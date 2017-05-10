@@ -1,7 +1,6 @@
 # Change Log
 
-## [Released](https://github.com/CenturyLinkCloud/mdw/releases/tag/v6.0.03)
-
+## [v6.0.03](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.03) (2017-05-09)
 **Implemented enhancements:**
 
 - Retain user filter selections on the Workflow tab [\#78](https://github.com/CenturyLinkCloud/mdw/issues/78)
@@ -16,7 +15,6 @@
 - Populate statusCode and statusMessage on listener response documents [\#11](https://github.com/CenturyLinkCloud/mdw/issues/11)
 - Save protocol metadata as part of request and response documents [\#10](https://github.com/CenturyLinkCloud/mdw/issues/10)
 - Publicly available discovery site for asset imports [\#5](https://github.com/CenturyLinkCloud/mdw/issues/5)
-- Publish mdw 6.0.x war/jars to Maven Central [\#3](https://github.com/CenturyLinkCloud/mdw/issues/3)
 - Camel support in mdw6 [\#2](https://github.com/CenturyLinkCloud/mdw/issues/2)
 
 **Closed issues:**

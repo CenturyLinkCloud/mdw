@@ -1,5 +1,4 @@
-Steps for Building and Publishing MDW Designer Plug-In:
--------------------------------------------------------
+# Steps for Building and Publishing MDW Designer Plug-In:
 
 In com.centurylink.mdw.designer:
  - Update mdwDesignerVersion in gradle.properties
@@ -27,17 +26,6 @@ Test updating Eclipse (Mars/Neon) to the new build.
 
 (If RCP is to be included in this build)
 Build com.centurylink.mdw.designer.rcp according to the instructions in its build.md.
-
-Publish Release Notes to the MDW Users mailing list.
-  (TODO: this procedure is changing to host the Release Notes on GitHub Pages)
-  View the Git revision history (in workspace dir):
-  git log  --name-status --abbrev-commit --after={2017-01-08} com.centurylink.mdw.designer com.centurylink.mdw.designer.core com.centurylink.mdw.designer.ui com.centurylink.mdw.designer.feature com.centurylink.mdw.designer.rcp > notes.txt
-  Use this information to produce the release notes email.
-  
-Upload the release notes email to the SharePoint site:
-  - Select the release notes email in Outlook and from the menu select File > Save As > Save As Type = Text Only.
-  - Filename format is MDW Designer Build x.x.x.txt.
-  - Upload to SharePoint under Releases > Release Notes > MDW Designer.
   
 On GitHub:
   - Close any open issues delivered with this build.
@@ -45,5 +33,13 @@ On GitHub:
   - Assign any undelivered issues for this build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub. 
 
+Release Notes
+  - If you are doing it first time then do following in root of your workspace dir
+    `gem install github_changelog_generator`
+  - github_changelog_generator --include-labels designer --exclude-tags-regex [v6.0.*]  --no-pull-request  --output Designer_CHANGELOG.md --future-release v9.1.x
+  - commit and push generated Designer_CHANGELOG.md to GitHub 
+  - git commit Designer_CHANGELOG.md -m "Designer Release notes"
+  - Create the release on GitHub, copy the notes from Designer_CHANGELOG.md
+  
 Update support items delivered with this build to Resolved status.
 

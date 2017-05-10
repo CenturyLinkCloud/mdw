@@ -1,11 +1,10 @@
 # Change Log
 
-## [v6.0.03](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.03) (2017-05-05)
+## [v9.1.5](https://github.com/CenturyLinkCloud/mdw/tree/v9.1.5) (2017-05-09)
 **Implemented enhancements:**
 
 - Asset discovery from public instance [\#75](https://github.com/CenturyLinkCloud/mdw/issues/75)
 - ExternalEventHandler File Naming [\#61](https://github.com/CenturyLinkCloud/mdw/issues/61)
-- Allow missing db configuration for VCS Assets projects [\#54](https://github.com/CenturyLinkCloud/mdw/issues/54)
 - Debug AutoTest Groovy scripts in Designer [\#50](https://github.com/CenturyLinkCloud/mdw/issues/50)
 - Zero-db Designer access for mdw6 [\#4](https://github.com/CenturyLinkCloud/mdw/issues/4)
 
