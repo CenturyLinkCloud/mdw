@@ -147,7 +147,7 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
 
                     StringBuffer sb = new StringBuffer();
                     ProgressMonitor progressMonitor = new SwtProgressMonitor(
-                             new SubProgressMonitor(monitor, 100));
+                            new SubProgressMonitor(monitor, 100));
                     for (File pkgFile : importPackageSelectPage.getSelectedPackages()) {
                         if (pkgFile.getContent() == null) { // download
                                                             // postponed
@@ -195,99 +195,93 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 // moved there
 
                                 importedPackages.add(importedPackage);
-
-                                if (wfp.isRemote() && wfp.isFilePersist()) {
-                                    // zip and upload imported packages to
-                                    // server
-                                    java.io.File tempDir = wfp.getTempDir();
-                                    if (!tempDir.exists()) {
-                                        if (!tempDir.mkdirs())
-                                            throw new IOException(
-                                                    "Unable to create temp directory: " + tempDir);
-                                    }
-                                    java.io.File zipFile = new java.io.File(tempDir + "/packages"
-                                            + StringHelper.filenameDateToString(new Date())
-                                            + ".zip");
-                                    java.io.File assetDir = wfp.getAssetDir();
-                                    List<java.io.File> includes = new ArrayList<java.io.File>();
-                                    for (WorkflowPackage pkg : importedPackages)
-                                        includes.add(new java.io.File(
-                                                assetDir + "/" + pkg.getName().replace('.', '/')));
-                                    // TODO populate excludes with non-imported
-                                    // package dirs (why, since these are not in
-                                    // includes?)
-                                    FileHelper.createZipFileWith(assetDir, zipFile, includes);
-                                    String uploadUrl = wfp.getServiceUrl()
-                                            + "/upload?overwrite=true&assetZip=true&user="
-                                            + importPackagePage.getProject().getUser()
-                                                    .getUsername();
-                                    InputStream is = new FileInputStream(zipFile);
-                                    try {
-                                        ByteArrayOutputStream os = new ByteArrayOutputStream();
-                                        int read = 0;
-                                        byte[] bytes = new byte[1024];
-                                        while ((read = is.read(bytes)) != -1)
-                                            os.write(bytes, 0, read);
-
-                                        String encryptedPassword = CryptUtil
-                                                .encrypt(wfp.getMdwDataSource().getDbPassword());
-                                        HttpHelper httpHelper = new HttpHelper(new URL(uploadUrl),
-                                                wfp.getMdwDataSource().getDbUser(),
-                                                encryptedPassword);
-                                        byte[] resp = httpHelper.postBytes(os.toByteArray());
-                                        PluginMessages
-                                                .log("Asset download respose: " + new String(resp));
-                                    }
-                                    finally {
-                                        is.close();
-                                    }
-                                }
                             }
                             progressMonitor.done();
                         }
                     }
-                    if (sb.length() > 0) {
+                    if (sb.length() > 0 || importedPackages.size() > 0 && wfp.isRemote()
+                            && wfp.isFilePersist()) {
+                        // zip and upload imported packages to
+                        // server
                         java.io.File tempDir = wfp.getTempDir();
                         if (!tempDir.exists()) {
                             if (!tempDir.mkdirs())
                                 throw new IOException(
                                         "Unable to create temp directory: " + tempDir);
                         }
-                        java.io.File tempFile = new java.io.File(tempDir + "/pkgDownload_"
+                        java.io.File zipFile = new java.io.File(tempDir + "/packages"
                                 + StringHelper.filenameDateToString(new Date()) + ".zip");
-                        String url = MdwPlugin.getSettings().getAssetDiscoveryUrl()
-                                + "/asset/packages?packages=" + sb.toString();
-                        HttpHelper httpHelper = new HttpHelper(new URL(url));
-                        httpHelper
-                                .setConnectTimeout(MdwPlugin.getSettings().getHttpConnectTimeout());
-                        httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
-                        httpHelper.download(tempFile);
-                        VersionControl vcs = new VersionControlGit();
-                        vcs.connect(null, null, null, wfp.getAssetDir());
-                        progressMonitor.subTask("Archive existing assets...");
                         java.io.File assetDir = wfp.getAssetDir();
-                        VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs,
-                                progressMonitor);
-                        archiver.backup();
-                        PluginMessages.log("Unzipping " + tempFile + " into: " + assetDir);
-                        FileHelper.unzipFile(tempFile, assetDir, null, null, true);
-                        archiver.archive();
-                        FileHelper.unzipFile(tempFile, tempDir, null, null, true);
-                        wfp.getSourceProject().refreshLocal(2, null);
-                        java.io.File explodedDir = new java.io.File(tempDir + "/com");
-                        if (explodedDir.isDirectory()) {
-                            List<java.io.File> fileList = FileHelper.getFilesRecursive(explodedDir,
-                                    "package.json", new ArrayList<java.io.File>());
-                            for (java.io.File file : fileList) {
-                                WorkflowPackage workflowPackage = new WorkflowPackage();
-                                workflowPackage.setProject(wfp);
-                                workflowPackage.setPackageVO(new PackageVO(new JSONObject(
-                                        FileHelper.getFileContents(file.getPath()))));
-                                importedPackages.add(workflowPackage);
+                        if (sb.length() > 0) {
+                            String url = MdwPlugin.getSettings().getAssetDiscoveryUrl()
+                                    + "/asset/packages?packages=" + sb.toString();
+                            HttpHelper httpHelper = new HttpHelper(new URL(url));
+                            httpHelper.setConnectTimeout(
+                                    MdwPlugin.getSettings().getHttpConnectTimeout());
+                            httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
+                            httpHelper.download(zipFile);
+                            if (!wfp.isRemote()) {
+                                VersionControl vcs = new VersionControlGit();
+                                vcs.connect(null, null, null, wfp.getAssetDir());
+                                progressMonitor.subTask("Archive existing assets...");
+                                VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs,
+                                        progressMonitor);
+                                archiver.backup();
+                                PluginMessages.log("Unzipping " + zipFile + " into: " + assetDir);
+                                FileHelper.unzipFile(zipFile, assetDir, null, null, true);
+                                archiver.archive();
+                                FileHelper.unzipFile(zipFile, tempDir, null, null, true);
+                                wfp.getSourceProject().refreshLocal(2, null);
+                                java.io.File explodedDir = new java.io.File(tempDir + "/com");
+                                if (explodedDir.isDirectory()) {
+                                    List<java.io.File> fileList = FileHelper.getFilesRecursive(
+                                            explodedDir, "package.json",
+                                            new ArrayList<java.io.File>());
+                                    for (java.io.File file : fileList) {
+                                        WorkflowPackage workflowPackage = new WorkflowPackage();
+                                        workflowPackage.setProject(wfp);
+                                        workflowPackage.setPackageVO(new PackageVO(new JSONObject(
+                                                FileHelper.getFileContents(file.getPath()))));
+                                        importedPackages.add(workflowPackage);
+                                    }
+                                    FileHelper.deleteRecursive(explodedDir);
+                                }
                             }
-                            FileHelper.deleteRecursive(explodedDir);
                         }
-                        tempFile.delete();
+                        else {
+                            List<java.io.File> includes = new ArrayList<java.io.File>();
+                            for (WorkflowPackage pkg : importedPackages)
+                                includes.add(new java.io.File(
+                                        assetDir + "/" + pkg.getName().replace('.', '/')));
+                            // TODO populate excludes with non-imported
+                            // package dirs (why, since these are not in
+                            // includes?)
+                            FileHelper.createZipFileWith(assetDir, zipFile, includes);
+                        }
+                        if (wfp.isRemote() && wfp.isFilePersist()) {
+                            String uploadUrl = wfp.getServiceUrl()
+                                    + "/upload?overwrite=true&assetZip=true&user="
+                                    + importPackagePage.getProject().getUser().getUsername();
+                            InputStream is = new FileInputStream(zipFile);
+                            try {
+                                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                                int read = 0;
+                                byte[] bytes = new byte[1024];
+                                while ((read = is.read(bytes)) != -1)
+                                    os.write(bytes, 0, read);
+
+                                String encryptedPassword = CryptUtil
+                                        .encrypt(wfp.getMdwDataSource().getDbPassword());
+                                HttpHelper httpHelper = new HttpHelper(new URL(uploadUrl),
+                                        wfp.getMdwDataSource().getDbUser(), encryptedPassword);
+                                byte[] resp = httpHelper.postBytes(os.toByteArray());
+                                PluginMessages.log("Asset download respose: " + new String(resp));
+                            }
+                            finally {
+                                is.close();
+                            }
+                        }
+                        zipFile.delete();
                         progressMonitor.done();
                     }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
