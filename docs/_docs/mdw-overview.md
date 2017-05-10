@@ -70,18 +70,13 @@ The built-in MDW Framework provides event handlers and listeners for handling in
   Workgroup | Users belong to the workgroups whose manual tasks they can act upon.  
  
   
-## The following links offer a wealth of information, including hands-on tutorials / user guides (Developer Cookbooks) on a broad range of MDW (and related) topics:
+### Additional Resources
+##### The following links offer a wealth of information, including hands-on tutorials / user guides (Developer Cookbooks) on a broad range of MDW (and related) topics:
 - [MDW Help Topics](http://centurylinkcloud.github.io/mdw/docs/help/)
-- [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
-- [TomcatCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
-- [CloudFoundryCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
-- [MDW Designer User Guide](http://centurylinkcloud.github.io/mdw/docs/designer/user-guide/)
-
-
-
-
-  
- 
+- [Microservices](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
+- [SOAP Services](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
+- [CloudFoundry](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
+- [Designer User Guide](http://centurylinkcloud.github.io/mdw/docs/designer/user-guide)
   
 
   
