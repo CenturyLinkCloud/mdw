@@ -29,8 +29,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     RESUME: {color: 'green'},
     DELAY: {color: 'orange'},
     HOLD: {color: 'orange'},
-    ERROR: {color: 'red'},
-    ABORT: {color: 'red'},
+    ERROR: {color: '#f44336'},
+    ABORT: {color: '#f44336'},
     CORRECT: {color: 'purple'},
     FINISH: {color: 'gray'}
   };

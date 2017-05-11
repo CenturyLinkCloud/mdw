@@ -1,0 +1,17 @@
+{
+  "category": "attributes",
+  "pagelet": {"widgets": [
+    {
+      "type": "text",
+      "name": "TRANSITION_RETRY_COUNT",
+      "label": "Retry Count",
+      "vw": 150
+    },
+    {
+      "type": "text",
+      "name": "TRANSITION_DELAY",
+      "label": "Delay (seconds)",
+      "vw": 150
+    }
+  ]}
+}

@@ -51,10 +51,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       if (this.template.category === 'object') {
         widget.value = this.workflowObj[widget.name];
       }
-      else if (this.template.category === 'attribute') {
-        widget.value = this.workflowObj.attributes[widget.name];
-      }
-      else if (this.template.category === 'process') {
+      else if (this.template.category === 'attributes') {
         if (widget.name === '_isService')
           widget.value = this.workflowObj.attributes.PROCESS_VISIBILITY === 'SERVICE' ? 'true' : 'false';
         else
@@ -283,7 +280,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   };
   
   Configurator.prototype.filterWidgets = function() {
-    if (this.template.category === 'object' || this.template.category === 'attribute')
+    if (this.template.category === 'object' || this.template.category === 'attributes')
       return;
     
     var widgets = [];
@@ -326,10 +323,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     if (this.template.category === 'object') {
       this.workflowObj[widget.name] = widget.value;
     }
-    else if (this.template.category === 'attribute') {
-      this.workflowObj.attributes[widget.name] = widget.value;
-    }
-    else if (this.template.category === 'process') {
+    else if (this.template.category === 'attributes') {
       if (widget.name === '_isService')
         this.workflowObj.attributes.PROCESS_VISIBILITY = widget.value === 'true' ? 'SERVICE' : 'PUBLIC';
       else

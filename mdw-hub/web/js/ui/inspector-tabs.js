@@ -102,6 +102,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           Event: 'event',
           '_template': mdw.roots.hub + '/js/ui/templates/transitionDefinition.json'
         },
+        Design: {
+          '_template': mdw.roots.services + '/js/ui/templates/transition.json'
+        },
         Attributes: 'attributes'
       },
       textNote: {
