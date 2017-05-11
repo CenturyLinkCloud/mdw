@@ -5,6 +5,8 @@ var editMod = angular.module('edit', ['ngResource', 'mdw']);
 editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'WorkflowCache', 'GitVcs',
                                          function($scope, $cookieStore, $routeParams, mdw, util, Assets, Asset, WorkflowCache, GitVcs) {
   
+  $scope.setFullWidth(true);
+
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
@@ -25,7 +27,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       packageName: $routeParams.packageName,
       assetName: $routeParams.assetName
     },
-    function(assetsData) {
+    function(assetData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
       
       $scope.aceOptions = {

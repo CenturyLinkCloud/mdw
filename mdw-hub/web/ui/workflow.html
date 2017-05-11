@@ -2,7 +2,7 @@
   <div>
     <canvas class="mdw-canvas"></canvas> 
   </div>
-  <div class="mdw-toolbox" ng-if="editable">
+  <div class="mdw-toolbox" mdw-toolbox ng-if="editable" style="bottom:10px;">
     <div class="panel-heading mdw-heading">
       <div class="mdw-heading-label">Toolbox</div>
       <div class="mdw-help-icon">
@@ -11,18 +11,19 @@
         </a>
       </div>
       <div class="mdw-heading-actions">
-        <a class="btn mdw-inspector-btn" ng-click="initInspector()">
+        <a class="btn" ng-if="toolbox.isOpen()" ng-click="closeToolbox()">
           <span class="glyphicon glyphicon-minus"></span>
         </a> 
-        <a class="btn mdw-inspector-btn" ng-click="closeInspector()">
-          <span class="glyphicon glyphicon-remove"></span>
+        <a class="btn" ng-if="toolbox && !toolbox.isOpen()" ng-click="openToolbox()">
+          <span class="glyphicon glyphicon-plus"></span>
         </a>
       </div>
     </div>
     <ul>
-      <li ng-repeat="impl in toolbox.getImplementors()" title="{{impl.implementorClass}}" tabIndex="{{100+$index}}">
+      <li id="{{impl.implementorClass}}" ng-repeat="impl in toolbox.getImplementors()" 
+        title="{{impl.implementorClass}}" tabIndex="{{1000+$index}}">
         <div class="mdw-toolbox-icon">
-          <img ng-src="{{impl.iconUrl}}"></img>
+          <img ng-src="{{impl.iconUrl}}" draggable="false"></img>
         </div>
         <div class="mdw-toolbox-label">{{impl.label}}</div>
       </li>

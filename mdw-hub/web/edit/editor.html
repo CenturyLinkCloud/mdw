@@ -1,21 +1,21 @@
 <div class="row" style="display:flex;">
-  <div class="mdw-panel-full-width">
+  <div class="mdw-panel-full-width mdw-edit-panel">
     <div class="panel panel-default mdw-panel">
-      <div class="panel-heading mdw-heading" style="padding-top:6px;padding-bottom:5px;">
+      <div class="panel-heading mdw-heading mdw-edit-heading">
         <div class="mdw-heading-label" style="margin-top:0px;">
           <img class="mdw-heading-icon" src="images/mdw_48.png" alt="mdw" hub-link>
           <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}}
           <span ng-if="asset.version"> v{{asset.version}}</span>
-          <span ng-if="isDirty()" class="mdw-dirty"> *</span>
+          <span ng-class="{'mdw-dirty':isDirty(),'mdw-not-dirty':!isDirty()}"> *</span>
         </div>
-        <div class="mdw-heading-actions" style="padding-top:8px;">
+        <div class="mdw-heading-actions mdw-edit-actions">
           <a class="btn btn-default" href="" ng-disabled="!isDirty()"
-            uib-popover-template="'edit/savePop.html'" popover-placement="left-top" pop-click>
+            uib-popover-template="'edit/savePop.html'" popover-placement="bottom" pop-click>
             Save
           </a>            
           <a class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
             Cancel
-          </a>            
+          </a>  
         </div>
       </div>
       <div mdw-editor="aceOptions" ng-if="!process" ng-model="asset.content" class="mdw-editor"></div>

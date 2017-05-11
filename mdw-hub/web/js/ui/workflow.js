@@ -3,10 +3,11 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController', 
-    ['$scope', '$http', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
-    function($scope, $http, mdw, util, mdwImplementors, Diagram, Inspector, Toolbox) {
+    ['$scope', '$http', '$document', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
+    function($scope, $http, $document, mdw, util, mdwImplementors, Diagram, Inspector, Toolbox) {
   
   $scope.init = function(canvas) {
+    
     if ($scope.serviceBase.endsWith('/'))
       $scope.serviceBase = $scope.serviceBase.substring(0, $scope.serviceBase.length - 1);
     if ($scope.hubBase) {
@@ -26,6 +27,7 @@ workflowMod.controller('MdwWorkflowController',
         $scope.canvas.bind('mousemove', $scope.mouseMove);
         $scope.canvas.bind('mousedown', $scope.mouseDown);
         $scope.canvas.bind('mouseup', $scope.mouseUp);
+        $scope.canvas.bind('mouseover', $scope.mouseOver);
         $scope.canvas.bind('mouseout', $scope.mouseOut);
         $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
       }, function(error) {
@@ -37,17 +39,19 @@ workflowMod.controller('MdwWorkflowController',
       $scope.canvas.bind('mousemove', $scope.mouseMove);
       $scope.canvas.bind('mousedown', $scope.mouseDown);
       $scope.canvas.bind('mouseup', $scope.mouseUp);
+      $scope.canvas.bind('mouseover', $scope.mouseOver);
       $scope.canvas.bind('mouseout', $scope.mouseOut);
       $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
     }
   };
   
   $scope.dest = function() {
-    $scope.canvas.bind('mousemove', $scope.mouseMove);
-    $scope.canvas.bind('mousedown', $scope.mouseDown);
-    $scope.canvas.bind('mouseup', $scope.mouseUp);
-    $scope.canvas.bind('mouseout', $scope.mouseOut);
-    $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
+    $scope.canvas.unbind('mousemove', $scope.mouseMove);
+    $scope.canvas.unbind('mousedown', $scope.mouseDown);
+    $scope.canvas.unbind('mouseup', $scope.mouseUp);
+    $scope.canvas.unbind('mousein', $scope.mouseIn);
+    $scope.canvas.unbind('mouseout', $scope.mouseOut);
+    $scope.canvas.unbind('dblclick', $scope.mouseDoubleClick);
   };
   
   $scope.renderProcess = function() {
@@ -92,6 +96,10 @@ workflowMod.controller('MdwWorkflowController',
           $scope.instance = response.data;
           $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
           $scope.diagram.draw();
+          if ($scope.editable) {
+            $scope.toolbox = Toolbox.getToolbox();
+            $scope.toolbox.init($scope.implementors, $scope.hubBase);
+          }
         }, function error(response) {
           mdw.messages = response.statusText;
       });
@@ -99,25 +107,33 @@ workflowMod.controller('MdwWorkflowController',
     else {
       $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
       $scope.diagram.draw();
-      if ($scope.editable)
-        $scope.toolbox = new Toolbox($scope.diagram, $scope.implementors, $scope.hubBase);
+      if ($scope.editable) {
+        $scope.toolbox = Toolbox.getToolbox();
+        $scope.toolbox.init($scope.implementors, $scope.hubBase);
+      }
     }
   };
   
   $scope.down = false;
   $scope.dragging = false;
+  $scope.dragIn = null;
   $scope.mouseMove = function(e) {
-    if ($scope.down && $scope.editable)
-      $scope.dragging = true;
-    if ($scope.diagram) {
-      if ($scope.dragging) {
-        if ($scope.diagram.onMouseDrag(e)) {
-          if ($scope.onChange)
-            $scope.onChange($scope.process);
+    if ($scope.dragIn) {
+      $document[0].body.style.cursor = 'copy';
+    }
+    else {
+      if ($scope.down && $scope.editable)
+        $scope.dragging = true;
+      if ($scope.diagram) {
+        if ($scope.dragging) {
+          if ($scope.diagram.onMouseDrag(e)) {
+            if ($scope.onChange)
+              $scope.onChange($scope.process);
+          }
         }
-      }
-      else {
-        $scope.diagram.onMouseMove(e);
+        else {
+          $scope.diagram.onMouseMove(e);
+        }
       }
     }
   };
@@ -142,12 +158,22 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = false;
     $scope.dragging = false;
     if ($scope.diagram) {
-      $scope.diagram.onMouseUp(e);
+      if ($scope.dragIn)
+        $scope.diagram.onDrop(e, $scope.dragIn);
+      else
+        $scope.diagram.onMouseUp(e);
+    }
+    $scope.dragIn = null;
+  };
+  $scope.mouseOver = function(e) {
+    if (e.buttons === 1 && $scope.toolbox.getSelected()) {
+      $scope.dragIn = $scope.toolbox.getSelected();
     }
   };
   $scope.mouseOut = function(e) {
     $scope.down = false;
     $scope.dragging = false;
+    $scope.dragIn = null;
     if ($scope.diagram)
       $scope.diagram.onMouseOut(e);
   };
@@ -164,8 +190,8 @@ workflowMod.controller('MdwWorkflowController',
 }]);
 
 workflowMod.factory('Diagram', 
-    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection',
-     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection) {
+    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox',
+     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection, Toolbox) {
   var Diagram = function(canvas, process, implementors, imgBase, editable, instance) {
     Shape.call(this, this, process);
     this.canvas = canvas;
@@ -280,6 +306,18 @@ workflowMod.factory('Diagram',
     // allow extra room
     canvasDisplay.w += Diagram.BOUNDARY_DIM;
     canvasDisplay.h += Diagram.BOUNDARY_DIM;
+    
+    if (this.editable) {
+      var toolbox = Toolbox.getToolbox();
+      // fill available
+      var parentWidth = this.canvas.parentElement.offsetWidth;
+      if (toolbox)
+        parentWidth -= toolbox.getWidth();
+      if (canvasDisplay.w < parentWidth)
+        canvasDisplay.w = parentWidth;
+      if (toolbox && canvasDisplay.h < toolbox.getHeight())
+        canvasDisplay.h = toolbox.getHeight();
+    }
     
     this.canvas.width = canvasDisplay.w;
     this.canvas.height = canvasDisplay.h;
@@ -705,7 +743,6 @@ workflowMod.factory('Diagram',
     else {
       $document[0].body.style.cursor = '';
     }
-    
   };
   
   Diagram.prototype.onMouseDrag = function(e) {
@@ -791,6 +828,15 @@ workflowMod.factory('Diagram',
         }
       }
     }
+  };
+  
+  Diagram.prototype.onDrop = function(e, item) {
+    var rect = this.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    // TODO item is embedded subproc
+    console.log('DROPPED: ' + item.label);
+    console.log('AT POS: ' + x + ', ' + y);
   };
   
   Diagram.prototype.getHoverObj = function(x, y) {
@@ -1077,7 +1123,8 @@ workflowMod.directive('mdwWorkflow', [function() {
     controller: 'MdwWorkflowController',
     controllerAs: 'mdwWorkflow',
     link: function link(scope, elem, attrs, ctrls) {
-      scope.init(angular.element(elem[0].getElementsByClassName('mdw-canvas')[0]));
+      var canvas = angular.element(elem[0].getElementsByClassName('mdw-canvas')[0]);
+      scope.init(canvas);
       scope.$on('$destroy', function() {
         scope.dest();
       });

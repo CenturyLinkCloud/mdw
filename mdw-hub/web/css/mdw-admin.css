@@ -755,7 +755,7 @@
 	user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;	
+  -ms-user-select: none;
 }
 .mdw-legend {
   list-style-type: none;
@@ -776,22 +776,26 @@
 .mdw-toolbox {
 	width: 250px;
   position: fixed;
-  top: 78px;
-  bottom: 250px;
-  right: 30px;	
+  right: 15px;
+  top: 38px;
   font-size: 13px;
+  background-color: white;
   border: 1px solid #757575;
   border-radius: 4px;
-  box-shadow: 2px 2px 4px #757575;
+  box-shadow: 4px 4px 16px #757575;
 }
 .mdw-toolbox .panel-heading {
   padding: 5px 10px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;  
 }
 .mdw-toolbox > ul {
   width: 247px;
 	position: fixed;
-  top: 118px;
-  bottom: 250px;
+  top: 78px;
+  bottom: 10px;
   margin-bottom: 5px;
   list-style-type: none;
   overflow-y: auto;
@@ -802,8 +806,15 @@
   cursor: pointer;
   padding: 7px 0 7px 10px;
 }
+.mdw-toolbox > ul > li:active {
+	cursor: copy;
+}
 .mdw-toolbox-icon {
 	width: 30px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;    
 }
 .mdw-toolbox-icon img {
 	margin: auto;
@@ -812,6 +823,10 @@
 	padding-left: 5px;
 	padding-top: 5px;
 	white-space: nowrap;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;  	
 }
 .mdw-inspector {
   /* display: none is set in style */
@@ -821,11 +836,11 @@
   right: 50px;
   border: 1px solid #757575;  
   border-radius: 4px;
-  box-shadow: 2px 2px 4px #757575; 
+  box-shadow: 4px 4px 16px #757575; 
 }
 .mdw-configurator {
-	right: 30px;
-	bottom: 10px;
+  right: 270px;
+  bottom: 10px;
 }
 .mdw-inspector-panel {
   clear: both;
@@ -992,6 +1007,18 @@
   margin-bottom: 2px; 
   font-weight: 600;
 }
+.mdw-edit-panel {
+  padding-right: 0; 
+}
+.mdw-edit-heading {
+  padding-top: 6px;
+  padding-bottom: 5px;
+}
+.mdw-edit-actions {
+	float: left;
+	margin-left: 25px;
+  padding-top: 8px;
+}
 .mdw-editor {
   position: absolute !important;
   top: 80px;
@@ -1008,6 +1035,11 @@
 .mdw-dirty {
 	font-weight: bold;
 	font-size: 22px;
+}
+.mdw-not-dirty {
+  font-weight: bold;
+  font-size: 22px;
+  color: transparent;
 }
 .mdw-highlight {
 	color: #880000;
