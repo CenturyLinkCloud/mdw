@@ -28,6 +28,21 @@ toolboxMod.factory('Toolbox', ['$document', 'mdw', 'util',
       else
         impl.iconUrl = hubBase + '/asset/' + impl.icon;
     });
+    this.implementors.push({
+      category: 'subflow',
+      label: 'Embedded Subprocess',
+      iconUrl: hubBase + '/asset/com.centurylink.mdw.base/subflow.png',
+      implementorClass: 'subflow'
+    });
+    this.implementors.push({
+      category: 'note',
+      label: 'Text Note',
+      iconUrl: hubBase + '/asset/com.centurylink.mdw.base/note.png',
+      implementorClass: 'note'
+    });
+    this.implementors.sort(function(impl1, impl2) {
+      return impl1.label.localeCompare(impl2.label);
+    });
   };
   
   Toolbox.prototype.setSelected = function(className) {

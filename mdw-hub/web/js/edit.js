@@ -199,8 +199,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.$on('$locationChangeStart', function(event) {
     if ($scope.isDirty()) {
-      var answer = confirm("Your changes will be lost.\nClick OK to confirm you want to leave this page.");
-      if (!answer)
+      if (!confirm('Your changes will be lost.\nClick OK to confirm you want to leave this page.'))
         event.preventDefault();
     }
   });  

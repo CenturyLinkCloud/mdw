@@ -54,6 +54,21 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.ELBOW_THRESHOLD = 0.8;
   Link.ELBOW_VH_THRESHOLD = 60;
   
+  Link.create = function(diagram, id, from, to) {
+    var transition = {
+        id: id,
+        event: 'FINISH',
+        to: to.activity.id
+    };
+    var link = new Link(diagram, transition, from, to);
+    if (!from.activity.transitions)
+      from.activity.transitions = [];
+    from.activity.transitions.push(transition);
+    link.display = {type: Link.LINK_TYPES.ELBOW, lx: 0, ly: 0, xs: [0,0], ys: [0,0]};
+    link.calc();
+    return link;
+  };
+  
   Link.prototype.draw = function() {
     var color = this.getColor();
         

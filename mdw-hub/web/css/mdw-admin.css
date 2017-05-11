@@ -1175,6 +1175,10 @@
   font-weight: bold;
   cursor: default;
 }
+/* avoid flicker for uiModal */
+.modal-open {
+  overflow-y: auto;
+}
 /*
 .line-legend li {
   display: flex;

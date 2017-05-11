@@ -22,6 +22,32 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   
   Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(WORKFLOW_STATUSES);
   
+  Step.create = function(diagram, id, implementor, x, y) {
+    var w = 24;
+    var h = 24;
+    if (diagram.drawBoxes) {
+      if (implementor.icon && implementor.icon.startsWith('shape:')) {
+        w = 60;
+        h = 40;
+      }
+      else {
+        w = 100;
+        h = 60;
+      }
+    }
+    var activity = {
+        id: id,
+        name: 'New ' + implementor.label,
+        implementor: implementor.implementorClass,
+        attributes: {WORK_DISPLAY_INFO: 'x=' + x + ',y=' + y + ',w=' + w + ',h=' + h},
+        transitions: []
+    };
+    var step = new Step(diagram, activity);
+    step.implementor = implementor;
+    step.display = {x: x, y: y};
+    return step;
+  };
+  
   Step.prototype.draw = function() {
     var activity = this.workflowObj = this.activity;
     var shape;

@@ -1,6 +1,27 @@
 'use strict';
 var uiUtil = angular.module('mdwUtil', ['mdw']);
 
+uiUtil.factory('uiUtil', ['mdw', '$uibModal', function(mdw, $uibModal) {
+  return {
+    getConfirmDialog: function(title, message) {
+      return {
+        templateUrl: 'ui/confirm.html',
+        size: 'sm',
+        backdrop: false,
+        controller: ['$scope', function ($scope) {
+          $scope.title = title;
+          $scope.message = message;
+        }]
+      };
+    },
+    confirm: function(title, message, then) {
+      $uibModal.open(this.getConfirmDialog(title, message)).result.then(function(res) {
+        then(res);
+      });
+    }
+  };
+}]);
+
 uiUtil.config(function($httpProvider) {
   $httpProvider.defaults.useXDomain = true;
 });
