@@ -38,7 +38,8 @@ toolboxMod.factory('Toolbox', ['$document', 'mdw', 'util',
   };
   
   Toolbox.prototype.getSelected = function() {
-    return this.selected;
+    if (this.selected && document.activeElement && this.selected.implementorClass === document.activeElement.id)
+      return this.selected;
   };
   
   Toolbox.prototype.getWidth = function() {
@@ -57,7 +58,7 @@ toolboxMod.factory('Toolbox', ['$document', 'mdw', 'util',
     if (!Toolbox.toolbox)
       Toolbox.toolbox = new Toolbox();
     return Toolbox.toolbox;
-  }
+  };
 
   return Toolbox;
 }]);

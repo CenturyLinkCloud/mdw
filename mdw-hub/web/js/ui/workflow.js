@@ -835,8 +835,6 @@ workflowMod.factory('Diagram',
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
     // TODO item is embedded subproc
-    console.log('DROPPED: ' + item.label);
-    console.log('AT POS: ' + x + ', ' + y);
   };
   
   Diagram.prototype.getHoverObj = function(x, y) {
