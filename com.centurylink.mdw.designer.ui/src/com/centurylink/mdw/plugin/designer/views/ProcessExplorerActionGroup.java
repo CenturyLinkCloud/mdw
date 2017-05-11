@@ -584,76 +584,78 @@ public class ProcessExplorerActionGroup extends ActionGroup {
             public void fillContextMenu(IMenuManager menu) {
                 importMenu.removeAll();
                 IStructuredSelection selection = getSelection();
-
-                if (!importMenuApplies(selection))
-                    return;
-
-                if (importProjectApplies(selection))
-                    importMenu.add(importProjectAction);
-
-                if (importPackageApplies(selection))
-                    importMenu.add(importPackageAction);
-
-                if (importVcsApplies(selection))
-                    importMenu.add(importVcsAction);
-
-                if (importProcessApplies(selection)) {
-                    if (selection.getFirstElement() instanceof WorkflowProcess) {
-                        importProcessAction.setId(
-                                MdwMenuManager.MDW_MENU_PREFIX + "import.new.process.version");
-                        importProcessAction.setText("New Process Version...");
+                WorkflowElement element = (WorkflowElement) selection.getFirstElement();
+                if (!(element.getProject().checkRequiredVersion(6, 0) && element.getProject().isRemote())) {
+                    if (!importMenuApplies(selection))
+                        return;
+    
+                    if (importProjectApplies(selection))
+                        importMenu.add(importProjectAction);
+    
+                    if (importPackageApplies(selection))
+                        importMenu.add(importPackageAction);
+    
+                    if (importVcsApplies(selection))
+                        importMenu.add(importVcsAction);
+    
+                    if (importProcessApplies(selection)) {
+                        if (element instanceof WorkflowProcess) {
+                            importProcessAction.setId(
+                                    MdwMenuManager.MDW_MENU_PREFIX + "import.new.process.version");
+                            importProcessAction.setText("New Process Version...");
+                        }
+                        else {
+                            importProcessAction
+                                    .setId(MdwMenuManager.MDW_MENU_PREFIX + "import.process");
+                            importProcessAction.setText("Process...");
+                        }
+                        importMenu.add(importProcessAction);
                     }
-                    else {
-                        importProcessAction
-                                .setId(MdwMenuManager.MDW_MENU_PREFIX + "import.process");
-                        importProcessAction.setText("Process...");
+    
+                    if (importWorkflowAssetApplies(selection)) {
+                        if (element instanceof WorkflowAsset) {
+                            WorkflowAsset asset = (WorkflowAsset) element;
+                            // menu item text and icon are dynamic
+                            importWorkflowAssetAction
+                                    .setId(MdwMenuManager.MDW_MENU_PREFIX + "import.new.asset.version");
+                            importWorkflowAssetAction
+                                    .setText("New " + asset.getTitle() + " Version...");
+                            importWorkflowAssetAction.setImageDescriptor(
+                                    MdwPlugin.getImageDescriptor("icons/" + asset.getIcon()));
+                        }
+                        else {
+                            importWorkflowAssetAction
+                                    .setId(MdwMenuManager.MDW_MENU_PREFIX + "import.asset");
+                            importWorkflowAssetAction.setText("Asset...");
+                            importWorkflowAssetAction
+                                    .setImageDescriptor(MdwPlugin.getImageDescriptor("icons/doc.gif"));
+                        }
+                        importMenu.add(importWorkflowAssetAction);
                     }
-                    importMenu.add(importProcessAction);
+    
+                    if (importAttributesApplies(selection)) {
+                        List<IAction> importAttrsActions = getImportAttributeActions(selection);
+                        if (!importAttrsActions.isEmpty()) {
+                            MenuManager attributesMenu = new MenuManager("Attributes",
+                                    MdwPlugin.getImageDescriptor("icons/attribute.gif"),
+                                    MdwMenuManager.MDW_MENU_PREFIX + "menu.import.attributes");
+                            attributesMenu.removeAll();
+                            for (IAction action : importAttrsActions)
+                                attributesMenu.add(action);
+                            importMenu.add(attributesMenu);
+                        }
+                    }
+    
+                    if (importTaskTemplateApplies(selection))
+                        importMenu.add(importTaskTemplateAction);
+    
+                    importMenu.add(new Separator("Other"));
+                    IWorkbenchAction otherAction = ActionFactory.IMPORT
+                            .create(getViewSite().getWorkbenchWindow());
+                    otherAction.setId(MdwMenuManager.MDW_MENU_PREFIX + "import.other");
+                    otherAction.setText("Other...");
+                    importMenu.add(otherAction);
                 }
-
-                if (importWorkflowAssetApplies(selection)) {
-                    if (selection.getFirstElement() instanceof WorkflowAsset) {
-                        WorkflowAsset asset = (WorkflowAsset) selection.getFirstElement();
-                        // menu item text and icon are dynamic
-                        importWorkflowAssetAction
-                                .setId(MdwMenuManager.MDW_MENU_PREFIX + "import.new.asset.version");
-                        importWorkflowAssetAction
-                                .setText("New " + asset.getTitle() + " Version...");
-                        importWorkflowAssetAction.setImageDescriptor(
-                                MdwPlugin.getImageDescriptor("icons/" + asset.getIcon()));
-                    }
-                    else {
-                        importWorkflowAssetAction
-                                .setId(MdwMenuManager.MDW_MENU_PREFIX + "import.asset");
-                        importWorkflowAssetAction.setText("Asset...");
-                        importWorkflowAssetAction
-                                .setImageDescriptor(MdwPlugin.getImageDescriptor("icons/doc.gif"));
-                    }
-                    importMenu.add(importWorkflowAssetAction);
-                }
-
-                if (importAttributesApplies(selection)) {
-                    List<IAction> importAttrsActions = getImportAttributeActions(selection);
-                    if (!importAttrsActions.isEmpty()) {
-                        MenuManager attributesMenu = new MenuManager("Attributes",
-                                MdwPlugin.getImageDescriptor("icons/attribute.gif"),
-                                MdwMenuManager.MDW_MENU_PREFIX + "menu.import.attributes");
-                        attributesMenu.removeAll();
-                        for (IAction action : importAttrsActions)
-                            attributesMenu.add(action);
-                        importMenu.add(attributesMenu);
-                    }
-                }
-
-                if (importTaskTemplateApplies(selection))
-                    importMenu.add(importTaskTemplateAction);
-
-                importMenu.add(new Separator("Other"));
-                IWorkbenchAction otherAction = ActionFactory.IMPORT
-                        .create(getViewSite().getWorkbenchWindow());
-                otherAction.setId(MdwMenuManager.MDW_MENU_PREFIX + "import.other");
-                otherAction.setText("Other...");
-                importMenu.add(otherAction);
             }
         };
     }
