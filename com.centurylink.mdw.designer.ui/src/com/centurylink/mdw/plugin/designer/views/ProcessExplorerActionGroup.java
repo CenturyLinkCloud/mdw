@@ -585,19 +585,20 @@ public class ProcessExplorerActionGroup extends ActionGroup {
                 importMenu.removeAll();
                 IStructuredSelection selection = getSelection();
                 WorkflowElement element = (WorkflowElement) selection.getFirstElement();
-                if (!(element.getProject().checkRequiredVersion(6, 0) && element.getProject().isRemote())) {
+                if (element != null && !(element.getProject().checkRequiredVersion(6, 0)
+                        && element.getProject().isRemote())) {
                     if (!importMenuApplies(selection))
                         return;
-    
+
                     if (importProjectApplies(selection))
                         importMenu.add(importProjectAction);
-    
+
                     if (importPackageApplies(selection))
                         importMenu.add(importPackageAction);
-    
+
                     if (importVcsApplies(selection))
                         importMenu.add(importVcsAction);
-    
+
                     if (importProcessApplies(selection)) {
                         if (element instanceof WorkflowProcess) {
                             importProcessAction.setId(
@@ -611,7 +612,7 @@ public class ProcessExplorerActionGroup extends ActionGroup {
                         }
                         importMenu.add(importProcessAction);
                     }
-    
+
                     if (importWorkflowAssetApplies(selection)) {
                         if (element instanceof WorkflowAsset) {
                             WorkflowAsset asset = (WorkflowAsset) element;
@@ -632,7 +633,7 @@ public class ProcessExplorerActionGroup extends ActionGroup {
                         }
                         importMenu.add(importWorkflowAssetAction);
                     }
-    
+
                     if (importAttributesApplies(selection)) {
                         List<IAction> importAttrsActions = getImportAttributeActions(selection);
                         if (!importAttrsActions.isEmpty()) {
@@ -645,10 +646,10 @@ public class ProcessExplorerActionGroup extends ActionGroup {
                             importMenu.add(attributesMenu);
                         }
                     }
-    
+
                     if (importTaskTemplateApplies(selection))
                         importMenu.add(importTaskTemplateAction);
-    
+
                     importMenu.add(new Separator("Other"));
                     IWorkbenchAction otherAction = ActionFactory.IMPORT
                             .create(getViewSite().getWorkbenchWindow());
