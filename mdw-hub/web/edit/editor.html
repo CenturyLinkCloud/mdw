@@ -7,6 +7,7 @@
           <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}}
           <span ng-if="asset.version"> v{{asset.version}}</span>
           <span ng-class="{'mdw-dirty':isDirty(),'mdw-not-dirty':!isDirty()}"> *</span>
+          <a class="mdw-raw-link" ng-if="process" ng-href="{{asset.url}}">Raw</a>  
         </div>
         <div class="mdw-heading-actions mdw-edit-actions">
           <a class="btn btn-default" href="" ng-disabled="!isDirty()"

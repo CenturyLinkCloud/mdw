@@ -122,18 +122,18 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.prototype.setDisplay = function(display) {
     if (!this.transition.attributes)
       this.transition.attributes = {};
-    var attr = 'type=' + display.type + ',lx=' + display.lx + ',ly=' + display.ly;
+    var attr = 'type=' + display.type + ',lx=' + Math.round(display.lx) + ',ly=' + Math.round(display.ly);
     attr += ',xs=';
     for (var i = 0; i < display.xs.length; i++) {
       if (i > 0)
         attr += '&';
-      attr += display.xs[i];
+      attr += Math.round(display.xs[i]);
     }
     attr += ',ys=';
     for (i = 0; i < display.ys.length; i++) {
       if (i > 0)
         attr += '&';
-      attr += display.ys[i];
+      attr += Math.round(display.ys[i]);
     }
     this.transition.attributes.TRANSITION_DISPLAY_INFO = attr;
   };

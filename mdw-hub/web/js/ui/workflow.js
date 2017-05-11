@@ -158,10 +158,15 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = false;
     $scope.dragging = false;
     if ($scope.diagram) {
-      if ($scope.dragIn)
-        $scope.diagram.onDrop(e, $scope.dragIn);
-      else
+      if ($scope.dragIn) {
+        if ($scope.diagram.onDrop(e, $scope.dragIn)) {
+          if ($scope.onChange)
+            $scope.onChange($scope.process);
+        }
+      }
+      else {
         $scope.diagram.onMouseUp(e);
+      }
     }
     $scope.dragIn = null;
   };
@@ -394,9 +399,42 @@ workflowMod.factory('Diagram',
     var link = new Link(this, transition, from, to);
     link.display = {type: Link.LINK_TYPES.ELBOW, lx: 0, ly: 0, xs: [0,0], ys: [0,0]};
     link.calc();
-    this.links.push();
+    this.links.push(link);
   };
 
+  Diagram.prototype.addStep = function(impl, x, y) {
+    var maxId = 0;
+    this.steps.forEach(function(step) {
+      var stepId = parseInt(step.activity.id.substring(1));
+      if (stepId > maxId)
+        maxId = stepId;
+    });
+    var implementor = this.getImplementor(impl);
+    var w = 24;
+    var h = 24;
+    if (this.drawBoxes) {
+      if (implementor.icon && implementor.icon.startsWith('shape:')) {
+        w = 60;
+        h = 40;
+      }
+      else {
+        w = 100;
+        h = 60;
+      }
+    }
+    var activity = {
+        id: 'A' + (maxId + 1),
+        name: 'New ' + implementor.label,
+        implementor: impl,
+        attributes: {WORK_DISPLAY_INFO: 'x=' + x + ',y=' + y + ',w=' + w + ',h=' + h}
+    };
+    this.process.activities.push(activity);
+    var step = new Step(this, activity);
+    step.implementor = implementor;
+    step.display = {x: x, y: y};
+    this.steps.push(step);
+  };
+  
   Diagram.prototype.getImplementor = function(className) {
     if (this.implementors) {
       for (var i = 0; i < this.implementors.length; i++) {
@@ -766,6 +804,7 @@ workflowMod.factory('Diagram',
             if (this.selection.getSelectObj().isStep) {
               this.draw();
               this.drawLine(this.dragX, this.dragY, x, y, DC.LINE_COLOR);
+              return true;
             }
           }
           else if (this.anchor >= 0) {
@@ -834,6 +873,9 @@ workflowMod.factory('Diagram',
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
+    this.addStep(item.implementorClass, x, y);
+    this.draw();
+    return true;
     // TODO item is embedded subproc
   };
   

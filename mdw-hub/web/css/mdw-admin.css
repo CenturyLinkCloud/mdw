@@ -1019,6 +1019,11 @@
 	margin-left: 25px;
   padding-top: 8px;
 }
+.mdw-raw-link {
+	margin-left: 3px;
+	font-weight: normal !important;
+	text-decoration: underline !important;
+}
 .mdw-editor {
   position: absolute !important;
   top: 80px;
