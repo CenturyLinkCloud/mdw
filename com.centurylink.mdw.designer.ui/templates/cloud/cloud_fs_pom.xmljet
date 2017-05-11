@@ -39,11 +39,6 @@
   <dependencies>
     <dependency>
       <groupId>com.centurylink.mdw</groupId>
-      <artifactId>mdw-schemas</artifactId>
-      <version>5.5.39</version>
-    </dependency>
-    <dependency>
-      <groupId>com.centurylink.mdw</groupId>
       <artifactId>mdw-common</artifactId>
       <version>${mdw.version}</version>
     </dependency>
@@ -85,12 +80,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms</artifactId>
-      <version>1.1.1</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -108,34 +97,10 @@
       <version>2.4.8</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>3.4.1.201406201815-r</version>
-      <scope>test</scope>
-    </dependency>
      <dependency>
       <groupId>javax.el</groupId>
       <artifactId>el-api</artifactId>
       <version>1.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongodb-driver</artifactId>
-      <version>3.3.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongodb-driver-core</artifactId>
-      <version>3.3.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>bson</artifactId>
-      <version>3.3.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
