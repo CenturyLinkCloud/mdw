@@ -456,6 +456,7 @@ public class MdwSettings implements PreferenceConstants {
             String releasesUrl = getMdwReleasesUrl();
             boolean isArchiva = releasesUrl.toLowerCase().indexOf("archiva") > 0;
             boolean isJavaEe = releasesUrl.toLowerCase().indexOf("javaee") > 0;
+            boolean isMavenCentral = releasesUrl.toLowerCase().indexOf("repo.maven") > 0;
             if (!isJavaEe) {
                 if (!releasesUrl.endsWith("/"))
                     releasesUrl += "/";
@@ -497,14 +498,20 @@ public class MdwSettings implements PreferenceConstants {
                 }
             }
             if (versions.isEmpty()) {
+                // try maven-central list format
+                String start = "<a href=\"";
+                String release = "[\\d\\.]*(\\-SNAPSHOT)?";
+                String end = "/\"";
                 // try new Tomcat dir list format
-                String tomcatStart = "<tt>";
-                String tomcatRelease = "[\\d\\.]*(\\-SNAPSHOT)?";
-                String tomcatEnd = "/</tt>";
-                versions = findReleases(releasesPage, tomcatStart, tomcatRelease, tomcatEnd);
+                if (!isMavenCentral) {
+                    start = "<tt>";
+                    release = "[\\d\\.]*(\\-SNAPSHOT)?";
+                    end = "/</tt>";
+                }
+                versions = findReleases(releasesPage, start, release, end);
                 if (versions.size() > 0 && previewsPage != null) {
-                    List<String> previewReleases = findReleases(previewsPage, tomcatStart,
-                            tomcatRelease, tomcatEnd);
+                    List<String> previewReleases = findReleases(previewsPage, start,
+                            release, end);
                     for (String previewRelease : previewReleases) {
                         if (!versions.contains(previewRelease)) {
                             if (!isArchiva || previewRelease.endsWith("SNAPSHOT"))
