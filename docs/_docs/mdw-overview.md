@@ -14,7 +14,7 @@ The chief feature of the MDW Frame is, it is [Cloudy-ready](http://centurylinkcl
 MDW uses a Dynamic Java workflow asset. It is dynamic because it can be changed without needing any kind of application deployment in any environment, whether it is a production or a development. This mechanism helps save a lot time for re-deploying and re-starting the server.
 
 ##### Service Orientation
-MDW comes with built-in protocol support for many of the common service transports in use at CenturyLink. This enables developers and analysts to focus on the business purpose of their workflows rather than getting bogged down in dealing with specific wire protocols. Service orchestration is simply a matter of drag and drop. Also, MDW readily interoperates with Spring and Camel to unleash existing industry-standard skillsets and achieve maximum reuse of existing assets. With built-in Microservices, 
+MDW comes with built-in protocol support for many of the common service transports in use at CenturyLink. This enables developers and analysts to focus on the business purpose of their workflows rather than getting bogged down in dealing with specific wire protocols. In MDW, the Service Orchestration is simply a matter of dragging and dropping built-in adapters and activities from the toolbox. Also, MDW readily interoperates with Spring and Camel to unleash existing industry-standard skillsets and achieve maximum reuse of existing assets. With built-in Microservices, 
 you can create, expose and consume services through a RESTFul WebService easily and quickly. MDW also provides built-in services and adapters for [SOAP](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/), JMS, LDAP, JDBC, SMTP and File I/O.
 
 ##### MDWHub
