@@ -882,7 +882,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
 
-    if (display.type.startsWith('Elbow')) {
+    if (display.type.startsWith('Elbow') && display.xs.length != 2) {
       if (this.isAnchorHorizontal(anchor)) {
         if (anchor > 0) 
           display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
@@ -899,6 +899,34 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
 
     // TODO: update arrows
     this.setDisplay(display);
+  };
+
+  Link.prototype.setFrom = function(fromStep) {
+    var newTransitions = [];
+    for (let i = 0; i < this.from.activity.transitions.length; i++) {
+      var fromTrans = this.from.activity.transitions[i];
+      if (this.transition.id == fromTrans.id) {
+        if (!fromStep.activity.transitions)
+          fromStep.activity.transitions = [];
+        fromStep.activity.transitions.push(fromTrans);
+      }
+      else {
+        newTransitions.push(fromTrans);
+      }
+    }
+    this.from.activity.transitions = newTransitions;
+    this.from = fromStep;
+  };
+  
+  Link.prototype.setTo = function(toStep) {
+    for (let i = 0; i < this.from.activity.transitions.length; i++) {
+      var fromTrans = this.from.activity.transitions[i];
+      if (this.transition.id == fromTrans.id) {
+        fromTrans.to = toStep.activity.id;
+        break;
+      }
+    }
+    this.to = toStep;
   };
   
   Link.prototype.moveLabel = function(deltaX, deltaY) {

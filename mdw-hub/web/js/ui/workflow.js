@@ -914,7 +914,18 @@ workflowMod.factory('Diagram',
           }
           else if (this.anchor >= 0) {
             if (this.selection.getSelectObj().isLink) {
-              this.selection.getSelectObj().moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+              let link = this.selection.getSelectObj();
+              link.moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+              if (this.anchor === 0) {
+                let hovStep = this.getHoverStep(x, y);
+                if (hovStep && link.from.activity.id != hovStep.activity.id)
+                  link.setFrom(hovStep);
+              }
+              else if (this.anchor == this.selection.getSelectObj().display.xs.length - 1) {
+                var hovStep = this.getHoverStep(x, y);
+                if (hovStep && link.to.activity.id != hovStep.activity.id)
+                  link.setTo(hovStep);
+              }
               this.draw();
             }
             if (this.selection.getSelectObj().resize) {
@@ -1037,6 +1048,22 @@ workflowMod.factory('Diagram',
     for (i = 0; i < this.notes.length; i++) {
       if (this.notes[i].isHover(x, y))
         return this.notes[i];
+    }
+  };
+  
+  Diagram.prototype.getHoverStep = function(x, y) {
+    for (let i = 0; i < this.subflows.length; i++) {
+      var subflow = this.subflows[i];
+      if (subflow.isHover(x, y)) {
+        for (var j = 0; j < subflow.steps.length; j++) {
+          if (subflow.steps[j].isHover(x, y))
+            return subflow.steps[j];
+        }
+      }
+    }
+    for (let i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].isHover(x, y))
+        return this.steps[i];
     }
   };
 
