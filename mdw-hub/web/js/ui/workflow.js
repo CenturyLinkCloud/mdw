@@ -86,6 +86,34 @@ workflowMod.controller('MdwWorkflowController',
           $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
           .then(function success(response) {
             $scope.implementors = response.data;
+            // add pseudo-implementors
+            $scope.implementors.push({
+              category: 'subflow',
+              label: 'Exception Handler Subflow',
+              icon: 'com.centurylink.mdw.base/subflow.png',
+              implementorClass: 'Exception Handler'
+            });
+            $scope.implementors.push({
+              category: 'subflow',
+              label: 'Cancelation Handler Subflow',
+              icon: 'com.centurylink.mdw.base/subflow.png',
+              implementorClass: 'Cancelation Handler'
+            });
+            $scope.implementors.push({
+              category: 'subflow',
+              label: 'Delay Handler Subflow',
+              icon: 'com.centurylink.mdw.base/subflow.png',
+              implementorClass: 'Delay Handler'
+            });    
+            $scope.implementors.push({
+              category: 'note',
+              label: 'Text Note',
+              icon: 'com.centurylink.mdw.base/note.png',
+              implementorClass: 'TextNote'
+            });
+            $scope.implementors.sort(function(impl1, impl2) {
+              return impl1.label.localeCompare(impl2.label);
+            });
             mdwImplementors.set($scope.implementors);
             $scope.doRender();
           }, function error(response) {
@@ -410,27 +438,44 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.addStep = function(impl, x, y) {
-    var maxId = 0;
-    this.steps.forEach(function(step) {
-      var stepId = parseInt(step.activity.id.substring(1));
-      if (stepId > maxId)
-        maxId = stepId;
-    });
     var implementor = this.getImplementor(impl);
-    var step = Step.create(this, 'A' + (maxId + 1), implementor, x, y);
+    var step = Step.create(this, this.genId(this.steps, 'activity'), implementor, x, y);
     this.process.activities.push(step.activity);
     this.steps.push(step);
   };
   
   Diagram.prototype.addLink = function(from, to) {
-    var maxId = 0;
-    this.links.forEach(function(link) {
-      var linkId = parseInt(link.transition.id.substring(1));
-      if (linkId > maxId)
-        maxId = linkId;
-    });
-    var link = Link.create(this, 'T' + (maxId + 1), from, to);
+    var link = Link.create(this, this.genId(this.links, 'transition'), from, to);
     this.links.push(link);
+  };
+
+  Diagram.prototype.addSubflow = function(type, x, y) {
+    var startActivityId = this.genId(this.steps, 'activity');
+    var startTransitionId = this.genId(this.links, 'transition');
+    var subprocId = this.genId(this.subflows, 'subprocess');
+    var subflow = Subflow.create(this, subprocId, startActivityId, startTransitionId, type, x, y);
+    if (!this.process.subprocesses)
+      this.process.subprocesses = [];
+    this.process.subprocesses.push(subflow.subprocess);
+    this.subflows.push(subflow);
+  };
+  
+  Diagram.prototype.addNote = function(x, y) {
+    var note = Note.create(this, this.genId(this.notes, 'textNote'), x, y);
+    this.process.textNotes.push(note.textNote);
+    this.notes.push(note);
+  };
+
+  Diagram.prototype.genId = function(items, workflowType) {
+    var maxId = 0;
+    if (items) {
+      items.forEach(function(item) {
+        var itemId = parseInt(item[workflowType].id.substring(1));
+        if (itemId > maxId)
+          maxId = itemId;
+      });
+    }
+    return maxId + 1;
   };
   
   Diagram.prototype.deleteStep = function(step) {
@@ -934,13 +979,12 @@ workflowMod.factory('Diagram',
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
     if (item.category == 'subflow') {
-      // TODO
+      this.addSubflow(item.implementorClass, x, y);
     }
     else if (item.category == 'note') {
-      // TODO
+      this.addNote(x, y);
     }
     else {
-      // TODO impl dragged into subproc
       this.addStep(item.implementorClass, x, y);
     }
     this.draw();

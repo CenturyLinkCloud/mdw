@@ -17,6 +17,66 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
   Subflow.HIT_WIDTH = 7;
   
+  Subflow.create = function(diagram, idNum, startActivityId, startTransitionId, type, x, y) {
+
+    var subprocess = Subflow.newSubprocess(diagram, idNum, type, x, y);
+    var subflow = new Subflow(diagram, subprocess);
+    subflow.steps = [];
+    subflow.links = [];
+    subflow.display = {x: x, y: y};
+    
+    var activityId = startActivityId;
+    var activityX = x + 40;
+    var activityY = y + 40;
+    var transitionId = startTransitionId;
+    
+    var start = Step.create(diagram, activityId, diagram.getImplementor(Step.START_IMPL), activityX, activityY);
+    subprocess.activities.push(start.activity);
+    subflow.steps.push(start);
+
+    activityId++;
+    
+    var task;
+    if (type == 'Exception Handler') {
+      activityX = x + 170;
+      activityY = y + 30;
+      task = Step.create(diagram, activityId, diagram.getImplementor(Step.TASK_IMPL), activityX, activityY);
+      task.activity.attributes.TASK_PAGELET = Step.TASK_PAGELET;
+      task.activity.attributes.STATUS_AFTER_EVENT = 'Cancelled';
+      task.activity.name = diagram.process.name + ' Fallout';
+      subprocess.activities.push(task.activity);
+      subflow.steps.push(task);
+      let link = Link.create(diagram, transitionId, start, task);
+      subflow.links.push(link);
+    }
+    
+    activityId++;
+    activityX = x + 340;
+    activityY = y + 40;
+    var stop = Step.create(diagram, activityId, diagram.getImplementor(Step.STOP_IMPL), activityX, activityY);
+    subprocess.activities.push(stop.activity);
+    subflow.steps.push(stop);
+    let link = Link.create(diagram, transitionId, task ? task : start, stop);
+    subflow.links.push(link);
+    
+    return subflow;
+  };
+  
+  Subflow.newSubprocess = function(diagram, idNum, type, x, y) {
+    var w = 440;
+    var h = 120;
+    var subprocess = { activities: [],
+      attributes: {
+        EMBEDDED_PROCESS_TYPE: type,
+        PROCESS_VISIBILITY: 'EMBEDDED',
+        WORK_DISPLAY_INFO: 'x=' + x + ',y=' + y + ',w=' + w + ',h=' + h
+      },
+      id: 'P' + idNum,
+      name: type
+    };
+    return subprocess;
+  };
+  
   Subflow.prototype.draw = function() {
 
     // runtime state first

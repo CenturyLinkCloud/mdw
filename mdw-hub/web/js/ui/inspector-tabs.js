@@ -87,7 +87,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           ID: 'id',
           Name: 'name',
           Description: 'description',
-          '_template': mdw.roots.hub + '/js/ui/templates/definition.json'          
+          '_template': mdw.roots.hub + '/js/ui/templates/processDefinition.json'          
         },
         Attributes: 'attributes',
         Documentation: { 

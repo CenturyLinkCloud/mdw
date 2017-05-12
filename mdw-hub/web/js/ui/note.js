@@ -20,6 +20,26 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   Note.FONT_SIZE= 13;
   Note.FONT= '13px monospace';
 
+  Note.create = function(diagram, idNum, x, y) {
+    var textNote = Note.newTextNote(diagram, idNum, x, y);
+    var note = new Note(diagram, textNote);
+    var disp = note.getDisplay();
+    note.display = {x: disp.x, y: disp.y, w: disp.w, h: disp.h};
+    return note;
+  };
+  
+  Note.newTextNote = function(diagram, idNum, x, y) {
+    var w = 200;
+    var h = 60;
+    var textNote = {
+        id: 'N' + idNum,
+        content: '',
+        attributes: {WORK_DISPLAY_INFO: 'x=' + x + ',y=' + y + ',w=' + w + ',h=' + h},
+        transitions: []
+    };
+    return textNote;
+  };
+  
   Note.prototype.draw = function() {
     this.diagram.rect(this.display.x, this.display.y, this.display.w, this.display.h, Note.BOX_OUTLINE_COLOR, Note.BOX_FILL_COLOR, Note.BOX_ROUNDING_RADIUS);
     if (this.textNote.content) {

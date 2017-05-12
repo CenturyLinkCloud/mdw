@@ -23,25 +23,10 @@ toolboxMod.factory('Toolbox', ['$document', 'mdw', 'util',
     this.implementors = implementors;
     this.hubBase = hubBase;
     this.implementors.forEach(function(impl) {
-      if (impl.icon.startsWith('shape:'))
+      if (impl.icon && impl.icon.startsWith('shape:'))
         impl.iconUrl = hubBase + '/asset/com.centurylink.mdw.base/' + impl.icon.substring(6) + '.png';
       else
         impl.iconUrl = hubBase + '/asset/' + impl.icon;
-    });
-    this.implementors.push({
-      category: 'subflow',
-      label: 'Embedded Subprocess',
-      iconUrl: hubBase + '/asset/com.centurylink.mdw.base/subflow.png',
-      implementorClass: 'subflow'
-    });
-    this.implementors.push({
-      category: 'note',
-      label: 'Text Note',
-      iconUrl: hubBase + '/asset/com.centurylink.mdw.base/note.png',
-      implementorClass: 'note'
-    });
-    this.implementors.sort(function(impl1, impl2) {
-      return impl1.label.localeCompare(impl2.label);
     });
   };
   

@@ -22,7 +22,21 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   
   Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(WORKFLOW_STATUSES);
   
-  Step.create = function(diagram, id, implementor, x, y) {
+  Step.START_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessStartActivity';
+  Step.STOP_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity';
+  Step.TASK_IMPL = 'com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity';
+  Step.TASK_PAGELET = 'com.centurylink.mdw.base/CustomManualTask.pagelet';
+  
+  Step.create = function(diagram, idNum, implementor, x, y) {
+    var activity = Step.newActivity(diagram, idNum, implementor, x, y);
+    var step = new Step(diagram, activity);
+    step.implementor = implementor;
+    var disp = step.getDisplay();
+    step.display = {x: disp.x, y: disp.y, w: disp.w, h: disp.h};
+    return step;
+  };
+  
+  Step.newActivity = function(diagram, idNum, implementor, x, y) {
     var w = 24;
     var h = 24;
     if (diagram.drawBoxes) {
@@ -35,17 +49,21 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
         h = 60;
       }
     }
+    var name = implementor.label;
+    if (implementor.implementorClass == Step.START_IMPL)
+      name = 'Start';
+    else if (implementor.implementorClass == Step.STOP_IMPL)
+      name = 'Stop';
+    else
+      name = 'New ' + name;
     var activity = {
-        id: id,
-        name: 'New ' + implementor.label,
+        id: 'A' + idNum,
+        name: name,
         implementor: implementor.implementorClass,
         attributes: {WORK_DISPLAY_INFO: 'x=' + x + ',y=' + y + ',w=' + w + ',h=' + h},
         transitions: []
     };
-    var step = new Step(diagram, activity);
-    step.implementor = implementor;
-    step.display = {x: x, y: y};
-    return step;
+    return activity;
   };
   
   Step.prototype.draw = function() {
