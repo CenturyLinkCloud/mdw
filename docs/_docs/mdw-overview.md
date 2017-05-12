@@ -60,7 +60,7 @@ The MDW Framework provides built-in event handlers and listeners for handling va
 ##### The following links offer a wealth of information, including hands-on tutorials / user guides (Developer Cookbooks) on a broad range of MDW (and related) topics:
 - [MDW Help Topics](http://centurylinkcloud.github.io/mdw/docs/help/)
 - [Microservices](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
-- [SOAP Services](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
+- [SOAP-based services](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
 - [CloudFoundry](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
 - [Designer User Guide](http://centurylinkcloud.github.io/mdw/docs/designer/user-guide)
   
