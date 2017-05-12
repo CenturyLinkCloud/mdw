@@ -17,6 +17,7 @@ package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,6 +84,8 @@ public class PackageDir extends File {
     public void parse() throws DataAccessException {
         try {
             File pkgFile = getMetaFile();
+            if (!pkgFile.exists())
+                throw new FileNotFoundException(pkgFile.getAbsolutePath());
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(pkgFile);

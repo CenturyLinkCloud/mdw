@@ -3,7 +3,7 @@
 var linkMod = angular.module('mdwLink', ['mdw']);
 
 linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
-                         function(mdw, util, DC, Label) {
+                        function(mdw, util, DC, Label) {
 
   var Link = function(diagram, transition, from, to) {
     this.diagram = diagram;
@@ -54,12 +54,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.ELBOW_THRESHOLD = 0.8;
   Link.ELBOW_VH_THRESHOLD = 60;
   
-  Link.create = function(diagram, id, from, to) {
-    var transition = {
-        id: id,
-        event: 'FINISH',
-        to: to.activity.id
-    };
+  Link.create = function(diagram, idNum, from, to) {
+    var transition = Link.newTransition(idNum, to.activity.id);
     var link = new Link(diagram, transition, from, to);
     if (!from.activity.transitions)
       from.activity.transitions = [];
@@ -68,6 +64,14 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     link.calc();
     return link;
   };
+  
+  Link.newTransition = function(idNum, toId) {
+    return {
+      id: 'T' + idNum,
+      event: 'FINISH',
+      to: toId
+    };
+  }; 
   
   Link.prototype.draw = function() {
     var color = this.getColor();
