@@ -11,7 +11,7 @@
     {
       "type": "text",
       "name": "resultCode",
-      "label": "result",
+      "label": "Result",
       "vw": 200
     },
     {
