@@ -421,8 +421,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
   };
   
   $scope.valueChanged = function(widget, evt) {
-    if ($scope.configurator.valueChanged(widget, evt))
+    if ($scope.configurator.valueChanged(widget, evt)) {
       $scope.onChange($scope.process);
+    }
   };  
 }]);
 

@@ -54,6 +54,10 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       else if (this.template.category === 'attributes') {
         if (widget.name === '_isService')
           widget.value = this.workflowObj.attributes.PROCESS_VISIBILITY === 'SERVICE' ? 'true' : 'false';
+        else if (widget.name === '_linkType')
+          widget.value = this.diagramObj.getDisplay().type;
+        else if (widget.name === '_controlPoints')
+          widget.value = this.diagramObj.getDisplay().xs.length;
         else
           widget.value = this.workflowObj.attributes[widget.name];
       }
@@ -324,10 +328,19 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       this.workflowObj[widget.name] = widget.value;
     }
     else if (this.template.category === 'attributes') {
-      if (widget.name === '_isService')
+      if (widget.name === '_isService') {
         this.workflowObj.attributes.PROCESS_VISIBILITY = widget.value === 'true' ? 'SERVICE' : 'PUBLIC';
-      else
+      }
+      else if (widget.name === '_linkType') {
+        this.diagramObj.display.type = widget.value;
+        this.workflowObj.attributes.TRANSITION_DISPLAY_INFO = this.diagramObj.getAttr(this.diagramObj.display);
+      }
+      else if (widget.name === '_controlPoints') {
+        this.diagramObj.calc(widget.value);
+      }
+      else {
         this.workflowObj.attributes[widget.name] = widget.value;
+      }
     }
     else if (widget.type === 'table') {
       // only evts are handled at this level

@@ -5,13 +5,30 @@
       "type": "text",
       "name": "TRANSITION_RETRY_COUNT",
       "label": "Retry Count",
-      "vw": 150
+      "vw": 100
     },
     {
       "type": "text",
       "name": "TRANSITION_DELAY",
       "label": "Delay (seconds)",
-      "vw": 150
-    }
+      "vw": 100
+    },
+    {
+      "type": "dropdown",
+      "name": "_linkType",
+      "label": "Type",
+      "options": [
+        "Elbow", "Straight", "ElbowH", "ElbowV"
+      ],
+      "default": "Elbow"
+    },
+    {
+      "type": "number",
+      "name": "_controlPoints",
+      "label": "Control Points",
+      "min": 2,
+      "default": 2,
+      "vw": 50
+    }    
   ]}
 }

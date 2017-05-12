@@ -141,6 +141,10 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.prototype.setDisplay = function(display) {
     if (!this.transition.attributes)
       this.transition.attributes = {};
+    this.transition.attributes.TRANSITION_DISPLAY_INFO = this.getAttr(display);
+  };
+  
+  Link.prototype.getAttr = function(display) {
     var attr = 'type=' + display.type + ',lx=' + Math.round(display.lx) + ',ly=' + Math.round(display.ly);
     attr += ',xs=';
     for (var i = 0; i < display.xs.length; i++) {
@@ -154,7 +158,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         attr += '&';
       attr += Math.round(display.ys[i]);
     }
-    this.transition.attributes.TRANSITION_DISPLAY_INFO = attr;
+    return attr;
   };
   
   // only for the label
@@ -525,7 +529,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.setDisplay(this.display);
   };
 
-  Link.prototype.calc = function() {
+  Link.prototype.calc = function(points) {
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
@@ -538,7 +542,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     var w2 = this.to.display.w;
     var h2 = this.to.display.h;
     
-    var n = xs.length < 2 ? 2 : xs.length;
+    var n = points ? points : (xs.length < 2 ? 2 : xs.length);
     var i;
     
     if (type == Link.LINK_TYPES.STRAIGHT) {
