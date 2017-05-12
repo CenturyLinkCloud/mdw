@@ -1,5 +1,5 @@
 ---
-title: Overview of the MDW
+title: Overview of MDW
 permalink: /docs/mdw-overview/
 overview: true
 ---

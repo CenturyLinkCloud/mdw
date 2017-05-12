@@ -1,6 +1,7 @@
 - title: Introduction
   docs:
   - mdw-intro
+  - mdw-overview
   - differentiators
   - features-guide
   - mdw-components
