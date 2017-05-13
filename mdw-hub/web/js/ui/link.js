@@ -596,7 +596,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     } 
     else {
       // ELBOW, ELBOWH, ELBOWV with middle control points
-      var horizontalFirst = type == Link.LINK_TYPES.ELBOWH || (type == Link.LINK_TYPES.ELBOWH && Math.abs(x1 - x2) >= Math.abs(y1 - y2));
+      var horizontalFirst = type == Link.LINK_TYPES.ELBOWH || (type == Link.LINK_TYPES.ELBOW && Math.abs(x1 - x2) >= Math.abs(y1 - y2));
       var evenN = n % 2 === 0;
       var horizontalLast = (horizontalFirst && evenN) || (!horizontalFirst && !evenN);
       xs = this.display.xs = [];
@@ -625,11 +625,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         for (i = 1; i < n - 1; i++) {
           if (i % 2 !== 0) {
             ys[i] = ys[i-1];
-            xs[i] = (xs[n-1] - xs[0]) * ((i + 1) / 2) / (n / 2) + xs[0];
+            xs[i] = (xs[n-1] - xs[0]) * Math.round(((i + 1) / 2) / (n / 2)) + xs[0];
           } 
           else {
             xs[i] = xs[i-1];
-            ys[i] = (ys[n-1] - ys[0]) * ((i + 1) / 2) / ((n - 1) / 2) + ys[0];
+            ys[i] = (ys[n-1] - ys[0]) * Math.round(((i + 1) / 2) / ((n - 1) / 2)) + ys[0];
           }
         }
       } 
@@ -637,11 +637,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         for (i = 1; i < n - 1; i++) {
           if (i % 2 !== 0) {
             xs[i] = xs[i-1];
-            ys[i] = (ys[n-1] - ys[0]) * ((i + 1) / 2) / (n / 2) + ys[0];
+            ys[i] = (ys[n-1] - ys[0]) * Math.round(((i + 1) / 2) / (n / 2)) + ys[0];
           } 
           else {
             ys[i] = ys[i-1];
-            xs[i] = (xs[n-1] - xs[0]) * (i / 2) / ((n - 1) / 2) + xs[0];
+            xs[i] = (xs[n-1] - xs[0]) * Math.round((i / 2) / ((n - 1) / 2)) + xs[0];
           }
         }
       }
