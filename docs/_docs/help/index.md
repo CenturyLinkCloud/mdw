@@ -14,7 +14,7 @@ permalink: /docs/help/
 <h3>Developer Cookbooks</h3>
 <ul>
   <li><a href='../guides/TomcatCookbook'>Apache Tomcat Cookbook</a></li>
-  <li><a href='../guides/MicroServicesCookbook'>Micro Services Cookbook</a></li>
+  <li><a href='../guides/MicroservicesCookbook'>Microservices Cookbook</a></li>
   <li><a href='../guides/CloudFoundryCookbook'>Cloud Foundry Cookbook</a></li>
 </ul>
 <h3>Workflow Design</h3>
