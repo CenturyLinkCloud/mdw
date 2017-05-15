@@ -24,16 +24,12 @@
     "webpack": "^2.4.1"
   },
   "scripts": {
-    "test": "grunt test",
-    "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "test": "grunt test"
   },
   "dependencies": {
     "angular": ">=1.4.7",
     "bootstrap-css-only": "^3.3.7",
     "highlightjs": "^9.10.0",
-    "marked": "^0.3.6",
-    "snyk": "^1.30.0"
-  },
-  "snyk": true
+    "marked": "^0.3.6"
+  }
 }
