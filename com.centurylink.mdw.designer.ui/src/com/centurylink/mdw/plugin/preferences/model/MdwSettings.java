@@ -489,7 +489,7 @@ public class MdwSettings implements PreferenceConstants {
                 }
                 if (versions.isEmpty())
                     throw new IOException(
-                            "Unable to locate any MDW releases at: http://repo.maven.apache.org/maven2");
+                            "Unable to locate any MDW releases at: " + releasesUrl);
             }
             catch (Exception ex) {
                 PluginMessages.log(ex);
