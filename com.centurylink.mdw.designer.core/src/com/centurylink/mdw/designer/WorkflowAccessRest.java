@@ -42,18 +42,29 @@ public class WorkflowAccessRest extends ServerAccessRest {
         super(server);
     }
 
-    public ProcessVO getProcess(long processId) throws DataAccessException {
+    public ProcessVO getProcess(long processId, boolean json) throws DataAccessException {
         try {
-            String pkgXml = getServer().invokeResourceService("Processes?id=" + processId);
-            ProcessImporter importer = DataAccess.getProcessImporter(DataAccess.currentSchemaVersion);
-            PackageVO pkg = importer.importPackage(pkgXml);
-            ProcessVO process = pkg.getProcesses().get(0);
-            process.setPackageName(pkg.getName());
-            process.setPackageVersion(pkg.getVersionString());
-            process.setId(processId);
-            return process;
+            if (json) {
+                String processJson = getServer().invokeResourceService("Workflow?id=" + processId);
+                JSONObject jsonObj = new JSONObject(processJson);
+                ProcessVO process = new ProcessVO(jsonObj);
+                process.setPackageName(jsonObj.getString("package"));
+                process.setPackageVersion(jsonObj.getString("packageVersion"));
+                process.setId(jsonObj.getLong("id"));
+                return process;
+            }
+            else {
+                String pkgXml = getServer().invokeResourceService("Processes?id=" + processId);
+                ProcessImporter importer = DataAccess.getProcessImporter(DataAccess.currentSchemaVersion);
+                PackageVO pkg = importer.importPackage(pkgXml);
+                ProcessVO process = pkg.getProcesses().get(0);
+                process.setPackageName(pkg.getName());
+                process.setPackageVersion(pkg.getVersionString());
+                process.setId(processId);
+                return process;
+            }
         }
-        catch (IOException ex) {
+        catch (Exception ex) {
             throw new DataAccessException("Error retrieving process: " + processId, ex);
         }
     }

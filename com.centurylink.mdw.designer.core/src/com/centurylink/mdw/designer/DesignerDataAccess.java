@@ -1712,7 +1712,7 @@ public class DesignerDataAccess  {
     }
 
     public ProcessVO remoteRetrieveProcess(long processId) throws DataAccessException {
-        return workflowAccessRest.getProcess(processId);
+        return workflowAccessRest.getProcess(processId, getDatabaseSchemaVersion() >= DataAccess.schemaVersion6);
     }
 
     public ProcessVO remoteRetrieveProcess(String name, int version) throws DataAccessException {
