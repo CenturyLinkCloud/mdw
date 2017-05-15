@@ -35,12 +35,12 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.user.UserAction;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.HttpHelper;
@@ -176,26 +176,14 @@ public abstract class RestService {
             HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl + queryStr));
             httpHelper.setHeaders(headers);
             if (method.equals("post"))
-              validateResponse(httpHelper.post(request));
+                validateResponse(httpHelper.post(request));
             else if (method.equals("put"))
                 validateResponse(httpHelper.put(request));
         }
     }
 
     protected List<URL> getOtherServerUrls(String requestUrl) throws IOException {
-
-        List<URL> serverUrls = new ArrayList<URL>();
-        URL thisUrl = new URL(requestUrl);
-        // Due to different domains for same servers in some environments (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
-        String thisHost = thisUrl.getHost().indexOf(".") > 0 ? thisUrl.getHost().substring(0, thisUrl.getHost().indexOf(".")) : thisUrl.getHost();
-        for (String serverHost : ApplicationContext.getCompleteServerList()) {
-            String serviceUrl = "http://" + serverHost + thisUrl.getPath();
-            URL otherUrl = new URL(serviceUrl);
-            String otherHost = otherUrl.getHost().indexOf(".") > 0 ? otherUrl.getHost().substring(0, otherUrl.getHost().indexOf(".")) : otherUrl.getHost();
-            if (!(thisHost.equalsIgnoreCase(otherHost)) || thisUrl.getPort() != otherUrl.getPort())
-                serverUrls.add(otherUrl);
-        }
-        return serverUrls;
+        return ApplicationContext.getOtherServerUrls(new URL(requestUrl));
     }
 
     protected void auditLog(UserAction userAction) {
@@ -233,11 +221,8 @@ public abstract class RestService {
         return 0L;
     }
 
-    /**
-     * Override if toString() on content is not meaningful.
-     */
     protected String getEntityDescription(String path, Object content, Map<String,String> headers) {
-        return content == null ? "" : content.toString();
+        return path;
     }
 
     protected Action getAction(String path, Object content, Map<String,String> headers) {

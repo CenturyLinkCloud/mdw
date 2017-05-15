@@ -16,6 +16,7 @@
 package com.centurylink.mdw.common.service;
 
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.model.StatusResponse;
 
 public class ServiceException extends MdwException {
 
@@ -43,5 +44,9 @@ public class ServiceException extends MdwException {
 
     public ServiceException(int code, String message, Throwable cause) {
         super(code, message, cause);
+    }
+
+    public StatusResponse getStatusResponse() {
+        return new StatusResponse(getCode(), getMessage());
     }
 }

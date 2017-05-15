@@ -16,6 +16,7 @@
 package com.centurylink.mdw.app;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -684,4 +685,18 @@ public class ApplicationContext {
         return webSocketPort;
     }
 
+    public static List<URL> getOtherServerUrls(URL thisUrl) throws IOException {
+        List<URL> serverUrls = new ArrayList<URL>();
+        // Due to different domains for same servers in some environments
+        // (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
+        String thisHost = thisUrl.getHost().indexOf(".") > 0 ? thisUrl.getHost().substring(0, thisUrl.getHost().indexOf(".")) : thisUrl.getHost();
+        for (String serverHost : ApplicationContext.getCompleteServerList()) {
+            String serviceUrl = "http://" + serverHost + thisUrl.getPath();
+            URL otherUrl = new URL(serviceUrl);
+            String otherHost = otherUrl.getHost().indexOf(".") > 0 ? otherUrl.getHost().substring(0, otherUrl.getHost().indexOf(".")) : otherUrl.getHost();
+            if (!(thisHost.equalsIgnoreCase(otherHost)) || thisUrl.getPort() != otherUrl.getPort())
+                serverUrls.add(otherUrl);
+        }
+        return serverUrls;
+    }
  }

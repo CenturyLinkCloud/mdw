@@ -64,6 +64,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Jeopardy,
         Hold,
         Ping,
+        Version,
         Other
     }
 

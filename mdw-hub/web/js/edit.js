@@ -151,13 +151,18 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       $scope.message = null;
       $scope.aceDirty = false;
       $scope.procDirty = false;
+      var metaChange = $scope.asset.version !== $scope.version.selected;
       $scope.asset.version = $scope.version.selected;
       var commitMsg = $scope.version.comment;
+      if (metaChange)
+        $scope.initVersion();
+      
       if ($scope.options.commitAndPush) {
         GitVcs.push({
           pkgPath: $scope.asset.packageName,
           asset: $scope.asset.name,
           gitAction: 'push',
+          includeMeta: metaChange
         }, { 
           comment: commitMsg, 
           user: $scope.gitCredentials.user,

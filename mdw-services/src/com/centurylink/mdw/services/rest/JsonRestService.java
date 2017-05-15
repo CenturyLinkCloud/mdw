@@ -186,8 +186,8 @@ public abstract class JsonRestService extends RestService implements JsonService
             JSONObject status = jsonObject.getJSONObject("status");
             int code = status.getInt("code");
             String message = status.getString("message");
-            if (code != 0)
-                throw new ServiceException(HTTP_500_INTERNAL_ERROR, "Propagation error: " + message);
+            if (code >= 400)
+                throw new ServiceException(code, "Propagation error: " + message);
         }
         catch (JSONException ex) {
             throw new ServiceException(ex.getMessage(), ex);
