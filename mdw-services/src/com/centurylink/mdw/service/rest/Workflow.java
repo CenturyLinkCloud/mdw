@@ -66,11 +66,30 @@ public class Workflow extends JsonRestService {
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        Query query = getQuery(path, headers);
         try {
+            // (for previous versions) process by id
+            long processId = query.getLongFilter("id");
+            if (processId > 0) {
+                Process p = ProcessCache.getProcess(processId);
+                if (p == null) {
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Process ID not found: " + processId);
+                }
+                else {
+                    JSONObject json = p.getJson();
+                    json.put("id", p.getId());
+                    json.put("name", p.getName());
+                    json.put("package", p.getPackageName());
+                    json.put("version", p.getVersionString());
+                    json.put("packageVersion", p.getPackageVersion());
+                    return json;
+                }
+            }
+
             String[] segments = getSegments(path);
             if (segments.length < 3)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Path segments {packageName}/{processName} are required");
-            if (getQuery(path, headers).getBooleanFilter("summary")) {
+            if (query.getBooleanFilter("summary")) {
                 Process process;
                 if (segments.length == 4)
                     process = ProcessCache.getProcess(segments[1] + "/" + segments[2], Asset.parseVersion(segments[3]));
@@ -85,7 +104,6 @@ public class Workflow extends JsonRestService {
             }
             else {
                 String assetPath = segments[1] + "/" + segments[2];
-                Query query = getQuery(path, headers);
                 if (segments.length == 4)
                     query.setFilter("version", Asset.parseVersion(segments[3]));
                 Process process = workflowServices.getProcessDefinition(assetPath, query);
