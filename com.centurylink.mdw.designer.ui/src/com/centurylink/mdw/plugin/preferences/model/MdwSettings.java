@@ -18,6 +18,7 @@ package com.centurylink.mdw.plugin.preferences.model;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,7 @@ import com.centurylink.mdw.plugin.PluginUtil;
  */
 public class MdwSettings implements PreferenceConstants {
     private static final String MDW_COMMON = "com/centurylink/mdw/mdw-common";
+    private static final String INTERNAl_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository/";
 
     private String mdwReleasesUrl;
 
@@ -451,78 +453,47 @@ public class MdwSettings implements PreferenceConstants {
 
     public List<String> getMdwVersions(String projectPath) {
         List<String> versions = new ArrayList<String>();
-
+        String releasesUrl;
+        boolean snapshotBuilds = MdwPlugin.getDefault().getPreferenceStore()
+                .getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS);
         try {
-            String releasesUrl = getMdwReleasesUrl();
-            boolean isArchiva = releasesUrl.toLowerCase().indexOf("archiva") > 0;
-            boolean isJavaEe = releasesUrl.toLowerCase().indexOf("javaee") > 0;
-            boolean isMavenCentral = releasesUrl.toLowerCase().indexOf("repo.maven") > 0;
-            if (!isJavaEe) {
-                if (!releasesUrl.endsWith("/"))
-                    releasesUrl += "/";
-                releasesUrl = releasesUrl + projectPath;
-            }
+            releasesUrl = INTERNAl_MDW_RELEASES_URL + projectPath;
             String releasesPage = PluginUtil.downloadContent(new URL(releasesUrl));
-            String previewsPage = null;
-            if (MdwPlugin.getDefault().getPreferenceStore()
-                    .getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS)) {
-                String previewsUrl = getMdwReleasesUrl();
-                if (!previewsUrl.endsWith("/"))
-                    previewsUrl += "/";
-                if (isArchiva)
-                    previewsUrl += "../snapshots/" + projectPath;
-                else
-                    previewsUrl += "Preview";
-                try {
-                    previewsPage = PluginUtil.downloadContent(new URL(previewsUrl));
-                }
-                catch (FileNotFoundException ex) {
-                    // there may not be any preview directory
-                    PluginMessages.log(ex);
-                }
-            }
-
-            // try Apache dir list format (works for Archiva)
-            String apacheStart = "<li><a href=\"";
-            String apacheRelease = "[\\d\\.]*?(\\-SNAPSHOT)?";
-            String apacheEnd = "/\">";
-            versions = findReleases(releasesPage, apacheStart, apacheRelease, apacheEnd);
-            if (versions.size() > 0 && previewsPage != null) {
-                List<String> previewReleases = findReleases(previewsPage, apacheStart,
-                        apacheRelease, apacheEnd);
-                for (String previewRelease : previewReleases) {
-                    if (!versions.contains(previewRelease)) {
-                        if (!isArchiva || previewRelease.endsWith("SNAPSHOT"))
-                            versions.add(previewRelease);
-                    }
-                }
-            }
             if (versions.isEmpty()) {
-                // try maven-central list format
-                String start = "<a href=\"";
+                String start = "<tt>";
                 String release = "[\\d\\.]*(\\-SNAPSHOT)?";
-                String end = "/\"";
-                // try new Tomcat dir list format
-                if (!isMavenCentral) {
-                    start = "<tt>";
-                    release = "[\\d\\.]*(\\-SNAPSHOT)?";
-                    end = "/</tt>";
-                }
+                if (!snapshotBuilds)
+                    release = "[\\d\\.]*";
+                String end = "/</tt>";
+
                 versions = findReleases(releasesPage, start, release, end);
-                if (versions.size() > 0 && previewsPage != null) {
-                    List<String> previewReleases = findReleases(previewsPage, start,
-                            release, end);
-                    for (String previewRelease : previewReleases) {
-                        if (!versions.contains(previewRelease)) {
-                            if (!isArchiva || previewRelease.endsWith("SNAPSHOT"))
-                                versions.add(previewRelease);
-                        }
-                    }
-                }
             }
             if (versions.isEmpty())
                 throw new IOException("Unable to locate any MDW releases at: " + releasesUrl);
-
+        }
+        catch (UnknownHostException e) {
+            try {
+                releasesUrl = getMdwReleasesUrl();
+                if (!releasesUrl.endsWith("/"))
+                    releasesUrl += "/";
+                releasesUrl = releasesUrl + projectPath;
+                String releasesPage = PluginUtil.downloadContent(new URL(releasesUrl));
+                if (versions.isEmpty()) {
+                    // try maven-central list format
+                    String start = "<a href=\"";
+                    String release = "[\\d\\.]*(\\-SNAPSHOT)?";
+                    if (!snapshotBuilds)
+                        release = "[\\d\\.]*";
+                    String end = "/\"";
+                    versions = findReleases(releasesPage, start, release, end);
+                }
+                if (versions.isEmpty())
+                    throw new IOException(
+                            "Unable to locate any MDW releases at: http://repo.maven.apache.org/maven2");
+            }
+            catch (Exception ex) {
+                PluginMessages.log(ex);
+            }
         }
         catch (Exception ex) {
             PluginMessages.log(ex);

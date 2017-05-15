@@ -24,7 +24,7 @@ public interface PreferenceConstants {
     // TODO: externalize these URLs
     public static final String PREFS_DEFAULT_ASSET_DISCOVERY_URL = "https://mdw.useast.appfog.ctl.io/mdw";
     public static final String PREFS_DEFAULT_PROJECT_DISCOVERY_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Discovery";
-    public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository";
+    public static final String PREFS_DEFAULT_MDW_RELEASES_URL = "http://repo.maven.apache.org/maven2";
     public static final String PREFS_DEFAULT_WORKSPACE_SETUP_URL = "http://lxdenvmtc143.dev.qintra.com:7021/Environment";
 
     public static final String PREFS_DEFAULT_COPYRIGHT_NOTICE = "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */";
