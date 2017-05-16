@@ -7,10 +7,8 @@ permalink: /docs/development/built-in-activities/
   ------------------------------------------------|:-----------------------------------------------------------|
   [Auto Form Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity is used for Auto Form Manual task.
   [Camel Route Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity is used for process routing.
-  [Cancelation Handler Subflow](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity handles cancellation of processes.
   [Crossmap Activity](http://centurylinkcloud.github.io/mdw/docs/help/crossmap.html) | This activity is used for a simple Groovy-based DSL that enables to transform JSON/XML input documents to JSON/XML output documents.
   [Custom Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Performs a manual task, with older implementation which generates presentation automatically based on process variables and configuration.
-  [Delay Handler Subflow](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity is used for delayed subflow.
   [Document Web Service](http://centurylinkcloud.github.io/mdw/docs/help/DocWebServiceAdapter.html) | General-purpose SOAP-based web service adapter for consuming document-style services.
   [Drools Activity](http://centurylinkcloud.github.io/mdw/docs/help/droolsActivities.html) | Rules execution using Drools.
   [Drools Decision Table](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Rules execution using Drools.
@@ -18,7 +16,6 @@ permalink: /docs/development/built-in-activities/
   [Dynamic Java General Activity](http://centurylinkcloud.github.io/mdw/docs/help/dynamicJavaActivity.html) | Java code stored in database, to be used in a cloud environment.
   [Event Check Activity](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Checks events.
   [Event Wait Activity](http://centurylinkcloud.github.io/mdw/docs/help/EventWaitActivity.html) | Waits for an external event.
-  [Exception Handler Subflow](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Handles exceptions.
   [Execute Script](http://centurylinkcloud.github.io/mdw/docs/help/scriptActivity.html) | Executes a script in Groovy, JavaScript or MagicBox rule language.
   [Expression Evaluator](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Evaluates a simple expressing, primarily intended for a mutual exclusive branching point.
   [File Writer](http://centurylinkcloud.github.io/mdw/docs/help/FileWriterActivity.html) | Write to file.
