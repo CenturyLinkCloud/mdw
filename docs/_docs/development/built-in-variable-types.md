@@ -3,7 +3,6 @@ title: Built-In Variable Types
 permalink: /docs/development/built-in-variable-types/
 ---
 
-### Built-In Variable Types
  - java.lang.String
  - java.lang.Boolean
  - java.lang.Exception
