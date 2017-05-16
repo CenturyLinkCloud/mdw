@@ -8,7 +8,7 @@ permalink: /docs/development/built-in-activities/
   [Auto Form Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity is used for Auto Form Manual task.
   [Camel Route Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity is used for process routing.
   [Cancelation Handler Subflow](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity handles cancellation of processes.
-  [Crossmap](http://centurylinkcloud.github.io/mdw/docs/help/Crossmap.html) | This activity is used for Cross Mapping.
+  [Crossmap Activity](http://centurylinkcloud.github.io/mdw/docs/help/crossmap.html) | This activity is used for a simple Groovy-based DSL that enables to transform JSON/XML input documents to JSON/XML output documents.
   [Custom Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Performs a manual task, with older implementation which generates presentation automatically based on process variables and configuration.
   [Delay Handler Subflow](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | This activity is used for delayed subflow.
   [Document Web Service](http://centurylinkcloud.github.io/mdw/docs/help/DocWebServiceAdapter.html) | General-purpose SOAP-based web service adapter for consuming document-style services.

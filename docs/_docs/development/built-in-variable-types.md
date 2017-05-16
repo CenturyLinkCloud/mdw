@@ -3,39 +3,53 @@ title: Built-In Variable Types
 permalink: /docs/development/built-in-variable-types/
 ---
 
-### Standard Activities
- - Process Start
- - Process Finish
- - Manual Task
- - AutoForm
- - Custom
- - General
- - Invoke SubProcess
- - Single
- - Multiple
- - Heterogeneous
- - Script Activity
- - Shell Script Executor
- - Expression Evaluator
- - Synchronization
- - XML Transform
- - Timer Wait
- - Event Wait
- - Publish Event
- - Notification
- - Drools Activity
- - Decision Table
- - Velocity Template
- - Dynamic Java
-
-### Adapter Activities
- - MDW Web Service
- - Document Web Service
- - RESTful Web Service
- - JMS
- - File Writer
- - Bus Adapter
- - LDAP Adapter
- - MQSeries Adapter
- - Camel Route Adapter
-
+### Built-In Variable Types
+ - java.lang.String
+ - java.lang.Boolean
+ - java.lang.Exception
+ - java.lang.Intiger
+ - java.lang.Long
+ - java.lang.Object
+ - java.net.URI
+ - java.util.Date
+ - java.util.List<Intiger>
+ - java.util.List<Long>
+ - java.util.List<String>
+ - java.util.List<String, String>
+ - groovy.util.Node
+ - java.xml.bind.JAXBElement
+ - org.apache.camel.component.cxf.CxfPayload
+ - org.apache.xmlbeans.XmlObject
+ - org.json.JSONObject
+ - org.w3c.dom.Document
+ - org.yaml.snakeyaml.Yaml
+ - com.centurylink.mdw.common.service.Jsonable
+ - com.centurylink.mdw.model.StringDocument
+ - com.centurylink.mdw.xml.XmlBeanWrapper
+ - com.centurylink.mdw.model.StringDocument
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
