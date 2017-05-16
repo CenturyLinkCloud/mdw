@@ -41,7 +41,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
    $scope.onTabSelect = function() {
 	var frame = document.getElementById("swaggerFrame");
 	frame.contentWindow.location.reload();
-	}
+	};
 	
    $scope.serviceFullPath = $routeParams.servicePath;
    $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.json'}, function success(serviceDef) {
