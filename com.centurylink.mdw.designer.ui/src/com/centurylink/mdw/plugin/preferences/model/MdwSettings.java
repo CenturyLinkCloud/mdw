@@ -457,7 +457,7 @@ public class MdwSettings implements PreferenceConstants {
         boolean snapshotBuilds = MdwPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PREFS_INCLUDE_PREVIEW_BUILDS);
         try {
-            releasesUrl = INTERNAl_MDW_RELEASES_URL + projectPath;
+            releasesUrl = getRepositoryUrl() + projectPath;
             String releasesPage = PluginUtil.downloadContent(new URL(releasesUrl));
             if (versions.isEmpty()) {
                 String start = "<tt>";
@@ -525,4 +525,7 @@ public class MdwSettings implements PreferenceConstants {
         return Collections.max(versions);
     }
 
+    public String getRepositoryUrl() {
+        return INTERNAl_MDW_RELEASES_URL;
+    }
 }

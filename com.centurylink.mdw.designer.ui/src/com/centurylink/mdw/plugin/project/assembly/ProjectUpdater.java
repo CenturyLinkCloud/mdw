@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1042,20 +1043,21 @@ public class ProjectUpdater implements IRunnableWithProgress {
     }
 
     protected URL getRepositoryFileUrl(String subpath, String version) throws IOException {
-        String baseUrl = mdwSettings.getMdwReleasesUrl();
-        if (!baseUrl.endsWith("/"))
-            baseUrl += "/";
+        String baseUrl = mdwSettings.getRepositoryUrl();
 
         String urlPath = "com/centurylink/mdw/" + subpath + "/";
 
         URL fileUrl = new URL(baseUrl + urlPath + version + "/" + file.getName());
 
-        if (((HttpURLConnection) fileUrl.openConnection()).getResponseCode() == 404
-                && MdwPlugin.getDefault().getPreferenceStore()
-                        .getBoolean(PreferenceConstants.PREFS_INCLUDE_PREVIEW_BUILDS)) {
-            PluginMessages.log("Release file not found: " + fileUrl + "\nTrying Preview location",
-                    PluginMessages.INFO_MESSAGE);
-            fileUrl = new URL(baseUrl + "../snapshots/" + urlPath + version + "/" + file.getName());
+        try {
+           ((HttpURLConnection)fileUrl.openConnection()).getResponseCode();
+        }
+        catch (UnknownHostException e) {
+            baseUrl = mdwSettings.getMdwReleasesUrl();
+            if (!baseUrl.endsWith("/"))
+                baseUrl += "/";
+
+            fileUrl = new URL(baseUrl + urlPath + version + "/" + file.getName());
         }
         return fileUrl;
     }
