@@ -11,10 +11,10 @@ permalink: /docs/development/built-in-variable-types/
  - java.lang.Object
  - java.net.URI
  - java.util.Date
- - java.util.List<Intiger>
- - java.util.List<Long>
- - java.util.List<String>
- - java.util.List<String, String>
+ - java.util.List< Intiger>
+ - java.util.List< Long>
+ - java.util.List< String>
+ - java.util.List< String, String>
  - groovy.util.Node
  - java.xml.bind.JAXBElement
  - org.apache.camel.component.cxf.CxfPayload
