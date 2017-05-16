@@ -1,6 +1,6 @@
 ---
 title: Built-In Activities
-permalink: /docs/built-in-activities/
+permalink: /docs/development/built-in-activities/
 ---
 
   Activity Implementor                            | Description                                                |
