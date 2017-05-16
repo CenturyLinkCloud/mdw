@@ -1,3 +1,5 @@
 Archive/
 com/centurylink/mdw/tibco
 com/centurylink/mdw/tests/tibco
+com/centurylink/mdw/mqseries
+com/centurylink/mdw/tests/mqseries
