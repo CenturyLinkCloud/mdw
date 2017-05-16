@@ -1009,7 +1009,6 @@ workflowMod.factory('Diagram',
       var msg = this.selection.isMulti ? 'Delete selected items?' : 'Delete ' + selObj.workflowType + '?';
       uiUtil.confirm("Confirm Delete", msg, function(res) {
         if (res) {
-          // TODO marquee/multisel
           selection.doDelete();
           selection.diagram.draw();
           onChange();

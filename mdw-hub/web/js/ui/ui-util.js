@@ -18,6 +18,22 @@ uiUtil.factory('uiUtil', ['mdw', '$uibModal', function(mdw, $uibModal) {
       $uibModal.open(this.getConfirmDialog(title, message)).result.then(function(res) {
         then(res);
       });
+    },
+    getEnterDialog: function(title, message) {
+      return {
+        templateUrl: 'ui/enter.html',
+        size: 'sm',
+        backdrop: false,
+        controller: ['$scope', function ($scope) {
+          $scope.title = title;
+          $scope.message = message;
+        }]
+      };
+    },
+    enter: function(title, message, then) {
+      $uibModal.open(this.getEnterDialog(title, message)).result.then(function(res) {
+        then(res);
+      });
     }
   };
 }]);

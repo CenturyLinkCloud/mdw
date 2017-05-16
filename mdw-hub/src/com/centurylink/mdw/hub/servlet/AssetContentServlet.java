@@ -166,6 +166,9 @@ public class AssetContentServlet extends HttpServlet {
         }
     }
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    }
+
     /**
      * Distributed operations support does not include package import.
      * TODO: authorization for distributed requests (Issue #69).

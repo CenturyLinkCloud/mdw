@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$cookieStore', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
-                                           function($scope, $location, $http, $cookieStore, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
+                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, uiUtil, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0)
@@ -178,9 +178,28 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$coo
     );
   };
 
+  $scope.createPackage = function() {
+    uiUtil.enter("Create Package", "New package name:", function(res) {
+      if (res) {
+        Assets.post({packageName: res}, {name: res},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('created package: ' + res);
+            $route.reload();
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Package create failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
+  
   $scope.refresh = function() {
     WorkflowCache.refresh({}, { distributed: true });
-  };  
+  };
+  
 }]);
 
 assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Assets', 'Asset', 
@@ -263,7 +282,8 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false },
-    put: { method: 'PUT'}
+    put: { method: 'PUT'},
+    post: { method: 'POST'}
   });
 }]);
 

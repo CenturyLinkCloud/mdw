@@ -180,4 +180,18 @@ public class Assets extends JsonRestService {
 
         return null;
     }
+
+    /**
+     * This is only for creating packages.  For individual assets, see AssetContentServlet.
+     */
+    @Override
+    public JSONObject post(String path, JSONObject content, Map<String, String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length != 2)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+        // we ignore content
+        ServiceLocator.getAssetServices().createPackage(segments[1]);
+        return null;
+    }
 }

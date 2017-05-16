@@ -1175,6 +1175,11 @@
   font-weight: bold;
   cursor: default;
 }
+.mdw-modal-input {
+  width: 268px;
+  height: 25px;
+  margin-top: 3px;
+}
 /* avoid flicker for uiModal */
 .modal-open {
   overflow-y: auto;

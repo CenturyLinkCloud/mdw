@@ -51,6 +51,7 @@ import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -262,6 +263,29 @@ public class AssetServicesImpl implements AssetServices {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
+
+    @Override
+    public void createPackage(String packageName) throws ServiceException {
+        File dir = new File(assetRoot + "/" + packageName.replace('.', '/'));
+        File metaDir = new File(dir + "/.mdw");
+        if (metaDir.exists())
+            throw new ServiceException(ServiceException.CONFLICT, "Package meta dir already exists: " + metaDir.getAbsolutePath());
+        if (!metaDir.mkdirs())
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot create meta dir: " + metaDir.getAbsolutePath());
+
+        Package pkg = new Package();
+        pkg.setSchemaVersion(DataAccess.currentSchemaVersion);
+        pkg.setVersion(1);
+        try {
+            JSONObject json = pkg.getJson();
+            json.put("name", packageName);
+            FileHelper.writeToFile(new ByteArrayInputStream(json.toString(2).getBytes()), new File(metaDir + "/package.json"));
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
     /**
      * Finds the next level of sibling PackageDirs under a set of non-package dirs.
      */
@@ -563,4 +587,5 @@ public class AssetServicesImpl implements AssetServices {
         public void clear() {
         }
     }
+
 }
