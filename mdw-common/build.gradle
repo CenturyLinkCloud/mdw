@@ -46,9 +46,10 @@ dependencies {
     compile group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
     
     // swagger
-    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.4"
-    compile group: "io.swagger", name: "swagger-core", version: "1.5.4"
-    compile group: "io.swagger", name: "swagger-models", version: "1.5.4"
+    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-core", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-models", version: "1.5.13"
+    
     compile group: "com.fasterxml.jackson.core", name: "jackson-core", version: "2.4.5"
     compile group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "2.4.5"
     compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.4.5"
