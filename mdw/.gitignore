@@ -4,3 +4,4 @@ deploy/
 .settings/
 bin/
 notes/
+/config/

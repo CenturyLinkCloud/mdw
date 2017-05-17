@@ -1,0 +1,5 @@
+def zipFile = file("../${mdwOutputDir}/mdw-config-${mdwVersion}.zip")
+artifacts {
+    archives zipFile
+}
+

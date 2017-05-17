@@ -1,7 +1,7 @@
 task buildConfig(type: Zip) {
     destinationDir = file("../${mdwOutputDir}")
     archiveName = "mdw-config-${mdwVersion}.zip"
-    from "config"
+    from "../mdw-config/config"
     include "*.yaml"
     include "*.json"
     include "*.properties"
@@ -39,7 +39,8 @@ task publishFormal {
 }
 
 subprojects {
-    apply plugin: "java"
+        apply plugin: "java"
+
     apply plugin: "eclipse-wtp"
     apply plugin: 'maven'
     apply plugin: 'signing'
@@ -232,4 +233,3 @@ task pushToOrigin(type: GradleBuild) {
     tasks = ["pushToOrigin"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
-
