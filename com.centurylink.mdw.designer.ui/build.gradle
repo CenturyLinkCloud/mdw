@@ -17,9 +17,17 @@ clean {
 }
 
 task copyMdwDocs(type: Copy) {
-    from "../docs/help"
+    dependsOn "copyJavaDocs"
+    from "../docs/_docs/help"
     include "**/*"
     into "./help/doc"
+    
+}
+
+task copyJavaDocs(type: Copy) {
+    from "../docs/_docs"
+    include "javadoc/**/*"
+    into "./help"
 }
 
 // this is run manually before autobuild
