@@ -1,14 +1,19 @@
-task buildConfig(type: Zip) {
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task configTemplates(type: Zip) {
     destinationDir = file("../${mdwOutputDir}")
     archiveName = "mdw-config-${mdwVersion}.zip"
-    from "../mdw-config/config"
-    include "*.yaml"
-    include "*.json"
-    include "*.properties"
+    from "templates/config"
+    include "**/*"
+}
+
+artifacts {
+    archives configTemplates
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn buildConfig
+    dependsOn configTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
@@ -39,8 +44,7 @@ task publishFormal {
 }
 
 subprojects {
-        apply plugin: "java"
-
+    apply plugin: "java"
     apply plugin: "eclipse-wtp"
     apply plugin: 'maven'
     apply plugin: 'signing'
@@ -116,7 +120,9 @@ subprojects {
         enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         repositories {
           mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            beforeDeployment { 
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
       
             repository(url: mavenRepoUrl) {
               authentication(userName: ossrhUsername, password: ossrhPassword)
@@ -132,7 +138,7 @@ subprojects {
               version = mdwVersion
               packaging 'jar'
               // optionally artifactId can be defined here
-              description 'MDW is a BPM framework'
+              description 'MDW is a cloud workflow framework'
               url 'http://centurylinkcloud.github.io/mdw/'
       
               scm {
@@ -233,3 +239,50 @@ task pushToOrigin(type: GradleBuild) {
     tasks = ["pushToOrigin"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
+
+ext.ossrhUsername = System.getProperty("ossrhUsername")
+ext.ossrhPassword = System.getProperty("ossrhPassword")
+
+uploadArchives {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    repositories {
+      mavenDeployer {
+        beforeDeployment {
+            MavenDeployment deployment -> signing.signPom(deployment)
+        }
+        repository(url: mavenRepoUrl) {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+        snapshotRepository(url: mavenSnapshotRepoUrl) {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+        pom.project {
+          name 'MDW Templates'
+          groupId 'com.centurylink.mdw'
+          version = mdwVersion
+          packaging 'zip'
+          artifactId 'mdw-config'
+          description 'MDW is a cloud workflow framework'
+          url 'http://centurylinkcloud.github.io/mdw/'
+          scm {
+            connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+            developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+            url 'https://github.com/CenturyLinkCloud/mdw.git'
+          }
+          licenses {
+            license {
+              name 'The Apache License, Version 2.0'
+              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+          }
+          developers {
+            developer {
+              id 'mdwdev'
+              name 'MDW Development'
+              email 'mdwdev@centurylink.com'
+            }
+          }
+        }
+      }
+    }
+  }

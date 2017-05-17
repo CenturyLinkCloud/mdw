@@ -1,0 +1,21 @@
+{
+  "users":  [
+    {
+      "name": "{{user}}",
+      "cuid": "{{user}}",
+      "groups": [
+        "Common",
+        "Developers",
+        "Site Admin"
+      ],
+      "Common": [
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ],
+      "Site Admin": [
+        "User Admin"
+      ]            
+    }
+  ]
+}
