@@ -64,7 +64,6 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
 // TODO clear VersionControl & PackageDir/AssetFile caches on Cache Refresh.
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
-    public static final String MDW_BASE_PACKAGE = "com.centurylink.mdw.base";
     public static final String PROCESS_FILE_EXTENSION = ".proc";
     public static final String IMPL_FILE_EXTENSION = ".impl";
     public static final String EVT_HANDLER_FILE_EXTENSION = ".evth";

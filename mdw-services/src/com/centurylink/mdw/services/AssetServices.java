@@ -73,4 +73,6 @@ public interface AssetServices {
     public AssetInfo getAsset(String assetPath) throws ServiceException;
 
     public void createPackage(String packageName) throws ServiceException;
+    public void createAsset(String assetPath) throws ServiceException;
+    public void createAsset(String assetPath, byte[] content) throws ServiceException;
 }

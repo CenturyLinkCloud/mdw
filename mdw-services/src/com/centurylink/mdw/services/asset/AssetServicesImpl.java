@@ -461,6 +461,27 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    /**
+     * Create an unversioned (version 0) asset on the file system.
+     */
+    public void createAsset(String path) throws ServiceException {
+        createAsset(path, new byte[0]);
+    }
+
+    /**
+     * Create an unversioned (version 0) asset on the file system.
+     */
+    public void createAsset(String path, byte[] content) throws ServiceException {
+        int lastSlash = path.lastIndexOf('/');
+        File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
+        try {
+            FileHelper.writeToFile(new ByteArrayInputStream(content), assetFile);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
     private void addVersionControlInfo(AssetInfo asset) throws ServiceException {
         CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {

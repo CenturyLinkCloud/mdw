@@ -179,7 +179,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   };
 
   $scope.createPackage = function() {
-    uiUtil.enter("Create Package", "New package name:", function(res) {
+    uiUtil.enter('Create Package', 'New package name:', function(res) {
       if (res) {
         Assets.post({packageName: res}, {name: res},
           function(data) {
@@ -202,8 +202,8 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   
 }]);
 
-assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Assets', 'Asset', 
-                                          function($scope, $routeParams, mdw, Assets, Asset) {
+assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', 'mdw', 'uiUtil', 'Assets', 'Asset', 'ASSET_TYPES', 
+                                          function($scope, $routeParams, $route, mdw, uiUtil, Assets, Asset, ASSET_TYPES) {
   mdw.message = null;
   $scope.pkg = Assets.get({
     packageName: $routeParams.packageName},
@@ -228,6 +228,39 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Asse
         mdw.messages = error.data.status.message;
     }    
   );
+  
+  $scope.getAssetTypes = function() {
+    return ASSET_TYPES;    
+  };
+  
+  $scope.newAsset = function(type) {
+    var ext = ASSET_TYPES[type];
+    $scope.closePopover();
+    uiUtil.enter('Create Asset', 'New asset name (.' + ext  + '):', function(res) {
+      if (res) {
+        var assetName = res;
+        var lastDot = res.lastIndexOf('.');
+        if (lastDot <= 0)
+          assetName += '.' + ext;
+        if (!assetName.endsWith('.' + ext)) {
+          mdw.messages = 'Invalid ' + type + ' asset name: ' + assetName;
+        }
+        else {
+          Assets.post({packageName: $routeParams.packageName, assetName: assetName}, {name: assetName},
+            function(data) {
+              $scope.mdwMessages = null;
+              console.log('created asset: ' + $routeParams.packageName + '/' + assetName);
+              $route.reload();
+            },
+            function(error) {
+              if (error.data.status)
+                $scope.mdwMessages = 'Asset create failed: ' + error.data.status.message;
+            }
+          ); 
+        }
+      }
+    });
+  };
 }]);
 
 assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 
@@ -256,9 +289,11 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
               assetName: $scope.asset.name
             },
             function(assetData) {
-              $scope.asset.content = assetData.rawResponse.removeCrs();
-              $scope.asset.lineNums = $scope.asset.content.lineNumbers();
-              // TODO process image
+              if (assetData.rawResponse) {
+                $scope.asset.content = assetData.rawResponse.removeCrs();
+                $scope.asset.lineNums = $scope.asset.content.lineNumbers();
+                // TODO process image
+              }
             }
           );
         }

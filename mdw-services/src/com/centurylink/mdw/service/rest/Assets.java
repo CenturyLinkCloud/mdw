@@ -183,15 +183,25 @@ public class Assets extends JsonRestService {
 
     /**
      * This is only for creating packages.  For individual assets, see AssetContentServlet.
+     * Content is ignored.
      */
     @Override
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
-        if (segments.length != 2)
+        if (segments.length == 2) {
+            ServiceLocator.getAssetServices().createPackage(segments[1]);
+        }
+        else if (segments.length == 3) {
+            String asset = segments[1] + '/' + segments[2];
+            if (segments[2].endsWith(".proc"))
+                ServiceLocator.getWorkflowServices().createProcess(asset);
+            else
+                ServiceLocator.getAssetServices().createAsset(asset);
+        }
+        else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
-        // we ignore content
-        ServiceLocator.getAssetServices().createPackage(segments[1]);
+        }
         return null;
     }
 }

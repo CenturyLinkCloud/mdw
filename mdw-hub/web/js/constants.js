@@ -52,3 +52,31 @@ constantsMod.constant('WORKFLOW_STATUSES', [
    {status: 'Hold', color: 'cyan'},
    {status: 'Waiting', color: 'yellow'}
  ]);
+
+constantsMod.constant('ASSET_TYPES', {
+  Camel: 'camel',
+  CSS: 'css',
+  CSV: 'csv',
+  Drools: 'drl',
+  Excel: 'xlsx',
+  GIF: 'gif',
+  Groovy: 'groovy',
+  HTML: 'html',
+  Java: 'java',
+  JavaScript: 'js',
+  Jar: 'jar',
+  JPG: 'jpg',
+  JSON: 'json',
+  Markdown: 'md',  
+  PNG: 'png',
+  Process: 'proc',
+  Task: 'task',
+  Text: 'txt',
+  Test: 'test',
+  Velocity: 'vsl',
+  WSDL: 'wsdl',
+  XML: 'xml',
+  XSD: 'xsd',
+  XSL: 'xsl',
+  YAML: 'yaml'
+});

@@ -659,6 +659,7 @@
   border: none;  
   padding: 1px 3px 1px 3px;
   margin: 0;
+  max-height: 410px;
 }
 .mdw-popover-menu > li a {
   outline: none;

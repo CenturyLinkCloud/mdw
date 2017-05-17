@@ -64,12 +64,12 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.initVersion = function() {
     $scope.version = {
-        current: $scope.asset.version,
-        nextMinor: util.nextMinor($scope.asset.version),
-        nextMajor: util.nextMajor($scope.asset.version),
-        selected: util.nextMinor($scope.asset.version),
-        comment: null
-      };
+      current: $scope.asset.version,
+      nextMinor: util.nextMinor($scope.asset.version),
+      nextMajor: util.nextMajor($scope.asset.version),
+      selected: util.nextMinor($scope.asset.version),
+      comment: null
+    };
   };
   
   $scope.initOptions = function() {

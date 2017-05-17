@@ -472,7 +472,8 @@ public class ApplicationContext {
     }
 
     public static boolean isMasterServer() {
-        return getMasterServer().equals(getServerHostPort());
+        // getServerHostPort() does not work in PaaS
+        return isPaaS() || getMasterServer().equals(getServerHostPort());
     }
 
     public static String getTempDirectory() {

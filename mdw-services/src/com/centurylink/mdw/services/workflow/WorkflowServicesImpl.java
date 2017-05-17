@@ -46,6 +46,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
@@ -1250,6 +1251,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
+    }
+
+    public void createProcess(String assetPath) throws ServiceException, JSONException {
+        if (!assetPath.endsWith(".proc"))
+            assetPath += ".proc";
+        Process newProc = ProcessCache.getProcess(ProcessLoader.MDW_BASE_PACKAGE + "/new");
+        ServiceLocator.getAssetServices().createAsset(assetPath, newProc.getJson().toString(2).getBytes());
     }
 
 }
