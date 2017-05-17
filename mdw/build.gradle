@@ -233,3 +233,8 @@ task pushToOrigin(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+task testLocalDev(type: GradleBuild) {
+    buildFile = "test.gradle"
+    tasks = ["autoTest"]
+    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}"]
+}
