@@ -1,19 +1,19 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-task configTemplates(type: Zip) {
+task zipTemplates(type: Zip) {
     destinationDir = file("../${mdwOutputDir}")
-    archiveName = "mdw-config-${mdwVersion}.zip"
-    from "templates/config"
+    archiveName = "mdw-template-${mdwVersion}.zip"
+    from "templates"
     include "**/*"
 }
 
 artifacts {
-    archives configTemplates
+    archives zipTemplates
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn configTemplates
+    dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
@@ -273,7 +273,7 @@ uploadArchives {
           groupId 'com.centurylink.mdw'
           version = mdwVersion
           packaging 'zip'
-          artifactId 'mdw-config'
+          artifactId 'mdw-template'
           description 'MDW is a cloud workflow framework'
           url 'http://centurylinkcloud.github.io/mdw/'
           scm {
