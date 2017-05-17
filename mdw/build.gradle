@@ -240,8 +240,20 @@ task pushToOrigin(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+version = "${mdwVersion}"
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 ext.ossrhUsername = System.getProperty("ossrhUsername")
 ext.ossrhPassword = System.getProperty("ossrhPassword")
+
+if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+    signing {
+        required = { isReleaseVersion  && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+        sign configurations.archives
+     }
+}
+else {
+    tasks.withType(Javadoc).all { enabled = false }
+}
 
 uploadArchives {
     enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
