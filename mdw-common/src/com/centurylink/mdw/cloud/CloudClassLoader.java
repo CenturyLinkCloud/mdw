@@ -320,12 +320,12 @@ public class CloudClassLoader extends ClassLoader {
         }
         if (result == null) {
             if (assetRoot != null) {
+                String sep = File.separator.equals("/") ? "" : "/";
                 for (Asset jarAsset : getJarAssets()) {
                     File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
-                    try {
-                        byte[] b = findInJarFile(jarFile, name);
-                        if (b != null) {
-                            return new URL("jar:file:/" + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
+                    try (JarFile jf = new JarFile(jarFile)) {
+                        if (jf.getEntry(name) != null) {
+                            return new URL("jar:file:" + sep + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
                         }
                     }
                     catch (Exception ex) {
