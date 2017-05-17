@@ -1,6 +1,7 @@
 ---
 title: Built-In Activities
 permalink: /docs/development/built-in-activities/
+layout: help
 ---
 
   Activity Implementor                            | Description                                                |
