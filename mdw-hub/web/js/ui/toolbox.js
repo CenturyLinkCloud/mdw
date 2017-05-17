@@ -20,6 +20,7 @@ toolboxMod.factory('Toolbox', ['$document', 'mdw', 'util',
   };
   
   Toolbox.prototype.init = function(implementors, hubBase) {
+    this.helpUrl = mdw.roots.docs + '/development/built-in-activities/';    
     this.implementors = implementors;
     this.hubBase = hubBase;
     this.implementors.forEach(function(impl) {
@@ -63,7 +64,7 @@ toolboxMod.factory('Toolbox', ['$document', 'mdw', 'util',
   return Toolbox;
 }]);
 
-toolboxMod.directive('mdwToolbox', ['$window', '$timeout', 'Toolbox', function($window, $timeout, Toolbox) {
+toolboxMod.directive('mdwToolbox', ['$window', '$timeout', 'mdw', 'Toolbox', function($window, $timeout, mdw, Toolbox) {
   return {
     restrict: 'A',
     controller: 'MdwWorkflowController',
