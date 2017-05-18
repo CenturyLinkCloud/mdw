@@ -25,8 +25,6 @@ dependencies {
     compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.4.8"
     compile group: "org.json", name: "json", version: "20090211"
     compile group: "org.apache.activemq", name: "activemq-all", version: "5.10.0"
-    compile group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
-    compile group: "org.apache.ant", name: "ant", version: "1.8.2"
     compile group: "org.apache.poi", name: "poi", version: "3.15"
     compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
     compile group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.3"
@@ -35,7 +33,6 @@ dependencies {
     compile group: "commons-lang", name: "commons-lang", version: "2.4"
     compile group: "commons-logging", name: "commons-logging", version: "1.1.1"
     compile group: "commons-jexl", name: "commons-jexl", version: "1.1"
-    compile group: "bouncycastle", name: "bcprov-jdk15", version: "140"
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "junit", name: "junit", version: "4.8.1"
     compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
@@ -66,9 +63,6 @@ dependencies {
     compile group: "org.springframework.amqp", name: "spring-rabbit", version: "1.4.4.RELEASE"
     compile group: "org.springframework.retry", name: "spring-retry", version: "1.0.2.RELEASE"
 
-    // cucumber
-    compile group: "info.cukes", name: "cucumber-core", version: "1.2.4"  
-    
     // oauth
     // TODO: For now oltu transitive dependencies are excluded because recent JSONObject versions do not alphabetize object keys.
     // This prevents tests from passing.  We need to perform structural comparison in JSON instead of text, or serialize reliably with later org.json. 
