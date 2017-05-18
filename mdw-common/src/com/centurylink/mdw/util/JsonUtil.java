@@ -53,12 +53,10 @@ public class JsonUtil {
     /**
      * Strips out comment lines (where first non-whitespace is //).
      * Does not support multi-line comments.
-     *
-     * TODO: support comments in PaaS properties
      */
     public static final String read(String name, ClassLoader classLoader) throws IOException {
         if (ApplicationContext.isPaaS()) {
-            return System.getenv(name);
+            return System.getenv("mdw_" + name.substring(0, name.lastIndexOf('.')));
         }
         else {
             InputStream stream = FileHelper.readFile(name, classLoader);
