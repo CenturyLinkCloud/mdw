@@ -24,11 +24,9 @@
 - title: Designer
   docs:
   - designer/user-guide
-  - designer/plugin-upgrade
 
 - title: Development
   docs:
-  - coding-standards
   - development/built-in-activities
   - development/built-in-variable-types
 
