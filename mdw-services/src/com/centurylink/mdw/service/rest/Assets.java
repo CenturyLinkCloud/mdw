@@ -34,6 +34,7 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
@@ -76,7 +77,8 @@ public class Assets extends JsonRestService {
         notes="If assetPath is not present, returns all assetPackages.",
         response=PackageList.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string")})
+        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
         try {
@@ -94,6 +96,15 @@ public class Assets extends JsonRestService {
             }
 
             AssetServices assetServices = ServiceLocator.getAssetServices();
+
+            if (query.getBooleanFilter("archiveDirs")) {
+                List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
+                JSONObject json = new JSONObject();
+                json.put("root", assetServices.getArchiveDir().getAbsolutePath());
+                for (ArchiveDir archiveDir : archiveDirs)
+                    json.put(archiveDir.getJsonName(), archiveDir.getJson());
+                return json;
+            }
 
             String pkg = getSegment(path, 1);
             String asset = pkg == null ? null : getSegment(path, 2);
@@ -204,4 +215,25 @@ public class Assets extends JsonRestService {
         }
         return null;
     }
+
+    @Override
+    public JSONObject delete(String path, JSONObject content, Map<String, String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 2) {
+            if ("Archive".equals(segments[1]))
+                ServiceLocator.getAssetServices().deleteArchive();
+            else
+                throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Package delete not supported");
+        }
+        else if (segments.length == 3) {
+            // TODO delete asset
+        }
+        else {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+        }
+        return null;
+    }
+
+
 }

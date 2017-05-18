@@ -10,6 +10,9 @@
             (<a href="{{pkgList.vcsRemoteUrl}}">{{pkgList.vcsBranch}}</a>)
           </span>
           <span class="mdw-heading-sub" ng-if="pkgList.vcsBranch && !pkgList.vcsRemoteUrl">({{pkgList.vcsBranch}})</span>
+          <span class="mdw-heading-sub-sub" ng-if="authUser.hasRole('Site Admin')">
+            <a href="#/assets/archive">Archive</a>
+          </span>
         </div>
         <!-- actions currently only supported for Git  -->
         <div class="mdw-heading-actions">

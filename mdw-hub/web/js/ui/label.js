@@ -54,7 +54,7 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
   Label.prototype.move = function(deltaX, deltaY) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
-    this.setDisplayAttr(x, y, this.display.w, this.display.h); 
+    this.setDisplayAttr(x, y, Math.round(this.display.w), this.display.h); 
   };
   
   return Label;

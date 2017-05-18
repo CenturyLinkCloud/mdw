@@ -117,13 +117,17 @@ public class AssetContentServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            AssetInfo asset = new AssetInfo(assetRoot, path);
-            boolean gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
 
-            if (!asset.getFile().isFile() && !gitRemote) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Asset file '" + asset.getFile() + "' not found");
+            boolean gitRemote = false;
+            File assetFile;
+            if (path.startsWith("Archive")) {
+                assetFile = new File(assetRoot + "/" + path);
             }
             else {
+                AssetInfo asset = new AssetInfo(assetRoot, path);
+                gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
+
+                assetFile = asset.getFile();
                 if ("true".equalsIgnoreCase(request.getParameter("download"))) {
                     response.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
                     response.setContentType("application/octet-stream");
@@ -131,42 +135,42 @@ public class AssetContentServlet extends HttpServlet {
                 else {
                     response.setContentType(asset.getContentType());
                 }
+            }
 
-                InputStream in = null;
-                OutputStream out = response.getOutputStream();
-                try {
-                    if (gitRemote) {
-                        String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
-                        if (branch == null)
-                            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
-                        VersionControlGit vcGit = VersionControlGit.getFrameworkGit();
-                        String gitPath = vcGit.getRelativePath(asset.getFile());
-                        in = vcGit.getRemoteContentStream(branch, gitPath);
-                        if (in == null)
-                            throw new IOException("Git remote not found: " + gitPath);
+            InputStream in = null;
+            OutputStream out = response.getOutputStream();
+            try {
+                if (gitRemote) {
+                    String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+                    if (branch == null)
+                        throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
+                    VersionControlGit vcGit = VersionControlGit.getFrameworkGit();
+                    String gitPath = vcGit.getRelativePath(assetFile);
+                    in = vcGit.getRemoteContentStream(branch, gitPath);
+                    if (in == null)
+                        throw new IOException("Git remote not found: " + gitPath);
+                }
+                else {
+                    if (!assetFile.isFile()) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Asset file '" + assetFile + "' not found");
+                        return;
                     }
-                    else {
-                        if (!asset.getFile().isFile())
-                            throw new IOException("Asset file not found: " + asset.getFile());
-                        in = new FileInputStream(asset.getFile());
-                    }
-                    int read = 0;
-                    byte[] bytes = new byte[1024];
-                    while ((read = in.read(bytes)) != -1)
-                        out.write(bytes, 0, read);
+                    in = new FileInputStream(assetFile);
                 }
-                catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                }
-                finally {
-                    if (in != null)
-                        in.close();
-                }
+
+                int read = 0;
+                byte[] bytes = new byte[1024];
+                while ((read = in.read(bytes)) != -1)
+                    out.write(bytes, 0, read);
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+            finally {
+                if (in != null)
+                    in.close();
             }
         }
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 
     /**

@@ -45,6 +45,7 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -65,7 +66,7 @@ public class AssetServicesImpl implements AssetServices {
         return assetRoot;
     }
     private File archiveDir;
-    private File getArchiveDir() {
+    public File getArchiveDir() {
         return archiveDir;
     }
 
@@ -479,6 +480,29 @@ public class AssetServicesImpl implements AssetServices {
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<ArchiveDir> getArchiveDirs() throws ServiceException {
+        List<ArchiveDir> archiveDirs = new ArrayList<>();
+        if (getArchiveDir().isDirectory()) {
+            for (File archiveDir : getArchiveDir().listFiles()) {
+                archiveDirs.add(new ArchiveDir(archiveDir));
+            }
+        }
+        return archiveDirs;
+    }
+
+    @Override
+    public void deleteArchive() throws ServiceException {
+        if (getArchiveDir().exists()) {
+            try {
+                FileHelper.deleteRecursive(getArchiveDir());
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
         }
     }
 

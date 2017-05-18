@@ -136,7 +136,7 @@ public class DataAccess {
                     if (url != null && branch != null) {
                         String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
                         String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
-                        if (user != null && password != null) {
+                        if (user != null) {
                             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
                             File gitLocal = new File(gitLocalPath);
                             vcGit.connect(url, user, password, gitLocal);
@@ -197,7 +197,7 @@ public class DataAccess {
                             }
                         }
                         else {
-                            logger.severe("**** WARNING: Not verifying local Git repository due to missing credentials.");
+                            logger.severe("**** WARNING: Not verifying Git asset sync due to missing property " + PropertyNames.MDW_GIT_USER + " (use anonymous for public repos)");
                         }
                     }
                 }

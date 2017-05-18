@@ -158,6 +158,15 @@
   font-weight: normal;
   color: #767676;
 }
+.mdw-heading-sub-sub {
+  font-size: 12px;
+  font-weight: normal;
+  color: #767676;
+  margin-left: 8px;
+}
+.mdw-heading-sub-sub a {
+  font-weight: normal!important;
+}
 .mdw-heading-input {
   float: left;
   display: flex;
@@ -270,6 +279,10 @@
 .mdw-list li {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+}
+.mdw-plainlist {
+	list-style: none;
+	padding-left: 20px;
 }
 .mdw-checklist {
   padding: 0;

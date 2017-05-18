@@ -314,11 +314,37 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
   );
 }]);
 
+assetMod.controller('ArchiveController', ['$scope', '$routeParams', '$route', 'mdw', 'uiUtil', 'Assets', 'Asset', 'ASSET_TYPES', 
+                                  function($scope, $routeParams, $route, mdw, uiUtil, Assets, Asset, ASSET_TYPES) {
+  $scope.archiveDirs = Assets.get({archiveDirs: true});
+  
+  $scope.deleteArchive = function() {
+    var msg = "Proceed with delete?\nArchive cannot be recovered!";
+    uiUtil.confirm("Confirm Archive Delete", msg, function(res) {
+      if (res) {
+        Assets.del({packageName: 'Archive'},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('deleted asset archive');
+            $route.reload();
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Archive delete failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
+  
+}]);
+
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false },
     put: { method: 'PUT'},
-    post: { method: 'POST'}
+    post: { method: 'POST'},
+    del: { method: 'DELETE'}
   });
 }]);
 
