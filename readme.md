@@ -69,7 +69,6 @@
     ```	
     -Dmdw.runtime.env=dev  
     -Dmdw.config.location=c:/workspaces/mdw/mdw/config  
-    -Dmdw.runtime.env=dev
     -Xms512m -Xmx1024m
     ```
 
