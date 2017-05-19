@@ -591,6 +591,7 @@ public class PluginDataAccess {
                             case "java.lang.Long[]":
                             case "java.util.Map":
                             case "com.centurylink.mdw.model.FormDataDocument":
+                            case "com.centurylink.mdw.common.service.Jsonable":
                                 break;
                             default:
                                 cleanedUpVarTypes.add(varType);
@@ -601,6 +602,7 @@ public class PluginDataAccess {
                     for (VariableTypeVO varType : designerDataModel.getVariableTypes()) {
                         switch (varType.getVariableType()) {
                             case "java.lang.Exception":
+                            case "com.centurylink.mdw.model.Jsonable":
                                 break;
                             default:
                                 cleanedUpVarTypes.add(varType);
