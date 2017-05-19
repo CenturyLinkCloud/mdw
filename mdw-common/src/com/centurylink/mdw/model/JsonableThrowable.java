@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
 
 /**
  * Represents a Throwable as a Jsonable for JSON serialization.
@@ -63,7 +63,7 @@ public class JsonableThrowable implements Jsonable {
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (throwable != null)
             json.put("throwable", throwable);
         if (message != null)
@@ -111,7 +111,7 @@ public class JsonableThrowable implements Jsonable {
             stackElemArr = new JSONArray();
             for (int i = 0; i < stackElements.length; i++) {
                 StackTraceElement stackElement = stackElements[i];
-                JSONObject stackElem = new JSONObject();
+                JSONObject stackElem = new JsonObject();
                 if (stackElement.getClassName() != null)
                     stackElem.put("class", stackElement.getClassName());
                 if (stackElement.getMethodName() != null)

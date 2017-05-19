@@ -18,19 +18,30 @@ package com.centurylink.mdw.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.model.Jsonable;
+import io.limberest.json.Jsonator;
+import io.swagger.annotations.ApiModelProperty;
 
-public class Mdw implements Jsonable {
+/**
+ * Replaces {@link com.centurylink.mdw.common.service.Jsonable}
+ * to provide auto-serialization.
+ */
+public interface Jsonable extends io.limberest.json.Jsonable {
 
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = create();
-        json.put("version", ApplicationContext.getMdwVersion());
-        json.put("build", ApplicationContext.getMdwBuildTimestamp());
-        return json;
-    }
+    @ApiModelProperty(hidden=true)
+    default JSONObject getJson() throws JSONException {
+        return new Jsonator(this).getJson(new JsonObject());
+    };
 
-    public String getJsonName() {
-        return "mdw";
+    /**
+     * May be pluralized by adding 's'.
+     */
+    @ApiModelProperty(hidden=true)
+    public String getJsonName();
+
+    /**
+     * @return a JSONObject implementation with predictable property ordering.
+     */
+    default JSONObject create() {
+        return new JsonObject();
     }
 }

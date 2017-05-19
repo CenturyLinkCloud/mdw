@@ -26,7 +26,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.util.StringHelper;
@@ -56,7 +57,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     }
 
     public ProcessInstance(String json) throws JSONException {
-        this(new JSONObject(json));
+        this(new JsonObject(json));
     }
 
     public ProcessInstance(JSONObject jsonObj) throws JSONException {
@@ -307,7 +308,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         // summary info (for ProcessLists)
         json.put("id", this.id);
         if (masterRequestId != null)
@@ -373,7 +374,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     }
 
     public JSONObject getJsonNew() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         // summary info (for ProcessLists)
         json.put("id", this.id);
         if (masterRequestId != null)

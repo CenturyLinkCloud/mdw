@@ -35,7 +35,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
@@ -444,7 +445,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException {
         String ownerContent = getDocumentStringValue(triggerId);
         try {
-            JSONObject json = new JSONObject(ownerContent);
+            JSONObject json = new JsonObject(ownerContent);
             if (!json.has("runtimeContext"))
                 throw new ServiceException(ServiceException.NOT_FOUND, "Trigger document does not have RuntimeContext information: " + triggerId);
             JSONObject runtimeContext = json.getJSONObject("runtimeContext");
@@ -720,7 +721,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             // load from file
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
-                process = new Process(new JSONObject(new String(bytes)));
+                process = new Process(new JsonObject(new String(bytes)));
                 process.setName(processName.substring(lastSlash + 1));
                 process.setPackageName(processName.substring(0, lastSlash));
             }
@@ -1213,7 +1214,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else if (trans instanceof JsonTranslator && !(trans instanceof YamlTranslator)) {
                 JSONObject jsonObj = ((JsonTranslator)trans).toJson(doc.getObject(doc.getDocumentType(), pkg));
-                return jsonObj.toString(2);
+                if (jsonObj instanceof JsonObject)
+                    return jsonObj.toString(2);
+                else
+                    return new JsonObject(jsonObj.toString()).toString(2); // reformat for predictable prop ordering
             }
             return doc.getContent(pkg);
         }

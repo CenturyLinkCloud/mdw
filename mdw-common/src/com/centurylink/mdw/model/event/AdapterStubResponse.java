@@ -18,7 +18,7 @@ package com.centurylink.mdw.model.event;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 
 public class AdapterStubResponse extends Response implements Jsonable {
@@ -46,7 +46,7 @@ public class AdapterStubResponse extends Response implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         JSONObject responseJson = super.getJson();
         if (delay > 0)
             responseJson.put("delay", delay);

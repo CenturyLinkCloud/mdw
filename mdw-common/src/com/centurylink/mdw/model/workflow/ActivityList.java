@@ -24,8 +24,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceList;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
 
 /**
@@ -62,7 +62,7 @@ public class ActivityList implements Jsonable, InstanceList<ActivityInstance> {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (retrieveDate != null)
             json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         if (count != -1)

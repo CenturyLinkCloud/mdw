@@ -18,7 +18,7 @@ package com.centurylink.mdw.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class Download implements Jsonable {
 
@@ -45,7 +45,7 @@ public class Download implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("url", url);
         json.put("file", file);
         return json;

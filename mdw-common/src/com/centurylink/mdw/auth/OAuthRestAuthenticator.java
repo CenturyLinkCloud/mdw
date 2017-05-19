@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.util.HttpHelper;
 
 public class OAuthRestAuthenticator implements Authenticator {
@@ -56,7 +57,7 @@ public class OAuthRestAuthenticator implements Authenticator {
                 + "&password=" + URLEncoder.encode(password, "UTF-8") + "&grant_type=password";
 
             String response = helper.post(body);
-            JSONObject json = new JSONObject(response);
+            JSONObject json = new JsonObject(response);
             if (json.has("status")) {
                 String msg = json.getString("status");
                 if (json.has("response_message"))

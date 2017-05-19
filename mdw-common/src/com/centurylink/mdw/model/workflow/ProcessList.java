@@ -24,8 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceList;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
 
 /**
@@ -36,7 +37,7 @@ public class ProcessList implements Jsonable, InstanceList<ProcessInstance> {
     public static final String PROCESS_INSTANCES = "processInstances";
 
     public ProcessList(String name, String json) throws JSONException, ParseException {
-        this(name, new JSONObject(json));
+        this(name, new JsonObject(json));
     }
 
     public ProcessList(String name, JSONObject jsonObj) throws JSONException, ParseException {
@@ -66,7 +67,7 @@ public class ProcessList implements Jsonable, InstanceList<ProcessInstance> {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (retrieveDate != null)
             json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         if (count != -1)

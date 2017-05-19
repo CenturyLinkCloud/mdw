@@ -21,8 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
@@ -30,6 +28,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.workflow.Package;
@@ -224,7 +223,7 @@ public class PackageCache implements PreloadableCache {
             Asset assetVO = loader.getAssetForOwner(OwnerType.PACKAGE, loaded.getPackageId());
             if (assetVO != null && assetVO.getStringContent() != null) {
                 if (assetVO.getStringContent().trim().startsWith("{")) {
-                    Package metaPkg = new Package(new JSONObject(assetVO.getStringContent()));
+                    Package metaPkg = new Package(new JsonObject(assetVO.getStringContent()));
                     List<Attribute> envAttrs = metaPkg.getAttributes(ApplicationContext.getRuntimeEnvironment());
                     if (envAttrs != null) {
                         envAttrs.addAll(metaPkg.getAttributes(null)); // non-env-specific

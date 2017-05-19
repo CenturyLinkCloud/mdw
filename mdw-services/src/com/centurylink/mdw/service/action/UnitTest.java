@@ -15,10 +15,6 @@
  */
 package com.centurylink.mdw.service.action;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
-
 import java.util.Map;
 
 import org.json.JSONException;
@@ -27,8 +23,13 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.ResponseCodes;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 
 public class UnitTest implements JsonService {
 
@@ -88,8 +89,8 @@ public class UnitTest implements JsonService {
               scriptTraceElement = ste;
             i++;
         }
-        JSONObject resp = new JSONObject();
-        JSONObject status = new JSONObject();
+        JSONObject resp = new JsonObject();
+        JSONObject status = new JsonObject();
         resp.put("status", status);
         status.put("code", ResponseCodes.UNIT_TEST_FAILED);
         status.put("message", err.toString());

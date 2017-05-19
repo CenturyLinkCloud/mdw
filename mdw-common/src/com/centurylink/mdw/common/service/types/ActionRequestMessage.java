@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
 import com.centurylink.mdw.service.Action;
@@ -132,14 +132,14 @@ public class ActionRequestMessage extends XmlBeanWrapper implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject actionRequest = new JSONObject();
-        JSONObject action = new JSONObject();
+        JSONObject actionRequest = create();
+        JSONObject action = create();
         action.put("name", getActionName());
         List<Parameter> params = getParameters();
         if (params != null && params.size() > 0) {
             JSONArray parameters = new JSONArray();
             for (Parameter param : params) {
-                JSONObject parameter = new JSONObject();
+                JSONObject parameter = create();
                 parameter.put(param.getName(), param.getStringValue());
                 parameters.put(parameter);
             }

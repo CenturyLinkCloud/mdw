@@ -38,6 +38,7 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
@@ -533,14 +534,14 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     }
 
     protected JSONObject getRequestMeta() throws Exception {
-        JSONObject meta = new JSONObject();
+        JSONObject meta = new JsonObject();
         meta.put("headers", JsonUtil.getJson(getRequestHeaders()));
 
         return meta;
     }
 
     protected JSONObject getResponseMeta() throws Exception {
-        JSONObject meta = new JSONObject();
+        JSONObject meta = new JsonObject();
         meta.put("headers", JsonUtil.getJson(getResponseHeaders()));
 
         return meta;

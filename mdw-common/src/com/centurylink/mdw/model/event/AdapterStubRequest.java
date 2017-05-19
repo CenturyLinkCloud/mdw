@@ -20,7 +20,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.JsonUtil;
 
 public class AdapterStubRequest implements Jsonable {
@@ -65,8 +65,8 @@ public class AdapterStubRequest implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
-        JSONObject requestJson = new JSONObject();
+        JSONObject json = create();
+        JSONObject requestJson = create();
         requestJson.put("masterRequestId", masterRequestId);
         requestJson.put("content", content);
         if (url != null)

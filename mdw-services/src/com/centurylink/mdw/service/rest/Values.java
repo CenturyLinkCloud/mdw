@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -73,7 +74,7 @@ public class Values extends JsonRestService {
         if (ownerId == null)
             throw new ServiceException("Missing path segment: {ownerId}");
 
-        JSONObject valuesJson = new JSONObject();
+        JSONObject valuesJson = new JsonObject();
         Map<String,String> values = ServiceLocator.getWorkflowServices().getValues(ownerType, ownerId);
         if (values != null) {
             for (String name : values.keySet())
@@ -153,7 +154,7 @@ public class Values extends JsonRestService {
     @ApiOperation(value="Delete values for an ownerType and ownerId", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        JSONObject empty = new JSONObject();
+        JSONObject empty = new JsonObject();
         return put(path, empty, headers);
     }
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;

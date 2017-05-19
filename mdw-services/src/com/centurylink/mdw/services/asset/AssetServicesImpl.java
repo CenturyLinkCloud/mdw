@@ -45,6 +45,7 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
@@ -572,7 +573,7 @@ public class AssetServicesImpl implements AssetServices {
                 String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(getGitBranch(), pkgMetaFilePath);
                 if (metaContent != null) {
                     if (metaContent.trim().startsWith("{")) {
-                        Package pkgVO = new Package(new JSONObject(metaContent));
+                        Package pkgVO = new Package(new JsonObject(metaContent));
                         pkgDir.setPackageVersion(pkgVO.getVersionString());
                     }
                     else {

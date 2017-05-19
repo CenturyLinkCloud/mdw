@@ -47,6 +47,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Attachment;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
@@ -927,7 +928,7 @@ public class TaskManagerBean implements TaskManager {
     private void resumeAutoFormTaskInstance(String taskAction, TaskInstance ti) throws TaskException {
         try {
             String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + ti.getTaskInstanceId().toString();
-            JSONObject jsonMsg = new JSONObject();
+            JSONObject jsonMsg = new JsonObject();
             String formAction;
             if (taskAction.equals(TaskAction.CANCEL))
                 formAction = "@CANCEL_TASK";
@@ -938,7 +939,7 @@ public class TaskManagerBean implements TaskManager {
                 jsonMsg.put(TaskAttributeConstant.URLARG_COMPLETION_CODE, taskAction);
             }
             jsonMsg.put(TaskAttributeConstant.TASK_ACTION, formAction);
-            JSONObject jsonMeta = new JSONObject().put("META", jsonMsg);
+            JSONObject jsonMeta = new JsonObject().put("META", jsonMsg);
             String message = jsonMeta.toString();
             EventManager eventManager = ServiceLocator.getEventManager();
             Long docid = eventManager.createDocument(JSONObject.class.getName(),
@@ -1013,7 +1014,7 @@ public class TaskManagerBean implements TaskManager {
             // Send request to new endpoint, while preventing infinte loop with new Query parameter
             HttpHelper helper = new HttpHelper(new URL(taskResumeEndpoint + "/Services/Tasks/" + taskInstanceId + "/" + action + "?disableEndpoint=true"));
             String response = helper.post(taskAction.getJson().toString(2));
-            StatusMessage statusMessage = new StatusMessage(new JSONObject(response));
+            StatusMessage statusMessage = new StatusMessage(new JsonObject(response));
             if (statusMessage.getCode() != 0)
                 throw new ServiceException("Failure response resuming task instance " + taskInstanceId + " at " +
                        taskResumeEndpoint + ": " + statusMessage.getMessage());

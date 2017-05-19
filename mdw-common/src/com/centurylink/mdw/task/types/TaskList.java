@@ -24,8 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceList;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.util.StringHelper;
 
@@ -37,7 +38,7 @@ public class TaskList implements Jsonable, InstanceList<TaskInstance> {
     public static final String PROCESS_TASKS = "processTasks";
 
     public TaskList(String name, String json) throws JSONException, ParseException {
-        this(name, new JSONObject(json));
+        this(name, new JsonObject(json));
     }
 
     public TaskList(String name, JSONObject jsonObj) throws JSONException, ParseException {
@@ -68,7 +69,7 @@ public class TaskList implements Jsonable, InstanceList<TaskInstance> {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         if (total > 0)

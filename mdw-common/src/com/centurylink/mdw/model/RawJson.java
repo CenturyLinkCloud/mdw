@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.common.service;
+package com.centurylink.mdw.model;
 
-import java.util.Date;
-import java.util.List;
+import org.json.JSONObject;
 
-import io.swagger.annotations.ApiModelProperty;
+/**
+ * Jsonable that just holds a raw JSONObject to avoid reserializing.
+ *
+ */
+public class RawJson implements Jsonable {
 
-public interface InstanceList<E> {
+    private JSONObject json;
+    public JSONObject getJson() { return json; }
 
-    @ApiModelProperty(value="Retrieve date (UTC)")
-    public Date getRetrieveDate();
-    @ApiModelProperty(value="List count")
-    public int getCount();
-    @ApiModelProperty(value="Total count for paginated results")
-    public long getTotal(); // for pagination
+    public RawJson(JSONObject json) {
+        this.json = json;
+    }
 
-    @ApiModelProperty(value="List items")
-    public List<? extends Jsonable> getItems();
-    @ApiModelProperty(hidden=true)
-    public int getIndex(String id);
-
+    public String getJsonName() {
+        return null;
+    }
 }

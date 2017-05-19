@@ -41,6 +41,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
@@ -232,7 +233,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
         if (!resultsFile.exists())
             writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
         PackageTests pkgTests = fullTestCaseList.getPackageTests(exeTestCase.getPackage());
         if (pkgTests == null) {
             pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage(), null));
@@ -346,7 +347,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
     }
 
     private void setLogWatchState(boolean on) throws JSONException, ProcessException, UnknownHostException {
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         json.put("ACTION", "REFRESH_PROPERTY");
         json.put("NAME", PropertyNames.MDW_LOGGING_WATCHER);
         json.put("VALUE", on ? InetAddress.getLocalHost().getHostAddress() : "");
@@ -355,7 +356,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
     }
 
     private void setStubServerState(boolean on) throws JSONException, ProcessException, UnknownHostException {
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         json.put("ACTION", "REFRESH_PROPERTY");
         json.put("NAME", PropertyNames.MDW_STUB_SERVER);
         json.put("VALUE", on ?  InetAddress.getLocalHost().getHostAddress() : "");

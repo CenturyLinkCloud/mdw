@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.json.JsonWriterSettings;
-import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -37,6 +36,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestList;
@@ -264,7 +264,7 @@ public class RequestDataAccess extends CommonDataAccess {
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                                 if (c != null) {
                                     if (c.getBoolean("isJSON", false))
-                                        request.setMeta(new JSONObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                        request.setMeta(new JsonObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
                                 }
                             }
                         }
@@ -279,7 +279,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         if (metaId > 0L) {
                             rs = db.runSelect(query, metaId);
                             if (rs.next())
-                                request.setMeta(new JSONObject(rs.getString("content")));
+                                request.setMeta(new JsonObject(rs.getString("content")));
                         }
                     }
                 }
@@ -339,7 +339,7 @@ public class RequestDataAccess extends CommonDataAccess {
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                                 if (c != null) {
                                     if (c.getBoolean("isJSON", false))
-                                        response.setMeta(new JSONObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                        response.setMeta(new JsonObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
                                 }
                             }
                         }
@@ -354,7 +354,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         if (metaId > 0L) {
                             rs = db.runSelect(query, metaId);
                             if (rs.next())
-                                response.setMeta(new JSONObject(rs.getString("content")));
+                                response.setMeta(new JsonObject(rs.getString("content")));
                         }
                     }
 

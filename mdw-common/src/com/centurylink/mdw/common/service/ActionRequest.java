@@ -24,7 +24,7 @@ import org.json.JSONObject;
 /**
  * Lightweight action request especially for JSON.
  */
-public class ActionRequest implements Jsonable {
+public class ActionRequest implements com.centurylink.mdw.model.Jsonable {
 
     private String action;
     private Map<String,String> parameters;
@@ -66,12 +66,12 @@ public class ActionRequest implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
-        JSONObject actionJson = new JSONObject();
+        JSONObject json = create();
+        JSONObject actionJson = create();
         actionJson.put("name", action);
         json.put("action", actionJson);
         if (parameters != null) {
-            JSONObject paramsJson = new JSONObject();
+            JSONObject paramsJson = create();
             for (String name : parameters.keySet())
                 paramsJson.put(name, parameters.get(name));
             actionJson.put("parameters", paramsJson);

@@ -75,6 +75,15 @@
     <servlet-class>com.centurylink.mdw.hub.servlet.SoapServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
+  <servlet>
+    <servlet-name>io.limberest.service.http.RestServlet</servlet-name>
+    <servlet-class>io.limberest.service.http.RestServlet</servlet-class>
+    <!-- limberest should not scan since we keep our own registry -->
+    <init-param>
+      <param-name>io.limberest.scan.packages</param-name>
+      <param-value></param-value>
+    </init-param>
+  </servlet>  
 
   <servlet-mapping>
     <servlet-name>RootServlet</servlet-name>
@@ -132,6 +141,11 @@
     <servlet-name>SoapServlet</servlet-name>
     <url-pattern>/SOAP/*</url-pattern>
   </servlet-mapping>
+  <!-- override limberest servlet mapping -->
+  <servlet-mapping>
+    <servlet-name>io.limberest.service.http.RestServlet</servlet-name>
+    <url-pattern>/svc/*</url-pattern>
+  </servlet-mapping>  
 
   <error-page>
     <error-code>500</error-code>

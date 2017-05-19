@@ -29,7 +29,7 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.representer.Representer;
 
 import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.ExecutionPlan;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;

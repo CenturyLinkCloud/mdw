@@ -21,7 +21,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
 
 public class InstanceNote implements Serializable, Jsonable, Comparable<InstanceNote> {
@@ -141,7 +141,7 @@ public class InstanceNote implements Serializable, Jsonable, Comparable<Instance
     public String getJsonName() { return "Note"; }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("id", getId());
         json.put("name", getNoteName());
         json.put("details", getNoteDetails());

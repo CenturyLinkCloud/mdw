@@ -18,8 +18,8 @@ package com.centurylink.mdw.model.request;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceCount;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceCount;
+import com.centurylink.mdw.model.Jsonable;
 
 public class RequestCount implements InstanceCount, Jsonable {
 
@@ -46,7 +46,7 @@ public class RequestCount implements InstanceCount, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("count", count);
         if (type != null)
             json.put("type", type);

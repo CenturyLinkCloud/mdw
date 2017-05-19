@@ -23,7 +23,7 @@ import javax.el.ValueExpression;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.JsonUtil;
 import com.sun.el.ValueExpressionLiteral;
@@ -117,7 +117,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("activity", getActivity().getJson());
         json.put("activityInstance", getActivityInstance().getJson());
         json.put("process", getPackage().getName() + "/" + getProcess().getName());

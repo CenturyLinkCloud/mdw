@@ -35,7 +35,8 @@ import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
 import com.centurylink.mdw.bpm.PropertyDocument.Property;
 import com.centurylink.mdw.bpm.PropertyGroupDocument.PropertyGroup;
 import com.centurylink.mdw.cloud.CloudClassLoader;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.java.CompiledJavaCache;
@@ -383,7 +384,7 @@ public class Package implements Serializable, Jsonable {
             return null;
         List<Attribute> metaAttributes = new ArrayList<Attribute>();
         if (metaContent.trim().startsWith("{")) {
-            Package metaPkg = new Package(new JSONObject(metaContent));
+            Package metaPkg = new Package(new JsonObject(metaContent));
             return metaPkg.getAttributes();
         }
         else {
@@ -631,7 +632,7 @@ public class Package implements Serializable, Jsonable {
     }
 
     public JSONObject getJson(boolean deep) throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("version", getVersionString());
         json.put("schemaVersion", Asset.formatVersion(getSchemaVersion()));
         if (group != null)
@@ -642,31 +643,31 @@ public class Package implements Serializable, Jsonable {
         if (deep) {
             // name is not included since it's the JSON name.
             if (implementors != null && !implementors.isEmpty()) {
-                JSONObject implementorsJson = new JSONObject();
+                JSONObject implementorsJson = create();
                 for (ActivityImplementor implementor : implementors)
                     implementorsJson.put(implementor.getJsonName(), implementor.getJson());
                 json.put("activityImplementors", implementorsJson);
             }
             if (externalEvents != null && !externalEvents.isEmpty()) {
-                JSONObject eventHandlersJson = new JSONObject();
+                JSONObject eventHandlersJson = create();
                 for (ExternalEvent eventHandler : externalEvents)
                     eventHandlersJson.put(eventHandler.getJsonName(), eventHandler.getJson());
                 json.put("eventHandlers", eventHandlersJson);
             }
             if (processes != null && !processes.isEmpty()) {
-                JSONObject processesJson = new JSONObject();
+                JSONObject processesJson = create();
                 for (Process process : processes)
                     processesJson.put(process.getJsonName(), process.getJson());
                 json.put("processes", processesJson);
             }
             if (assets != null && !assets.isEmpty()) {
-                JSONObject assetsJson = new JSONObject();
+                JSONObject assetsJson = create();
                 for (Asset asset : assets)
                     assetsJson.put(asset.getJsonName(), asset.getJson());
                 json.put("assets", assetsJson);
             }
             if (taskTemplates != null && !taskTemplates.isEmpty()) {
-                JSONObject taskTemplatesJson = new JSONObject();
+                JSONObject taskTemplatesJson = create();
                 for (TaskTemplate taskTemplate : taskTemplates)
                     taskTemplatesJson.put(taskTemplate.getJsonName(), taskTemplate.getJson());
                 json.put("taskTemplates", taskTemplatesJson);

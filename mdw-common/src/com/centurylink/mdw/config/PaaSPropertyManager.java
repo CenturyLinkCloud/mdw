@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.MiniEncrypter;
 
@@ -40,7 +41,7 @@ public class PaaSPropertyManager extends PropertyManager {
         setStringProperty("mdw.asset.location", System.getenv("MDW_ASSET_LOCATION")); // default value
         String mdwProperties = System.getenv("mdw_properties");
         try {
-            JSONObject json = new JSONObject(mdwProperties);
+            JSONObject json = new JsonObject(mdwProperties);
             Iterator<?> keys = json.keys();
             while (keys.hasNext()) {
                 String key = keys.next().toString();

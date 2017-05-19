@@ -40,6 +40,7 @@ import com.centurylink.mdw.event.EventHandlerErrorResponse;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.EventHandlerRegistry;
 import com.centurylink.mdw.event.UnparseableMessageException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -458,8 +459,8 @@ public class ListenerHelper {
     }
 
     private JSONObject createRequestMetaDocument(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId) throws EventHandlerException, JSONException{
-        JSONObject meta = new JSONObject();
-        JSONObject headers = new JSONObject();
+        JSONObject meta = new JsonObject();
+        JSONObject headers = new JsonObject();
 
         for (String key : metaInfo.keySet()) {
             if (Listener.AUTHENTICATED_USER_HEADER.equals(key) ||
@@ -488,8 +489,8 @@ public class ListenerHelper {
     }
 
     private JSONObject createResponseMetaDocument(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId) throws EventHandlerException, JSONException{
-        JSONObject meta = new JSONObject();
-        JSONObject headers = new JSONObject();
+        JSONObject meta = new JsonObject();
+        JSONObject headers = new JsonObject();
 
         for (String key : metaInfo.keySet()) {
             if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)
@@ -602,7 +603,7 @@ public class ListenerHelper {
         Object msgdoc = null;
         if (jsonMessage) {
             try {
-                msgdoc = new JSONObject(request);
+                msgdoc = new JsonObject(request);
             }
             catch (JSONException e) {
                 // Just log

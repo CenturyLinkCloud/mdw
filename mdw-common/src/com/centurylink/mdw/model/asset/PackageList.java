@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 
 import io.swagger.annotations.ApiModel;
@@ -70,7 +70,7 @@ public class PackageList implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject pkgs = new JSONObject();
+        JSONObject pkgs = create();
         pkgs.put("serverInstance", serverInstance);
         pkgs.put("assetRoot", assetRoot.toString().replace('\\', '/'));
         if (vcsRoot != null)
@@ -84,7 +84,7 @@ public class PackageList implements Jsonable {
         JSONArray pkgArray = new JSONArray();
         if (packageDirs != null) {
             for (PackageDir pkgDir : packageDirs) {
-                JSONObject pkg = new JSONObject();
+                JSONObject pkg = create();
                 pkg.put("id", pkgDir.getId());
                 pkg.put("name", pkgDir.getPackageName());
                 pkg.put("version", pkgDir.getPackageVersion());

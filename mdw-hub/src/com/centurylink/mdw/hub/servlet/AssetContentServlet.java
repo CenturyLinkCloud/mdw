@@ -52,6 +52,7 @@ import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -266,7 +267,7 @@ public class AssetContentServlet extends HttpServlet {
                     int ver = asset.getVersion();
 
                     if (asset instanceof Process) {
-                        asset = new Process(new JSONObject(new String(content)));
+                        asset = new Process(new JsonObject(new String(content)));
                         asset.setName(assetName.substring(0, assetName.length() - 5));
                         asset.setPackageName(pkgName);
                     }
@@ -357,7 +358,7 @@ public class AssetContentServlet extends HttpServlet {
                     response = httpHelper.deleteBytes(requestContent);
                 else
                     throw new UnsupportedOperationException(method);
-                JSONObject jsonObject = new JSONObject(new String(response));
+                JSONObject jsonObject = new JsonObject(new String(response));
                 JSONObject status = jsonObject.getJSONObject("status");
                 int code = status.getInt("code");
                 String message = status.getString("message");

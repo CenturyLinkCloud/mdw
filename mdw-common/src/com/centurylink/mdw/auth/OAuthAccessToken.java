@@ -21,7 +21,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
 
 public class OAuthAccessToken implements Jsonable {
@@ -84,7 +84,7 @@ public class OAuthAccessToken implements Jsonable {
         if (token == null)
             return null;
 
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("token", token);
         if (type != null)
             json.put("type", type);

@@ -29,7 +29,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.ParseException;
 import com.centurylink.mdw.util.StringHelper;
 
@@ -269,7 +269,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (id != null)
           json.put("id", id);
         json.put("name", (action.equals(Action.Other) ? extendedAction : action));
@@ -281,7 +281,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         json.put("source", source);
         if (destination != null)
           json.put("destination", destination);
-        JSONObject entityJson = new JSONObject();
+        JSONObject entityJson = create();
         if (entityId != null)
           entityJson.put("id", entityId);
         entityJson.put("name", entity);
@@ -290,7 +290,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
     }
 
     public JSONObject getHistoryJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (id != null)
           json.put("id", id);
         json.put("name", (action.equals(Action.Other) ? extendedAction : action));

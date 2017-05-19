@@ -27,7 +27,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.MiniEncrypter;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -745,7 +745,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
      * JSON name = getName(), so not included.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("version", getVersionString());
         if (isBinary()) {
             if (excludedFromMemoryCache(getName())) {

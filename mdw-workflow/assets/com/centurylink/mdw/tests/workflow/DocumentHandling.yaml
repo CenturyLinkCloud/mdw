@@ -47,17 +47,17 @@ process: # 10158
     name: changedJson
     value: |
       {"house": {
-        "address": "100 Elm Street",
         "rooms": [
           {
-            "floor": "second",
-            "name": "bedroom"
+            "name": "bedroom",
+            "floor": "second"
           },
           {
-            "floor": "first",
-            "name": "kitchen"
+            "name": "kitchen",
+            "floor": "first"
           }
-        ]
+        ],
+        "address": "100 Elm Street"
       }}
   variable: # 10479
     name: changedStringDoc
@@ -110,17 +110,17 @@ process: # 10158
     name: unchangedJson
     value: |
       {"house": {
-        "address": "100 Elm Street",
         "rooms": [
           {
-            "floor": "second",
-            "name": "bedroom"
+            "name": "bedroom",
+            "floor": "second"
           },
           {
-            "floor": "first",
-            "name": "kitchen"
+            "name": "kitchen",
+            "floor": "first"
           }
-        ]
+        ],
+        "address": "100 Elm Street"
       }}
   variable: # 10473
     name: unchangedXmlBean
@@ -193,21 +193,21 @@ process: # 10157
     name: changedJson
     value: |
       {"house": {
-        "address": "100 Elm Street",
         "rooms": [
           {
-            "floor": "second",
-            "name": "bedroom"
+            "name": "bedroom",
+            "floor": "second"
           },
           {
-            "floor": "first",
-            "name": "kitchen"
+            "name": "kitchen",
+            "floor": "first"
           },
           {
-            "floor": "second",
-            "name": "bathroom"
+            "name": "bathroom",
+            "floor": "second"
           }
-        ]
+        ],
+        "address": "100 Elm Street"
       }}
   variable: # 10463
     name: changedStringDoc
@@ -264,17 +264,17 @@ process: # 10157
     name: unchangedJson
     value: |
       {"house": {
-        "address": "100 Elm Street",
         "rooms": [
           {
-            "floor": "second",
-            "name": "bedroom"
+            "name": "bedroom",
+            "floor": "second"
           },
           {
-            "floor": "first",
-            "name": "kitchen"
+            "name": "kitchen",
+            "floor": "first"
           }
-        ]
+        ],
+        "address": "100 Elm Street"
       }}
   variable: # 10457
     name: unchangedXmlBean

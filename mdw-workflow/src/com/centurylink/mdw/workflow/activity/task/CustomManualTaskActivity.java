@@ -23,6 +23,7 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -256,7 +257,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
 
     protected void broadcastResponse(String message, String correlationId)
             throws JSONException, ProcessException {
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         json.put("ACTION", "NOTIFY");
         json.put("CORRELATION_ID", correlationId);
         json.put("MESSAGE", message);

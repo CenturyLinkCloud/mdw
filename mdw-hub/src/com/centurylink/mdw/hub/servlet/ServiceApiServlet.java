@@ -24,9 +24,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
 import com.centurylink.mdw.hub.service.SwaggerReader;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.service.api.MdwScanner;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -93,9 +92,9 @@ public class ServiceApiServlet extends HttpServlet {
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");
                     if (scanner.getPrettyPrint())
-                        response.getWriter().println(new JSONObject(Json.mapper().writeValueAsString(swagger)).toString(2));
+                        response.getWriter().println(new JsonObject(Json.mapper().writeValueAsString(swagger)).toString(2));
                     else
-                        response.getWriter().println(new JSONObject(Json.mapper().writeValueAsString(swagger)).toString());
+                        response.getWriter().println(new JsonObject(Json.mapper().writeValueAsString(swagger)).toString());
                 }
                 else if (ext.equals(YAML_EXT)) {
                     response.setContentType("text/yaml");

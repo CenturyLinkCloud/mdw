@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
 
 import io.swagger.annotations.ApiModel;
@@ -135,7 +135,7 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
 
     @ApiModelProperty(hidden=true)
     public JSONObject getJson() throws JSONException {
-        JSONObject status = new JSONObject();
+        JSONObject status = create();
         Integer code = getCode();
         if (code != null)
             status.put("code", code.intValue());
@@ -145,7 +145,7 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
         String requestId = getRequestId();
         if (requestId != null)
             status.put("requestId", requestId);
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("status", status);
         return json;
     }
@@ -166,9 +166,4 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
     public String toXml() {
         return getXml();
     }
-
-    public String toJson() {
-        return "{\n  \"status\": {\n    \"code\": " + getCode() + ",\n    \"message\": \"" + getMessage() + "\"\n  }\n}";
-    }
-
 }

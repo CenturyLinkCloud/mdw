@@ -23,7 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Dynamic Java workflow asset.
@@ -75,7 +76,7 @@ public class ValidationResult implements Jsonable {
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         if (validationMessages != null) {
             JSONArray jsonArr = new JSONArray();
             for (ValidationMessage message : validationMessages)

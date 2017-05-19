@@ -1,4 +1,3 @@
-#Thu Mar 23 17:52:37 MDT 2017
 A\ Custom\ Task.task=1
 An\ AutoForm\ Task.task=1
 Another\ Custom\ Task.task=1
@@ -44,7 +43,7 @@ TaskResumeLocal.proc=3
 TaskResumeLocal.test=2
 TaskResumeLocal.yaml=1
 TaskValuesService.test=2
-TaskValuesService.yaml=1
+TaskValuesService.yaml=2
 autoform\ task\ for\ local\ resume.task=1
 custom\ task\ for\ local\ resume.task=1
 masterTaskForSubtasks.task=3
@@ -53,8 +52,8 @@ subtaskB.task=1
 task-index-custom-jaxb.xml=1
 task-index-provider-jaxb.xml=1
 task-values-json-1.json=6
-task-values-json-2.json=6
-task-values-json-3.json=4
+task-values-json-2.json=7
+task-values-json-3.json=5
 task-values-json-4.json=1
 taskContext.spring=1
 taskJaxb.xsd=1

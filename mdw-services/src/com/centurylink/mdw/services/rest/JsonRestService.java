@@ -29,11 +29,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.JsonExport;
-import com.centurylink.mdw.common.service.JsonExportable;
 import com.centurylink.mdw.common.service.JsonService;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonExport;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.util.HttpHelper;
@@ -60,8 +62,8 @@ public abstract class JsonRestService extends RestService implements JsonService
             }
             if (response == null)
                 return null;
-            else if (response.has(Jsonable.GENERIC_ARRAY))
-                return response.getJSONArray(Jsonable.GENERIC_ARRAY).toString(2);
+            else if (response.has(JsonArray.GENERIC_ARRAY))
+                return response.getJSONArray(JsonArray.GENERIC_ARRAY).toString(2);
             else
                 return response.toString(2);
         }
@@ -147,7 +149,7 @@ public abstract class JsonRestService extends RestService implements JsonService
 
     protected JSONObject masterServerGet(String path) throws ServiceException, JSONException {
         try {
-            return new JSONObject(masterOpHelper(path).get());
+            return new JsonObject(masterOpHelper(path).get());
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -156,7 +158,7 @@ public abstract class JsonRestService extends RestService implements JsonService
 
     protected JSONObject masterServerPost(String path, JSONObject json) throws ServiceException, JSONException {
         try {
-            return new JSONObject(masterOpHelper(path).post(json.toString(2)));
+            return new JsonObject(masterOpHelper(path).post(json.toString(2)));
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -172,7 +174,7 @@ public abstract class JsonRestService extends RestService implements JsonService
 
     protected JSONObject masterServerPut(String path, JSONObject json) throws ServiceException, JSONException {
         try {
-            return new JSONObject(masterOpHelper(path).put(json.toString(2)));
+            return new JsonObject(masterOpHelper(path).put(json.toString(2)));
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -182,7 +184,7 @@ public abstract class JsonRestService extends RestService implements JsonService
     @Override
     protected void validateResponse(String response) throws ServiceException {
         try {
-            JSONObject jsonObject = new JSONObject(response);
+            JSONObject jsonObject = new JsonObject(response);
             JSONObject status = jsonObject.getJSONObject("status");
             int code = status.getInt("code");
             String message = status.getString("message");

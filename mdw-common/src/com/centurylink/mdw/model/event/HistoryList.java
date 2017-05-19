@@ -23,8 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceList;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.util.StringHelper;
 
@@ -44,7 +45,7 @@ public class HistoryList implements Jsonable, InstanceList<UserAction>
 
   public HistoryList(String name, String json) throws JSONException {
       this.name = name;
-      JSONObject jsonObj = new JSONObject(json);
+      JSONObject jsonObj = new JsonObject(json);
       if (jsonObj.has("retrieveDate"))
           retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
       if (jsonObj.has("count"))
@@ -87,7 +88,7 @@ public class HistoryList implements Jsonable, InstanceList<UserAction>
   }
 
   public JSONObject getJson() throws JSONException {
-      JSONObject json = new JSONObject();
+      JSONObject json = create();
       json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
       json.put("count", count);
       JSONArray array = new JSONArray();

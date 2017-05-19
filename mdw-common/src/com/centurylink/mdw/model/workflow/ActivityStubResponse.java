@@ -20,7 +20,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.util.JsonUtil;
 
@@ -61,7 +61,7 @@ public class ActivityStubResponse extends Response implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (resultCode != null)
             json.put("resultCode", resultCode);
         if (delay > 0)

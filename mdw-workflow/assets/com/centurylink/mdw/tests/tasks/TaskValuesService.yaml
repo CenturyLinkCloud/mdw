@@ -35,8 +35,8 @@ process: # 15429
         "objOne": {
           "obj1Date": "Thu Sep 01 13:52:01 MDT 2016",
           "obj1bool": true,
-          "obj1int": 12345,
-          "obj1string": "obj1stringval"
+          "obj1string": "obj1stringval",
+          "obj1int": 12345
         },
         "objTwo": {"obj2string": "obj2stringval"},
         "stringProp": "stringProp"

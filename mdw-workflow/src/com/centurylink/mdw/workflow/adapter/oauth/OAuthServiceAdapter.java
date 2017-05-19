@@ -146,7 +146,7 @@ public class OAuthServiceAdapter extends AdapterActivityBase {
             }
             Map<String, String> users = new HashMap<String, String>();
             if (resourceResponse != null && resourceResponse.getBody() != null) {
-                JSONObject json = new JSONObject(resourceResponse.getBody());
+                JSONObject json = new JsonObject(resourceResponse.getBody());
                 if (logger.isDebugEnabled()) {
                     logger.debug("OAuthAdapter - Number of users :" + json.getString("total_results"));
                 }

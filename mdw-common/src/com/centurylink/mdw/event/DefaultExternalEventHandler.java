@@ -25,10 +25,12 @@ import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import com.centurylink.mdw.model.JsonObject;
 
 public class DefaultExternalEventHandler implements ExternalEventHandler, PackageAware, RegisteredService, ExternalEventHandlerErrorResponse {
 
@@ -93,7 +95,7 @@ public class DefaultExternalEventHandler implements ExternalEventHandler, Packag
     }
 
     public String createStandardResponseJson(int statusCode, String statusMessage, String requestId) {
-        JSONObject responseObj = new JSONObject();
+        JSONObject responseObj = new JsonObject();
         String response;
         try {
             responseObj.put("StatusCode", statusCode);

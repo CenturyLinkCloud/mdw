@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.common.service;
+package com.centurylink.mdw.model;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.JSONObject;
 
 /**
- * Jsonable that just holds a raw JSONObject to avoid reserializing.
- *
+ * Extends org.json.JSONObject to offer predictable ordering of object keys.
+ * This is especially useful for comparing expected versus actual stringified JSON results
+ * (for either automated or eyeball comparisons).
  */
-public class RawJson implements Jsonable {
+public class JsonObject extends JSONObject {
 
-    private JSONObject json;
-    public JSONObject getJson() { return json; }
-
-    public RawJson(JSONObject json) {
-        this.json = json;
+    public JsonObject() {
     }
 
-    public String getJsonName() {
-        return null;
+    public JsonObject(String source) {
+        super(source);
+    }
+
+    public Set<String> keySet() {
+        return new TreeSet<String>(super.keySet());
     }
 }

@@ -30,13 +30,15 @@ import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.JsonUtil;
 
+import com.centurylink.mdw.model.JsonObject;
+
 /**
  * TODO: Import/Export override attributes.
  */
 public class ImporterExporterJson {
 
     public List<Package> importPackages(String packagesContent) throws JSONException {
-        JSONObject packagesJson = new JSONObject(packagesContent).getJSONObject("packages");
+        JSONObject packagesJson = new JsonObject(packagesContent).getJSONObject("packages");
         List<Package> packages = new ArrayList<Package>();
         Map<String,JSONObject> pkgObjects = JsonUtil.getJsonObjects(packagesJson);
         for (String pkgName : pkgObjects.keySet()) {
@@ -49,7 +51,7 @@ public class ImporterExporterJson {
     }
 
     public String exportPackages(List<Package> packages) throws JSONException, XmlException {
-        JSONObject packagesJson = new JSONObject();
+        JSONObject packagesJson = new JsonObject();
         for (Package pkg : packages) {
             JSONObject pkgJson = pkg.getJson();
             List<Attribute> metaAttributes = pkg.getMetaAttributes();
@@ -57,7 +59,7 @@ public class ImporterExporterJson {
                 pkgJson.put("attributes", JsonUtil.getAttributesJson(metaAttributes, true));
             packagesJson.put(pkg.getJsonName(), pkgJson);
         }
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         json.put("packages", packagesJson);
         return json.toString(2);
     }

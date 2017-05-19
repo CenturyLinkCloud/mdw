@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class VariableType implements Serializable, Jsonable {
 
@@ -113,7 +113,7 @@ public class VariableType implements Serializable, Jsonable {
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("name", variableType);
         json.put("id", variableTypeId);
         json.put("translator", translatorClass);

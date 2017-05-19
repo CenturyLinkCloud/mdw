@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -86,9 +86,14 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
             JSONArray usrs = json.getJSONArray("users");
             users = new User[usrs.length()];
             for (int i = 0; i < usrs.length(); i++) {
-                String usr = usrs.getString(i);
-                users[i] = new User();
-                users[i].setCuid(usr);
+                Object usr = usrs.get(i);
+                if (usr instanceof String) {
+                    users[i] = new User();
+                    users[i].setCuid((String)usr);
+                }
+                else if (usr instanceof JSONObject) {
+                    users[i] = new User((JSONObject)usr);
+                }
             }
         }
         else {
@@ -204,7 +209,7 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("name", name);
         if (parentGroup != null)
             json.put("parent", parentGroup);

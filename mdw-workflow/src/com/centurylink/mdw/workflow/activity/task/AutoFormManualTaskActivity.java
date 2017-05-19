@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -177,7 +178,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
         if (messageString.startsWith("{")) {
             JSONObject jsonobj;
             try {
-                jsonobj = new JSONObject(messageString);
+                jsonobj = new JsonObject(messageString);
                 JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
                 if (meta==null || !meta.has(TaskAttributeConstant.TASK_ACTION)) return false;
                 String action = meta.getString(TaskAttributeConstant.TASK_ACTION);
@@ -193,7 +194,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
 
     protected void processTaskAction(String messageString) throws ActivityException {
         try {
-            JSONObject datadoc = new JSONObject(messageString);
+            JSONObject datadoc = new JsonObject(messageString);
             String compCode = extractFormData(datadoc); // this handles both embedded proc and not
             datadoc = datadoc.getJSONObject("META");
             String action = datadoc.getString(TaskAttributeConstant.TASK_ACTION);

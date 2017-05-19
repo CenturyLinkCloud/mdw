@@ -20,7 +20,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class TestExecConfig implements Jsonable {
 
@@ -115,7 +115,7 @@ public class TestExecConfig implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (threads > 0)
             json.put("threads", threads);
         if (interval > 0)
