@@ -1,0 +1,2 @@
+# variable types compatibility
+com.centurylink.mdw.common.service=com.centurylink.mdw.model.Jsonable

@@ -31,6 +31,7 @@ import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.EventManager;
@@ -362,7 +363,7 @@ public class AdapterConnectionPool
 
     public void broadcastPoolStatus(String status) {
         try {
-            JSONObject json = new JSONObject();
+            JSONObject json = new JsonObject();
             json.put("ACTION", "ADAPTER_POOL_STATUS");
             json.put("POOL_NAME", getName());
             json.put("STATUS", status);

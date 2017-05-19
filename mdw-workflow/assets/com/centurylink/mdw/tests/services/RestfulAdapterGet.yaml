@@ -22,7 +22,7 @@ process: # 10229
   variable: # 10491
     name: responseDoc
     value: |
-      {"ser:ApplicationSummary": {
+      {"ApplicationSummary": {
         "ApplicationName": "${~mdw.*}",
         "Container": "Tomcat",
         "Database": "MySQL",
@@ -40,6 +40,5 @@ process: # 10229
           "url": "${~http.*}"
         },
         "ServicesUrl": "${~http.*}",
-        "Version": "Unknown",
-        "xmlns:ser": "http://mdw.centurylink.com/services"
+        "Version": "Unknown"
       }}

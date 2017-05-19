@@ -37,6 +37,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.Event;
@@ -121,7 +122,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 run.setValues(values);
             }
             String response = httpHelper.post(run.getJson().toString(2));
-            run = new ProcessRun(new JSONObject(response));
+            run = new ProcessRun(new JsonObject(response));
             if (run.getInstanceId() == null)
                 throw new TestException("Failed to start " + process.getLabel());
             else
@@ -146,7 +147,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             query.setFilter("app", "autotest");
             HttpHelper httpHelper = getHttpHelper("GET", "services/Processes?" + query);
             String response = httpHelper.get();
-            ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response));
+            ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JsonObject(response));
             List<ProcessInstance> processInstances = processList.getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
@@ -163,7 +164,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             }
             for (ProcessInstance procInst : processInstances) {
                 httpHelper = getHttpHelper("GET", "services/Processes/" + procInst.getId() + "?app=autotest");
-                procInst = new ProcessInstance(new JSONObject(httpHelper.get()));
+                procInst = new ProcessInstance(new JsonObject(httpHelper.get()));
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
                 if (procInsts == null)
@@ -179,10 +180,10 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                     q.setFilter("app", "autotest");
                     httpHelper = getHttpHelper("GET", "services/Processes?" + q);
                     response = httpHelper.get();
-                    embeddedProcInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JSONObject(response)).getProcesses();
+                    embeddedProcInstList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JsonObject(response)).getProcesses();
                     for (ProcessInstance embeddedProcInst : embeddedProcInstList) {
                         httpHelper = getHttpHelper("GET", "services/Processes/" + embeddedProcInst.getId() + "?app=autotest");
-                        ProcessInstance fullChildInfo = new ProcessInstance(new JSONObject(httpHelper.get()));
+                        ProcessInstance fullChildInfo = new ProcessInstance(new JsonObject(httpHelper.get()));
                         String childProcName = "unknown_subproc_name";
                         for (Process subproc : proc.getSubProcesses()) {
                             if (subproc.getProcessId().toString().equals(embeddedProcInst.getComment())) {
@@ -236,7 +237,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         if (val != null && val.startsWith("DOCUMENT:")) {
             try {
                 HttpHelper httpHelper = getHttpHelper("GET", "services/Processes/" + var.getProcessInstanceId() + "/values/" + var.getName());
-                Value value = new Value(var.getName(), new JSONObject(httpHelper.get()));
+                Value value = new Value(var.getName(), new JsonObject(httpHelper.get()));
                 return value.getValue();
             }
             catch (Exception ex) {
@@ -255,7 +256,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 Query query = getProcessQuery(target);
                 HttpHelper httpHelper = getHttpHelper("GET", "services/Workflow/" + query);
                 String response = httpHelper.get();
-                JSONObject json = new JSONObject(response);
+                JSONObject json = new JsonObject(response);
                 process = new Process(json);
                 if (json.has("id"))
                     process.setId(json.getLong("id"));
@@ -284,7 +285,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             Query query = getTaskQuery(task.getName());
             HttpHelper httpHelper = getHttpHelper("GET", "services/Tasks/" + query);
             String response = httpHelper.get();
-            TaskList taskList = new TaskList(TaskList.TASKS, new JSONObject(response));
+            TaskList taskList = new TaskList(TaskList.TASKS, new JsonObject(response));
             List<TaskInstance> taskInstances = taskList.getTasks();
             if (taskInstances.isEmpty())
                 throw new TestException("Cannot find task instances: " + query);
@@ -297,18 +298,18 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             taskAction.setUser(getUser());
             taskAction.setTaskInstanceId(task.getId());
             if (task.getVariables() != null) {
-                JSONObject valuesJson = new JSONObject();
+                JSONObject valuesJson = new JsonObject();
                 for (String name : task.getVariables().keySet())
                     valuesJson.put(name, task.getVariables().get(name).toString());
                 httpHelper = getHttpHelper("PUT", "services/Processes/" + taskInstance.getOwnerId() + "/values?app=autotest");
                 response = httpHelper.put(valuesJson.toString(2));
-                StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
+                StatusMessage statusMsg = new StatusMessage(new JsonObject(response));
                 if (!statusMsg.isSuccess())
                     throw new TestException("Error updating task values: " + statusMsg.getMessage());
             }
             httpHelper = getHttpHelper("POST", "services/Tasks/" + task.getOutcome() + "?app=autotest");
             response = httpHelper.post(taskAction.getJson().toString(2));
-            StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
+            StatusMessage statusMsg = new StatusMessage(new JsonObject(response));
             if (!statusMsg.isSuccess())
                 throw new TestException("Error actioning task: " + task.getId() + ": " + statusMsg.getMessage());
         }
@@ -331,7 +332,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             evt.setMessage(event.getMessage());
             HttpHelper httpHelper = getHttpHelper("POST", "services/Events/" + event.getId() + "?app=autotest");
             String response = httpHelper.post(evt.getJson().toString(2));
-            StatusMessage statusMsg = new StatusMessage(new JSONObject(response));
+            StatusMessage statusMsg = new StatusMessage(new JsonObject(response));
             if (!statusMsg.isSuccess())
                 throw new TestException("Error notifying event: " + statusMsg.getMessage());
         }

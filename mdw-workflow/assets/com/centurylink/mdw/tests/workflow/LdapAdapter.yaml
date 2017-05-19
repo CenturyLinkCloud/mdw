@@ -50,10 +50,10 @@ process: # 10463
     value: Oakes
   variable: # 11232
     name: matchingCuids
-    value: ["dxoakes","ab64507"]
+    value: ["dxoakes"]
   variable: # 11233
     name: matchingMnetIds
-    value: [420104,376174]
+    value: [420104]
   variable: # 11229
     name: mnetId
     value: 420104

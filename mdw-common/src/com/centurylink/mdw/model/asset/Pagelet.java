@@ -34,7 +34,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.JsonUtil;
 
 public class Pagelet implements Jsonable {
@@ -235,7 +235,7 @@ public class Pagelet implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         JSONObject attrsJson = JsonUtil.getJson(attributes);
         if (attrsJson != null)
             json.put("attributes", attrsJson);
@@ -332,7 +332,7 @@ public class Pagelet implements Jsonable {
         }
 
         public JSONObject getJson() throws JSONException {
-            JSONObject json = new JSONObject();
+            JSONObject json = create();
             json.put("name", name);
             json.put("type", type);
 

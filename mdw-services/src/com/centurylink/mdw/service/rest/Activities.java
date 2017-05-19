@@ -27,13 +27,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonArray;
-import com.centurylink.mdw.common.service.JsonExportable;
-import com.centurylink.mdw.common.service.JsonListMap;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -91,7 +91,7 @@ public class Activities extends JsonRestService implements JsonExportable {
                     for (ActivityInstance activityInstance : activityVOs.getActivities()) {
                         jsonActivities.put(activityInstance.getJson());
                     }
-                    //return new JsonArray(jsonActivities).getJson();
+                    //return new JsonArray(jsonActivities).toJson();
                     return activityVOs.getJson();
                 }
 

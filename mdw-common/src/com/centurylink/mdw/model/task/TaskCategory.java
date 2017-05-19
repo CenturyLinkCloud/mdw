@@ -18,7 +18,7 @@ package com.centurylink.mdw.model.task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Category;
 
 public class TaskCategory extends Category implements Jsonable, Comparable<TaskCategory> {
@@ -36,7 +36,7 @@ public class TaskCategory extends Category implements Jsonable, Comparable<TaskC
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("id", getId());
         json.put("code", getCode());
         json.put("name", getName());

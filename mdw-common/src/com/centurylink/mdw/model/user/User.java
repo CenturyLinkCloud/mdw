@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -309,7 +309,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         // json.put("id", getCuid());
         json.put("cuid", getCuid());
         json.put("name", getName());
@@ -321,7 +321,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
             json.put("workgroups", grpsJson);
         }
         if (attributes != null) {
-            JSONObject attrsJson = new JSONObject();
+            JSONObject attrsJson = create();
             for (String attr : attributes.keySet()) {
                 String value = attributes.get(attr);
                 attrsJson.put(attr, value == null ? "" : value);

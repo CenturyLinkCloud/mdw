@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.util.StringHelper;
@@ -188,7 +188,7 @@ public class Solution implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("id", id);
         if (name != null)
             json.put("name", name);
@@ -203,7 +203,7 @@ public class Solution implements Jsonable {
         if (description != null)
             json.put("description", description);
         if (members != null) {
-            JSONObject membersJson = new JSONObject();
+            JSONObject membersJson = create();
             for (MemberType memberType : members.keySet()) {
                 List<Jsonable> memberList = members.get(memberType);
                 JSONArray membersArray = new JSONArray();
@@ -214,7 +214,7 @@ public class Solution implements Jsonable {
             json.put("members", membersJson);
         }
         if (values != null) {
-            JSONObject valuesJson = new JSONObject();
+            JSONObject valuesJson = create();
             for (String name : values.keySet()) {
                 String value = values.get(name);
                 valuesJson.put(name, value == null ? "" : value);

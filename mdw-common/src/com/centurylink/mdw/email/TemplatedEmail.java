@@ -64,6 +64,7 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.email.Template.Format;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
@@ -330,14 +331,14 @@ public class TemplatedEmail {
     }
 
     public JSONObject buildEmailJson() throws MessagingException {
-        JSONObject jsonobj = new JSONObject();
+        JSONObject jsonobj = new JsonObject();
         try {
             jsonobj.put("FROM", fromAddress);
             jsonobj.put("SUBJECT", substitute(subject));
             jsonobj.put("ISHTML", html?"true":"false");
             jsonobj.put("CONTENT", getBody());
             if (!images.isEmpty()) {
-                JSONObject imagesObj = new JSONObject();
+                JSONObject imagesObj = new JsonObject();
                 jsonobj.put("IMAGES", imagesObj);
                 for (String imageId : images.keySet()) {
                     String imageFile = images.get(imageId);

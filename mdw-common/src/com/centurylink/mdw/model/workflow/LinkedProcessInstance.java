@@ -22,7 +22,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Represents a process instance in a hierarchical structure of called/calling processes.
@@ -30,7 +31,7 @@ import com.centurylink.mdw.common.service.Jsonable;
 public class LinkedProcessInstance implements Jsonable {
 
     public LinkedProcessInstance(String json) throws JSONException {
-        this(new JSONObject(json));
+        this(new JsonObject(json));
     }
 
     public LinkedProcessInstance(JSONObject jsonObj) throws JSONException {
@@ -64,7 +65,7 @@ public class LinkedProcessInstance implements Jsonable {
      * Includes children (not parent).
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("processInstance", processInstance.getJson());
         if (!children.isEmpty()) {
             JSONArray childrenArr = new JSONArray();

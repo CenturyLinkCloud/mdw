@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -95,7 +96,7 @@ public class Workflow extends JsonRestService {
                     process = ProcessCache.getProcess(segments[1] + "/" + segments[2], Asset.parseVersion(segments[3]));
                 else
                     process = ProcessCache.getProcess(segments[1] + "/" + segments[2], 0);
-                JSONObject json = new JSONObject();
+                JSONObject json = new JsonObject();
                 json.put("id", process.getId());
                 json.put("name", process.getName());
                 json.put("package", process.getPackageName());

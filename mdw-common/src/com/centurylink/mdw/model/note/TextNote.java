@@ -22,7 +22,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.JsonUtil;
@@ -105,7 +105,7 @@ public class TextNote implements Serializable, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("id", getLogicalId());
         json.put("content", content);
         if (attributes != null && !attributes.isEmpty())

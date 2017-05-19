@@ -18,7 +18,7 @@ package com.centurylink.mdw.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class Response implements Jsonable {
 
@@ -66,7 +66,7 @@ public class Response implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (content != null)
             json.put("content", content);
         if (statusCode != null)

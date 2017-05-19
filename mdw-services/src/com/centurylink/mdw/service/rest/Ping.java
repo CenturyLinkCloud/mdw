@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -61,7 +62,7 @@ public class Ping extends JsonRestService {
     throws ServiceException, JSONException {
         if (content.has("ping")) {
             JSONObject ping = content.getJSONObject("ping");
-            JSONObject pong = new JSONObject();
+            JSONObject pong = new JsonObject();
             pong.put("pong", ping);
             return pong;
         }

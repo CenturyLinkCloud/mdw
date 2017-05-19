@@ -18,8 +18,8 @@ package com.centurylink.mdw.model.workflow;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceCount;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceCount;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Aggregated process instance count for a particular definition or status.
@@ -79,7 +79,7 @@ public class ProcessCount implements InstanceCount, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("count", count);
         if (id >= 0)
             json.put("id", id);

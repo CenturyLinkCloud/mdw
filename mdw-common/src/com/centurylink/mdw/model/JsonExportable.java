@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.common.service;
+package com.centurylink.mdw.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.centurylink.mdw.common.service.Query;
 
 /**
  * Marker interface for exportable Json services.

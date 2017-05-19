@@ -15,22 +15,23 @@
  */
 package com.centurylink.mdw.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Date;
+import java.util.List;
 
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.model.Jsonable;
+import io.swagger.annotations.ApiModelProperty;
 
-public class Mdw implements Jsonable {
+public interface InstanceList<E> {
 
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = create();
-        json.put("version", ApplicationContext.getMdwVersion());
-        json.put("build", ApplicationContext.getMdwBuildTimestamp());
-        return json;
-    }
+    @ApiModelProperty(value="Retrieve date (UTC)")
+    public Date getRetrieveDate();
+    @ApiModelProperty(value="List count")
+    public int getCount();
+    @ApiModelProperty(value="Total count for paginated results")
+    public long getTotal(); // for pagination
 
-    public String getJsonName() {
-        return "mdw";
-    }
+    @ApiModelProperty(value="List items")
+    public List<? extends Jsonable> getItems();
+    @ApiModelProperty(hidden=true)
+    public int getIndex(String id);
+
 }

@@ -18,7 +18,7 @@ package com.centurylink.mdw.model.event;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Represents a workflow event notification.
@@ -50,7 +50,7 @@ public class Event implements Jsonable {
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("id", id);
         if (message != null)
             json.put("message", message);

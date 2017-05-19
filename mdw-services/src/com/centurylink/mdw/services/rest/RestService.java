@@ -34,6 +34,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
@@ -302,7 +303,7 @@ public abstract class RestService {
      */
     protected void authorizeExport(Map<String,String> headers) throws AuthorizationException {
         String path = headers.get(Listener.METAINFO_REQUEST_PATH);
-        User user = authorize(path, new JSONObject(), headers);
+        User user = authorize(path, new JsonObject(), headers);
         Action action = Action.Export;
         Entity entity = getEntity(path, null, headers);
         Long entityId = new Long(0);

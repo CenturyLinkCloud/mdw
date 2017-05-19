@@ -23,12 +23,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 
@@ -91,7 +90,7 @@ public class PackageDir extends File {
                 fis = new FileInputStream(pkgFile);
                 byte[] bytes = new byte[(int) pkgFile.length()];
                 fis.read(bytes);
-                Package pkgVo = new Package(new JSONObject(new String(bytes)));
+                Package pkgVo = new Package(new JsonObject(new String(bytes)));
                 pkgName = pkgVo.getName();
                 pkgVersion = pkgVo.getVersionString();
                 schemaVersion = Asset.formatVersion(pkgVo.getSchemaVersion());

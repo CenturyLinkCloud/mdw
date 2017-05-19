@@ -45,7 +45,6 @@ import com.centurylink.mdw.service.action.InstanceLevelActionHandler;
 import com.centurylink.mdw.service.resource.AppSummary;
 import com.centurylink.mdw.service.rest.Users;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.ResourceFormatter.Format;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
@@ -58,6 +57,12 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
     private Package pkg;
     public Package getPackage() { return pkg; }
     public void setPackage(Package pkg) { this.pkg = pkg; }
+
+    public enum Format {
+        xml,
+        json,
+        text
+    }
 
     @Override
     public Response handleEventMessage(Request req, Object requestObj, Map<String,String> metaInfo)

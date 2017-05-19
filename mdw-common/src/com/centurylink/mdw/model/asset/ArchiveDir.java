@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Read-only jsonable representing an asset archive directory.
@@ -51,7 +51,7 @@ public class ArchiveDir implements Jsonable {
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (metas != null) {
             JSONArray metaArr = new JSONArray();
             for (String meta : metas)

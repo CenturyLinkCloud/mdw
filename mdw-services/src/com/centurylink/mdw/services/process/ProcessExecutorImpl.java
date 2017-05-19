@@ -43,6 +43,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -1752,7 +1753,7 @@ class ProcessExecutorImpl {
                     ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
                     if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
                         // assuming it is a service process waiting for message
-                        JSONObject json = new JSONObject();
+                        JSONObject json = new JsonObject();
                         json.put("ACTION", "NOTIFY");
                         json.put("CORRELATION_ID", pEventName);
                         json.put("MESSAGE", message);

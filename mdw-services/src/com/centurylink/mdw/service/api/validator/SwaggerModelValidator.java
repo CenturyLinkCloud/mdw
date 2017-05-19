@@ -25,7 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.StringHelper;
 
@@ -128,7 +128,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
         return result;
     }
 
-    public ValidationResult validateModel(JSONObject originalRequest, Jsonable modelObject)
+    public ValidationResult validateModel(JSONObject originalRequest, com.centurylink.mdw.model.Jsonable modelObject)
             throws ValidationException, JSONException {
         // Get all the models
         Map<String, Model> models = ModelConverters.getInstance()

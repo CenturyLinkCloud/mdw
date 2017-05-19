@@ -33,6 +33,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.provider.CacheService;
@@ -292,7 +293,7 @@ public class ScheduledEventQueue implements CacheEnabled, CacheService {
 
     private void broadcastInvalidate(String eventName) {
         try {
-            JSONObject json = new JSONObject();
+            JSONObject json = new JsonObject();
             json.put("ACTION", "INVALIDATE_EVENT");
             json.put("EVENT_NAME", eventName);
             json.put("FROM", ApplicationContext.getServerHostPort());

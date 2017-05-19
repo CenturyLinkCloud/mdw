@@ -32,7 +32,7 @@ import com.centurylink.mdw.activity.types.ScriptActivity;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.activity.types.SynchronizationActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.variable.Variable;
 
 public class ActivityImplementor implements Serializable, Comparable<ActivityImplementor>, Jsonable {
@@ -310,7 +310,7 @@ public class ActivityImplementor implements Serializable, Comparable<ActivityImp
      * TODO: When/if implementors become full-fledged assets, we can decouple asset name from implementor class.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("implementorClass", implementorClassName);
         if (baseClassName != null)
             json.put("category", baseClassName);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.common.service;
+package com.centurylink.mdw.model;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class JsonListMap<T extends Jsonable> implements Jsonable {
 
     public JSONObject getJson() throws JSONException {
 
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         for (String key : jsonables.keySet()) {
             JSONArray jsonArr = new JSONArray();
             for (Jsonable jsonable : jsonables.get(key)) {

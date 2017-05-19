@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.common.service;
+package com.centurylink.mdw.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ import org.json.JSONObject;
  * A Jsonable that contains a generic JSON array.
  */
 public class JsonArray implements Jsonable {
+
+    public static final String GENERIC_ARRAY = "genericArray";
 
     private JSONArray array;
     public JSONArray getArray() { return array; }
@@ -49,7 +51,7 @@ public class JsonArray implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject jsonObj = new JSONObject();
+        JSONObject jsonObj = create();
         // either array or values should be populated
         if (array != null)
             jsonObj.put(getJsonName(), array);
@@ -57,6 +59,6 @@ public class JsonArray implements Jsonable {
     }
 
     public String getJsonName() {
-        return Jsonable.GENERIC_ARRAY;
+        return GENERIC_ARRAY;
     }
 }

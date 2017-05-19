@@ -61,6 +61,7 @@ public class MdwBaselineData implements BaselineData {
             variableTypes.add(new VariableType(211L, "com.centurylink.mdw.common.service.Jsonable", "com.centurylink.mdw.common.translator.impl.JsonableTranslator"));
             variableTypes.add(new VariableType(212L, "org.yaml.snakeyaml.Yaml", "com.centurylink.mdw.common.translator.impl.YamlTranslator"));
             variableTypes.add(new VariableType(213L, "java.lang.Exception", "com.centurylink.mdw.common.translator.impl.JsonableTranslator"));
+            variableTypes.add(new VariableType(214L, "com.centurylink.mdw.model.Jsonable", "com.centurylink.mdw.common.translator.impl.JsonableTranslator"));
             // requires the mdw-camel bundle installed
             variableTypes.add(new VariableType(310L, "org.apache.camel.component.cxf.CxfPayload", "com.centurylink.mdw.camel.cxf.CxfPayloadTranslator"));
         }

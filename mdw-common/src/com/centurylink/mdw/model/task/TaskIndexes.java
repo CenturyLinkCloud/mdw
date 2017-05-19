@@ -21,7 +21,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class TaskIndexes implements Jsonable {
 
@@ -65,11 +65,11 @@ public class TaskIndexes implements Jsonable {
 
     public JSONObject getJson() throws JSONException {
 
-        JSONObject taskInstance = new JSONObject();
+        JSONObject taskInstance = create();
         taskInstance.put("taskInstanceId", taskInstanceId);
 
         if (!indexes.isEmpty()) {
-            JSONObject indices = new JSONObject();
+            JSONObject indices = create();
             for (String key : indexes.keySet()) {
                 indices.put(key, indexes.get(key));
             }

@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
@@ -37,7 +38,7 @@ public class BroadcastHelper  {
     public void processBroadcastMessage(String message)
         throws JSONException, MdwException
     {
-        JSONObject json = new JSONObject(message);
+        JSONObject json = new JsonObject(message);
         String action = json.getString("ACTION");
         if (action.equals("NOTIFY")) {
             String correlationId = json.getString("CORRELATION_ID");

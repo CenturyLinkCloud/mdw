@@ -28,8 +28,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Instance;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Instance;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.types.Task;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.util.StringHelper;
@@ -116,7 +117,7 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     }
 
     public TaskInstance(String json) throws JSONException {
-        this(new JSONObject(json));
+        this(new JsonObject(json));
     }
 
     public TaskInstance(JSONObject jsonObj) throws JSONException {
@@ -187,7 +188,7 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("id", associatedTaskInstanceId == null || associatedTaskInstanceId == 0L ? taskInstanceId
                 : associatedTaskInstanceId);
         if (taskId != null)

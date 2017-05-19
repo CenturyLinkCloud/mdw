@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -1042,7 +1042,7 @@ public class Process extends Asset implements Jsonable {
      * JSON name = getName(), so not included.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (getProcessDescription() != null && !getProcessDescription().isEmpty())
           json.put("description", getProcessDescription());
         if (attributes != null && !attributes.isEmpty()) {
@@ -1087,7 +1087,7 @@ public class Process extends Asset implements Jsonable {
             json.put("textNotes", textNotesJson);
         }
         if (variables != null && !variables.isEmpty()) {
-            JSONObject variablesJson = new JSONObject();
+            JSONObject variablesJson = create();
             for (Variable variable : variables)
                 variablesJson.put(variable.getJsonName(), variable.getJson());
             json.put("variables", variablesJson);

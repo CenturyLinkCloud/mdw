@@ -26,10 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.VariableType;

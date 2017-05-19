@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.xml.DomHelper;
 
 public interface XmlDocumentTranslator extends JsonTranslator {

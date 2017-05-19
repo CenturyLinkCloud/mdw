@@ -29,15 +29,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonArray;
-import com.centurylink.mdw.common.service.JsonExportable;
-import com.centurylink.mdw.common.service.JsonListMap;
-import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonListMap;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -109,7 +110,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         else {
                             // all values
                             Map<String,Value> values = workflowServices.getProcessValues(id);
-                            JSONObject valuesJson = new JSONObject();
+                            JSONObject valuesJson = new JsonObject();
                             for (String name : values.keySet()) {
                                 valuesJson.put(name, values.get(name).getJson());
                             }
@@ -118,7 +119,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                     }
                     else if ("summary".equals(segTwo)) {
                         ProcessInstance process = workflowServices.getProcess(id, false);
-                        JSONObject summary = new JSONObject();
+                        JSONObject summary = new JsonObject();
                         summary.put("id", process.getId());
                         summary.put("name", process.getProcessName());
                         summary.put("packageName", process.getPackageName());
@@ -140,7 +141,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         List<Process> processVOs = workflowServices.getProcessDefinitions(query);
                         JSONArray jsonProcesses = new JSONArray();
                         for (Process processVO : processVOs) {
-                            JSONObject jsonProcess = new JSONObject();
+                            JSONObject jsonProcess = new JsonObject();
                             jsonProcess.put("packageName", processVO.getPackageName());
                             jsonProcess.put("processId", processVO.getId());
                             jsonProcess.put("name", processVO.getName());
@@ -219,7 +220,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 if (triggerId > 0) {
                     // retrieve instance by trigger -- just send summary
                     ProcessInstance process = workflowServices.getProcessForTrigger(triggerId);
-                    JSONObject summary = new JSONObject();
+                    JSONObject summary = new JsonObject();
                     summary.put("id", process.getId());
                     summary.put("name", process.getProcessName());
                     summary.put("packageName", process.getPackageName());

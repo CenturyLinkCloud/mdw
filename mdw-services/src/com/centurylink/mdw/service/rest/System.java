@@ -25,10 +25,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -78,7 +79,7 @@ public class System extends JsonRestService {
             }
         }
         else {
-            return new JSONObject(); // TODO
+            return new JsonObject(); // TODO
         }
     }
 

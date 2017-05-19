@@ -37,7 +37,7 @@ import com.centurylink.mdw.cache.CacheEnabled;
 import com.centurylink.mdw.cache.ExcludableCache;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
@@ -291,7 +291,7 @@ public class CacheRegistration implements StartupClass {
 
     public static void broadcastRefresh(String cacheNames, InternalMessenger messenger) {
         try {
-            JSONObject json = new JSONObject();
+            JSONObject json = new JsonObject();
             json.put("ACTION", "REFRESH_CACHES");
             if (!StringHelper.isEmpty(cacheNames)) json.put("CACHE_NAMES", cacheNames);
             messenger.broadcastMessage(json.toString());

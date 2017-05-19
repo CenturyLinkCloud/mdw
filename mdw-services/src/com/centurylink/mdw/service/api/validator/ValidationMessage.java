@@ -20,7 +20,8 @@ import java.text.ParseException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Dynamic Java workflow asset.
@@ -61,7 +62,7 @@ public class ValidationMessage implements Jsonable {
     @Override
     public JSONObject getJson() throws JSONException {
         // TODO Auto-generated method stub
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         if (message !=null) {
             json.put("message", message);
         }

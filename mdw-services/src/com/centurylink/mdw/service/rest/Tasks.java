@@ -31,28 +31,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonExportable;
-import com.centurylink.mdw.common.service.JsonArray;
-import com.centurylink.mdw.common.service.JsonListMap;
-import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonListMap;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskIndexes;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskManager;
@@ -140,7 +141,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     List<TaskTemplate> taskVOs = taskServices.getTaskTemplates(query);
                     JSONArray jsonTasks = new JSONArray();
                     for (TaskTemplate taskVO : taskVOs) {
-                        JSONObject jsonTask = new JSONObject();
+                        JSONObject jsonTask = new JsonObject();
                         jsonTask.put("packageName", taskVO.getPackageName());
                         jsonTask.put("taskId", taskVO.getId());
                         jsonTask.put("name", taskVO.getName());
@@ -226,7 +227,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         }
                         else if (extra.equals("values")) {
                             Map<String,Value> values = taskServices.getValues(instanceId);
-                            JSONObject valuesJson = new JSONObject();
+                            JSONObject valuesJson = new JsonObject();
                             for (String name : values.keySet()) {
                                 valuesJson.put(name, values.get(name).getJson());
                             }
@@ -239,7 +240,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         else if (extra.equals("history")) {
                             TaskManager taskMgr = ServiceLocator.getTaskManager();
                             Collection<EventLog> eventLogs = taskMgr.getEventLogs(instanceId);
-                            JSONObject json = new JSONObject();
+                            JSONObject json = new JsonObject();
                             if (eventLogs !=null && eventLogs.size() >0) {
                                 JSONArray historyJson = new JSONArray();
 
@@ -315,7 +316,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 else {
                     // top-level task instance
                     Long taskInstanceId = taskServices.createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER), taskLogicalId);
-                    JSONObject json = new JSONObject();
+                    JSONObject json = new JsonObject();
                     json.put("taskInstanceId", taskInstanceId);
                     return json;
                 }

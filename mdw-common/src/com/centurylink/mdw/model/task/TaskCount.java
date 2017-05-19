@@ -18,8 +18,8 @@ package com.centurylink.mdw.model.task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceCount;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceCount;
+import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Aggregated task instance count for a particular definition, workgroup or user.
@@ -97,7 +97,7 @@ public class TaskCount implements InstanceCount, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("count", count);
         if (id >= 0)
             json.put("id", id);

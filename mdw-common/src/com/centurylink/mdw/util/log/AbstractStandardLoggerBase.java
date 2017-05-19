@@ -28,6 +28,8 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.soccom.SoccomClient;
 
+import com.centurylink.mdw.model.JsonObject;
+
 public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     public static final String DEFAULT_HOST = "localhost";
@@ -87,7 +89,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
         if (matcher.matches())
         {
-            obj = new JSONObject();
+            obj = new JsonObject();
             obj.put("name", "LogWatcher");
             obj.put("time", matcher.group(1));
             obj.put("procId", new Long(matcher.group(2)));

@@ -27,13 +27,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -88,7 +89,7 @@ public class Assets extends JsonRestService {
                 String url = discoveryUrl + "/services/" + path;
                 HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
                 try {
-                    return new JSONObject(helper.get());
+                    return new JsonObject(helper.get());
                 }
                 catch (JSONException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid response from: " + discoveryUrl, ex);
@@ -99,7 +100,7 @@ public class Assets extends JsonRestService {
 
             if (query.getBooleanFilter("archiveDirs")) {
                 List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
-                JSONObject json = new JSONObject();
+                JSONObject json = new JsonObject();
                 json.put("root", assetServices.getArchiveDir().getAbsolutePath());
                 for (ArchiveDir archiveDir : archiveDirs)
                     json.put(archiveDir.getJsonName(), archiveDir.getJson());
