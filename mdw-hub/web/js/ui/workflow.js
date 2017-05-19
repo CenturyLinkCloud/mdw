@@ -1007,7 +1007,7 @@ workflowMod.factory('Diagram',
     var selObj = this.selection.getSelectObj();
     if (selObj && !selObj.isLabel) {
       var msg = this.selection.isMulti ? 'Delete selected items?' : 'Delete ' + selObj.workflowType + '?';
-      uiUtil.confirm("Confirm Delete", msg, function(res) {
+      uiUtil.confirm('Confirm Delete', msg, function(res) {
         if (res) {
           selection.doDelete();
           selection.diagram.draw();

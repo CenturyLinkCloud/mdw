@@ -77,8 +77,11 @@ public interface AssetServices {
     public AssetInfo getAsset(String assetPath) throws ServiceException;
 
     public void createPackage(String packageName) throws ServiceException;
+    public void deletePackage(String packageName) throws ServiceException;
+
     public void createAsset(String assetPath) throws ServiceException;
     public void createAsset(String assetPath, byte[] content) throws ServiceException;
+    public void deleteAsset(String assetPath) throws ServiceException;
 
     public List<ArchiveDir> getArchiveDirs() throws ServiceException;
 }

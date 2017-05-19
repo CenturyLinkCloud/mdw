@@ -287,6 +287,19 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    @Override
+    public void deletePackage(String packageName) throws ServiceException {
+        File dir = new File(assetRoot + "/" + packageName.replace('.', '/'));
+        if (!dir.exists() || !(new File(dir + "/.mdw")).exists())
+            throw new ServiceException(ServiceException.NOT_FOUND, "Package dir not found: " + dir);
+        try {
+            FileHelper.deleteRecursive(dir);
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
     /**
      * Finds the next level of sibling PackageDirs under a set of non-package dirs.
      */
@@ -483,6 +496,19 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    public void deleteAsset(String path) throws ServiceException {
+        int lastSlash = path.lastIndexOf('/');
+        File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
+        if (!assetFile.isFile())
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset file not found: " + assetFile);
+        try {
+            FileHelper.deleteRecursive(assetFile);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
     @Override
     public List<ArchiveDir> getArchiveDirs() throws ServiceException {
         List<ArchiveDir> archiveDirs = new ArrayList<>();
@@ -566,7 +592,7 @@ public class AssetServicesImpl implements AssetServices {
         AssetInfo asset = null;
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
         if (gitVc != null && getGitUser() != null) {
-            String path = getAssetPath() + "/" + pkgDir.getPackageName() + "/" + assetName;
+            String path = getAssetPath() + "/" + pkgDir.getPackageName().replace('.', '/') + "/" + assetName;
             GitDiffs diffs = gitVc.getDiffs(getGitBranch(), path);
             if (DiffType.MISSING.equals(diffs.getDiffType(path))) {
                 AssetFile assetFile = pkgDir.getAssetFile(new File(path));

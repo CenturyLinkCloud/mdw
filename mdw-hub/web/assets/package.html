@@ -10,10 +10,13 @@
           <span class="mdw-diff" ng-if="pkg.vcsDiff == 'EXTRA'"><sup>+</sup></span>
           <span class="mdw-diff" ng-if="pkg.vcsDiff == 'MISSING'"><sup>-</sup></span>
         </div>
-        <div class="mdw-heading-actions">
+        <div class="mdw-heading-actions" ng-if="pkg.id">
           <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Design')" 
               uib-popover-template="'assets/newAsset.html'" popover-placement="left-top" pop-click>
             <span class="glyphicon glyphicon-plus"></span> New
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')" ng-click="deletePackage()">
+            <span class="glyphicon glyphicon-remove"></span> Delete
           </button>
         </div>
       </div>

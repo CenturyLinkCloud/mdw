@@ -194,7 +194,7 @@ public class Assets extends JsonRestService {
 
     /**
      * This is only for creating packages.  For individual assets, see AssetContentServlet.
-     * Content is ignored.
+     * TODO: Content is ignored, and an empty asset is always created.
      */
     @Override
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
@@ -224,10 +224,10 @@ public class Assets extends JsonRestService {
             if ("Archive".equals(segments[1]))
                 ServiceLocator.getAssetServices().deleteArchive();
             else
-                throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Package delete not supported");
+                ServiceLocator.getAssetServices().deletePackage(segments[1]);
         }
         else if (segments.length == 3) {
-            // TODO delete asset
+            ServiceLocator.getAssetServices().deleteAsset(segments[1] + '/' + segments[2]);
         }
         else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);

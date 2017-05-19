@@ -202,8 +202,8 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   
 }]);
 
-assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', 'mdw', 'uiUtil', 'Assets', 'Asset', 'ASSET_TYPES', 
-                                          function($scope, $routeParams, $route, mdw, uiUtil, Assets, Asset, ASSET_TYPES) {
+assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$location', 'mdw', 'uiUtil', 'Assets', 'Asset', 'ASSET_TYPES', 
+                                          function($scope, $routeParams, $route, $location, mdw, uiUtil, Assets, Asset, ASSET_TYPES) {
   mdw.message = null;
   $scope.pkg = Assets.get({
     packageName: $routeParams.packageName},
@@ -261,10 +261,29 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', 'm
       }
     });
   };
+  
+  $scope.deletePackage = function() {
+    var msg = 'Delete: ' + $scope.pkg.name + '?  All its assets will be deleted.';
+    uiUtil.confirm('Confirm Delete Package', msg, function(res) {
+      if (res) {
+        Assets.del({packageName: $scope.pkg.name},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('deleted package: ' + $scope.pkg.name);
+            $location.path('/packages');
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Package delete failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 
-                                       function($scope, $routeParams, mdw, util, Assets, Asset) {
+assetMod.controller('AssetController', ['$scope', '$routeParams', '$location', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 
+                                       function($scope, $routeParams, $location, mdw, util, uiUtil, Assets, Asset) {
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
@@ -312,15 +331,35 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
       }
     }
   );
+  
+  $scope.deleteAsset = function() {
+    var msg = 'Delete: ' + $scope.asset.name + '?';
+    uiUtil.confirm('Confirm Delete', msg, function(res) {
+      if (res) {
+        Assets.del({packageName: $scope.packageName, assetName: $scope.asset.name},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('deleted asset: ' + $scope.packageName + '/' + $scope.asset.name);
+            $location.path('/packages/' + $scope.packageName);
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Asset delete failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
+  
 }]);
 
-assetMod.controller('ArchiveController', ['$scope', '$routeParams', '$route', 'mdw', 'uiUtil', 'Assets', 'Asset', 'ASSET_TYPES', 
-                                  function($scope, $routeParams, $route, mdw, uiUtil, Assets, Asset, ASSET_TYPES) {
+assetMod.controller('ArchiveController', ['$scope', '$route', 'mdw', 'uiUtil', 'Assets', 
+                                  function($scope, $route, mdw, uiUtil, Assets, Asset) {
   $scope.archiveDirs = Assets.get({archiveDirs: true});
   
   $scope.deleteArchive = function() {
-    var msg = "Proceed with delete?\nArchive cannot be recovered!";
-    uiUtil.confirm("Confirm Archive Delete", msg, function(res) {
+    var msg = 'Proceed with delete?\nArchive cannot be recovered!';
+    uiUtil.confirm('Confirm Archive Delete', msg, function(res) {
       if (res) {
         Assets.del({packageName: 'Archive'},
           function(data) {
