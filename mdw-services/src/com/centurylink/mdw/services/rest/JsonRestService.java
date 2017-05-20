@@ -60,12 +60,27 @@ public abstract class JsonRestService extends RestService implements JsonService
                 response = service(path, json, headers);
                 auditLog(getUserAction(user, path, json, headers));
             }
-            if (response == null)
+            if (response == null) {
                 return null;
-            else if (response.has(JsonArray.GENERIC_ARRAY))
+            }
+            else if (response.has(JsonArray.GENERIC_ARRAY)) {
                 return response.getJSONArray(JsonArray.GENERIC_ARRAY).toString(2);
-            else
+            }
+            else {
+                if (response.has("status")) {
+                    String code = headers.get(Listener.METAINFO_HTTP_STATUS_CODE);
+                    if (code == null || code.equals("0")) {
+                        JSONObject status = response.optJSONObject("status");
+                        if (status != null && status.has("code")) {
+                            int setCode = status.optInt("code");
+                            if (setCode != 0)
+                                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(setCode));
+                        }
+
+                    }
+                }
                 return response.toString(2);
+            }
         }
         catch (JSONException ex) {
             throw new ServiceException(ex.getMessage(), ex);
