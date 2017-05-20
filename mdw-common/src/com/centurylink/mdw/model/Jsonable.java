@@ -33,12 +33,6 @@ public interface Jsonable extends io.limberest.json.Jsonable {
     };
 
     /**
-     * May be pluralized by adding 's'.
-     */
-    @ApiModelProperty(hidden=true)
-    public String getJsonName();
-
-    /**
      * @return a JSONObject implementation with predictable property ordering.
      */
     default JSONObject create() {
