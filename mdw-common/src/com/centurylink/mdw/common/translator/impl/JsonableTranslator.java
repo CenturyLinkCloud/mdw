@@ -42,7 +42,10 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
         JSONObject json = new JsonObject();
         try {
             json.put(JSONABLE_TYPE, jsonable.getClass().getName());
-            json.put(jsonable.getJsonName(), jsonable.getJson());
+            String name = jsonable.getJsonName();
+            if (name == null)
+                name = jsonable.getClass().getSimpleName().substring(0, 1).toLowerCase() + jsonable.getClass().getSimpleName().substring(1);
+            json.put(name, jsonable.getJson());
             return json.toString(2);
         }
         catch (JSONException ex) {
