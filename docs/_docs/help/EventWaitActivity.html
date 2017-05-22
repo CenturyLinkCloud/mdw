@@ -8,7 +8,7 @@
 
 This implementor is used to wait for external messages, solicited
 (asynchronous response messages) or unsolicited (such as
-order cancellation messages).
+order cancellation messages). This implementor works with the <em><a href="TimerWaitActivity.html">Timer Wait</a></em> activity.
 
 <h2>Attributes</h2>
 
@@ -42,7 +42,8 @@ have predefined meanings:
 The time out attribute specifies how long we should time out the waiting.
 When the value is 0 or negative, the activity waits indefinitely.
 <p>
-The activity should have a DELAY outgoing transition to indicate what should
+The activity should have an Event Type for <em>DELAY</em> outgoing 
+transition from the <em>Event Wait Activity</em> to <em><a href="TimerWaitActivity.html">Timer Wait</a></em> activity to indicate what should
 be done when a timeout happens. If a DELAY transition is not defined,
 the DELAY embedded process will be looked at next. If that does not exist
 either, the DELAY embedded process of the parent process instance will be
