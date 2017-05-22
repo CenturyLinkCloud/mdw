@@ -19,11 +19,7 @@ Configuration involves specifying the name and version of the subprocess to be i
 as well as bindings to the input/output parameters of the subprocess.</p>
 
 <h3><a id="smartProcessVersion">Smart Subprocess Versioning</a></h3>
-<p>Before MDW 5.5 you'd explicitly call out the version of the subprocess to be executed.
-This meant that if the subprocess version was incremented, in order to have calling processes
-use the new version you'd have to locate all callers, open their definitions, change to use the new version, and save.</p>
-<p>
-With MDW 5.5 you can use Smart Subprocess Versioning to support greater modularity and encapsulation.
+With MDW 6 you can use Smart Subprocess Versioning to support greater modularity and encapsulation.
 By default Designer automatically infers a Smart Subprocess Version, even if you select a specific version when
 configuring the caller (although you can turn this off through Window > Preferences > MDW > Process Design > Infer Smart Subprocess/Asset Version Spec).</p>
 <p>
@@ -78,7 +74,7 @@ pass input variable values.
 
 <p>
 <h2>Invoking Remote Processes</h2>
-Introduced since MDW 4.1, you can invoke remote processes, which
+In MDW, you can invoke remote processes, which
 refer to processes deployed in a different MDW application.
 For example, an IOM process can invoke a process in CCWF.
 <p>
@@ -99,18 +95,17 @@ To invoke a remote process involves the following simple steps:
 		  	to avoid security violation exception.</li>
 		  <li><code>iiop://<var>host</var>:<var>port</var></code> - this is only
 		  	supported when both sides are WebLogic servers, and RMI is used
-		  	for sending messages. This protocol is only supported from MDW 5.2.</li>
+		  	for sending messages.  
 		  <li><code>rmi://<var>host</var>:<var>port</var></code> - this is only
 		  	supported when both sides are Tomcat servers, and RMI is used
 		  	for sending messages. This protocol is only supported from MDW 5.2.</li>
 		  <li><code>http://<var>host</var>:<var>port</var>/<code>service_context_path</code></code> - 
 		    restful services over HTTP are used for sending messages.
-		     This protocol is only supported from MDW 5.2.</li>
        </ul>
       The following is an example:
       <pre>
-      mdw.remote.server.CCWF=t3://lxdnd693.dev.qintra.com:6061
-      mdw.remote.server.IOM=t3://lxdnd695.dev.qintra.com:6091
+      mdw.remote.server.CCWF=t3://hostname.dev.qintra.com:port#
+      mdw.remote.server.IOM=t3://hostname.dev.qintra.com:port#
       </pre>
       </li>
    <li>In the process name field, specify the remote process name,
