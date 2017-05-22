@@ -934,6 +934,9 @@
 .mdw-widget {
 	display: flex;
 }
+.mdw-widget select:disabled {
+	background-color: #eBeBe4;
+}
 .mdw-widget select[multiple] {
   overflow-y: auto;
   padding: 3px;
@@ -943,8 +946,14 @@
 .mdw-widget input {
   padding: 2px 3px;
 }
+.mdw-widget input:disabled {
+  background-color: #eBeBe4;
+}
 .mdw-widget textarea {
   padding: 2px 3px;
+}
+.mdw-widget textarea:disabled {
+  background-color: #eBeBe4;
 }
 .mdw-widget label {
 	margin-right: 15px;

@@ -29,6 +29,9 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
       
+      if (!this.diagramObj.diagram.editable)
+        widget.readonly = true;
+      
       // label
       if (!widget.label)
         widget.label = widget.name;
@@ -96,7 +99,8 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         this.initTableValues(widget);
       }
       else if (widget.type === 'editor') {
-        editCallback(widget);
+        if (this.diagramObj.diagram.editable)
+          editCallback(widget);
       }
       
       // width && height
@@ -108,7 +112,6 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         widget.rows = widget.rows ? widget.rows : 8;
         widget.height = widget.rows * 17.5 + 10;
       }
-      
     }
     
     // padding

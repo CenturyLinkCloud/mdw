@@ -10,7 +10,8 @@
 
 var inspectorTabSvc = angular.module('mdwInspectorTabs', ['mdw']);
 
-inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, $q, mdw) {
+inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility', 
+                                          function($http, $q, mdw, Compatibility) {
   return {
     definition: {
       process: {
@@ -38,17 +39,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           },
           '_template': mdw.roots.services + '/js/ui/templates/variables.json'
         },
-        /* string:
-         * Evaluated string refers to obj collection for list-type display.
-         * Note: 'attributes' and 'assetAttrs' objects at the bottom of file
-         * designate special behavior for assets (TODO: refactor).
-         */
-        Attributes: 'attributes',
+        Versions: {},
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
           '_template': mdw.roots.services + '/js/ui/templates/documentation.json'
         },
-        // Versions: {},  TODO
         Monitoring: {
           '_attributes': 'monitoring', // TODO not fully baked 
           '_template': mdw.roots.hub + '/js/ui/templates/monitoring.json'
@@ -66,9 +61,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
           '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
         },
         Events: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_categories': ['com.centurylink.mdw.activity.types.TaskActivity', 'com.centurylink.mdw.activity.types.InvokeProcessActivity', 'com.centurylink.mdw.activity.types.SynchronizationActivity']
         },
-        Attributes: 'attributes',
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
           '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'
@@ -79,8 +74,15 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
         },
         Stubbing: {
           '_attributes': 'stubbing', // TODO not fully baked 
-          '_template': mdw.roots.hub + '/js/ui/templates/stubbing.json'
-        }
+          '_template': mdw.roots.hub + '/js/ui/templates/stubbing.json',
+          '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
+        },
+        /* string:
+         * Evaluated string refers to obj collection for list-type display.
+         * Note: 'attributes' and 'assetAttrs' objects at the bottom of file
+         * designate special behavior for assets (TODO: refactor).
+         */
+        Attributes: 'attributes'
       },
       subprocess: {
         Definition: {
@@ -188,12 +190,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', function($http, 
               else if (workflowObject.attributes.processmap) {
                 var attr = workflowObject.attributes.processmap;
                 if (attr) {
-                  var specs = attr.split(';');
-                  specs.forEach(function(spec) {
-                    spec = spec.replace('\\,', '~');
-                    var segments = spec.split(',');
-                    subprocs.push(segments[1] + ' v' + segments[2].replace('~', ','));
-                  });
+                  var subprocTbl = Compatibility.getTable(attr);
+                  for (let i = 0; i < subprocTbl.length; i++) {
+                    var subprocRow = subprocTbl[i];
+                    subprocs.push(subprocRow[1] + ' v' + subprocRow[2]);
+                  }
                 }
               }
               var gets = [];

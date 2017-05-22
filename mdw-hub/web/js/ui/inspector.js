@@ -32,14 +32,22 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         if (typeof tab === 'object') {
           var tabProps = util.getProperties(tab);
           // when _template is only prop (eg: Design tab)
-          var onlyShowForEdit = tabProps.length === 1 && tabProps[0] === '_template';
-          if ($scope.editable || !onlyShowForEdit) {
+          var onlyShowForDef = tabProps.length === 1 && tabProps[0] === '_template';
+          if (!$scope.runtimeInfo || !onlyShowForDef) {
             if (tabProps[0] && typeof tab[tabProps[1]] == 'function') {
               if (tab[tabProps[1]]($scope.diagramObject, $scope.workflowObject))
                 filteredTabs[tabName] = tab;
             }
             else {
-              filteredTabs[tabName] = tab;
+              if (obj.workflowType == 'activity' && tab._categories) {
+                // only show for specific categories
+                var implCat = $scope.diagramObject.diagram.getImplementor($scope.workflowObject.implementor).category;
+                if (tab._categories.indexOf(implCat) >= 0)
+                  filteredTabs[tabName] = tab;
+              }
+              else {
+                filteredTabs[tabName] = tab;
+              }
             }
           }
         }
@@ -68,8 +76,8 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     $scope.activeTab = $scope.tabs[tabName];
     $scope.activeTabValues = [];
 
-    // design tab uses configurator
-    if ($scope.editable) {
+    // templated tabs use configurator (TODO: ugly special handling for Documentation)
+    if ($scope.activeTab._template && ($scope.editable || $scope.activeTabName !== 'Documentation')) {
       var templateUrl = util.substExpr($scope.activeTab._template, $scope.workflowObject);
       $http.get(templateUrl).then(function(res) {
         var template = res.data;

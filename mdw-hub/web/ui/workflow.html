@@ -60,7 +60,7 @@
           </li>
         </ul>
         <!-- tab values for object -->
-        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue && !editable">
+        <div class="mdw-inspector-values" ng-if="!activeTabValues[0].values && !drilledValue && (!activeTab._template || (!editing && activeTabName == 'Documentation'))">
           <div class="mdw-markdown-content" ng-if="activeTabValues[0].isMarkdown" ng-bind-html="activeTabValues[0].value | markdown | unsafe">
           </div>
           <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue && !activeTabValues[0].isMarkdown" style="display:flex">
@@ -82,7 +82,7 @@
           </div>
         </div>
         <!-- tab values for array of object -->
-        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue && !editable">
+        <div class="mdw-inspector-values" ng-if="activeTabValues[0].values && !drilledValue && !activeTab._template">
           <div ng-repeat="tabValue in activeTabValues" ng-if="!drilledValue">
             <div class="mdw-inspector-value" ng-if="tabValue.names && $index == 0">
               <span class="mdw-pre" ng-repeat="name in tabValue.names"><span class="mdw-ul">{{name.name}}</span>{{name.pad}}</span>
@@ -104,7 +104,7 @@
           </div>
         </div>
         <!-- design section -->
-        <div class="mdw-inspector-values" ng-if="editable && !editing">
+        <div class="mdw-inspector-values" ng-if="!editing && activeTab._template && (editable || activeTabName != 'Documentation')">
           <div ng-repeat="widget in configurator.getWidgets()" 
             ng-if="widget.type != 'table' && widget.type != 'mapping' && widget.type != 'editor'" 
             class="mdw-widget" style="height:{{widget.height}}px;">
@@ -120,7 +120,7 @@
             </div>
           </div>
         </div>
-        <div class="mdw-inspector-values" ng-if="editing">
+        <div class="mdw-inspector-values" ng-if="editing && activeTab._template">
           <div mdw-editor="editOptions" ng-model="editing.value" class="mdw-widget-edit"></div>
         </div>
       </div>
