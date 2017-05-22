@@ -177,7 +177,7 @@ public class PluginUtil {
 
     /**
      * Downloads the contents of the web page into a string.
-     * 
+     *
      * @param url
      *            the url of the page to download
      * @return the page text
@@ -209,7 +209,7 @@ public class PluginUtil {
 
     /**
      * Download a file from a URL.
-     * 
+     *
      * @param url
      * @param file
      */
@@ -239,7 +239,7 @@ public class PluginUtil {
 
     /**
      * Copy contents of a file.
-     * 
+     *
      * @param source
      * @param dest
      */
@@ -324,7 +324,8 @@ public class PluginUtil {
             message = "Download";
         monitor.subTask("Preparing to " + message + ": " + destFile.getName());
         IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-        createFoldersAsNeeded(project, destFolder, subMonitor);
+        if (destFolder != null)
+            createFoldersAsNeeded(project, destFolder, subMonitor);
         try {
             File file = new File(destFile.getRawLocationURI());
             fos = new FileOutputStream(file);
@@ -374,11 +375,11 @@ public class PluginUtil {
             throws IOException, CoreException {
         monitor.subTask("Unzipping: " + file.getName());
         JarFile jar = null;
-
+        String outpath = null;
         try {
             jar = new JarFile(new File(file.getLocationURI()));
 
-            if (!destFolder.exists())
+            if (destFolder != null && !destFolder.exists())
                 project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 1));
 
             IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
@@ -393,7 +394,11 @@ public class PluginUtil {
                     continue;
 
                 // write the file into the project
-                String outpath = destFolder.getProjectRelativePath() + "/" + entryName;
+                if (destFolder == null)
+                    outpath = project.getProjectRelativePath() + "/" + entryName;
+                else
+                    outpath = destFolder.getProjectRelativePath() + "/" + entryName;
+
                 IFile outfile = project.getFile(outpath);
                 if (!outfile.exists()) {
                     if (entry.isDirectory())

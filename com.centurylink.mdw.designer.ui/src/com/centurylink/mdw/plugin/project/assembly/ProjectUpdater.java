@@ -414,6 +414,8 @@ public class ProjectUpdater implements IRunnableWithProgress {
         else
             run(monitor);
 
+        if (localFolder == null)
+            localFolder = project.getFolder(configPath);
         postFilterProperties(
                 workflowProject.isOsgi() ? localFolder.getFile("com.centurylink.mdw.cfg")
                         : localFolder.getFile("mdw.properties"),
@@ -1043,21 +1045,29 @@ public class ProjectUpdater implements IRunnableWithProgress {
     }
 
     protected URL getRepositoryFileUrl(String subpath, String version) throws IOException {
+        String fileName = file.getName();
         String baseUrl = mdwSettings.getRepositoryUrl();
 
-        String urlPath = "com/centurylink/mdw/" + subpath + "/";
+        String urlPath = "com/centurylink/mdw/";
 
-        URL fileUrl = new URL(baseUrl + urlPath + version + "/" + file.getName());
+        URL fileUrl = new URL(baseUrl + urlPath + subpath + "/" + version + "/" + fileName);
 
         try {
-           ((HttpURLConnection)fileUrl.openConnection()).getResponseCode();
+            ((HttpURLConnection) fileUrl.openConnection()).getResponseCode();
         }
         catch (UnknownHostException e) {
             baseUrl = mdwSettings.getMdwReleasesUrl();
             if (!baseUrl.endsWith("/"))
                 baseUrl += "/";
 
-            fileUrl = new URL(baseUrl + urlPath + version + "/" + file.getName());
+            if (fileName.indexOf("config") > 0) {
+                localFolder = null;
+                subpath = "mdw-templates";
+                fileName = "mdw-templates-" + version + ".zip";
+                file = project.getFile(project.getProjectRelativePath() + "/" + fileName);
+            }
+
+            fileUrl = new URL(baseUrl + urlPath + subpath + "/" + version + "/" + fileName);
         }
         return fileUrl;
     }
