@@ -9,7 +9,7 @@ layout: help
   [Auto Form Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for performing Auto Form Manual task.
   [Camel Route Adapter](http://camel.apache.org/) | Camel is an "integration framework" that enables to link together services through declarative route definitions.
   [Crossmap Activity](http://centurylinkcloud.github.io/mdw/docs/help/crossmap.html) | Used for simple Groovy-based DSL that enables to transform JSON/XML input documents to JSON/XML output documents.
-  [Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Used to create a manual task instance.
+  [Custom Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Used to create a custom manual task instance.
   [Document Web Service](http://centurylinkcloud.github.io/mdw/docs/help/DocWebServiceAdapter.html) | Used for SOAP-based, document-style WebServices.
   [Drools Activity](http://centurylinkcloud.github.io/mdw/docs/help/droolsActivities.html) | Used for rules execution.
   [Dynamic Java General Activity](http://centurylinkcloud.github.io/mdw/docs/help/dynamicJavaActivity.html) | Used to edit Java Code in a local or remote environment without needing to re-deploy or restart the server.

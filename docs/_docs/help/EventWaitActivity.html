@@ -13,7 +13,7 @@ order cancellation messages).
 <h2>Attributes</h2>
 
 <h3>Events</h3>
-The attribute "Events" specifies one or more events the activity instance is waiting for.
+The attribute <em>Events</em> specifies one or more events the activity instance is waiting for.
 Each event specification contains three entries:
 <ul>
   <li>Event Name. This is an event name that is used to match with event names generated
@@ -64,7 +64,6 @@ should be set when a timeout situation occurs. There are 3 statuses possible:
 <h3>Notes About Timeouts</h3>
 <ul>
   <li>The mdw.timer.ThresholdForDelay setting (in minutes, with a default of 60) controls whether JMS or DB is used for storing timeouts (values below the threshold use JMS; those above use DB).</li>
-  <li>In ServiceMix, JMS timeouts require "scheduleSupport" in localhost-broker.xml and may not be preserved across a server shutdown.</li>
   <li>The MDW scheduled event monitor runs at a frequency specified by mdw.timer.CheckInterval (in seconds with a default of 60), and with an initial startup delay of mdw.timer.InitialDelay (in seconds with a default value of 300).  So this means that db timeouts cannot be expected to be more accurate +/- 1 minute.  It also means that when the server is initially started the check will not be performed for at least 5 minutes.</li>
   <li>It is highly recommended that the value of ThresholdForDelay NOT be set below 5 minutes.</li>
   <li>During testing, you may desire shorter timeouts than those expected in real-world scenarios.  In that case, it's important that you understand that the delays may not be accurate down to the minute if they're stored in the db.</li>
@@ -80,15 +79,15 @@ any events received while in holding status, so the activity instance may actual
 set to COMPLETED status immediately, depending on the result of event processing.
 
 <h2>Processing Events</h2>
-With this out-of-box implementor, you can only configure it to transition to specified
+With this built-in implementor, you can only configure it to transition to specified
 next activities. More often than not, you may need to process the messages received
 with the event and perform some business logic.
 This can be achieved by subclassing this implementor and override the method
 <code>Integer processMessage(String message)</code>. The only argument to the method
-is the XML message (in string form) received along with the event (probably from external
-systems and stored in DOCUMENT table).
-The method returns an activity status, dictating the status of the activity instance
-to be set after processing the message. The valid statuses include:
+is the XML message (in String form) received along with the event (probably from external
+systems and stored in DOCUMENT table). After this method call is complete, it will call handleCompletionCode() method
+to return an activity status, dictating the status of the activity instance to be set after processing the message. 
+The valid statuses include:
 <ul>
 	<li><code>WorkStatus.STATUS_COMPLETED</code>: the activity instance is set to completed
 		and transitions are made to next activities according to completion code
@@ -243,11 +242,11 @@ statuses:
   		<td>continue checking synchronization as incoming transitions arrive, in parallel</td>
   		<td>not allowed (designer does not give the option)</td></tr>
 </table>
-To customize event processing, you will need to override <code>processOtherMessage(String message)</code>
+To customize event processing, you will need to override <code>TimerWaitActivity.processOtherMessage(String message)</code>
 (not <code>processMessage()</code> which is for event wait). The method does not return anything, the default method does nothing.
 <p>
 When an embedded process returns, the same behavior as event wait activity described above applies, except
-when resuming waiting from hold status, each activity behaves in its native way:
+when resuming waiting from a hold status, each activity behaves in its native way:
 <ul>
    <li>For timer wait, it checks if the timer is already expired while in holding status. If yes, completes the activity,
    		otherwise check if another unsolicited event arrived. If yes, invoke processOtherMessage() again.</li>
