@@ -47,25 +47,11 @@ The MDW Framework provides built-in event handlers and listeners for handling va
   [Activity](http://centurylinkcloud.github.io/mdw/docs/help/implementor.html) | Activity is implemented by Java class(s), called activity implementors. To allow a single activity implementor to be reused in many places, it is designed to allow configuration through a set of attributes (name-value pairs). For a complete listing of the Activity Implementors, see [Built-In Activities](http://centurylinkcloud.github.io/mdw/docs/development/built-in-activities/).
   [Adapter](http://centurylinkcloud.github.io/mdw/docs/help/AdapterActivityBase.html) | Sends outgoing messages to an external system (service invocation)
   [Attribute](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Configurable aspect of an activity or process.  This is manipulated via the property tabs in Designer
-  Transition |Transition is the link between activities that model dependencies between steps, so when an activity is completed, the process flows through one or more outbound transitions to start other activities that depend on completion of the first. 
+  Transition |Transition is the link between activities that model dependencies between steps, so when an activity is completed, the process flows through one or more outbound transitions to start other activities that depend on completion of the first activity. 
   [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A variable has a name and will be give a specific value at runtime. 
   [Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | We use the term manual task to avoid a confusion since task is used to express the more general concept that we call activity (both manual and automated) in MDW.
   Note | Text-based annotations attached to workflow entities such as Orders or Tasks.  
   Package | The top-level branch in the project tree that represents a workflow package, which is like a java package that contains processes, activity implementors, test cases, event handler configurations and other resources. Your work should be incorporated in a dedicated package, which will be used for managing resources and for insulating your work from that of other users.  Package also facilitates importing/exporting between environments.
- 
-  
-### Additional Resources
-##### The following links offer a wealth of information, including hands-on tutorials / user guides (Developer Cookbooks) on a broad range of MDW (and related) topics:
-- [MDW Help Topics](http://centurylinkcloud.github.io/mdw/docs/help/)
-- [Microservices](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
-- [SOAP-based services](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
-- [CloudFoundry](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
-- [Designer User Guide](http://centurylinkcloud.github.io/mdw/docs/designer/user-guide)
-  
-
-  
-
-  
   
   
   
