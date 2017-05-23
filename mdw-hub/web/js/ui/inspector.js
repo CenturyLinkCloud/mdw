@@ -455,7 +455,8 @@ inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
   };
 }]);
 
-inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, Inspector) {
+inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector', 
+                                      function($window, $document, Inspector) {
   return {
     restrict: 'A',
     controller: 'MdwInspectorController',
@@ -464,6 +465,8 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       var workflowElem = elem.parent();
       var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
       var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
+      var contentElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-content'));
+      var contentHeight;
 
       scope.openInspector = function() {
         elem[0].style.left = workflowElem[0].getBoundingClientRect().left + 'px';
@@ -475,18 +478,59 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
         workflowElem[0].style.height = canvasElem[0].offsetHeight + 'px';
       };
       scope.maxInspector = function() {
-        angular.element(elem[0].getElementsByClassName('mdw-inspector-content'))[0].style.height = '100%';        
+        contentElem[0].style.height = '100%';        
         elem[0].style.height = '80%';
         elem[0].style.top = '100px';
         panelElem[0].style.height = '90%';
       };
       // removes extra styling added by max or close
       scope.initInspector = function() {
-        angular.element(elem[0].getElementsByClassName('mdw-inspector-content'))[0].style.height = '';        
+        contentElem[0].style.height = '';        
         elem[0].style.height = '';
         elem[0].style.top = '';
         panelElem[0].style.height = '';
+        contentHeight = 168;  // must agree with mdw-inspector-content        
       };
+      
+      var mouseDown = function(e) {
+        var y = e.clientY - elem[0].getBoundingClientRect().top;
+        scope.resizing = y <= 3;
+        if (scope.resizing) {
+          scope.startY = e.clientY;
+          if (contentElem[0].style.height)
+            contentHeight = parseInt(contentElem[0].style.height.substring(0, contentElem[0].style.height.length - 2));
+        }
+      };
+      var mouseUp = function(e) {
+        scope.resizing = false;
+        $document[0].body.style.cursor = 'default';
+      };
+      var mouseOut = function(e) {
+        if (!scope.resizing)
+          $document[0].body.style.cursor = 'default';
+      };
+      var mouseMove = function(e) {
+        if (scope.resizing) {
+          contentElem[0].style.height = (contentHeight + (scope.startY - e.clientY)) + 'px';
+        }
+        if (e.target == elem[0]) {
+          var y = e.clientY - elem[0].getBoundingClientRect().top;
+          if (y <= 3 || scope.resizing)
+            $document[0].body.style.cursor = 'ns-resize';
+          else
+            $document[0].body.style.cursor = 'default';
+        }
+        else {
+          if (scope.resizing)
+            $document[0].body.style.cursor = 'ns-resize';
+        }
+      };
+      
+      elem.bind('mousedown', mouseDown);
+      elem.bind('mouseup', mouseUp);
+      elem.bind('mouseout', mouseOut);
+      workflowElem.bind('mousemove', mouseMove);
+      workflowElem.bind('mouseup', mouseUp);
       
       // show
       Inspector.listen(function(obj, show) {
@@ -514,6 +558,11 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       
       scope.$on('$destroy', function() {
         Inspector.unlisten();
+        elem.unbind('mousedown', mouseDown);
+        elem.unbind('mouseup', mouseUp);        
+        elem.unbind('mouseout', mouseOut);        
+        workflowElem.unbind('mousemove', mouseMove);
+        workflowElem.unbind('mouseup', mouseUp);
       });
     }
   };

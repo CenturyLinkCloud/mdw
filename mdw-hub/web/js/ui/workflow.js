@@ -53,7 +53,7 @@ workflowMod.controller('MdwWorkflowController',
     $scope.canvas.unbind('mousemove', $scope.mouseMove);
     $scope.canvas.unbind('mousedown', $scope.mouseDown);
     $scope.canvas.unbind('mouseup', $scope.mouseUp);
-    $scope.canvas.unbind('mousein', $scope.mouseIn);
+    $scope.canvas.unbind('mouseover', $scope.mouseOver);
     $scope.canvas.unbind('mouseout', $scope.mouseOut);
     $scope.canvas.unbind('dblclick', $scope.mouseDoubleClick);
     if ($scope.editable)
@@ -203,7 +203,7 @@ workflowMod.controller('MdwWorkflowController',
     $scope.dragIn = null;
   };
   $scope.mouseOver = function(e) {
-    if (e.buttons === 1 && $scope.toolbox.getSelected()) {
+    if (e.buttons === 1 && $scope.toolbox && $scope.toolbox.getSelected()) {
       $scope.dragIn = $scope.toolbox.getSelected();
     }
   };
@@ -852,7 +852,7 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.onMouseOut = function(e) {
-    // TODO anything?
+    $document[0].body.style.cursor = 'default';
   };
   
   Diagram.prototype.onMouseMove = function(e) {

@@ -848,21 +848,24 @@
   width: auto;
   bottom: 15px;
   right: 50px;
-  border: 1px solid #757575;  
+  border: 1px solid #757575;
   border-radius: 4px;
-  box-shadow: 4px 4px 16px #757575; 
+  box-shadow: 4px 4px 16px #757575;
+  background-color: white;
 }
 .mdw-configurator {
   right: 270px;
   bottom: 10px;
 }
 .mdw-inspector-panel {
-  clear: both;
+	margin-top: 1px;
+  border-top: 1px solid #757575;  
+	clear: both;
   border-bottom: none;
   margin-bottom: 0;
 }
 .mdw-inspector-panel .panel-heading {
-  padding: 5px 10px;
+  padding: 5px 10px;  
 }
 .mdw-inspector-content {
   display: flex;
