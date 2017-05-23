@@ -2,8 +2,8 @@
 
 var configMod = angular.module('mdwConfigurator', ['mdw']);
 
-configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups', 'Compatibility', 'DOCUMENT_TYPES',
-                  function($http, mdw, util, Assets, Workgroups, Compatibility, DOCUMENT_TYPES) {
+configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets', 'Workgroups', 'Compatibility', 'DOCUMENT_TYPES',
+                  function($injector, $http, mdw, util, Assets, Workgroups, Compatibility, DOCUMENT_TYPES) {
   
   var Configurator = function(tab, workflowType, workflowObj, diagramObj, template) {
     this.tab = tab;
@@ -52,7 +52,13 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       
       // value
       if (this.template.category === 'object') {
-        widget.value = this.workflowObj[widget.name];
+        if (widget.converter) {
+          var converter = $injector.get(widget.converter);
+          widget.value = converter.toWidgetValue(widget, this.workflowObj[widget.name]);
+        }
+        else {
+          widget.value = this.workflowObj[widget.name];
+        }
       }
       else if (this.template.category === 'attributes') {
         if (widget.name === '_isService')
@@ -221,10 +227,16 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
             rowWidget.value = widget.default;
           if (widget.readonly)
             rowWidget.readonly = widget.readonly;
+          else if (tblWidget.readonly)
+            rowWidget.readonly = tblWidget.readonly;          
           if (widget.type === 'asset') {
             rowWidget.source = widget.source;
             assetWidgets.push(rowWidget);
           }
+          if (widget.options)
+            rowWidget.options = widget.options;
+          if (widget.vw)
+            rowWidget.width = widget.vw;
           widgetRow.push(rowWidget);
         }
       }
@@ -327,8 +339,14 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   };
   
   Configurator.prototype.valueChanged = function(widget, evt) {
-    if (this.template.category === 'object') {
-      this.workflowObj[widget.name] = widget.value;
+    if (this.template.category === 'object' && !widget.parent && widget.type !== 'table') {
+      if (widget.converter) {
+        let converter = $injector.get(widget.converter);
+        this.workflowObj[widget.name] = converter.fromWidgetValue(converter, widget.value);
+      }
+      else {
+        this.workflowObj[widget.name] = widget.value;
+      }
     }
     else if (this.template.category === 'attributes') {
       if (widget.name === '_isService') {
@@ -359,7 +377,13 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           widget.value.splice(parseInt(evt.substring(4)), 1);
           this.initTableValues(widget, this.getAssetOptions(widget));
         }
-        this.workflowObj.attributes[widget.name] = JSON.stringify(this.removeEmptyRows(widget.value));        
+        if (widget.converter && this.template.category === 'object') {
+          let converter = $injector.get(widget.converter);
+          this.workflowObj[widget.name] = converter.fromWidgetValue(widget, this.removeEmptyRows(widget.value));
+        }
+        else {
+          this.workflowObj.attributes[widget.name] = JSON.stringify(this.removeEmptyRows(widget.value));
+        }
       }
     }
     else if (widget.parent) {
@@ -386,7 +410,13 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
             tblWidget.value.push(valueRow);
           }
         }
-        this.workflowObj.attributes[tblWidget.name] = JSON.stringify(this.removeEmptyRows(tblWidget.value));
+        if (tblWidget.converter && this.template.category === 'object') {
+          let converter = $injector.get(tblWidget.converter);
+          this.workflowObj[tblWidget.name] = converter.fromWidgetValue(tblWidget, this.removeEmptyRows(tblWidget.value));
+        }
+        else {
+          this.workflowObj.attributes[tblWidget.name] = JSON.stringify(this.removeEmptyRows(tblWidget.value));
+        }
       }
     }
     else if (widget.type === 'asset') {

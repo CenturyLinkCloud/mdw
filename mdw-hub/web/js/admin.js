@@ -5,7 +5,7 @@ var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket'
  'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'mdwToolbox', 'mdwConfigurator', 
  'mdwCompatibility', 'authUser', 'mdw', 'util', 'mdwUtil', 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 
  'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system', 'solutions', 'message', 
- 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
+ 'objectTableConverter', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
 adminApp.config(function($httpProvider) {

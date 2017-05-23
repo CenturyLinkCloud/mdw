@@ -6,9 +6,9 @@
     <div ng-repeat="widget in widgetRow" class="mdw-widget">
       <div class="mdw-widget-value" ng-include="'ui/widgets/' + widget.type + '.html'">
       </div>
-    </div><button ng-if="!widget.parent.readonly" ng-click="valueChanged(tblWidget,'del_'+$index)" style="left:-8px;"><span class="glyphicon glyphicon-remove"></span></button>
+    </div><button ng-if="!tblWidget.readonly" ng-click="valueChanged(tblWidget,'del_'+$index)" style="left:-8px;"><span class="glyphicon glyphicon-remove"></span></button>
   </div>
   <div>
-    <button ng-if="!widget.parent.readonly" ng-click="valueChanged(tblWidget,'new')" style="left:5px;"><span class="glyphicon glyphicon-plus"></span></button>
+    <button ng-if="!tblWidget.readonly" ng-click="valueChanged(tblWidget,'new')" style="left:5px;"><span class="glyphicon glyphicon-plus"></span></button>
   </div>
 </div>
