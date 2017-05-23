@@ -36,7 +36,7 @@ Here's a shot of the Designer property tab for configuring Multiple Subprocess I
   <dd>A boolean value indicating whether the parent process waits for completion
       of subprocesses.</dd>
   <dt>Force Parallel Execution</dt>
-  <dd>Normally, the engine will try to run with a single thread all
+  <dd>Normally, the engine will try to run with a single thread for 
       all subprocesses as far as possible. This attribute is a boolean value
       and when it is set to true, the engine will allocate one thread
       for each subprocess so they can run in parallel.</dd>
@@ -127,7 +127,8 @@ String createExecutionPlan() {
 }
 </pre>
 <p><span style="font-weight:bold">Note:</span> In Groovy script the $ character is used for templating and must be escaped.
-So, for example, the call to addParameter() should pass "\$orderContent" instead of "$orderContent").</p>
+So, for example, the call to addParameter() should pass "\$orderContent" instead of "$orderContent"). Here is an example to 
+call: addParameter(subprocinst, "orderContent", "\$orderContent");</p>
 <p>The utility method <code>addParameter()</code> above is defined as</p>
 <pre>
 void addParameter(SubprocessInstance subprocinst, String name, String value) {
@@ -247,7 +248,7 @@ waiting from hold status, non-recurring events that have already arrived
 would always trigger a transition.
 <p>
 To provide custom code handling unsolicited events, you will need to override 
-<code>processOtherMessage(String message)</code>. 
+<code>TimerWaitActivity.processOtherMessage(String message)</code>. 
 The method is passed in with one argument, which is the entire message. The default
 method does nothing. The completion code after processing the message is configured
 in the designer, but you can override it in the code by invoking <code>setReturnCode()</code>.
