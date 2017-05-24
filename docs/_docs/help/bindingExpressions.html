@@ -17,17 +17,14 @@ used to embed dynamic values include:</p>
 </ul>
 
 <p>
-The preferred syntax for binding expressions in MDW is the standard <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java
-Expression Language</a>.  Historically MDW supported a proprietary expression language, <a href="magicbox.html">Magic Box</a>, which as of
-MDW 5.5 is still supported for compatibility purposes only but its use for new development is discouraged.  Because this legacy EL used the dollar symbol (<code>$</code>) as a token identifier, 
-it is a good idea to try to avoid it in standard Java Expressions, and instead use the alternative hash symbol (<code>#</code>).  For example, instead of <code>${myVariable}</code>, use
-<code>#{myVariable}</code>.  Having said that, MDW does allow using the $ token for Java Expressions by recognizing that a curly bracket needs to follow the $ (or #) token for it to be valid.
+Although MDW supports multiple scripting languages for data binding expressions, the preferred syntax is the standard <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java
+Expression Language</a>. 
 </p>
 
 <h3>Evaluation Context</h3>
 <p>
 In most cases the evaluation context for an MDW Java EL expression is a 
-<a href="../javadoc/com/centurylink/mdw/model/value/process/RuntimeContext.html">runtime context</a> for a process, activity or task.
+<a href="http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/model/workflow/RuntimeContext.html">runtime context</a> for a process, activity or task.
 In this context your process variables are available as top-level entities, or they can be the base for further evaluation:
 </p>
 <pre>
@@ -42,12 +39,12 @@ Besides process variables, certain other runtime values are available for bindin
 as <i>context</i>, so through this you can access any values described by the javadocs for the relevant context:
 </p>
 <ul>
-  <li><a href="../javadoc/com/centurylink/mdw/model/value/process/ProcessRuntimeContext.html">ProcessRuntimeContext</a></li>
-  <li><a href="../javadoc/com/centurylink/mdw/model/value/activity/ActivityRuntimeContext.html">ActivityRuntimeContext</a></li>
-  <li><a href="../javadoc/com/centurylink/mdw/model/value/task/TaskRuntimeContext.html">TaskRuntimeContext</a></li>
-  <li><a href="../javadoc/com/centurylink/mdw/model/value/activity/MockRuntimeContext.html">MockRuntimeContext</a></li>
+  <li><a href="http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html">ProcessRuntimeContext</a></li>
+  <li><a href="http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a></li>
+  <li><a href="http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/model/task/TaskRuntimeContext.html">TaskRuntimeContext</a></li>
+  <li><a href="http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/test/MockRuntimeContext.html">MockRuntimeContext</a></li>
 </ul>
-<p>As an example, if for whatever reason in your <a href="DocWebServiceAdapter">document web service adapter</a> you wanted to point the URL
+<p>As an example, if for whatever reason in your <a href="DocWebServiceAdapter.html">document web service adapter</a> you wanted to point the URL
 to the Employee.wsdl endpoint hosted in the same MDW environment, on the Design tab for this activity in Designer you could specify:
 </p>
 <pre>
@@ -64,8 +61,7 @@ file as <i>employee.service.url</i>.  In that case you can take advantage of the
 <h3>Document Variables</h3>
 <p>
 MDW <a href="variable.html#documents">document variables</a> are available as full-blown objects in your expressions.  For instance,
-if you have a JAXBElement variable named <i>order</i> in your workflow based on the DesignerOrder XML in 
-<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Tutorials/mdwdemo.html">mdwdemo</a>, 
+if you have a JAXBElement variable named <i>order</i> in your workflow based on the DesignerOrder XML, 
 you can access the orderNumber element as follows:
 </p>
 <pre>
