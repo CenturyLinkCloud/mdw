@@ -30,12 +30,10 @@ The following attributes are used by this implementor:
       the adapter is asynchronous.</li>
   <li>Wait for response. When it is true, the adapter is synchronous, meaning it is waiting
       for a response; when it is false, the adapter is asynchronous, meaning it sends the message
-      and moves on to the next activity. The third option is Certified (available since MDW 4.5
-      and MDW 5.1), which is asynchronous as well, but the message delivery is guaranteed (more
+      and moves on to the next activity. The third option is Certified, which is asynchronous as well, but the message delivery is guaranteed (more
       detail will be covered in the next section).</li>
   <li>Log req/resp. This is a Boolean flag to turn on or off logging of messages
-  	  to and from the external systems. The messages are logged in the database table
-  	  ADAPTER_INSTANCE (will be moved to DOCUMENT in future releases).</li>
+  	  to and from the external systems. The messages are logged in the database table DOCUMENT.</li>
   <li>Server URL. This attribute specifies the URL of the receiving (remote) JNDI server.
       An example is <code>tcp://localhost:7001</code>. More than likely, the value is
       deployment specific (different between development, testing and production environment).
@@ -71,8 +69,7 @@ The following attributes are used by this implementor:
 </ul>
 
 <h2>Certified Messages</h2>
-Certified messages are asynchronous (one-way) messages with guaranteed delivery,
-and are implemented since MDW 5.1 and also ported to MDW 4.5.
+Certified messages are asynchronous (one-way) messages with guaranteed delivery.
 The mechanism is implemented through a demon which resends messages for which
 earlier delivery failed. The receiver also needs to be aware of certified messages,
 for which an MDW-defined internal acknowledgment must be sent back to the 
