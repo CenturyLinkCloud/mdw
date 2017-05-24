@@ -15,7 +15,9 @@
  */
 package com.centurylink.mdw.plugin.designer.wizards;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
@@ -24,6 +26,7 @@ import org.eclipse.ui.IExportWizard;
 import org.json.JSONException;
 
 import com.centurylink.mdw.common.exception.DataAccessException;
+import com.centurylink.mdw.common.utilities.FileHelper;
 import com.centurylink.mdw.common.utilities.timer.ActionCancelledException;
 import com.centurylink.mdw.common.utilities.timer.ProgressMonitor;
 import com.centurylink.mdw.plugin.MdwPlugin;
@@ -43,11 +46,13 @@ public class ExportPackageWizard extends ImportExportWizard implements IExportWi
         boolean exportJson = false;
         boolean includeTaskTemplates = false;
         boolean inferReferencedImpls = false;
+        boolean exportZip = false;
         IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
         if (getProject().isFilePersist()) {
             exportJson = prefsStore.getBoolean(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT);
             includeTaskTemplates = !prefsStore
                     .getBoolean(PreferenceConstants.PREFS_SUPPRESS_TASK_TEMPLATES_IN_PKG_EXPORT);
+            exportZip = prefsStore.getBoolean(PreferenceConstants.PREFS_EXPORT_ZIP_FORMAT);
         }
         else {
             inferReferencedImpls = !prefsStore.getBoolean(
@@ -55,8 +60,16 @@ public class ExportPackageWizard extends ImportExportWizard implements IExportWi
         }
 
         List<WorkflowPackage> packages = getPackages();
-        String export;
-        if (packages.size() == 1 && !exportJson)
+        String export = null;
+        if (exportZip) {
+            File assetDir = getProject().getAssetDir();
+            List<File> includes = new ArrayList<File>();
+            for (WorkflowPackage pkg : packages)
+                includes.add(new File(
+                        assetDir + "/" + pkg.getName().replace('.', '/')));
+            FileHelper.createZipFileWith(assetDir, new File(getPage().getFilePath()), includes);
+        }
+        else if (packages.size() == 1 && !exportJson)
             export = exporter.exportPackage(packages.get(0), includeTaskTemplates,
                     inferReferencedImpls, progressMonitor);
         else
@@ -64,7 +77,8 @@ public class ExportPackageWizard extends ImportExportWizard implements IExportWi
                     progressMonitor);
         progressMonitor.progress(10);
         progressMonitor.subTask("Writing " + (exportJson ? "JSON" : "XML") + " file");
-        writeFile(getPage().getFilePath(), export.getBytes());
+        if (export != null)
+            writeFile(getPage().getFilePath(), export.getBytes());
         progressMonitor.progress(5);
     }
 

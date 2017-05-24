@@ -128,6 +128,8 @@ public interface PreferenceConstants {
     public static final String PREFS_RUNNING_SERVER = "MdwRunningServer";
 
     public static final String PREFS_EXPORT_JSON_FORMAT = "MdwExportJsonFormat";
+    public static final String PREFS_EXPORT_ZIP_FORMAT = "MdwExportZipFormat";
+
     // stored as _SUPPRESS_ so that default is true
     public static final String PREFS_SUPPRESS_TASK_TEMPLATES_IN_PKG_EXPORT = "MdwSuppressTaskTemplatesInPackageExport";
     public static final String PREFS_SUPPRESS_INFER_REFERENCED_IMPLS_DURING_EXPORT = "MdwSuppressInferReferencedImplsDuringExport";
