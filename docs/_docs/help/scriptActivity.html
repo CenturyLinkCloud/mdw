@@ -100,12 +100,11 @@ To access this functionality from a script activity, you might include the follo
 <br/>
 Script library artifacts are cached in the MDW runtime engine.  They are compiled on-demand by the GroovyScriptEngine.
 The first time any Groovy script is accessed, all script libraries are loaded and initialized.  So the first execution may be slow, but subsequent executions should be very fast since the code has been pre-loaded and pre-compiled.
-Note: with MDW 5.x there is a mechanism for specifying that the Groovy script libraries be preinitialized (see the example in bundle-context.xml and/or ApplicationCache.xml).
 If you change a script or library and save it in Eclipse, the cache is automatically reloaded, and the next access will re-initialize the libraries.
 
 <br/>
 <h3>Debugging Groovy Scripts</h3>
-If you have the <a href="http://groovy.codehaus.org/Eclipse+Plugin">Groovy Plug-In</a> installed, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
+If you have the <a href="http://dist.springsource.org/snapshot/GRECLIPSE/e4.6">Groovy Plug-In</a> installed on your eclipse, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
 This only works for local (not remote) workflow projects, and the server must be running in debug mode.
 When a breakpoint is encountered, you can evaluate variables and change values just as you would when debugging Java code in Eclipse.
 Note that in the context of a script activity, there is a wrapper class that contains your process variable bind values.

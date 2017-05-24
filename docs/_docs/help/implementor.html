@@ -17,12 +17,12 @@ The following steps are needed to define an activity implementor:
 The main requirement for an activity implementor class that extends
 <a href="../javadoc/com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html">
 <code>com.centurylink.mdw.workflow.activity.DefaultActivityImpl</code></a>,
-or one of its subclasses, out-of-box or user defined. It is more common to extends
-an out-of-box implementor class, and for adapter, task, event wait, timer wait,
+or one of its subclasses, built-in or user defined. It is more common to extend
+a built-in implementor class, and for adapter, task, event wait, timer wait,
 synchronization activities, it is almost impossible not to start from the out-of-box
 activities. The rest of this document covers how to implement activity
 implementor from the base activity and common tasks for new implementors,
-please refer to corresponding documentation when extending from an out-of-box activity
+please refer to corresponding documentation when extending from a built-in activity
 implementor.</p>
 
 <p>There is really only one method that must be implemented by an activity
@@ -38,15 +38,15 @@ implementor:</p>
 by the designer to obtain descriptions of the implementor:</p>
 <dl>
  <dt>public String getLabel()</dt>
- <dd>Return the label of the activity implementor displayed in the tool pane of the designer.
+ <dd>Returns the label of the activity implementor displayed in the tool pane of the designer.
      Any string is acceptable but you may want to ensure the name is short and unique.
      If you do not override this method, the default method returns <code>Dummy Activity</code>.</dd>
  
  <dt>public String getIconName()</dt>
- <dd>Return the icon name of the activity implementor.
+ <dd>Returns the icon name of the activity implementor.
     The icon name must be one of the following:
     <ul>
-      <li>an image stored in the database as resource (with language IMAGE_JPEG, IMAGE_GIF or IMAGE_PNG).
+      <li>an image stored in the VCS as a resource (with language IMAGE_JPEG, IMAGE_GIF or IMAGE_PNG).
       		The name specified here must be the resource name, followed by <code>.jpg</code>,
       		<code>.gif</code> or <code>.png</code>.</li>
       <li>an image file name packaged together with designer (this is no longer
@@ -190,7 +190,7 @@ In the following we list all supported widgets.
 Your implementors must be configured in the designer to be used.
 The following information needs to be provided during configuration.
 <ul>
-  <li>Activity Implementor Class. This the class name of your implementor.
+  <li>Activity Implementor Class. This is the class name of your implementor.
       When the designer is running in on-line mode (through server), it will validate the
       accessibility of the class in the server during save, so you need
       to ensure the class is deployed prior to configuring the implementor.
@@ -218,17 +218,16 @@ The following information needs to be provided during configuration.
    		    to pop up editor panel.</li>
       </ul></li>
   <li>Icon name. See description for getIconName() method above for additional information.
-      With MDW 5 designer, a drop down list with all available icon names is shown
-      for selection.</li>
+      A drop down list with all available icon names is shown for selection.</li>
   <li>Attribute descriptor. This has been described above.</li>
 </ul>
-<p>With MDW 5 Designer, you only need to provide the implementor class name,
+<p>In MDW Designer, you only need to provide the implementor class name,
 and the rest of the information can be automatically loaded by pressing the button
 "Load from Class" while the server is running and the class is already accessible.</p>
 
 <h2>API For Implementing Implementor</h2>
 
-he base class <a href="../javadoc/com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html"><code>DefaultActivityImpl</code></a>
+The base class <a href="../javadoc/com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html"><code>DefaultActivityImpl</code></a>
 contains methods (API) for
 assisting your implementations. Please refer to its java doc (following
 above hyperlink, or through Eclipse IDE) for detailed description of the methods.
@@ -327,11 +326,11 @@ Although the framework is packaged with quite a few
 customizable adapter activities, it cannot be possible to cover all
 needs and hence you will likely need to define an adapter activity
 yourself. There are two primary ways to do this.
-The first is to extend an out-of-box adapter. Refer to the documentation
+The first is to extend a built-in adapter. Refer to the documentation
 of that adapter for how to do that.
 The second is to extend the base adapter activity class,
 <code>AdapterActivityBase</code>, which is an abstract class.
-Follow <a href='AdapterActivityBase.html'>this link</a> for the documentation for doing this. 
+Follow <a href='AdapterActivityBase.html'>this link</a> for the detailed documentation for the usage of this class. 
 
 </body>
 </html>
