@@ -63,7 +63,8 @@ public class Workflow extends JsonRestService {
         notes="Path segments {packageName} and {processName} are required, while {processVersion} is optional.",
         response=Process.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="version", paramType="query")})
+        @ApiImplicitParam(name="version", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="summary", paramType="query", dataType="boolean")})
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();

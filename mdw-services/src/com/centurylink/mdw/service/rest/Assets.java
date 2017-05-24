@@ -111,10 +111,15 @@ public class Assets extends JsonRestService {
             String asset = pkg == null ? null : getSegment(path, 2);
 
             if (pkg == null) {
-                if (query.hasFilters())
+                if (query.hasFilters()) {
                     return assetServices.getAssetPackageList(query).getJson();
-                else
-                    return assetServices.getPackages(true).getJson(); // TODO query param for vcs info
+                }
+                else {
+                    JSONObject json = assetServices.getPackages(true).getJson(); // TODO query param for vcs info
+                    if (assetServices.getArchiveDir().isDirectory())
+                        json.put("hasArchive", true);
+                    return json;
+                }
             }
             else {
                 if (asset == null) {

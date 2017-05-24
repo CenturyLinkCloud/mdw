@@ -71,59 +71,5 @@ The following restrictions apply to specific modes:
 </ul>
 See the MDW <a href="bindingExpressions.html">binding expressions</a> documentation for examples of how to 
 pass input variable values.
-
-<p>
-<h2>Invoking Remote Processes</h2>
-In MDW, you can invoke remote processes, which
-refer to processes deployed in a different MDW application.
-For example, an IOM process can invoke a process in CCWF.
-<p>
-To invoke a remote process involves the following simple steps:
-<ul>
-  <li>In the <code>mdw.properties</code>, you need to define
-       the property <code>mdw.remote.server.<var>app_name</var></code>,
-       where <var>app_name</var> is the logical name of the application
-       that hosts the remote subprocesses. The logical name must match the property <code>MDWFramework.ApplicationDetails/ApplicationName</code>
-      of that application, which is typically its formal name of application.
-       The value of the property
-       should be the engine URL, which can be one of the following forms:
-       <ul>
-		  <li><code>t3://<var>host</var>:<var>port</var></code> - this is only
-		  	supported when both sides are WebLogic servers. JMS is used
-		  	for sending messages. Note that global trust between 
-		  	the two communicating WebLogic servers must be set up
-		  	to avoid security violation exception.</li>
-		  <li><code>iiop://<var>host</var>:<var>port</var></code> - this is only
-		  	supported when both sides are WebLogic servers, and RMI is used
-		  	for sending messages.  
-		  <li><code>rmi://<var>host</var>:<var>port</var></code> - this is only
-		  	supported when both sides are Tomcat servers, and RMI is used
-		  	for sending messages. This protocol is only supported from MDW 5.2.</li>
-		  <li><code>http://<var>host</var>:<var>port</var>/<code>service_context_path</code></code> - 
-		    restful services over HTTP are used for sending messages.
-       </ul>
-      The following is an example:
-      <pre>
-      mdw.remote.server.CCWF=t3://hostname.dev.qintra.com:port#
-      mdw.remote.server.IOM=t3://hostname.dev.qintra.com:port#
-      </pre>
-      </li>
-   <li>In the process name field, specify the remote process name,
-      followed by "@", then followed by the logical name of the
-      application. For example, to invoke the process named
-      "UpdateDTVProcess" in CCWF, the process name needs to be
-      specified as "UpdateDTVProcess@CCWF". Note you should
-      perform this step when the above properties are effective,
-      as the designer validates the remote process and populates
-      the parameter table.</li>
-</ul>
-<p>In order for the remote subprocess to send a response back
-to the sender application, the remote application also needs
-to configure the remote server property pointing back to the invoker.
-For example, if an IOM process needs to invoke a subprocess hosted by CCWF,
-the IOM side needs to configure the property <code>mdw.remote.server.CCWF</code>,
-and the CCWF side needs to configure the property <code>mdw.remote.server.IOM</code>.
-</p>
-
 </body>
 </html>

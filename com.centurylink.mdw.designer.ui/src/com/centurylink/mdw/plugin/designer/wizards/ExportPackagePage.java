@@ -20,13 +20,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
 
 public class ExportPackagePage extends ImportExportPage {
+    private Button exportJsonRadio;
+    private Button exportZipRadio;
     private Button exportJsonCheckbox;
     private Button includeTaskTemplsCheckbox;
     private Button inferImplsCheckbox;
@@ -43,12 +47,71 @@ public class ExportPackagePage extends ImportExportPage {
     protected void createControls(Composite composite, int ncol) {
         super.createControls(composite, ncol);
         if (getProject().isFilePersist()) {
-            createExportJson(composite, ncol);
-            createIncludeTaskTemplates(composite, ncol);
+            if (getProject().checkRequiredVersion(6)) {
+                createFormatControls(composite, ncol);
+            }
+            else {
+                createExportJson(composite, ncol);
+                createIncludeTaskTemplates(composite, ncol);
+            }
         }
         else {
             createInferImplementors(composite, ncol);
         }
+    }
+
+    private void createFormatControls(Composite parent, int ncol) {
+        Group radioGroup = new Group(parent, SWT.NONE);
+        radioGroup.setText("Export Format");
+        GridLayout gl = new GridLayout();
+        gl.numColumns = 1;
+        radioGroup.setLayout(gl);
+        GridData gd = new GridData(GridData.BEGINNING);
+        gd.horizontalSpan = ncol;
+        radioGroup.setLayoutData(gd);
+
+        exportJsonRadio = new Button(radioGroup, SWT.RADIO | SWT.LEFT);
+        gd = new GridData(GridData.BEGINNING);
+        gd.horizontalSpan = 1;
+        gd.verticalIndent = 10;
+        exportJsonRadio.setLayoutData(gd);
+        exportJsonRadio.setText("JSON");
+        exportJsonRadio.setSelection(true);
+        exportJsonRadio.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                boolean selected = exportJsonRadio.getSelection();
+                exportZipRadio.setSelection(!selected);
+                IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
+                prefsStore.setValue(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT, selected);
+                prefsStore.setValue(PreferenceConstants.PREFS_SUPPRESS_TASK_TEMPLATES_IN_PKG_EXPORT,
+                        false);
+                handleFieldChanged();
+            }
+        });
+        IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
+        boolean exportJson = prefsStore.getBoolean(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT);
+        exportJsonRadio.setSelection(exportJson);
+
+        exportZipRadio = new Button(radioGroup, SWT.RADIO | SWT.LEFT);
+        gd = new GridData(GridData.BEGINNING);
+        gd.horizontalSpan = 1;
+        gd.verticalIndent = 10;
+        exportZipRadio.setLayoutData(gd);
+        exportZipRadio.setText("ZIP");
+        exportZipRadio.setSelection(false);
+        exportZipRadio.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                boolean selected = exportZipRadio.getSelection();
+                exportJsonRadio.setSelection(!selected);
+                IPreferenceStore prefsStore = MdwPlugin.getDefault().getPreferenceStore();
+                prefsStore.setValue(PreferenceConstants.PREFS_EXPORT_ZIP_FORMAT, selected);
+                prefsStore.setValue(PreferenceConstants.PREFS_SUPPRESS_TASK_TEMPLATES_IN_PKG_EXPORT,
+                        false);
+                handleFieldChanged();
+            }
+        });
+        boolean exportZip = prefsStore.getBoolean(PreferenceConstants.PREFS_EXPORT_ZIP_FORMAT);
+        exportZipRadio.setSelection(exportZip);
     }
 
     private void createExportJson(Composite parent, int ncol) {
@@ -117,7 +180,10 @@ public class ExportPackagePage extends ImportExportPage {
     }
 
     protected String getFileExtension() {
+        String format = ".zip";
+        if (!getProject().checkRequiredVersion(6))
+            format = ".xml";
         return MdwPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT) ? ".json" : ".xml";
+                .getBoolean(PreferenceConstants.PREFS_EXPORT_JSON_FORMAT) ? ".json" : format;
     }
 }

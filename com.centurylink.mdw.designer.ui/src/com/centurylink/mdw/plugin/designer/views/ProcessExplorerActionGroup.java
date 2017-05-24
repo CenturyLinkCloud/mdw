@@ -149,7 +149,6 @@ public class ProcessExplorerActionGroup extends ActionGroup {
     private IAction importWorkflowAssetAction;
     private IAction importTaskTemplateAction;
     private IAction exportPackageAction;
-    private IAction exportProjectAction;
     private IAction exportProcessAction;
     private IAction exportTaskTemplateAction;
     private IAction exportWorkflowAssetAction;
@@ -245,7 +244,6 @@ public class ProcessExplorerActionGroup extends ActionGroup {
         importTaskTemplateAction = createImportTaskTemplateAction();
         importWorkflowAssetAction = createImportWorkflowAssetAction();
         exportPackageAction = createExportPackageAction();
-        exportProjectAction = createExportProjectAction();
         exportProcessAction = createExportProcessAction();
         exportTaskTemplateAction = createExportTaskTemplateAction();
         exportWorkflowAssetAction = createExportWorkflowAssetAction();
@@ -669,9 +667,6 @@ public class ProcessExplorerActionGroup extends ActionGroup {
             public void fillContextMenu(IMenuManager menu) {
                 exportMenu.removeAll();
                 IStructuredSelection selection = getSelection();
-
-                if (exportProjectApplies(selection))
-                    exportMenu.add(exportProjectAction);
 
                 if (exportPackageApplies(selection))
                     exportMenu.add(exportPackageAction);
@@ -1273,24 +1268,6 @@ public class ProcessExplorerActionGroup extends ActionGroup {
         }
 
         return importAttributesActions;
-    }
-
-    private IAction createExportProjectAction() {
-        IAction action = new Action() {
-            public void run() {
-                if (!exportProjectApplies(getSelection()))
-                    return;
-
-                view.setFocus();
-
-                actionHandler.export(WorkflowProject.class, getSelection());
-            }
-        };
-        ImageDescriptor imageDesc = MdwPlugin.getImageDescriptor("icons/remote_project.gif");
-        action.setImageDescriptor(imageDesc);
-        action.setId(MdwMenuManager.MDW_MENU_PREFIX + "export.projects");
-        action.setText("Project(s)...");
-        return action;
     }
 
     private IAction createExportProcessAction() {
@@ -2343,21 +2320,9 @@ public class ProcessExplorerActionGroup extends ActionGroup {
     }
 
     public boolean exportApplies(IStructuredSelection selection) {
-        return exportProjectApplies(selection) || exportPackageApplies(selection)
+        return  exportPackageApplies(selection)
                 || exportProcessApplies(selection) || exportWorkflowAssetApplies(selection)
                 || exportAttributesApplies(selection) || exportTaskTemplatesApplies(selection);
-    }
-
-    public boolean exportProjectApplies(IStructuredSelection selection) {
-        if (selection.size() == 0)
-            return false;
-
-        for (Object element : selection.toArray()) {
-            if (!(element instanceof WorkflowProject))
-                return false;
-        }
-
-        return true;
     }
 
     public boolean exportPackageApplies(IStructuredSelection selection) {
