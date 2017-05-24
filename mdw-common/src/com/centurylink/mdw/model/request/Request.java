@@ -26,6 +26,9 @@ import com.centurylink.mdw.util.StringHelper;
 
 public class Request implements Jsonable {
 
+    public static final String REQUEST_ID = "request-id";
+    public static final String TRANSACTION_ID = "transaction-id";
+
     // this is the document id
     private Long id = 0L;
     public Long getId() { return id; }
