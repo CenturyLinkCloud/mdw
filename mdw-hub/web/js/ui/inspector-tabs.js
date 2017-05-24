@@ -32,11 +32,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
          * with prop names being labels and prop values evaluated.
          * Note: '=' refers to the identity (name) of each obj in collection
          */
-        Variables: { 'variables': {
-            Name: '=',
-            Type: 'type',
-            Mode: 'category',
-          },
+        Variables: {
           '_template': mdw.roots.services + '/js/ui/templates/variables.json'
         },
         Versions: {},

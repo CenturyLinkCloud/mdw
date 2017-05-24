@@ -35,6 +35,7 @@ constantsMod.constant('DOCUMENT_TYPES', {
   'javax.xml.bind.JAXBElement': 'xml',
   'org.apache.camel.component.cxf.CxfPayload': 'xml',
   'com.centurylink.mdw.common.service.Jsonable': 'json',
+  'com.centurylink.mdw.model.Jsonable': 'json',
   'org.yaml.snakeyaml.Yaml': 'yaml',
   'java.lang.Exception': 'json',
   'java.util.List<Integer>': 'json',

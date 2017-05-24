@@ -20,16 +20,14 @@ The expression should return a boolean value indicating whether flow can proceed
 The <a href="http://commons.apache.org/jexl/reference/syntax.html">expression language syntax</a> will be familiar to those who have used expressions in JSPs or Facelets.
 <br/><br/>
 The variables in your synchronization expression are the upstream activity logical IDs
-(<font color='#009000'>for MDW 4 versions 4.4.14 and earlier and MDW 5 versions 5.1.01 and earlier, the escaped activity names must be used
-in place of logical IDs. See a later section for details</font>).
-For example, in the illustration below if you wanted execution to continue when EITHER the 'Script One' activity OR the 'Script Two' 
+For example, in the illustration below if you wanted execution to continue when EITHER the 'Script One' activity <em>OR</em> the 'Script Two' 
 activity completed, you would write your sync expression as follows:
 <br/>
 <pre style="padding:5px">
  A1 || A6
 </pre>
 <br/>
-If you wanted execution to continue only after BOTH 'Script One' AND 'Script Two' finished processing, you could leave the sync
+If you wanted execution to continue only after BOTH 'Script One' <em>AND</em> 'Script Two' finished processing, you could leave the sync
 expression blank (since this is the default behavior), or you could create the equivalent expression:
 
 <pre style="padding:5px">
@@ -81,27 +79,9 @@ waiting from hold status, non-recurring events that have already arrived
 would always trigger a transition.
 <p>
 To provide custom code handling unsolicited events, you will need to override 
-<code>processOtherMessage(String message)</code>. 
+<code>TimerWaitActivity.processOtherMessage(String message)</code>. 
 The method is passed in with one argument, which is the entire message. The default
 method does nothing. The completion code after processing the message is configured
 in the designer, but you can override it in the code by invoking <code>setReturnCode()</code>.
-
-<h2>Backward Compatibility - Using Escaped Activity Names</h2>
-Using logical IDs to represent activities in the synchronization expression
-is implemented in MDW 4.4.15 and MDW 5.1.02. For MDW 4 versions 4.4.14 and earlier
-and MDW 5 versions 5.1.01 and earlier, the escaped activity names must be used
-in place of logical IDs.
-<p>
-Because activity names may contain spaces and other characters that are not legal
-variable names to JEXL, they must be escaped with the following rules:
-<ul>
-  <li>Replace any character in the activity names that is not letter or digit by "_"</li>
-  <li>If there are several consecutive characters that are not letter or digit, use
-      a single "_" instead of one for each illegal character.</li>
-</ul>
-For example, 'Script One' must be escaped as 'Script_One', and 'Like this? Or that?'
-must be 'Like_this_Or_that_' (note only one '_' is used between "this" and "Or" in place
-of the question mark and the space following it).
-
 </body>
 </html>
