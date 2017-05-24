@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.model.services;
+package com.centurylink.mdw.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.services.ServiceSummaryConstants;
+import com.centurylink.mdw.model.service.ServiceSummaryConstants;
 
 /**
  * Summarizes planned microservice invocations runtime state.

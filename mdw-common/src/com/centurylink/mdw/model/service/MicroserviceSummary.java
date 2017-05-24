@@ -2,7 +2,7 @@
  * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
  */
 
-package com.centurylink.mdw.model.services;
+package com.centurylink.mdw.model.service;
 
 import java.util.ArrayList;
 import java.util.List;

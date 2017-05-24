@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
@@ -24,20 +23,17 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
-import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.request.Request;
-import com.centurylink.mdw.model.services.Invocation;
-import com.centurylink.mdw.model.services.MicroserviceSummary;
-import com.centurylink.mdw.model.services.ServiceSummary;
-import com.centurylink.mdw.model.services.ServiceSummaryConstants;
+import com.centurylink.mdw.model.service.Invocation;
+import com.centurylink.mdw.model.service.MicroserviceSummary;
+import com.centurylink.mdw.model.service.ServiceSummary;
+import com.centurylink.mdw.model.service.ServiceSummaryConstants;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.services.RequestServices;
-import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
 
 /**
@@ -48,7 +44,6 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     public static final String JSON_RESPONSE_VARIABLE = "JSON Response Variable";
     public static final String LOCAL_TUNNEL_PROXY_PORT = "Local Tunnel Proxy Port";
-    public static final String REPLY_TO_PATH = "/services/sd/v1/update";
 
     /**
      * Overridden to support local tunnel proxying.
@@ -91,17 +86,6 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 requestHeaders.put("Accept", "application/json");
             else
                 requestHeaders.put("Content-Type", "application/json");
-            // Populate the transaction-id in the header
-            String microservice = getMicroservice();
-            ServiceSummary serviceSummary = getServiceSummary();
-            if (serviceSummary != null) {
-                MicroserviceSummary microSummary = serviceSummary.getSummary(microservice);
-                if (microSummary == null)
-                    throw new ActivityException("Microservice summary not found: " + microservice);
-                if (!StringHelper.isEmpty(microSummary.getTransactionId())) {
-                    requestHeaders.put(Request.TRANSACTION_ID, microSummary.getTransactionId());
-                 }
-            }
         }
         catch (ActivityException ex) {
             logexception(ex.getMessage(), ex);
@@ -158,6 +142,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     /**
      * Populate response variable and serviceSummary
+     * @return response Id
      */
     @Override
     protected Long logResponse(Response response) {
@@ -248,7 +233,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         String microservice = getAttributeValue(ServiceSummaryConstants.MICROSERVICE);
         if (StringHelper.isEmpty(microservice))
             microservice = getPackage().getName() + "/" + getProcessDefinition().getName();
-        microservice = ServiceCatalog.getInstance().getMicroservicePath(microservice);
+        microservice = getMicroservicePath(microservice);
         return microservice;
     }
 
@@ -384,4 +369,12 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 setResponseHeaders(httpHelper.getHeaders());
         }
     }
+    /**
+     * Trim microservice subprocess per naming convention
+     */
+    public String getMicroservicePath(String assetPath) {
+        AssetVersionSpec spec = AssetVersionSpec.parse(assetPath);
+        return spec.getPackageName().substring(spec.getPackageName().lastIndexOf('.') + 1) + "/" + spec.getName();
+    }
+
 }
