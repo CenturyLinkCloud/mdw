@@ -10,7 +10,7 @@
             (<a href="{{pkgList.vcsRemoteUrl}}">{{pkgList.vcsBranch}}</a>)
           </span>
           <span class="mdw-heading-sub" ng-if="pkgList.vcsBranch && !pkgList.vcsRemoteUrl">({{pkgList.vcsBranch}})</span>
-          <span class="mdw-heading-sub-sub" ng-if="authUser.hasRole('Site Admin')">
+          <span class="mdw-heading-sub-sub" ng-if="pkgList.hasArchive && authUser.hasRole('Site Admin')">
             <a href="#/assets/archive">Archive</a>
           </span>
         </div>

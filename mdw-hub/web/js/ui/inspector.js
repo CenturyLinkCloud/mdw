@@ -260,6 +260,14 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             else if (val.value.indexOf('${props[') >= 0 || val.value.indexOf('#{props[') >= 0) {
               val.extended = true;
             }
+            else if (val.value.startsWith('[') || val.value.startsWith('{')) {
+              try {
+                let parsed = JSON.parse(val.value);
+                val.full = JSON.stringify(parsed, null, 2);
+                val.extended = true;
+              }
+              catch(ex) {}
+            }
             if (spec) {
               if (spec.alias)
                 val.name = spec.alias;
