@@ -136,7 +136,6 @@ import com.centurylink.mdw.plugin.designer.wizards.ExportAssetWizard;
 import com.centurylink.mdw.plugin.designer.wizards.ExportAttributesWizard;
 import com.centurylink.mdw.plugin.designer.wizards.ExportPackageWizard;
 import com.centurylink.mdw.plugin.designer.wizards.ExportProcessWizard;
-import com.centurylink.mdw.plugin.designer.wizards.ExportProjectWizard;
 import com.centurylink.mdw.plugin.designer.wizards.ExportTaskTemplatesWizard;
 import com.centurylink.mdw.plugin.designer.wizards.ImportAssetWizard;
 import com.centurylink.mdw.plugin.designer.wizards.ImportAttributesWizard;
@@ -1117,12 +1116,7 @@ public class WorkflowElementActionHandler {
 
     public void export(Class<? extends WorkflowElement> elementClass,
             IStructuredSelection selection) {
-        if (elementClass.equals(WorkflowProject.class)) {
-            ExportProjectWizard exportProjectWizard = new ExportProjectWizard();
-            exportProjectWizard.init(getWorkbench(), selection);
-            new WizardDialog(getShell(), exportProjectWizard).open();
-        }
-        else if (elementClass.equals(WorkflowPackage.class)) {
+        if (elementClass.equals(WorkflowPackage.class)) {
             ExportPackageWizard exportPackageWizard = new ExportPackageWizard();
             exportPackageWizard.init(getWorkbench(), selection);
             new WizardDialog(getShell(), exportPackageWizard).open();
