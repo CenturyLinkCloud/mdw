@@ -71,12 +71,9 @@ permalink: /docs/help/
 <ul>
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
-  <li><a href='gherkinTestScriptSyntax.html'>Gherkin Test Script Syntax</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
   <li><a href='database.html'>MDW Database Models</a></li>
   <li><a href='reports.html'>MDW Reports</a></li>
-  <li><a href='bam.html'>Business Activity Monitoring</a></li>
-  <li><a href='blv.html'>Business Live View</a></li>
   <li><a href='eventmgr.html'>Event Manager</a></li>
 </ul>
 </div>

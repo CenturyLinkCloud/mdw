@@ -6,17 +6,11 @@
   </topic>
   <topic label="Groovy Test Script Syntax" href="help/doc/groovyTestScriptSyntax.html"> 
   </topic>
-  <topic label="Gherkin Test Script Syntax" href="help/doc/gherkinTestScriptSyntax.html"> 
-  </topic>
   <topic label="Test Results Format" href="help/doc/testResultsFormat.html"> 
   </topic>
   <topic label="MDW Data Model" href="help/doc/database.html"> 
   </topic>
   <topic label="MDW Reports" href="help/doc/reports.html"> 
-  </topic>
-  <topic label="Business Activity Monitoring" href="help/doc/bam.html"> 
-  </topic>
-  <topic label="Business Live View" href="help/doc/blv.html"> 
   </topic>
   <topic label="Event Manager" href="help/doc/eventmgr.html"> 
   </topic>

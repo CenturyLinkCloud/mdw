@@ -38,8 +38,6 @@
   </topic> 
   <topic label="RESTful Adapter Activity" href="help/doc/RestfulAdapter.html">
   </topic>
-  <topic label="OSGi Service Adapter" href="help/doc/OsgiServiceAdapter.html">
-  </topic> 
   <topic label="Composite Synchronous Adapter Activity" href="help/doc/CompositeSynchronousAdapter.html">
   </topic> 
   <topic label="Document Transform Activity" href="help/doc/documentTransform.html">
@@ -56,8 +54,6 @@
   </topic> 
   <topic label="Crossmap Activity" href="help/doc/crossmap.html">
   </topic> 
-  <topic label="Magic Box Rule Language" href="help/mbengdoc/language.html">
-  </topic>
   <topic label="Custom Attributes" href="help/doc/customAttributes.html">
   </topic>
   <topic label="Workflow Package Configuration" href="help/doc/packageConfig.html">
