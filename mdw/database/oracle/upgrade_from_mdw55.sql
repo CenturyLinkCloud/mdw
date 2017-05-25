@@ -11,7 +11,7 @@ UPDATE DOCUMENT set OWNER_TYPE = 'ADAPTER_RESPONSE' where OWNER_TYPE = 'ADAPTOR_
 -- not used when mongodb is present - except for pre-existing coming from 5.5
 CREATE TABLE DOCUMENT_CONTENT
 (
-  DOCUMENT_ID         NUMBER(20)		  PRIMARY KEY,
+  DOCUMENT_ID         NUMBER(20),
   CONTENT             CLOB      NOT NULL  
 );
 ALTER TABLE DOCUMENT_CONTENT ADD (
