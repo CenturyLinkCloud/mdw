@@ -9,7 +9,6 @@ permalink: /docs/help/
 <ul>
   <li><a href='introduction.html'>Introduction</a></li>
   <li><a href='webServices.html'>MDW Web Services</a></li>
-  <li><a href='mdwAuth.html'>MDW Authentication</a></li>
 </ul>
 <h3>Developer Cookbooks</h3>
 <ul>
@@ -31,20 +30,16 @@ permalink: /docs/help/
   <li><a href='droolsActivities.html'>Drools Activity</a></li>
   <li><a href='TimerWaitActivity.html'>Timer Wait Activity</a></li>
   <li><a href='JmsAdapter.html'>JMS Adapter Activity</a></li>
-  <li><a href='SynchronousBusAdapter.html'>Synchronous Bus Adapter Activity</a></li>
   <li><a href='DocWebServiceAdapter.html'>Document Web Service Adapter Activity</a></li>
   <li><a href='MDWWebServiceAdapter.html'>MDW Web Service Adapter Activity</a></li>
   <li><a href='RestfulAdapter.html'>RESTful Adapter Activity</a></li>
-  <li><a href='OsgiServiceAdapter.html'>OSGi Service Adapter</a></li>
   <li><a href='CompositeSynchronousAdapter.html'>Composite Synchronous Adapter Activity</a></li>
   <li><a href='documentTransform.html'>Document Transform Activity</a></li>
   <li><a href='notification.html'>Notification Activity</a></li>
-  <li><a href='LdapAdapter.html'>LDAP Adapter Activity</a></li>
   <li><a href='sqlAdapter.html'>SQL Adapter Activity</a></li>
   <li><a href='dynamicJavaActivity.html'>Dynamic Java Activity</a></li>
   <li><a href='FileWriterActivity.html'>File Writer Activity</a></li>
   <li><a href='crossmap.html'>Crossmap Activity</a></li>
-  <li><a href='http://cshare.ad.qintra.com/sites/MDW/Previous%20Documents/mbengdoc/language.html'>Magic Box Rule Language</a></li>
   <li><a href='customAttributes.html'>Custom Attributes</a></li>
   <li><a href='packageConfig.html'>Workflow Package Configuration</a></li>
 </ul>
