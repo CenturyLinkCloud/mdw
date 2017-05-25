@@ -60,6 +60,10 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
           '_categories': ['com.centurylink.mdw.activity.types.TaskActivity', 'com.centurylink.mdw.activity.types.InvokeProcessActivity', 'com.centurylink.mdw.activity.types.SynchronizationActivity']
         },
+        Recipients: {
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_categories': ['com.centurylink.mdw.activity.types.NotificationActivity']
+        },
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
           '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'

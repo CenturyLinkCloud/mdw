@@ -1,7 +1,22 @@
 <div>
-  task: {{task}}
-</div>
-
-<div>
-  pagelet: {{pagelet}}
+  <uib-tabset>
+    <uib-tab ng-repeat="configurator in configurators" heading="{{configurator.tab}}">
+      <div class="mdw-task-configurator">
+        <div ng-repeat="widget in configurator.getWidgets()" 
+          ng-if="widget.type != 'table' && widget.type != 'mapping' && widget.type != 'editor'" 
+          class="mdw-widget" style="height:{{widget.height}}px;">
+          <div class="mdw-widget-label">
+            {{widget.label}}<span class="mdw-pre">{{widget.pad}}</span>
+          </div>
+          <div class="mdw-widget-value" ng-include="'ui/widgets/' + widget.type + '.html'">
+          </div>
+        </div>
+        <div ng-repeat="tblWidget in configurator.getWidgets()" 
+          ng-if="tblWidget.type == 'table' || tblWidget.type == 'mapping'" class="mdw-widget">
+          <div class="mdw-widget-value" ng-include="'ui/widgets/' + tblWidget.type + '.html'">
+          </div>
+        </div>
+      </div>
+    </uib-tab>
+  </uib-tabset>
 </div>

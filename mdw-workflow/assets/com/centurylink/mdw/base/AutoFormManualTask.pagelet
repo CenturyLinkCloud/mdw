@@ -8,8 +8,8 @@
   </DROPDOWN>
   <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" /> 
   <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
-  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" DEFAULT="Hours"/>
-  <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" DEFAULT="Hours"/>
+  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
+  <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />
   <DROPDOWN NAME="PriorityStrategy" LABEL="Prioritization Strategy" VW="250">
     <OPTION PARAMETER="Priority">Specified</OPTION>
     <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>

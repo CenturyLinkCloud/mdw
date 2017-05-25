@@ -1075,6 +1075,13 @@
 .mdw-highlight {
 	color: #880000;
 }
+.mdw-task-configurator {
+	font-family: monospace;	
+	padding: 15px;
+}
+.mdw-task-configurator .mdw-widget {
+	margin-bottom: 5px;
+}
 .panel-heading a {
   font-weight: bold;
   text-decoration: none;

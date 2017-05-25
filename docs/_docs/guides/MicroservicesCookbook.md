@@ -63,8 +63,7 @@ A local project is useful if you want to debug your custom Java source code and 
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you will be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you will use.
 
   ![alt text](../images/workflow.png "workflow")
-- When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment.  For details about these settings, refer to the 
-  server-specific cookbooks listed above under "Supported Java Containers" section.
+- When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment. For the password, you can enter `tomcat`.  For details about these settings, refer to the server-specific cookbooks listed above under "Supported Java Containers" section.
   
   ![alt text](../images/tomcatSetting.png "tomcatSetting")
 - Click Next again and enter your database connection info.  The password for database is `mdw`. 

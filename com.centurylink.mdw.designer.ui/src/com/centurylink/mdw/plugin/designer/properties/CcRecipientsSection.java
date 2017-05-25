@@ -36,6 +36,9 @@ public class CcRecipientsSection extends DesignSection implements IFilter {
         if (!activity.getProject().isMdw5())
             return false;
 
+        if (activity.getProject().checkRequiredVersion(6))
+            return false; // combined with Recipients
+
         if (activity.isForProcessInstance())
             return false;
 

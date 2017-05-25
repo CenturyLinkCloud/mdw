@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 import com.centurylink.mdw.plugin.MdwPlugin;
 import com.centurylink.mdw.plugin.preferences.model.PreferenceConstants;
@@ -61,22 +62,24 @@ public class ExportPackagePage extends ImportExportPage {
     }
 
     private void createFormatControls(Composite parent, int ncol) {
+        new Label(parent, SWT.NONE); // spacer
+
         Group radioGroup = new Group(parent, SWT.NONE);
         radioGroup.setText("Export Format");
         GridLayout gl = new GridLayout();
-        gl.numColumns = 1;
+        gl.numColumns = 2;
         radioGroup.setLayout(gl);
         GridData gd = new GridData(GridData.BEGINNING);
-        gd.horizontalSpan = ncol;
+        gd.horizontalSpan = ncol - 1;
+        gd.verticalIndent = 5;
         radioGroup.setLayoutData(gd);
 
         exportJsonRadio = new Button(radioGroup, SWT.RADIO | SWT.LEFT);
         gd = new GridData(GridData.BEGINNING);
         gd.horizontalSpan = 1;
-        gd.verticalIndent = 10;
+        gd.verticalIndent = 5;
         exportJsonRadio.setLayoutData(gd);
         exportJsonRadio.setText("JSON");
-        exportJsonRadio.setSelection(true);
         exportJsonRadio.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean selected = exportJsonRadio.getSelection();
@@ -95,7 +98,8 @@ public class ExportPackagePage extends ImportExportPage {
         exportZipRadio = new Button(radioGroup, SWT.RADIO | SWT.LEFT);
         gd = new GridData(GridData.BEGINNING);
         gd.horizontalSpan = 1;
-        gd.verticalIndent = 10;
+        gd.verticalIndent = 5;
+        gd.horizontalIndent = 25;
         exportZipRadio.setLayoutData(gd);
         exportZipRadio.setText("ZIP");
         exportZipRadio.setSelection(false);

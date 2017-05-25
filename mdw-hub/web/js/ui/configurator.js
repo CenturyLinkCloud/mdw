@@ -10,7 +10,8 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     this.workflowType = workflowType;
     this.workflowObj = workflowObj;
     this.diagramObj = diagramObj;
-    this.process = diagramObj.diagram.process;
+    if (diagramObj.diagram.process)
+      this.process = diagramObj.diagram.process;
     this.template = template;
   };
   
@@ -35,7 +36,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       // label
       if (!widget.label)
         widget.label = widget.name;
-      if (widget.label.length > labelWidth)
+      if (widget.label.length > labelWidth && widget.type != 'note')
         labelWidth = widget.label.length;
 
       // options source
@@ -108,15 +109,30 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         if (this.diagramObj.diagram.editable)
           editCallback(widget);
       }
+      else if (widget.type === 'datetime') {
+        if (widget.value) {
+          widget.units = this.workflowObj.attributes[widget.name + '_UNITS'];
+          if (!widget.units)
+            widget.units = 'Hours';
+          if (widget.units == 'Minutes')
+            widget.value = parseInt(widget.value) / 60;
+          else if (widget.units == 'Hours')
+            widget.value = parseInt(widget.value) / 3600;
+          else if (widget.units == 'Days')
+            widget.value = parseInt(widget.value) / 86400;
+        }
+      }
       
       // width && height
       widget.width = widget.vw;
       if (!widget.width)
         widget.width = 400;
-      widget.height = 30;
-      if (widget.multiline) {
-        widget.rows = widget.rows ? widget.rows : 8;
-        widget.height = widget.rows * 17.5 + 10;
+      if (widget.type != 'mapping' && widget.type != 'picklist' && widget.type != 'table') {
+        widget.height = 30;
+        if (widget.multiline) {
+          widget.rows = widget.rows ? widget.rows : 8;
+          widget.height = widget.rows * 17.5 + 10;
+        }
       }
     }
     
@@ -306,8 +322,8 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     var tab = this.tab;
     this.template.pagelet.widgets.forEach(function(widget) {
       if (!widget.hidden) {
-        // TODO unsupported sections: Bindings, CC Recipients 
-        if ((widget.section && tab === widget.section) || ((!widget.section || widget.section == 'Recipients') && tab == 'Design'))
+        // TODO unsupported sections: Bindings (LdapAdapter.impl and OAuthServiceAdapter.impl) 
+        if ((widget.section && tab === widget.section) || (!widget.section && (tab == 'Design' || tab == 'General')))
           widgets.push(widget);
       }
     });
