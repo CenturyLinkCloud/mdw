@@ -218,7 +218,7 @@ public class SwaggerModelValidator implements java.io.Serializable {
                 // }
                 // Check for requiredness
                 if (!json.has(property) || json.get(property) == null
-                        || StringHelper.isEmpty(json.getString(property))) {
+                        || json.isNull(property)) {
                     if (modelProperty.getRequired()) {
                         String msg = "'" + property + "' is a required property";
                         if (model instanceof ModelImpl)
