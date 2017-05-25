@@ -77,6 +77,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public Date getRetrieveDate() { return retrieveDate; }
     public void setRetrieveDate(Date d) { this.retrieveDate = d; }
 
+    private String template;
+    public String getTemplate() { return template; }
+    public void setTemplate(String template) { this.template = template; }
+
     public TaskInstance(Long pTaskInstId, Long pTaskId, String pTaskName, String pOrderId, Date pStartDate,
             Date pEndDate, Date pDueDate, Integer pStatusCd, Integer pStateCd, String pComments, String pClaimUserCuid,
             String pTaskMessage, String pActivityName, String pCategoryCd, String pOwnerAppName, Long pAssTaskInstId) {
@@ -185,6 +189,8 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
         if (jsonObj.has("activityInstanceId"))
             activityInstanceId = jsonObj.getLong("activityInstanceId");
+        if (jsonObj.has("template"))
+            template = jsonObj.getString("template");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -230,6 +236,8 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         if (activityInstanceId != null)
             json.put("activityInstanceId", activityInstanceId);
+        if (template != null)
+            json.put("template", template);
         return json;
     }
 

@@ -1,7 +1,7 @@
 <div>
   <uib-tabset>
-    <uib-tab ng-repeat="configurator in configurators" heading="{{configurator.tab}}">
-      <div class="mdw-task-configurator">
+    <uib-tab ng-repeat="configurator in configurators" heading="{{configurator.tab}}" select="tabSelect(configurator.tab)">
+      <div class="mdw-task-configurator" ng-if="configurator.tab != 'Source'">
         <div ng-repeat="widget in configurator.getWidgets()" 
           ng-if="widget.type != 'table' && widget.type != 'mapping' && widget.type != 'editor'" 
           class="mdw-widget" style="height:{{widget.height}}px;">
@@ -16,6 +16,18 @@
           <div class="mdw-widget-value" ng-include="'ui/widgets/' + tblWidget.type + '.html'">
           </div>
         </div>
+      </div>
+      <div ng-if="configurator.tab == 'Source' && editable" mdw-editor="editOptions" ng-model="source.content" 
+        class="mdw-editor" style="top:140px;">
+      </div>
+      <div ng-if="configurator.tab == 'Source' && !editable" class="mdw-resource-content">
+        <pre><code class="mdw-code" 
+          ng-bind-html="source.content | highlight:'json' | unsafe"></code></pre>
+      </div>
+      <div ng-if="configurator.helpLink" style="margin-left:15px;">
+        <a href="{{configurator.helpLink.url}}" ng-if="configurator.helpLink" title="{{configurator.helpLink.name}}" target="_blank">
+          <span class="glyphicon glyphicon-question-sign mdw-icon-btn"></span>
+        </a>
       </div>
     </uib-tab>
   </uib-tabset>

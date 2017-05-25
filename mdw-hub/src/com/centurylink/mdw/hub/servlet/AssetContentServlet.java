@@ -241,9 +241,14 @@ public class AssetContentServlet extends HttpServlet {
                     String version = request.getParameter("version");
                     boolean verChange = false;
                     Asset asset = null;
+                    PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
+
                     // TODO event handler and implementors
                     if (assetName.endsWith(".proc")) {
                         asset = persisterVcs.getProcessBase(pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
+                    }
+                    else if (assetName.endsWith(".task")) {
+                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(assetRoot + "/" + pkgName + "/" + assetName)));
                     }
                     else {
                         asset = persisterVcs.getAsset(pkg.getId(), assetName);
@@ -280,7 +285,6 @@ public class AssetContentServlet extends HttpServlet {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid asset version: v" + version);
                     verChange = newVer != ver;
                     asset.setVersion(newVer);
-                    PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
                     if (asset instanceof Process) {
                         persisterVcs.save((Process)asset, pkgDir);
                         persisterVcs.updateProcess((Process)asset);

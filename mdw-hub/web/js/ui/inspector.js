@@ -417,23 +417,32 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
   };
   
   $scope.edit = function(widget) {
-    $scope.editing = widget;
-    $scope.editOptions = {
-      theme: 'eclipse', 
-      mode: widget.name === 'Java' ? 'java' : (widget.language ? widget.language.toLowerCase() : 'groovy'),
-      onChange: function() {
-        // first call happens on load
-        if ($scope.editDirty === undefined) {
-          $scope.editDirty = false;
-        }
-        else {
-          if ($scope.configurator.valueChanged(widget))
-            $scope.onChange($scope.process);
-          $scope.$parent.setDirty($scope.$parent.process);
-        }
-      },
-      basePath: '/mdw/lib/ace-builds/src-min-noconflict'
-    };    
+    var lang = widget.name === 'Java' ? 'java' : (widget.language ? widget.language.toLowerCase() : 'groovy');
+    if ($scope.editable) {
+      $scope.editing = widget;
+      $scope.editOptions = {
+        theme: 'eclipse', 
+        mode: lang,
+        onChange: function() {
+          // first call happens on load
+          if ($scope.editDirty === undefined) {
+            $scope.editDirty = false;
+          }
+          else {
+            if ($scope.configurator.valueChanged(widget))
+              $scope.onChange($scope.process);
+            $scope.$parent.setDirty($scope.$parent.process);
+          }
+        },
+        basePath: '/mdw/lib/ace-builds/src-min-noconflict',
+      };
+    }
+    else {
+      $scope.drilledValue = {
+        full: widget.value,
+        language: lang
+      };
+    }
   };
   
   $scope.valueChanged = function(widget, evt) {

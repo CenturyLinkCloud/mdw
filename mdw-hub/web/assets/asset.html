@@ -48,7 +48,7 @@
         <mdw-task-template task="asset.content">
         </mdw-task-template>
       </div>
-      <div class="mdw-item-content" ng-if="asset.view == 'content' && (asset.content || asset.isImage)">
+      <div class="mdw-item-content" ng-if="asset.view == 'content' && (asset.content || asset.isImage) && !process && !assetName.endsWith('.task')">
         <pre ng-if="!asset.isBinary && !asset.isMarkdown && !process && !assetName.endsWith('.task')" class="mdw-line-nums">{{asset.lineNums}}</pre>
         <pre ng-show="!asset.isBinary && !asset.isMarkdown && !process && !assetName.endsWith('.task')" class="mdw-resource-content"><code class="mdw-code" ng-bind-html="asset.content | highlight:asset.language | unsafe"></code></pre>
         <div ng-show="asset.isMarkdown" class="mdw-resource-content"><div ng-bind-html="asset.content | markdown | unsafe"></div></div>

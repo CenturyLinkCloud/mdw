@@ -1,6 +1,6 @@
 <div class="mdw-widget-tbl">
   <div class="mdw-widget-tbl-head">
-    <div ng-repeat="widget in tblWidget.widgets" ng-if="widget.source !== 'ProcessVersion'">{{widget.label}}</div>
+    <div ng-repeat="widget in tblWidget.widgets" ng-if="widget.source != 'ProcessVersion' && widget.source != 'AssetVersion'">{{widget.label}}</div>
   </div>
   <div ng-repeat="widgetRow in tblWidget.widgetRows">
     <div ng-repeat="widget in widgetRow" class="mdw-widget">

@@ -19,9 +19,13 @@
           </a>  
         </div>
       </div>
-      <div mdw-editor="aceOptions" ng-if="!process" ng-model="asset.content" class="mdw-editor"></div>
+      <div mdw-editor="aceOptions" ng-if="!process && !assetName.endsWith('.task')" ng-model="asset.content" class="mdw-editor"></div>
       <mdw-workflow ng-if="process" process="process" editable="true" on-process-change="onProcessChange"
-          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">      
+          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+      </mdw-workflow>
+      <mdw-task-template ng-if="assetName.endsWith('.task')" task-asset="{{packageName + '/' + assetName}}" 
+          editable="true" class="mdw-task-editor">
+      </mdw-task-template>
     </div>
   </div>
 </div>

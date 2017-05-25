@@ -1063,6 +1063,9 @@
   font-weight: bold;
   padding: 4px 6px;
 }
+.mdw-task-editor {
+	padding: 10px;
+}
 .mdw-dirty {
 	font-weight: bold;
 	font-size: 22px;

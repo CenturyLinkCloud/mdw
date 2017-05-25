@@ -104,7 +104,7 @@
           </div>
         </div>
         <!-- design section -->
-        <div class="mdw-inspector-values" ng-if="!editing && activeTab._template && (editable || activeTabName != 'Documentation')">
+        <div class="mdw-inspector-values" ng-if="!editing && !drilledValue && activeTab._template && (editable || activeTabName != 'Documentation')">
           <div ng-repeat="widget in configurator.getWidgets()" 
             ng-if="widget.type != 'table' && widget.type != 'mapping' && widget.type != 'editor'" 
             class="mdw-widget" style="height:{{widget.height}}px;">

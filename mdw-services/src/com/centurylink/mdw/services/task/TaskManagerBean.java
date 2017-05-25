@@ -221,6 +221,9 @@ public class TaskManagerBean implements TaskManager {
         if (activityInstanceId != null) {
             taskInstance.setActivityInstanceId(activityInstanceId);
         }
+        TaskTemplate template = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+        if (template != null)
+            taskInstance.setTemplate(template.getPackageName() + "/" + template.getName());
         return taskInstance;
     }
 
