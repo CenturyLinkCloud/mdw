@@ -934,7 +934,9 @@ public class ProcessEngineDriver {
         if (performance_level<=0) performance_level = default_performance_level_regular;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-        // do not set internal messenger with cache options, as this engine does not process it directly
+        // do not set internal messenger with cache options, as this engine does not process it directly - Unless PL 9
+        if (performance_level >= 9)
+            msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
