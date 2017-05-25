@@ -80,7 +80,6 @@ public class ExportPackagePage extends ImportExportPage {
         gd.verticalIndent = 5;
         exportJsonRadio.setLayoutData(gd);
         exportJsonRadio.setText("JSON");
-        exportJsonRadio.setSelection(true);
         exportJsonRadio.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean selected = exportJsonRadio.getSelection();
