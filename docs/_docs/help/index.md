@@ -7,14 +7,8 @@ permalink: /docs/help/
 <div class="grid">
 <h3>General Information</h3>
 <ul>
-  <li><a href='introduction.html'>Introduction</a></li>
+  <li><a href='../mdw-intro'>Introduction</a></li>
   <li><a href='webServices.html'>MDW Web Services</a></li>
-</ul>
-<h3>Developer Cookbooks</h3>
-<ul>
-  <li><a href='../guides/TomcatCookbook'>Apache Tomcat Cookbook</a></li>
-  <li><a href='../guides/MicroservicesCookbook'>Microservices Cookbook</a></li>
-  <li><a href='../guides/CloudFoundryCookbook'>Cloud Foundry Cookbook</a></li>
 </ul>
 <h3>Workflow Design</h3>
 <ul>
