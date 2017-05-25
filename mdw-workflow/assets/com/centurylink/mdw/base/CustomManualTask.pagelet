@@ -8,15 +8,10 @@
   </DROPDOWN>
   <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" />   
   <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
-  <DROPDOWN NAME="CustomPage" LABEL="Custom Page" SOURCE="RuleSets" TYPE="FACELET,JSP"/>
-  <SELECT NAME="Rendering" LABEL="Page Rendering" VW="300">
-    <OPTION>HTML5</OPTION>
-    <OPTION>Compatibility</OPTION>
-  </SELECT>
-  <NOTE> Blank rendering defers to mdw.default.rendering.engine</NOTE>
+  <DROPDOWN NAME="CustomPage" LABEL="Custom Page" SOURCE="RuleSets" TYPE="HTML"/>
   <HYPERLINK URL="/MDWWeb/doc/customPages.html">Custom Page Help</HYPERLINK>
-  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" DEFAULT="Hours"/>
-  <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" DEFAULT="Hours"/>
+  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
+  <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />
   <DROPDOWN NAME="PriorityStrategy" LABEL="Prioritization Strategy" VW="250">
     <OPTION PARAMETER="Priority">Specified</OPTION>
     <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
@@ -42,6 +37,8 @@
   <NOTE SECTION="Recipients" VH="65">Overrides task workgroups for notices.</NOTE>
   <LIST NAME="NoticeGroups" LABEL="Notice Groups" SOURCE="UserGroup" SECTION="Recipients" ADVANCED="true"/>
   <TEXT LABEL="Recipient Emails" NAME="RecipientVar" VX="160" VW="410" SECTION="Recipients"/>
+  <LIST NAME="CCGroups" LABEL="CC Recipient Groups" SOURCE="UserGroup" SECTION="CC Recipients"/>
+  <TEXT NAME="CCVar" LABEL="CC Recipient Emails" VW="410" SECTION="CC Recipients"/>
   <TEXT LABEL="Task Index Provider" NAME="IndexProvider" DEFAULT="com.centurylink.mdw.services.task.CustomTaskIndexProvider" SECTION="Indexes"/>
   <TABLE NAME="Indices" SECTION="Indexes">
     <TEXT LABEL="Index Name" VW="200"/>

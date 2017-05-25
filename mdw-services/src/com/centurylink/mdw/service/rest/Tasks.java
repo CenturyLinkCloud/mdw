@@ -20,6 +20,7 @@ import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExportable;
@@ -44,6 +46,7 @@ import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskIndexes;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -150,6 +153,13 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         jsonTasks.put(jsonTask);
                     }
                     return new JsonArray(jsonTasks).getJson();
+                }
+                else if (segOne.equals("categories")) {
+                    Map<Integer,TaskCategory> categories = DataAccess.getBaselineData().getTaskCategories();
+                    List<TaskCategory> list = new ArrayList<>();
+                    list.addAll(categories.values());
+                    Collections.sort(list);
+                    return JsonUtil.getJsonArray(list).getJson();
                 }
                 else if (segOne.equals("bulkActions")) {
                     boolean myTasks = query.getBooleanFilter("myTasks");

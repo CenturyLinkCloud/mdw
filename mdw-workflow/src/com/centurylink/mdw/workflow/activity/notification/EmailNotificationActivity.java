@@ -30,6 +30,7 @@ import javax.mail.internet.InternetAddress;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
@@ -57,7 +58,7 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  * Activity for sending HTML email notifications.
  */
 @Tracked(LogLevel.TRACE)
-public class EmailNotificationActivity extends DefaultActivityImpl {
+public class EmailNotificationActivity extends DefaultActivityImpl implements NotificationActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -65,67 +66,71 @@ public class EmailNotificationActivity extends DefaultActivityImpl {
     public void execute() throws ActivityException {
 
         String noticeType = getAttributeValue(WorkAttributeConstant.NOTICE_TYPE);
+        if (noticeType == null || noticeType.equals(WorkAttributeConstant.NOTICE_TYPE_EMAIL))
+            sendNotices();
+        else
+            throw new ActivityException("Unsupported email notice type: " + noticeType);
+    }
 
-        if (noticeType == null || noticeType.equals(WorkAttributeConstant.NOTICE_TYPE_EMAIL)) {
-            String groups = getAttributeValue(WorkAttributeConstant.NOTICE_GROUPS);
-            String recipEmails = getAttributeValue(WorkAttributeConstant.NOTICE_RECIP_EMAILS);
-            if (!StringHelper.isEmpty(recipEmails) && recipEmails.indexOf('@') < 0 && !recipEmails.startsWith("$")) {
-                if (recipEmails.startsWith("prop:")) {
-                    try {
-                        recipEmails = getAttributeValueSmart(WorkAttributeConstant.NOTICE_RECIP_EMAILS);
-                    }
-                    catch (PropertyException e) {
-                        throw new ActivityException("Notification activity requires recipient emails or groups attribute: " + this.getActivityName()
-                                + "Property not found  = recipEmails" + recipEmails);
-                    }
+    public void sendNotices() throws ActivityException {
+        String groups = getAttributeValue(WorkAttributeConstant.NOTICE_GROUPS);
+        String recipEmails = getAttributeValue(WorkAttributeConstant.NOTICE_RECIP_EMAILS);
+        if (!StringHelper.isEmpty(recipEmails) && recipEmails.indexOf('@') < 0 && !recipEmails.startsWith("$")) {
+            if (recipEmails.startsWith("prop:")) {
+                try {
+                    recipEmails = getAttributeValueSmart(WorkAttributeConstant.NOTICE_RECIP_EMAILS);
                 }
-                else
-                    recipEmails = "$" + recipEmails;
-            }
-            if (StringHelper.isEmpty(groups) && StringHelper.isEmpty(recipEmails)) {
-                throw new ActivityException("Notification activity requires recipient emails or groups attribute: " + this.getActivityName());
-            }
-
-            try {
-                String fromAddress = getAttributeValueSmart(WorkAttributeConstant.NOTICE_FROM);
-                if (fromAddress == null)
-                    throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_FROM);
-                String subject = getAttributeValueSmart(WorkAttributeConstant.NOTICE_SUBJECT);
-                if (subject == null)
-                    throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_SUBJECT);
-                String templateName = getAttributeValueSmart(WorkAttributeConstant.NOTICE_TEMPLATE);
-                if (templateName == null)
-                    throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_TEMPLATE);
-
-                TemplatedEmail templatedEmail = new TemplatedEmail();
-                templatedEmail.setFromAddress(fromAddress);
-                templatedEmail.setSubject(subject);
-                templatedEmail.setHtml(true);
-                templatedEmail.setTemplateName(templateName);
-                templatedEmail.setModel(getTemplatedEmailModel());
-                templatedEmail.setAttachments(getAttachments());
-                templatedEmail.setRecipients(getRecipients(groups, recipEmails));
-                templatedEmail.setCcRecipients(getCcRecipients());
-                templatedEmail.setRuntimeContext(this.getRuntimeContext());
-
-                JSONObject emailJson = templatedEmail.buildEmailJson();
-                createDocument(JSONObject.class.getName(), emailJson, OwnerType.NOTIFICATION_ACTIVITY, getActivityInstanceId());
-                templatedEmail.sendEmail(emailJson);
-            }
-            catch (MessagingException ex) {
-                logger.severeException(ex.getMessage(), ex);
-                while (ex.getNextException() != null && ex.getNextException() instanceof MessagingException) {
-                    ex = (MessagingException) ex.getNextException();
-                    logger.severeException(ex.getMessage(), ex);
+                catch (PropertyException e) {
+                    throw new ActivityException("Notification activity requires recipient emails or groups attribute: " + this.getActivityName()
+                            + "Property not found  = recipEmails" + recipEmails);
                 }
-                String continueDespite = getAttributeValue(WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION);
-                if (continueDespite == null || !Boolean.parseBoolean(continueDespite))
-                    throw new ActivityException(-1, ex.getMessage(), ex);
             }
-            catch (Exception ex) {
+            else
+                recipEmails = "$" + recipEmails;
+        }
+        if (StringHelper.isEmpty(groups) && StringHelper.isEmpty(recipEmails)) {
+            throw new ActivityException("Notification activity requires recipient emails or groups attribute: " + this.getActivityName());
+        }
+
+        try {
+            String fromAddress = getAttributeValueSmart(WorkAttributeConstant.NOTICE_FROM);
+            if (fromAddress == null)
+                throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_FROM);
+            String subject = getAttributeValueSmart(WorkAttributeConstant.NOTICE_SUBJECT);
+            if (subject == null)
+                throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_SUBJECT);
+            String templateName = getAttributeValueSmart(WorkAttributeConstant.NOTICE_TEMPLATE);
+            if (templateName == null)
+                throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_TEMPLATE);
+
+            TemplatedEmail templatedEmail = new TemplatedEmail();
+            templatedEmail.setFromAddress(fromAddress);
+            templatedEmail.setSubject(subject);
+            templatedEmail.setHtml(true);
+            templatedEmail.setTemplateName(templateName);
+            templatedEmail.setModel(getTemplatedEmailModel());
+            templatedEmail.setAttachments(getAttachments());
+            templatedEmail.setRecipients(getRecipients(groups, recipEmails));
+            templatedEmail.setCcRecipients(getCcRecipients());
+            templatedEmail.setRuntimeContext(this.getRuntimeContext());
+
+            JSONObject emailJson = templatedEmail.buildEmailJson();
+            createDocument(JSONObject.class.getName(), emailJson, OwnerType.NOTIFICATION_ACTIVITY, getActivityInstanceId());
+            templatedEmail.sendEmail(emailJson);
+        }
+        catch (MessagingException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            while (ex.getNextException() != null && ex.getNextException() instanceof MessagingException) {
+                ex = (MessagingException) ex.getNextException();
                 logger.severeException(ex.getMessage(), ex);
+            }
+            String continueDespite = getAttributeValue(WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION);
+            if (continueDespite == null || !Boolean.parseBoolean(continueDespite))
                 throw new ActivityException(-1, ex.getMessage(), ex);
-            }
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }
 
