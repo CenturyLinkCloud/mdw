@@ -258,7 +258,7 @@ CREATE TABLE DOCUMENT
   CREATE_DT         DATE                        DEFAULT SYSDATE               NOT NULL,
   MODIFY_DT     DATE,
   STATUS_CODE         NUMBER(4),
-  STATUS_MESSAGE      VARCHAR(1000)
+  STATUS_MESSAGE      VARCHAR2(1000)
 );
 
 -- not used when mongodb is present
