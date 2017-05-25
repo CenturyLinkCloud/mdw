@@ -1,20 +1,17 @@
 {
   "users":  [
     {
-      "name": "{{user}}",
-      "cuid": "{{user}}",
+      "name": "{{user.name}}",
+      "cuid": "{{user.id}}",
       "groups": [
-        "Common",
         "Developers",
         "Site Admin"
       ],
-      "Common": [
+      "roles": [
+        "User Admin",
         "Process Execution",
         "Process Design",
         "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
       ]            
     }
   ]
