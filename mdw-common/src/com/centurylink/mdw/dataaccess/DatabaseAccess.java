@@ -32,6 +32,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -48,6 +49,9 @@ public class DatabaseAccess {
     private String database_name; // JDBC url or a connection pool name
     private static String INTERNAL_DATA_SOURCE = null;
     private static Long db_time_diff = null;
+
+    private static boolean loadedInternalDriver = false;
+    private static String InternalDbDriver = null;
 
     private static EmbeddedDataAccess embedded;
     public static EmbeddedDataAccess getEmbedded() { return embedded; }
@@ -243,7 +247,26 @@ public class DatabaseAccess {
         } else {
             try {
                 DataSource dataSource = ApplicationContext.getDataSourceProvider().getDataSource(database_name);
-                connection = dataSource.getConnection();
+
+                if (InternalDbDriver == null)
+                    InternalDbDriver = PropertyManager.getProperty("mdw.database.driver");
+
+                // For user-provided Oracle JDBC driver (via JAR in package asset) to be used by MDW framework code for MDW schema operations
+                // Only need to load driver the first time, which creates the connection factory
+                if (!loadedInternalDriver && this.database_name.equals(INTERNAL_DATA_SOURCE) && !StringHelper.isEmpty(InternalDbDriver) && InternalDbDriver.contains("oracle")) {
+                    com.centurylink.mdw.model.workflow.Package pkg = PackageCache.getPackage(ProcessLoader.MDW_BASE_PACKAGE);
+                    if (pkg == null)
+                        throw new SQLException("MDW Base package is required");
+
+                    ClassLoader origCL = Thread.currentThread().getContextClassLoader();
+                    Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
+                    connection = dataSource.getConnection();
+                    Thread.currentThread().setContextClassLoader(origCL);
+                }
+                else
+                    connection = dataSource.getConnection();
+
+                loadedInternalDriver = true;
             } catch (NamingException e) {
                 throw new SQLException("Failed to find data source " + database_name, e);
             }
