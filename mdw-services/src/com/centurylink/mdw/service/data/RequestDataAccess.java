@@ -89,10 +89,10 @@ public class RequestDataAccess extends CommonDataAccess {
             ResultSet rs = db.runSelect(q.toString(), null);
             while (rs.next()) {
                 ProcessInstance pi = buildProcessInstance(rs);
-                Request request = new Request(rs.getLong("d.document_id"));
-                request.setCreated(rs.getTimestamp("d.create_dt"));
-                request.setStatusCode(rs.getInt("d.status_code"));
-                request.setStatusMessage(rs.getString("d.status_message"));
+                Request request = new Request(rs.getLong("document_id"));
+                request.setCreated(rs.getTimestamp("create_dt"));
+                request.setStatusCode(rs.getInt("status_code"));
+                request.setStatusMessage(rs.getString("status_message"));
                 request.setMasterRequestId(pi.getMasterRequestId());
                 request.setProcessInstanceId(pi.getId());
                 request.setProcessId(pi.getProcessId());
@@ -100,11 +100,11 @@ public class RequestDataAccess extends CommonDataAccess {
                 request.setProcessVersion(pi.getProcessVersion());
                 request.setPackageName(pi.getPackageName());
                 request.setProcessStatus(pi.getStatus());
-                request.setProcessStart(rs.getTimestamp("pi.start_dt"));
-                request.setProcessEnd(rs.getTimestamp("pi.end_dt"));
+                request.setProcessStart(rs.getTimestamp("start_dt"));
+                request.setProcessEnd(rs.getTimestamp("end_dt"));
                 requests.add(request);
                 requestMap.put(request.getId(), request);
-                if (OwnerType.LISTENER_REQUEST.equals(rs.getString("d.owner_type")))
+                if (OwnerType.LISTENER_REQUEST.equals(rs.getString("owner_type")))
                     listenerRequestIds.add(request.getId());
             }
 
@@ -399,10 +399,10 @@ public class RequestDataAccess extends CommonDataAccess {
             List<Long> requestIds = new ArrayList<Long>();
             ResultSet rs = db.runSelect(q.toString(), null);
             while (rs.next()) {
-                Request request = new Request(rs.getLong("d.document_id"));
-                request.setCreated(rs.getTimestamp("d.create_dt"));
-                request.setStatusCode(rs.getInt("d.status_code"));
-                request.setStatusMessage(rs.getString("d.status_message"));
+                Request request = new Request(rs.getLong("document_id"));
+                request.setCreated(rs.getTimestamp("create_dt"));
+                request.setStatusCode(rs.getInt("status_code"));
+                request.setStatusMessage(rs.getString("status_message"));
                 requestMap.put(request.getId(), request);
                 requests.add(request);
                 requestIds.add(request.getId());
