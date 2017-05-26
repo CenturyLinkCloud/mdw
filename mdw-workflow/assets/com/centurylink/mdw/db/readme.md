@@ -42,30 +42,26 @@ called seed_users.json located in the config directory specified by system prope
 {
   "users":  [
     {
-      "name": "Joe Developer",
-      "cuid": "jd123",
+      "name": "Joe Dev",
+      "id": "jdev",
       "attributes": {
-        "emailAddress": "joe.developer@centurylink.com"
-      },          
+        "emailAddress": "jdev@example.com"
+      },      
       "groups": [
-        "Common",
-        "MDW Support",
+        "Developers",
         "Site Admin"
       ],
-      "Common": [
-        "Process Design",
+      "roles": [
+        "User Admin",
         "Process Execution",
+        "Process Design",
         "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
       ]            
     }
   ]
 }
 ```
-This gives Joe permission to perform key actions for the Common group, and to add users
-under any group.
+This gives Joe permission to perform key actions for the Common group.
 
 **Important:** The seed_users.json file must be in place before the first time you start your
 server with embedded db enabled.  Otherwise this file is ignored as the database has already

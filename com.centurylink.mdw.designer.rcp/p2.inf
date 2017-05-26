@@ -1,3 +1,0 @@
-instructions.configure=\
-  addRepository(type:0,location:http${#58}//lxdenvmtc143.dev.qintra.com:6101/MdwRcp);\
-  addRepository(type:1,location:http${#58}//lxdenvmtc143.dev.qintra.com:6101/MdwRcp);
