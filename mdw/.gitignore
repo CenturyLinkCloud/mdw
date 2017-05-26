@@ -5,3 +5,5 @@ deploy/
 bin/
 notes/
 /config/
+gradle
+gradlew
