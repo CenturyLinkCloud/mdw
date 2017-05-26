@@ -54,7 +54,6 @@ import com.centurylink.mdw.plugin.designer.DesignerPerspective;
 import com.centurylink.mdw.plugin.designer.DesignerProxy;
 import com.centurylink.mdw.plugin.designer.Importer;
 import com.centurylink.mdw.plugin.designer.SwtProgressMonitor;
-import com.centurylink.mdw.plugin.designer.model.ElementChangeEvent.ChangeType;
 import com.centurylink.mdw.plugin.designer.model.File;
 import com.centurylink.mdw.plugin.designer.model.Folder;
 import com.centurylink.mdw.plugin.designer.model.WorkflowElement;
@@ -66,6 +65,8 @@ import com.centurylink.mdw.plugin.project.model.WorkflowProject;
 public class ImportPackageWizard extends Wizard implements IImportWizard {
     private ImportPackagePage importPackagePage;
     private ImportPackageSelectPage importPackageSelectPage;
+    private boolean zipFormat;
+    private java.io.File importFile;
 
     ImportPackageSelectPage getImportPackageSelectPage() {
         return importPackageSelectPage;
@@ -199,8 +200,8 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                             progressMonitor.done();
                         }
                     }
-                    if (sb.length() > 0 || importedPackages.size() > 0 && wfp.isRemote()
-                            && wfp.isFilePersist()) {
+                    if (sb.length() > 0 || (importedPackages.size() > 0 && wfp.isRemote()
+                            && wfp.isFilePersist()) || zipFormat) {
                         // zip and upload imported packages to
                         // server
                         java.io.File tempDir = wfp.getTempDir();
@@ -211,6 +212,8 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                         }
                         java.io.File zipFile = new java.io.File(tempDir + "/packages"
                                 + StringHelper.filenameDateToString(new Date()) + ".zip");
+                        if (zipFormat)
+                            zipFile = importFile;
                         java.io.File assetDir = wfp.getAssetDir();
                         if (sb.length() > 0) {
                             String url = MdwPlugin.getSettings().getAssetDiscoveryUrl()
@@ -220,35 +223,8 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                     MdwPlugin.getSettings().getHttpConnectTimeout());
                             httpHelper.setReadTimeout(MdwPlugin.getSettings().getHttpReadTimeout());
                             httpHelper.download(zipFile);
-                            if (!wfp.isRemote()) {
-                                VersionControl vcs = new VersionControlGit();
-                                vcs.connect(null, null, null, wfp.getAssetDir());
-                                progressMonitor.subTask("Archive existing assets...");
-                                VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs,
-                                        progressMonitor);
-                                archiver.backup();
-                                PluginMessages.log("Unzipping " + zipFile + " into: " + assetDir);
-                                FileHelper.unzipFile(zipFile, assetDir, null, null, true);
-                                archiver.archive();
-                                FileHelper.unzipFile(zipFile, tempDir, null, null, true);
-                                wfp.getSourceProject().refreshLocal(2, null);
-                                java.io.File explodedDir = new java.io.File(tempDir + "/com");
-                                if (explodedDir.isDirectory()) {
-                                    List<java.io.File> fileList = FileHelper.getFilesRecursive(
-                                            explodedDir, "package.json",
-                                            new ArrayList<java.io.File>());
-                                    for (java.io.File file : fileList) {
-                                        WorkflowPackage workflowPackage = new WorkflowPackage();
-                                        workflowPackage.setProject(wfp);
-                                        workflowPackage.setPackageVO(new PackageVO(new JSONObject(
-                                                FileHelper.getFileContents(file.getPath()))));
-                                        importedPackages.add(workflowPackage);
-                                    }
-                                    FileHelper.deleteRecursive(explodedDir);
-                                }
-                            }
                         }
-                        else {
+                        else if (!zipFormat) {
                             List<java.io.File> includes = new ArrayList<java.io.File>();
                             for (WorkflowPackage pkg : importedPackages)
                                 includes.add(new java.io.File(
@@ -257,6 +233,33 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                             // package dirs (why, since these are not in
                             // includes?)
                             FileHelper.createZipFileWith(assetDir, zipFile, includes);
+                        }
+                        if (!wfp.isRemote()) {
+                            VersionControl vcs = new VersionControlGit();
+                            vcs.connect(null, null, null, wfp.getAssetDir());
+                            progressMonitor.subTask("Archive existing assets...");
+                            VcsArchiver archiver = new VcsArchiver(assetDir, tempDir, vcs,
+                                    progressMonitor);
+                            archiver.backup();
+                            PluginMessages.log("Unzipping " + zipFile + " into: " + assetDir);
+                            FileHelper.unzipFile(zipFile, assetDir, null, null, true);
+                            archiver.archive();
+                            FileHelper.unzipFile(zipFile, tempDir, null, null, true);
+                            wfp.getSourceProject().refreshLocal(2, null);
+                            java.io.File explodedDir = new java.io.File(tempDir + "/com");
+                            if (explodedDir.isDirectory()) {
+                                List<java.io.File> fileList = FileHelper.getFilesRecursive(
+                                        explodedDir, "package.json",
+                                        new ArrayList<java.io.File>());
+                                for (java.io.File file : fileList) {
+                                    WorkflowPackage workflowPackage = new WorkflowPackage();
+                                    workflowPackage.setProject(wfp);
+                                    workflowPackage.setPackageVO(new PackageVO(new JSONObject(
+                                            FileHelper.getFileContents(file.getPath()))));
+                                    importedPackages.add(workflowPackage);
+                                }
+                                FileHelper.deleteRecursive(explodedDir);
+                            }
                         }
                         if (wfp.isRemote() && wfp.isFilePersist()) {
                             String uploadUrl = wfp.getServiceUrl()
@@ -281,7 +284,8 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
                                 is.close();
                             }
                         }
-                        zipFile.delete();
+                        if (!zipFormat)
+                            zipFile.delete();
                         progressMonitor.done();
                     }
                     wfp.getDesignerProxy().getCacheRefresh().doRefresh(true);
@@ -326,6 +330,18 @@ public class ImportPackageWizard extends Wizard implements IImportWizard {
     public void addPages() {
         addPage(importPackagePage);
         addPage(importPackageSelectPage);
+    }
+
+    @Override
+    public boolean canFinish() {
+        zipFormat = importPackagePage.isZipFormat();
+        if (importPackagePage.isPageComplete() && zipFormat) {
+            importFile = importPackagePage.getZipFile();
+            return true;
+        }
+        else if (importPackagePage.isPageComplete() && importPackageSelectPage.isPageComplete())
+            return true;
+        return false;
     }
 
     void initializePackageSelectPage(WorkflowElement preselected) {

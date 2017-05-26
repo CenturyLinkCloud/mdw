@@ -164,7 +164,7 @@ public class ImportPackagePage extends WizardPage {
         browseImportFileButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dlg = new FileDialog(getShell());
-                dlg.setFilterExtensions(new String[] { "*.json", "*.xml" });
+                dlg.setFilterExtensions(getFileExtensions());
                 String res = dlg.open();
                 if (res != null)
                     filePathText.setText(res);
@@ -254,7 +254,7 @@ public class ImportPackagePage extends WizardPage {
 
     @Override
     public boolean canFlipToNextPage() {
-        return isPageComplete();
+        return isPageComplete() && !isZipFormat();
     }
 
     @Override
@@ -546,5 +546,20 @@ public class ImportPackagePage extends WizardPage {
             PluginMessages.log(ex); // silently fail and return false
         }
         return false;
+    }
+
+    protected String[] getFileExtensions() {
+        String[] extns = new String[] { "*.json", "*.zip" };
+        if (!getProject().checkRequiredVersion(6))
+            extns = new String[] { "*.json", "*.xml" };
+        return extns;
+    };
+
+    protected boolean isZipFormat() {
+        return filePathText.getText().indexOf("zip") > 0;
+    }
+
+    public java.io.File getZipFile() {
+        return new java.io.File(filePathText.getText());
     }
 }
