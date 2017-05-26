@@ -35,3 +35,5 @@ gems:
 
 exclude:
   - .gitignore
+  - _docs/help
+  - _docs/javadoc

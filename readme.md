@@ -121,18 +121,18 @@
    - Install Ruby 2.1.0 or higher and add its bin directory to your PATH.
    - Install Bundler:
      ```
-	 gem install bundler
+     gem install bundler
 	 ```
    - Download the CURL CA Certs from http://curl.haxx.se/ca/cacert.pem and save in your Ruby installation directory.
    - Set environment variable SSL_CERT_FILE to point to this this cacert.pem file location.
    - Install Ruby DevKit: https://github.com/oneclick/rubyinstaller/wiki/Development-Kit
    - Install Jekyll and all its dependencies (in the /docs directory):
      ```
-	 bundle install
+     bundle install
 	 ```
    - Build GitHub pages site locally (in the /docs directory):
      ```
-	 bundle exec jekyll serve --incremental --baseurl ''
+     bundle exec jekyll serve --incremental --watch --baseurl ''
 	 ```
    - Access locally in your browser:
      http://127.0.0.1:4000/
