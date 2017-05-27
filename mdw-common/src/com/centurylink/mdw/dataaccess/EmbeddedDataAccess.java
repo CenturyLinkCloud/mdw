@@ -103,12 +103,15 @@ public class EmbeddedDataAccess {
             try {
                 String usersJson = JsonUtil.read("seed_users.json");
                 if (usersJson != null) {
-                    logger.info("Loading seed users into " + MDW_EMBEDDED_DB_CLASS);
+                    logger.info("Loading seed users into " + MDW_EMBEDDED_DB_CLASS + ":");
                     JSONObject usersObj = new JsonObject(usersJson);
                     if (usersObj.has("users")) {
                         JSONArray usersArr = usersObj.getJSONArray("users");
-                        for (int i = 0; i < usersArr.length(); i++)
-                            embeddedDb.insertUser(new User(usersArr.getJSONObject(i)));
+                        for (int i = 0; i < usersArr.length(); i++) {
+                            User user = new User(usersArr.getJSONObject(i));
+                            logger.info("  creating user: '" + user.getCuid() + "'");
+                            embeddedDb.insertUser(user);
+                        }
                     }
                 }
             }
