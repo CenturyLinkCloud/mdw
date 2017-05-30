@@ -16,9 +16,11 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
@@ -28,15 +30,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.Event;
@@ -49,9 +59,12 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.task.types.TaskList;
+import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseEvent;
+import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestCaseProcess;
 import com.centurylink.mdw.test.TestCaseTask;
 import com.centurylink.mdw.test.TestException;
@@ -76,9 +89,19 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         super(testCase, user, mainResultsDir, run, masterRequestId, monitor, processCache, config);
     }
 
+    public StandaloneTestCaseRun(TestCase testCase, String user, File mainResultsDir, int run,
+            String masterRequestId, LogMessageMonitor monitor, Map<String, Process> processCache,
+            TestExecConfig config, boolean multi) throws IOException {
+        super(testCase, user, mainResultsDir.getParentFile(), run, masterRequestId, monitor, processCache, config);
+        this.resultsFile = mainResultsDir;
+    }
+
+    private File resultsFile;
+
     /**
      * Standalone execution for Designer and Gradle.
      */
+
     public void run() {
         startExecution();
 
@@ -97,6 +120,9 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         }
         catch (IOException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
+        }
+        catch (Throwable ex) {
+            finishExecution(ex);
         }
     }
 
@@ -134,7 +160,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
 
     @Override
     protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, boolean orderById)
-    throws DataAccessException, IOException, ServiceException, JSONException, ParseException {
+            throws DataAccessException, IOException, ServiceException, JSONException, ParseException {
         List<ProcessInstance> mainProcessInsts = new ArrayList<ProcessInstance>();
         Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<String,List<ProcessInstance>>();
         Map<String,String> fullActivityNameMap = new HashMap<String,String>();
@@ -370,5 +396,118 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             }
         }
         AccessController.doPrivileged(new DoSetContext(shell.getClassLoader()));
+    }
+    public TestCaseList writeTestResults(TestCase exeTestCase, TestCaseList testCaseList) throws JSONException, IOException {
+        if (!resultsFile.exists())
+            writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
+        String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
+        TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        PackageTests pkgTests = fullTestCaseList.getPackageTests(exeTestCase.getPackage());
+        if (pkgTests == null) {
+            pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage(), null));
+            pkgTests.setTestCases(new ArrayList<TestCase>());
+            fullTestCaseList.addPackageTests(pkgTests);
+        }
+        TestCase testCase = fullTestCaseList.getTestCase(exeTestCase.getPath());
+        if (testCase == null)
+            testCase = fullTestCaseList.addTestCase(exeTestCase);
+        if (testCase != null) {
+            testCase.setStatus(exeTestCase.getStatus());
+            testCase.setStart(exeTestCase.getStart());
+            testCase.setEnd(exeTestCase.getEnd());
+            testCase.setMessage(exeTestCase.getMessage());
+            fullTestCaseList.setCount(fullTestCaseList.getTestCases().size());
+            fullTestCaseList.sort();
+            writeFile(resultsFile, fullTestCaseList.getJson().toString(2).getBytes());
+        }
+        return fullTestCaseList;
+    }
+    private void writeFile(File file, byte[] contents) throws IOException {
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs())
+            throw new IOException("Unable to create directory: " + file.getParentFile());
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            fos.write(contents);
+        }
+        finally {
+            if (fos != null)
+                fos.close();
+        }
+    }
+
+    public static CommandLine getCommandLine(String[] parameters)
+    {
+        CommandLine commandLine = null;
+
+        Option option_include = Option.builder("include")
+                .desc("The include option")
+                .argName("opt1")
+                .longOpt("opt1")
+                .hasArg()
+                .build();
+        Option option_format = Option.builder("byFormat")
+                .desc("The include-format option")
+                .argName("opt2")
+                .longOpt("opt2")
+                .hasArg()
+                .build();
+        Option option_exclude = Option.builder("exclude")
+                .desc("The exclude option")
+                .argName("opt3")
+                .longOpt("opt3")
+                .hasArg()
+                .build();
+
+        Options options = new Options();
+        CommandLineParser parser = new DefaultParser();
+
+        //String[] testArgs =  { "-include", "opt1", "-byFormat", "opt2", "-exclude", "opt3",};
+
+        options.addOption(option_include);
+        options.addOption(option_format);
+        options.addOption(option_exclude);
+
+        String header = "Options, flags and arguments may be in any order";
+        String footer = "This is MDW standalone task";
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("Gradle Test Task", header, options, footer, true);
+
+        try
+        {
+            commandLine = parser.parse(options, parameters);
+        }
+        catch (org.apache.commons.cli.ParseException exception)
+        {
+            System.out.print("Parse error: ");
+            System.out.println(exception.getMessage());
+        }
+        return commandLine;
+    }
+
+
+    public static TestCaseList addTestCases(TestingServices testingServices, String assetLoc,
+            TestCaseList testCaseList, String testPaths)  throws ServiceException {
+        String [] testCasePaths = testPaths.split(",");
+
+        for (int i = 0; i < testCasePaths.length; i++) {
+            String testCasePath = testCasePaths[i];
+            if (testCasePath.startsWith("${resource_loc:") && testCasePath.endsWith("}"))
+                testCasePath = testCasePath.substring(15, testCasePath.length() - 1);
+            // convert to asset path format
+            if (testCasePath.startsWith(assetLoc))
+                testCasePath = testCasePath.substring(assetLoc.length() + 1);
+            testCasePath = testCasePath.replace('\\', '/');
+            int lastSlash = testCasePath.lastIndexOf('/');
+            testCasePath = testCasePath.substring(0, lastSlash).replace('/', '.') + testCasePath.substring(lastSlash);
+            TestCase testCase = testingServices.getTestCase(testCasePath);
+            if (testCaseList.getPackageTests(testCase.getPackage()) == null){
+                PackageTests pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), testCase.getPackage(), null));
+                pkgTests.setTestCases(new ArrayList<TestCase>());
+                testCaseList.addPackageTests(pkgTests);
+            }
+            testCaseList.addTestCase(testCase);
+        }
+        return testCaseList;
     }
 }
