@@ -26,7 +26,7 @@ If you <i>do</i> feel like diving into the underlying protocol details, you can 
 Just as for all supported protocols, you can create and register Web Service Handlers using the MDW Plug-In External Event wizard 
 (File &gt; New &gt; Other &gt; MDW Event Handlers &gt; External Event Handler).
 Your handler is registered to respond to a specified incoming document content (the <a href="xpath.html">Message Pattern</a>), 
-regardless of how the message was received (SOAP, REST, JMS, BUS, etc).
+regardless of how the message was received (SOAP, REST, JMS, etc).
 Typically you'll choose to launch a <a href="process.html">Service Process</a> which is responsible for handling the request 
 and generating a response in real-time.  However, you can also choose to implement a custom handler that can perform actions such as parsing the 
 request before launching a process, or can generate a response without involving a workflow process at all.
@@ -41,7 +41,7 @@ By default it's also made available in your service process flow via the implici
 <h4>SOAP</h4>
 <p>
 The incoming SOAP request consists of an XML document with a SOAP Envelope, optional Headers, and a SOAP Body.
-In a document-literal style service (the type supported out-of-the-box by MDW) the SOAP Body contains a top-level XML schema type that 
+In a document-literal style service (the type supported built-in by MDW) the SOAP Body contains a top-level XML schema type that 
 comprises the message payload.  The MDW SOAP listener unpacks the message payload from the SOAP body and matches it against your event handler.
 The SOAP headers are passed on in the protocol metadata to your custom event handler method.
 </p>
@@ -52,7 +52,7 @@ The steps for exposing an MDW Web Service based on a custom WSDL definition star
   In the Eclipse Process Explorer view, right-click on a workflow package and select New &gt; XML Document.
   Type the document name, and select the language as "WSDL".
   When your server is running, the WSDL will be exposed via the standard MDW SOAP service endpoint URL 
-  (such as: http://localhost:8181/MDWWeb/SOAP/Employee.wsdl)</li>
+  (such as: http://localhost:8080/mdw/services/SOAP/Employee.wsdl)</li>
 </ul>
    <img src="images/new_wsdl.jpg" style="margin-left:25px;" />
    <br/><br/>
@@ -196,7 +196,6 @@ You can use any of the pre-built Web Service adapter activities:
 <ul>
   <li><a href="RestfulAdapter.html">RESTful Adapter</a> (for consuming REST-based services)</li>
   <li><a href="DocWebServiceAdapter.html">Document Web Service Adapter</a> ()For SOAP services with any document-literal style WSDL)</li>
-  <li><a href="MDWWebServiceAdapter.html">MDW Web Service Adapter</a> (for SOAP services built on the MDW RPC-style WSDL)</li>
 </ul> 
 <hr/>
 <br/><br/>
@@ -255,15 +254,6 @@ If your app is deployed in an OSGi container, you can register your implementati
 This registers as both an XML and JSON service, so in this case you'd implement both XmlService and JsonService.
 Consumers can designate which response format they prefer by adding the parameter ?format=json (or xml) to their request URL.
 </p>
-<p>
-The XSD covering ResourceRequests and ActionRequests is here:<br/>
-<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Services.xsd">http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Services.xsd</a>.
-</p>
-<p>
-Typically an ActionRequest needs to pass arbitrary XML or JSON content beyond the simple Parameter schema type (which is good for name/value pairs).
-This payload is embedded in the Content element as in this example, which illustrates how a separate arbitrary XSD can be used to constrain the embedded payload:<br/>
-<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Samples/CreateTask.xml.xml">http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Samples/CreateTask.xml</a>.
-</p>
 Alternatively, in MDW if you would like the custom payload to be the top-level element, you can register your EventHandler implementation through the usual channels (Camel or ExternalEvent), and the incoming document will be matched to your service according to the pattern specified in your EventHandler registration.
 
 <h3>Standard REST Services</h3>
@@ -276,8 +266,6 @@ These are listed in the <a href="../javadoc/index.html">MDW JavaDocs</a> under t
   <li><b>Resources:</b> <a href="../javadoc/com/centurylink/mdw/service/resource/package-summary.html">com.centurylink.mdw.service.resource</a></li>
   <li><b>Actions:</b> <a href="../javadoc/com/centurylink/mdw/service/action/package-summary.html">com.centurylink.mdw.service.action</a></li>
   </ul>
-Sample requests for many of these services are available here:<br/>
-<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Samples">http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Samples</a>.
 </p>
 <p>
 Services are categorized into Resource Requests and Action Requests.
@@ -315,7 +303,7 @@ The adapters below include configuration to set a user/password Basic Authentica
   </li>
   <li><code>DocumentWebServiceAdapter</code>
   </li>
-  <li><code>RestfulServiceAdapter</code>
+  <li><code>RestServiceAdapter</code>
   </li>
 </ul>
 <p> For specific details on how to configure the above adapters for Basic Authentication, please refer to these adapters in the eclipse help.
@@ -325,13 +313,13 @@ The adapters below include configuration to set a user/password Basic Authentica
 The MDW servlets below support HTTP Basic Authentication for hosted web services.  
 </p>
 <ul>
-  <li><code>SoapListenerServlet</code>
+  <li><code>SoapServlet</code>
   </li>
-  <li><code>RestfulServicesServlet</code>
+  <li><code>RestServlet</code>
   </li>
  </ul>
 <p>
-To enable these servlets to use Basic authentication, you should set the following property in your <b>mdw.properties</b> or <b>com.centurylink.mdw.cfg</b> configuration file.
+To enable these servlets to use Basic authentication, you should set the following property in your <b>mdw.properties</b> configuration file.
 <br/><br/>
 <code>mdw.http.listeners.auth.mode=Basic</code>
 <br/><br/>
