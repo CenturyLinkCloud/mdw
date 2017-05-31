@@ -6,7 +6,7 @@ title: Designer User Guide
 
 #### Getting Started with MDW Designer
 - The MDW Designer application comes with an Eclipse plug-in for developers, which requires a setup and that information can be found in the `readme.md` file in any of the following mdw projects hosted on CenturyLink's GitHub site:
-     - [MDW Demo](https://github.com/mdw-dev/mdw-demo)
+     - [MDW Demo](https://github.com/CenturyLinkCloud/mdw-demo)
      - [Full-Blown MDW 6](https://github.com/CenturyLinkCloud/mdw)
 
 - In addition to this document, there is a great deal of online help docs and guides that are available via the menu option, HELP on the home page, as well as on Eclipse under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning, etc. 

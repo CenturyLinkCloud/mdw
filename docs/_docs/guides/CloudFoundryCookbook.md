@@ -21,7 +21,7 @@ title: CloudFoundry Cookbook
 #### 1. Clone the Demo Project from GitHub
 
 A quick way to get familiar with the layout of an mdw workflow cloud project is to start with the mdw-demo project. This project is available from our GitHub instance of the CenturyLink.
-- For your eclipse setup guide, refer to the `readme.md` file (step 1 and step 3 only) in the [https://github.com/mdw-dev/mdw-demo](https://github.com/mdw-dev/mdw-demo) project and return to this guide to continue. 
+- For your eclipse setup guide, refer to the `readme.md` file (step 1 and step 3 only) in the [https://github.com/CenturyLinkCloud/mdw-demo](https://github.com/CenturyLinkCloud/mdw-demo) project and return to this guide to continue. 
 
 ##### MDW Designer Perspective:
 -	To best view mdw-demo's workflow assets, switch to Designer Perspective (Window > Perspective > Open Perspective > Other > MDW Designer).
