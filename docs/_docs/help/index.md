@@ -27,7 +27,6 @@ permalink: /docs/help/
   <li><a href='DocWebServiceAdapter.html'>Document Web Service Adapter Activity</a></li>
   <li><a href='MDWWebServiceAdapter.html'>MDW Web Service Adapter Activity</a></li>
   <li><a href='RestfulAdapter.html'>RESTful Adapter Activity</a></li>
-  <li><a href='CompositeSynchronousAdapter.html'>Composite Synchronous Adapter Activity</a></li>
   <li><a href='documentTransform.html'>Document Transform Activity</a></li>
   <li><a href='notification.html'>Notification Activity</a></li>
   <li><a href='sqlAdapter.html'>SQL Adapter Activity</a></li>

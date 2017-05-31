@@ -8,7 +8,7 @@
 When deploying in a cloud environment the mechanism for setting your app-specific workflow properties is through MDW Package Configuration.
 This enables you to configure custom settings that apply only to your particular workflow application.
 <br/><br/>
-Also, the MDW runtime provides many injection points where you can configure behavior provided by your custom deployable artifact (OSGi Bundle or Jar File).
+Also, the MDW runtime provides many injection points where you can configure behavior provided by your custom deployable artifact (Jar File).
 Examples of this include <a href="dynamicJavaActivity.html"> Dynamic Java</a>, <a href="MDWCamelIntegration.html">Camel Integration</a>, and <a href="workflowAssets.html">Spring Workflow Assets</a>.  
 Frequently you'll want to associate your workflow package with a corresponding deployable artifact so that MDW knows where to locate your custom code.
 This is accomplished using Package Configuration as well.
@@ -28,19 +28,7 @@ Prod environments require special permissions and confirmations before performin
 The package configuration settings are exported along with the processes and assets for a package, and so they carry forward when migrated to a new environment.
 <br/><br/>
 You can leverage your package configuration properties using the <i>props</i> <a href="bindingExpressions.html">binding expression</a> syntax in your activity design attributes, 
-and in your programmatically through the <a href="../javadoc/com/centurylink/mdw/common/utilities/property/PropertyManager.html">MDW PropertyManager API</a>.
+and in your programmatically through the <a href="../javadoc/com/centurylink/mdw/config/PropertyManager.html">MDW PropertyManager API</a>.
 This gives you a mechanism for plugging in environment-specific values.
-<h3>OSGi Bundle Spec Properties</h3>
-The properties shown in the screenshot have special significance to the MDW runtime in an <a href="http://www.osgi.org/Technology/WhyOSGi">OSGi</a> environment such as ServiceMix or Fuse.
-The property OsgiBundleSymbolicName designates a bundle that should be accessed by MDW when locating custom implementation 
-(such as bundle classes accessed by <a href="customWeb.html#dynamicJavaManagedBeans">Dynamic Java Managed Beans</a>). 
-In OSGi environments a common strategy for handling in-flight processes is to leave your old bundle in place while
-deploying a new bundle alongside it to handle new processes.
-This is possible in OSGi because each bundle gets its own ClassLoader, so multiple classes with the same name can coexist in the container. 
-This ability enables you to develop your new bundle classes without having to worry about compatibility with pre-existing process instances.  
-One ingredient in this strategy is to use a <a href="../javadoc/com/centurylink/mdw/common/provider/VersionAwareProvider.html">Version Aware Provider</a>
-for MDW Activities.  For workflow assets like Spring configs or Dynamic Java Managed Beans, another ingredient is to specify
-the OsgiBundleVersion package property, which tell MDW that it needs to look in a specified version of your bundle when accessing your classes.
-The bundle specification follows the OSGi version range syntax as documented in the <a href="../javadoc/com/centurylink/mdw/osgi/BundleSpec.html">MDW BundleSpec class API</a>.
 </body>
 </html>
