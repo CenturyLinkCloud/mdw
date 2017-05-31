@@ -10,7 +10,7 @@ layout: help
   [Camel Route Adapter](http://camel.apache.org/) | Camel is an "integration framework" that enables to link together services through declarative route definitions.
   [Crossmap Activity](http://centurylinkcloud.github.io/mdw/docs/help/crossmap.html) | Used for simple Groovy-based DSL that enables to transform JSON/XML input documents to JSON/XML output documents.
   [Custom Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Used to create a custom manual task instance.
-  [Document Web Service](http://centurylinkcloud.github.io/mdw/docs/help/DocWebServiceAdapter.html) | Used for SOAP-based, document-style WebServices.
+  [Document Web Service](http://centurylinkcloud.github.io/mdw/docs/help/DocWebServiceAdapter.html) | Used for SOAP-based, document-style Web Services.
   [Drools Activity](http://centurylinkcloud.github.io/mdw/docs/help/droolsActivities.html) | Used for rules execution.
   [Dynamic Java General Activity](http://centurylinkcloud.github.io/mdw/docs/help/dynamicJavaActivity.html) | Used to edit Java Code in a local or remote environment without needing to re-deploy or restart the server.
   [Event Check Activity](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for checking various statuses and events in a workflow process. 
@@ -23,7 +23,7 @@ layout: help
   [JDBC SQL Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for connecting to databases.
   [JMS Adapter](http://centurylinkcloud.github.io/mdw/docs/help/JmsAdapter.html) | Used to send JMS messages.
   [LDAP Adapter](http://centurylinkcloud.github.io/mdw/docs/help/LdapAdapter.html) | Used to query LDAP directory for entities and attributes and to bind results to process variables.
-  [Multi-REST Service Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for invoking multiple RESTful WebServices.
+  [Multi-REST Service Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for invoking multiple RESTful Web Services.
   [Notification](http://centurylinkcloud.github.io/mdw/docs/help/notification.html) | Used to send email notifications.
   [OAuth Service Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for user authentication.
   [Process Finish](http://centurylinkcloud.github.io/mdw/docs/help/ProcessFinishActivity.html) | Used to stop the process.

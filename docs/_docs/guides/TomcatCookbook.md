@@ -3,7 +3,7 @@ permalink: /docs/guides/TomcatCookbook/
 title: Tomcat Cookbook
 ---
 
-### MDW SOAP document-style WebServices
+### MDW SOAP document-style Web Services
 
 This document contains information about creating, exposing and consuming services through a SOAP-based WebService. For a RESTFul WebService, refer to [MicroservicesCookbook](../MicroservicesCookbook/).
 
