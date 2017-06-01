@@ -440,20 +440,20 @@ public class StandaloneTestCaseRun extends TestCaseRun {
     {
         CommandLine commandLine = null;
 
-        Option option_include = Option.builder("include")
-                .desc("The include option")
+        Option option_includes = Option.builder("includes")
+                .desc("The includes option")
                 .argName("opt1")
                 .longOpt("opt1")
                 .hasArg()
                 .build();
         Option option_format = Option.builder("byFormat")
-                .desc("The include-format option")
+                .desc("The byFormat option")
                 .argName("opt2")
                 .longOpt("opt2")
                 .hasArg()
                 .build();
-        Option option_exclude = Option.builder("exclude")
-                .desc("The exclude option")
+        Option option_excludes = Option.builder("excludes")
+                .desc("The excludes option")
                 .argName("opt3")
                 .longOpt("opt3")
                 .hasArg()
@@ -462,11 +462,11 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
-        //String[] testArgs =  { "-include", "opt1", "-byFormat", "opt2", "-exclude", "opt3",};
+        //String[] testArgs =  { "-includes", "opt1", "-byFormat", "opt2", "-excludes", "opt3",};
 
-        options.addOption(option_include);
+        options.addOption(option_includes);
         options.addOption(option_format);
-        options.addOption(option_exclude);
+        options.addOption(option_excludes);
 
         String header = "Options, flags and arguments may be in any order";
         String footer = "This is MDW standalone task";
