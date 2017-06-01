@@ -9,7 +9,7 @@
 <p>MDW provides an event management GUI, accessible through
 Eclipse Designer by right-clicking on the workflow project in Process Explorer view and selecting Swing Tools > Event Manager.   
 EventManager can be used to view and manage both external and internal events, as well as
-other event-like things such as certified messages, scheduled jobs, and event logs.
+other event-like things such as scheduled jobs and event logs.
 The event manager has a tab for each type of events it manages.
 </p>
 
@@ -95,62 +95,6 @@ with STATUS_CD having the value 7.</p>
 <p>You can use the command buttons on this screen to manually create, modify and delete
    the entries, although this functionality is provided only for recovering from bad system
    errors, and should be used with extreme caution.</p>
-
-<h2>Managing Certified Messages</h2>
-<p>The Certified Messages tab is used to manage certified JMS or connection
-pool messages. These are also stored in the database table EVENT_INSTANCE,
-with STATUS_CD 6, 8, 9, 10 and 11, whose meanings are explained below.
-The following picture shows the tab as seen in the classic Designer.</p>
-<img src='images/eventmgr_certified.jpg'/>
-<p>The descriptions of the columns are as follows:</p>
-<ul>
-  <li>Create Time: the time when the certified message is created.</li>
-  <li>Event Name: it has the format <code>MDWCM-<var>sender-app-name</var>-<var>message-document-id</var></code>.</li>
-  <li>Status: the English description of STATUS_CD. They can be:
-  	<ul>
-  		<li>&ldquo;Certified Message&rdquo; (6 - ): The message is 
-  			not yet delivered, but will be retried automatically.</li>
-  		<li>&ldquo;CM - on hold&rdquo; (8): the message has been
-  				put on hold, namely will not be automatically retried.
-  				The system will automatically put a message on hold
-  				when it has made maximum number of retries without 
-  				being successful. You can also use the Event Manager
-  				to put a message on hold manually.</li>
-  		<li>&ldquo;CM - Cancelled&rdquo; (9): the message has been
-  				cancelled (you can cancel a message not delivered yet
-  				in this Event Manager, described below).</li>
-  		<li>&ldquo;CM - Delivered&rdquo; (10): the message has been
-  				delivered. The entry is not deleted as the certification.</li>
-  		<li>&ldquo;CM - Received&rdquo; (11): the above 4 statuses
-  				are for the message sender. This status is for
-  				the message receiver, and it is just used to certify
-  				that the message is indeed received.</li>
-   	</ul>
-  <li>Consumed Time: the time when the message is delivered (from sender point of view),
-      or received (from receiver point of view).</li>
-  <li>Document ID. The ID of the document holding the message on the sender side.
-    The field is not populated on the receiver side. Double-click on the entry will show the message content in a dialog.</li>
-  <li>Properties. Configuration properties. See documentation
-    on certified JMS messages (follow <a href='JmsAdapter.html'>this link</a>) and certified connection
-    pool messages (follow <a href='ConnectionPoolAdapter.html'>this link</a>) for explanations.</li>
-  <li>Reference: this field is used to identify who is sending the certified messages.
-  	The value is set by API call to send certified messages. MDW internal code
-  	sets this to the log tag (process definition/instance ID 
-  	and activity definition/instance ID) of the activity instance when the
-  	message is sent from an activity (e.g. certified email messages
-  	sent by the notification activity), and sets this to task instance ID
-  	when the message is sent from a manual task instance.</li>
-</ul>
-<p>You can use the command buttons on this screen to manually create, modify and delete
-   the entries, although this functionality is provided only for recovering from bad system
-   errors, and should be used with extreme caution.</p>
-<p>You can also change status of the messages here, such
-as cancelling the message, putting it on hold, and resuming retries.
-Note even when the system puts the message on hold after maximum
-number of retry failures, you can still manually resume retries,
-and the auto retry counter is reset in this case, implying the system
-will again retry up to specified maximum number of times.</p>
-
 <h2>Using and Managing Runtime Flags</h2>
 <p>The Flags tab is used to manage run time flags - events recorded
 and checked by API, typically in custom activity
@@ -297,7 +241,6 @@ types of data:</p>
 			   		event name is InternalEvent.<var>actInstId</var></li>
 		   <li>active message: consumeDate is null, reference is "active"</li>
 		</ul></li>
-  <li>Certified messages</li>
   <li>Flags</li>
 </ul>
 <p>
@@ -321,28 +264,16 @@ types of data:</p>
       <li>4 (flag): a flag indicates something has happened. Set and clear by API only</li>
       <li>5 (scheduled job): was previously known as timer tasks.</li>
       <li>7 (internal event):</li>
-	  <li>6 (certified message - to be sent): a certified message that has not been successfully sent yet</li>
-	  <li>8 (certified message - on hold): a certified message that failed to be sent within maximum number of retries,
-	  				and needs to be managed manually</li>
-	  <li>9 (certified message - canceled): a certified message that is canceled before being successfully delivered</li>
-	  <li>10 (certified message - delivered): a certified message that has been successfully delivered</li>
-	  <li>11 (certified message - received):</li>
     </ul>
 	</td></tr>
 <tr><td><code>CREATE_DT</code></td>
 	<td>Create date of the event entry</td></tr>
 <tr><td><code>CONSUME_DT</code></td>
-	<td>For external events and certified messages, this is use</td></tr>
+	<td>For external events, this is use</td></tr>
 <tr><td><code>PRESERVE_INTERVAL</code></td><td></td></tr>
 <tr><td><code>AUXDATA</code></td><td></td></tr>
 <tr><td><code>REFERENCE</code></td><td></td></tr>
 <tr><td><code>COMMENTS</code></td><td></td></tr>
 </table>
-
-<p>With MDW 5.*, three tables are used for event management:
-<code>EVENT_INSTANCE</code>, <code>EVENT_WAIT_INSTANCE</code> and
-<code>EVENT_LOG</code>. </p>
-
-
 </body>
 </html>

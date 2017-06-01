@@ -139,15 +139,14 @@ The only argument is passed in with object returned by <code>openConnection</cod
 </li>
 <li><code>String invoke(Object connection, String message, int timeout, Map&lt;String,String> meta_data)</code>. 
 You will need to implement this method to actually send a message.
-It should also wait for responses for synchronous and certified messages.
+It should also wait for responses for synchronous.
 The timeout value is in seconds. The implementation should allow a value less than 0
 to use the global value specified in the configuration parameter <code>timeout</code>,
 or a hard-coded default value when the configuration parameter is absent.
 <p>
 In case of error detected, the method should:
 	<ul>
- 		<li>Throw ConnectionException when it is expecting the certified message manager
- 			or the connection pool adapter to retry automatically. The type of error must
+ 		<li>Throw ConnectionException when it is expecting the connection pool adapter to retry automatically. The type of error must
  			be retriable (typically for connectivity issues). If you use a constructor
  			for ConnectionException that takes an error code, you should set
  			it to <code>ConnectionException.CONNECTION_DOWN</code> (41290) if the exception
@@ -155,16 +154,11 @@ In case of error detected, the method should:
  			The single argument constructor sets this code by default.
  			</li>
  		<li>Throw AdapterException when the error is not retriable, such as data error
- 			that can only be fixed by manual intervention elsewhere. If the message is certified,
- 			the method is called by the certified message manager, which will put the message
- 			in CM-Hold status and log a Sentry-sensitive log entry. If the message is synchronous,
+ 			that can only be fixed by manual intervention elsewhere. If the message is synchronous,
  			the method is typically invoked by a connection pool adapter, which will lead to
  			an error transition, typically end up in exception handler.</li>
 	</ul>
-<p>
-If the adapter is used to support certified messages, the method should verify
-the responses it receives are correct acknowledgment. 
-<p>
+
 The following is the implementation of the connection pool adapter:
 <pre>
     @Override

@@ -15,8 +15,8 @@ dfn { color: brown; }
 
 <h2>Introduction</h2>
 
-MDW provides out-of-box adapter activities for many protocols
-such as JMS, Tibco Bus, MDW Web Service and MQ Series. It is very simple
+MDW provides built-in adapter activities for many protocols
+such as JMS and MDW Web Service. It is very simple
 to use them directly or extend them to implement your own adapters.
 <p>
 This simplicity, while allowing rapid learning and prototype, often lacks
@@ -26,12 +26,6 @@ features for supporting production environments:
 <ul>
   <li>Throttling control: connection pools allow to specify maximum 
       number of simultaneous connections.</li>
-  <li>Certified delivery: connection pools can automatically re-send
-  	  messages on connection failures. You can configure how many 
-  	  and how often the retries are to be made. When maximum number
-  	  of retries are reached, an exception is thrown back to the invoker
-  	  when it is synchronous, or a Sentry marker is logged to generate
-  	  alarms when it is asynchronous.
   <li>A management user interface is provided to manually re-send messages
       after all automatic retries fail, among other management functionalities.</li>
   <li>Switching to a different transport technology is easier (configuration
@@ -42,16 +36,14 @@ The connection pool mechanism involves the following components:
   <li>Connection pools: each connection pool manages 1 or more connections to 
   	  one or a group of communication end points.</li>
   <li>Poolable adapters: a <dfn>poolable adapter</dfn> is an adapter activity
-  	  implemented by extending the new base class, <code>PoolableAdapterBase</code>,
-  	  introduced in MDW 4.5.12 and 5.1.05. See <a href='AdapterActivityBase.html'>
+  	  implemented by extending the new base class, <code>PoolableAdapterBase</code>.
+  	  See <a href='AdapterActivityBase.html'>
   	  Using Adapter Activities</a> for more details. Each connection
   	  managed by a connection pool is an instance of a poolable adapter.</li>
   <li>Connection pool adapter: this is an adapter activity interfacing with a connection pool
   	  (instead of directly to communication end points as other adapter activities,
   	  which are called <dfn>direct connection adapter activities</dfn> to differentiate
   	  from pooled connection adapters).</li>
-  <li>Certified message manager: it exists independently from connection pool mechanism,
-      but it is more general when working together with connection pools.</li>
   <li>Connection pool management GUI: this will be provided in MDW Web Tool and classic designer
       (not completed yet as of this writing).</li>
 </ul>
@@ -61,11 +53,9 @@ the following:</p>
 
 <ul>
   <li>Implementation of a poolable adapter, unless one provided
-      by MDW out-of-box can be used (as of this writing, MDW 4.5.12 and
-      5.1.05 provide the following out-of-box poolable adapters:
-      Tibco BUS, MDW WebService, Email, and MQ Series.</li>
+      by MDW built-in can be used.</li>
   <li>Configuration of a connection pool (as properties or through the management GUI).</li>
-  <li>Optionally, extend the out-of-box connection pool adapter activity
+  <li>Optionally, extend the built-in connection pool adapter activity
       to handle external system specific custom logic.</li>
   <li>Configuration of a connection pool adapter activity (in Designer).</li>
 </ul>
@@ -89,26 +79,7 @@ A connection pool can support one or more of the following three messaging style
    <li>Synchronous: the client is waiting for a response of a request message. 
    			This is also known as request-reply style.</li>
    <li>Asynchronous: the client sends message but does not expects or waits for responses.</li>
-   <li>Certified: same as asynchronous in that the client does not expects or waits for responses,
-   			but it expects the message to be retried automatically when the message delivery fails
-   			when the destination system does not respond.</li>
 </ul>
-Introduction to certified messages is covered
-under <a href="JmsAdapter.html">JMS Adapter documentation</a>,
-as JMS is the preferred way of using certified messages.
-Certified messages require hand-shaking between the sender and receiver to
-ensure the messages are acknowledged and delivered exactly once,
-and such hand-shaking is implemented for JMS messages when both the sender and
-the receiver are MDW applications (4.5 for MDW 4 and 5.1 for MDW 5).
-<p>
-When the receiver is not an MDW application, it is not possible to implement
-a general certified mechanism. 
-With the help of a little bit of custom coding (in adapters),
-the connection pools can be used for the next best thing - it can ensure the messages are delivered
-by automatic retrying, but it cannot ensure the messages
-are delivered no more than once. In practice, this is sufficient
-in most of time, especially that it does not require receiver to be MDW-based applications.
-
 <h2>Connection Pool Configuration</h2>
 Connection pools are configured through properties and will also be
 possible to be configured in the connection pool management GUI.
@@ -133,9 +104,9 @@ The following table shows the common properties.
     the size applies to each server (the total number of connections is
     therefore the number of servers times the value of this attribute).</td></tr>
 <tr><td><code>mdw.connection.pool.<var>pool-name</var>.timeout</code></td><td>
-	For synchronous (request-reply) and certified messages, the timeout in seconds waiting for
+	For synchronous (request-reply), the timeout in seconds waiting for
 	 response or acknowledgment.  This is optional and the default value is 120 for response of synchronous
-	 messages and 15 seconds for acknowledgment of certified messages.</td></tr>
+	 messages.</td></tr>
 <tr><td><code>mdw.connection.pool.<var>pool-name</var>.max_tries</code></td><td>Maximum number of attempts
     (tries and retries). This is an optional attribute, and the default value is 12.</td></tr>
 <tr><td><code>mdw.connection.pool.<var>pool-name</var>.retry_interval</code></td><td>The number of seconds
@@ -162,33 +133,6 @@ The following table shows the common properties.
     the value for the property <code>timeout</code> is used.</td></tr>
 </table>
 <p>
-As of this writing (MDW 4.5.12 and MDW 5.1.05), 4 poolable adapters are provided out-of-box.
-Their specific properties are described below.
-
-<h3>Poolable Tibco Bus Adapter</h3>
-This adapter provides capability of sending messages through Tibco Bus. It supports 
-synchronous/certified messages. Note that this implementation uses
-Tibco native request-reply messaging for both synchronous and certified messages, not using
-native Tibco-implemented certified messages (which are discouraged by CenturyLink bus infrastructure due to
-its overhead).
-The implementation class is <code>com.centurylink.mdw.workflow.adapter.tibco.PoolableTibcoBusAdapter</code>. 
-The following table lists additional configuration properties used by the adapter.
-   <table>
-   	 <tr><th>Property Name</th><th>Description</th></tr>
-   	 <tr><td>mdw.connection.pool.<var>pool-name</var>.uri</td>
-   	 		<td>The bus URI, such as <code>rvd://239.75.2.3:7523/denvzd.qwest.net:7523</code>. There is
-   	 		no default value for this and the property is required.</td></tr>
-   	 <tr><td>mdw.connection.pool.<var>pool-name</var>.topic</td>
-   	 		<td>The bus top name. This is required.</td></tr>
-   	 <tr><td>mdw.connection.pool.<var>pool-name</var>.account</td>
-   	 		<td>The application's account name. Default is <code>MDW</code></td></tr>
-   	 <tr><td>mdw.connection.pool.<var>pool-name</var>.credential</td>
-   	 		<td>Default is empty string</td></tr>   	 		
-   </table>
-Additionally, meta data can be specified (used in sending messages) through the 
-(connection pool or direct connection) adapter activities,
-and they are added as meta information to Bus Connector messages.
-
 <h3>Poolable MDW Web Service Adapter</h3>
 This adapter provides capability of invoking MDW Web Services.
 It supports synchronous/certified messages.  
@@ -200,28 +144,6 @@ The following table lists additional configuration properties used by the adapte
    	 		<td>The WSDL URL. Required</td></tr> 	 		
    </table>
 
-<h3>MQ Series Adapter</h3>
-This adapter provides capability of sending messages through MQ Series.
-It supports asynchronous/certified messages as well as synchronous ones (implemented
-by waiting responses on dynamic queues).  
-The implementation class is <code>com.centurylink.mdw.workflow.adapter.mqseries.MqSeriesAdapter</code>. 
-The following table lists additional configuration properties used by the adapter.
-   <table>
-   	 <tr><th>Property Name</th><th>Description</th></tr>
-   	 <tr><td>mdw.connection.pool.<var>pool-name</var>.QueueManagerName</td>
-   	 		<td>The local queue manager name</td></tr>
-   	<tr><td>mdw.connection.pool.<var>pool-name</var>.QueueName</td>
-   	 		<td>The queue name to which the messages are sent to</td></tr> 	 		
-    <tr><td>mdw.connection.pool.<var>pool-name</var>.ReplyQueueName</td>
-   	 		<td>When in synchronous mode, this is used to specify the name
-   	 		of the queue for receiving responses. It is typical to specify
-   	 		a modal queue name here, so that the responses will be received
-   	 		from dynamic queues. If this property is absent, it assumes
-   	 		the existence of a model queue named <code>REPLY_MODEL_QUEUE</code>.</td></tr>
-   </table>
-Additionally, the property <code>CorrelationId</code> can be specified
-as meta data (used in sending messages) through the adapter activities.
-   
 <h2>Configuration of the Connection Pool Adapter</h2>
 The class <code>com.centurylink.mdw.workflow.adapter.ConnectionPoolAdapter</code>
 implements an adapter activity that access a connection pool.
@@ -234,39 +156,33 @@ The following attributes are used by this implementor:
       system is taken from the value of this variable.</li>
   <li>Response Variable. This is a variable name that will receive the response message,
       when the adapter is synchronous (Wait for response is true). It is ignored when
-      the adapter is asynchronous or certified</li>
+      the adapter is asynchronous</li>
   <li>Log req/resp. This is a Boolean flag to turn on or off logging of messages
   	  to and from the external systems. The messages are logged in the database table
-  	  in ADAPTER_INSTANCE (for MDW 4.*) or DOCUMENT table (for MDW 5.*). 
+  	  in DOCUMENT table. 
   	  </li>
   <li>Wait for response. When it is true, the messaging is in synchronous style, meaning it is waiting
       for a response; when it is false, the messaging is asynchronous, meaning the activity sends the message
-      and moves on to the next activity. The third option is certified messaging.
+      and moves on to the next activity. 
       </li>
   <li>Connection Pool. This attribute specifies the name of the connection pool. The connection
   		pool must support the messaging style specified above.</li>
-  <li>Time out (seconds). This specifies the timeout value for synchronous and
-  		certified messages (ignored for asynchronous messages). If this is left blank,
+  <li>Time out (seconds). This specifies the timeout value for synchronous (ignored for asynchronous messages). If this is left blank,
   		then the time out property configured with the connection pool is used.
   		If property is not defined by the pool either, 120 seconds is used as the 
-  		time out for synchronous messages, and for certified messages,
-  		the acknowledgment timeout for certified messages is used (15 seconds
-  		default and can be altered by the property <code>mdw.certified_message.AcknowlegmentTimeout</code>).
+  		time out for synchronous messages</code>).
   </li>
   <li>Max tries. This specifies the maximum number of retries (including the
-  		the very first attempt) for synchronous and
-  		certified messages (ignored for asynchronous messages). If this is left blank,
+  		the very first attempt) for synchronous (ignored for asynchronous messages). If this is left blank,
   		then the max tries property configured with the connection pool is used.
 		If property is not defined by the pool either, the default value of 12
-		is used. For certified messages, this default can be altered
-		by the property <code>mdw.certified_message.MaxTries</code>.
+		is used.</code>.
   		</li>
   <li>Retry interval (seconds). This specifies the elapse time between retries
-        for synchronous and certified messages (ignored for asynchronous messages). If this is left blank,
+        for synchronous (ignored for asynchronous messages). If this is left blank,
   		then the retry interval property configured with the connection pool is used.
   		If property is not defined by the pool either, the default value of 600 seconds
-		is used. For certified messages, this default can be altered
-		by the property <code>mdw.certified_message.RetryInterval</code>.</li>
+		is used.</code>.</li>
   <li>Request Message XSD. This is for documentation purpose only. If a valid URL is specified,
       you can open the XSD directly from the designer by clicking the "Open Link" button 
       on the right side of the attribute specification.</li>
@@ -388,14 +304,6 @@ And the shutdown task should be identical
 except the argument to <code>setEnabled</code> is false.
 
 <h3>Auto-resend when enabling the connection pool</h3>
-Certified messages and messages sent from a connection pool adapter
-activity to a connection pool when it is disabled will
-automatically be retried when the pool is enabled.
-<p>
-For certified messages that are sent while the pool is down,
-you can view them in the Certified Message tab of the Designer's Event
-Manager. They are shown as in active status (Certified Message),
-but the next retry time should be blank.
 <p>
 For request messages sent from a connection pool adapter activity,
 you can view them in the Internal Message tab of the Designer's Event

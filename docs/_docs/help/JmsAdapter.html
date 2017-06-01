@@ -15,10 +15,6 @@ another event wait activity to receive the responses if they are expected)
 and synchronous messages (sending messages and waiting for responses in the same
 activity).
 <p>
-The adapter also implements so-called <em>certified messages</em>, which are asynchronous
-messages but MDW guarantees their delivery. We will cover this in more detail.
-
-
 <h2>Attributes</h2>
 The following attributes are used by this implementor:
 
@@ -30,8 +26,7 @@ The following attributes are used by this implementor:
       the adapter is asynchronous.</li>
   <li>Wait for response. When it is true, the adapter is synchronous, meaning it is waiting
       for a response; when it is false, the adapter is asynchronous, meaning it sends the message
-      and moves on to the next activity. The third option is Certified, which is asynchronous as well, but the message delivery is guaranteed (more
-      detail will be covered in the next section).</li>
+      and moves on to the next activity.</li>
   <li>Log req/resp. This is a Boolean flag to turn on or off logging of messages
   	  to and from the external systems. The messages are logged in the database table DOCUMENT.</li>
   <li>Server URL. This attribute specifies the URL of the receiving (remote) JNDI server.
@@ -39,9 +34,7 @@ The following attributes are used by this implementor:
       deployment specific (different between development, testing and production environment).
       So it is typically specified using properties using the MDW <a href="bindingExpressions.html">binding expressions</a> syntax 
       <code>#{props['my.jms.url']}</code>.</li>
-  <li>Queue Name. This specifies the receiving (remote) queue name. For certified
-  	  messages, the receiving queue must implement MDW acknowledgment protocol (see
-  	  more detail in the next section)</li>
+  <li>Queue Name. This specifies the receiving (remote) queue name. </li>
   <li>Reply Queue Name. This specifies a local queue name to receive the response.
       When the adapter is synchronous (Wait for response is true), this is typically
       left blank, and the engine will generate a temporary queue to recevie the response.
@@ -67,103 +60,6 @@ The following attributes are used by this implementor:
       you can open the XSD directly from the designer by clicking the "Open Link" button 
       on the right side of the attribute specification.</li>
 </ul>
-
-<h2>Certified Messages</h2>
-Certified messages are asynchronous (one-way) messages with guaranteed delivery.
-The mechanism is implemented through a demon which resends messages for which
-earlier delivery failed. The receiver also needs to be aware of certified messages,
-for which an MDW-defined internal acknowledgment must be sent back to the 
-sender, and must guarantee only one message is processed when it receives multiple
-copies (this can happen when the acknowledgment fails to reach the sender, which
-resends the message without having received an acknowledgment). 
-<p>
-Certified messages relieves the applications from implementing their own
-retrying logic after failures, thereby simplifies much of the code logic and
-exception handling, as most of time the developers and AIPs do not even need
-to worry about whether the messages are actually delivered. There are some rare
-occasions (e.g. the receiver machine is permanently down, say as a result
-of hardware failure), so we cover below the internal implementation for managing
-these type of situations. Understanding the implementation may also help trouble
-shooting, because message delivery certificates are persisted so you can use that
-to find out if and when the messages are sent and received.
-<p>
-When a certified message is to be delivered, MDW records the message content
-in the DOCUMENT table (as with all adapter messages), and also a row
-in the table EVENT_INSTANCE with the following data
-<ul>
-  <li>EVENT_NAME: this is a unique <em>certified message ID</em> in the form of
-  		<code>MDWCM-<var>appname</var>-<var>documentid</var></code>,
-  		where <var>appname</var> is the application name as configured
-  		in MDW properties, and <var>documentid</var> is the ID of the
-  		document storing the request message.</li>
-  <li>DOCUMENT_ID: this is again the ID of the request document.</li>
-  <li>STATUS_CD: always 6 (EventInstanceVO.STATUS_CERTIFIED_MESSAGE)
-  		for certified messages</li>
-  <li>CREATE_DT: time when the message is requested to be sent</li>
-  <li>CONSUME_DT: time when the message is known to be delivered.
-  		When it is null, it means the message is not known to be delivered yet</li>
-  <li>AUXDATA: this stores configuration parameters
-  	    such as JNDI URL and the queue name of receiver.</li>
-  <li>REFERENCE: this is used for identifying the association
-  		of the message, such as the process/activity instance IDs
-  		of the activity sending the message. It is for display 
-  		in the event management GUI only and plays no role in functionality</li>
-</ul>
-MDW will also inform its internal demon (CertifiedMessageManager), which handles
-delivery, re-send and certification of certified messages, about this new request.
-In case of failure, the demon resends the message every 600 seconds
-(10 minutes) by default, which can be changed by setting the property
-<code>mdw.certified_message.RetryInterval</code> (unit is second).
-The demon buffers all undelivered messages in memory and checks
-by default every 60 seconds if there are any messages that need
-to be resent, hence the actual redelivery may happen between 300 and 360 seconds.
-The 60 seconds check interval can be altered by setting the 
-property <code>mdw.certified_message.CheckInterval</code>.
-For each delivery try (original or redelivery), the demon times out
-by default 15 seconds in waiting for the acknowledgment, and the timeout value
-can be altered by setting the property <code>mdw.certified_message.AcknowlegmentTimeout</code>.
-<p>
-On the receiving side, two MDW queues, external event queue
-(com.centurylink.mdw.external.event.queue) has implemented
-MDW certified messaging protocol (the latter is for MDW internal usage).
-For certified messages, the sender sets the JMS correlation ID to the certified message
-ID, which has the special prefix <code>MDWCM-</code>. The receiver
-recognizes certified messages by checking for this prefix, and sends
-back a response whose content is just this certified message ID as the 
-acknowledgment. The receiver also creates an entry in EVENT_INSTANCE table
-(note this is on a different database) as the certificate of having received
-the message, with the following entries:
-<ul>
-  <li>EVENT_NAME: the certified message ID as received from the sender</li>
-  <li>DOCUMENT_ID: not used</li>
-  <li>STATUS_CD: always 6 (EventInstanceVO.STATUS_CERTIFIED_MESSAGE)
-  		for certified messages</li>
-  <li>CREATE_DT: not used, filled with the current system time</li>
-  <li>CONSUME_DT: time when the message is received.</li>
-  <li>COMMENTS: null</li>
-</ul>
-If the entry already exits, it means the message has been received previously,
-and the receiver will not pass the message to event handlers again. It will,
-however, still send the acknowledgment back to the sender.
-<p>
-When the sender application server is down, the demon at restart will
-read in all messages from database that are not delivered yet (CONSUME_DT is null),
-and start to manage them again, hence guarantees the messages will not get lost.
-To avoid clogging the application server when it is just started, the demon
-waits for 300 seconds by default before trying to redeliver messages. You can
-override the delay by setting the property 
-<code>mdw.certified_message.InitialDelay</code>.
-<p>
-In a clustered environment, every managed server has its own demon, each
-loads all unsent messages from database at start, but the demon implementation
-ensures that a message is only processed by one demon.
-For performance consideration, demon only loads database entries at the start,
-so new entries inserted by one managed server are not known to demons
-in other managed servers until they restart.
-This implies that if one managed server is down for extended time, 
-then messages added during the life time of its last run and failed to deliver
-will not be retried again until some managed server (does not have to be the downed one)
-is restarted.
 
 <h2>Extending the Implementor</h2>
 If your customization needs cannot be completely met by 
