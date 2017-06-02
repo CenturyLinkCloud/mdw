@@ -5,7 +5,7 @@ title: Tomcat Cookbook
 
 ### MDW SOAP document-style Web Services
 
-This document contains information about creating, exposing and consuming services through a SOAP-based WebService. For a RESTFul WebService, refer to [MicroservicesCookbook](../MicroservicesCookbook/).
+This document contains information about creating, exposing and consuming services through a SOAP-based Web Service. For a RESTFul Web Service, refer to [MicroservicesCookbook](../MicroservicesCookbook/).
 
 ### Prerequisites
  - Eclipse Neon for JavaEE Developers:  

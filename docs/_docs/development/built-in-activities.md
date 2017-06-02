@@ -29,7 +29,7 @@ layout: help
   [Process Finish](http://centurylinkcloud.github.io/mdw/docs/help/ProcessFinishActivity.html) | Used to stop the process.
   [Process Start](http://centurylinkcloud.github.io/mdw/docs/help/ProcessStartActivity.html) | Used to start the first activity any process executes.
   [Publish Event](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for synchronization between independent process instances.
-  [RESTful service adapter activity](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | Used to invoke a RESTful WebService from a workflow process.
+  [RESTful service adapter activity](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | Used to invoke a RESTful Web Service from a workflow process.
   [Slack Notification Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for sending notifications.
   [Synchronization Activity](http://centurylinkcloud.github.io/mdw/docs/help/synchronization.html) | Used to coordinate two parallel execution paths.
   [Text Note](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for text note.
