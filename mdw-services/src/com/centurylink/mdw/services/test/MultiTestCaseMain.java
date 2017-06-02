@@ -138,6 +138,7 @@ public class MultiTestCaseMain {
 
             // wait for all tests to finish
             Thread.sleep(PAUSE); // pause at least once to avoid too-quick socket shutdown
+            httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
             configJson.put(PropertyNames.MDW_LOGGING_WATCHER, "");
             if (execConfig.isStubbing())
                 configJson.put(PropertyNames.MDW_STUB_SERVER, "");

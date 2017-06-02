@@ -38,25 +38,23 @@ dependencies {
 task functionTests(type: JavaExec)  {
     classpath = sourceSets.main.runtimeClasspath
     ignoreExitValue = true
-    //println classpath.getAsPath()
-    //configurations.runtime.each { println "classpath entry" + it }
     main = 'com.centurylink.mdw.services.test.MultiTestCaseMain'
+    
     jvmArgs = [
-        '-Dmdw.asset.root=C:\\workspaces\\mdw6\\mdw-workflow\\assets',
-        '-Dmdw.config.location="C:\\workspaces\\mdw6\\mdw\\config"',
+        "-Dmdw.asset.root=${deployAssetDir}",
+        "-Dmdw.config.location=" + projectDir + "/config",
         '-Dmdw.test.user=mdwapp',
-        //       '-Dmdw.test.stub.port=7182',
         '-Dmdw.test.intervalSecs=2',
-        '-Dmdw.test.server.url="http://localhost:8080/mdw"',
+        "-Dmdw.test.server.url=${localTestServerUrl}",
         '-Dmdw.test.stubbing=true',
         '-Dmdw.test.pin.to.server=true',
         '-Dmdw.test.verbose=true',
         '-Djavax.net.ssl.trustStore=C:/workspaces/GitLab/mdw-framework/deploy/certs/CenturyLinkQCA.jks',
         '-Dmdw.runtime.env=dev']
-    jvmArgs += ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
+    //jvmArgs += ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
     // arguments to pass to the application
-    //args =["-byFormat", "test"]
-    args = ["-includes", "C:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\workflow\\StartStop.test"]
+    args =["-byFormat", "test"]
+    //args = ["-includes", "C:/workspaces/mdw6/mdw-workflow/assets/com/centurylink/mdw/tests/workflow/StartStop.test"]
     //,C:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\workflow\\SqlAdapter.test
     //args +=["-excludes", "C:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\stubbing\\AdapterStubEcho.test"]
 }
