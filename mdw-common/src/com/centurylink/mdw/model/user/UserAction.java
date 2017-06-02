@@ -333,7 +333,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
             JSONObject entityJson = json.getJSONObject("entity");
             if (entityJson.has("id")) {
                 try {
-                    entityId = new Long(entityJson.getString("id"));
+                    entityId = entityJson.getLong("id");
                 }
                 catch (NumberFormatException ex) {
                 }
