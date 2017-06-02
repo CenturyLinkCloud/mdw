@@ -146,7 +146,7 @@ public class MultiTestCaseMain {
             if (!msg.isSuccess())
                 System.out.println("Error setting server config: " + msg.getMessage());
 
-           // System.exit(0);
+           System.exit(0);
         }
         catch (Throwable th) {
             th.printStackTrace();
@@ -158,6 +158,7 @@ public class MultiTestCaseMain {
                 StubServer.stop();
             if (monitor != null)
                 monitor.shutdown();
+            System.exit(0);
         }
         // reach here only when error
         //System.exit(0);
