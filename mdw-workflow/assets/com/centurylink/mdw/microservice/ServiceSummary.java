@@ -1,7 +1,19 @@
-/**
- * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2017 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package com.centurylink.mdw.model.service;
+package com.centurylink.mdw.microservice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +23,19 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.service.ServiceSummaryConstants;
 
 /**
  * Summarizes planned microservice invocations runtime state.
- * <p>
- * This is designed to be used and updated throughout a workflow
- * </p>
+ * This is designed to be used and updated throughout a master workflow.
  */
 public class ServiceSummary implements Jsonable {
+
+    // constants
+    public static final String SERVICE_SUMMARY = "serviceSummary";
+    public static final String REQUEST_ID_VAR = "Request ID";
+    public static final String DEFAULT_REQUEST_ID_VAR = "requestId";
+    public static final String MICROSERVICE = "Microservice";
+    public static final String SERVICE_SUMMARY_NOTIFICATION = "servicesummary-update-";
 
     private String publicUserId;
     public String getPublicUserId() { return publicUserId; }
@@ -29,14 +45,14 @@ public class ServiceSummary implements Jsonable {
     public String getRequestId() { return requestId; }
     public void setRequestId(String id) { this.requestId = id; }
 
-    private List<MicroserviceSummary> microserviceSummaries = new ArrayList<MicroserviceSummary>();
-    public List<MicroserviceSummary> getMicroserviceSummaries() { return microserviceSummaries; }
-    public void setMicroserviceSummaries(List<MicroserviceSummary> invocations) {
+    private List<Microservice> microserviceSummaries = new ArrayList<Microservice>();
+    public List<Microservice> getMicroserviceSummaries() { return microserviceSummaries; }
+    public void setMicroserviceSummaries(List<Microservice> invocations) {
         this.microserviceSummaries = invocations;
     }
 
-    public MicroserviceSummary getSummary(String microservice) {
-        for (MicroserviceSummary microSummary : microserviceSummaries) {
+    public Microservice getSummary(String microservice) {
+        for (Microservice microSummary : microserviceSummaries) {
             if (microSummary.getMicroservice().equals(microservice))
                 return microSummary;
         }
@@ -44,7 +60,7 @@ public class ServiceSummary implements Jsonable {
     }
 
     public List<Invocation> getInvocations(String microservice) {
-        MicroserviceSummary microSummary = getSummary(microservice);
+        Microservice microSummary = getSummary(microservice);
         if (microSummary == null)
             return null;
         else
@@ -54,7 +70,7 @@ public class ServiceSummary implements Jsonable {
     //No guarantee that "micro.getUpdates() returns a initialized array
     //due to the fact that initially the updates attribute doesn't exist
     public List<Update> getUpdates(String microservice) {
-        for (MicroserviceSummary micro : microserviceSummaries) {
+        for (Microservice micro : microserviceSummaries) {
             if (micro.getMicroservice().equals(microservice))
                 return micro.getUpdates();
         }
@@ -65,7 +81,7 @@ public class ServiceSummary implements Jsonable {
      * Add a microservice without any invocations.
      */
     public List<Invocation> addMicroservice(String microservice) {
-        MicroserviceSummary microInvokes = new MicroserviceSummary(microservice);
+        Microservice microInvokes = new Microservice(microservice);
         microserviceSummaries.add(microInvokes);
         return microInvokes.getInvocations();
     }
@@ -84,7 +100,7 @@ public class ServiceSummary implements Jsonable {
      * @param update
      */
     public void addUpdate(String microservice, Update update) {
-        MicroserviceSummary microserviceSummary = retrieveMicroserviceSummary(microservice);
+        Microservice microserviceSummary = retrieveMicroserviceSummary(microservice);
         if (microserviceSummary.getUpdates() == null) {
             microserviceSummary.setUpdates(new ArrayList<Update>());
         }
@@ -97,14 +113,14 @@ public class ServiceSummary implements Jsonable {
      * @param microservice
      * @return MicroserviceSummary object
      */
-    public MicroserviceSummary retrieveMicroserviceSummary(String microservice) {
-        for (MicroserviceSummary micro : microserviceSummaries) {
+    public Microservice retrieveMicroserviceSummary(String microservice) {
+        for (Microservice micro : microserviceSummaries) {
             if (micro.getMicroservice().equals(microservice)) {
                 return micro;
             }
         }
         //Guarantees updates will be initialized
-        MicroserviceSummary microSummary = new MicroserviceSummary(microservice);
+        Microservice microSummary = new Microservice(microservice);
         microserviceSummaries.add(microSummary);
         return microSummary;
     }
@@ -119,7 +135,7 @@ public class ServiceSummary implements Jsonable {
         if (json.has("microservices")) {
             JSONObject summaryJson = json.getJSONObject("microservices");
             for (String microservice : JSONObject.getNames(summaryJson)) {
-                MicroserviceSummary microInvokes = new MicroserviceSummary(microservice, summaryJson.getJSONObject(microservice));
+                Microservice microInvokes = new Microservice(microservice, summaryJson.getJSONObject(microservice));
                 microserviceSummaries.add(microInvokes);
             }
         }
@@ -132,7 +148,7 @@ public class ServiceSummary implements Jsonable {
         if (requestId != null)
             json.put("requestId", requestId);
         JSONObject invocationsJson = create();
-        for (MicroserviceSummary microInvoke : microserviceSummaries) {
+        for (Microservice microInvoke : microserviceSummaries) {
             invocationsJson.put(microInvoke.getMicroservice(), microInvoke.getJson());
         }
         json.put("microservices", invocationsJson);
@@ -155,7 +171,7 @@ public class ServiceSummary implements Jsonable {
 
 
     public String getJsonName() {
-        return ServiceSummaryConstants.SERVICE_SUMMARY;
+        return SERVICE_SUMMARY;
     }
 
 }

@@ -1,0 +1,49 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=41,y=123,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=159,ly=143,type=Elbow,xs=105&212,ys=143&143"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=489,y=121,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "MICROSERVICE_NAMES": "true,mic2,${serviceSummary != null},",
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "servicesummary-update-{$MasterRequestID},,false,",
+        "WORK_DISPLAY_INFO": "x=216,y=107,w=157,h=82"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.microservice.MicroserviceDependenciesWait",
+      "name": "Microservice \r\nDependencies Wait",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=377,ly=170,type=Elbow,xs=377&485,ys=141&141"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=25,y=36,w=260,h=27"
+  },
+  "variables": {"serviceSummary": {
+    "category": "INPUT",
+    "type": "com.centurylink.mdw.model.Jsonable"
+  }}
+}

@@ -1,0 +1,120 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=32,y=105,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=42,ly=-19,type=Elbow,xs=96&144,ys=125&125"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=590,y=103,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DELAY_BETWEEN": "6",
+        "Execution Plan": "plan",
+        "Force Parallel Execution": "true",
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=431,y=91,w=99,h=60",
+        "processmap": "[[\"sub1\",\"com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Sub1\",\"[0.1,1)\",\"\"],[\"sub2\",\"com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Sub2\",\"[0.1,1)\",\"\"],[\"notify\",\"com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Notify\",\"[0.1,1)\",\"\"]]",
+        "synchronous": "false"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
+      "name": "Invoke Subs",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=561,ly=123,type=Elbow,xs=534&586,ys=123&123"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "plan",
+        "Rule": "import com.centurylink.mdw.model.ExecutionPlan\r\nimport com.centurylink.mdw.model.Subprocess\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\n// request is of type com.centurylink.tom.model.Order\r\nruntimeContext.logDebug 'serviceSummary:\\n' + serviceSummary.json.toString(2)\r\n\r\n// build the servicePlan\r\nplan = new ExecutionPlan()\r\nList<Subprocess> subprocs = new ArrayList<>()\r\nSubprocess subproc = new Subprocess()\r\nsubproc.setLogicalName(\"sub1\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubproc.getParameters().put('serviceSummary', '$serviceSummary')\r\nsubprocs.add(subproc)\r\nsubproc = new Subprocess()\r\nsubproc.setLogicalName(\"sub2\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubproc.getParameters().put('serviceSummary', '$serviceSummary')\r\nsubprocs.add(subproc)\r\nsubproc = new Subprocess()\r\nsubproc.setLogicalName(\"notify\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubprocs.add(subproc)\r\nplan.setSubprocesses(subprocs)\r\n\r\n\r\n\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=284,y=91,w=103,h=61"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Build Plan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=415,ly=121,type=Elbow,xs=391&427,ys=121&121"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "publishFirst",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=148,y=97,w=80,h=57"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Publish\r\nFirst?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=235,ly=127,type=Elbow,xs=232&280,ys=124&124"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=194,ly=173,type=Elbow,xs=188&188,ys=158&216"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "true",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Event Name": "servicesummary-update-{$MasterRequestID}",
+        "WORK_DISPLAY_INFO": "x=141,y=220,w=103,h=69"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.PublishEventMessage",
+      "name": "Publish\r\nEvent",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=289,ly=208,type=Elbow,xs=248&335,ys=254&156"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=34,y=34,w=257,h=27"
+  },
+  "variables": {
+    "plan": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    },
+    "publishFirst": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    },
+    "serviceSummary": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    }
+  }
+}

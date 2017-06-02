@@ -1,8 +1,19 @@
-/**
- * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2017 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
-package com.centurylink.mdw.model.service;
+package com.centurylink.mdw.microservice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +27,7 @@ import com.centurylink.mdw.model.Jsonable;
 /**
  * Represents a microservice's invocations for one master request.
  */
-public class MicroserviceSummary implements Jsonable {
+public class Microservice implements Jsonable {
 
     private String microservice;
     public String getMicroservice() { return microservice; }
@@ -34,12 +45,12 @@ public class MicroserviceSummary implements Jsonable {
     public List<Update> getUpdates() { return updates; }
     public void setUpdates(List<Update> updates) { this.updates = updates; }
 
-    public MicroserviceSummary(String microservice) {
+    public Microservice(String microservice) {
         this.microservice = microservice;
         this.invocations = new ArrayList<Invocation>();
     }
 
-    public MicroserviceSummary(String microservice, JSONObject json) throws JSONException {
+    public Microservice(String microservice, JSONObject json) throws JSONException {
         this.microservice = microservice;
         if (json.has("transactionId")) {
             this.transactionId = json.getString("transactionId");
