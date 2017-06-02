@@ -47,9 +47,9 @@
     bower install
    ```
 4. Build the Projects (Initial, non-incremental build)
-   - Window > Show View > Other > Gradle  > Gradle Tasks. 
+   - Window > Show View > Other > Gradle  > Gradle Tasks.
    - Expand the mdw project, click View Menu then `Show All Tasks` then expand other folder and double-click the `buildAll` task. If you do not see the Other folder, refresh the mdw project.
-   - (On Mac): Run `gradle buildAll` from the command-line instead. 
+   - (On Mac): Run `gradle buildAll` from the command-line instead.
    - Refresh all projects in Eclipse and (ctrl-b) to build (or let autobuild do it).  Incremental builds can be performed this way and do not require a Gradle build.
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
@@ -98,7 +98,7 @@
    - Optionally you can import the /docs project into your Eclipse workspace for editing these artifacts.
 2. Local GitHub Pages
    - To test doc access before pushing, and to make changes to default layouts and styles, you can build through [Jekyll](https://help.github.com/articles/about-github-pages-and-jekyll/) locally.
-   - Install Ruby 2.1.0 or higher and add its bin directory to your PATH.
+   - Install Ruby 2.3.3 or higher and add its bin directory to your PATH.
    - Install Bundler:
      ```
      gem install bundler
