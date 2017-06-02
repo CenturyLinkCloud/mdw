@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=41,y=123,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=46,y=123,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=159,ly=143,type=Elbow,xs=105&212,ys=143&143"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=161,ly=143,type=Elbow,xs=110&212,ys=143&143"},
         "event": "FINISH",
         "id": "T3",
         "to": "A3"

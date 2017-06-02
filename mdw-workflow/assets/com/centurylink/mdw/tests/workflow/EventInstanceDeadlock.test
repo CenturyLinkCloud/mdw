@@ -3,6 +3,7 @@ package com.centurylink.mdw.tests.workflow
 start process("com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Main") {
     variables = [
         publishFirst: false,
+        subCount: 3,
         serviceSummary: '''{
   "_type": "com.centurylink.mdw.microservice.ServiceSummary",
   "serviceSummary": {

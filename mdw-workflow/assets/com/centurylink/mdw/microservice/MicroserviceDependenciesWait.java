@@ -47,7 +47,9 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
             setReturnCode(WorkStatus.STATUSNAME_COMPLETED + "::FINISH");
         }
         else {
+            ServiceSummaryLockCache.lock(getMasterRequestId());
             super.execute();
+            ServiceSummaryLockCache.unlock(getMasterRequestId());
         }
     }
 
@@ -83,15 +85,17 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            EventWaitInstance wi = null;
+            ServiceSummaryLockCache.lock(getMasterRequestId());
             try {
-                wi = this.registerWaitEvents(false, true);
-            }
-            catch (Exception e) {
-                logger.info("Error in registerWaitEvents - " + e.getMessage());
-                wi = this.registerWaitEvents(false, true);
-            }
-            if (wi != null) {
+                EventWaitInstance wi = null;
+                try {
+                    wi = this.registerWaitEvents(false, true);
+                }
+                catch (Exception e) {
+                    logger.info("Error in registerWaitEvents - " + e.getMessage());
+                    wi = this.registerWaitEvents(false, true);
+                }
+                if (wi != null) {
                     try {
                         // Reregister the event and set event to status 1
                         EventManager eventManager = ServiceLocator.getEventManager();
@@ -107,16 +111,21 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
                         logger.severe("Unable to update event instance for actibvity "
                                 + getActivityInstanceId() + ":" + e.getMessage());
                     }
+                }
+                if (compCode.startsWith(
+                        WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
+                        || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::"
+                                + EventType.EVENTNAME_ABORT)
+                        || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::"
+                                + EventType.EVENTNAME_ERROR))
+                    return true;
+                else
+                    return false;
             }
-            if (compCode.startsWith(
-                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
-                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::"
-                            + EventType.EVENTNAME_ABORT)
-                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::"
-                            + EventType.EVENTNAME_ERROR))
-                return true;
-            else
-                return false;
+            finally {
+                ServiceSummaryLockCache.unlock(getMasterRequestId());
+
+            }
         }
         else
             return true;

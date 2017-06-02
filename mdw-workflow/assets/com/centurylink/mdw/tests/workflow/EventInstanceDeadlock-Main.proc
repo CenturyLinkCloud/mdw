@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=32,y=105,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=25,y=104,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=42,ly=-19,type=Elbow,xs=96&144,ys=125&125"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=28,ly=-41,type=Elbow,xs=89&144,ys=124&124"},
         "event": "FINISH",
         "id": "T1",
         "to": "A5"
@@ -41,7 +41,7 @@
     {
       "attributes": {
         "Output Documents": "plan",
-        "Rule": "import com.centurylink.mdw.model.ExecutionPlan\r\nimport com.centurylink.mdw.model.Subprocess\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\n// request is of type com.centurylink.tom.model.Order\r\nruntimeContext.logDebug 'serviceSummary:\\n' + serviceSummary.json.toString(2)\r\n\r\n// build the servicePlan\r\nplan = new ExecutionPlan()\r\nList<Subprocess> subprocs = new ArrayList<>()\r\nSubprocess subproc = new Subprocess()\r\nsubproc.setLogicalName(\"sub1\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubproc.getParameters().put('serviceSummary', '$serviceSummary')\r\nsubprocs.add(subproc)\r\nsubproc = new Subprocess()\r\nsubproc.setLogicalName(\"sub2\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubproc.getParameters().put('serviceSummary', '$serviceSummary')\r\nsubprocs.add(subproc)\r\nsubproc = new Subprocess()\r\nsubproc.setLogicalName(\"notify\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubprocs.add(subproc)\r\nplan.setSubprocesses(subprocs)\r\n\r\n\r\n\r\n",
+        "Rule": "import com.centurylink.mdw.model.ExecutionPlan\r\nimport com.centurylink.mdw.model.Subprocess\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\n// request is of type com.centurylink.tom.model.Order\r\nruntimeContext.logDebug 'serviceSummary:\\n' + serviceSummary.json.toString(2)\r\n\r\n// build the servicePlan\r\n// three of each subproc to force contention\r\nplan = new ExecutionPlan()\r\nList<Subprocess> subprocs = new ArrayList<>()\r\nSubprocess subproc\r\nfor (int i = 0; i < subCount; i++) {\r\n    subproc = new Subprocess()\r\n    subproc.setLogicalName(\"sub1\")\r\n    subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\n    subproc.getParameters().put('serviceSummary', '$serviceSummary')\r\n    subprocs.add(subproc)\r\n    subproc = new Subprocess()\r\n    subproc.setLogicalName(\"sub2\")\r\n    subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\n    subproc.getParameters().put('serviceSummary', '$serviceSummary')\r\n    subprocs.add(subproc)\r\n}\r\nif (!publishFirst) {\r\n    subproc = new Subprocess()\r\n    subproc.setLogicalName(\"notify\")\r\n    subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\n    subprocs.add(subproc)\r\n    plan.setSubprocesses(subprocs)\r\n}\r\n\r\n\r\n\r\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=284,y=91,w=103,h=61"
       },
@@ -115,6 +115,10 @@
     "serviceSummary": {
       "category": "INPUT",
       "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "subCount": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
     }
   }
 }

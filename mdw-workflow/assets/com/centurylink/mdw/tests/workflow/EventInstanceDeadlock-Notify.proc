@@ -24,7 +24,7 @@
         "WORK_DISPLAY_INFO": "x=330,y=109,w=103,h=69"
       },
       "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.event.PublishEventMessage",
+      "implementor": "com.centurylink.mdw.microservice.ServiceSummaryEventPublish",
       "name": "Publish\r\nEvent",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=468,ly=143,type=Elbow,xs=437&500,ys=143&143"},
