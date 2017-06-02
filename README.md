@@ -47,7 +47,7 @@
     bower install
    ```
 4. Build the Projects (Initial, non-incremental build)
-   - Window > Show View > Other > Gradle  > Gradle Tasks.
+   - Window > Show View > Other > Gradle  > Gradle Tasks. If you do not see the Other folder, refresh the mdw project.
    - Expand the mdw project, click View Menu then `Show All Tasks` then expand other folder and double-click the `buildAll` task.
    - (On Mac): Run `gradle buildAll` from the command-line instead.
    - Refresh all projects in Eclipse and (ctrl-b) to build (or let autobuild do it).  Incremental builds can be performed this way and do not require a Gradle build.
