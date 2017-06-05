@@ -91,10 +91,16 @@ public class ServiceApiServlet extends HttpServlet {
 
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");
+                    JsonObject swaggerJson = new JsonObject(Json.mapper().writeValueAsString(swagger));
+                    // sort definitions and paths
+                    if (swaggerJson.has("definitions"))
+                        swaggerJson.put("definitions", new JsonObject(swaggerJson.getJSONObject("definitions").toString()));
+                    if (swaggerJson.has("paths"))
+                        swaggerJson.put("paths", new JsonObject(swaggerJson.getJSONObject("paths").toString()));
                     if (scanner.getPrettyPrint())
-                        response.getWriter().println(new JsonObject(Json.mapper().writeValueAsString(swagger)).toString(2));
+                        response.getWriter().println(swaggerJson.toString(2));
                     else
-                        response.getWriter().println(new JsonObject(Json.mapper().writeValueAsString(swagger)).toString());
+                        response.getWriter().println(swaggerJson.toString());
                 }
                 else if (ext.equals(YAML_EXT)) {
                     response.setContentType("text/yaml");
