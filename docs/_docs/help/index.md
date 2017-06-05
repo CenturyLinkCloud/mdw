@@ -45,7 +45,6 @@ permalink: /docs/help/
   <li><a href='taskAction.html'>Defining Task Actions</a></li>
   <li><a href='taskNotices.html'>Task Notices</a></li>
   <li><a href='taskRouting.html'>Workgroup Routing</a></li>
-  <li><a href='http://cshare.ad.qintra.com/sites/MDW/User%20Documentation/MdwHubUserGuide.doc'>MDWHub User Guide</a></li>
 </ul>
 <h3>Coding and Development</h3>
 <ul>
