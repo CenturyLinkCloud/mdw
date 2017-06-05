@@ -31,7 +31,7 @@
      
 2. Get the Source Code
    - Command-line Git:  
-     `git clone --depth 10 https://github.com/CenturyLinkCloud/mdw.git mdw6`
+     `git clone https://github.com/CenturyLinkCloud/mdw.git mdw6`
    - Then in Eclipse:  
      Import the projects into your Eclipse workspace:  
      File > Import > General > Existing Projects into Workspace
