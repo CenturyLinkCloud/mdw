@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="css/mdw.css">
   <link rel="stylesheet" href="css/mdw-hub.css">
   <link rel="stylesheet" href="css/mdw-admin.css">
+  <link rel="stylesheet" href="lib/swagger-ui/swagger-ui.css" >
+  <link rel="stylesheet" href="lib/swagger-ui/fonts.css" >
+
   <link rel="icon" type="image/png" href="images/mdw.ico" />
  
   <script src="bower_components/angular/angular.js"></script>
@@ -23,13 +26,14 @@
   <script src="bower_components/angular-cookies/angular-cookies.js"></script>
   <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <script src="bower_components/highlightjs/highlight.pack.js"></script>
-  <script src="bower_components/iframe-resizer/js/iframeResizer.js"></script>
   <script src="bower_components/jsdiff/diff.js"></script>
   <script src="bower_components/Chart.js/dist/Chart.js"></script>
   <script src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
   <script src="lib/angular-chart.js"></script>
   <script src="lib/ng-infinite-scroll-1.2.0.js"></script>
   <script src="lib/marked-0.3.6.js"></script>
+  <script src="lib/swagger-ui/swagger-ui-bundle.js"> </script>
+  <script src="lib/swagger-ui/swagger-ui-standalone-preset.js"> </script>
   <script src="js/mdw.js"></script>
   <script src="js/util.js"></script>
   <script src="js/constants.js"></script>
@@ -75,6 +79,7 @@
   <script src="js/ui/ui-util.js"></script>
   <script src="js/ui/task.js"></script>
   <script src="js/ui/converters/object-table.js"></script>
+  <script src="js/ui/swagger.js"></script>
   <script src="js/dashboard/processes.js"></script>
   <script src="js/dashboard/requests.js"></script>
   <script src="js/dashboard/activities.js"></script>

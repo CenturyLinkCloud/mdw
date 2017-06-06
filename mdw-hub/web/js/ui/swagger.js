@@ -5,12 +5,12 @@ var swaggerMod = angular.module('mdwSwagger', ['mdw']);
 swaggerMod.directive('mdwSwagger', function() {
   return {
     restrict: 'E',
+    templateUrl: 'ui/swagger.html', 
     scope: {
       apiUrl: '=apiUrl'
     },
-    template: '<div id="swagger-ui"></div>',
     link: function link(scope, elem, attrs, ctrls) {
-      const ui = SwaggerUIBundle({
+      const ui = new SwaggerUIBundle({
         url: scope.apiUrl,
         dom_id: '#swagger-ui',
         presets: [
