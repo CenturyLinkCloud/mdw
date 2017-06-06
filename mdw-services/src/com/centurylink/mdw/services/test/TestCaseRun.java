@@ -232,7 +232,12 @@ public class TestCaseRun implements Runnable {
      * Delete the (convention-based) result file if exists
      */
     protected void deleteResultsFile() {
-        String resFileName = getTestCase().getName() + Asset.getFileExtension(Asset.YAML);
+        String resFileName = getTestCase().getName();
+        if (resFileName.endsWith(".test")){
+            int dotTest = resFileName.lastIndexOf(".test");
+            resFileName = resFileName.substring(0, dotTest);
+        }
+        resFileName = resFileName + Asset.getFileExtension(Asset.YAML);
         File resFile = new File(resultsDir + "/" + resFileName);
         if (resFile.isFile())
             resFile.delete();

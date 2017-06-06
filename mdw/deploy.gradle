@@ -28,10 +28,11 @@ task stopTomcat(type: ServerStop) {
 }
 
 task deleteAssets(type: Delete) {
-    delete fileTree(deployAssetDir) {
-      exclude 'Archive'
-    }
+    def assetDir = new File(deployAssetDir + "/com")  //Do not delete Archive folder but delete .mdw folders
+    println "assetDir" +  assetDir
+    assetDir.deleteDir()
 }
+
 deleteAssets.mustRunAfter stopTomcat
 
 task deployMdwAssets(type: Copy) {
@@ -73,7 +74,9 @@ deployJavadocs.mustRunAfter deployMdwWar
 
 // doesn't work on windows (blocks build task thread)
 // http://forums.gradle.org/gradle/topics/exec_task_issues_details
+// We should try this https://github.com/bmuschko/gradle-tomcat-plugin
 task startTomcat(type: Exec) {
+    sleep(45 * 1000)
     workingDir tomcatBinDir
     if (System.properties["os.name"].startsWith("Windows"))
         commandLine "start.bat"

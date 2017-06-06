@@ -73,7 +73,7 @@ public class TestCaseMain {
             throw new IllegalStateException("Missing system property: mdw.test.user");
         String masterRequestId = System.getProperty("mdw.test.master.request.id");
         if (masterRequestId == null)
-            throw new IllegalStateException("Missing system property: mdw.asset.root");
+            throw new IllegalStateException("Missing system property: mdw.test.master.request.id");
 
         TestingServices testingServices = ServiceLocator.getTestingServices();
         TestCase testCase = testingServices.getTestCase(testCasePath);
