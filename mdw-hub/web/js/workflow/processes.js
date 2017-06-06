@@ -21,6 +21,9 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
     $scope.processFilter.processId = null;
     $scope.processFilter.instanceId = null;
     $scope.processFilter.masterRequestId = null;
+    // fix date format stored in cookieStore
+    if ($scope.processFilter.startDate != null && $scope.processFilter.startDate.length > 0)
+    	$scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
   }
   
   // pseudo-status [Active] means non-final
