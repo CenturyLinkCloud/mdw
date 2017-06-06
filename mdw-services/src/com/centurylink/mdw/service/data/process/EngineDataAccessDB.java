@@ -583,6 +583,24 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         }
         return hasWaiters?this.getEventWaitInstances(eventName):null;
     }
+    public List<EventWaitInstance> recordBroadcastEventArrive(String eventName, Long documentId) throws SQLException {
+        boolean hasWaiters;
+        try {
+            this.recordEventHistory(eventName, EventLog.SUBCAT_ARRIVAL, OwnerType.DOCUMENT, documentId, null);
+            createEventInstance(eventName, documentId, EventInstance.STATUS_WAITING_MULTIPLE, null, null, null, 0);
+            hasWaiters = false;
+        } catch (SQLException e) {
+            EventInstance event = lockEventInstance(eventName);
+            if (event == null)
+                throw e;  // throw original SQLException
+            if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
+                hasWaiters = true;
+            } else {
+                throw new SQLException("The event is already recorded and in status " + event.getStatus());
+            }
+        }
+        return hasWaiters?this.getEventWaitInstances(eventName):null;
+    }
 
     public Long recordEventWait(String eventName, boolean multipleRecepients,
             int preserveSeconds, Long actInstId, String compCode) throws SQLException {
@@ -620,6 +638,25 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 } else {
                     throw new SQLException("The event has been waited by multiple recepients");
                 }
+            } else {        // STATUS_FLAG
+                throw new SQLException("The event is already recorded as a FLAG");
+            }
+        }
+        createEventWaitInstance(actInstId, eventName, compCode);
+        return documentId;
+    }
+    public Long recordBroadcastEventWait(String eventName,
+            int preserveSeconds, Long actInstId, String compCode) throws SQLException {
+        Long documentId;
+        try {
+            createEventInstance(eventName, null,
+                    EventInstance.STATUS_WAITING_MULTIPLE,
+                    null, null, null, preserveSeconds);
+            documentId = null;
+        } catch (SQLException e) {
+            EventInstance event = lockEventInstance(eventName);
+            if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
+                documentId = null;
             } else {        // STATUS_FLAG
                 throw new SQLException("The event is already recorded as a FLAG");
             }

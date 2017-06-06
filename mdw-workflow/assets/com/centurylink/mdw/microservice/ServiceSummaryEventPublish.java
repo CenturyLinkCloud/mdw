@@ -17,6 +17,7 @@ package com.centurylink.mdw.microservice;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.workflow.activity.event.PublishEventMessage;
 
@@ -39,8 +40,8 @@ public class ServiceSummaryEventPublish extends PublishEventMessage {
         loginfo("Publish message, event=" + eventName +
                 ", id=" + docref.getDocumentId() + ", message=" + eventMessage);
 
-        ServiceSummaryLockCache.lock(getMasterRequestId());
+        BroadcastEventLockCache.lock(eventName);
         getEngine().notifyProcess(eventName, docref.getDocumentId(), eventMessage, delay);
-        ServiceSummaryLockCache.unlock(getMasterRequestId());
+        BroadcastEventLockCache.unlock(eventName);
     }
 }

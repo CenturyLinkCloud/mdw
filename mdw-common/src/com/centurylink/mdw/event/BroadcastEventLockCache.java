@@ -13,57 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.microservice;
+package com.centurylink.mdw.event;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.provider.CacheService;
 
 /**
  * TODO: remove old locks to prevent unlimited object accumulation
  */
-@RegisteredService(CacheService.class)
-public class ServiceSummaryLockCache implements CacheService {
+public class BroadcastEventLockCache implements CacheService {
 
-    private static volatile Map<String,ReentrantLock> masterRequestLocks = Collections.synchronizedMap(new HashMap<String,ReentrantLock>());
+    private static volatile Map<String,ReentrantLock> eventLocks = Collections.synchronizedMap(new HashMap<String,ReentrantLock>());
 
     public void refreshCache() throws Exception {
         clearCache();
     }
 
     public void clearCache() {
-        synchronized (masterRequestLocks) {
-            masterRequestLocks.clear();
+        synchronized (eventLocks) {
+            eventLocks.clear();
         }
     }
 
-    public static void lock(String masterRequestId) {
-        getLock(masterRequestId).lock();
+    public static void lock(String eventName) {
+        getLock(eventName).lock();
     }
 
-    public static ReentrantLock getLock(String masterRequestId) {
-        ReentrantLock lock = masterRequestLocks.get(masterRequestId);
+    public static ReentrantLock getLock(String eventName) {
+        ReentrantLock lock = eventLocks.get(eventName);
         if (lock == null) {
-            synchronized (masterRequestLocks) {
-                lock = masterRequestLocks.get(masterRequestId);
+            synchronized (eventLocks) {
+                lock = eventLocks.get(eventName);
                 if (lock == null) {
                     lock = new ReentrantLock();
-                    masterRequestLocks.put(masterRequestId, lock);
+                    eventLocks.put(eventName, lock);
                 }
             }
         }
         return lock;
     }
 
-    public static void unlock(String masterRequestId) {
-        ReentrantLock lock = masterRequestLocks.get(masterRequestId);
+    public static void unlock(String eventName) {
+        ReentrantLock lock = eventLocks.get(eventName);
         if (lock == null) {
-            synchronized (masterRequestLocks) {
-                lock = masterRequestLocks.get(masterRequestId);
+            synchronized (eventLocks) {
+                lock = eventLocks.get(eventName);
             }
         }
 
@@ -71,9 +69,9 @@ public class ServiceSummaryLockCache implements CacheService {
             lock.unlock();
     }
 
-    public static ReentrantLock removeLock(String masterRequestId) {
-        synchronized (masterRequestLocks) {
-            return masterRequestLocks.remove(masterRequestId);
+    public static ReentrantLock removeLock(String eventName) {
+        synchronized (eventLocks) {
+            return eventLocks.remove(eventName);
         }
     }
 

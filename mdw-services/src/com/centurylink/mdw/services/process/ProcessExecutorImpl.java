@@ -43,6 +43,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
@@ -1670,7 +1671,7 @@ class ProcessExecutorImpl {
 
     }
 
-    /**
+   /**
      * Method that creates the event log based on the passed in params
      *
      * @param pEventNames
@@ -1735,9 +1736,103 @@ class ProcessExecutorImpl {
             throw new ProcessException(-1, e.getMessage(), e);
         }
     }
+    EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
+            String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean notifyIfArrived)
+    throws DataAccessException, ProcessException {
 
+        try {
+            EventWaitInstance ret = null;
+            Long documentId = null;
+            String pCompCode = null;
+            int i;
+            for (i=0; i < pEventNames.length; i++) {
+                pCompCode = pWakeUpEventTypes[i];
+                try {
+                    BroadcastEventLockCache.lock(pEventNames[i]);
+                    documentId = edao.recordBroadcastEventWait(pEventNames[i],
+                        3600,       // TODO set this value in designer!
+                        actInstId, pWakeUpEventTypes[i]);
+                    if (logger.isInfoEnabled()) {
+                    logger.info("registered event wait event='"
+                            + pEventNames[i] + "' actInst=" + actInstId
+                            + " as broadcast-waiting");
+                    }
+                } finally {
+                    BroadcastEventLockCache.unlock(pEventNames[i]);
+                }
+                if (documentId!=null) break;
+            }
+            if (documentId!=null) {
+                if (logger.isInfoEnabled()) {
+                    logger.info((notifyIfArrived?"notify":"return") +
+                            " event before registration: event='"
+                            + pEventNames[i] + "' actInst=" + actInstId);
+                }
+                if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
+                if (notifyIfArrived) {
+                    ActivityInstance actInst = edao.getActivityInstance(actInstId);
+                    resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
+                    edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
+                } else {
+                    edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
+                }
+                ret = new EventWaitInstance();
+                ret.setMessageDocumentId(documentId);
+                ret.setCompletionCode(pCompCode);
+                Document docvo = edao.getDocument(documentId, true);
+                edao.updateDocumentInfo(docvo);
+            }
+            return ret;
+        } catch (SQLException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+           } catch (MdwException e) {
+            throw new ProcessException(-1, e.getMessage(), e);
+        }
+    }
+
+    Integer broadcast(String pEventName, Long pEventInstId,
+            String message, int delay) throws DataAccessException, EventException, SQLException {
+        List<EventWaitInstance> waiters = edao.recordBroadcastEventArrive(pEventName, pEventInstId);
+        if (waiters!=null) {
+            boolean hasFailures = false;
+            try {
+                for (EventWaitInstance inst : waiters) {
+                    String pCompCode = inst.getCompletionCode();
+                    if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
+                    if (logger.isInfoEnabled()) {
+                        logger.info("notify event after registration: event='"
+                                + pEventName + "' actInst=" + inst.getActivityInstanceId());
+                    }
+                    ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
+                    if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
+                        // assuming it is a service process waiting for message
+                        JSONObject json = new JsonObject();
+                        json.put("ACTION", "NOTIFY");
+                        json.put("CORRELATION_ID", pEventName);
+                        json.put("MESSAGE", message);
+                        internalMessenger.broadcastMessage(json.toString());
+                    } else {
+                        resumeActivityInstance(actInst, pCompCode, pEventInstId, message, delay);
+                    }
+                    // deregister wait instances
+                    edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
+                    if (pEventInstId!=null && pEventInstId.longValue()>0) {
+                        Document docvo = edao.getDocument(pEventInstId, true);
+                        edao.updateDocumentInfo(docvo);
+                    }
+                }
+            } catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+                throw new EventException(ex.getMessage());
+            }
+            if (hasFailures) return EventInstance.RESUME_STATUS_PARTIAL_SUCCESS;
+            else return EventInstance.RESUME_STATUS_SUCCESS;
+        } else return EventInstance.RESUME_STATUS_NO_WAITERS;
+
+    }
     Integer notifyProcess(String pEventName, Long pEventInstId,
-            String message, int delay)
+                    String message, int delay)
     throws DataAccessException, EventException, SQLException {
         List<EventWaitInstance> waiters = edao.recordEventArrive(pEventName, pEventInstId);
         if (waiters!=null) {

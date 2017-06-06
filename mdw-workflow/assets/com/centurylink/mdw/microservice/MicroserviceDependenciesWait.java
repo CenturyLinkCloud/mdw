@@ -22,6 +22,7 @@ import org.json.JSONException;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -47,9 +48,9 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
             setReturnCode(WorkStatus.STATUSNAME_COMPLETED + "::FINISH");
         }
         else {
-            ServiceSummaryLockCache.lock(getMasterRequestId());
+            BroadcastEventLockCache.lock(getMasterRequestId());
             super.execute();
-            ServiceSummaryLockCache.unlock(getMasterRequestId());
+            BroadcastEventLockCache.unlock(getMasterRequestId());
         }
     }
 
@@ -85,7 +86,7 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            ServiceSummaryLockCache.lock(getMasterRequestId());
+            BroadcastEventLockCache.lock(getMasterRequestId());
             try {
                 EventWaitInstance wi = null;
                 try {
@@ -123,7 +124,7 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
                     return false;
             }
             finally {
-                ServiceSummaryLockCache.unlock(getMasterRequestId());
+                BroadcastEventLockCache.unlock(getMasterRequestId());
 
             }
         }

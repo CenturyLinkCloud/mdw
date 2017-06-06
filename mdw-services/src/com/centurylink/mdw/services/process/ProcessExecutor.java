@@ -577,6 +577,20 @@ public class ProcessExecutor {
         }
     }
 
+    public EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
+            String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean notifyIfArrived)
+    throws DataAccessException, ProcessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createBroadcastEventWaitInstances(actInstId,
+                    pEventNames, pWakeUpEventTypes, notifyIfArrived);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     public void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
     throws DataAccessException {
         TransactionWrapper transaction=null;
@@ -600,6 +614,21 @@ public class ProcessExecutor {
         } catch (SQLException e) {
             throw new DataAccessException(0, "Failed to notify process of event arrival", e);
         } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public Integer broadcast(String pEventName, Long pEventInstId, String message, int delay)
+            throws DataAccessException, EventException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.broadcast(pEventName, pEventInstId, message, delay);
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(0, "Failed to notify process of event arrival", e);
+        }
+        finally {
             stopTransaction(transaction);
         }
     }
