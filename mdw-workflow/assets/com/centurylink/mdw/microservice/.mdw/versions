@@ -1,6 +1,6 @@
 Invocation.java=1
 Microservice.java=1
-MicroserviceDependenciesWait.java=2
+MicroserviceDependenciesWait.java=6
 MicroserviceRestAdapter.java=1
 ServiceSummary.java=1
 ServiceSummaryEventPublish.java=1
