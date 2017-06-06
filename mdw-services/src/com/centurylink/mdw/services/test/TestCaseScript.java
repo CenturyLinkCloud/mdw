@@ -17,6 +17,7 @@ package com.centurylink.mdw.services.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,7 +138,17 @@ public abstract class TestCaseScript extends Script {
         return process(target, null);
     }
 
+    @SuppressWarnings("deprecation")
     public TestCaseProcess process(String target, Closure<?> cl) throws TestException {
+        int lastSlash = target.lastIndexOf('/');
+        if (lastSlash > 0) {
+            String packageName = target.substring(0, lastSlash);
+            String processName = URLEncoder.encode(target.substring(lastSlash + 1)); //Handle space in proc name
+            target = packageName + "/" + processName;
+        }
+        else {
+            target = URLEncoder.encode(target); //Handle space in process name
+        }
         process = new TestCaseProcess(getTestCaseRun().getProcess(target));
         if (cl != null) {
             cl.setResolveStrategy(Closure.DELEGATE_FIRST);

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.services.workflow;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -714,6 +715,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (version < 0)
             version = 0;
         boolean forUpdate = query.getBooleanFilter("forUpdate");
+        try {
+            processName = URLDecoder.decode(processName, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            logger.severe("Unable to decode processName : " + processName);
+        }
         Process process = ProcessCache.getProcess(processName, version);
         if (forUpdate) {
             // load from file
