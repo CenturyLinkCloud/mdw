@@ -142,7 +142,15 @@ public class SwaggerReader {
                     for (String seg : parsedPath.split("/")) {
                         if (seg.startsWith("{") && seg.endsWith("}")) {
                             String segName = seg.substring(1, seg.length() - 1);
-                            if (!operation.getParameters().contains(segName)) {
+                            boolean declared = false;
+                            for (Parameter opParam : operation.getParameters()) {
+                                if ("path".equals(opParam.getIn()) && segName.equals(opParam.getName())) {
+                                    declared = true;
+                                    break;
+                                }
+                            }
+                            if (!declared) {
+                                // add it for free
                                 PathParameter pathParam = new PathParameter();
                                 pathParam.setName(segName);
                                 pathParam.setRequired(false);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+\ * Copyright (C) 2017 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,8 +99,7 @@ public class Workgroups extends JsonRestService {
         notes="If users/{cuid} is present, user is added to workgroup.", response=StatusMessage.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="Workgroup", paramType="body", required=true, dataType="com.centurylink.mdw.model.user.Workgroup"),
-        @ApiImplicitParam(name="{groupName}", paramType="path", required=true)})
-
+        @ApiImplicitParam(name="groupName", paramType="path", required=true)})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String name = getSegment(path, 1);
