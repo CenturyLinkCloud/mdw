@@ -292,6 +292,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               return $http.get(url);
             }
           }
+        },
+        ServiceSummary: {
+          '_template': mdw.roots.hub + '/js/ui/templates/stubbing.json'
         }
       },
       subprocess: {
