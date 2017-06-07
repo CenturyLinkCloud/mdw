@@ -94,7 +94,7 @@ public class Workgroups extends JsonRestService {
      * For creating a new workgroup or a new group/user relationship.
      */
     @Override
-    @Path("/{groupName}/users/{cuid}")
+    @Path("/{groupName}/{'users'}/{cuid}")
     @ApiOperation(value="Create a workgroup or add a user to an existing workgroup",
         notes="If users/{cuid} is present, user is added to workgroup.", response=StatusMessage.class)
     @ApiImplicitParams({
@@ -173,7 +173,7 @@ public class Workgroups extends JsonRestService {
     /**
      * Delete workgroup or remove user from group.
      */
-    @Path("/{groupName}/users/{cuid}")
+    @Path("/{groupName}/{'users'}/{cuid}")
     @ApiOperation(value="Delete a workgroup or remove a user from a workgroup",
         notes="If users/{cuid} is present, user is removed from workgroup.", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)

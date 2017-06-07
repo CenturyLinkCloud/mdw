@@ -150,6 +150,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
                 }
             }
         }
+
         return p;
     }
 
