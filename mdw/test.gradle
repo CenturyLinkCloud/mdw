@@ -1,0 +1,65 @@
+// run the MDW automated tests before publishing a build 
+apply plugin: 'java'
+apply plugin: "war"
+repositories {
+    mavenCentral()
+    maven {
+        url mdwRepoUrl
+    }
+}
+
+dependencies {
+    runtime files("../mdw-hub/deploy/webapps/mdw/WEB-INF/classes")   
+    runtime fileTree(dir: "./deploy/app", include: '*.jar')   
+    runtime group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
+    runtime group: "org.json", name: "json", version: "20090211"
+    runtime group: "commons-lang", name: "commons-lang", version: "2.4"
+    runtime group: "commons-codec", name: "commons-codec", version: "1.3"
+    runtime group: "org.apache.ant", name: "ant", version: "1.8.2"
+    runtime group: "org.apache.ant", name: "ant-junit", version: "1.8.2"
+    runtime(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
+    runtime group: "org.codehaus.groovy", name: "groovy-all", version: "2.3.6"
+    runtime group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+    runtime group: "info.cukes", name: "cucumber-core", version: "1.2.4"
+    runtime group: "info.cukes", name: "gherkin", version: "2.12.2"
+    runtime group: "info.cukes", name: "cucumber-java", version: "1.2.4"
+    runtime group: "info.cukes", name: "cucumber-groovy", version: "1.2.4"
+    runtime group: "info.cukes", name: "cucumber-junit", version: "1.2.4"
+    runtime group: "info.cukes", name: "cucumber-jvm-deps", version: "1.0.5"
+    runtime group: "javax.el", name: "el-api", version: "1.0"
+    runtime group: "org.yaml", name: "snakeyaml", version: "1.16"
+    runtime group: "javax.mail", name: "mail", version: "1.4.5"
+    runtime group: "org.java-websocket", name: "Java-WebSocket", version: "1.3.0"
+    runtime group: "commons-cli", name: "commons-cli", version: "1.4"
+    runtime group: "com.centurylink.mdw", name: "mdw-schemas", version: "5.5.39"  
+    runtime group: "com.sun.el", name: "el-impl", version: "1.0"
+    runtime group: "io.limberest", name: "limberest", version: "1.0.01"
+}
+
+task functionTests(type: JavaExec)  {
+    classpath = sourceSets.main.runtimeClasspath
+    ignoreExitValue = true
+    main = 'com.centurylink.mdw.services.test.MultiTestCaseMain'
+    
+    jvmArgs = [
+        "-Dmdw.asset.root=" + assetDirPath,
+        "-Dmdw.config.location=" + projectDir + "/config",
+        '-Dmdw.test.user=mdwapp',
+        '-Dmdw.test.intervalSecs=2',
+        "-Dmdw.test.server.url=" + testServerUrl,
+        '-Dmdw.test.stubbing=true',
+        '-Dmdw.test.pin.to.server=true',
+        '-Dmdw.test.verbose=true',
+        '-Djavax.net.ssl.trustStore=C:/workspaces/GitLab/mdw-framework/deploy/certs/CenturyLinkQCA.jks',
+        '-Dmdw.runtime.env=dev']
+    jvmArgs += ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
+    // arguments to pass to the application
+    //args =["-byFormat", "test"]
+    args = ["-includes", "C:/workspaces/mdw6/mdw-workflow/assets/com/centurylink/mdw/tests/workflow/ServiceHeteroprocSequential.test"]
+    //args +=["-excludes", "C:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\stubbing\\AdapterStubEcho.test"]
+}
+
+task autoTest(dependsOn: [functionTests])  {
+    println "*** MDW ${mdwVersion} automated test execution ***"
+}
+

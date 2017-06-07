@@ -22,6 +22,7 @@ import org.json.JSONException;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -47,15 +48,12 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
             setReturnCode(WorkStatus.STATUSNAME_COMPLETED + "::FINISH");
         }
         else {
-            ServiceSummaryLockCache.lock(getMasterRequestId());
             super.execute();
-            ServiceSummaryLockCache.unlock(getMasterRequestId());
         }
     }
 
     @Override
     protected boolean handleCompletionCode() throws ActivityException {
-        // TBD check for synchronous and continue
         Integer exitStatus = WorkStatus.STATUS_COMPLETED;
         if (!dependenciesMet()) {
             logger.info(getActivityName() + "  *** not met, setting to waiting");
@@ -85,47 +83,22 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            ServiceSummaryLockCache.lock(getMasterRequestId());
             try {
-                EventWaitInstance wi = null;
-                try {
-                    wi = this.registerWaitEvents(false, true);
-                }
-                catch (Exception e) {
-                    logger.info("Error in registerWaitEvents - " + e.getMessage());
-                    wi = this.registerWaitEvents(false, true);
-                }
-                if (wi != null) {
-                    try {
-                        // Reregister the event and set event to status 1
-                        EventManager eventManager = ServiceLocator.getEventManager();
-                        String eventName = ServiceSummary.SERVICE_SUMMARY_NOTIFICATION + getMasterRequestId();
-                        eventManager.updateEventInstance(eventName, null,
-                                EventInstance.STATUS_WAITING_MULTIPLE, null, null, null, 0,
-                                null);
-                        eventManager.createEventWaitInstance(eventName, getActivityInstanceId(),
-                                wi.getCompletionCode());
-                    }
-                    catch (DataAccessException e) {
-                        // just output
-                        logger.severe("Unable to update event instance for actibvity "
-                                + getActivityInstanceId() + ":" + e.getMessage());
-                    }
-                }
-                if (compCode.startsWith(
-                        WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
-                        || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::"
-                                + EventType.EVENTNAME_ABORT)
-                        || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::"
-                                + EventType.EVENTNAME_ERROR))
-                    return true;
-                else
-                    return false;
+                this.registerWaitEvents(false, true);
             }
-            finally {
-                ServiceSummaryLockCache.unlock(getMasterRequestId());
-
+            catch (Exception e) {
+                logger.info("Error in registerWaitEvents - " + e.getMessage());
+                e.printStackTrace();
             }
+            if (compCode
+                    .startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
+                    || compCode.startsWith(
+                            WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
+                    || compCode.startsWith(
+                            WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))
+                return true;
+            else
+                return false;
         }
         else
             return true;
@@ -179,12 +152,16 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
                         + expResultBool);
                 if (Boolean.parseBoolean(microservice[0])) {
                     // check it
-                    // if microservice isn't populated then do the check based on
+                    // if microservice isn't populated then do the check based
+                    // on
                     // the expression
                     if ((StringHelper.isEmpty(microservice[1]) && !expResultBool.booleanValue())
-                            || (expResultBool.booleanValue() && !StringHelper.isEmpty(microservice[1])
-                                    && microServiceSuccess(microservice[1], serviceSummary) == null)) {
-                        // service has been checked, but no successful response was
+                            || (expResultBool.booleanValue()
+                                    && !StringHelper.isEmpty(microservice[1])
+                                    && microServiceSuccess(microservice[1],
+                                            serviceSummary) == null)) {
+                        // service has been checked, but no successful response
+                        // was
                         // received
                         dependenciesMet = false;
                         break;
@@ -235,8 +212,8 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         if (invocations == null)
             return null;
         // Get first successful 200 invocation
-        Invocation successfulInvocation = invocations.stream().filter(
-                (invocation) -> Status.OK.getCode() == invocation.getStatus().getCode()
+        Invocation successfulInvocation = invocations.stream()
+                .filter((invocation) -> Status.OK.getCode() == invocation.getStatus().getCode()
                         || Status.ACCEPTED.getCode() == invocation.getStatus().getCode())
                 .findFirst().orElse(null);
         logger.info("Invocations checking for  " + microservice + " invocation="
@@ -245,8 +222,10 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         // If none found, check updates
         return successfulInvocation != null ? successfulInvocation
                 : updates == null ? null
-                    : updates.stream().filter((update) -> Status.OK.getCode() == update.getStatus().getCode()
-                        || Status.ACCEPTED.getCode() == update.getStatus().getCode()).findFirst().orElse(null);
+                        : updates.stream().filter((update) -> Status.OK.getCode() == update
+                                .getStatus().getCode()
+                                || Status.ACCEPTED.getCode() == update.getStatus().getCode())
+                                .findFirst().orElse(null);
     }
 
     public ServiceSummary getServiceSummary() throws ActivityException {
@@ -262,6 +241,45 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         else {
             return serviceSummary;
         }
+    }
+    /**
+     * Overriden registerWaitEvents to create broadcast style event waits
+     */
+    @Override
+    protected EventWaitInstance registerWaitEvents(boolean reregister, boolean checkIfArrived)
+            throws ActivityException {
+        List<String[]> eventSpecs = this.getWaitEventSpecs();
+        if (eventSpecs.isEmpty())
+            return null;
+        String[] eventNames = new String[eventSpecs.size()];
+        String[] eventCompletionCodes = new String[eventSpecs.size()];
+        boolean[] eventOccurances = new boolean[eventSpecs.size()];
+        for (int i = 0; i < eventNames.length; i++) {
+            eventNames[i] = translatePlaceHolder(eventSpecs.get(i)[0]);
+            eventCompletionCodes[i] = eventSpecs.get(i)[1];
+            if (eventSpecs.get(i)[1] == null) {
+                eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
+            }
+            else {
+                eventCompletionCodes[i] = eventSpecs.get(i)[1].trim();
+                if (eventCompletionCodes[i].length() == 0)
+                    eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
+            }
+            String eventOccur = eventSpecs.get(i)[2];
+            eventOccurances[i] = (eventOccur == null || eventOccur.length() == 0
+                    || eventOccur.equalsIgnoreCase("true"));
+        }
+        try {
+
+            EventWaitInstance received = getEngine().createBroadcastEventWaitInstances(
+                    this.getActivityInstanceId(), eventNames, eventCompletionCodes, !checkIfArrived);
+            return received;
+        }
+        catch (Exception ex) {
+            super.logexception(ex.getMessage(), ex);
+            throw new ActivityException(ex.getMessage());
+        }
+
     }
 
 }

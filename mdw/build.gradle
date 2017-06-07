@@ -155,12 +155,6 @@ task deployTomcatMdwDev(type: GradleBuild) {
 										testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
-task testTomcatMdwdev(type: GradleBuild) {
-  buildFile = "test.gradle"
-  tasks = ["autoTestAndPublish"]
-  startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}"]
-}
-
 task publishToMavenCentral(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
@@ -249,3 +243,15 @@ uploadArchives {
       }
     }
 }
+task testLocalDev(type: GradleBuild) {
+    buildFile = "test.gradle"
+    tasks = ["autoTest"]
+    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}"]
+}
+
+task testTomcatMdwdev(type: GradleBuild) {
+    buildFile = "test.gradle"
+    tasks = ["autoTest"]
+    startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}"]
+}
+
