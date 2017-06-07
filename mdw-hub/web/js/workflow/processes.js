@@ -22,7 +22,7 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
     $scope.processFilter.instanceId = null;
     $scope.processFilter.masterRequestId = null;
     // fix date format stored in cookieStore
-    if ($scope.processFilter.startDate != null && $scope.processFilter.startDate.length > 0)
+    if ($scope.processFilter.startDate !== null && $scope.processFilter.startDate.length > 0)
     	$scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
   }
   
