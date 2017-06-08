@@ -22,7 +22,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
   }
   else {
 	// fix date format stored in cookieStore
-	if ($scope.requestFilter.receivedDate !== null && $scope.requestFilter.receivedDate.length > 0)
+	if ($scope.requestFilter.receivedDate)
 		$scope.requestFilter.receivedDate = util.serviceDate(new Date($scope.requestFilter.receivedDate));
   }
   
