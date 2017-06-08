@@ -13,7 +13,7 @@
 - title: Guides
   docs:
   - guides/SetupGuideForTomcat
-  - guides/SetupGuideforCloudFoundry
+  - guides/SetupGuideForCloudFoundry
   - guides/MicroservicesCookbook
   
 - title: Documentation
