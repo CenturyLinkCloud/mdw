@@ -28,7 +28,7 @@ permalink: /docs/guides/
     <div class="unit one-third">
       <h2>Microservices Cookbook</h2>
       <p>
-        Cookbook to get you started with Microservices
+        Cookbook to get you started with Microservices 
       </p>
       <a href="MicroservicesCookbook">Microservices Cookbook &rarr;</a>
     </div>
