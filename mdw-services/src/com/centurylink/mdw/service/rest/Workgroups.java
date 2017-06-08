@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+\ * Copyright (C) 2017 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,11 +94,12 @@ public class Workgroups extends JsonRestService {
      * For creating a new workgroup or a new group/user relationship.
      */
     @Override
-    @Path("/{groupName}/users/{cuid}")
+    @Path("/{groupName}/{'users'}/{cuid}")
     @ApiOperation(value="Create a workgroup or add a user to an existing workgroup",
         notes="If users/{cuid} is present, user is added to workgroup.", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Workgroup", paramType="body", dataType="com.centurylink.mdw.model.user.Workgroup")})
+        @ApiImplicitParam(name="Workgroup", paramType="body", required=true, dataType="com.centurylink.mdw.model.user.Workgroup"),
+        @ApiImplicitParam(name="groupName", paramType="path", required=true)})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String name = getSegment(path, 1);
@@ -173,7 +174,7 @@ public class Workgroups extends JsonRestService {
     /**
      * Delete workgroup or remove user from group.
      */
-    @Path("/{groupName}/users/{cuid}")
+    @Path("/{groupName}/{'users'}/{cuid}")
     @ApiOperation(value="Delete a workgroup or remove a user from a workgroup",
         notes="If users/{cuid} is present, user is removed from workgroup.", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)

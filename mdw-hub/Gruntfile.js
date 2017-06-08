@@ -49,12 +49,12 @@ module.exports = function(grunt) {
           expect: false,
           inject: false,
           browser: false,
-          _:false,
-          DOMParser: false,
-          iFrameResize: false,
           FileReader: false,
           Uint8Array: false,
+          SwaggerUIBundle: false,
+          SwaggerUIStandalonePreset: false,
           Image: false,
+          _:false,
           __dirname: false
         }
       }

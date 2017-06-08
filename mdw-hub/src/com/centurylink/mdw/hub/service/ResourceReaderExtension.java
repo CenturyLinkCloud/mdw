@@ -150,6 +150,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
                 }
             }
         }
+
         return p;
     }
 
@@ -175,6 +176,8 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
             for (ApiImplicitParam param : implicitParams.value()) {
                 final Parameter p = readImplicitParam(context.getSwagger(), param);
                 if (p != null) {
+                    if (p instanceof BodyParameter && param.format() != null)
+                        p.getVendorExtensions().put("format", param.format());
                     operation.parameter(p);
                 }
             }
