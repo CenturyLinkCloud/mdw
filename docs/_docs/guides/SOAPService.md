@@ -1,50 +1,18 @@
 ---
-permalink: /docs/guides/TomcatCookbook/
-title: Tomcat Cookbook
+permalink: /docs/guides/SOAPService/
+title: SOAP Web Service
 ---
 
-### MDW SOAP document-style Web Services
+### MDW SOAP document-style Web Service
 
 This document contains information about creating, exposing and consuming services through a SOAP-based Web Service. For a RESTFul Web Service, refer to [MicroservicesCookbook](../MicroservicesCookbook/).
 
-### Prerequisites
- - Eclipse Neon for JavaEE Developers:  
-   [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
- - Required Plugins:
-     - MDW Designer:                                                     
-       http://centurylinkcloud.github.io/mdw/designer/updateSite
-     - Buildship Plugin:   
-       http://download.eclipse.org/buildship/updates/e46/releases/2.x
-       
- - Recommended Plugins:
-     - Groovy:                                   
-       http://dist.springsource.org/snapshot/GRECLIPSE/e4.6
-     - Yaml:                                             
-       http://dadacoalition.org/yedit
- - Tomcat 8:
-     - [https://tomcat.apache.org](https://tomcat.apache.org)
- - Chrome and Postman
-     - [https://www.google.com/chrome](https://www.google.com/chrome)     
-     - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+### Prerequisite
+Before you can start working with MDW framework, you will need to do a one-time step. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
      
 ### Supported Java Container (Apache Tomcat 8)  
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  To be able to develop locally you need an Apache Tomcat: [https://tomcat.apache.org](https://tomcat.apache.org).
-
-### MDW Database:
-- MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
-  database. Generally for cloud development you'll point to a pre-existing central database.  If you want to host your own database, you'll need to configure an instance of MySQL 
-  with the MDW db schema. The SQL scripts for installing the MDW schema and setting up an MDW database in MySQL:  
   
-		Note: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:
-		http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
-		Run the following scripts in this order. These scripts are found in workflow/assets/.../db/ directory
-		1. create_tables.sql	
-		2. create_indexes.sql
-		3. add_fkeys.sql
-		4. baseline_inserts.sql (This script inserts a basic set of reference data into some of the tables created above).
-		5. seed_users.sql (Edit the seed_users.sql script to add initial MDW users.  At least one of these should be granted Site Admin access to enable them to add users through the Administration webapp). 
-  
-
 ### Workflow Services
 
 #### 1. Create a Local Project
@@ -63,7 +31,7 @@ A local project is useful if you want to debug your custom Java source code and 
   
 - Click Next.  Enter information about your Tomcat installation.  If you don't know what your Tomcat User password is, enter `tomcat`.
 
-  ![alt textr](../images/addTomcatServer.png "addTomcatServer")
+  ![alt textr](../images/tomcatSetting.png "tomcatSetting")
     
 - Click Next again and enter your database connection info.  The password for the database is `mdw`.  
 
@@ -230,24 +198,8 @@ A local project is useful if you want to debug your custom Java source code and 
   
    ![alt text](../images/addTomcatServer4.png "addTomcatServer4")
 
-##### Run Tomcat:
-- Now that you have created the WTP server instance, the Servers view gives you a handy way to start and stop Tomcat.  And output is directed to the Eclipse Console view, where you can click on 
-  stack traces to open associated source code (including MDW Framework code and Dynamic Java).  Start your server by right-clicking on it (or use the icon in the Servers view toolbar).
-  
-- The first time you start your server, the Tomcat explodes the mdw.war file in your deploy/webapps directory and caches the deployable content.  This can sometimes take a minute.  With the server 
-  running you should see MDW output in the Eclipse Console view. 
-  
- - You can safely ignore any Dynamic Java compilation errors unless they pertain to the custom activity you created in Step 2. 
-  
-  Tip: When you upgrade to a new MDW build version in Eclipse, Designer automatically downloads the corresponding mdw.war file into your deploy/webapps directory.  If at any time you want to 
-  clean out the MDW deployment and start fresh, you can delete mdw.war and the exploded mdw directory (and for a very thorough cleansing you can even delete the Tomcat cache under 
-  deploy/work/Catalina/localhost/mdw).  
-  
-- Then you can deploy from scratch from Package Explorer view by right-clicking on your workflow project and selecting MDW Update > Update Framework Libraries.
-  
-- Make sure your project is added to your Java Build Path/Source. You will need to do this from a Java or Resource perspective. 
-
-- You can confirm that MDW was successfully deployed by accessing MDWHub in your browser: [http://localhost:8080/mdw](http://localhost:8080/mdw).
+##### Run Your Workflow Project:
+- If you have not completed the one-time setup, please follow [this link](../SetupGuideForTomcat/) and return to continue.
 
 ##### Open the Process Launch Dialog:
 - Right-click on your process that is under your workflow package in Process Explorer view and Select Run. You can also right-click on your Designer and Select Run.  Designer will present the 

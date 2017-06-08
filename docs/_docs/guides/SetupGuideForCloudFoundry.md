@@ -1,11 +1,11 @@
 ---
-permalink: /docs/guides/CloudFoundryCookbook/
-title: CloudFoundry Cookbook
+permalink: /docs/guides/SetupGuideforCloudFoundry/
+title: Setup Guide for CloudFoundry
 ---
 
-### MDW Cloud Foundry Cookbook
+### MDW Cloud Foundry Setup Guide
 
-### Prerequisites
+### Prerequisite
  - Eclipse Neon for JavaEE Developers:  
    http://www.eclipse.org/downloads
  - Required Plugins:
@@ -110,8 +110,9 @@ Tip: When you upgrade to a new MDW build version in Eclipse, Designer automatica
 -	Once you've implemented and tested a feature, you can deploy to the cloud using `cf push`.
 
 ##### Next Steps:
--	Check out some of the other MDW developer cookbooks:                       
- [http://centurylinkcloud.github.io/mdw/docs/help/cookbooks](http://centurylinkcloud.github.io/mdw/docs/help)
+-	Check out some of the other MDW developer docs:       
+    - [Microservices Cookbook](../MicroservicesCookbook/)            
+    - [SOAP-based Web Service](../SOAPService/)
 -	Browse through the online help docs, which are the same as those in Eclipse:                             
  	  [http://centurylinkcloud.github.io/mdw/help](http://centurylinkcloud.github.io/mdw/docs/help)
 -	The MDW JavaDocs:                                                     

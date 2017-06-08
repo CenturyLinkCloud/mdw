@@ -12,9 +12,9 @@
 
 - title: Guides
   docs:
-  - guides/TomcatCookbook
+  - guides/SetupGuideForTomcat
+  - guides/SetupGuideforCloudFoundry
   - guides/MicroservicesCookbook
-  - guides/CloudFoundryCookbook
   
 - title: Documentation
   docs:
