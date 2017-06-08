@@ -1,5 +1,5 @@
 ---
-permalink: /docs/guides/SetupGuideforCloudFoundry/
+permalink: /docs/guides/SetupGuideForCloudFoundry/
 title: Setup Guide for CloudFoundry
 ---
 

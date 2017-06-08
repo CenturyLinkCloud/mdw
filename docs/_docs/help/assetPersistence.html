@@ -24,8 +24,7 @@ However, MDW is a BPM tool and is not especially strong in the area of revision 
 A better approach is to hand off the SCM aspects of workflow to GitHub, and let users take advantage of the vast array of 
 tools available for managing their assets in a GitHub repository.
 <h3>How It Works</h3>
-When you choose VCS persistence while creating a new workflow project (as illustrated in the <a href="http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/">MDW CloudFoundry Cookbook</a>),
-MDW saves any assets you create as files in your project on the local file system (typically under src/main/workflow).
+When you choose VCS persistence while creating a new workflow project, MDW saves any assets you create as files in your project on the local file system (typically under src/main/workflow).
 <p>
 Workflow packages are simply directories in the workflow project containing a special subdirectory named <span style="font-style:italic;">.mdw</span>.  Inside this subdirectory
 the details of the workflow package is kept in a file named <span style="font-style:italic;">package.json</span>. 

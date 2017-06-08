@@ -49,10 +49,8 @@ title: Designer User Guide
  
                                            
 #### How to Use MDW Designer
-If you would like to create a new process from scratch,  refer to one of the following cookbooks hosted in CenturyLink's GitHub repository:  
+If you would like to create a new process from scratch,  refer to one of the following cookbook(s) hosted in CenturyLink's GitHub repository:  
 - [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
-- [TomcatCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
-- [CloudFoundryCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
 
 #####  1.  Create a  Workflow Process
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 
