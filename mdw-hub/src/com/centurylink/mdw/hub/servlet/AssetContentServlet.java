@@ -206,7 +206,7 @@ public class AssetContentServlet extends HttpServlet {
                     archiver.backup();
                     if (isZip) {
                         logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-                        FileHelper.unzipFile(tempFile, assetRoot, null, null, true);
+                        ZipHelper.unzip(tempFile, assetRoot, null, null, true);
                     }
                     else {
                         logger.info("Importing " + tempFile + " into: " + assetRoot);

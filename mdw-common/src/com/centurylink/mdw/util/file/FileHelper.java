@@ -28,10 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
@@ -428,95 +425,6 @@ public final class FileHelper {
         }
 
         return outStream.toString();
-    }
-
-    public static void createZipFile(File directory, File zipFile) throws IOException {
-        createZipFile(directory, zipFile, null);
-    }
-
-    public static void createZipFile(File directory, File zipFile, List<File> excludes) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(zipFile);
-            ZipHelper.writeZip(directory, fos, excludes);
-        }
-        finally {
-            if (fos != null)
-                fos.close();
-        }
-    }
-
-    public static void createZipFileWith(File directory, File zipFile, List<File> includes) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(zipFile);
-            ZipHelper.writeZipWith(directory, fos, includes);
-        }
-        finally {
-            if (fos != null)
-                fos.close();
-        }
-    }
-
-    public static void unzipFile(File zipFile, File destDir) throws IOException {
-        unzipFile(zipFile, destDir, null, null, false);
-    }
-
-    public static void unzipFile(File zipFile, File destDir, String baseLoc, List<String> excludes, boolean overwrite) throws IOException {
-        if (!destDir.exists() || !destDir.isDirectory())
-            throw new IOException("Destination directory does not exist: " + destDir);
-
-        ZipFile zip = new ZipFile(zipFile);
-        try {
-            if (baseLoc != null && !baseLoc.endsWith("/"))
-                baseLoc += "/";
-
-            Enumeration<? extends ZipEntry> entries = zip.entries();
-
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-
-                if ((baseLoc == null || (entry.getName().startsWith(baseLoc) && !entry.getName().equals(baseLoc)))
-                        && (excludes == null || !excludes.contains(entry.getName()))) {
-                    // write the file
-                    String outpath = destDir + "/";
-                    if (baseLoc == null)
-                        outpath += entry.getName();
-                    else
-                        outpath += entry.getName().substring(baseLoc.length());
-                    File outfile = new File(outpath);
-                    if (outfile.exists() && !overwrite)
-                        throw new IOException("Output file already exists: " + outfile);
-                    if (entry.isDirectory()) {
-                        if (outfile.exists())
-                            deleteRecursive(outfile);
-                        if (!outfile.mkdirs())
-                            throw new IOException("Unable to create directory: " + outfile);
-                    }
-                    else {
-                        InputStream is = null;
-                        OutputStream os = null;
-                        try {
-                            is = zip.getInputStream(entry);
-                            os = new FileOutputStream(outfile);
-                            int read = 0;
-                            byte[] bytes = new byte[1024];
-                            while((read = is.read(bytes)) != -1)
-                                os.write(bytes, 0, read);
-                        }
-                        finally {
-                            if (is != null)
-                                is.close();
-                            if (os != null)
-                              os.close();
-                        }
-                    }
-                }
-            }
-        }
-        finally {
-            zip.close();
-        }
     }
 
     public static byte[] read(File file) throws IOException {

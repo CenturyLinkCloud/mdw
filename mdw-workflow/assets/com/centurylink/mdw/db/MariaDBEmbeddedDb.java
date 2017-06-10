@@ -30,7 +30,7 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.container.EmbeddedDb;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
@@ -85,7 +85,7 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
                 firstTime = true;
                 if (!baseDir.exists() && !baseDir.mkdirs())
                     throw new IOException("Cannot create db base dir: " + baseDir);
-                FileHelper.unzipFile(dbJar, baseDir, binariesSubLoc, null, false);
+                ZipHelper.unzip(dbJar, baseDir, binariesSubLoc, null, false);
                 if (!config.isWindows()) {
                     Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
                     Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));

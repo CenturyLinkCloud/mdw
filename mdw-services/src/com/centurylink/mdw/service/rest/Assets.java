@@ -45,7 +45,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
@@ -184,7 +184,7 @@ public class Assets extends JsonRestService {
             VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
             archiver.backup();
             logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-            FileHelper.unzipFile(tempFile, assetRoot, null, null, true);
+            ZipHelper.unzip(tempFile, assetRoot, null, null, true);
             archiver.archive(true);
             progressMonitor.done();
             tempFile.delete();

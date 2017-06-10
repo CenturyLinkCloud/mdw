@@ -51,7 +51,7 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -116,7 +116,7 @@ public class Packages extends JsonRestService implements JsonExportable {
                     return new JsonObject();
                 }
                 else {
-                    FileHelper.createZipFileWith(pkgDir, zipFile, extraPackages);
+                    ZipHelper.zipWith(pkgDir, zipFile, extraPackages);
                     String url = webToolsUrl + "/system/download?deleteAfterDownload=true&filepath=" + zipFile.getPath().replace('\\', '/');
                     Download download = new Download(url);
                     download.setFile(zipFile.getName());
