@@ -99,9 +99,17 @@ task checkAllowed() {
     }
 }
 
+task publishTemplates(type: HttpPut) {
+    dependsOn(checkAllowed)
+    from "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip"
+    baseUrl "${publishBaseUrl}/mdw-templates/${mdwVersion}"
+    user publishUser
+    password publishPassword
+}
+
 task publishBase(type: HttpPut) {
-    dependsOn(checkAllowed, buildBaseConfigs)
-    from "../${mdwOutputDir}/mdw-config-${mdwVersion}.zip"
+    dependsOn(checkAllowed, buildBaseConfigs, publishTemplates)
+    from "../${mdwOutputDir}/mdw-config-${mdwVersion}.zip" // TODO: remove with Designer 9.1.6
     from "../${mdwOutputDir}/application-context-${mdwVersion}.xml"
     baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
     user publishUser

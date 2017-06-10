@@ -1,0 +1,85 @@
+apply plugin: "eclipse-wtp"
+apply plugin: 'java'
+
+eclipse {
+    project {
+        natures += "org.eclipse.wst.common.project.facet.core.nature"
+    }
+    classpath {
+        defaultOutputDir = file("build/classes")
+        
+        containers "GROOVY_SUPPORT"
+        containers "GROOVY_DSL_SUPPORT"
+        
+        file {
+            whenMerged { classpath ->
+                // eclipse should process dynamic java, but should not be part of build
+                def assetsSrc = new org.gradle.plugins.ide.eclipse.model.SourceFolder("assets", "build/assets")
+                assetsSrc.excludes.add("Archive/")
+                entries.add(assetsSrc)
+                
+                def groovySupport = entries.find { it.kind == "con" && it.path == "GROOVY_SUPPORT" }
+                groovySupport.entryAttributes.put("minimal", "true")
+            }
+        }
+    }
+    wtp {
+        facet {
+            facet type: "fixed", name: "jst.web"
+            facet name: "mdw.workflow", version: "5.1"
+        }
+    }
+}
+
+group = '{{project}}'
+version = '1.0.01'
+
+description = "{{project}}"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'assets'
+        }
+    }
+}
+
+repositories {
+     maven { url '{{releases-url}}' }
+}
+
+dependencies {
+    
+    compile group: 'com.centurylink.mdw', name: 'mdw-common', version:mdwVersion
+    compile group: 'com.centurylink.mdw', name: 'mdw-services', version:mdwVersion
+    compile group: 'com.centurylink.mdw', name: 'mdw-workflow', version:mdwVersion
+    
+    compile group: 'io.limberest', name: 'limberest', version: '1.0.01'
+    
+    // asset package dependencies
+    compile fileTree(dir: "assets/com/centurylink/mdw/camel", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/drools", includes: ["*.jar"])
+    
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    compile group: "org.apache.poi", name: "poi", version: "3.15"
+    compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
+    
+    compile group: "org.springframework", name: "spring-beans", version: "4.2.7.RELEASE"
+    compile group: "org.springframework", name: "spring-context", version: "4.2.7.RELEASE"
+    compile group: "org.springframework", name: "spring-core", version: "4.2.7.RELEASE"
+    
+    compile group: 'javax.ws.rs', name: 'jsr311-api', version:'1.1.1'
+    compile group: 'org.json', name: 'json', version: '20160810'
+    compile group: 'commons-logging', name: 'commons-logging', version:'1.1.1'
+    compile group: 'io.swagger', name: 'swagger-annotations', version:'1.5.4'
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version:'2.4.8'
+    compile group: 'javax.el', name: 'el-api', version:'1.0'
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    compile group: "org.apache.poi", name: "poi", version: "3.15"
+    compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
+    compile group: 'junit', name: 'junit', version:'4.8.1'
+}

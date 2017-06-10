@@ -7,7 +7,14 @@ eclipse {
     }
 }
 
+configurations {
+    cli
+    compile.extendsFrom(cli)
+}
+ 
 dependencies {
+
+    cli group: "com.beust", name: "jcommander", version: "1.72"
 
     // TODO: remove all dependencies on mdw-schemas
     compile fileTree(dir: '../mdw/libs', include: '*.jar')
@@ -99,7 +106,25 @@ jar {
     }
 }
 
+task cliJar(type: Jar) {
+    archiveName = "mdw-cli-${version}.jar"
+    manifest {
+        attributes("MDW-Version": "${version}",
+            "MDW-Build": new Date().format(mdwBuildTimeFormat),
+            "Main-Class": "com.centurylink.mdw.cli.Main")
+    }
+    
+    from("build/classes") {
+        include "com/centurylink/mdw/cli/**/*.class"
+    }
+    
+    from configurations.cli.asFileTree.files.collect {
+        zipTree(it)
+    }
+}
+
 archivesBaseName = "mdw-common"
 artifacts {
     archives jar, javadocJar, sourcesJar
 }
+

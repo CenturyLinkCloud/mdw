@@ -1,0 +1,10 @@
+build
+deploy
+target
+data
+.apt_src
+.gradle
+.temp
+*.launch
+testResults
+.metadata
