@@ -234,6 +234,7 @@ public class ZipHelper {
         }
 
         unzip(tempZip, destDir);
+        tempZip.delete();
     }
 
 }
