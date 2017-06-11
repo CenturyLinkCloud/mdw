@@ -24,15 +24,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.InstanceList;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
 
 public class NotesList implements InstanceList<InstanceNote>, Jsonable {
 
     public NotesList(String name, String json) throws JSONException, ParseException {
         this.name = name;
-        JSONObject jsonObj = new JSONObject(json);
+        JSONObject jsonObj = new JsonObject(json);
         if (jsonObj.has("ownerType"))
             ownerType = jsonObj.getString("ownerType");
         if (jsonObj.has("ownerId"))
@@ -56,7 +57,7 @@ public class NotesList implements InstanceList<InstanceNote>, Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         if (ownerType != null)

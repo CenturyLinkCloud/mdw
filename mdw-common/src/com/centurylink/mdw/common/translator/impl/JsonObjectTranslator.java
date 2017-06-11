@@ -18,6 +18,7 @@ package com.centurylink.mdw.common.translator.impl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
@@ -26,7 +27,7 @@ public class JsonObjectTranslator extends DocumentReferenceTranslator implements
 
     public Object realToObject(String str) throws TranslationException {
         try {
-            return new JSONObject(str);
+            return new JsonObject(str);
         } catch (JSONException e) {
             throw new TranslationException(e.getMessage(), e);
         }

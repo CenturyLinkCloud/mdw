@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -62,21 +63,41 @@ public class Workflow extends JsonRestService {
         notes="Path segments {packageName} and {processName} are required, while {processVersion} is optional.",
         response=Process.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="version", paramType="query")})
+        @ApiImplicitParam(name="version", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="summary", paramType="query", dataType="boolean")})
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        Query query = getQuery(path, headers);
         try {
+            // (for previous versions) process by id
+            long processId = query.getLongFilter("id");
+            if (processId > 0) {
+                Process p = ProcessCache.getProcess(processId);
+                if (p == null) {
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Process ID not found: " + processId);
+                }
+                else {
+                    JSONObject json = p.getJson();
+                    json.put("id", p.getId());
+                    json.put("name", p.getName());
+                    json.put("package", p.getPackageName());
+                    json.put("version", p.getVersionString());
+                    json.put("packageVersion", p.getPackageVersion());
+                    return json;
+                }
+            }
+
             String[] segments = getSegments(path);
             if (segments.length < 3)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Path segments {packageName}/{processName} are required");
-            if (getQuery(path, headers).getBooleanFilter("summary")) {
+            if (query.getBooleanFilter("summary")) {
                 Process process;
                 if (segments.length == 4)
                     process = ProcessCache.getProcess(segments[1] + "/" + segments[2], Asset.parseVersion(segments[3]));
                 else
                     process = ProcessCache.getProcess(segments[1] + "/" + segments[2], 0);
-                JSONObject json = new JSONObject();
+                JSONObject json = new JsonObject();
                 json.put("id", process.getId());
                 json.put("name", process.getName());
                 json.put("package", process.getPackageName());
@@ -85,7 +106,6 @@ public class Workflow extends JsonRestService {
             }
             else {
                 String assetPath = segments[1] + "/" + segments[2];
-                Query query = getQuery(path, headers);
                 if (segments.length == 4)
                     query.setFilter("version", Asset.parseVersion(segments[3]));
                 Process process = workflowServices.getProcessDefinition(assetPath, query);

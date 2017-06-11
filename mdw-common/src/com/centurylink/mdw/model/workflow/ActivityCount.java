@@ -79,7 +79,7 @@ public class ActivityCount extends ProcessCount {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("count", getCount());
         if (!StringHelper.isEmpty(activityId))
             json.put("id", activityId);

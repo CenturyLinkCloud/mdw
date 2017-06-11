@@ -17,17 +17,17 @@ package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 
@@ -83,12 +83,14 @@ public class PackageDir extends File {
     public void parse() throws DataAccessException {
         try {
             File pkgFile = getMetaFile();
+            if (!pkgFile.exists())
+                throw new FileNotFoundException(pkgFile.getAbsolutePath());
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(pkgFile);
                 byte[] bytes = new byte[(int) pkgFile.length()];
                 fis.read(bytes);
-                Package pkgVo = new Package(new JSONObject(new String(bytes)));
+                Package pkgVo = new Package(new JsonObject(new String(bytes)));
                 pkgName = pkgVo.getName();
                 pkgVersion = pkgVo.getVersionString();
                 schemaVersion = Asset.formatVersion(pkgVo.getSchemaVersion());

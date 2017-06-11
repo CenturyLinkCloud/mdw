@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.event.EventHandlerException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
@@ -43,10 +44,10 @@ public class NotifySynchronousAdapterHandler extends ExternalEventHandlerBase {
         }
         return response;
     }
-    
-    public void notifyWaitingThread(String eventName, String message) 
+
+    public void notifyWaitingThread(String eventName, String message)
             throws JSONException, ProcessException {
-        JSONObject json = new JSONObject();
+        JSONObject json = new JsonObject();
         json.put("ACTION", "NOTIFY");
         json.put("CORRELATION_ID", eventName);
         json.put("MESSAGE", message);

@@ -45,6 +45,11 @@ routesSvc.factory('routes', function() {
         controller: 'PackagesController'
       },
       {
+        path: '/assets/archive',
+        templateUrl: 'assets/archive.html',
+        controller: 'ArchiveController'
+      },
+      {
         path: '/assets/gitImport',
         templateUrl: 'assets/gitImport.html',
         controller: 'PackagesController'

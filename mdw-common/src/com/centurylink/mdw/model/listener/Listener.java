@@ -93,5 +93,4 @@ public interface Listener {
     public static final String CONTENT_TYPE_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public static final String CONTENT_TYPE_ZIP = "application/zip";
     public static final String CONTENT_TYPE_DOWNLOAD = "application/octet-stream";
-
 }

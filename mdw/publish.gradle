@@ -15,10 +15,14 @@ configurations {
 }
 
 dependencies {
+    publish fileTree(dir: 'libs', include: '*.jar')
     publish files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
     publish group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
-    publish group: "org.json", name: "json", version: "20090211"
+    publish group: "org.json", name: "json", version: "20160810"
     publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+	// limberest
+	publish group: "io.limberest", name: "limberest", version: "1.0.01"
+
 }
 
 task buildBaseConfigs() {

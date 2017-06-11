@@ -1,14 +1,19 @@
-task buildConfig(type: Zip) {
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task zipTemplates(type: Zip) {
     destinationDir = file("../${mdwOutputDir}")
-    archiveName = "mdw-config-${mdwVersion}.zip"
-    from "config"
-    include "*.yaml"
-    include "*.json"
-    include "*.properties"
+    archiveName = "mdw-templates-${mdwVersion}.zip"
+    from "templates"
+    include "**/*"
+}
+
+artifacts {
+    archives zipTemplates
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn buildConfig
+    dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
@@ -91,73 +96,14 @@ subprojects {
         exclude "**/.metadata/"
         exclude "**/.*ignore"
     }    
-    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-    ext.ossrhUsername = System.getProperty("ossrhUsername")
-    ext.ossrhPassword = System.getProperty("ossrhPassword")
-    
-    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
-        signing {
-            required = { isReleaseVersion  && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
-            sign configurations.archives
-         }
-    }
-    else {
-        tasks.withType(Javadoc).all { enabled = false }  
-    }
+
+    def packaging = 'jar'
     
     task javadocJar(type: Jar) {
         enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
-
-    uploadArchives {        
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
-        repositories {
-          mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-      
-            repository(url: mavenRepoUrl) {
-              authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-      
-            snapshotRepository(url: mavenSnapshotRepoUrl) {
-              authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-      
-            pom.project {
-              name 'MDW Framework'
-              groupId 'com.centurylink.mdw'
-              version = mdwVersion
-              packaging 'jar'
-              // optionally artifactId can be defined here
-              description 'MDW is a BPM framework'
-              url 'http://centurylinkcloud.github.io/mdw/'
-      
-              scm {
-                connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
-                developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
-                url 'https://github.com/CenturyLinkCloud/mdw.git'
-              }
-      
-              licenses {
-                license {
-                  name 'The Apache License, Version 2.0'
-                  url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                }
-              }
-      
-              developers {
-                developer {
-                  id 'mdwdev'
-                  name 'MDW Development'
-                  email 'mdwdev@centurylink.com'
-                }
-              }
-            }
-          }
-        }
-      }
 }
 
 task cleanJavadocs(type: Delete) {
@@ -227,6 +173,76 @@ task pushToOrigin(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+def packaging = 'zip'
+
+allprojects {
+    version = "${mdwVersion}"
+    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+    ext.ossrhUsername = System.getProperty("ossrhUsername")
+    ext.ossrhPassword = System.getProperty("ossrhPassword")
+    
+    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+        signing {
+            required = { isReleaseVersion  && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            sign configurations.archives
+         }
+    }
+    else {
+        tasks.withType(Javadoc).all { enabled = false }
+    }
+    
+    uploadArchives {
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        repositories {
+          mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+            repository(url: mavenRepoUrl) {
+              authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            snapshotRepository(url: mavenSnapshotRepoUrl) {
+              authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            pom.project {
+              name 'MDW Templates'
+              groupId 'com.centurylink.mdw'
+              version = mdwVersion
+              packaging = packaging
+              description 'MDW is a cloud workflow framework'
+              url 'http://centurylinkcloud.github.io/mdw/'
+              scm {
+                connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                url 'https://github.com/CenturyLinkCloud/mdw.git'
+              }
+              licenses {
+                license {
+                  name 'The Apache License, Version 2.0'
+                  url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+              }
+              developers {
+                developer {
+                  id 'mdwdev'
+                  name 'MDW Development'
+                  email 'mdwdev@centurylink.com'
+                }
+              }
+            }
+          }
+        }
+      }
+}
+
+uploadArchives {
+    repositories {
+      mavenDeployer {
+        pom.project {
+          artifactId = "mdw-templates"}
+      }
+    }
+}
 task testLocalDev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
@@ -239,4 +255,3 @@ task testTomcatMdwdev(type: GradleBuild) {
     startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}"]
 }
 
- 

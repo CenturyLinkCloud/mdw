@@ -5,6 +5,8 @@ var editMod = angular.module('edit', ['ngResource', 'mdw']);
 editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'WorkflowCache', 'GitVcs',
                                          function($scope, $cookieStore, $routeParams, mdw, util, Assets, Asset, WorkflowCache, GitVcs) {
   
+  $scope.setFullWidth(true);
+
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
@@ -25,7 +27,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       packageName: $routeParams.packageName,
       assetName: $routeParams.assetName
     },
-    function(assetsData) {
+    function(assetData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
       
       $scope.aceOptions = {
@@ -62,12 +64,12 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.initVersion = function() {
     $scope.version = {
-        current: $scope.asset.version,
-        nextMinor: util.nextMinor($scope.asset.version),
-        nextMajor: util.nextMajor($scope.asset.version),
-        selected: util.nextMinor($scope.asset.version),
-        comment: null
-      };
+      current: $scope.asset.version,
+      nextMinor: util.nextMinor($scope.asset.version),
+      nextMajor: util.nextMajor($scope.asset.version),
+      selected: util.nextMinor($scope.asset.version),
+      comment: null
+    };
   };
   
   $scope.initOptions = function() {
@@ -149,13 +151,18 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       $scope.message = null;
       $scope.aceDirty = false;
       $scope.procDirty = false;
+      var metaChange = $scope.asset.version !== $scope.version.selected;
       $scope.asset.version = $scope.version.selected;
       var commitMsg = $scope.version.comment;
+      if (metaChange)
+        $scope.initVersion();
+      
       if ($scope.options.commitAndPush) {
         GitVcs.push({
           pkgPath: $scope.asset.packageName,
           asset: $scope.asset.name,
           gitAction: 'push',
+          includeMeta: metaChange
         }, { 
           comment: commitMsg, 
           user: $scope.gitCredentials.user,
@@ -197,8 +204,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.$on('$locationChangeStart', function(event) {
     if ($scope.isDirty()) {
-      var answer = confirm("Your changes will be lost.\nClick OK to confirm you want to leave this page.");
-      if (!answer)
+      if (!confirm('Your changes will be lost.\nClick OK to confirm you want to leave this page.'))
         event.preventDefault();
     }
   });  

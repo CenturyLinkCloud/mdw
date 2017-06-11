@@ -42,7 +42,7 @@ All of these assets can be managed in the same way, with the following built-in 
 <h3>Managing Workflow Assets</h3>
 Workflow assets can be managed by developers or end-users via MDW Designer, as long as they belong to the role ProcessAdmin for the target project.
 To create a brand new instance of an asset, right-click on a workflow package in Process Explorer, and selecting New, and then the type of asset desired.
-Assuming that you appropriate permissions, updates can be accomplished by double-clicking the asset to edit it in place, or by right clicking and selecting Import > New Version.
+Assuming that you have appropriate permissions, updates can be accomplished by double-clicking the asset to edit it in place, or by right clicking and selecting Import > New Version.
 Either way, the version will be incremented and you'll be prompted for a comment to accompany the new version. 
 <br/><br/>
 <img src="images/newAsset.jpg" />
@@ -55,9 +55,9 @@ Then after updating the asset in an external editor, import your changes by righ
 <br/>
 
 <h3><a id="assetImport">Asset Import</a></h3>
-MDW applications need to be able to version their assets and propagate them one environment to another (dev to test, test to prod, etc.).
-Starting with MDW 5.5 asset versioning is achieved by integrating with Git (see <a href="assetPersistence.html">Asset Persistence</a>).
-Importing assets from Git can be done through Designer, or through a command-line interface to support automation and continuous integration.
+MDW applications need to be able to version their assets and propagate them from one environment to another (dev to test, test to prod, etc.).
+Asset versioning is achieved by integrating with GitHub (see <a href="assetPersistence.html">Asset Persistence</a>).
+Importing assets from GitHub can be done through Designer, or through a command-line interface to support automation and continuous integration.
 <br/><br/>
 TODO: screenshots for Designer import from Git, and examples of command-line import scripts
 <br/><br/>
@@ -65,7 +65,7 @@ TODO: screenshots for Designer import from Git, and examples of command-line imp
 <h3><a id="discovery">Asset Discovery</a></h3>
 Beyond environmental migrations, MDW <a href="workflowAssets.html">Workflow Assets</a> are meant to be shared and reused
 across applications.  For this purpose Designer provides a discovery mechanism to locate and import assets from a central repository.
-The MDW base and hub packages are examples of asset collections that can be reused in this way.
+The MDW base, db and hub packages are examples of asset collections that can be reused in this way.
 To discover and import these packages, right-click on your project in Process Explorer view and select 
 Import > Package(s) > Discover.
 <br/><br/>

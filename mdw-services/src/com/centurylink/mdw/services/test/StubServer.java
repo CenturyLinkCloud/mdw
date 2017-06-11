@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubRequest;
@@ -103,7 +104,7 @@ public class StubServer extends SoccomServer {
             OutputStream out) throws IOException, SoccomException {
         String request = new String(msg, 0, msgSize);
         try {
-            JSONObject json = new JSONObject(request);
+            JSONObject json = new JsonObject(request);
             if (json.has(ActivityStubRequest.JSON_NAME)) {
                 ActivityStubRequest activityStubRequest = new ActivityStubRequest(json);
                 ActivityStubResponse activityStubResponse = stubber.processRequest(activityStubRequest);

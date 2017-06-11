@@ -91,6 +91,19 @@ public interface EventManager {
      */
     public Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
     throws DataAccessException, EventException;
+    /**
+     * Method that notifies the event wait instances based on the passed in params
+     *
+     * @param pEventName
+     * @param pEventSource
+     * @param pEventOwner
+     * @param pEventOwnerId
+     * @param pCompCode
+     * @param pParams
+     * @return Boolean Status
+     */
+    public Integer broadcast(String pEventName, Long pEventInstId, String message, int delay)
+    throws DataAccessException, EventException;
 
     /**
      * Creates the process instance

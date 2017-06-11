@@ -39,6 +39,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
+
 /**
  * Helper classes for String utilities.
  */
@@ -1202,7 +1204,7 @@ public class StringHelper {
     public static String getMapValue(String map, String name, char delimiter) {
         if (map.startsWith("{")) {
             try {
-                JSONObject json = new JSONObject(map);
+                JSONObject json = new JsonObject(map);
                 if (json.has(name))
                     return json.getString(name);
                 else
@@ -1299,7 +1301,7 @@ public class StringHelper {
         if (map != null) {
             if (map.startsWith("{")) {
                 try {
-                    return JsonUtil.getMap(new JSONObject(map));
+                    return JsonUtil.getMap(new JsonObject(map));
                 }
                 catch (JSONException ex) {
                     throw new StringParseException(ex);

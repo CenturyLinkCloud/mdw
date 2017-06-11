@@ -21,7 +21,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.util.JsonUtil;
 
@@ -83,7 +83,7 @@ public class ProcessRun implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (id != null)
             json.put("id", id);
         if (masterRequestId != null)
@@ -91,7 +91,7 @@ public class ProcessRun implements Jsonable {
         if (definitionId != null)
             json.put("definitionId", definitionId);
         if (values != null) {
-            JSONObject valuesJson = new JSONObject();
+            JSONObject valuesJson = create();
             for (String name : values.keySet()) {
                 valuesJson.put(name, values.get(name).getJson());
             }

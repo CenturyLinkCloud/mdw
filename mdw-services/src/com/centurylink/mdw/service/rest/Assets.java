@@ -27,13 +27,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
@@ -43,7 +45,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
@@ -76,7 +78,8 @@ public class Assets extends JsonRestService {
         notes="If assetPath is not present, returns all assetPackages.",
         response=PackageList.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string")})
+        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
         try {
@@ -86,7 +89,7 @@ public class Assets extends JsonRestService {
                 String url = discoveryUrl + "/services/" + path;
                 HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
                 try {
-                    return new JSONObject(helper.get());
+                    return new JsonObject(helper.get());
                 }
                 catch (JSONException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid response from: " + discoveryUrl, ex);
@@ -95,14 +98,28 @@ public class Assets extends JsonRestService {
 
             AssetServices assetServices = ServiceLocator.getAssetServices();
 
+            if (query.getBooleanFilter("archiveDirs")) {
+                List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
+                JSONObject json = new JsonObject();
+                json.put("root", assetServices.getArchiveDir().getAbsolutePath());
+                for (ArchiveDir archiveDir : archiveDirs)
+                    json.put(archiveDir.getJsonName(), archiveDir.getJson());
+                return json;
+            }
+
             String pkg = getSegment(path, 1);
             String asset = pkg == null ? null : getSegment(path, 2);
 
             if (pkg == null) {
-                if (query.hasFilters())
+                if (query.hasFilters()) {
                     return assetServices.getAssetPackageList(query).getJson();
-                else
-                    return assetServices.getPackages(true).getJson(); // TODO query param for vcs info
+                }
+                else {
+                    JSONObject json = assetServices.getPackages(true).getJson(); // TODO query param for vcs info
+                    if (assetServices.getArchiveDir().isDirectory())
+                        json.put("hasArchive", true);
+                    return json;
+                }
             }
             else {
                 if (asset == null) {
@@ -167,7 +184,7 @@ public class Assets extends JsonRestService {
             VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
             archiver.backup();
             logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-            FileHelper.unzipFile(tempFile, assetRoot, null, null, true);
+            ZipHelper.unzip(tempFile, assetRoot, null, null, true);
             archiver.archive(true);
             progressMonitor.done();
             tempFile.delete();
@@ -180,4 +197,49 @@ public class Assets extends JsonRestService {
 
         return null;
     }
+
+    /**
+     * This is only for creating packages.  For individual assets, see AssetContentServlet.
+     * TODO: Content is ignored, and an empty asset is always created.
+     */
+    @Override
+    public JSONObject post(String path, JSONObject content, Map<String, String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 2) {
+            ServiceLocator.getAssetServices().createPackage(segments[1]);
+        }
+        else if (segments.length == 3) {
+            String asset = segments[1] + '/' + segments[2];
+            if (segments[2].endsWith(".proc"))
+                ServiceLocator.getWorkflowServices().createProcess(asset);
+            else
+                ServiceLocator.getAssetServices().createAsset(asset);
+        }
+        else {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject delete(String path, JSONObject content, Map<String, String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 2) {
+            if ("Archive".equals(segments[1]))
+                ServiceLocator.getAssetServices().deleteArchive();
+            else
+                ServiceLocator.getAssetServices().deletePackage(segments[1]);
+        }
+        else if (segments.length == 3) {
+            ServiceLocator.getAssetServices().deleteAsset(segments[1] + '/' + segments[2]);
+        }
+        else {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+        }
+        return null;
+    }
+
+
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
@@ -132,7 +132,7 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject asset = new JSONObject();
+        JSONObject asset = create();
         asset.put("name", file.getName());
         if (file instanceof AssetFile) {
             AssetFile assetFile = (AssetFile)file;

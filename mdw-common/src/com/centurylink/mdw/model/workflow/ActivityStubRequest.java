@@ -18,7 +18,7 @@ package com.centurylink.mdw.model.workflow;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class ActivityStubRequest implements Jsonable {
 
@@ -39,8 +39,8 @@ public class ActivityStubRequest implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
-        JSONObject stubRequestJson = new JSONObject();
+        JSONObject json = create();
+        JSONObject stubRequestJson = create();
         if (runtimeContext != null)
             stubRequestJson.put("runtimeContext", runtimeContext.getJson());
         json.put(JSON_NAME, stubRequestJson);

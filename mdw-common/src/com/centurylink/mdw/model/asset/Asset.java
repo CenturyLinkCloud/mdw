@@ -27,7 +27,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.MiniEncrypter;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -47,7 +47,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String IMAGE_PNG = "IMAGE_PNG";
     public static final String CSS = "CSS";
     public static final String JAVASCRIPT = "JAVASCRIPT";
-    public static final String MAGICBOX = "MAGICBOX";
     public static final String WEBSCRIPT = "WEBSCRIPT";
     public static final String CONFIG = "CONFIG";
     public static final String DROOLS = "DROOLS";
@@ -94,7 +93,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         IMAGE_PNG,
         CSS,
         JAVASCRIPT,
-        MAGICBOX,
         WEBSCRIPT,
         CONFIG, // used internally for package config
         DROOLS,
@@ -676,7 +674,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             // TODO map should be driven from properties
             extensionToLanguage.put(".groovy", GROOVY);
             extensionToLanguage.put(".js", JAVASCRIPT);
-            extensionToLanguage.put(".mbr", MAGICBOX);
             extensionToLanguage.put(".xhtml", FACELET);
             extensionToLanguage.put(".jsp", JSP);
             extensionToLanguage.put(".drl", DROOLS);
@@ -748,7 +745,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
      * JSON name = getName(), so not included.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("version", getVersionString());
         if (isBinary()) {
             if (excludedFromMemoryCache(getName())) {

@@ -23,25 +23,24 @@ import java.util.Map;
 import javax.transaction.SystemException;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
@@ -578,6 +577,20 @@ public class ProcessExecutor {
         }
     }
 
+    public EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
+            String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean notifyIfArrived)
+    throws DataAccessException, ProcessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createBroadcastEventWaitInstances(actInstId,
+                    pEventNames, pWakeUpEventTypes, notifyIfArrived);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     public void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
     throws DataAccessException {
         TransactionWrapper transaction=null;
@@ -601,6 +614,21 @@ public class ProcessExecutor {
         } catch (SQLException e) {
             throw new DataAccessException(0, "Failed to notify process of event arrival", e);
         } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public Integer broadcast(String pEventName, Long pEventInstId, String message, int delay)
+            throws DataAccessException, EventException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.broadcast(pEventName, pEventInstId, message, delay);
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(0, "Failed to notify process of event arrival", e);
+        }
+        finally {
             stopTransaction(transaction);
         }
     }

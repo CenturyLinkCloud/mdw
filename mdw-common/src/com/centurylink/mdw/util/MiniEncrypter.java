@@ -21,21 +21,12 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * This class is similar to CryptUtil but requires no third party libraries
- * (no need for BouncyCastleProvider and base64 encoder), and is intended
- * for encrypting small amount of data.
- * 
- * Check with Don why we need an external encryption provider in CryptUtil
- * 
- *
- */
 public class MiniEncrypter {
 
     private static final String algorithm = "Blowfish";    // or "DES", "DESede"
     private static final String defaultKeyString = "MDWInternal";
     private static SecretKey defaultKey = null;
-    
+
     /**
      * Encrypt a string using a default key
      * @param input data to encrypt
@@ -49,19 +40,19 @@ public class MiniEncrypter {
             return null;
         }
     }
-    
+
     /**
      * Encrypt a string
      * @param input data to encrypt
      * @param strkey a default key will be used when passing null in
      * @return encrypted string
      */
-    protected static String encrypt(String input, String strkey) 
+    protected static String encrypt(String input, String strkey)
     throws GeneralSecurityException {
         SecretKey key;
         if (strkey!=null) key = new SecretKeySpec(strkey.getBytes(), algorithm);
         else {
-            if (defaultKey==null) defaultKey = 
+            if (defaultKey==null) defaultKey =
                 new SecretKeySpec(defaultKeyString.getBytes(), algorithm);
             key = defaultKey;
         }
@@ -71,7 +62,7 @@ public class MiniEncrypter {
         byte[] encrypted = cipher.doFinal(inputBytes);
         return encodeAlpha(encrypted);
     }
-    
+
     /**
      * Decrypt a string using the default key
      * @param encrypted encrypted string to be decrypted
@@ -97,7 +88,7 @@ public class MiniEncrypter {
         SecretKey key;
         if (strkey!=null) key = new SecretKeySpec(strkey.getBytes(), algorithm);
         else {
-            if (defaultKey==null) defaultKey = 
+            if (defaultKey==null) defaultKey =
                 new SecretKeySpec(defaultKeyString.getBytes(), algorithm);
             key = defaultKey;
         }
@@ -108,7 +99,7 @@ public class MiniEncrypter {
         String recovered = new String(recoveredBytes);
         return recovered;
     }
-     
+
     public static byte[] decodeAlpha(String inputString) {
         int i, n = inputString.length();
          n = n/2;
@@ -120,7 +111,7 @@ public class MiniEncrypter {
          }
          return bytes;
     }
-     
+
     public static String encodeAlpha(byte[] inputBytes) {
          StringBuffer sb = new StringBuffer(inputBytes.length*2);
          for (int i=0; i<inputBytes.length; i++) {
@@ -131,7 +122,7 @@ public class MiniEncrypter {
          }
          return sb.toString();
     }
-     
+
     public static void main(String[] args) throws Exception {
         String input = "Do you likes this?";
         System.out.println("Entered: " + input);
@@ -141,5 +132,5 @@ public class MiniEncrypter {
         System.out.println("Recovered: " + decrypt(encrypted, key));
 
     }
-}  
+}
 

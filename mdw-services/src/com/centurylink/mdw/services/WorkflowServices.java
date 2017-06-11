@@ -23,7 +23,6 @@ import org.json.JSONException;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.ActivityCount;
@@ -165,6 +164,9 @@ public interface WorkflowServices {
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
 
+    public Integer broadcast(String eventName) throws ServiceException;
+    public Integer broadcast(String eventName, int delay) throws ServiceException ;
+
     public Integer notify(String event, String message, int delay) throws ServiceException;
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage, int delay) throws ServiceException;
@@ -188,5 +190,7 @@ public interface WorkflowServices {
     public String getDocType(Object docObj);
 
     public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
+
+    public void createProcess(String assetPath) throws ServiceException, JSONException;
 
 }

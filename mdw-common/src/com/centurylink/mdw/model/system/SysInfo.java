@@ -22,7 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 import io.swagger.annotations.ApiModel;
 
@@ -83,7 +83,7 @@ public class SysInfo implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("name", this.name);
         if (this.values != null) {
            JSONArray valuesArr = new JSONArray();

@@ -137,13 +137,20 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
     },
     nextMinor: function(version) {
       var dot = version.indexOf('.');
-      var maj = version.substring(0, dot);
-      var min = version.substring(dot + 1);
+      var maj, min;
+      if (dot == -1) {
+        maj = version;
+        min = '0';
+      }
+      else {
+        maj = version.substring(0, dot);
+        min = version.substring(dot + 1);
+      }
       return maj + '.' + (parseInt(min) + 1);
     },
     nextMajor: function(version) {
       var dot = version.indexOf('.');
-      var maj = version.substring(0, dot);
+      var maj = dot == -1 ? '0' : version.substring(0, dot);
       return (parseInt(maj) + 1) + '.0';
     },
     // gets expression coordinates

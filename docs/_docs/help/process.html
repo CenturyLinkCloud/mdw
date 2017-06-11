@@ -6,8 +6,17 @@
 <body>
 <h1>Processes</h1>
 
-<p>An introduction to processes can be found in <a href='introduction.html'>Introduction</a>.
-The following describes the attributes you can configure.
+<p>In MDW, a process is used to model a business process, which consists of a number of (automated or manual) 
+work items or steps, called activities and they are performed in a designated sequence. A process is a collection 
+of activities and transitions between those activities and is mathematically and graphically represented as 
+a (typically acyclic) directed graph.
+</p><P>
+The process flows through one or more out-bound transitions to start other activities that depend on the completion 
+of the first.  A process can invoke another process through a subprocess activity.
+</p><P>
+One of the benefits of a defined business process is that it can be applied repeatedly to many data instances. 
+We use the terms process definition vs. process instance to differentiate between the template that describes 
+the process and a particular execution of that process. As an example:
 </p>
 <ul>
   <li>Transition with no Label: This describes how transitions without a label is used.
@@ -39,87 +48,78 @@ The following describes the attributes you can configure.
 </ul>
 
 <h2>Service Processes</h2>
-<p>Typically, a process is started asynchronously, meaning the 
-originator does not wait for the completion of the process.
-It is often desired for the work flow applications to provide
-also <em>services</em>, which return synchronous responses
-to the requesters in real time.</p>
+<p>Typically, a process is started asynchronously (fire-and-forget), which means the originator 
+does not wait for the completion of the process. However, it is often desired for applications to 
+create a workflow process to provide <em>services</em>, which return a synchronous response to the 
+requester in real-time. To allow a synchronous process</em>, MDW uses the term <em>Service Process</em>. 
 
-<p>In order to take advantage of the MDW infrastructure (external event handler,
-adapters, activities, etc),
-MDW provides the so-called <em>service processes</em>  for this purpose.
-Service processes were also known as
-<em>synchronous processes</em> earlier, but we now try to avoid
-this term to avoid confusion with calling a sub process synchronously.</p>
-
-<p>Service processes are executed in a single thread without using internal
-JMS messages. This is to allow the responses being captured and sent back
-to the invoker. Service processes are defined and handled pretty much
-the same way as regular processes, with some limitations incurred by
+<p>The service process is executed in a single thread without using the internal
+JMS messages. This is to allow the response be captured and sent back
+to the invoker. A service process is defined and handled pretty much
+the same way as a regular process, with some limitations incurred by
 the requirement that they are executed in a single thread.</p>
 
-<p>With MDW 4.* and MDW 5.0 implementation, service processes have 
-the following restrictions:</p>
+<p>In MDW, the service process provides the following:</p>
 <ul>
-   <li>No parallel branching is allowed, namely all transitions out of an activity
-   		must be mutual exclusive.</li>
-   <li>No activities can suspend (wait for timer, external event, manual response, etc).
-   		This is to say that
-   		timer wait, event wait, sub process invocation, manual tasks are not allowed.
-   		Adaptor activities are allowed, but you cannot get responses from asynchronous
-   		adaptors as that will require event wait activities. As a result,
-   		fall-out subprocesses and fall-out tasks are not allowed.</li>
+   <li>Parallel branching, namely all transitions out of an activity must be mutually exclusive.</li>
+   <li>Activities can suspend (wait for timer, external event, manual response, etc).
+   		This means that the <em>timer wait, event wait, sub process invocation, manual tasks are not allowed</em>.
+   		Adaptor activities are allowed, but you cannot get responses from asynchronous adaptors, as that will require 
+   		event wait activities. As a result,	fall-out subprocesses and fall-out tasks are not allowed.</li>
    <li>The process should define an output (or input/output) variable named "response" and set its
-       value, which is used to return as a response. The variable is typically
-       a document of XML Bean type, although any other type can be used
-       and the return message as a string will be translated by the variable
-       translator.</li>
+        value, which is used to return as a response. The variable is typically
+        a document of XML Bean type, although any other type can be used
+        and the return message as a String will be translated by the variable
+        translator.</li>
 </ul>
-<p>If an exception is generated during process execution, the exception message
-is captured by MDW and thrown to the external event handler. The standard
-process start event handler will create a standard error message as response.</p>
-
-<p>MDW 4.* and 5.0 implement service processes using a different execution engine
-from the one for executing regular processes. MDW 5.1 has re-implemented 
-the service processes using the same engine for regular processes. As a result,
-MDW 5.1 implementation has less limitations, especially it does allow
-parallel branching (although their execution is serialized), subprocess
-invocation, and synchronization activity.
-The following types activities are still not allowed:</p>
-
+<p>Service process has two exception rules:</p>
 <ul>
-  <li>Event wait and timer wait activities</li>
-  <li>Manual task activities</li>
-  <li>Invoking multiple process activities</li>
+    <li>For main service process that is started from event handlers using API call
+    	to the method <code>ProcessEngineDriver.invokeService()</code>,
+    	if the <code>performance_level</code> argument is passed 
+		in with a non-zero value, then this performance level is used.</li>
+	<li>For a service process started as a subprocess of another service process,
+		its performance level is inherited from the parent process.</li>
 </ul>
 
 <h2>Performance Level</h2>
 
-<p>With MDW 5.2 implementation, you can set 4 different performance levels
-to service processes and 3 to regular processes. Here are their description:</p>
-<ul>
-  <li>1: All process, activity, transition, and
-  		variable instances as well as documents are persisted in database. No in-memory cache
-  		is used.</li>
-  <li>3: All process, activity, transition, and
-  		variable instances as well as documents are persisted in database, but
-  		variable instances and documents are cached for each engine processing session
-  		to speed up read accesses.</li>
-  <li>5: This is for service processes only.
-        All process, activity, and transition instances are persisted in database;
-		variable instances and documents are created in memory cache only, not persisted
-  		in database.</li>
-  <li>9: All process, activity, transition and
-  		variable instances as well as documents are stored in memory cache only. No database
-  		persistence is used. For service processes, one memory cache is used
-  		for each top level invocation to a service process; for regular processes,
-  		a shared memory cache is used for all executions at this performance level.</li>
-</ul>
+<p>The following table describes each of the performance level used in MDW:</p>
 
+<table style="width:85%">
+  <tr>
+    <th>Performance Level</th>
+    <th>Description</th> 
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>To be determined by a property or process attribute, which will set the level to one of the following (1, 3, 5, 9).</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>All process, activity, transition and variable instances as well as documents are persisted in a database. No in-memory cache is used.</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>All process, activity, transition and variable instances as well as documents are persisted in a database, but variable instances and documents 
+        are cached for each engine processing session to speed up the read access.</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>This is for service processes only. All processes, activities and transition instances are persisted in a database;
+		variable instances and documents are created in memory cache only and it's not persisted in a database.</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>All process, activity, transition and	variable instances as well as documents are stored in memory cache only. No database
+  		  persistence is used. For service processes, one memory cache is used for each top level invocation to a service process; 
+  		  for regular processes, a shared memory cache is used for all executions at this performance level.</td>
+  </tr>
+</table>
 <p>The performance level of a process instance is typically determined
 by the performance level attribute configured for its process definition,
 and when the attribute is not configured (is blank, 0, or null), the default
-performance levels are used. Two properties are used to specify default performance levels:</p>
+performance levels are used. The following two properties are used to specify default performance levels:</p>
   <ul>
     <li><code>mdw.performance.level.service</code>: defines the default
     	performance level for service processes. When the property is not defined,
@@ -128,16 +128,6 @@ performance levels are used. Two properties are used to specify default performa
     	performance level for regular processes. When the property is not defined,
     	the hard coded default of 3 is used.</li>
   </ul>
-  
-<p>For service processes, there are two exception rules:</p>
-<ul>
-    <li>For main service processes that are started from event handlers using API call
-    	to the method <code>ProcessEngineDriver.invokeService()</code>,
-    	if the <code>performance_level</code> argument is passed 
-		in with a non-zero value, then this performance level is used.</li>
-	<li>For a service process started as a subprocess of another service process,
-		its performance level is inherited from the parent process.</li>
-</ul>
-
+ 
 </body>
 </html>

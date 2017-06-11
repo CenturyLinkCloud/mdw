@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.rest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +28,13 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -64,16 +65,16 @@ public class GitVcs extends JsonRestService {
     }
 
     @Override
-    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
-        return Entity.Package;
+    protected Action getAction(String path, Object content, Map<String, String> headers) {
+        if ("pull".equals(getQuery(path, headers).getFilter("gitAction")))
+            return Action.Import;
+        else
+            return Action.Version;
     }
 
     @Override
-    protected Action getAction(String path, Object content, Map<String, String> headers) {
-        if ("POST".equals(headers.get(Listener.METAINFO_HTTP_METHOD)))
-            return Action.Import;
-        else
-            return super.getAction(path, content, headers);
+    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
+        return Entity.Asset;
     }
 
     /**
@@ -87,14 +88,16 @@ public class GitVcs extends JsonRestService {
     @ApiOperation(value="Interact with Git for VCS Assets",
         notes="Performs the requested {Action} on {gitPath}", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Action", paramType="query", dataType="string")})
+        @ApiImplicitParam(name="Action", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="includeMeta", paramType="query", dataType="boolean")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
 
         String subpath = getSub(path);
         if (subpath == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing path segment: {path}");
-        String action = getParameters(headers).get("gitAction");
+        Query query = getQuery(path, headers);
+        String action = query.getFilter("gitAction");
         if (action == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing parameter: gitAction");
         try {
@@ -150,9 +153,8 @@ public class GitVcs extends JsonRestService {
             }
             else if ("push".equals(action)) {
                 if (pkgName != null) {
-                    String pushPath = assetPath + "/" + pkgName.replace('.', '/');
+                    String pkgPath = assetPath + "/" + pkgName.replace('.', '/');
                     if (assetName != null) {
-                        pushPath = pushPath + "/" + assetName;
                         if (!content.has("comment"))
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing comment");
                         String comment = content.getString("comment");
@@ -161,16 +163,21 @@ public class GitVcs extends JsonRestService {
                                     content.getString("user"), content.getString("password")));
                         }
                         vcGit.pull(branch);
-                        // TODO add if new
-                        vcGit.commit(pushPath, comment);
+                        // TODO stage if new or deleted
+                        List<String> commitPaths = new ArrayList<>();
+                        commitPaths.add(pkgPath + "/" + assetName);
+                        if (query.getBooleanFilter("includeMeta")) {
+                            String metaPath = pkgPath + "/.mdw";
+                            commitPaths.add(metaPath + "/versions");
+                            commitPaths.add(metaPath + "/package.json");
+                        }
+                        vcGit.commit(commitPaths, comment);
                         vcGit.push();
                     }
                     else {
                         // probably won't implement this
-                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Package push not implemented: " + pushPath);
+                        throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Package push not implemented: " + pkgPath);
                     }
-
-                    // TODO distributed pull afterward and then async distributed cache refresh
                 }
                 else {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);

@@ -150,7 +150,14 @@ public interface EngineDataAccess {
             int preserveSeconds, Long actInstId, String compCode)
     throws SQLException;
 
+    Long recordBroadcastEventWait(String eventName,
+            int preserveSeconds, Long actInstId, String compCode)
+    throws SQLException;
+
     List<EventWaitInstance> recordEventArrive(String eventName, Long documentId)
+    throws SQLException;
+
+    List<EventWaitInstance> recordBroadcastEventArrive(String eventName, Long documentId)
     throws SQLException;
 
     Long recordEventLog(String name, String category, String subCategory,

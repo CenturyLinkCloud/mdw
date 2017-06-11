@@ -3,10 +3,11 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController', 
-    ['$scope', '$http', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
-    function($scope, $http, mdw, util, mdwImplementors, Diagram, Inspector, Toolbox) {
+    ['$scope', '$http', '$document', 'mdw', 'util', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
+    function($scope, $http, $document, mdw, util, mdwImplementors, Diagram, Inspector, Toolbox) {
   
   $scope.init = function(canvas) {
+    
     if ($scope.serviceBase.endsWith('/'))
       $scope.serviceBase = $scope.serviceBase.substring(0, $scope.serviceBase.length - 1);
     if ($scope.hubBase) {
@@ -26,8 +27,11 @@ workflowMod.controller('MdwWorkflowController',
         $scope.canvas.bind('mousemove', $scope.mouseMove);
         $scope.canvas.bind('mousedown', $scope.mouseDown);
         $scope.canvas.bind('mouseup', $scope.mouseUp);
+        $scope.canvas.bind('mouseover', $scope.mouseOver);
         $scope.canvas.bind('mouseout', $scope.mouseOut);
         $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
+        if ($scope.editable)
+          $document.bind('keydown', $scope.keyDown);        
       }, function(error) {
         mdw.messages = error;
       });
@@ -37,17 +41,23 @@ workflowMod.controller('MdwWorkflowController',
       $scope.canvas.bind('mousemove', $scope.mouseMove);
       $scope.canvas.bind('mousedown', $scope.mouseDown);
       $scope.canvas.bind('mouseup', $scope.mouseUp);
+      $scope.canvas.bind('mouseover', $scope.mouseOver);
       $scope.canvas.bind('mouseout', $scope.mouseOut);
       $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
+      if ($scope.editable)
+        $document.bind('keydown', $scope.keyDown);        
     }
   };
   
   $scope.dest = function() {
-    $scope.canvas.bind('mousemove', $scope.mouseMove);
-    $scope.canvas.bind('mousedown', $scope.mouseDown);
-    $scope.canvas.bind('mouseup', $scope.mouseUp);
-    $scope.canvas.bind('mouseout', $scope.mouseOut);
-    $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
+    $scope.canvas.unbind('mousemove', $scope.mouseMove);
+    $scope.canvas.unbind('mousedown', $scope.mouseDown);
+    $scope.canvas.unbind('mouseup', $scope.mouseUp);
+    $scope.canvas.unbind('mouseover', $scope.mouseOver);
+    $scope.canvas.unbind('mouseout', $scope.mouseOut);
+    $scope.canvas.unbind('dblclick', $scope.mouseDoubleClick);
+    if ($scope.editable)
+      $document.unbind('keydown', $scope.keyDown);        
   };
   
   $scope.renderProcess = function() {
@@ -76,6 +86,34 @@ workflowMod.controller('MdwWorkflowController',
           $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
           .then(function success(response) {
             $scope.implementors = response.data;
+            // add pseudo-implementors
+            $scope.implementors.push({
+              category: 'subflow',
+              label: 'Exception Handler Subflow',
+              icon: 'com.centurylink.mdw.base/subflow.png',
+              implementorClass: 'Exception Handler'
+            });
+            $scope.implementors.push({
+              category: 'subflow',
+              label: 'Cancelation Handler Subflow',
+              icon: 'com.centurylink.mdw.base/subflow.png',
+              implementorClass: 'Cancelation Handler'
+            });
+            $scope.implementors.push({
+              category: 'subflow',
+              label: 'Delay Handler Subflow',
+              icon: 'com.centurylink.mdw.base/subflow.png',
+              implementorClass: 'Delay Handler'
+            });    
+            $scope.implementors.push({
+              category: 'note',
+              label: 'Text Note',
+              icon: 'com.centurylink.mdw.base/note.png',
+              implementorClass: 'TextNote'
+            });
+            $scope.implementors.sort(function(impl1, impl2) {
+              return impl1.label.localeCompare(impl2.label);
+            });
             mdwImplementors.set($scope.implementors);
             $scope.doRender();
           }, function error(response) {
@@ -92,6 +130,10 @@ workflowMod.controller('MdwWorkflowController',
           $scope.instance = response.data;
           $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
           $scope.diagram.draw();
+          if ($scope.editable) {
+            $scope.toolbox = Toolbox.getToolbox();
+            $scope.toolbox.init($scope.implementors, $scope.hubBase);
+          }
         }, function error(response) {
           mdw.messages = response.statusText;
       });
@@ -99,25 +141,32 @@ workflowMod.controller('MdwWorkflowController',
     else {
       $scope.diagram = new Diagram($scope.canvas[0], $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
       $scope.diagram.draw();
-      if ($scope.editable)
-        $scope.toolbox = new Toolbox($scope.diagram, $scope.implementors, $scope.hubBase);
+      if ($scope.editable) {
+        $scope.toolbox = Toolbox.getToolbox();
+        $scope.toolbox.init($scope.implementors, $scope.hubBase);
+      }
     }
   };
   
   $scope.down = false;
   $scope.dragging = false;
+  $scope.dragIn = null;
   $scope.mouseMove = function(e) {
-    if ($scope.down && $scope.editable)
-      $scope.dragging = true;
-    if ($scope.diagram) {
-      if ($scope.dragging) {
-        if ($scope.diagram.onMouseDrag(e)) {
-          if ($scope.onChange)
-            $scope.onChange($scope.process);
+    if ($scope.dragIn && $scope.editable) {
+      $document[0].body.style.cursor = 'copy';
+    }
+    else {
+      if ($scope.down && $scope.editable)
+        $scope.dragging = true;
+      if ($scope.diagram) {
+        if ($scope.dragging) {
+          if ($scope.diagram.onMouseDrag(e)) {
+            $scope.handleChange();
+          }
         }
-      }
-      else {
-        $scope.diagram.onMouseMove(e);
+        else {
+          $scope.diagram.onMouseMove(e);
+        }
       }
     }
   };
@@ -142,12 +191,26 @@ workflowMod.controller('MdwWorkflowController',
     $scope.down = false;
     $scope.dragging = false;
     if ($scope.diagram) {
-      $scope.diagram.onMouseUp(e);
+      if ($scope.dragIn) {
+        if ($scope.diagram.onDrop(e, $scope.dragIn)) {
+          $scope.handleChange();
+        }
+      }
+      else {
+        $scope.diagram.onMouseUp(e);
+      }
+    }
+    $scope.dragIn = null;
+  };
+  $scope.mouseOver = function(e) {
+    if (e.buttons === 1 && $scope.toolbox && $scope.toolbox.getSelected()) {
+      $scope.dragIn = $scope.toolbox.getSelected();
     }
   };
   $scope.mouseOut = function(e) {
     $scope.down = false;
     $scope.dragging = false;
+    $scope.dragIn = null;
     if ($scope.diagram)
       $scope.diagram.onMouseOut(e);
   };
@@ -156,16 +219,25 @@ workflowMod.controller('MdwWorkflowController',
       var selObj = $scope.diagram.selection.getSelectObj();
       if (selObj && selObj.isLabel)
         selObj = selObj.owner;
-      if (selObj) {
+      if (selObj)
         Inspector.setObj(selObj, true);
-      }
     }
+  };
+  $scope.keyDown = function(e) {
+    if (e.keyCode == 46 && $scope.diagram && $scope.editable) {
+      $scope.diagram.onDelete(e, $scope.handleChange);
+    }
+  };
+  
+  $scope.handleChange = function() {
+    if ($scope.onChange)
+      $scope.onChange($scope.process);
   };
 }]);
 
 workflowMod.factory('Diagram', 
-    ['$document', 'mdw', 'util', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection',
-     function($document, mdw, util, DC, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection) {
+    ['$document', 'mdw', 'util', 'uiUtil', 'DC', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox',
+     function($document, mdw, util, uiUtil, DC, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection, Toolbox) {
   var Diagram = function(canvas, process, implementors, imgBase, editable, instance) {
     Shape.call(this, this, process);
     this.canvas = canvas;
@@ -281,6 +353,18 @@ workflowMod.factory('Diagram',
     canvasDisplay.w += Diagram.BOUNDARY_DIM;
     canvasDisplay.h += Diagram.BOUNDARY_DIM;
     
+    if (this.editable) {
+      var toolbox = Toolbox.getToolbox();
+      // fill available
+      var parentWidth = this.canvas.parentElement.offsetWidth;
+      if (toolbox)
+        parentWidth -= toolbox.getWidth();
+      if (canvasDisplay.w < parentWidth)
+        canvasDisplay.w = parentWidth;
+      if (toolbox && canvasDisplay.h < toolbox.getHeight())
+        canvasDisplay.h = toolbox.getHeight();
+    }
+    
     this.canvas.width = canvasDisplay.w;
     this.canvas.height = canvasDisplay.h;
   };
@@ -339,25 +423,6 @@ workflowMod.factory('Diagram',
     else if (id.startsWith('N'))
       return this.getNote(id);
   };
-  
-  Diagram.prototype.addLink = function(from, to) {
-    var maxId = 0;
-    this.links.forEach(function(link) {
-      var linkId = parseInt(link.transition.id.substring(1));
-      if (linkId > maxId)
-        maxId = linkId;
-    });
-    var transition = {
-        id: 'T' + (maxId + 1),
-        event: 'FINISH',
-        to: to.activity.id
-    };
-    from.activity.transitions.push(transition);
-    var link = new Link(this, transition, from, to);
-    link.display = {type: Link.LINK_TYPES.ELBOW, lx: 0, ly: 0, xs: [0,0], ys: [0,0]};
-    link.calc();
-    this.links.push();
-  };
 
   Diagram.prototype.getImplementor = function(className) {
     if (this.implementors) {
@@ -372,6 +437,122 @@ workflowMod.factory('Diagram',
     return { implementorClass: className };
   };
   
+  Diagram.prototype.addStep = function(impl, x, y) {
+    var implementor = this.getImplementor(impl);
+    var step = Step.create(this, this.genId(this.steps, 'activity'), implementor, x, y);
+    this.process.activities.push(step.activity);
+    this.steps.push(step);
+  };
+  
+  Diagram.prototype.addLink = function(from, to) {
+    var link = Link.create(this, this.genId(this.links, 'transition'), from, to);
+    this.links.push(link);
+  };
+
+  Diagram.prototype.addSubflow = function(type, x, y) {
+    var startActivityId = this.genId(this.steps, 'activity');
+    var startTransitionId = this.genId(this.links, 'transition');
+    var subprocId = this.genId(this.subflows, 'subprocess');
+    var subflow = Subflow.create(this, subprocId, startActivityId, startTransitionId, type, x, y);
+    if (!this.process.subprocesses)
+      this.process.subprocesses = [];
+    this.process.subprocesses.push(subflow.subprocess);
+    this.subflows.push(subflow);
+  };
+  
+  Diagram.prototype.addNote = function(x, y) {
+    var note = Note.create(this, this.genId(this.notes, 'textNote'), x, y);
+    this.process.textNotes.push(note.textNote);
+    this.notes.push(note);
+  };
+
+  Diagram.prototype.genId = function(items, workflowType) {
+    var maxId = 0;
+    if (items) {
+      items.forEach(function(item) {
+        var itemId = parseInt(item[workflowType].id.substring(1));
+        if (itemId > maxId)
+          maxId = itemId;
+      });
+    }
+    return maxId + 1;
+  };
+  
+  Diagram.prototype.deleteStep = function(step) {
+    var idx = -1;
+    for (let i = 0; i < this.steps.length; i++) {
+      var s = this.steps[i];
+      if (step.activity.id === s.activity.id) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      this.process.activities.splice(idx, 1);
+      this.steps.splice(idx, 1);
+    }
+    for (let i = 0; i < this.links.length; i++) {
+      var link = this.links[i];
+      if (link.to.activity.id === step.activity.id) {
+        this.deleteLink(link);
+      }
+    }
+  };
+
+  Diagram.prototype.deleteLink = function(link) {
+    var idx = -1;
+    for (let i = 0; i < this.links.length; i++) {
+      var l = this.links[i];
+      if (l.transition.id === link.transition.id) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      this.links.splice(idx, 1);
+      var tidx = -1;
+      for (let i = 0; i < link.from.activity.transitions.length; i++) {
+        if (link.from.activity.transitions[i].id === link.transition.id) {
+          tidx = i;
+          break;
+        }
+      }
+      if (tidx >= 0) {
+        link.from.activity.transitions.splice(tidx, 1);
+      }
+    }
+  };
+
+  Diagram.prototype.deleteSubflow = function(subflow) {
+    var idx = -1;
+    for (let i = 0; i < this.subflows.length; i++) {
+      var s = this.subflows[i];
+      if (s.subprocess.id === subflow.subprocess.id) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      this.process.subprocesses.splice(idx, 1);
+      this.subflows.splice(idx, 1);
+    }
+  };
+
+  Diagram.prototype.deleteNote = function(note) {
+    var idx = -1;
+    for (let i = 0; i < this.notes.length; i++) {
+      var n = this.notes[i];
+      if (n.textNote.id === note.textNote.id) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      this.process.textNotes.splice(idx, 1);
+      this.notes.splice(idx, 1);
+    }
+  };
+
   Diagram.prototype.getActivityInstances = function(id) {
     if (this.instance) {
       var insts = [];  // should always return something, even if empty
@@ -671,7 +852,7 @@ workflowMod.factory('Diagram',
   };
   
   Diagram.prototype.onMouseOut = function(e) {
-    // TODO anything?
+    $document[0].body.style.cursor = 'default';
   };
   
   Diagram.prototype.onMouseMove = function(e) {
@@ -705,7 +886,6 @@ workflowMod.factory('Diagram',
     else {
       $document[0].body.style.cursor = '';
     }
-    
   };
   
   Diagram.prototype.onMouseDrag = function(e) {
@@ -729,11 +909,23 @@ workflowMod.factory('Diagram',
             if (this.selection.getSelectObj().isStep) {
               this.draw();
               this.drawLine(this.dragX, this.dragY, x, y, DC.LINE_COLOR);
+              return true;
             }
           }
           else if (this.anchor >= 0) {
             if (this.selection.getSelectObj().isLink) {
-              this.selection.getSelectObj().moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+              let link = this.selection.getSelectObj();
+              link.moveAnchor(this.anchor, x - this.dragX, y - this.dragY);
+              if (this.anchor === 0) {
+                let hovStep = this.getHoverStep(x, y);
+                if (hovStep && link.from.activity.id != hovStep.activity.id)
+                  link.setFrom(hovStep);
+              }
+              else if (this.anchor == this.selection.getSelectObj().display.xs.length - 1) {
+                var hovStep = this.getHoverStep(x, y);
+                if (hovStep && link.to.activity.id != hovStep.activity.id)
+                  link.setTo(hovStep);
+              }
               this.draw();
             }
             if (this.selection.getSelectObj().resize) {
@@ -793,6 +985,38 @@ workflowMod.factory('Diagram',
     }
   };
   
+  Diagram.prototype.onDrop = function(e, item) {
+    var rect = this.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    if (item.category == 'subflow') {
+      this.addSubflow(item.implementorClass, x, y);
+    }
+    else if (item.category == 'note') {
+      this.addNote(x, y);
+    }
+    else {
+      this.addStep(item.implementorClass, x, y);
+    }
+    this.draw();
+    return true;
+  };
+
+  Diagram.prototype.onDelete = function(e, onChange) {
+    var selection = this.selection;
+    var selObj = this.selection.getSelectObj();
+    if (selObj && !selObj.isLabel) {
+      var msg = this.selection.isMulti ? 'Delete selected items?' : 'Delete ' + selObj.workflowType + '?';
+      uiUtil.confirm('Confirm Delete', msg, function(res) {
+        if (res) {
+          selection.doDelete();
+          selection.diagram.draw();
+          onChange();
+        }
+      });
+    }
+  };
+
   Diagram.prototype.getHoverObj = function(x, y) {
     if (this.label.isHover(x, y))
       return this.label;
@@ -823,6 +1047,22 @@ workflowMod.factory('Diagram',
     for (i = 0; i < this.notes.length; i++) {
       if (this.notes[i].isHover(x, y))
         return this.notes[i];
+    }
+  };
+  
+  Diagram.prototype.getHoverStep = function(x, y) {
+    for (let i = 0; i < this.subflows.length; i++) {
+      var subflow = this.subflows[i];
+      if (subflow.isHover(x, y)) {
+        for (var j = 0; j < subflow.steps.length; j++) {
+          if (subflow.steps[j].isHover(x, y))
+            return subflow.steps[j];
+        }
+      }
+    }
+    for (let i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].isHover(x, y))
+        return this.steps[i];
     }
   };
 
@@ -939,6 +1179,20 @@ workflowMod.factory('Selection', ['mdw', function(mdw) {
         newSel.push(this.selectObjs[i]);
     }
     this.selectObjs = newSel;
+  };
+  
+  Selection.prototype.doDelete = function() {
+    for (var i = 0; i < this.selectObjs.length; i++) {
+      var selObj = this.selectObjs[i];
+      if (selObj.isStep)
+        this.diagram.deleteStep(selObj);
+      else if (selObj.isLink)
+        this.diagram.deleteLink(selObj);
+      else if (selObj.isSubflow)
+        this.diagram.deleteSubflow(selObj);
+      else if (selObj.isNote)
+        this.diagram.deleteNote(selObj);
+    }
   };
   
   // works for the primary (single) selection to reenable anchors
@@ -1077,7 +1331,8 @@ workflowMod.directive('mdwWorkflow', [function() {
     controller: 'MdwWorkflowController',
     controllerAs: 'mdwWorkflow',
     link: function link(scope, elem, attrs, ctrls) {
-      scope.init(angular.element(elem[0].getElementsByClassName('mdw-canvas')[0]));
+      var canvas = angular.element(elem[0].getElementsByClassName('mdw-canvas')[0]);
+      scope.init(canvas);
       scope.$on('$destroy', function() {
         scope.dest();
       });

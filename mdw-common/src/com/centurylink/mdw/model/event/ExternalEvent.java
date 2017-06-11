@@ -21,7 +21,7 @@ import org.apache.xmlbeans.XmlException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.xml.XmlPath;
 
@@ -128,7 +128,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
      * asset name from eventName.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("path", eventMessagePattern);
         json.put("handlerClass", eventHandler);
         return json;

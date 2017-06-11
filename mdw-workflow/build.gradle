@@ -45,8 +45,9 @@ dependencies {
     compile group: "junit", name: "junit", version:"4.8.1"
     compile group: "oro", name: "oro", version: "2.0.8"   
     
-    // Un-comment below if you add the tibco package in your workspace's assets
+    // Un-comment below if you add the tibco and/or ibmmq package(s) in your workspace's assets
   //  compile fileTree(dir: "assets/com/centurylink/mdw/tibco", includes: ["*.jar"])
+  //  compile fileTree(dir: "assets/com/centurylink/mdw/ibmmq", includes: ["*.jar"])
 }
 
 task cleanJar {

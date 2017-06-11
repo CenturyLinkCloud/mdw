@@ -1,0 +1,27 @@
+{
+  "category": "object",
+  "pagelet": {"widgets": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "readonly": true,
+      "vw": 50
+    },  
+    {
+      "type": "text",
+      "name": "resultCode",
+      "label": "Result",
+      "vw": 200
+    },
+    {
+      "type": "dropdown",
+      "name": "event",
+      "label": "Event",
+      "options": [
+        "START", "FINISH", "DELAY", "ERROR", "ABORT", "RESUME"
+      ],
+      "default": "FINISH"
+    }
+  ]}
+}

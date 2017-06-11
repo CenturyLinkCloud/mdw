@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.types.TaskAction;
 import com.centurylink.mdw.model.user.UserAction;
 
@@ -81,7 +81,7 @@ public class UserTaskAction extends UserAction implements Jsonable {
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (getId() != null)
             return super.getJson();  // should be treated as UserActionVO (auditing, etc)
 

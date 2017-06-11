@@ -1,0 +1,125 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=25,y=104,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=28,ly=-41,type=Elbow,xs=89&144,ys=124&124"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=590,y=103,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DELAY_BETWEEN": "6",
+        "Execution Plan": "plan",
+        "Force Parallel Execution": "true",
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=431,y=91,w=99,h=60",
+        "processmap": "[[\"sub1\",\"com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Sub1\",\"[0.1,1)\",\"\"],[\"sub2\",\"com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Sub2\",\"[0.1,1)\",\"\"],[\"notify\",\"com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Notify\",\"[0.1,1)\",\"\"]]",
+        "synchronous": "false"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
+      "name": "Invoke Subs",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=561,ly=123,type=Elbow,xs=534&586,ys=123&123"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "plan",
+        "Rule": "import com.centurylink.mdw.model.ExecutionPlan\r\nimport com.centurylink.mdw.model.Subprocess\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\n// request is of type com.centurylink.tom.model.Order\r\nruntimeContext.logDebug 'serviceSummary:\\n' + serviceSummary.json.toString(2)\r\n\r\n// build the servicePlan\r\n// three of each subproc to force contention\r\nplan = new ExecutionPlan()\r\nList<Subprocess> subprocs = new ArrayList<>()\r\nSubprocess subproc\r\nfor (int i = 0; i < subCount; i++) {\r\n    subproc = new Subprocess()\r\n    subproc.setLogicalName(\"sub1\")\r\n    subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\n    subproc.getParameters().put('serviceSummary', '$serviceSummary')\r\n    subprocs.add(subproc)\r\n    subproc = new Subprocess()\r\n    subproc.setLogicalName(\"sub2\")\r\n    subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\n    subproc.getParameters().put('serviceSummary', '$serviceSummary')\r\n    subprocs.add(subproc)\r\n}\r\nif (!publishFirst) {\r\n    subproc = new Subprocess()\r\n    subproc.setLogicalName(\"notify\")\r\n    subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\n    subprocs.add(subproc)\r\n    plan.setSubprocesses(subprocs)\r\n}\r\n\r\n\r\n\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=284,y=91,w=103,h=61"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Build Plan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=415,ly=121,type=Elbow,xs=391&427,ys=121&121"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "publishFirst",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=148,y=97,w=80,h=57"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Publish\r\nFirst?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=235,ly=127,type=Elbow,xs=232&280,ys=124&124"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=187,ly=184,type=Elbow,xs=188&188,ys=158&210"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "true",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\r\n\r\npackage com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\n\nimport com.centurylink.mdw.common.service.ServiceException;\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.service.data.process.EngineDataAccessDB;\nimport com.centurylink.mdw.services.ServiceLocator;\nimport com.centurylink.mdw.services.WorkflowServices;\nimport com.centurylink.mdw.util.log.LoggerUtil;\nimport com.centurylink.mdw.util.log.StandardLogger;\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class BroadcastUpdateMessage_A7 implements JavaExecutor\r\n{\r\n    private static StandardLogger logger = LoggerUtil.getStandardLogger();\n    private ActivityRuntimeContext context;\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException\n    {\n      this.context = context;\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException\n    {\n        String event = \"servicesummary-update-\"+context.getMasterRequestId();\n        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();\n        int resume = 0;\n        try {\n            resume = workflowServices.broadcast(event);\n        } catch (ServiceException se) {\n            throw new JavaExecutionException(\"Unable to send broadcast message \"+event, se);\n        }\n        logger.info(\"ServiceSummary broadcast resume = \" + resume);\n        return null;\n    }\n\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=132,y=214,w=101,h=90"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Broadcast \r\nUpdate\r\nMessage",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=285,ly=206,type=Elbow,xs=237&335,ys=259&156"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=34,y=34,w=257,h=27"
+  },
+  "variables": {
+    "plan": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    },
+    "publishFirst": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    },
+    "serviceSummary": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "subCount": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    }
+  },
+  "version": "0.6"
+}

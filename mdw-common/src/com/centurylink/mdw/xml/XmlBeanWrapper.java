@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import com.centurylink.mdw.app.Compatibility;
+import com.centurylink.mdw.model.JsonObject;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -165,7 +166,7 @@ public abstract class XmlBeanWrapper implements Serializable {
     }
 
     public void fromJson(String json) throws JSONException, XmlException {
-        JSONObject jsonObject = new JSONObject(json);
+        JSONObject jsonObject = new JsonObject(json);
         fromJson(jsonObject);
     }
 

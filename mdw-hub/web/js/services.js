@@ -5,7 +5,8 @@ var servicesMod = angular.module('services', ['ngResource', 'mdw', 'assets']);
 servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis', 
                                              function($scope, mdw, ServiceApis) {
 
-  var swaggerDef = ServiceApis.get({}, function success() {
+
+	var swaggerDef = ServiceApis.get({}, function success() {
     $scope.serviceApis = {}; // path-to-api object
 
     var paths = swaggerDef.paths;
@@ -37,22 +38,14 @@ servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis',
 servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '$window', 'mdw', 'ServiceApis', 'Assets', 'Asset', 
                                               function($scope, $routeParams, $sce, $window, mdw, ServiceApis, Assets, Asset) {
 
-  $scope.serviceFullPath = $routeParams.servicePath;
+  // api path is actual service path
+  $scope.apiUrl = 'api/' + $routeParams.servicePath + '.json';
   $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.json'}, function success(serviceDef) {
     $scope.serviceApi.servicePath = $routeParams.servicePath; // service path is logical path (with dots separating subpaths)
     $scope.serviceApi.apiPath = $routeParams.servicePath.replace(/\./g, '/'); // api path is actual service path
     $scope.serviceApi.jsonContent = serviceDef.raw;
     ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.yaml' }, function(serviceDef) {
       $scope.serviceApi.yamlContent = serviceDef.raw;
-      // hack the swagger-editor local storage cache to avoid retrieving twice
-      var swaggerEditorCache = $window.localStorage['ngStorage-SwaggerEditorCache'];
-      if (!swaggerEditorCache)
-        swaggerEditorCache = '{}';
-      var cacheObj = JSON.parse(swaggerEditorCache);
-      cacheObj.yaml = $scope.serviceApi.yamlContent;
-      $window.localStorage['ngStorage-SwaggerEditorCache'] = JSON.stringify(cacheObj);
-      var swaggerEditorUrl = 'swagger/swagger-editor/#?servicePath=' + $scope.serviceFullPath;
-      document.getElementById('swaggerFrame').src = swaggerEditorUrl;
       
       // populate the serviceApi sample assets
       $scope.serviceApi.samplePackageName = null;
@@ -101,14 +94,14 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
     else {
       $scope.serviceApi.selectedSample = null;
     }    
-  };
-    
+  };  
 }]);
 
 servicesMod.controller('CombinedServiceController', ['$scope', '$routeParams', '$sce', 'mdw', 'ServiceApis', 
                                                       function($scope, $routeParams, $sce, mdw, ServiceApis) {
  
  $scope.serviceApi = ServiceApis.get({servicePath: 'swagger', ext: '.json'}, function success(serviceDef) {
+   
    var path = 'swagger';
    $scope.serviceApi.servicePath = 'swagger';
    $scope.serviceApi.jsonContent = serviceDef.raw;
@@ -139,21 +132,3 @@ servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw)
     }
   });
 }]);
-
-servicesMod.directive('inFrame', function() {
-  return {
-    restrict: 'EA',
-    scope: {
-      clazz: '@class',
-      src: '@src',
-      api: '@api'
-    },
-    template: '<iframe id="swaggerFrame" class="{{clazz}}" src="{{src}}" name="{{api}}"></iframe>',
-    link: function(scope, elem, attrs) {
-      elem.ready(function() {
-        var frame = elem.find('iframe')[0];
-        iFrameResize({heightCalculationMethod:'lowestElement'}, frame);
-      });
-    }
-  };
-});

@@ -26,11 +26,11 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonExportable;
-import com.centurylink.mdw.common.service.JsonListMap;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestCount;
 import com.centurylink.mdw.model.request.RequestList;

@@ -36,7 +36,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
@@ -47,9 +48,11 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
+import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
@@ -444,7 +447,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException {
         String ownerContent = getDocumentStringValue(triggerId);
         try {
-            JSONObject json = new JSONObject(ownerContent);
+            JSONObject json = new JsonObject(ownerContent);
             if (!json.has("runtimeContext"))
                 throw new ServiceException(ServiceException.NOT_FOUND, "Trigger document does not have RuntimeContext information: " + triggerId);
             JSONObject runtimeContext = json.getJSONObject("runtimeContext");
@@ -726,7 +729,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             // load from file
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
-                process = new Process(new JSONObject(new String(bytes)));
+                process = new Process(new JsonObject(new String(bytes)));
                 process.setName(processName.substring(lastSlash + 1));
                 process.setPackageName(processName.substring(0, lastSlash));
             }
@@ -980,6 +983,29 @@ public class WorkflowServicesImpl implements WorkflowServices {
             return EventInstance.RESUME_STATUS_FAILURE;
         }
     }
+    public Integer broadcast(String eventName) throws ServiceException {
+        Integer delay = PropertyManager.getIntegerProperty(PropertyNames.ACTIVITY_RESUME_DELAY, 2);
+        return broadcast(eventName, delay);
+    }
+
+    public Integer broadcast(String eventName, int delay) throws ServiceException {
+        try {
+            EventManager eventManager = ServiceLocator.getEventManager();
+            Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L, "broadcast-"+eventName, null);
+            BroadcastEventLockCache.lock(eventName);
+            return eventManager.broadcast(eventName, docId, null, delay);
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);  // TODO why not throw?
+            return EventInstance.RESUME_STATUS_FAILURE;
+        }
+        finally {
+            BroadcastEventLockCache.unlock(eventName);
+        }
+    }
 
     public void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(processInstanceId);
@@ -1219,7 +1245,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else if (trans instanceof JsonTranslator && !(trans instanceof YamlTranslator)) {
                 JSONObject jsonObj = ((JsonTranslator)trans).toJson(doc.getObject(doc.getDocumentType(), pkg));
-                return jsonObj.toString(2);
+                if (jsonObj instanceof JsonObject)
+                    return jsonObj.toString(2);
+                else
+                    return new JsonObject(jsonObj.toString()).toString(2); // reformat for predictable prop ordering
             }
             return doc.getContent(pkg);
         }
@@ -1257,6 +1286,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
+    }
+
+    public void createProcess(String assetPath) throws ServiceException, JSONException {
+        if (!assetPath.endsWith(".proc"))
+            assetPath += ".proc";
+        Process newProc = ProcessCache.getProcess(ProcessLoader.MDW_BASE_PACKAGE + "/new");
+        ServiceLocator.getAssetServices().createAsset(assetPath, newProc.getJson().toString(2).getBytes());
     }
 
 }

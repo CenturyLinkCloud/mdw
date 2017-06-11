@@ -63,7 +63,7 @@ public class EventHandlerCache implements PreloadableCache {
     static {
         fallbackHandler.setEventName("FallbackHandler");
         fallbackHandler.setEventHandler("com.centurylink.mdw.listener.FallbackEventHandler");
-        fallbackHandler.setPackageName("com.centurylink.mdw.base");
+        fallbackHandler.setPackageName(ProcessLoader.MDW_BASE_PACKAGE);
         fallbackHandler.setId(new Long(0));
     }
 
@@ -71,7 +71,7 @@ public class EventHandlerCache implements PreloadableCache {
     static {
         serviceHandler.setEventName("ServiceHandler");
         serviceHandler.setEventHandler("com.centurylink.mdw.service.handler.ServiceRequestHandler");
-        serviceHandler.setPackageName("com.centurylink.mdw.base");
+        serviceHandler.setPackageName(ProcessLoader.MDW_BASE_PACKAGE);
         serviceHandler.setId(new Long(0));
     }
 

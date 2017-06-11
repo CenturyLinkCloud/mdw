@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/admin-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-checklist">
+          <div class="mdw-heading-label">Asset Archive
+            <span class="mdw-heading-sub">({{archiveDirs.root}})</span>
+          </div>
+        </div>
+        <div class="mdw-heading-actions">
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')" ng-click="deleteArchive()">
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          </button>
+        </div>
+      </div>
+      <ul class="mdw-plainlist" style="margin-top:5px;">
+        <li ng-repeat="(name, archiveDir) in archiveDirs" ng-if="name != 'root'">
+          <div style="font-weight:bold">{{name}}</div>
+          <ul class="mdw-plainlist">
+            <li ng-repeat="meta in archiveDir.metas">
+              .mdw/<a href="asset/Archive/{{name}}/.mdw/{{meta}}">{{meta}}</a>
+            </li>
+            <li ng-repeat="file in archiveDir.files">
+              <a href="asset/Archive/{{name}}/{{file}}">{{file}}</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

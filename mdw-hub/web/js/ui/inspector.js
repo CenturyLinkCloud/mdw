@@ -32,14 +32,22 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         if (typeof tab === 'object') {
           var tabProps = util.getProperties(tab);
           // when _template is only prop (eg: Design tab)
-          var onlyShowForEdit = tabProps.length === 1 && tabProps[0] === '_template';
-          if ($scope.editable || !onlyShowForEdit) {
+          var onlyShowForDef = tabProps.length === 1 && tabProps[0] === '_template';
+          if (!$scope.runtimeInfo || !onlyShowForDef) {
             if (tabProps[0] && typeof tab[tabProps[1]] == 'function') {
               if (tab[tabProps[1]]($scope.diagramObject, $scope.workflowObject))
                 filteredTabs[tabName] = tab;
             }
             else {
-              filteredTabs[tabName] = tab;
+              if (obj.workflowType == 'activity' && tab._categories) {
+                // only show for specific categories
+                var implCat = $scope.diagramObject.diagram.getImplementor($scope.workflowObject.implementor).category;
+                if (tab._categories.indexOf(implCat) >= 0)
+                  filteredTabs[tabName] = tab;
+              }
+              else {
+                filteredTabs[tabName] = tab;
+              }
             }
           }
         }
@@ -68,8 +76,8 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     $scope.activeTab = $scope.tabs[tabName];
     $scope.activeTabValues = [];
 
-    // design tab uses configurator
-    if ($scope.editable) {
+    // templated tabs use configurator (TODO: ugly special handling for Documentation)
+    if ($scope.activeTab._template && ($scope.editable || $scope.activeTabName !== 'Documentation')) {
       var templateUrl = util.substExpr($scope.activeTab._template, $scope.workflowObject);
       $http.get(templateUrl).then(function(res) {
         var template = res.data;
@@ -252,6 +260,14 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             else if (val.value.indexOf('${props[') >= 0 || val.value.indexOf('#{props[') >= 0) {
               val.extended = true;
             }
+            else if (val.value.startsWith('[') || val.value.startsWith('{')) {
+              try {
+                let parsed = JSON.parse(val.value);
+                val.full = JSON.stringify(parsed, null, 2);
+                val.extended = true;
+              }
+              catch(ex) {}
+            }
             if (spec) {
               if (spec.alias)
                 val.name = spec.alias;
@@ -401,28 +417,38 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
   };
   
   $scope.edit = function(widget) {
-    $scope.editing = widget;
-    $scope.editOptions = {
-      theme: 'eclipse', 
-      mode: widget.name === 'Java' ? 'java' : (widget.language ? widget.language.toLowerCase() : 'groovy'),
-      onChange: function() {
-        // first call happens on load
-        if ($scope.editDirty === undefined) {
-          $scope.editDirty = false;
-        }
-        else {
-          if ($scope.configurator.valueChanged(widget))
-            $scope.onChange($scope.process);
-          $scope.$parent.setDirty($scope.$parent.process);
-        }
-      },
-      basePath: '/mdw/lib/ace-builds/src-min-noconflict'
-    };    
+    var lang = widget.name === 'Java' ? 'java' : (widget.language ? widget.language.toLowerCase() : 'groovy');
+    if ($scope.editable) {
+      $scope.editing = widget;
+      $scope.editOptions = {
+        theme: 'eclipse', 
+        mode: lang,
+        onChange: function() {
+          // first call happens on load
+          if ($scope.editDirty === undefined) {
+            $scope.editDirty = false;
+          }
+          else {
+            if ($scope.configurator.valueChanged(widget))
+              $scope.onChange($scope.process);
+            $scope.$parent.setDirty($scope.$parent.process);
+          }
+        },
+        basePath: '/mdw/lib/ace-builds/src-min-noconflict',
+      };
+    }
+    else {
+      $scope.drilledValue = {
+        full: widget.value,
+        language: lang
+      };
+    }
   };
   
   $scope.valueChanged = function(widget, evt) {
-    if ($scope.configurator.valueChanged(widget, evt))
+    if ($scope.configurator.valueChanged(widget, evt)) {
       $scope.onChange($scope.process);
+    }
   };  
 }]);
 
@@ -446,7 +472,8 @@ inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
   };
 }]);
 
-inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, Inspector) {
+inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector', 
+                                      function($window, $document, Inspector) {
   return {
     restrict: 'A',
     controller: 'MdwInspectorController',
@@ -455,6 +482,8 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       var workflowElem = elem.parent();
       var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
       var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
+      var contentElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-content'));
+      var contentHeight;
 
       scope.openInspector = function() {
         elem[0].style.left = workflowElem[0].getBoundingClientRect().left + 'px';
@@ -466,18 +495,59 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
         workflowElem[0].style.height = canvasElem[0].offsetHeight + 'px';
       };
       scope.maxInspector = function() {
-        angular.element(elem[0].getElementsByClassName('mdw-inspector-content'))[0].style.height = '100%';        
+        contentElem[0].style.height = '100%';        
         elem[0].style.height = '80%';
         elem[0].style.top = '100px';
         panelElem[0].style.height = '90%';
       };
       // removes extra styling added by max or close
       scope.initInspector = function() {
-        angular.element(elem[0].getElementsByClassName('mdw-inspector-content'))[0].style.height = '';        
+        contentElem[0].style.height = '';        
         elem[0].style.height = '';
         elem[0].style.top = '';
         panelElem[0].style.height = '';
+        contentHeight = 168;  // must agree with mdw-inspector-content        
       };
+      
+      var mouseDown = function(e) {
+        var y = e.clientY - elem[0].getBoundingClientRect().top;
+        scope.resizing = y <= 3;
+        if (scope.resizing) {
+          scope.startY = e.clientY;
+          if (contentElem[0].style.height)
+            contentHeight = parseInt(contentElem[0].style.height.substring(0, contentElem[0].style.height.length - 2));
+        }
+      };
+      var mouseUp = function(e) {
+        scope.resizing = false;
+        $document[0].body.style.cursor = 'default';
+      };
+      var mouseOut = function(e) {
+        if (!scope.resizing)
+          $document[0].body.style.cursor = 'default';
+      };
+      var mouseMove = function(e) {
+        if (scope.resizing) {
+          contentElem[0].style.height = (contentHeight + (scope.startY - e.clientY)) + 'px';
+        }
+        if (e.target == elem[0]) {
+          var y = e.clientY - elem[0].getBoundingClientRect().top;
+          if (y <= 3 || scope.resizing)
+            $document[0].body.style.cursor = 'ns-resize';
+          else
+            $document[0].body.style.cursor = 'default';
+        }
+        else {
+          if (scope.resizing)
+            $document[0].body.style.cursor = 'ns-resize';
+        }
+      };
+      
+      elem.bind('mousedown', mouseDown);
+      elem.bind('mouseup', mouseUp);
+      elem.bind('mouseout', mouseOut);
+      workflowElem.bind('mousemove', mouseMove);
+      workflowElem.bind('mouseup', mouseUp);
       
       // show
       Inspector.listen(function(obj, show) {
@@ -505,6 +575,11 @@ inspectMod.directive('mdwInspector', ['$window', 'Inspector', function($window, 
       
       scope.$on('$destroy', function() {
         Inspector.unlisten();
+        elem.unbind('mousedown', mouseDown);
+        elem.unbind('mouseup', mouseUp);        
+        elem.unbind('mouseout', mouseOut);        
+        workflowElem.unbind('mousemove', mouseMove);
+        workflowElem.unbind('mouseup', mouseUp);
       });
     }
   };

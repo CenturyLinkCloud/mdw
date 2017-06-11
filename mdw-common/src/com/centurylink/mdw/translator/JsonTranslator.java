@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.workflow.Package;
 
@@ -55,7 +55,7 @@ public interface JsonTranslator {
             String key = keys.next().toString();
             if (!JSONABLE_TYPE.equals(key)) {
                 JSONObject objectJson = json.getJSONObject(key);
-                Jsonable jsonable = ctor.newInstance(objectJson);
+                com.centurylink.mdw.model.Jsonable jsonable = ctor.newInstance(objectJson);
                 return jsonable;
             }
         }

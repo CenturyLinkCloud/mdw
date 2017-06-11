@@ -4,26 +4,10 @@ title: Microservices Cookbook
 ---
 ### MDW Microservices
 
-This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [TomcatCookbook](../TomcatCookbook/).
+This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [SOAP Service](../SOAPService/).
 
-### Prerequisites
- - Eclipse Neon for JavaEE Developers:                                                                                 
-   [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
- - Required Plugins:
-     - MDW Designer:                                                    
-       http://centurylinkcloud.github.io/mdw/designer/updateSite
-     - Buildship Plugin:   
-       http://download.eclipse.org/buildship/updates/e46/releases/2.x
- - Recommended Plugins:
-     - Groovy:                                   
-       http://dist.springsource.org/snapshot/GRECLIPSE/e4.6
-     - Yaml:                                             
-       http://dadacoalition.org/yedit
- - Servers:
-     - Refer to `Supported Java Containers` in this tutorial 
- - Chrome and Postman
-     - [https://www.google.com/chrome](https://www.google.com/chrome)
-	  - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+### Prerequisite
+Before you can start working with MDW framework, you will need to do a one-time step. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
 
 ### Java Containers
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  The differences between local and remote development are described in later sections of this tutorial.  To be able to develop locally you need one of the following containers installed.  At certain points in this tutorial, we'll link to container-specific steps in the Cookbooks for each supported container.
@@ -31,24 +15,10 @@ You can perform many cloud development activities using a remote workflow projec
 ### Supported Java Containers: 
 -   Apache Tomcat 8:
     - [https://tomcat.apache.org](https://tomcat.apache.org)
-    - [TomcatCookbook](../TomcatCookbook/)
+    - [Setup Guide for Tomcat](../SetupGuideForTomcat/)
 -   Pivotal Cloud Foundry 2.x:
     - [http://pivotal.io/platform](http://pivotal.io/platform)
-    - [CloudFoundryCookbook](../CloudFoundryCookbook/)
- 
-### MDW Database:
-- MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a MySQL or Oracle 
-  database. Generally for cloud development you'll point to a pre-existing central database.  If you want to host your own database, you'll need to configure an instance of MySQL 
-  with the MDW db schema. The SQL scripts for installing the MDW schema and setting up an MDW database in MySQL:  
-  
-		Note: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:
-		http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
-		Run the following scripts in this order. These scripts are found in workflow/assets/.../db/ directory.
-		1. create_tables.sql	
-		2. create_indexes.sql
-		3. add_fkeys.sql
-		4. baseline_inserts.sql (This script inserts a basic set of reference data into some of the tables created above).
-		5. seed_users.sql (Edit the seed_users.sql script to add initial MDW users.  At least one of these should be granted Site Admin access to enable them to add users through the Administration webapp). 
+    - [Setup Guide for CloudFoundry](../SetupGuideForCloudFoundry/)
 		
 ### Local Development:
 #### 1. Create a Local Project
@@ -63,8 +33,7 @@ A local project is useful if you want to debug your custom Java source code and 
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you will be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you will use.
 
   ![alt text](../images/workflow.png "workflow")
-- When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment.  For details about these settings, refer to the 
-  server-specific cookbooks listed above under "Supported Java Containers" section.
+- When you click Next, you'll be presented with the Tomcat for your local development.  Enter the settings for your environment. For the password, you can enter `tomcat`.  For details about these settings, refer to the server-specific cookbooks listed above under "Supported Java Containers" section.
   
   ![alt text](../images/tomcatSetting.png "tomcatSetting")
 - Click Next again and enter your database connection info.  The password for database is `mdw`. 
@@ -180,9 +149,9 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
    ![alt text](../images/myOrderValidatorActivity3.png "myOrderValidatorActivity3")
 
 ##### Get Your Server Running:
-- Depending on which supported container you're using, you can follow one of the server setup exercises.  You will need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
-    - [Tomcat Server Setup](../TomcatCookbook/)
-    - [Cloud Foundry Setup](../CloudFoundryCookbook/)
+- Depending on which supported container you're using and if you have not done a one-time setup, you can follow one of the server setup exercises.  You will need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
+    - [Setup Guide for Tomcat](../SetupGuideForTomcat/)
+    - [Setup Guide for CloudFoundry](../SetupGuideForCloudFoundry/)
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:
      - Tomcat:                                                                                  
        [http://localhost:8080/mdw](http://localhost:8080/mdw)

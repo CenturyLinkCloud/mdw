@@ -21,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -95,7 +95,7 @@ public class HttpMessage implements Serializable, Jsonable {
     public String getJsonName() { return "HttpMessage"; }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("responseTime", getResponseTime());
         json.put("response", getResponse());
         json.put("statusCode", getStatusCode());

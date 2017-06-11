@@ -3,7 +3,7 @@
 var linkMod = angular.module('mdwLink', ['mdw']);
 
 linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
-                         function(mdw, util, DC, Label) {
+                        function(mdw, util, DC, Label) {
 
   var Link = function(diagram, transition, from, to) {
     this.diagram = diagram;
@@ -29,8 +29,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     RESUME: {color: 'green'},
     DELAY: {color: 'orange'},
     HOLD: {color: 'orange'},
-    ERROR: {color: 'red'},
-    ABORT: {color: 'red'},
+    ERROR: {color: '#f44336'},
+    ABORT: {color: '#f44336'},
     CORRECT: {color: 'purple'},
     FINISH: {color: 'gray'}
   };
@@ -53,6 +53,25 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   
   Link.ELBOW_THRESHOLD = 0.8;
   Link.ELBOW_VH_THRESHOLD = 60;
+  
+  Link.create = function(diagram, idNum, from, to) {
+    var transition = Link.newTransition(idNum, to.activity.id);
+    var link = new Link(diagram, transition, from, to);
+    if (!from.activity.transitions)
+      from.activity.transitions = [];
+    from.activity.transitions.push(transition);
+    link.display = {type: Link.LINK_TYPES.ELBOW, lx: 0, ly: 0, xs: [0,0], ys: [0,0]};
+    link.calc();
+    return link;
+  };
+  
+  Link.newTransition = function(idNum, toId) {
+    return {
+      id: 'T' + idNum,
+      event: 'FINISH',
+      to: toId
+    };
+  }; 
   
   Link.prototype.draw = function() {
     var color = this.getColor();
@@ -122,20 +141,24 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   Link.prototype.setDisplay = function(display) {
     if (!this.transition.attributes)
       this.transition.attributes = {};
-    var attr = 'type=' + display.type + ',lx=' + display.lx + ',ly=' + display.ly;
+    this.transition.attributes.TRANSITION_DISPLAY_INFO = this.getAttr(display);
+  };
+  
+  Link.prototype.getAttr = function(display) {
+    var attr = 'type=' + display.type + ',lx=' + Math.round(display.lx) + ',ly=' + Math.round(display.ly);
     attr += ',xs=';
     for (var i = 0; i < display.xs.length; i++) {
       if (i > 0)
         attr += '&';
-      attr += display.xs[i];
+      attr += Math.round(display.xs[i]);
     }
     attr += ',ys=';
     for (i = 0; i < display.ys.length; i++) {
       if (i > 0)
         attr += '&';
-      attr += display.ys[i];
+      attr += Math.round(display.ys[i]);
     }
-    this.transition.attributes.TRANSITION_DISPLAY_INFO = attr;
+    return attr;
   };
   
   // only for the label
@@ -506,7 +529,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.setDisplay(this.display);
   };
 
-  Link.prototype.calc = function() {
+  Link.prototype.calc = function(points) {
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
@@ -519,7 +542,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     var w2 = this.to.display.w;
     var h2 = this.to.display.h;
     
-    var n = xs.length < 2 ? 2 : xs.length;
+    var n = points ? points : (xs.length < 2 ? 2 : xs.length);
     var i;
     
     if (type == Link.LINK_TYPES.STRAIGHT) {
@@ -573,7 +596,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     } 
     else {
       // ELBOW, ELBOWH, ELBOWV with middle control points
-      var horizontalFirst = type == Link.LINK_TYPES.ELBOWH || (type == Link.LINK_TYPES.ELBOWH && Math.abs(x1 - x2) >= Math.abs(y1 - y2));
+      var horizontalFirst = type == Link.LINK_TYPES.ELBOWH || (type == Link.LINK_TYPES.ELBOW && Math.abs(x1 - x2) >= Math.abs(y1 - y2));
       var evenN = n % 2 === 0;
       var horizontalLast = (horizontalFirst && evenN) || (!horizontalFirst && !evenN);
       xs = this.display.xs = [];
@@ -602,11 +625,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         for (i = 1; i < n - 1; i++) {
           if (i % 2 !== 0) {
             ys[i] = ys[i-1];
-            xs[i] = (xs[n-1] - xs[0]) * ((i + 1) / 2) / (n / 2) + xs[0];
+            xs[i] = (xs[n-1] - xs[0]) * Math.round(((i + 1) / 2) / (n / 2)) + xs[0];
           } 
           else {
             xs[i] = xs[i-1];
-            ys[i] = (ys[n-1] - ys[0]) * ((i + 1) / 2) / ((n - 1) / 2) + ys[0];
+            ys[i] = (ys[n-1] - ys[0]) * Math.round(((i + 1) / 2) / ((n - 1) / 2)) + ys[0];
           }
         }
       } 
@@ -614,11 +637,11 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         for (i = 1; i < n - 1; i++) {
           if (i % 2 !== 0) {
             xs[i] = xs[i-1];
-            ys[i] = (ys[n-1] - ys[0]) * ((i + 1) / 2) / (n / 2) + ys[0];
+            ys[i] = (ys[n-1] - ys[0]) * Math.round(((i + 1) / 2) / (n / 2)) + ys[0];
           } 
           else {
             ys[i] = ys[i-1];
-            xs[i] = (xs[n-1] - xs[0]) * (i / 2) / ((n - 1) / 2) + xs[0];
+            xs[i] = (xs[n-1] - xs[0]) * Math.round((i / 2) / ((n - 1) / 2)) + xs[0];
           }
         }
       }
@@ -859,7 +882,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
 
-    if (display.type.startsWith('Elbow')) {
+    if (display.type.startsWith('Elbow') && display.xs.length != 2) {
       if (this.isAnchorHorizontal(anchor)) {
         if (anchor > 0) 
           display.ys[anchor - 1] = this.display.ys[anchor] + deltaY;
@@ -876,6 +899,34 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
 
     // TODO: update arrows
     this.setDisplay(display);
+  };
+
+  Link.prototype.setFrom = function(fromStep) {
+    var newTransitions = [];
+    for (let i = 0; i < this.from.activity.transitions.length; i++) {
+      var fromTrans = this.from.activity.transitions[i];
+      if (this.transition.id == fromTrans.id) {
+        if (!fromStep.activity.transitions)
+          fromStep.activity.transitions = [];
+        fromStep.activity.transitions.push(fromTrans);
+      }
+      else {
+        newTransitions.push(fromTrans);
+      }
+    }
+    this.from.activity.transitions = newTransitions;
+    this.from = fromStep;
+  };
+  
+  Link.prototype.setTo = function(toStep) {
+    for (let i = 0; i < this.from.activity.transitions.length; i++) {
+      var fromTrans = this.from.activity.transitions[i];
+      if (this.transition.id == fromTrans.id) {
+        fromTrans.to = toStep.activity.id;
+        break;
+      }
+    }
+    this.to = toStep;
   };
   
   Link.prototype.moveLabel = function(deltaX, deltaY) {

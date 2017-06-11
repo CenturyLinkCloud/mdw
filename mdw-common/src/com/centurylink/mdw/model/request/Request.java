@@ -20,11 +20,14 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.util.StringHelper;
 
 public class Request implements Jsonable {
+
+    public static final String REQUEST_ID = "request-id";
+    public static final String TRANSACTION_ID = "transaction-id";
 
     // this is the document id
     private Long id = 0L;
@@ -150,7 +153,7 @@ public class Request implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (id > 0)
             json.put("id", id);
         if (created != null)

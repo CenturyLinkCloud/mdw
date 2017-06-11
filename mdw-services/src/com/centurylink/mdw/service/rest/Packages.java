@@ -29,10 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.JsonExportable;
-import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.common.service.RawJson;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -42,7 +39,11 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.Download;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Mdw;
+import com.centurylink.mdw.model.RawJson;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
@@ -50,7 +51,7 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -112,10 +113,10 @@ public class Packages extends JsonRestService implements JsonExportable {
                       extraPackages.add(archiveDir);
                 }
                 if (extraPackages.isEmpty()) {
-                    return new JSONObject();
+                    return new JsonObject();
                 }
                 else {
-                    FileHelper.createZipFileWith(pkgDir, zipFile, extraPackages);
+                    ZipHelper.zipWith(pkgDir, zipFile, extraPackages);
                     String url = webToolsUrl + "/system/download?deleteAfterDownload=true&filepath=" + zipFile.getPath().replace('\\', '/');
                     Download download = new Download(url);
                     download.setFile(zipFile.getName());
@@ -154,7 +155,7 @@ public class Packages extends JsonRestService implements JsonExportable {
                     packages.add(pkg);
                 }
 
-                JSONObject json = new JSONObject(new ImporterExporterJson().exportPackages(packages));
+                JSONObject json = new JsonObject(new ImporterExporterJson().exportPackages(packages));
                 Jsonable mdw = new Mdw();
                 json.put(mdw.getJsonName(), mdw.getJson());
                 return json;

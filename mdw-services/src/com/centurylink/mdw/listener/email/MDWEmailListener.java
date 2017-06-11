@@ -34,7 +34,7 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
-import org.bouncycastle.util.encoders.Base64;
+import org.apache.commons.codec.binary.Base64;
 
 import com.centurylink.mdw.bpm.Attachment;
 import com.centurylink.mdw.bpm.MessageDocument;
@@ -70,7 +70,6 @@ public class MDWEmailListener {
             throw new ListenerException("Exception in MDWEmailListener " + ex.getMessage());
         }
     }
-
 
     protected String createEmailXml(Message message) throws Exception {
         MessageDocument  emailDoc = MessageDocument.Factory.newInstance();
@@ -161,7 +160,7 @@ public class MDWEmailListener {
                 String contentType = part.getContentType();
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
                 if (saveAttachment(input, output)) {
-                    byte[] encodedByte = Base64.encode(output.toByteArray());
+                    byte[] encodedByte = new Base64().encode(output.toByteArray());
                     if (encodedByte != null && fileName != null && contentType != null) {
                         attachmentMap.put(fileName+"~"+contentType, encodedByte);
                     }

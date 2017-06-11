@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
@@ -341,7 +341,7 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
      * Serialized as an object, so name is not included.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("type", variableType);
         json.put("category", getCategory());
         if (variableReferredAs != null && !variableReferredAs.isEmpty())

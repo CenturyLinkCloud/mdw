@@ -27,7 +27,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.constant.PaaSConstants;
 import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.CryptUtil;
+import com.centurylink.mdw.util.MiniEncrypter;
 
 public class DefaultPropertyManager extends PropertyManager {
 
@@ -217,7 +217,7 @@ public class DefaultPropertyManager extends PropertyManager {
             }
             for (String nameOfEncrypted : namesOfEncrypted.keySet()) {
                 String encValue = (String) properties.remove(nameOfEncrypted);
-                String value = CryptUtil.decrypt(encValue);
+                String value = MiniEncrypter.decrypt(encValue);
                 properties.setProperty(namesOfEncrypted.get(nameOfEncrypted), value);
             }
         }

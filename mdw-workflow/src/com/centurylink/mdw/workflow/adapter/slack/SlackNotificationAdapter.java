@@ -26,6 +26,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -103,7 +104,7 @@ public class SlackNotificationAdapter extends RestServiceAdapter {
      * @throws PropertyException
      */
     public String buildSlackRequest(String message, String link) throws PropertyException {
-        JSONObject slackRequest = new JSONObject();
+        JSONObject slackRequest = new JsonObject();
         String env = ApplicationContext.getRuntimeEnvironment().toUpperCase();
         String slackUser = getAttributeValueSmart(SLACK_USERNAME_ATTRIBUTE);
         try {

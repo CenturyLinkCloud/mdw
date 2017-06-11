@@ -10,6 +10,9 @@
             (<a href="{{pkgList.vcsRemoteUrl}}">{{pkgList.vcsBranch}}</a>)
           </span>
           <span class="mdw-heading-sub" ng-if="pkgList.vcsBranch && !pkgList.vcsRemoteUrl">({{pkgList.vcsBranch}})</span>
+          <span class="mdw-heading-sub-sub" ng-if="pkgList.hasArchive && authUser.hasRole('Site Admin')">
+            <a href="#/assets/archive">Archive</a>
+          </span>
         </div>
         <!-- actions currently only supported for Git  -->
         <div class="mdw-heading-actions">
@@ -20,6 +23,9 @@
           <button type="button" class="btn btn-primary mdw-btn" ng-disabled="pkgList.getSelected().length > 0" ng-if="authUser.hasRole('Process Design')"
             uib-popover-template="'assets/importMenu.html'" popover-placement="left" pop-click>
             <span class="glyphicon glyphicon-download-alt" style="transform:rotate(180deg)"></span> Import
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Design')" ng-click="createPackage()">
+            <span class="glyphicon glyphicon-plus"></span> New
           </button>
         </div>
       </div>

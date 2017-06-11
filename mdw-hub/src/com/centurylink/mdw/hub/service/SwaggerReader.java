@@ -39,6 +39,7 @@ import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
 import io.swagger.servlet.ReaderContext;
 import io.swagger.servlet.extensions.ReaderExtension;
 import io.swagger.util.BaseReaderUtils;
@@ -135,6 +136,31 @@ public class SwaggerReader {
 
                 final Map<String, String> regexMap = new HashMap<String, String>();
                 final String parsedPath = PathUtils.parsePath(operationPath, regexMap);
+
+                if (parsedPath != null) {
+                    // check for curly path params
+                    for (String seg : parsedPath.split("/")) {
+                        if (seg.startsWith("{") && seg.endsWith("}")) {
+                            String segName = seg.substring(1, seg.length() - 1);
+                            boolean declared = false;
+                            for (Parameter opParam : operation.getParameters()) {
+                                if ("path".equals(opParam.getIn()) && segName.equals(opParam.getName())) {
+                                    declared = true;
+                                    break;
+                                }
+                            }
+                            if (!declared) {
+                                // add it for free
+                                PathParameter pathParam = new PathParameter();
+                                pathParam.setName(segName);
+                                pathParam.setRequired(false);
+                                pathParam.setDefaultValue("");
+                                operation.parameter(pathParam);
+                            }
+                        }
+                    }
+                }
+
 
                 Path path = swagger.getPath(parsedPath);
                 if (path == null) {

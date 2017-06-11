@@ -23,8 +23,8 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonArray;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;

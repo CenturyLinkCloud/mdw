@@ -24,13 +24,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.hub.service.SwaggerReader;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.service.api.MdwScanner;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -88,14 +89,30 @@ public class ServiceApiServlet extends HttpServlet {
                             logger.debug("  - " + c);
                     }
                     SwaggerReader.read(swagger, classes);
+                    // force same scheme as MDWHub
+                    // TODO: move this determination to swagger-ui customization when mature
+                    swagger.getSchemes().clear();
+                    String hubUrl = ApplicationContext.getMdwHubUrl();
+                    if (hubUrl.startsWith("https://"))
+                        swagger.getSchemes().add(Scheme.HTTPS);
+                    else if (hubUrl.startsWith("http://"))
+                        swagger.getSchemes().add(Scheme.HTTP);
+                    else
+                        swagger.getSchemes().add(Scheme.forValue(request.getScheme()));
                 }
 
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");
+                    JsonObject swaggerJson = new JsonObject(Json.mapper().writeValueAsString(swagger));
+                    // sort definitions and paths
+                    if (swaggerJson.has("definitions"))
+                        swaggerJson.put("definitions", new JsonObject(swaggerJson.getJSONObject("definitions").toString()));
+                    if (swaggerJson.has("paths"))
+                        swaggerJson.put("paths", new JsonObject(swaggerJson.getJSONObject("paths").toString()));
                     if (scanner.getPrettyPrint())
-                        response.getWriter().println(new JSONObject(Json.mapper().writeValueAsString(swagger)).toString(2));
+                        response.getWriter().println(swaggerJson.toString(2));
                     else
-                        response.getWriter().println(new JSONObject(Json.mapper().writeValueAsString(swagger)).toString());
+                        response.getWriter().println(swaggerJson.toString());
                 }
                 else if (ext.equals(YAML_EXT)) {
                     response.setContentType("text/yaml");

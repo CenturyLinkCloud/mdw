@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.services.RequestServices;
@@ -41,7 +42,7 @@ public class ExternalMessageInstance implements JsonService {
         Long requestId = eventInstId == null ? null : new Long(eventInstId);
 
         try {
-            JSONObject json = new JSONObject();
+            JSONObject json = new JsonObject();
             RequestServices requestServices = ServiceLocator.getRequestServices();
             Query query = new Query();
             if (requestId == null) {

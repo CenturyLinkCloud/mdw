@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
@@ -58,7 +58,7 @@ public class PackageAssets implements Jsonable, Comparable<PackageAssets> {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject pkg = new JSONObject();
+        JSONObject pkg = create();
         pkg.put("id", packageDir.getId());
         pkg.put("name", packageDir.getPackageName());
         pkg.put("version", packageDir.getPackageVersion());

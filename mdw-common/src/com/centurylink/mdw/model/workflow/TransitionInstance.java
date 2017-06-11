@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 
 public class TransitionInstance implements Jsonable, Serializable {
 
@@ -113,7 +113,7 @@ public class TransitionInstance implements Jsonable, Serializable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         if (transitionInstanceID != null)
             json.put("id", transitionInstanceID);
         if (transitionID != null)

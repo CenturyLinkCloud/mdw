@@ -35,6 +35,7 @@ constantsMod.constant('DOCUMENT_TYPES', {
   'javax.xml.bind.JAXBElement': 'xml',
   'org.apache.camel.component.cxf.CxfPayload': 'xml',
   'com.centurylink.mdw.common.service.Jsonable': 'json',
+  'com.centurylink.mdw.model.Jsonable': 'json',
   'org.yaml.snakeyaml.Yaml': 'yaml',
   'java.lang.Exception': 'json',
   'java.util.List<Integer>': 'json',
@@ -52,3 +53,31 @@ constantsMod.constant('WORKFLOW_STATUSES', [
    {status: 'Hold', color: 'cyan'},
    {status: 'Waiting', color: 'yellow'}
  ]);
+
+constantsMod.constant('ASSET_TYPES', {
+  Camel: 'camel',
+  CSS: 'css',
+  CSV: 'csv',
+  Drools: 'drl',
+  Excel: 'xlsx',
+  GIF: 'gif',
+  Groovy: 'groovy',
+  HTML: 'html',
+  Java: 'java',
+  JavaScript: 'js',
+  Jar: 'jar',
+  JPG: 'jpg',
+  JSON: 'json',
+  Markdown: 'md',  
+  PNG: 'png',
+  Process: 'proc',
+  Task: 'task',
+  Text: 'txt',
+  Test: 'test',
+  Velocity: 'vsl',
+  WSDL: 'wsdl',
+  XML: 'xml',
+  XSD: 'xsd',
+  XSL: 'xsl',
+  YAML: 'yaml'
+});

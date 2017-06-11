@@ -20,16 +20,16 @@ import org.json.JSONObject;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public interface Jsonable {
-
-    static final String GENERIC_ARRAY = "genericArray";
+/**
+ * @deprecated
+ * Use {@link com.centurylink.mdw.model.Jsonable}
+ * which provides auto-serialization.
+ */
+@Deprecated
+public interface Jsonable extends com.centurylink.mdw.model.Jsonable {
 
     @ApiModelProperty(hidden=true)
-    public JSONObject getJson() throws JSONException;
-
-    /**
-     * May be pluralized by adding 's'.
-     */
-    @ApiModelProperty(hidden=true)
-    public String getJsonName();
+    default JSONObject getJson() throws JSONException {
+        return getJson();
+    }
 }

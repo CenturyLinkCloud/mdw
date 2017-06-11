@@ -57,11 +57,19 @@ public class CloudClassLoader extends ClassLoader {
 
     private File assetRoot;
 
-    private List<Asset> jarAssets;
+    private static List<Asset> cachedJarAssets = null;
+    private List<Asset> jarAssets = null;
     public List<Asset> getJarAssets() {
+        List<Asset> newJarAssets = AssetCache.getJarAssets();
+
+        if (cachedJarAssets != newJarAssets) {
+            cachedJarAssets = newJarAssets;
+            jarAssets = null;
+        }
+
         if (jarAssets == null) {
             jarAssets = new ArrayList<Asset>();
-            jarAssets.addAll(AssetCache.getAssets(Asset.JAR));
+            jarAssets.addAll(newJarAssets);
             // same-package jars go first
             Collections.sort(jarAssets, new Comparator<Asset>() {
                 public int compare(Asset rs1, Asset rs2) {
@@ -75,6 +83,7 @@ public class CloudClassLoader extends ClassLoader {
                 }
             });
         }
+
         return jarAssets;
     }
 
@@ -238,7 +247,9 @@ public class CloudClassLoader extends ClassLoader {
         byte[] b = null;
         if (assetRoot != null) {
             for (Asset jarAsset : getJarAssets()) {
-                File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
+                File jarFile = jarAsset.getRawFile();
+                if (jarFile == null)
+                    jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                 b = findInJarFile(jarFile, path);
                 if (b != null)
                     return b;
@@ -320,12 +331,14 @@ public class CloudClassLoader extends ClassLoader {
         }
         if (result == null) {
             if (assetRoot != null) {
+                String sep = File.separator.equals("/") ? "" : "/";
                 for (Asset jarAsset : getJarAssets()) {
-                    File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
-                    try {
-                        byte[] b = findInJarFile(jarFile, name);
-                        if (b != null) {
-                            return new URL("jar:file:/" + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
+                    File jarFile = jarAsset.getRawFile();
+                    if (jarFile == null)
+                        jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
+                    try (JarFile jf = new JarFile(jarFile)) {
+                        if (jf.getEntry(name) != null) {
+                            return new URL("jar:file:" + sep + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
                         }
                     }
                     catch (Exception ex) {
@@ -346,7 +359,9 @@ public class CloudClassLoader extends ClassLoader {
         if (assetRoot != null) {
             String sep = File.separator.equals("/") ? "" : "/";
             for (Asset jarAsset : getJarAssets()) {
-                File jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
+                File jarFile = jarAsset.getRawFile();
+                if (jarFile == null)
+                    jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                 try (JarFile jf = new JarFile(jarFile)) {
                     if (jf.getEntry(name) != null) {
                         if (resUrls == null)

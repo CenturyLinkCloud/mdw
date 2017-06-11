@@ -45,12 +45,15 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -64,7 +67,7 @@ public class AssetServicesImpl implements AssetServices {
         return assetRoot;
     }
     private File archiveDir;
-    private File getArchiveDir() {
+    public File getArchiveDir() {
         return archiveDir;
     }
 
@@ -262,6 +265,42 @@ public class AssetServicesImpl implements AssetServices {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
+
+    @Override
+    public void createPackage(String packageName) throws ServiceException {
+        File dir = new File(assetRoot + "/" + packageName.replace('.', '/'));
+        File metaDir = new File(dir + "/.mdw");
+        if (metaDir.exists())
+            throw new ServiceException(ServiceException.CONFLICT, "Package meta dir already exists: " + metaDir.getAbsolutePath());
+        if (!metaDir.mkdirs())
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot create meta dir: " + metaDir.getAbsolutePath());
+
+        Package pkg = new Package();
+        pkg.setSchemaVersion(DataAccess.currentSchemaVersion);
+        pkg.setVersion(1);
+        try {
+            JSONObject json = pkg.getJson();
+            json.put("name", packageName);
+            FileHelper.writeToFile(new ByteArrayInputStream(json.toString(2).getBytes()), new File(metaDir + "/package.json"));
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deletePackage(String packageName) throws ServiceException {
+        File dir = new File(assetRoot + "/" + packageName.replace('.', '/'));
+        if (!dir.exists() || !(new File(dir + "/.mdw")).exists())
+            throw new ServiceException(ServiceException.NOT_FOUND, "Package dir not found: " + dir);
+        try {
+            FileHelper.deleteRecursive(dir);
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
     /**
      * Finds the next level of sibling PackageDirs under a set of non-package dirs.
      */
@@ -437,6 +476,63 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    /**
+     * Create an unversioned (version 0) asset on the file system.
+     */
+    public void createAsset(String path) throws ServiceException {
+        createAsset(path, new byte[0]);
+    }
+
+    /**
+     * Create an unversioned (version 0) asset on the file system.
+     */
+    public void createAsset(String path, byte[] content) throws ServiceException {
+        int lastSlash = path.lastIndexOf('/');
+        File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
+        try {
+            FileHelper.writeToFile(new ByteArrayInputStream(content), assetFile);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
+    public void deleteAsset(String path) throws ServiceException {
+        int lastSlash = path.lastIndexOf('/');
+        File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
+        if (!assetFile.isFile())
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset file not found: " + assetFile);
+        try {
+            FileHelper.deleteRecursive(assetFile);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<ArchiveDir> getArchiveDirs() throws ServiceException {
+        List<ArchiveDir> archiveDirs = new ArrayList<>();
+        if (getArchiveDir().isDirectory()) {
+            for (File archiveDir : getArchiveDir().listFiles()) {
+                archiveDirs.add(new ArchiveDir(archiveDir));
+            }
+        }
+        return archiveDirs;
+    }
+
+    @Override
+    public void deleteArchive() throws ServiceException {
+        if (getArchiveDir().exists()) {
+            try {
+                FileHelper.deleteRecursive(getArchiveDir());
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
+        }
+    }
+
     private void addVersionControlInfo(AssetInfo asset) throws ServiceException {
         CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {
@@ -477,7 +573,7 @@ public class AssetServicesImpl implements AssetServices {
                 String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(getGitBranch(), pkgMetaFilePath);
                 if (metaContent != null) {
                     if (metaContent.trim().startsWith("{")) {
-                        Package pkgVO = new Package(new JSONObject(metaContent));
+                        Package pkgVO = new Package(new JsonObject(metaContent));
                         pkgDir.setPackageVersion(pkgVO.getVersionString());
                     }
                     else {
@@ -497,7 +593,7 @@ public class AssetServicesImpl implements AssetServices {
         AssetInfo asset = null;
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
         if (gitVc != null && getGitUser() != null) {
-            String path = getAssetPath() + "/" + pkgDir.getPackageName() + "/" + assetName;
+            String path = getAssetPath() + "/" + pkgDir.getPackageName().replace('.', '/') + "/" + assetName;
             GitDiffs diffs = gitVc.getDiffs(getGitBranch(), path);
             if (DiffType.MISSING.equals(diffs.getDiffType(path))) {
                 AssetFile assetFile = pkgDir.getAssetFile(new File(path));
@@ -563,4 +659,5 @@ public class AssetServicesImpl implements AssetServices {
         public void clear() {
         }
     }
+
 }

@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
@@ -35,12 +36,11 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.AuthConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.service.ApplicationSummaryDocument;
 import com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary;
 import com.centurylink.mdw.service.DbInfo;
 import com.centurylink.mdw.service.Repository;
-import com.centurylink.mdw.util.ResourceFormatter;
-import com.centurylink.mdw.util.ResourceFormatter.Format;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -49,9 +49,8 @@ public class AppSummary implements XmlService, JsonService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public String getXml(XmlObject request, Map<String,String> metaInfo) throws ServiceException {
-        ResourceFormatter formatter = new ResourceFormatter(Format.xml, 2);
         try {
-            return formatter.format(getAppSummaryDoc());
+            return getAppSummaryDoc().xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2));
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -59,9 +58,8 @@ public class AppSummary implements XmlService, JsonService {
     }
 
     public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
-        ResourceFormatter formatter = new ResourceFormatter(Format.json, 2);
         try {
-            return formatter.format(getAppSummaryDoc());
+            return getAppSummaryJson().toString(2);
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -75,6 +73,67 @@ public class AppSummary implements XmlService, JsonService {
             return getXml((XmlObject)requestObj, metaInfo);
     }
 
+
+    public JSONObject getAppSummaryJson() throws SQLException {
+        JSONObject appSumJson = new JsonObject();
+
+        appSumJson.put("ApplicationName", ApplicationContext.getApplicationName());
+        appSumJson.put("Version", ApplicationContext.getApplicationVersion());
+        appSumJson.put("MdwVersion", ApplicationContext.getMdwVersion());
+        if (ApplicationContext.getMdwBuildTimestamp() != null)
+            appSumJson.put("MdwBuild", ApplicationContext.getMdwBuildTimestamp());
+        if (ApplicationContext.getMdwHubUrl() != null)
+            appSumJson.put("MdwHubUrl", ApplicationContext.getMdwHubUrl());
+        if (ApplicationContext.getServicesUrl() != null)
+            appSumJson.put("ServicesUrl", ApplicationContext.getServicesUrl());
+        if (AuthConstants.getOAuthTokenLocation() != null)
+            appSumJson.put("OAuthTokenUrl", AuthConstants.getOAuthTokenLocation());
+        appSumJson.put("Container", ApplicationContext.getContainerName());
+        Connection conn = null;
+        try {
+            DataSource ds = ApplicationContext.getMdwDataSource();
+            conn = ds.getConnection();
+            DatabaseMetaData metaData = conn.getMetaData();
+            JSONObject dbInfoJson = new JsonObject();
+            dbInfoJson.put("jdbcUrl", metaData.getURL());
+            if ("MySQL".equals(metaData.getDatabaseProductName()) && metaData.getUserName().contains("@"))
+                dbInfoJson.put("user", metaData.getUserName().substring(0, metaData.getUserName().indexOf("@")));
+            else
+                dbInfoJson.put("user", metaData.getUserName());
+            appSumJson.put("Database", metaData.getDatabaseProductName());
+            appSumJson.put("DbInfo", dbInfoJson);
+        }
+        finally {
+            if (conn != null)
+                conn.close();
+        }
+
+        String gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+        if (gitRemoteUrl != null) {
+            JSONObject repoJson = new JsonObject();
+            repoJson.put("provider", "Git");
+            repoJson.put("url", gitRemoteUrl);
+            String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+            if (branch != null)
+                repoJson.put("branch", branch);
+            try {
+                // get the current head commit
+                String localPath = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
+                if (localPath != null) {
+                    VersionControlGit vcGit = new VersionControlGit();
+                    vcGit.connect(gitRemoteUrl, null, null, new File(localPath));
+                    repoJson.put("commit", vcGit.getCommit());
+                }
+            }
+            catch (IOException ex) {
+                logger.severeException(ex.getMessage(),  ex);
+            }
+            appSumJson.put("Repository", repoJson);
+        }
+        JSONObject json = new JsonObject();
+        json.put("ApplicationSummary", appSumJson);
+        return json;
+    }
 
     public ApplicationSummaryDocument getAppSummaryDoc() throws SQLException {
         ApplicationSummaryDocument applicationSummaryDocument = ApplicationSummaryDocument.Factory.newInstance();

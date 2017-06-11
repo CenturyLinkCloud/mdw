@@ -1,6 +1,7 @@
 - title: Introduction
   docs:
   - mdw-intro
+  - mdw-overview
   - differentiators
   - features-guide
   - mdw-components
@@ -11,9 +12,9 @@
 
 - title: Guides
   docs:
-  - guides/TomcatCookbook
+  - guides/SetupGuideForTomcat
+  - guides/SetupGuideForCloudFoundry
   - guides/MicroservicesCookbook
-  - guides/CloudFoundryCookbook
   
 - title: Documentation
   docs:
@@ -23,11 +24,9 @@
 - title: Designer
   docs:
   - designer/user-guide
-  - designer/plugin-upgrade
 
 - title: Development
   docs:
-  - coding-standards
   - development/built-in-activities
   - development/built-in-variable-types
 

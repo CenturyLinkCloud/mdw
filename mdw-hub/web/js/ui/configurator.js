@@ -2,15 +2,16 @@
 
 var configMod = angular.module('mdwConfigurator', ['mdw']);
 
-configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups', 'Compatibility', 'DOCUMENT_TYPES',
-                  function($http, mdw, util, Assets, Workgroups, Compatibility, DOCUMENT_TYPES) {
+configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets', 'Workgroups', 'Compatibility', 'DOCUMENT_TYPES',
+                  function($injector, $http, mdw, util, Assets, Workgroups, Compatibility, DOCUMENT_TYPES) {
   
   var Configurator = function(tab, workflowType, workflowObj, diagramObj, template) {
     this.tab = tab;
     this.workflowType = workflowType;
     this.workflowObj = workflowObj;
     this.diagramObj = diagramObj;
-    this.process = diagramObj.diagram.process;
+    if (diagramObj.diagram.process)
+      this.process = diagramObj.diagram.process;
     this.template = template;
   };
   
@@ -28,11 +29,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     var labelWidth = 10;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
+      widget.configurator = this;
+      
+      if (!this.diagramObj.diagram.editable)
+        widget.readonly = true;
       
       // label
       if (!widget.label)
         widget.label = widget.name;
-      if (widget.label.length > labelWidth)
+      if (widget.label.length > labelWidth && widget.type != 'note')
         labelWidth = widget.label.length;
 
       // options source
@@ -49,14 +54,23 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       
       // value
       if (this.template.category === 'object') {
-        widget.value = this.workflowObj[widget.name];
+        if (widget.converter) {
+          var converter = widget.converter;
+          if (typeof converter !== 'object')
+            converter = $injector.get(converter);
+          widget.value = converter.toWidgetValue(widget, this.workflowObj[widget.name]);
+        }
+        else {
+          widget.value = this.workflowObj[widget.name];
+        }
       }
-      else if (this.template.category === 'attribute') {
-        widget.value = this.workflowObj.attributes[widget.name];
-      }
-      else if (this.template.category === 'process') {
+      else if (this.template.category === 'attributes') {
         if (widget.name === '_isService')
           widget.value = this.workflowObj.attributes.PROCESS_VISIBILITY === 'SERVICE' ? 'true' : 'false';
+        else if (widget.name === '_linkType')
+          widget.value = this.diagramObj.getDisplay().type;
+        else if (widget.name === '_controlPoints')
+          widget.value = this.diagramObj.getDisplay().xs.length;
         else
           widget.value = this.workflowObj.attributes[widget.name];
       }
@@ -95,19 +109,33 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
         this.initTableValues(widget);
       }
       else if (widget.type === 'editor') {
-        editCallback(widget);
+        editCallback(widget); // callback should check if editable
+      }
+      else if (widget.type === 'datetime') {
+        if (widget.value) {
+          widget.units = this.workflowObj.attributes[widget.name + '_UNITS'];
+          if (!widget.units)
+            widget.units = 'Hours';
+          if (widget.units == 'Minutes')
+            widget.value = parseInt(widget.value) / 60;
+          else if (widget.units == 'Hours')
+            widget.value = parseInt(widget.value) / 3600;
+          else if (widget.units == 'Days')
+            widget.value = parseInt(widget.value) / 86400;
+        }
       }
       
       // width && height
       widget.width = widget.vw;
       if (!widget.width)
-        widget.width = 400;
-      widget.height = 30;
-      if (widget.multiline) {
-        widget.rows = widget.rows ? widget.rows : 8;
-        widget.height = widget.rows * 17.5 + 10;
+        widget.width = 450;
+      if (widget.type != 'mapping' && widget.type != 'picklist' && widget.type != 'table') {
+        widget.height = 30;
+        if (widget.multiline) {
+          widget.rows = widget.rows ? widget.rows : 8;
+          widget.height = widget.rows * 17.5 + 10;
+        }
       }
-      
     }
     
     // padding
@@ -199,7 +227,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       tblWidget.value = [];
       tblWidget.value.push([]);
       tblWidget.widgets.forEach(function(widget) {
-        if (tblWidget.source !== 'ProcessVersion')
+        if (widget.source !== 'ProcessVersion' && widget.source !== 'AssetVersion')
           tblWidget.value[0].push('');
       });
     }
@@ -207,20 +235,27 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       var widgetRow = [];
       for (let j = 0; j < tblWidget.widgets.length; j++) {
         var widget = tblWidget.widgets[j];
-        if (widget.source !== 'ProcessVersion') {
+        if (widget.source !== 'ProcessVersion' && widget.source !== 'AssetVersion') {
           var rowWidget = {
             type: widget.type,
             value: tblWidget.value[i][j],
-            parent: tblWidget
+            parent: tblWidget,
+            configurator: this
           };
-          if (!widget.value && widget.default)
+          if (!rowWidget.value && widget.default)
             rowWidget.value = widget.default;
           if (widget.readonly)
             rowWidget.readonly = widget.readonly;
+          else if (tblWidget.readonly)
+            rowWidget.readonly = tblWidget.readonly;          
           if (widget.type === 'asset') {
             rowWidget.source = widget.source;
             assetWidgets.push(rowWidget);
           }
+          if (widget.options)
+            rowWidget.options = widget.options;
+          if (widget.vw)
+            rowWidget.width = widget.vw;
           widgetRow.push(rowWidget);
         }
       }
@@ -283,15 +318,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   };
   
   Configurator.prototype.filterWidgets = function() {
-    if (this.template.category === 'object' || this.template.category === 'attribute')
+    if (this.template.category === 'object' || this.template.category === 'attributes')
       return;
     
     var widgets = [];
     var tab = this.tab;
     this.template.pagelet.widgets.forEach(function(widget) {
       if (!widget.hidden) {
-        // TODO unsupported sections: Bindings, CC Recipients 
-        if ((widget.section && tab === widget.section) || ((!widget.section || widget.section == 'Recipients') && tab == 'Design'))
+        // TODO unsupported sections: Bindings (LdapAdapter.impl and OAuthServiceAdapter.impl) 
+        if ((widget.section && tab === widget.section) || (!widget.section && (tab == 'Design' || tab == 'General')))
           widgets.push(widget);
       }
     });
@@ -303,7 +338,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
       if (widget.type == 'link' && widget.url && widget.url.startsWith('/MDWWeb/doc') && 
-          ((!widget.section && this.tab == 'Design') || this.tab === widget.section)) {
+          ((!widget.section && (this.tab == 'Design' || this.tab == 'General')) || this.tab === widget.section)) {
         helpWidgetIndex = i;
         break;
       }
@@ -323,17 +358,31 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
   };
   
   Configurator.prototype.valueChanged = function(widget, evt) {
-    if (this.template.category === 'object') {
-      this.workflowObj[widget.name] = widget.value;
+    if (this.template.category === 'object' && !widget.parent && widget.type !== 'table') {
+      if (widget.converter) {
+        let converter = widget.converter;
+        if (typeof converter !== 'object')
+          converter = $injector.get(converter);
+        this.workflowObj[widget.name] = converter.fromWidgetValue(widget, widget.value);
+      }
+      else {
+        this.workflowObj[widget.name] = widget.value;
+      }
     }
-    else if (this.template.category === 'attribute') {
-      this.workflowObj.attributes[widget.name] = widget.value;
-    }
-    else if (this.template.category === 'process') {
-      if (widget.name === '_isService')
+    else if (this.template.category === 'attributes') {
+      if (widget.name === '_isService') {
         this.workflowObj.attributes.PROCESS_VISIBILITY = widget.value === 'true' ? 'SERVICE' : 'PUBLIC';
-      else
+      }
+      else if (widget.name === '_linkType') {
+        this.diagramObj.display.type = widget.value;
+        this.workflowObj.attributes.TRANSITION_DISPLAY_INFO = this.diagramObj.getAttr(this.diagramObj.display);
+      }
+      else if (widget.name === '_controlPoints') {
+        this.diagramObj.calc(widget.value);
+      }
+      else {
         this.workflowObj.attributes[widget.name] = widget.value;
+      }
     }
     else if (widget.type === 'table') {
       // only evts are handled at this level
@@ -349,7 +398,15 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           widget.value.splice(parseInt(evt.substring(4)), 1);
           this.initTableValues(widget, this.getAssetOptions(widget));
         }
-        this.workflowObj.attributes[widget.name] = JSON.stringify(this.removeEmptyRows(widget.value));        
+        if (widget.converter && this.template.category === 'object') {
+          let converter = widget.converter;
+          if (typeof converter !== 'object')
+            converter = $injector.get(converter);
+          this.workflowObj[widget.name] = converter.fromWidgetValue(widget, this.removeEmptyRows(widget.value));
+        }
+        else {
+          this.workflowObj.attributes[widget.name] = JSON.stringify(this.removeEmptyRows(widget.value));
+        }
       }
     }
     else if (widget.parent) {
@@ -361,7 +418,7 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
           if (widgetRow[0].value) {
             var valueRow = [];
             for (let j = 0; j < widgetRow.length; j++) {
-              if (widgetRow[j].source === 'proc') {
+              if (widgetRow[j].source === 'proc' || widgetRow[j].type === 'asset') {
                 var assetVersion = this.getAssetVersion(widgetRow[j].value, true);
                 if (assetVersion) {
                   valueRow.push(assetVersion.asset);
@@ -370,13 +427,19 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
                 }
               }
               else {
-                valueRow.push(widgetRow[j].value);  
+                valueRow.push(widgetRow[j].value ? widgetRow[j].value : '');  
               }
             }
             tblWidget.value.push(valueRow);
           }
         }
-        this.workflowObj.attributes[tblWidget.name] = JSON.stringify(this.removeEmptyRows(tblWidget.value));
+        if (tblWidget.converter && this.template.category === 'object') {
+          let converter = $injector.get(tblWidget.converter);
+          this.workflowObj[tblWidget.name] = converter.fromWidgetValue(tblWidget, this.removeEmptyRows(tblWidget.value));
+        }
+        else {
+          this.workflowObj.attributes[tblWidget.name] = JSON.stringify(this.removeEmptyRows(tblWidget.value));
+        }
       }
     }
     else if (widget.type === 'asset') {
@@ -420,12 +483,24 @@ configMod.factory('Configurator', ['$http', 'mdw', 'util', 'Assets', 'Workgroups
       }
     }
     else if (widget.type === 'editor') {
-      if (widget.value) {
+      if (widget.value)
         this.workflowObj.attributes[widget.name] = JSON.stringify(widget.value);
-      }
     }
     else {
-      this.workflowObj.attributes[widget.name] = widget.value;
+      if (widget.type === 'datetime') {
+        if (widget.value) {
+          this.workflowObj.attributes[widget.name + '_UNITS'] = widget.units;
+          if (widget.units == 'Minutes')
+            this.workflowObj.attributes[widget.name] = '' + (widget.value * 60);
+          else if (widget.units == 'Hours')
+            this.workflowObj.attributes[widget.name] = '' + (widget.value * 3600);
+          else if (widget.units == 'Days')
+            this.workflowObj.attributes[widget.name] = '' + (widget.value * 86400);
+        }
+      }
+      else {
+        this.workflowObj.attributes[widget.name] = widget.value;
+      }
     }
     return true;
   };

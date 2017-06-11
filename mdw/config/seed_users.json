@@ -1,175 +1,21 @@
-// same data as seed_users.sql
 {
   "users":  [
     {
       "name": "MDW Application",
-      "cuid": "mdwapp",
+      "id": "mdwapp",
       "attributes": {
         "emailAddress": "mdwapp@centurylink.com"
       },      
       "groups": [
-        "Common",
-        "MDW Support",
         "Developers",
         "Site Admin"
       ],
-      "Common": [
+      "roles": [
+        "User Admin",
         "Process Execution",
         "Process Design",
         "Task Execution"
-      ]
-    },
-    {
-      "name": "Donald Oakes",
-      "cuid": "dxoakes",
-      "attributes": {
-        "emailAddress": "donald.oakes@centurylink.com",
-        "phoneNumber": "303-992-9747"
-      },          
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
       ]            
-    },
-    {
-      "name": "Manoj Agrawal",
-      "cuid": "aa56486",
-      "attributes": {
-        "emailAddress": "manoj.agrawal@centurylink.com",
-        "phoneNumber": "303-992-9980"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Jack Brojde",
-      "cuid": "jbrojde",
-      "attributes": {
-        "emailAddress": "jack.brojde@centurylink.com",
-        "phoneNumber": "303-992-8497"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Morgan Sheets",
-      "cuid": "ab64967",
-      "attributes": {
-        "emailAddress": "morgan.sheets@centurylink.com",
-        "phoneNumber": "303-992-9938"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Iain bisset",
-      "cuid": "AB78953",
-      "attributes": {
-        "emailAddress": "iain.bisset@centurylink.com",
-        "phoneNumber": "719-649-5121"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Naveena Bellamkonda",
-      "cuid": "aa88955",
-      "attributes": {
-        "emailAddress": "naveena.bellamkonda@centurylink.com",
-        "phoneNumber": "9916117043"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    },
-    {
-      "name": "Vimala Gubbi Nagaraja",
-      "cuid": "ab75728",
-      "attributes": {
-        "emailAddress": "Vimala.Gubbinagaraja@centurylink.com",
-        "phoneNumber": "0000000000"
-      },      
-      "groups": [
-        "Common",
-        "MDW Support",
-        "Developers",
-        "Site Admin"
-      ],
-      "Common": [
-        "Process Execution",
-        "Process Design"
-      ],
-      "Site Admin": [
-        "User Admin"
-      ]
-    }    
+    }   
   ]
 }

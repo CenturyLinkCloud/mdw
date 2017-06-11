@@ -22,6 +22,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 
@@ -31,7 +32,7 @@ public class StringStringMapTranslator extends DocumentReferenceTranslator {
     public Object realToObject(String json) throws TranslationException {
         try {
             Map<String,String> stringMap = new HashMap<String,String>();
-            JSONObject jsonObject = new JSONObject(json);
+            JSONObject jsonObject = new JsonObject(json);
             String[] stringNames = JSONObject.getNames(jsonObject);
             if (stringNames != null) {
                 for (int i = 0; i < stringNames.length; i++) {
@@ -48,7 +49,7 @@ public class StringStringMapTranslator extends DocumentReferenceTranslator {
     @SuppressWarnings("unchecked")
     public String realToString(Object object) throws TranslationException {
         Map<String,String> stringMap = (Map<String,String>)object;
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JsonObject();
         Iterator<String> it = stringMap.keySet().iterator();
         try {
             while (it.hasNext()) {

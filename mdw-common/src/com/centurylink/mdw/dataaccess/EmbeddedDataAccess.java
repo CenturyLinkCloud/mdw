@@ -27,6 +27,7 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.container.EmbeddedDb;
 import com.centurylink.mdw.container.EmbeddedDbExtension;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.JsonUtil;
@@ -102,12 +103,15 @@ public class EmbeddedDataAccess {
             try {
                 String usersJson = JsonUtil.read("seed_users.json");
                 if (usersJson != null) {
-                    logger.info("Loading seed users into " + MDW_EMBEDDED_DB_CLASS);
-                    JSONObject usersObj = new JSONObject(usersJson);
+                    logger.info("Loading seed users into " + MDW_EMBEDDED_DB_CLASS + ":");
+                    JSONObject usersObj = new JsonObject(usersJson);
                     if (usersObj.has("users")) {
                         JSONArray usersArr = usersObj.getJSONArray("users");
-                        for (int i = 0; i < usersArr.length(); i++)
-                            embeddedDb.insertUser(new User(usersArr.getJSONObject(i)));
+                        for (int i = 0; i < usersArr.length(); i++) {
+                            User user = new User(usersArr.getJSONObject(i));
+                            logger.info("  creating user: '" + user.getCuid() + "'");
+                            embeddedDb.insertUser(user);
+                        }
                     }
                 }
             }

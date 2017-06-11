@@ -6,12 +6,18 @@ compatMod.factory('Compatibility', ['mdw', 'util',
                   function(mdw, util) {
   return {
     getArray: function(value) {
+      if (value.constructor === Array)
+        return value; // already an array
+      
       if (value.startsWith('['))
         return JSON.parse(value);
       else
         return this.safeSplit(value, '#');
     },
     getMap: function(value) {
+      if (typeof value === 'object')
+        return value; // already an object
+      
       if (value.startsWith('{')) {
         return JSON.parse(value);
       }
@@ -25,6 +31,9 @@ compatMod.factory('Compatibility', ['mdw', 'util',
       }
     },
     getTable: function(value) {
+      if (value.constructor === Array)
+        return value; // already an array
+      
       if (value.startsWith('[')) {
         return JSON.parse(value);
       }

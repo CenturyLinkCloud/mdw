@@ -19,11 +19,10 @@ activity (Note: to use a custom page you must choose the Custom Manual Task impl
 <h3>Customizing MDWHub</h3>
 The easiest way to get started overriding MDWHub is to create your own workflow package called, by convention, MDWHub.
 Then every web resource you locate under this package takes precedence over the corresponding standard resource.
-There are a number of examples of custom web assets in the mdwdemo Git repository:<br/>
-https://8.22.8.164/mdw/mdwdemo.git (user/password = mdwapp/ldap_0123).<br/>
-In the mdwdemo project the MDWHub standard resources are located under deploy/webapps/mdw, and the corresponding overrides are
-under the MDWHub, MDWHub.layout, MDWHub.images, etc workflow packages.  If you've created your own project by following the 
-<a href="http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Tutorials/MdwTomcatCookbook.html">MDW Tomcat Cookbook</a>, 
+There are a number of examples of custom web assets in the mdw-demo GitHub repository:<br/>
+https://github.com/CenturyLinkCloud/mdw-demo (user/password are not required to clone this project).<br/>
+In the mdw-demo project the MDWHub standard resources are located under deploy/webapps/mdw, and the corresponding overrides are
+under the MDWHub, MDWHub.layout, MDWHub.images, etc workflow packages.  If you've created your own project, 
 you can refer to the MDWHub standard resources under deploy/webapps/mdw.
 
 <br/><br/>
@@ -103,9 +102,9 @@ These custom resources are referenced using a special syntax in your page.  Here
 <h3>Accessing Custom Pages</h3>
 If you've configured a Custom Page on the Design tab for a Manual Task activity, then any access to the task detail will automatically be directed to your custom page.
 <br/><br/>Otherwise, custom pages can be accessed directly through a special URL format like the following:
-<pre>http://localhost:8181/MDWHub/page.jsf?pageName=myCustomPage</pre>
+<pre>http://localhost:8080/mdw/page.jsf?pageName=myCustomPage</pre>
 Pages and other resources are cached on the server, but during development you'll probably want to test your changes iteratively.  In this case you can force a refresh by appending the "refresh" parameter to your URL:
-<pre>http://localhost:8181/MDWHub/page.jsf?pageName=myCustomPage&amp;refresh=true</pre>
+<pre>http://localhost:8080/mdw/page.jsf?pageName=myCustomPage&amp;refresh=true</pre>
 In MDW Designer, if you right-click on a page in Process Explorer view, the Run... option will automatically launch the page with refresh=true.
 <br/><br/>
 <h3>Navigation Outcomes</h3>
@@ -120,7 +119,7 @@ The "toPage" parameter can be set to either a custom page or a pre-existing out-
 <h3><a id="processStartPages">Process Start Pages</h3>
 By default, MDWHub will dynamically generate a start page for each process with fields for each process input variable.
 The URL for this page is like this:
-<pre>http://localhost:8181/MDWHub/start.jsf?process=MyPackage/MyProcess</pre>
+<pre>http://localhost:8080/mdw/start.jsf?process=MyPackage/MyProcess</pre>
 The field labels and display sequence for this generic process start page can be set on the Variables tab of the process properties.
 <br/><br/>    
 Alternatively, a process can be configured to use your custom page to trigger a process instance launch.
@@ -155,13 +154,5 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class EmployeeLookupBean implements java.io.Serializable { ...</pre>
 
-In addition, for OSGi-deployed workflow applications, MDW provides a custom scope that honors your <a href="packageConfig.html">Package Configuration</a> (note the expression language syntax below):
-<pre>
-@ManagedBean(name="bundleAccessBean")
-@CustomScoped("#{mdwBundleSessionScope}")
-public class BundleAccessBean implements java.io.Serializable { ...</pre>
-This mdwBundleSessionScope behaves just like regular session scope, except that it's renewed whenever the user navigates to a process or task instance
-that's contained in a worklflow package with a different OSGi bundle association versus the currently active instance.
-This is especially useful for in-flight instances that may have been configured to associate with an older bundle version.
 </body>
 </html>

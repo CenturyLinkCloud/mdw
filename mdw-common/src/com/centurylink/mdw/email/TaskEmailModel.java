@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskState;
 import com.centurylink.mdw.model.task.TaskStates;
@@ -82,7 +83,7 @@ public class TaskEmailModel implements TemplatedEmail.Model {
     }
 
     public JSONObject toJson() throws JSONException {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JsonObject();
         jsonObject.put("taskName", getTaskName());
         jsonObject.put("taskInstanceId", getTaskInstanceId());
         jsonObject.put("masterRequestId", getMasterRequestId());

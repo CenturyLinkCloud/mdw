@@ -40,6 +40,7 @@ public class AssetCache implements PreloadableCache {
     private static Map<AssetKey,Asset> assetMap;
     private static List<Asset> allAssets;  // initially unpopulated
     private static List<Asset> latestAssets;
+    private static List<Asset> jarAssets;
 
     public AssetCache() {
 
@@ -75,6 +76,7 @@ public class AssetCache implements PreloadableCache {
         allAssets = null;
         latestAssets = null;
         assetMap = null;
+        jarAssets = null;
     }
 
     public static boolean isLoaded() {
@@ -424,6 +426,14 @@ public class AssetCache implements PreloadableCache {
         }
 
         return allAssets;
+    }
+
+    // This is used by CloudClassLoader to search all JAR file assets
+    public static synchronized List<Asset> getJarAssets()  {
+        if (jarAssets == null) {
+            jarAssets = getAssets(Asset.JAR);
+        }
+        return jarAssets;
     }
 }
 

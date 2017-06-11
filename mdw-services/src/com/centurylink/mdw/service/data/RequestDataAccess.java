@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.json.JsonWriterSettings;
-import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -37,6 +36,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestList;
@@ -89,10 +89,10 @@ public class RequestDataAccess extends CommonDataAccess {
             ResultSet rs = db.runSelect(q.toString(), null);
             while (rs.next()) {
                 ProcessInstance pi = buildProcessInstance(rs);
-                Request request = new Request(rs.getLong("d.document_id"));
-                request.setCreated(rs.getTimestamp("d.create_dt"));
-                request.setStatusCode(rs.getInt("d.status_code"));
-                request.setStatusMessage(rs.getString("d.status_message"));
+                Request request = new Request(rs.getLong("document_id"));
+                request.setCreated(rs.getTimestamp("create_dt"));
+                request.setStatusCode(rs.getInt("status_code"));
+                request.setStatusMessage(rs.getString("status_message"));
                 request.setMasterRequestId(pi.getMasterRequestId());
                 request.setProcessInstanceId(pi.getId());
                 request.setProcessId(pi.getProcessId());
@@ -100,11 +100,11 @@ public class RequestDataAccess extends CommonDataAccess {
                 request.setProcessVersion(pi.getProcessVersion());
                 request.setPackageName(pi.getPackageName());
                 request.setProcessStatus(pi.getStatus());
-                request.setProcessStart(rs.getTimestamp("pi.start_dt"));
-                request.setProcessEnd(rs.getTimestamp("pi.end_dt"));
+                request.setProcessStart(rs.getTimestamp("start_dt"));
+                request.setProcessEnd(rs.getTimestamp("end_dt"));
                 requests.add(request);
                 requestMap.put(request.getId(), request);
-                if (OwnerType.LISTENER_REQUEST.equals(rs.getString("d.owner_type")))
+                if (OwnerType.LISTENER_REQUEST.equals(rs.getString("owner_type")))
                     listenerRequestIds.add(request.getId());
             }
 
@@ -264,7 +264,7 @@ public class RequestDataAccess extends CommonDataAccess {
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                                 if (c != null) {
                                     if (c.getBoolean("isJSON", false))
-                                        request.setMeta(new JSONObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                        request.setMeta(new JsonObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
                                 }
                             }
                         }
@@ -279,7 +279,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         if (metaId > 0L) {
                             rs = db.runSelect(query, metaId);
                             if (rs.next())
-                                request.setMeta(new JSONObject(rs.getString("content")));
+                                request.setMeta(new JsonObject(rs.getString("content")));
                         }
                     }
                 }
@@ -339,7 +339,7 @@ public class RequestDataAccess extends CommonDataAccess {
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                                 if (c != null) {
                                     if (c.getBoolean("isJSON", false))
-                                        response.setMeta(new JSONObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                        response.setMeta(new JsonObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
                                 }
                             }
                         }
@@ -354,7 +354,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         if (metaId > 0L) {
                             rs = db.runSelect(query, metaId);
                             if (rs.next())
-                                response.setMeta(new JSONObject(rs.getString("content")));
+                                response.setMeta(new JsonObject(rs.getString("content")));
                         }
                     }
 
@@ -399,10 +399,10 @@ public class RequestDataAccess extends CommonDataAccess {
             List<Long> requestIds = new ArrayList<Long>();
             ResultSet rs = db.runSelect(q.toString(), null);
             while (rs.next()) {
-                Request request = new Request(rs.getLong("d.document_id"));
-                request.setCreated(rs.getTimestamp("d.create_dt"));
-                request.setStatusCode(rs.getInt("d.status_code"));
-                request.setStatusMessage(rs.getString("d.status_message"));
+                Request request = new Request(rs.getLong("document_id"));
+                request.setCreated(rs.getTimestamp("create_dt"));
+                request.setStatusCode(rs.getInt("status_code"));
+                request.setStatusMessage(rs.getString("status_message"));
                 requestMap.put(request.getId(), request);
                 requests.add(request);
                 requestIds.add(request.getId());

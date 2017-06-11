@@ -6,7 +6,7 @@ title: Designer User Guide
 
 #### Getting Started with MDW Designer
 - The MDW Designer application comes with an Eclipse plug-in for developers, which requires a setup and that information can be found in the `readme.md` file in any of the following mdw projects hosted on CenturyLink's GitHub site:
-     - [MDW Demo](https://github.com/mdw-dev/mdw-demo)
+     - [MDW Demo](https://github.com/CenturyLinkCloud/mdw-demo)
      - [Full-Blown MDW 6](https://github.com/CenturyLinkCloud/mdw)
 
 - In addition to this document, there is a great deal of online help docs and guides that are available via the menu option, HELP on the home page, as well as on Eclipse under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning, etc. 
@@ -49,10 +49,8 @@ title: Designer User Guide
  
                                            
 #### How to Use MDW Designer
-If you would like to create a new process from scratch,  refer to one of the following cookbooks hosted in CenturyLink's GitHub repository:  
+If you would like to create a new process from scratch,  refer to one of the following cookbook(s) hosted in CenturyLink's GitHub repository:  
 - [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
-- [TomcatCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/TomcatCookbook/)
-- [CloudFoundryCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/CloudFoundryCookbook/)
 
 #####  1.  Create a  Workflow Process
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 

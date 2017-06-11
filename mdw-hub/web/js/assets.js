@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$cookieStore', 'mdw', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
-                                           function($scope, $location, $http, $cookieStore, mdw, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
+                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, uiUtil, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0)
@@ -178,13 +178,32 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$http', '$coo
     );
   };
 
+  $scope.createPackage = function() {
+    uiUtil.enter('Create Package', 'New package name:', function(res) {
+      if (res) {
+        Assets.post({packageName: res}, {name: res},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('created package: ' + res);
+            $route.reload();
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Package create failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
+  
   $scope.refresh = function() {
     WorkflowCache.refresh({}, { distributed: true });
-  };  
+  };
+  
 }]);
 
-assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Assets', 'Asset', 
-                                          function($scope, $routeParams, mdw, Assets, Asset) {
+assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$location', 'mdw', 'uiUtil', 'Assets', 'Asset', 'ASSET_TYPES', 
+                                          function($scope, $routeParams, $route, $location, mdw, uiUtil, Assets, Asset, ASSET_TYPES) {
   mdw.message = null;
   $scope.pkg = Assets.get({
     packageName: $routeParams.packageName},
@@ -209,10 +228,62 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', 'mdw', 'Asse
         mdw.messages = error.data.status.message;
     }    
   );
+  
+  $scope.getAssetTypes = function() {
+    return ASSET_TYPES;    
+  };
+  
+  $scope.newAsset = function(type) {
+    var ext = ASSET_TYPES[type];
+    $scope.closePopover();
+    uiUtil.enter('Create Asset', 'New asset name (.' + ext  + '):', function(res) {
+      if (res) {
+        var assetName = res;
+        var lastDot = res.lastIndexOf('.');
+        if (lastDot <= 0)
+          assetName += '.' + ext;
+        if (!assetName.endsWith('.' + ext)) {
+          mdw.messages = 'Invalid ' + type + ' asset name: ' + assetName;
+        }
+        else {
+          Assets.post({packageName: $routeParams.packageName, assetName: assetName}, {name: assetName},
+            function(data) {
+              $scope.mdwMessages = null;
+              console.log('created asset: ' + $routeParams.packageName + '/' + assetName);
+              $route.reload();
+            },
+            function(error) {
+              if (error.data.status)
+                $scope.mdwMessages = 'Asset create failed: ' + error.data.status.message;
+            }
+          ); 
+        }
+      }
+    });
+  };
+  
+  $scope.deletePackage = function() {
+    var msg = 'Delete: ' + $scope.pkg.name + '?  All its assets will be deleted.';
+    uiUtil.confirm('Confirm Delete Package', msg, function(res) {
+      if (res) {
+        Assets.del({packageName: $scope.pkg.name},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('deleted package: ' + $scope.pkg.name);
+            $location.path('/packages');
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Package delete failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 
-                                       function($scope, $routeParams, mdw, util, Assets, Asset) {
+assetMod.controller('AssetController', ['$scope', '$routeParams', '$location', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 
+                                       function($scope, $routeParams, $location, mdw, util, uiUtil, Assets, Asset) {
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
@@ -237,9 +308,11 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
               assetName: $scope.asset.name
             },
             function(assetData) {
-              $scope.asset.content = assetData.rawResponse.removeCrs();
-              $scope.asset.lineNums = $scope.asset.content.lineNumbers();
-              // TODO process image
+              if (assetData.rawResponse) {
+                $scope.asset.content = assetData.rawResponse.removeCrs();
+                $scope.asset.lineNums = $scope.asset.content.lineNumbers();
+                // TODO process image
+              }
             }
           );
         }
@@ -258,12 +331,59 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', 'mdw', 'util',
       }
     }
   );
+  
+  $scope.deleteAsset = function() {
+    var msg = 'Delete: ' + $scope.asset.name + '?';
+    uiUtil.confirm('Confirm Delete', msg, function(res) {
+      if (res) {
+        Assets.del({packageName: $scope.packageName, assetName: $scope.asset.name},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('deleted asset: ' + $scope.packageName + '/' + $scope.asset.name);
+            $location.path('/packages/' + $scope.packageName);
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Asset delete failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
+  
+}]);
+
+assetMod.controller('ArchiveController', ['$scope', '$route', 'mdw', 'uiUtil', 'Assets', 
+                                  function($scope, $route, mdw, uiUtil, Assets, Asset) {
+  $scope.archiveDirs = Assets.get({archiveDirs: true});
+  
+  $scope.deleteArchive = function() {
+    var msg = 'Proceed with delete?\nArchive cannot be recovered!';
+    uiUtil.confirm('Confirm Archive Delete', msg, function(res) {
+      if (res) {
+        Assets.del({packageName: 'Archive'},
+          function(data) {
+            $scope.mdwMessages = null;
+            console.log('deleted asset archive');
+            $route.reload();
+          },
+          function(error) {
+            if (error.data.status)
+              $scope.mdwMessages = 'Archive delete failed: ' + error.data.status.message;
+          }
+        ); 
+      }
+    });
+  };
+  
 }]);
 
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false },
-    put: { method: 'PUT'}
+    put: { method: 'PUT'},
+    post: { method: 'POST'},
+    del: { method: 'DELETE'}
   });
 }]);
 

@@ -21,49 +21,10 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.activity.types.AdapterActivity;
-import com.centurylink.mdw.activity.types.EvaluatorActivity;
-import com.centurylink.mdw.activity.types.EventWaitActivity;
-import com.centurylink.mdw.activity.types.FinishActivity;
-import com.centurylink.mdw.activity.types.GeneralActivity;
-import com.centurylink.mdw.activity.types.InvokeProcessActivity;
-import com.centurylink.mdw.activity.types.RuleActivity;
-import com.centurylink.mdw.activity.types.ScriptActivity;
-import com.centurylink.mdw.activity.types.StartActivity;
-import com.centurylink.mdw.activity.types.SynchronizationActivity;
-import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.variable.Variable;
 
 public class ActivityImplementor implements Serializable, Comparable<ActivityImplementor>, Jsonable {
-
-    public static Class<?>[] baseClasses = {
-        GeneralActivity.class,
-        AdapterActivity.class,
-        EventWaitActivity.class,
-        StartActivity.class,
-        FinishActivity.class,
-        InvokeProcessActivity.class,
-        TaskActivity.class,
-        SynchronizationActivity.class,
-        ScriptActivity.class,
-        RuleActivity.class,
-        EvaluatorActivity.class
-    };
-
-    public static final String oldBaseClassPackage = "com.qwest.mdw.workflow.activity.types";
-    public static String[] oldBaseClasses = {
-        oldBaseClassPackage + ".ControlledActivity",
-        oldBaseClassPackage + ".AdapterActivity",
-        oldBaseClassPackage + ".EventWaitActivity",
-        oldBaseClassPackage + ".StartActivity",
-        oldBaseClassPackage + ".FinishActivity",
-        oldBaseClassPackage + ".InvokeProcessActivity",
-        oldBaseClassPackage + ".TaskActivity",
-        oldBaseClassPackage + ".SynchronizationActivity",
-        oldBaseClassPackage + ".ScriptActivity",
-        oldBaseClassPackage + ".RuleActivity"
-    };
 
     @Override
     public boolean equals(Object obj) {
@@ -310,7 +271,7 @@ public class ActivityImplementor implements Serializable, Comparable<ActivityImp
      * TODO: When/if implementors become full-fledged assets, we can decouple asset name from implementor class.
      */
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("implementorClass", implementorClassName);
         if (baseClassName != null)
             json.put("category", baseClassName);

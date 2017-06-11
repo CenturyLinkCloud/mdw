@@ -29,11 +29,10 @@
               <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="serviceApi.yamlContent | highlight:'yaml' | unsafe"></code></pre>
             </div>
           </uib-tab>
-          <uib-tab heading="Swagger">
+          <uib-tab heading="Swagger" select="selectSwagger()">
             <div class="mdw-inner-content">
-              <!-- src is blank until delayed load in js once yaml has been retrieved for local storage -->
-              <in-frame class="mdw-frame" src="blank.html" api="{{servicePath}}"></in-frame>
-            </div>
+              <mdw-swagger api-url="apiUrl"></mdw-swagger>
+            </div> 
           </uib-tab>
           <uib-tab heading="Samples" select="selectSample(null)">
             <div class="mdw-inner-content">

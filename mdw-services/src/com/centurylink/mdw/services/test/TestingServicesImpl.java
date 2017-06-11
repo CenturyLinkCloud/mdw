@@ -42,6 +42,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -195,7 +196,7 @@ public class TestingServicesImpl implements TestingServices {
 
     private void processResultsFile(File resultsFile, List<TestCase> testCases) throws Exception {
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
         for (TestCase testCase : testCases) {
             TestCase caseFromFile = testCaseList.getTestCase(testCase.getPath());
             if (caseFromFile != null) {
@@ -206,7 +207,7 @@ public class TestingServicesImpl implements TestingServices {
 
     private void processResultsFile(File resultsFile, final TestCase testCase) throws Exception {
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(jsonString));
+        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
         TestCase caseFromFile = testCaseList.getTestCase(testCase.getPath());
         if (caseFromFile != null) {
             addInfo(testCase, caseFromFile);
@@ -380,7 +381,7 @@ public class TestingServicesImpl implements TestingServices {
                 throw new ServiceException(ServiceException.NOT_FOUND, "Results file not found: " + file);
             else if (!file.getName().endsWith(".json"))
                 throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Results file must be JSON: " + file);
-            return new JSONObject(new String(FileHelper.read(file)));
+            return new JsonObject(new String(FileHelper.read(file)));
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

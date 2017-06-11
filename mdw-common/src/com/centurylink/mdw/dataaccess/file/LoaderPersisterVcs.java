@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.OwnerType;
@@ -48,6 +47,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.ProcessPersister;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.ExternalEvent;
@@ -64,7 +64,6 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
 // TODO clear VersionControl & PackageDir/AssetFile caches on Cache Refresh.
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
-    public static final String MDW_BASE_PACKAGE = "com.centurylink.mdw.base";
     public static final String PROCESS_FILE_EXTENSION = ".proc";
     public static final String IMPL_FILE_EXTENSION = ".impl";
     public static final String EVT_HANDLER_FILE_EXTENSION = ".evth";
@@ -354,7 +353,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         packageVO.setSchemaVersion(DataAccess.currentSchemaVersion);
 
         String pkgJson = new String(read(pkgDir.getMetaFile()));
-        Package jsonPkg = new Package(new JSONObject(pkgJson));
+        Package jsonPkg = new Package(new JsonObject(pkgJson));
         packageVO.setGroup(jsonPkg.getGroup());
         packageVO.setAttributes(jsonPkg.getAttributes());
         packageVO.setMetaContent(pkgJson);
@@ -397,7 +396,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         Process process;
         if (deep) {
             String content = new String(read(assetFile));
-            process = new Process(new JSONObject(content));
+            process = new Process(new JsonObject(content));
         }
         else {
             process = new Process();
@@ -500,7 +499,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public ActivityImplementor loadActivityImplementor(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
-        ActivityImplementor implVo = new ActivityImplementor(new JSONObject(content));
+        ActivityImplementor implVo = new ActivityImplementor(new JsonObject(content));
         implVo.setImplementorId(assetFile.getId());
         implVo.setPackageName(pkgDir.getPackageName());
         return implVo;
@@ -516,7 +515,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public ExternalEvent loadExternalEventHandler(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
-        ExternalEvent evthVo = new ExternalEvent(new JSONObject(content));
+        ExternalEvent evthVo = new ExternalEvent(new JsonObject(content));
         evthVo.setId(assetFile.getId());
         int lastDot = assetFile.getName().lastIndexOf('.');
         evthVo.setEventName(assetFile.getName().substring(0, lastDot));
@@ -534,7 +533,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public TaskTemplate loadTaskTemplate(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
-        TaskTemplate taskVO = new TaskTemplate(new JSONObject(content));
+        TaskTemplate taskVO = new TaskTemplate(new JsonObject(content));
         taskVO.setName(assetFile.getName());
         taskVO.setTaskId(assetFile.getId());
         taskVO.setPackageName(pkgDir.getPackageName());

@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.user.Role;
 
 /**
@@ -192,7 +192,7 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
 
     @Override
     public JSONObject getJson() throws JSONException {
-        JSONObject json = new JSONObject();
+        JSONObject json = create();
         json.put("action", taskActionName);
         if (alias != null)
             json.put("alias", alias);
@@ -205,7 +205,7 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
         if (autoSave)
             json.put("autosave", true);
         if (forTasks != null) {
-            JSONObject forTasksJson = new JSONObject();
+            JSONObject forTasksJson = create();
             for (ForTask forTask : forTasks) {
                 forTasksJson.put(forTask.getJsonName(), forTask.getJson());
             }
@@ -242,7 +242,7 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
         }
 
         public JSONObject getJson() throws JSONException {
-            JSONObject json = new JSONObject();
+            JSONObject json = create();
             if (destinations != null) {
               JSONArray destArray = new JSONArray();
               for (String destination : destinations) {

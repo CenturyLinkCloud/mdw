@@ -20,6 +20,11 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
         descending: true
     }; 
   }
+  else {
+	// fix date format stored in cookieStore
+	if ($scope.requestFilter.receivedDate)
+		$scope.requestFilter.receivedDate = util.serviceDate(new Date($scope.requestFilter.receivedDate));
+  }
   
   if ($scope.context == 'service') {
     $scope.requestTypes = {

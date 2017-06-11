@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
@@ -105,11 +106,11 @@ public class TestCaseMain {
         try {
             // tell the server we're monitoring
             HttpHelper httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
-            JSONObject configJson = new JSONObject();
+            JSONObject configJson = new JsonObject();
             configJson.put(PropertyNames.MDW_LOGGING_WATCHER, InetAddress.getLocalHost().getHostAddress());
             if (execConfig.isStubbing())
                 configJson.put(PropertyNames.MDW_STUB_SERVER, InetAddress.getLocalHost().getHostAddress());
-            StatusMessage msg = new StatusMessage(new JSONObject(httpHelper.put(configJson.toString(2))));
+            StatusMessage msg = new StatusMessage(new JsonObject(httpHelper.put(configJson.toString(2))));
             if (!msg.isSuccess())
                 System.out.println("Error setting server config: " + msg.getMessage());
 
@@ -120,7 +121,7 @@ public class TestCaseMain {
             configJson.put(PropertyNames.MDW_LOGGING_WATCHER, "");
             if (execConfig.isStubbing())
                 configJson.put(PropertyNames.MDW_STUB_SERVER, "");
-            msg = new StatusMessage(new JSONObject(httpHelper.put(configJson.toString(2))));
+            msg = new StatusMessage(new JsonObject(httpHelper.put(configJson.toString(2))));
             if (!msg.isSuccess())
                 System.out.println("Error setting server config: " + msg.getMessage());
 

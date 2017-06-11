@@ -1562,7 +1562,7 @@ public class TaskDataAccess extends CommonDataAccess {
             for (String key : indices.keySet()) {
                 args[1] = key;
                 args[2] = indices.get(key);
-                if (args[2]!=null) db.runUpdateWithPreparedStatement(args);
+                if (!StringHelper.isEmpty((String)args[2])) db.runUpdateWithPreparedStatement(args);
             }
             db.commit();
         } catch (Exception e) {

@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.Variable;
@@ -115,7 +116,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
                 setVariableValue(outputVar.getName(), output);
             }
             else if (outputTrans instanceof JsonTranslator) {
-                Object output = ((JsonTranslator)outputTrans).fromJson(new JSONObject(builder.getString()));
+                Object output = ((JsonTranslator)outputTrans).fromJson(new JsonObject(builder.getString()));
                 setVariableValue(outputVar.getName(), output);
             }
 

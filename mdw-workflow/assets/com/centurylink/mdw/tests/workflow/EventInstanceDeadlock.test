@@ -1,0 +1,42 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Main") {
+    variables = [
+        publishFirst: false,
+        subCount: 3,
+        serviceSummary: '''{
+  "_type": "com.centurylink.mdw.microservice.ServiceSummary",
+  "serviceSummary": {
+      "microservices": {
+        "portster/PortIn": {
+          "updates": [
+            {
+              "requestId": 0,
+              "received": "2017-05-30 20:25:45",
+              "status": {
+                "code": 202,
+                "source": "BVoip",
+                "message": "focaccept"
+              }
+            }
+          ],
+          "invocations": [{
+            "requestId": 601957,
+            "sent": "2017-05-30 20:24:39",
+            "content": "",
+            "status": {
+              "code": 202,
+              "message": "Accepted"
+            },
+            "responseId": 601959
+          }]
+        }
+      },
+      "requestId": "sdwf35b84c94f241c3"
+    }
+}'''
+ ]
+}
+
+wait process
+verify process

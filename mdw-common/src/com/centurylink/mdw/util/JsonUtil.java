@@ -34,9 +34,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.JsonArray;
-import com.centurylink.mdw.common.service.Jsonable;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.file.FileHelper;
 
@@ -53,12 +54,10 @@ public class JsonUtil {
     /**
      * Strips out comment lines (where first non-whitespace is //).
      * Does not support multi-line comments.
-     *
-     * TODO: support comments in PaaS properties
      */
     public static final String read(String name, ClassLoader classLoader) throws IOException {
         if (ApplicationContext.isPaaS()) {
-            return System.getenv(name);
+            return System.getenv("mdw_" + name.substring(0, name.lastIndexOf('.')));
         }
         else {
             InputStream stream = FileHelper.readFile(name, classLoader);
@@ -88,7 +87,7 @@ public class JsonUtil {
     public static final JSONObject getJson(Map<String,String> map) throws JSONException {
         if (map == null)
             return null;
-        JSONObject jsonObj = new JSONObject();
+        JSONObject jsonObj = new JsonObject();
         for (String key : map.keySet()) {
             String value = map.get(key);
             if (value != null)
@@ -125,7 +124,7 @@ public class JsonUtil {
     public static JSONObject getAttributesJson(List<Attribute> attributes, boolean grouped) throws JSONException {
         if (attributes == null)
             return null;
-        JSONObject attrsJson = new JSONObject();
+        JSONObject attrsJson = new JsonObject();
         boolean hasSla = false;
         if (grouped) {
             Map<String,List<Attribute>> byGroup = new HashMap<String,List<Attribute>>();
@@ -143,7 +142,7 @@ public class JsonUtil {
                         attrsJson.put(ungroupedAttr.getAttributeName(), ungroupedAttr.getAttributeValue());
                 }
                 else {
-                    JSONObject groupJson = new JSONObject();
+                    JSONObject groupJson = new JsonObject();
                     attrsJson.put(group, groupJson);
                     for (Attribute groupedAttr : byGroup.get(group))
                         groupJson.put(groupedAttr.getAttributeName(), groupedAttr.getAttributeValue());

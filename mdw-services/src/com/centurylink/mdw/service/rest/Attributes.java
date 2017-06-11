@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -74,7 +75,7 @@ public class Attributes extends JsonRestService {
 
         try {
             Map<String,String> attrs = ServiceLocator.getWorkflowServices().getAttributes(ownerType, Long.parseLong(ownerId));
-            JSONObject attrsJson = new JSONObject();
+            JSONObject attrsJson = new JsonObject();
             for (String name : attrs.keySet())
                 attrsJson.put(name, attrs.get(name));
             return attrsJson;
@@ -153,7 +154,7 @@ public class Attributes extends JsonRestService {
     @ApiOperation(value="Delete attributes for an ownerType and ownerId", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        JSONObject empty = new JSONObject();
+        JSONObject empty = new JsonObject();
         return put(path, empty, headers);
     }
 }

@@ -24,6 +24,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -35,6 +36,9 @@ import com.centurylink.mdw.model.asset.PackageList;
 public interface AssetServices {
 
     public File getAssetRoot();
+
+    public File getArchiveDir();
+    public void deleteArchive() throws ServiceException;
 
     public VersionControl getVersionControl() throws IOException;
 
@@ -71,4 +75,13 @@ public interface AssetServices {
      * @param assetPath - myPackage/myAsset.ext
      */
     public AssetInfo getAsset(String assetPath) throws ServiceException;
+
+    public void createPackage(String packageName) throws ServiceException;
+    public void deletePackage(String packageName) throws ServiceException;
+
+    public void createAsset(String assetPath) throws ServiceException;
+    public void createAsset(String assetPath, byte[] content) throws ServiceException;
+    public void deleteAsset(String assetPath) throws ServiceException;
+
+    public List<ArchiveDir> getArchiveDirs() throws ServiceException;
 }

@@ -10,13 +10,11 @@ external systems. Because the protocols can vary, and
 the message formats are typically different, the framework
 handles them using the following methodology:
 <ul>
-	<li>Listeners are defined in protocol specific ways
-		(for example, a JMS listener is a MDB and BUS listener is
-		a CenturyLink developed Bus Listener).
+	<li>Listeners are defined in protocol specific ways.
 		Listeners typically do minimal things and delegate
-		real processing to external event handlers so that
+		real processing to external event handlers (these event handlers will handle requests that are coming from other systems/apps in the workflow) so that
 		the messages can be handled in non-protocol specific ways.
-		MDW provides listeners for many common protocols out-of-box, and the hope
+		MDW provides listeners for many common built-in protocols, and the hope
 		is that MDW applications will rarely need to define their own listeners.
 		One of the most importing thing the listeners do
 		is to determine, typically based on the contents
@@ -24,8 +22,8 @@ handles them using the following methodology:
 		of the XML messages), an external event handler
 		to handle the message. It does this by examining
 		the external event handlers configured in the Designer
-		and stored in the database table EXTERNAL_EVENT.
-		The listeners then delegates the processing of
+		and saved as assets with .evth as an extension.
+		The listeners then delegate the processing of
 		the message to the external event handlers.
 		</li>
 	<li>An external event handler should interpret
@@ -45,23 +43,23 @@ handles them using the following methodology:
 		    <li>Set input parameters and master request IDs when starting a process</li>
 		    <li>Save large chunk of data as documents</li>
 		</ul>
-		MDW provides two out-of-box external event handlers, one for starting processes
+		MDW provides two built-in external event handlers, one for starting processes
 		(<code>com.centurylink.mdw.listener.ProcessStartEventHandler</code>) as well
 		as invoking processes as services,
 		and the other for sending messages to existing process instances
-		(<code>com.centurylink.mdw.listener.<code>com.centurylink.mdw.listener.NotifyWaitingActivityEventHandler</code></code>).
+		(<code>com.centurylink.mdw.listener.<code>NotifyWaitingActivityEventHandler</code></code>).
 	</li>
 </ul>
-Although out-of-box listeners are often sufficient for most applications,
+Although built-in listeners are often sufficient for most applications,
 it is often necessary for an application to provide their own external event handlers 
-for performing customization not achievable through the out-of-box ones.
-The external event handlers (including the out-of-box ones)
+for performing customization not achievable through the built-in listeners.
+The external event handlers (including the built-in ones)
 must be configured through the Designer so that
 the listeners know which one to use for an incoming message.
 
 <h2>Configuring External Event Handlers</h2>
 External event handlers are configured through the Designer and
-they are recorded in the database table <code>EXTERNAL_EVENT</code>.
+they are saved as assets with .evth as an extension.
 Each entry contains an event pattern and an event handler specification.
 <p>
 The event pattern is described using a variant of the XPath language that is name-space
@@ -81,7 +79,7 @@ is equivalent to the one above:
 <pre>
     START_PROCESS?ProcessName=MyProcess&MasterRequestID={//Order/OrderNumber}
 </pre>
-Similarly, there is a syntax abbreviation for the out-of-box event hander
+Similarly, there is a syntax abbreviation for the built-in event hander
 <code>NotifyWaitingActivityEventHandler</code>, which is <code>NOTIFY_PROCESS</code>.
 An example of its usage is (description of its syntax will be described later):
 <pre>
@@ -95,23 +93,23 @@ The advantages of this include the advanced transport and filtering capabilities
 For example, Camel goes beyond the basic XPath message filtering provided by MDW event handlers to enable filtering according to request header values or even by complex scripting language expressions.
 See <a href="MDWCamelIntegration.html">Camel Routes</a> documentation for details.
 
-<h2>Out-of-box Listeners</h2>
-MDW 5.2 currently provides the following listeners out-of-the-box.<br/>
+<h2>Built-In Listeners</h2>
 MDW includes a number of prebuilt, extensible options for hosting Web services.
-See the general <a href="webServices.html">Web Services</a> documentation for details.
+See the general <a href="webServices.html">MDW Web Services</a> documentation for details.
  
 <h3>Document (SOAP) Web Service Listener</h3>
 To expose document-literal style services using a custom WSDL definition, MDW provides a mechanism whereby the WSDL document is created as a <a href="workflowAssets.html">Workflow Asset</a>.
-An HTTP GET request against a custom WSDL asset called Employee looks like:<br/>http://localhost:8080/MDWWeb/SOAP?Employee.wsdl.<br/><br/>
+An HTTP GET request against a custom WSDL asset called Employee looks like:<br/>http://localhost:8080/mdw/services/SOAP/Employee.wsdl<br/><br/>
 A similar URL can be used as the endpoint for an HTTP POST request which will invoke the service.
 In this case the request is unwrapped from the SOAP envelope, and based on the top-level element the usual message pattern matching procedure is followed.
 Likewise, the response content is presumed to be XML and is inserted into a SOAP envelope.
 <br/><br/>
 The endpoint location in the WSDL asset can be parameterized as follows based on environment-specific property settings:<br/>
- &lt;soap:address location="${MDWFramework.MDWDesigner/services.url}/SOAP/Employee.wsdl" /&gt; 
+ &lt;soap:address location="${mdw.services.url}/SOAP/Employee.wsdl" /&gt; 
+ 
 <p>
-The listener class is <a href="../javadoc/com/qwest/mdw/web/servlet/SoapListenerServlet.html">
-<code>com.centurylink.mdw.web.servlet.SoapListenerServlet</code></a>.
+The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/SoapServlet.html">   
+<code>com.centurylink.mdw.hub.servlet.SoapServlet</code></a>.
 <p>
 The following meta information values are populated:
 <ul>
@@ -123,76 +121,38 @@ The following meta information values are populated:
   <li>&lt;Headers&gt;. The name/value pairs corresponding to all the HTTP and SOAP request headers</li>
 </ul>
 
-<h3>MDW-Compliant (SOAP) Web Service Listener</h3>
-This listener has a fixed WSDL specified by the legacy MDW RPC web service conventions:
-is <code>http://<i>host</i>:<i>port</i>/<i>MDWWeb</i>/MDWWebService?WSDL</code>.
-<p>
-The listener class is <a href="../javadoc/com/centurylink/mdw/listener/webservice/WebServiceImpl.html">
-<code>com.centurylink.mdw.listener.webservice.WebServiceImpl</code></a>.
-<p>
-The web service provides one method, <code>String invokeWebService(String serviceName, String requestDetails)</code>
-The request details must be an XML document in String format.
-The service name is no longer significant and it will be recorded
-in meta info, so the external event handlers can access it
-if there is a need.
-<p>
-The following meta information are populated:
-<ul>
-	<li>Protocol. This is always "WebService"</li>
-	<li>ServiceName. This is the first argument of invokeWebService() method</li>
-	<li>EventName. Event pattern</li>
-	<li>EventID. The ID of the external event handler specification</li>
-	<li>DocumentID. The ID of the entry in DOCUMENT table storing the request</li>
-</ul>
-
 <h3>RESTful Web Service Listener</h3>
 The REST-based Web Service Listener is a simple HTTP servlet that receives and responds to XML or JSON GET or POST requests.
-The URL for accessing the servlet is <code>http://<i>host</i>:<i>port</i>/<i>MDWWeb</i>/Services</code>.
+The URL for accessing the servlet is http://host:port#/mdw/Services/packageName/path. Here is an example: http://localhost:8080/mdw/Services/MyServices/Order.
+
 <p>
-The listener class is 
-<code>com.centurylink.mdw.web.servlet.RestfulServicesServlet</code>.
+The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/RestServlet.html">   
+<code>com.centurylink.mdw.hub.servlet.RestServlet</code></a>.. 
 <p>
 MDW also provides a helper class, <code>com.centurylink.mdw.common.utilities.HttpHelper</code>,
-that can be used to simply the client coding. The following sample code
+that can be used to simplify the client coding. The following sample code
 demonstrates the client side code:
 <pre>
     String message = "&lt;ping&gt;an XML document&lt;/ping&gt;";
-    String httpServletUrl = "http://localhost:7001/MDWWeb/Services";
+    String httpServletUrl = "http://localhost:7001/mdw/Services";
     HttpHelper httpHelper = new HttpHelper(new URL(httpServletUrl));
     String response = httpHelper.post(message);
 </pre>
 <p>
-The following meta information are populated:
+The following meta information is populated:
 <ul>
   <li>Protocol. This is always "RestfulWebService"</li>
-  <li>ServiceClass. This is always "com.centurylink.mdw.web.servlet.RestfulServicesServlet"</li>
+  <li>ServiceClass. This is always "com.centurylink.mdw.hub.servlet.RestServlet."</li>
   <li>HttpMethod. This is either "GET" or "POST", and can be in lower or mixed cases.</li>
   <li>Operation. This is the first segment of additional path info, or null if
       there is no additional path info.</li>
   <li>&lt;Parameters&gt;. The name/value pairs corresponding to all the HTTP request parameters</li>      
   <li>&lt;Headers&gt;. The name/value pairs corresponding to all the HTTP request headers</li>      
 </ul>
-
-<h3>Bus Listener</h3>
-The listener class is <a href="../javadoc/com/qwest/mdw/listener/bus/MDWBusListener.html">
-<code>com.centurylink.mdw.listener.bus.MDWBusListener</code></a>.
-The topics it listens to are configured in config/busResponders.xml.
-<p>
-The following meta information are populated:
-<ul>
-  <li>Protocol. This is always "Bus"</li>
-  <li>RequestID. This is the bus message identifier</li>
-  <li>Topic</li>
-  <li>ReployToTopic</li>
-  <li>EventName. Event pattern</li>
-  <li>EventID. The ID of the external event handler specification</li>
-  <li>DocumentID. The ID of the entry in DOCUMENT table storing the request</li>
-</ul>
-
 <h3>JMS Listener</h3>
 The listener class is <code>com.centurylink.mdw.listener.jms.JmsListener</code>
 and the queue it is listening is <code>com.centurylink.mdw.external.event.queue</code>.
-The following meta information are populated:
+The following meta information is populated:
 <ul>
 	<li>Protocol. This is always "Jms"</li>
 	<li>RequestID. This is the JMS message ID</li>
@@ -203,17 +163,11 @@ The following meta information are populated:
 	<li>DocumentID. The ID of the entry in DOCUMENT table storing the request</li>
 </ul>
 
-<h4>MQ Listeners</h4>
-<p>This is implemented using native IBM MQ Series Java API, rather than
-using WebLogic foreign JMS. The java class name is <code>com.centurylink.mdw.listener.mqseries.MDWMQListener</code>.</p>
-<p>You will need to configure MQ listeners <em>to be completed</em></p>
-<p>MQ Listeners mananges its own thread pool.</p>
+<h2>Built-In Event Handlers</h2>
 
-<h2>Out-of-box Event Handlers</h2>
-
-<h3>Out-of-box Process Start Event Handler</h3>
+<h3>Built-In Process Start Event Handler</h3>
 The event handler,
-<a href="../javadoc/com/qwest/mdw/listener/ProcessStartEventHandler.html">
+<a href="../javadoc/com/centurylink/mdw/listener/ProcessStartEventHandler.html">
 <code>com.centurylink.mdw.listener.ProcessStartEventHandler</code></a>,
 can be used to start an asynchronous (regular) process or
 invoke a synchronous (service) process as service.
@@ -269,7 +223,7 @@ Specification of the Master Request ID is not required. When it is not specified
 the external event instance ID will be used as the master request ID for the process
 instance.
 <p>
-This out-of-box handler does not pass in any parameters
+This built-in handler does not pass in any parameters
 to the process instance. If some variables need to be initialized
 from the external message, you can do so by configuring
 the start activity of the process.
@@ -277,9 +231,9 @@ Configuration of the start activity is described with
 <a href="ProcessStartActivity.html">this link</a>.
 
 
-<h3>Out-of-box Event Handler for Notifying Waiting Process Instances</h3>
-The out-of-box event handler
-<a href="../javadoc/com/qwest/mdw/listener/NotifyWaitingActivityEventHandler.html">
+<h3>Built-In Event Handler for Notifying Waiting Process Instances</h3>
+The built-in event handler
+<a href="../javadoc/com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html"> 
 <code>com.centurylink.mdw.listener.NotifyWaitingActivityEventHandler</code></a> can be used
 to process messages that need to be delivered to existing process instances.
 <p>
@@ -289,7 +243,7 @@ specify an event name, identifying the messages it waits for.
 The event handlers should take care of the tasks of mapping external messages
 to event names and inform the process instances waiting for them.
 <p>
-The out-of-box handler can be configured through the designer as to how to
+The built-in handler can be configured through the designer as to how to
 map XML messages to event names, with the help of XPath expressions.
 Its configuration in the designer has a syntax abbreviation of <code>NOTIFY_PROCESS</code>,
 and requires one argument, <code>EventName</code>.
@@ -310,20 +264,17 @@ the messages arrive prior to the execution of event waiting activities.
 External event handlers typically perform one of the followings:
 <ul>
 	<li>Start a process instance</li>
-	<li>Inform process instanced that are waiting for messages</li>
+	<li>Inform process instances that are waiting for messages</li>
 	<li>Invoke a service (synchronous) process and return the value
 		of its variable "response" as response</li>
-	<li>Invoke completely custom code to generate response. This approach
-		was the only way for services prior to MDW 4.1. With the introduction
-		of service processes, we now discourage its use.</li>
 </ul>
-The out-of-box process start event handler is a good example for
+The built-in process start event handler is a good example for
 starting a process, and it is oftentimes sufficient that you use that directly
 or subclass it.
 <p>
 Similarly, for informing existing process instances, it is oftentimes
-sufficient that configure or subclass the out-of-box handler
-<a href="../javadoc/com/qwest/mdw/listener/NotifyWaitingActivityEventHandler.html">
+sufficient that configure or subclass the built-in handler
+<a href="../javadoc/com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html">
 <code>com.centurylink.mdw.listener.NotifyWaitingActivityEventHandler</code></a>.
 <p>
 
@@ -333,13 +284,13 @@ and override the method <code>buildParameters</code>.
 If the external message contains large data such as service orders, it is recommended 
 that you create documents in this method and pass only the document references
 to the processes. The method <code>createDocument</code> defined in the base class
-can be used to create documents. See Java doc for <a href="../javadoc/com/qwest/mdw/listener/ExternalEventHandlerBase.html">
+can be used to create documents. See Java doc for <a href="../javadoc/com/centurylink/mdw/listener/ExternalEventHandlerBase.html">
 <code>com.centurylink.mdw.listener.ExternalEventHandlerBase</code></a>, which is the super class
 for <code>ProcessStartEventHandler</code>, for more details.
 <p>
 In case you need to define your own event handlers for starting or informing
 processes, the best approach is probably to extend the class 
-<a href="../javadoc/com/qwest/mdw/listener/ExternalEventHandlerBase.html">
+<a href="../javadoc/com/centurylink/mdw/listener/ExternalEventHandlerBase.html">
 <code>com.centurylink.mdw.listener.ExternalEventHandlerBase</code></a>
 instead of implementing <code>com.centurylink.mdw.event.ExternalEventHandler</code>
 from scratch. This base class contains methods to start a process, to inform (wake)
@@ -351,34 +302,33 @@ the event manager behind the scene will record the event, check if there is
 any process instances waiting for it, and resume them.
 <p>
 To invoke a service process and return a response synchronously,
-the method to use is <code>invokeProcessAsService()</code>.
+the method to use is <code>invokeServiceProcess()</code>.
 
 
 <h2>Create Listeners</h2>
-As we explained above, MDW Framework has provided several out-of-box listeners
-(Web Service, BUS, JMS, etc) and those are sufficient for most purposes,
+As we explained above, MDW Framework has provided several built-in listeners
+(Web Service, JMS, etc) and those are sufficient for most purposes,
 so you should not have
 a lot of reasons to create your own listeners. There are reasons, however,
 the default listeners are not sufficient, including:
 <ul>
-  <li>You need a protocol for which there is no out-of-box listeners,
-  	such as MQ Series, RMI, etc. We will add more out-of-box listeners
-  	in the future, if they are commonly needed.</li>
+  <li>You need a protocol for which there is no built-in listeners for your specific needs.
+  	We will add more built-in listeners in the future, if they are commonly needed.</li>
   <li>You need to implement a different Web Service server from
-    the default MDWWebService, probably
+    the default MDW Web Service, probably
   	demanded by a vendor application such as ASMS.</li>
   <li>You would like to create a separate thread pool for load 
   	consideration.</li>
 </ul>
 The framework provides a class, 
-<a href="../javadoc/com/qwest/mdw/listener/ListenerHelper.html">
+<a href="../javadoc/com/centurylink/mdw/listener/ListenerHelper.html">
 <code>com.centurylink.mdw.listener.ListenerHelper</code></a>,
 that extracts common code needed for implementing listeners.
 The most important function the helper can do is to
 determine an external event handler to handle an external message.
 It does this by examining
 the external event handlers configured in the Designer
-and stored in the database table EXTERNAL_EVENT.
+and saves them as assets with .evth as an extension.
 The listener helper then delegates the processing of
 the message to the external event handler.
 <p>
@@ -387,35 +337,33 @@ With this listener helper class, the implementation code for a listener is very 
 <h3>Listener Class</h3>
 A listener class is the one directly receives the messages
 from external systems. It is therefore protocol specific.
-For example, a bus listener class is a bus processor class
-and must extend BusProcessor, a web service listener class
-is a POJO class but must be specified in web-services.xml, etc.
 <p>
 We describe here general requirement for writing listener classes,
-and the following subsections describes specific topic for each
+and the following subsections describe specific topic for each
 protocol.
 <p>
 Typically a listener class does very little by itself
 and delegates the processing of external messages to 
-<a href="../javadoc/com/qwest/mdw/listener/ListenerHelper.html">
+<a href="../javadoc/com/centurylink/mdw/listener/ListenerHelper.html">
 <code>com.centurylink.mdw.listener.ListenerHelper</code></a>,
 which processes
 the messages in a non-protocol specific way.
-The following code is extracted from the out-of-box bus listener
-class, <code>com.centurylink.mdw.listener.tibco.MDWBusListener</code>,
-which is a good example for any other listener class.
+The following code is extracted from the built-in external event listener
+class, <code>com.centurylink.mdw.listener.jms.ExternalEventListener</code>,
+which is a good example for any other listener class delegating the work to ListenerHelper class.
 <pre>
-    public BusMessage process(BusMessage busMsg) {
-        ListenerHelper helper = new ListenerHelper();
-        Map<String,String> metaInfo = new HashMap<String,String>();
-        metaInfo.put(Listener.METAINFO_PROTOCOL, "Bus");
-        metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
-        metaInfo.put(Listener.METAINFO_REQUEST_ID, busMsg.getIdentifier());
-        metaInfo.put("ReplyToTopic", busMsg.getReplyToTopic());
-        String resp = helper.processEvent(busMsg.getString(), metaInfo);
-        BusMessage respMsg = prepareResponse(busMsg, resp);
-        return respMsg;
-    }
+   ...
+   ListenerHelper helper = new ListenerHelper();
+   Map<String, String> metaInfo = new HashMap<String, String>();
+   metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_JMS);
+   metaInfo.put(Listener.METAINFO_REQUEST_PATH, getQueueName());
+   metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
+   metaInfo.put(Listener.METAINFO_REQUEST_ID, message.getJMSMessageID());
+   metaInfo.put(Listener.METAINFO_CORRELATION_ID, message.getJMSCorrelationID());
+   if (message.getJMSReplyTo() != null)
+       metaInfo.put("ReplyTo", message.getJMSReplyTo().toString());
+   resp = helper.processEvent(txt, metaInfo);
+   ...
 </pre>
 The center of the code is to invoke <code>processEvent</code>
 method of ListenerHelper class. The listener itself only performs the
@@ -429,17 +377,14 @@ following tasks:
   		construct and send the message from the return message
   		of ListenerHelper.processEvent.</li>
 </ul>
-Note that the ListenerHelper.processEvent assumes all messages
-are XML data in String format. MDW currently does not intend
-to support non-XML messages.
+
 <p>
 The processEvent method in ListenerHelper performs the following
 things:
 <ul>
 	<li>Parse the message into a DOM document</li>
 	<li>Find an external event handler that handles the message,
-		using external event handlers configured in the designer
-		(stored in the database table EXTERNAL_EVENT).</li>
+		using external event handlers configured in the designer.</li>
 	<li>Record the request data in DOCUMENT table. Note
 	    that if the last step fails to find an handler, an exception
 	    will be thrown and this step is by-passed, so the event
@@ -454,77 +399,5 @@ it will return a default response message MDWStatusMessage.
 Since the external systems may not be designed to recognize MDWStatusMessage,
 it is therefore desired that the external event handlers
 capture all exceptions and generate appropriate response messages.
-
-<h3>New Bus Listener</h3>
-A bus listener is a sub class of Qwest developed
-<code>com.qwest.bus.responder.BusProcessor</code>, which
-is configured in busResponders.xml.
-<p>
-To create a new Bus listener, you will need to
-<ul>
-	<li>Add an entry in config/busResponders.xml</li>
-	<li>You can either use the same bus responder class
-		as the default listener, or create a different bus responder class.</li>
-</ul>
-If you do create a different bus responder class,
-you may want to start by cloning the default one.
-
-<h3>New Web Service Listener</h3>
-The out-of-box web service listener is in 
-<code>com.centurylink.mdw.listener.webservice.WebServiceImpl</code>. 
-To create a new Web Service listener, you will need to
-<ul>
-	<li>Create a new web service server class.</li>
-	<li>Typical methods for deploying web service in WLS, such as
-		build commands in build.xml and deployment descriptors
-		in web-services.xml.</li>
-</ul>
-
-<h3>New JMS Listener</h3>
-The listener class of a JMS listener is a message driven bean.
-To create a new JMS listener, you will then need to configure
-a JMS queue and a new MDB listening to it.
-
-<h3>New MQ Series Listener</h3>
-The out-of-box MQ Series listener is in <code>com.centurylink.mdw.listener.mqseries.MDWMQListener</code>.<br/>
-This listener will read MQ Series configuration parameters from mdw.properties.<br/>
-If MQ Server is installed on same machine as your application server then only
-queueManager and queueName is required.
-<pre>
-<ul>
-	<li>mdw.listener.mq.MDWMQListener.queueManagerName=SUOMD72IQM3 </li>
-	<li>mdw.listener.mq.MDWMQListener.queueName=QL_OCOD_IOM_REQUEST </li>
-	<li>Use xml wrapper if you want to wrap MQ message inside an xml 
-		mdw.listener.mq.MDWMQListener.xmlWrapper=MDWMQMessage</li>
-	<li> Set needResponse as true if you want listener to return a response
-	response will be returned to MQ series reply queue configured in incoming message
-		mdw.listener.mq.MDWMQListener.needResponse=true</li>
-	<li> Use thread pool to process MQ messages in threads 
-		mdw.listener.mq.MDWMQListener.useThreadPool=true </li>
-  <li> When a reason code is thrown a number of times in a row, this property controls
-    how many are shown in the log. In this case after 3 of the same reason they
-    will be suppressed.
-    mdw.listener.mq.MDWMQListener.numberOfSuppressedReasonsToShow=3</li>
-  <li>The reasons to suppress, IBM MQ reason codes in successtion to suppress.
-    mdw.listener.mq.MDWMQListener.reasonsToSuppress=2009,2033,2019</li>
-</ul>
-</pre><br/>
-These are the sample parameters which can be used to connect to a remote MQ Server.
-<pre>
-<ui>
-	<li>MQ Series Remote server 
-	mdw.listener.mq.MDWMQListener.host=suomd72i.dev.qintra.com</li>
-	<li>if port is not specified then default port will be used
-	mdw.listener.mq.MDWMQListener.port=1416</li>
-	<li>mdw.listener.mq.MDWMQListener.channel=SYSTEM.DEF.SVRCONN</li>
-</ui>
-</pre><br/>
-If your application need to have a listener which are listening more than one <br/>
-MQ Series queue then have multiple properties in mdw.properties having a unique name in place of MDWMQListener. <br/>
-So a new configuration will look like as below. <br/>
-</pre>
-mdw.listener.mq.<b>NewListenerName</b>.queueManagerName=SUOMD72IQM3<br/>
-mdw.listener.mq.<b>NewMQListenerName</b>.queueName=QL_OCOD_IOM_REQUEST
-</pre>
 </body>
 </html>
