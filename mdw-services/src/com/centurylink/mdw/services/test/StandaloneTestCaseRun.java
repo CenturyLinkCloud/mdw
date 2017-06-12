@@ -150,7 +150,8 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             String response = httpHelper.post(run.getJson().toString(2));
             run = new ProcessRun(new JsonObject(response));
             if (run.getInstanceId() == null)
-                throw new TestException("Failed to start " + process.getLabel());
+                //throw new TestException("Failed to start " + process.getLabel());
+                getLog().println(process.getLabel() + " Service Process"  + " started");
             else
                 getLog().println(process.getLabel() + " instance " + run.getInstanceId() + " started");
         }
