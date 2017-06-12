@@ -159,6 +159,10 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         return "Asset";
     }
 
+    public boolean isFormat(String assetFormat) {
+        return Asset.getFileExtension(assetFormat).substring(1).equals(getExtension());
+    }
+
     public boolean shouldCache(String ifNoneMatchHeader) {
         if (ifNoneMatchHeader == null)
             return false; // no cache

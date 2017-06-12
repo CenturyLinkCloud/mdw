@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.Attributes;
@@ -69,7 +71,8 @@ public class TestingServicesImpl implements TestingServices {
     }
 
     public TestCaseList getTestCases() throws ServiceException {
-        return getTestCases(Asset.getFileExtension(Asset.TEST).substring(1));
+        return getTestCases(new String[] { Asset.getFileExtension(Asset.TEST).substring(1),
+                Asset.getFileExtension(Asset.POSTMAN).substring(1) });
     }
 
     public TestCaseList getTestCaseList(TestCase testCase) throws ServiceException {
@@ -87,19 +90,41 @@ public class TestingServicesImpl implements TestingServices {
         return testCaseList;
     }
 
-    public TestCaseList getTestCases(String format) throws ServiceException {
+    public TestCaseList getTestCases(String[] formats) throws ServiceException {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
         testCaseList.setPackageTests(new ArrayList<PackageTests>());
         List<TestCase> allTests = new ArrayList<TestCase>();
-        Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsOfType(format);
+        Map<String,List<AssetInfo>> pkgAssets = new HashMap<>();
+        for (String format: formats)
+            pkgAssets.putAll(assetServices.getAssetsOfType(format));
         for (String pkgName : pkgAssets.keySet()) {
             List<AssetInfo> assets = pkgAssets.get(pkgName);
             PackageTests pkgTests = new PackageTests(assetServices.getPackage(pkgName));
             pkgTests.setTestCases(new ArrayList<TestCase>());
             for (AssetInfo asset : assets) {
                 TestCase testCase = new TestCase(pkgName, asset);
-                pkgTests.getTestCases().add(testCase);
-                allTests.add(testCase);
+                if (testCase.getAsset().isFormat(Asset.POSTMAN)) {
+                    try {
+                        String json = new String(FileHelper.read(testCase.file()));
+                        JSONObject coll = new JSONObject(json);
+                        if (coll.has("item")) {
+                            JSONArray items = coll.getJSONArray("item");
+                            for (int i = 0; i < items.length(); i++) {
+                                JSONObject item = items.getJSONObject(i);
+                                TestCase itemTestCase = new TestCase(pkgName, asset, item);
+                                pkgTests.getTestCases().add(itemTestCase);
+                                allTests.add(itemTestCase);
+                            }
+                        }
+                    }
+                    catch (IOException ex) {
+                        logger.severeException(ex.getMessage(), ex);
+                    }
+                }
+                else {
+                    pkgTests.getTestCases().add(testCase);
+                    allTests.add(testCase);
+                }
             }
             testCaseList.getPackageTests().add(pkgTests);
         }

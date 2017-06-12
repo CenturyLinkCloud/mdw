@@ -50,8 +50,19 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         this.asset = asset;
     }
 
+    /**
+     * item is impl-specific (eg: Postman collection item)
+     */
+    public TestCase(String pkg, AssetInfo asset, JSONObject item) {
+        this(pkg, asset);
+        this.item = item;
+    }
+
     private AssetInfo asset;
     public AssetInfo getAsset() { return asset; }
+
+    private JSONObject item;
+    public JSONObject getItem() { return item; }
 
     public String getName() {
         return asset.getName();
@@ -117,6 +128,8 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             this.actual = json.getString("actual");
         if (json.has("executeLog"))
             this.executeLog = json.getString("executeLog");
+        if (json.has("item"))
+            this.item = json.getJSONObject("item");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -136,6 +149,8 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             json.put("actual", actual);
         if (executeLog != null)
             json.put("executeLog", executeLog);
+        if (item != null)
+            json.put("item", item);
         if (asset.getCommitInfo() != null)
             json.put("commitInfo", asset.getCommitInfo().getJson());
 

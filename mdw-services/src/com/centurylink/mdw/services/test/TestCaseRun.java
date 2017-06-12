@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
@@ -48,6 +49,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
@@ -95,6 +97,8 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 public class TestCaseRun implements Runnable {
+
+    static final String POSTMAN_PKG = "com.centurylink.mdw.testing.postman";
 
     private TestCase testCase;
     public TestCase getTestCase() { return testCase; }
@@ -188,23 +192,34 @@ public class TestCaseRun implements Runnable {
     public void run() {
         startExecution();
         try {
-            String groovyScript = testCase.getText();
-            CompilerConfiguration compilerConfig = new CompilerConfiguration();
-            compilerConfig.setScriptBaseClass(TestCaseScript.class.getName());
+            if (testCase.getAsset().isFormat(Asset.POSTMAN)) {
+                String runnerClass = POSTMAN_PKG + ".NodeRunner";
+                Package pkg = PackageCache.getPackage(testCase.getPackage());
+                Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+                Object runner = nodeRunnerClass.newInstance();
+                Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+                runMethod.invoke(runner, testCase);
+                finishExecution(null);
+            }
+            else {
+                String groovyScript = testCase.getText();
+                CompilerConfiguration compilerConfig = new CompilerConfiguration();
+                compilerConfig.setScriptBaseClass(TestCaseScript.class.getName());
 
-            Binding binding = new Binding();
-            binding.setVariable("testCaseRun", this);
+                Binding binding = new Binding();
+                binding.setVariable("testCaseRun", this);
 
-            ClassLoader classLoader = this.getClass().getClassLoader();
-            Package testPkg = PackageCache.getPackage(testCase.getPackage());
-            if (testPkg != null)
-                classLoader = testPkg.getCloudClassLoader();
+                ClassLoader classLoader = this.getClass().getClassLoader();
+                Package testPkg = PackageCache.getPackage(testCase.getPackage());
+                if (testPkg != null)
+                    classLoader = testPkg.getCloudClassLoader();
 
-            GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
-            Script gScript = shell.parse(groovyScript);
-            gScript.setProperty("out", log);
-            gScript.run();
-            finishExecution(null);
+                GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
+                Script gScript = shell.parse(groovyScript);
+                gScript.setProperty("out", log);
+                gScript.run();
+                finishExecution(null);
+            }
         }
         catch (Throwable ex) {
             finishExecution(ex);

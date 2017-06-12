@@ -34,9 +34,9 @@ public interface TestingServices {
     public TestCaseList getTestCases() throws ServiceException;
 
     /**
-     * Returns test cases for a specific format (eg: Groovy or Cucumber).
+     * Returns test cases for a specifics formats (eg: Groovy, Cucumber or JS).
      */
-    public TestCaseList getTestCases(String format) throws ServiceException;
+    public TestCaseList getTestCases(String[] formats) throws ServiceException;
 
     /**
      * Returns a single test case with it's detailed information.

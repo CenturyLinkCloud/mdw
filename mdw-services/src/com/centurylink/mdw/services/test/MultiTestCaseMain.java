@@ -85,7 +85,7 @@ public class MultiTestCaseMain {
 
             if (clArgs.hasOption("byFormat")) {
                 System.out.println("Option byFormat is present.  The value is: " + clArgs.getOptionValue("byFormat"));
-                testCaseList = testingServices.getTestCases(clArgs.getOptionValue("byFormat"));
+                testCaseList = testingServices.getTestCases(new String[]{clArgs.getOptionValue("byFormat")});
             }
             if (clArgs.hasOption("includes")) {
                 System.out.println("Option includes is present.  The value is: "  + clArgs.getOptionValue("includes"));

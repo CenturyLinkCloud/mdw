@@ -43,6 +43,7 @@ dependencies {
     providedCompile(group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1") { transitive = false }
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/camel", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/drools", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/testing/postman", includes: ["*.jar"])
  
 	//  Un-comment below if you add the tibco and/or ibmmq package(s) to your workspace's assets
     //providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/tibco", includes: ["*.jar"])

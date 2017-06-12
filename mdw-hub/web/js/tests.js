@@ -12,6 +12,8 @@ testingMod.controller('TestsController',
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
+        if (tc.item)
+          tc.baseName = tc.baseName + '/' + tc.item.name;
         $scope.testCaseCount++;
       });
       $scope.applyPkgCollapsedState();
@@ -131,7 +133,11 @@ testingMod.controller('TestsController',
             pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []};
             execTestPkgs.push(pkgObj);
           }
-          pkgObj.testCases.push({name: $scope.testCaseList.packages[i].testCases[j].name});
+          var tc = $scope.testCaseList.packages[i].testCases[j];
+          var tcObj = {name: tc.name};
+          if (tc.item)
+            tcObj.item = {name: tc.item.name};
+          pkgObj.testCases.push(tcObj);
         }
       }
     }
