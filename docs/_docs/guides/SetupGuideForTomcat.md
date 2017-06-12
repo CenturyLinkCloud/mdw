@@ -32,7 +32,7 @@ You can perform many cloud development activities using a remote workflow projec
 ### Tomcat Server:
  
 ##### Create a Tomcat Server Instance:
-- To execute a workflow process you need a server running with MDW deployed.  For debugging in Eclipse the easiest way to set this up is through a Web Tools Platform server instance. 
+- To execute a workflow process you need a server running with MDW deployed.  For debugging in Eclipse the easiest way to set this up is through a Web Tools Platform (WTP) server instance. 
   From the menu select File > New > Other > Server > Server.  Click Next and select Apache > Tomcat 8 (MDW) from the options.  To be able to debug your Dynamic Java it is important 
   that you select Tomcat 8 (MDW) instead of the standard Tomcat 8.0 Server.  The server name is arbitrary, so you can make is something friendlier than the default.
   
@@ -48,8 +48,9 @@ You can perform many cloud development activities using a remote workflow projec
 - If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 8 server in this view.  You can 
   double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
    ![alt text](../images/addTomcatServer3.png "addTomcatServer3")
- 
-- Before you start the server, you will need to add your Workflow project to your server instance. Right click the server instance, select `Add and Remove` and select the MyWorkflow from the left pane and click the Add to move it to the right pane. Note: You must have a workflow project before you can add it to the server instance.
+   
+##### Note: You must have a workflow project created before you can add it to the server instance.
+- Right click the server instance, select `Add and Remove` and select the MyWorkflow from the left pane and click the Add to move it to the right pane. 
   
    ![alt text](../images/addTomcatServer4.png "addTomcatServer4")
 
