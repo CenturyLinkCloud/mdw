@@ -6,7 +6,7 @@ title: Microservices Cookbook
 
 This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [SOAP Service](../SOAPService/).
 
-##### Before you can start working with MDW framework, you will need to do a one-time setup. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
+Before you can start working with MDW framework, you will need to do a one-time setup. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
   
 ### Local Development:
 #### 1. Create a Local Project
