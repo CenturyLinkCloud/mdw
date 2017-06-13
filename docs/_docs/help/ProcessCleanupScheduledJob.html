@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>Process Cleanup Scheduled Job</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Process Cleanup Scheduled Job</h1> 
+To enable the process cleanup scheduled job, set the following properties in the
+MDW configuration file (mdw.properties):
+<pre>
+  # Scheduled job - process clean up.
+  mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup
+  # run daily at 2:30 am
+  mdw.timer.task.ProcessCleanup.Schedule=30 2 * * ? *
+  # cleanup script to execute from scheduled job
+  MDWFramework.ProcessCleanup-RuntimeCleanupScript=Cleanup-Runtime.sql
+  # minimum age (in days) before process instance data is eligible for cleanup
+  MDWFramework.ProcessCleanup-ProcessExpirationAgeInDays=180
+  # maximum number of instance rows to clean up during one job execution
+  MDWFramework.ProcessCleanup-MaximumProcessExpiration=10000
+  # minimum age (in days) before event instance data is eligible for cleanup
+  MDWFramework.ProcessCleanup-ExternalEventExpirationAgeInDays=180
+</pre>
+In this example the MDW db cleanup job is scheduled to run every day at 2:30 am and will delete process and event instance data for completed processes older than 180 days.
+
+<br><br>The default MDW cleanup scripts are available here:
+<a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/Cleanup-Runtime.sql">Cleanup-Runtime</a>
+ 
+<br><br>
+These scripts are built into the MDW framework modules, so if these defaults are suitable then they don't need to be deployed separately with a workflow application.  If an application has custom cleanup requirements, then they can deliver a custom version of Cleanup-Runtime.sql (or any other name referenced in the property setting).  The custom cleanup script should be delivered into the application configuration directory.
+ 
+</body>
+</html>

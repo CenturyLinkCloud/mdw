@@ -6,20 +6,8 @@ title: Microservices Cookbook
 
 This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [SOAP Service](../SOAPService/).
 
-### Prerequisite
-Before you can start working with MDW framework, you will need to do a one-time step. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
-
-### Java Containers
-You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  The differences between local and remote development are described in later sections of this tutorial.  To be able to develop locally you need one of the following containers installed.  At certain points in this tutorial, we'll link to container-specific steps in the Cookbooks for each supported container.
+Before you can start working with MDW framework, you will need to do a one-time setup. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
   
-### Supported Java Containers: 
--   Apache Tomcat 8:
-    - [https://tomcat.apache.org](https://tomcat.apache.org)
-    - [Setup Guide for Tomcat](../SetupGuideForTomcat/)
--   Pivotal Cloud Foundry 2.x:
-    - [http://pivotal.io/platform](http://pivotal.io/platform)
-    - [Setup Guide for CloudFoundry](../SetupGuideForCloudFoundry/)
-		
 ### Local Development:
 #### 1. Create a Local Project
 A local project is useful if you want to debug your custom Java source code and Groovy scripts.  The standard MDW war file is deployed as part of the steps outlined in this tutorial.
@@ -149,7 +137,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
    ![alt text](../images/myOrderValidatorActivity3.png "myOrderValidatorActivity3")
 
 ##### Get Your Server Running:
-- Depending on which supported container you're using and if you have not done a one-time setup, you can follow one of the server setup exercises.  You will need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
+- Depending on which supported container you're using and if you have not done a `one-time setup`, you can follow one of the server setup exercises.  You will need to follow the steps from one of these guides to the point where MDW is deployed and you're able to start and stop your server from the Eclipse Servers view. 
     - [Setup Guide for Tomcat](../SetupGuideForTomcat/)
     - [Setup Guide for CloudFoundry](../SetupGuideForCloudFoundry/)
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:

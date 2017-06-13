@@ -77,17 +77,7 @@ Note: The following examples use the MDW demo deployment in CenturyLink's AppFog
 It can quickly become tedious to build and push to Cloud Foundry every time you want to test a code change.  To deploy mdw-demo locally, you can run on Tomcat.  With a Tomcat server running locally, your changes can be hot-deployed so that pushes and server restarts are not required.
 
 ##### Supported Tomcat Containers:
--	Apache Tomcat 8:                                  
- 	[https://tomcat.apache.org](https://tomcat.apache.org)
-
-##### Create a Tomcat Server:
--	To execute a workflow process you need a server running with MDW deployed.  For debugging in Eclipse the easiest way to set this up is through a Web Tools Platform server instance.  From the menu select File > New > Other > Server > Server.  Click Next and select Apache > Tomcat 8.0 (MDW) from the options.  To be able to debug your Dynamic Java it's important that you select Tomcat 8.0 (MDW) instead of the standard Tomcat 8.0 Server.  The server name is arbitrary, so you can make is something friendlier than the default.
-  
--	If you've not previously used a Tomcat 8 runtime in Eclipse, clicking Next takes you to a page where you specify your Tomcat location.  Make sure that the selected JDK is Java 1.8.
- 
--	The final page of the New Server wizard is where you designate your workflow project to be deployed on the server.  After that, click Finish to create the server instance.
- 
--	If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 8 server in this view.  You can double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 300 seconds, and hit `Ctrl-S` to save your changes.  Then close the editor.
+-	Apache Tomcat 8: Please follow the [Setup Guide for Tomcat](../SetupGuideForTomcat/) and return to this guide to continue.                             
  
 #### 2. Deploy Locally
 

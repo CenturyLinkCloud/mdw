@@ -12,22 +12,22 @@ is the ability to execute dynamic Java transparently in both local and remote en
 Dynamic Java workflow assets help provide this capability.
 <br/><br/>
 For a detailed walkthrough of MDW Cloud development setup, 
-see the <a href="http://centurylinkcloud.github.io/mdw/docs/guides/SetupGuideForCloudFoundry/">MDW Cloud Cookbook</a>.
+see the <a href="http://centurylinkcloud.github.io/mdw/docs/guides/SetupGuideForCloudFoundry/">Setup Guide for CloudFoundry</a>.
 
 <br/><br/>
 <h3>Background</h3>
-Dynamic Java takes advantage of the runtime compilation and execution framework built into JDK >= 1.6.
+Dynamic Java takes advantage of the runtime compilation and execution framework built into JDK1.8.
 Compiled class definitions are lazily cached in the CompiledJavaCache as specified in the application cache configuration.
 <br/><br/>
 An important aspect of the Dynamic Java is that it enables you to transparently edit Java Code in a local
 or remote environment without needing to redeploy or restart your server.  You can also debug your code without
 regard to where the workflow is hosted, setting breakpoints and viewing/changing variable values during process execution.
 <br/><br/>
-For MDW running in <a href="http://cshare.ad.qintra.com/sites/MDW/BPM/SitePages/MDW%20Cloud%20Mode%20Considerations.html">Cloud Mode</a>,
+For MDW running in <a href='mdwCloudModeConsiderations.html'>Cloud Mode</a>,
 there is no client-app Jar or War, so Dynamic Java is used to implement Custom Activities, Event Handlers and Variable Translators.
 Other capabilities that can be implemented in Dynamic Java include Activity/Adapter/Process/Service Monitors, <a href="scheduledJobs.html">Scheduled Jobs</a>,
 Cache Services, Startup Services, and custom JSON or XML based service implementations that can be exposed through any of the supported MDW protocols 
-(SOAP, REST, TIBCO Bus, etc).  For Manual Tasks Dynamic Java customizations include Manual Task custom Routing Strategies, AutoAssign Strategies, 
+(SOAP, REST, etc).  For Manual Tasks Dynamic Java customizations include Manual Task custom Routing Strategies, AutoAssign Strategies, 
 Prioritization Strategies, SubTask Strategies and Task Notifiers. 
 <br/><br/>
 
