@@ -19,7 +19,7 @@ The main requirement for an activity implementor class that extends
 <code>com.centurylink.mdw.workflow.activity.DefaultActivityImpl</code></a>,
 or one of its subclasses, built-in or user defined. It is more common to extend
 a built-in implementor class, and for adapter, task, event wait, timer wait,
-synchronization activities, it is almost impossible not to start from the out-of-box
+synchronization activities, it is almost impossible not to start from the built-in
 activities. The rest of this document covers how to implement activity
 implementor from the base activity and common tasks for new implementors,
 please refer to corresponding documentation when extending from a built-in activity
@@ -29,41 +29,10 @@ implementor.</p>
 implementor:</p>
 
 <dl>
- <dt>public void execute() throws ActivityException</dt>
+ <dt>public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException</dt>
  <dd>The code logic to execute this activity. The default implementation does
       nothing.</dd>
 </dl>
-
-<p>The following methods are highly recommended to be overriden. They are used
-by the designer to obtain descriptions of the implementor:</p>
-<dl>
- <dt>public String getLabel()</dt>
- <dd>Returns the label of the activity implementor displayed in the tool pane of the designer.
-     Any string is acceptable but you may want to ensure the name is short and unique.
-     If you do not override this method, the default method returns <code>Dummy Activity</code>.</dd>
- 
- <dt>public String getIconName()</dt>
- <dd>Returns the icon name of the activity implementor.
-    The icon name must be one of the following:
-    <ul>
-      <li>an image stored in the VCS as a resource (with language IMAGE_JPEG, IMAGE_GIF or IMAGE_PNG).
-      		The name specified here must be the resource name, followed by <code>.jpg</code>,
-      		<code>.gif</code> or <code>.png</code>.</li>
-      <li>an image file name packaged together with designer (this is no longer
-      		recommended, so we are not listing available image file names here);</li>
-      <li>one of the following internal shapes:
-          <code>shape:start</code>, <code>shape:start</code>,
-              <code>shape:recvmsg</code>, <code>shape:sendmsg</code>,
-              <code>shape:task</code>, <code>shape:rule</code>,
-              <code>shape:subproc</code>, <code>shape:invoke</code>,
-              <code>shape:decision</code>, <code>shape:activity</code>
-    </ul>
- 	If you do not override this method, the default method returns <code>shape:activity</code>.
- 	For consistent look-and-feel, we recommend that your icon size be 24 by 24 or slightly smaller.
- 	</dd>
- 	
-</dl>
-
 Additionally, you can implement the following trace annotation
 <dl>
  <dt>@Tracked(LogLevel.TRACE)</dt>
@@ -85,10 +54,9 @@ and it should always invoke the base constructor first.</p>
 <li>Do not reference to variables by their names directly – use attributes to get their names.
     In this way, your implementor can easily be reused in a different place, as
     variable names can be configured at design time.</li>
-<li>Use getAttributeValueSmart instead of getAttributeValue, so that attribute value
+<li>Use getAttributeValue, so that attribute value
     can resolve <a href="bindingExpressions.html">binding expressions</a> with dynamic runtime values in addition to static text.</li>
-<li>If you extend some subclasses, such as 
-AdaterActivityBase, you may need to override some of the specific methods used by base implementation of execute(), instead. For activities implementing SuspendibleActivity, 
+<li>If you extend some subclasses, you may need to override some of the specific methods used by base implementation of execute(), instead. For activities implementing SuspendibleActivity, 
 you will need to implement resume(), or override it from an existing implementor implementing the activity interface. </li> 
 <li>Use setReturnCode() to set return code (default null). You can also set it to <code>ABORT:</code>, 
 <code>CORRECT:</code>, <code>DELAY:</code>, <code>ABORT:mycode</code>, etc.
@@ -205,8 +173,6 @@ The following information needs to be provided during configuration.
       <ul>
         <li>Activity. This is the basic type and there is no special functionality
             provided by the designer.</li>
-        <li>AdaptorActivity. The run time information will display external messages,
-   			and the simulation tab allows stubbing.</li>
    		<li>EventWaitActivity. The run time information will display external messages.</li>
    		<li>StartActivity.</li>
    		<li>FinishActivity.</li>
@@ -231,95 +197,6 @@ The base class <a href="../javadoc/com/centurylink/mdw/workflow/activity/Default
 contains methods (API) for
 assisting your implementations. Please refer to its java doc (following
 above hyperlink, or through Eclipse IDE) for detailed description of the methods.
-The following list summarizes common API methods.
-<ul>
-  <li>Attribute accessing methods:<ul>
-  	<li>getAttributeValue: get attribute value of the activity by attribute name</li>
-  	<li>getAttributeValueAsVariableName: assuming the attribute specifies a variable
-  		(either an identifier, or a dollar sign followed by an identifier), return the variable name</li>
-  	<li>getAttributeValueSmart: same as getAttributeValue but allows <a href="bindingExpressions.html">binding expression</a> syntax</li>
-  	<li>getAttributes: return a list of all attributes</li>
-  </ul></li>
-  <li>Variable and document accessing and updating:<ul>
-    <li>getParameterValue: get variable instance (a.k.a parameter) value. Despite the method
-       name, this is used for all variables, not just parameters of the process.</li>
-    <li>setParameterValue: set variable instance (parameter) value</li>
-    <li>getParameterId: get the variable instance ID</li>
-    <li>getParameterType: get the type of the variable</li>
-    <li>getParameters: get all variable instances for the process instance</li>
-    <li>setParameterValueAsDocument: update/create a document and
-    	set the value of the variable instance to a document reference</li>
-    <li>getDocument: return the document referenced by a document reference</li>
-    <li>getDocumentForUpdate: same as getDocument except putting a write lock on the document</li>
-    <li>getDocumentContent: return the content of the document</li>
-    <li>createDocument: create a new document</li>
-    <li>updateDocumentContent: update the content of a document</li>
-    <li>updateDocumentInfo: update auxiliary information of a document</li>
-    <li>getVariableInstance: return the variable instance object</li>
-    <li>getVariableValue: a convenient method that calls getParameterValue,
-    	and if it is a document reference, return the document content</li>
-    <li>setVariableValue: a convenient method that calls either
-       setParameterValue or setParameterValueAsDocument, depending on whether
-       the variable is a document variable</li>
-  </ul></li>
-  <li>Environment information access methods:<ul>
-    <li>getProcessId: return the process (definition) id</li>
-    <li>getActivityId: return the activity (definition) id</li>
-	<li>getActivityInstanceId: return the activity instance ID</li>
-  	<li>getProcessInstanceId: return the process instance ID</li>
-  	<li>getMasterRequestId: return the master request ID</li>
-  	<li>getProcessInstanceOwner: return the owner type of the process instance</li>
-  	<li>getProcessInstanceOwnerId: return the owner ID of the process instance</li>
-  	<li>getActivityName: return the name of the activity</li>
-  	<li>getProcessDefinition: return the process definition object (ProcessVO)</li>
-  	<li>getParentProcessId: return the ID of parent process instance</li>
-  	<li>getProcessInstance: return the process instance object (ProcessInstanceVO)</li>
-  	<li>getPackage: get the current package object (PackageVO)</li>
-  	<li>getEntryCode: get the completion code when the activity instance is created</li>
-  	<li>getExternalEventInstanceDetails: for process instances that are started
-  			by external events only - return the contents of the external events</li>
-  </ul></li>
-  <li>Script expression evaluation methods:<ul>
-    <li>evaluateExpression: evaluate an expression in a number of supported languages</li>
-    <li>evaluateCondition: evaluate a condition (a boolean expression) in Magic Box language</li>
-    <li>executeScript:</li>
-  </ul></li>
-  <li>Return code and message methods:<ul>
-    <li>setReturnCode: set the return code, a.k.a. completion code, of the
-    	activity instance.</li>
-    <li>getReturnCode: get the return code, a.k.a. completion code.</li>
-    <li>setReturnMessage: set the return message (additional detail about the return code)</li>
-    <li>getReturnMessage: get the return message</li>
-  </ul></li>
-  <li>Design time meta information:<ul>
-    <li>getLable: return the label of the implementor</li>
-    <li>getIconName: return the icon name of the implementor</li>
-    <li>getDescriptor: return the pagelet descriptor of the implementor</li>
-  </ul></li>
-  <li>Logging:<ul>
-    <li>logwarn: </li>
-    <li>logdebug: </li>
-    <li>loginfo: </li>
-    <li>logsevere: </li>
-    <li>logexception: </li>
-    <li>logtag: return the tag used by all log methods</li>
-    <li>isLogDebugEnabled: </li>
-    <li>isLogInfoEnabled: </li>
-  </ul></li>
-  <li>Engine and database access:<ul>
-    <li>getEngine: </li>
-    <li>getScriptEvaluator: </li>
-    <li>openDatabaseAccess: </li>
-    <li>closeDatabaseAccess: </li>
-  </ul></li>
-  <li>Miscellaneous:<ul>
-    <li>lockActivityInstance: </li>
-    <li>lockProcessInstance: </li>
-    <li>translatePlaceHolder: </li>
-    <li>getProperty: </li>
-    <li>getRuleSet: </li>
-  </ul></li>
-</ul>
 
 <h2>Implementing Adapter Activity Implementers</h2>
 Although the framework is packaged with quite a few
