@@ -23,8 +23,9 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 
 /**
- * Dynamic Java workflow asset.
+ * @deprecated
  */
+@Deprecated
 public class ArrayValidator implements Validator {
     @Override
     public ValidationResult validate(JSONObject json, String key, Property modelProperty,

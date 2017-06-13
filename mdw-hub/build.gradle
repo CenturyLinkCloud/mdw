@@ -2,6 +2,7 @@ apply plugin: "war"
 
 configurations {
     wtpExclude
+    runtimeExtra // runtime libs excluded due to gradle's funky transitive mechanism
 }
 
 eclipse {
@@ -66,8 +67,7 @@ dependencies {
     compile group: "el-impl", name: "el-impl", version: "1.0"
     compile group: "mysql", name: "mysql-connector-java", version: "5.1.29"
     
-    // swagger
-    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.13"
+    runtimeExtra group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
 }
 
 task mdwWarSourcesJar(type: Jar) {
@@ -111,7 +111,7 @@ war {
     
     archiveName = "mdw-${version}.war"
     
-    war.classpath
+    classpath = war.classpath.plus(configurations.runtimeExtra)
 
     manifest {
         attributes("MDW-Version": mdwVersion, "MDW-Build": new Date().format(mdwBuildTimeFormat))

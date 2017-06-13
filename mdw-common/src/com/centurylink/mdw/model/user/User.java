@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.Size;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,6 +130,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
     public String getName() { return this.name; }
     public void setName(String fullName) { this.name = fullName; }
 
+    @Size(max=128)
     private String cuid;
     @ApiModelProperty(value="User's workstation id", required=true)
     public String getCuid() { return this.cuid; }

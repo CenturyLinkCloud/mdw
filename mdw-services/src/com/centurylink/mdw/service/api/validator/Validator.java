@@ -22,8 +22,9 @@ import org.json.JSONObject;
 import io.swagger.models.properties.Property;
 
 /**
- * Dynamic Java workflow asset.
+ * @deprecated Use the io.limberest.validate.Validator interface.
  */
+@Deprecated
 public interface Validator {
     ValidationResult validate(JSONObject json, String key, Property modelProperty, Iterator<Validator> next);
 }

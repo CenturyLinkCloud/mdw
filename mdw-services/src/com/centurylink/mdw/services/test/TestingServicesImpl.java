@@ -111,9 +111,9 @@ public class TestingServicesImpl implements TestingServices {
                             JSONArray items = coll.getJSONArray("item");
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                TestCase itemTestCase = new TestCase(pkgName, asset, item);
-                                pkgTests.getTestCases().add(itemTestCase);
-                                allTests.add(itemTestCase);
+                                JSONObject headerItem = new JSONObject();
+                                headerItem.put("name", item.getString("name"));
+                                testCase.addItem(headerItem);
                             }
                         }
                     }
@@ -121,10 +121,8 @@ public class TestingServicesImpl implements TestingServices {
                         logger.severeException(ex.getMessage(), ex);
                     }
                 }
-                else {
-                    pkgTests.getTestCases().add(testCase);
-                    allTests.add(testCase);
-                }
+                pkgTests.getTestCases().add(testCase);
+                allTests.add(testCase);
             }
             testCaseList.getPackageTests().add(pkgTests);
         }
@@ -163,8 +161,6 @@ public class TestingServicesImpl implements TestingServices {
     private long addStatusInfo(List<TestCase> testCases) {
         try {
             if (!testCases.isEmpty()) {
-                //
-
                 File resultsFile = getTestResultsFile(testCases.get(0).getAsset().getExtension());
                 if (resultsFile != null && resultsFile.isFile()) {
                     if (resultsFile.getName().endsWith(".xml"))
@@ -418,7 +414,7 @@ public class TestingServicesImpl implements TestingServices {
         if (resultsDir == null)
             return null;
         String summaryFile = null;
-        if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format)) {
+        if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format) || Asset.getFileExtension(Asset.POSTMAN).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE);
             if (summaryFile == null) {
                 summaryFile = "mdw-function-test-results.json";

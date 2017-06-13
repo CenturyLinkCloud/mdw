@@ -49,17 +49,35 @@
         <ul class="mdw-checklist" uib-collapse="pkg.collapsed">
           <li ng-repeat="testCase in pkg.testCases" ng-class="{'mdw-last-item': $last}">
             <div>
-              <input type="checkbox" ng-model="testCase.selected" ng-change="packageOff(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
-              <span ng-if="!testCase.status || testCase.status == 'Stopped'" class="glyphicon glyphicon-ok-sign mdw-test-status" style="visibility:hidden"></span>
-              <span ng-if="testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
-              <span ng-if="testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
-              <span ng-if="testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
-              <span ng-if="testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+              <input type="checkbox" ng-model="testCase.selected" ng-change="packageOff(pkg)" 
+                ng-if="!testCase.items && authUser.hasRole('Process Execution')"></input>
+              <span ng-if="testCase.items || !testCase.status || testCase.status == 'Stopped'" 
+                class="glyphicon glyphicon-off mdw-test-status" style="opacity:0.25;{{testCase.items ? 'visibility:hidden' : ''}}"></span>
+              <span ng-if="!testCase.items && testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
+              <span ng-if="!testCase.items && testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
+              <span ng-if="!testCase.items && testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
+              <span ng-if="!testCase.items && testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
               <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}">
                 {{testCase.baseName}}
               </a>
-              <span class="mdw-item-substat" ng-if="testCase.start"> {{testCase.start}}</span>
+              <span class="mdw-item-substat" ng-if="!testCase.items && testCase.start"> {{testCase.start}}</span>
             </div>
+            <ul class="mdw-checklist" ng-if="testCase.items" style="margin-left:20px;">
+              <li ng-repeat="item in testCase.items" ng-class="{'mdw-last-item': $last}">
+                <div>
+                  <input type="checkbox" ng-model="item.selected" ng-change="packageOff(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
+                  <span ng-if="!item.status || item.status == 'Stopped'" class="glyphicon glyphicon-off mdw-test-status" style="opacity:0.25;"></span>
+                  <span ng-if="item.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
+                  <span ng-if="item.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
+                  <span ng-if="item.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
+                  <span ng-if="item.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+                  <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}/{{item.name}}" style="position:relative;top:-2px">
+                    {{item.name}}
+                  </a>
+                  <span class="mdw-item-substat" ng-if="item.start"> {{item.start}}</span>
+                </div>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>

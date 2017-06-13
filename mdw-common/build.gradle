@@ -59,6 +59,10 @@ dependencies {
     compile group: "org.javassist", name: "javassist", version: "3.18.1-GA"
     compile group: "org.apache.commons", name: "commons-lang3", version: "3.2.1"
     compile group: "com.google.guava", name: "guava", version: "18.0"
+    
+    // jsr-303 for swagger validations
+    compile group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+
 
     // rabbitmq
     compile group: "com.rabbitmq", name: "amqp-client", version: "3.5.1"
@@ -81,8 +85,8 @@ dependencies {
 	compile group: "org.java-websocket", name: "Java-WebSocket", version: "1.3.0"
     
     // limberest
-    compile group: "io.limberest", name: "limberest", version: "1.0.01"
-    
+    // compile group: "io.limberest", name: "limberest", version: "1.0.02"
+    // TODO limberest 1.0.02 from maven central
 }
 
 clean {
