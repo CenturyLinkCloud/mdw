@@ -254,5 +254,5 @@ task testTomcatMdwdev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
     startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}",
-        mdwConfigLocation: "" + projectDir + "../../../../../tomcat/tomcat7-mdw6/conf"]
+        mdwConfigLocation: "" + projectDir + "/../../../../tomcat/tomcat7-mdw6/conf"]
 }
