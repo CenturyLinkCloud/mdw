@@ -43,7 +43,7 @@ task functionTests(type: JavaExec)  {
     
     jvmArgs = [
         "-Dmdw.asset.root=" + assetDirPath,
-        "-Dmdw.config.location=" + projectDir + "/config",
+        "-Dmdw.config.location=" + mdwConfigLocation,
         '-Dmdw.test.user=mdwapp',
         '-Dmdw.test.intervalSecs=2',
         "-Dmdw.test.server.url=" + testServerUrl,
@@ -54,8 +54,8 @@ task functionTests(type: JavaExec)  {
         '-Dmdw.runtime.env=dev']
     //jvmArgs += ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
     // arguments to pass to the application
-    args =["-byFormat", "test"]
-    //args = ["-includes", "C:/workspaces/mdw6/mdw-workflow/assets/com/centurylink/mdw/tests/workflow/ServiceHeteroprocSequential.test"]
+    //args =["-byFormat", "test"]
+    args = ["-includes", "C:/workspaces/mdw6/mdw-workflow/assets/com/centurylink/mdw/tests/workflow/ServiceHeteroprocSequential.test"]
     //args +=["-excludes", "C:\\workspaces\\mdw6\\mdw-workflow\\assets\\com\\centurylink\\mdw\\tests\\stubbing\\AdapterStubEcho.test"]
 }
 
