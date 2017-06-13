@@ -247,12 +247,12 @@ task testLocalDev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
     startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}",
-       mdwConfigLocation: "" + projectDir + "/config", testResultsLocation: "${testResultsLocalLocation}"]
+       mdwConfigLocation: "" + projectDir + "/config"]
 }
 
 task testTomcatMdwdev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
     startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}",
-        mdwConfigLocation: "" + projectDir + "../../../../../tomcat/tomcat7-mdw6/conf", testResultsLocation: "${testResultsDevLocation}"]
+        mdwConfigLocation: "" + projectDir + "../../../../../tomcat/tomcat7-mdw6/conf"]
 }
