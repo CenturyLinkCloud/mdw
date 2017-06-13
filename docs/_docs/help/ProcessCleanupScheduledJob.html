@@ -7,21 +7,20 @@
 <h1>Process Cleanup Scheduled Job</h1> 
 To enable the process cleanup scheduled job, set the following properties in the
 MDW configuration file (mdw.properties):
-<br>
+<pre>
   # Scheduled job - process clean up.
-  <br>
-  <code>mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup</code>
-  <br># run daily at 2:30 am
-  <br><code>mdw.timer.task.ProcessCleanup.Schedule=30 2 * * ? *</code>
-  <br># cleanup script to execute from scheduled job
-  <br><code>MDWFramework.ProcessCleanup-RuntimeCleanupScript=Cleanup-Runtime.sql</code>
-  <br># minimum age (in days) before process instance data is eligible for cleanup
-  <br><code>MDWFramework.ProcessCleanup-ProcessExpirationAgeInDays=180</code>
-  <br># maximum number of instance rows to clean up during one job execution
-  <br><code>MDWFramework.ProcessCleanup-MaximumProcessExpiration=10000</code>
-  <br># minimum age (in days) before event instance data is eligible for cleanup
-  <br><code>MDWFramework.ProcessCleanup-ExternalEventExpirationAgeInDays=180</code>
-<br><br>
+  mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup
+  # run daily at 2:30 am
+  mdw.timer.task.ProcessCleanup.Schedule=30 2 * * ? *
+  # cleanup script to execute from scheduled job
+  MDWFramework.ProcessCleanup-RuntimeCleanupScript=Cleanup-Runtime.sql
+  # minimum age (in days) before process instance data is eligible for cleanup
+  MDWFramework.ProcessCleanup-ProcessExpirationAgeInDays=180
+  # maximum number of instance rows to clean up during one job execution
+  MDWFramework.ProcessCleanup-MaximumProcessExpiration=10000
+  # minimum age (in days) before event instance data is eligible for cleanup
+  MDWFramework.ProcessCleanup-ExternalEventExpirationAgeInDays=180
+</pre>
 In this example the MDW db cleanup job is scheduled to run every day at 2:30 am and will delete process and event instance data for completed processes older than 180 days.
 
 <br><br>The default MDW cleanup scripts are available here:
