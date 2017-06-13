@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,19 +51,19 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         this.asset = asset;
     }
 
-    /**
-     * item is impl-specific (eg: Postman collection item)
-     */
-    public TestCase(String pkg, AssetInfo asset, JSONObject item) {
-        this(pkg, asset);
-        this.item = item;
-    }
-
     private AssetInfo asset;
     public AssetInfo getAsset() { return asset; }
 
-    private JSONObject item;
-    public JSONObject getItem() { return item; }
+    /**
+     * impl-specific subtests (eg: postman collection)
+     */
+    private JSONArray items;
+    public JSONArray getItems() { return items; }
+    public void addItem(JSONObject item) {
+        if (items == null)
+            items = new JSONArray();
+        items.put(item);
+    }
 
     public String getName() {
         return asset.getName();
@@ -128,8 +129,8 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             this.actual = json.getString("actual");
         if (json.has("executeLog"))
             this.executeLog = json.getString("executeLog");
-        if (json.has("item"))
-            this.item = json.getJSONObject("item");
+        if (json.has("items"))
+            this.items = json.getJSONArray("items");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -149,8 +150,8 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             json.put("actual", actual);
         if (executeLog != null)
             json.put("executeLog", executeLog);
-        if (item != null)
-            json.put("item", item);
+        if (items != null)
+            json.put("items", items);
         if (asset.getCommitInfo() != null)
             json.put("commitInfo", asset.getCommitInfo().getJson());
 

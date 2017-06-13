@@ -47,6 +47,9 @@ uiUtil.filter('highlight', function($sce) {
     if (lang === 'test') {
       lang = 'groovy';
     }
+    else if (lang === 'postman') {
+      lang = 'json';
+    }
     else if (lang === 'spring' || lang === 'camel') {
       lang = 'xml';
     }

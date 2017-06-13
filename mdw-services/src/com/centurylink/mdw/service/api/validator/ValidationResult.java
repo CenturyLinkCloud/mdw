@@ -27,8 +27,9 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 
 /**
- * Dynamic Java workflow asset.
+ * @deprecated Validations throw ServiceException
  */
+@Deprecated
 public class ValidationResult implements Jsonable {
     private List<ValidationMessage> validationMessages;
 

@@ -90,6 +90,11 @@ routesSvc.factory('routes', function() {
         controller: 'TestController'
       },      
       {
+        path: '/tests/:packageName/:testCaseName/:item',
+        templateUrl: 'testing/test.html',
+        controller: 'TestController'
+      },      
+      {
         path: '/history',
         templateUrl: 'history/history.html',
         controller: 'HistoryController'

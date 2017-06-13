@@ -12,8 +12,6 @@ testingMod.controller('TestsController',
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
-        if (tc.item)
-          tc.baseName = tc.baseName + '/' + tc.item.name;
         $scope.testCaseCount++;
       });
       $scope.applyPkgCollapsedState();
@@ -254,27 +252,31 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$locat
     $scope.testCase.commands = TestCase.get({
       basePath: 'testCase',
       subPath: $routeParams.packageName,
-      testResource: $scope.testCase.name
+      testResource: $scope.testCase.name,
+      item: $scope.testCase.item
     });
     if ($scope.testCase.expected) {
       $scope.testCase.expectedResults = TestCase.get({
         basePath: 'testCase',
         subPath: $scope.testCase.expected.substring(0, $scope.testCase.expected.indexOf('/')),
-        testResource: $scope.testCase.expected.substring($scope.testCase.expected.indexOf('/') + 1)
+        testResource: $scope.testCase.expected.substring($scope.testCase.expected.indexOf('/') + 1),
+        item: $scope.testCase.item
       });
     }
     if ($scope.testCase.actual) {
       $scope.testCase.actualResults = TestCase.get({
         basePath: 'testResult',
         subPath: $scope.testCase.actual.substring(0, $scope.testCase.actual.indexOf('/')),
-        testResource: $scope.testCase.actual.substring($scope.testCase.actual.indexOf('/') + 1)
+        testResource: $scope.testCase.actual.substring($scope.testCase.actual.indexOf('/') + 1),
+        item: $scope.testCase.item
       });
     }
     if ($scope.testCase.executeLog) {
       $scope.testCase.log = TestCase.get({
         basePath: 'testResult',
         subPath: $scope.testCase.executeLog.substring(0, $scope.testCase.executeLog.indexOf('/')),
-        testResource: $scope.testCase.executeLog.substring($scope.testCase.executeLog.indexOf('/') + 1)
+        testResource: $scope.testCase.executeLog.substring($scope.testCase.executeLog.indexOf('/') + 1),
+        item: $scope.testCase.item
       });
     }
   });

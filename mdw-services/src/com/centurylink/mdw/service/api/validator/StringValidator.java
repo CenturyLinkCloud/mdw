@@ -27,8 +27,9 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 
 /**
- * Dynamic Java workflow asset.
+ * @deprecated
  */
+@Deprecated
 public class StringValidator implements Validator {
     @Override
     public ValidationResult validate(JSONObject json, String key, Property modelProperty,
