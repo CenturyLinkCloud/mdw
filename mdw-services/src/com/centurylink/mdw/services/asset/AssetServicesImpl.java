@@ -129,12 +129,15 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    public PackageAssets getAssets(String packageName) throws ServiceException {
+        return getAssets(packageName, false);
+    }
+
     /**
      * Returns all the assets for the specified package.
-     * Works only for VCS assets.  Does not use the AssetVOCache.
+     * Does not use the AssetCache.
      */
-    public PackageAssets getAssets(String packageName) throws ServiceException {
-
+    public PackageAssets getAssets(String packageName, boolean withVcsInfo) throws ServiceException {
         try {
             PackageDir pkgDir = getPackageDir(packageName);
             if (pkgDir == null) {
@@ -153,10 +156,12 @@ public class AssetServicesImpl implements AssetServices {
             PackageAssets pkgAssets = new PackageAssets(pkgDir);
             pkgAssets.setAssets(assets);
 
-            CodeTimer timer = new CodeTimer("AssetServices", true);
-            addVersionControlInfo(pkgAssets);
-            pkgAssets.sort();
-            timer.stopAndLogTiming("addVersionControlInfo(PackageAssets)");
+            if (withVcsInfo) {
+                CodeTimer timer = new CodeTimer("AssetServices", true);
+                addVersionControlInfo(pkgAssets);
+                pkgAssets.sort();
+                timer.stopAndLogTiming("addVersionControlInfo(PackageAssets)");
+            }
 
             return pkgAssets;
         }
@@ -458,6 +463,10 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     public AssetInfo getAsset(String path) throws ServiceException {
+        return getAsset(path, false);
+    }
+
+    public AssetInfo getAsset(String path, boolean withVcsInfo) throws ServiceException {
         try {
             int lastSlash = path.lastIndexOf('/');
             String pkgName = path.substring(0, lastSlash);
@@ -477,7 +486,8 @@ public class AssetServicesImpl implements AssetServices {
             AssetFile assetFile = pkgDir.getAssetFile(new File(pkgDir + "/" + assetName));
             if (assetFile.isFile()) {
                 AssetInfo asset = new AssetInfo(assetFile);
-                addVersionControlInfo(asset);
+                if (withVcsInfo)
+                    addVersionControlInfo(asset);
                 return asset;
             }
             else {
@@ -599,7 +609,7 @@ public class AssetServicesImpl implements AssetServices {
                 }
             }
             else {
-                throw new IOException("Cannot locate missing package XML in version control: " + pkgMetaFilePath);
+                throw new IOException("Cannot locate missing package meta in version control: " + pkgMetaFilePath);
             }
         }
         return pkgDir;

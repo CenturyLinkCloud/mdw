@@ -8,11 +8,11 @@
           <span class="glyphicon mdw-test-status"
             ng-class="{'glyphicon-ok-sign':testCase.status == 'Passed', 'glyphicon-remove-sign':testCase.status == 'Failed', 'glyphicon-exclamation-sign':testCase.status=='Errored'}"></span>
           {{testCasePackage}}&nbsp;/&nbsp;{{testCase.baseName}}
-          <span class="mdw-commit" ng-if="testCase.commitInfo" title="{{testCase.commitInfo.message}}"> ({{testCase.commitInfo.committer}} 
+          <span class="mdw-commit" ng-if="testCase.commitInfo.committer" title="{{testCase.commitInfo.message}}"> ({{testCase.commitInfo.committer}} 
             <span class="mdw-commit-date">{{testCase.commitInfo.date}}</span>)
           </span>
         </div>
-        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution')">
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution') && !testCase.name.endsWith('.postman')">
           <button type="button" class="btn btn-primary mdw-btn" ng-click="runTest(testCasePackage, testCase.name)">
             <span class="glyphicon glyphicon-play"></span> Run
           </button> 
@@ -20,7 +20,7 @@
       </div>
       <div class="mdw-tabbed-section">
         <uib-tabset>
-          <uib-tab heading="Test Case">
+          <uib-tab heading="{{testCaseItem ? 'Test Case Item' : 'Test Case'}}">
             <div class="mdw-inner-content">
               <div class="mdw-resource-heading">{{testCase.name}}</div>
               <pre class="mdw-line-nums">{{testCase.commands.lineNumbers}}</pre>

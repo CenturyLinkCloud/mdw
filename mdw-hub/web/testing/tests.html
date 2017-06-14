@@ -57,6 +57,7 @@
               <span ng-if="!testCase.items && testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
               <span ng-if="!testCase.items && testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
               <span ng-if="!testCase.items && testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+              <img ng-if="testCase.items && testCase.name.endsWith('.postman')" src="images/postman.png" alt="postman">&nbsp;</img>
               <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}">
                 {{testCase.baseName}}
               </a>
@@ -71,8 +72,8 @@
                   <span ng-if="item.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
                   <span ng-if="item.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
                   <span ng-if="item.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
-                  <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}/{{item.name}}" style="position:relative;top:-2px">
-                    {{item.name}}
+                  <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}/{{item.object.name}}" style="position:relative;top:-2px">
+                    {{item.object.name}}
                   </a>
                   <span class="mdw-item-substat" ng-if="item.start"> {{item.start}}</span>
                 </div>

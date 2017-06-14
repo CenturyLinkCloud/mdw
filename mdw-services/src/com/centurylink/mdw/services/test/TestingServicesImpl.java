@@ -42,7 +42,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -135,15 +134,6 @@ public class TestingServicesImpl implements TestingServices {
         try {
             TestCase testCase = readTestCase(path);
             addStatusInfo(testCase);
-            AssetServices assetServices = ServiceLocator.getAssetServices();
-            VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
-            if (vcGit != null && PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
-                testCase.getAsset()
-                    .setCommitInfo(vcGit.getCommitInfo(
-                            vcGit.getRelativePath(new File(assetServices.getAssetRoot() + "/"
-                                    + testCase.getPackage().replace('.', '/') + "/"
-                                    + testCase.getAsset().getName()))));
-            }
             return testCase;
         }
         catch (Exception ex) {
@@ -167,7 +157,7 @@ public class TestingServicesImpl implements TestingServices {
                     String itemObjName = itemObj.getString("name");
                     if (itemName.equals(itemObjName)) {
                         item = new TestCaseItem(itemName);
-                        item.setItem(itemObj);
+                        item.setObject(itemObj);
                     }
                 }
             }
@@ -284,7 +274,7 @@ public class TestingServicesImpl implements TestingServices {
         testCase.setMessage(sourceCase.getMessage());
         if (testCase.getItems() != null) {
             for (TestCaseItem item : testCase.getItems()) {
-                TestCaseItem sourceItem = sourceCase.getItem(item.getItem().getString("name"));
+                TestCaseItem sourceItem = sourceCase.getItem(item.getName());
                 if (sourceItem != null) {
                     item.setStatus(sourceItem.getStatus());
                     item.setStart(sourceItem.getStart());
@@ -294,7 +284,6 @@ public class TestingServicesImpl implements TestingServices {
             }
         }
     }
-
 
     private void processResultsFileXml(File resultsFile, final List<TestCase> testCases) throws Exception {
         FileInputStream inputStream = null;

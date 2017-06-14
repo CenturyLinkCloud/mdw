@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.test.TestCase.Status;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Represents an item within a test case (eg: in a postman collection).
  */
@@ -32,8 +34,8 @@ public class TestCaseItem implements Jsonable {
     }
 
     public TestCaseItem(String name) {
-        this.item = new JSONObject();
-        this.item.put("name", name);
+        this.object = new JSONObject();
+        this.object.put("name", name);
     }
 
     private Status status;
@@ -67,8 +69,15 @@ public class TestCaseItem implements Jsonable {
     public String getExecuteLog() { return executeLog; }
     public void setExecuteLog(String executeLog) { this.executeLog = executeLog; }
 
-    private JSONObject item;
-    public JSONObject getItem() { return item; }
-    public void setItem(JSONObject item) { this.item = item; }
+    /**
+     * Must have a 'name' property.
+     */
+    private JSONObject object;
+    public JSONObject getObject() { return object; }
+    public void setObject(JSONObject object) { this.object = object; }
 
+    @ApiModelProperty(hidden=true)
+    public String getName() {
+        return object == null ? null : object.optString("name");
+    }
 }

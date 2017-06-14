@@ -240,24 +240,37 @@ testingMod.controller('TestsController',
   });  
 }]);
 
-testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
-                                         function($scope, $routeParams, $q, $location, AutomatedTests, TestCase, TestExec) {
+testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestVcs', 'TestCase', 'TestExec',
+                                         function($scope, $routeParams, $q, $location, AutomatedTests, TestVcs, TestCase, TestExec) {
   $scope.testCase = AutomatedTests.get({
     packageName: $routeParams.packageName, 
     testCaseName: $routeParams.testCaseName,
-    item: $routeParams.itemName}, 
+    itemName: $routeParams.itemName}, 
   function(testCaseData) {
-    
+
     $scope.testCasePackage = $routeParams.packageName;
-    var lastDot = $scope.testCase.name.lastIndexOf('.');
-    $scope.testCase.baseName = $scope.testCase.name.substring(0, lastDot);
-    $scope.testCase.language = $scope.testCase.name.substring(lastDot + 1);
+    $scope.testCaseItem = $routeParams.itemName;
+    $scope.testCaseName = $routeParams.testCaseName; 
+
+    if ($scope.testCaseItem) {
+      $scope.testCase.baseName = $routeParams.testCaseName + ': ' + $scope.testCase.object.name;
+      $scope.testCase.language = 'json';
+    }
+    else {
+      var lastDot = $scope.testCase.name.lastIndexOf('.');
+      $scope.testCase.baseName = $scope.testCase.name.substring(0, lastDot);
+      $scope.testCase.language = $scope.testCase.name.substring(lastDot + 1);
+      $scope.testCase.commitInfo = TestVcs.get({
+        packageName: $scope.testCasePackage,
+        testCaseName: $scope.testCaseName
+      });
+    }
     
     $scope.testCase.commands = TestCase.get({
       basePath: 'testCase',
       subPath: $routeParams.packageName,
-      testResource: $scope.testCase.name,
-      item: $scope.testCase.item
+      testResource: $scope.testCaseName,
+      item: $scope.testCaseItem
     });
     if ($scope.testCase.expected) {
       $scope.testCase.expectedResults = TestCase.get({
@@ -422,7 +435,7 @@ testingMod.filter('yamlDiff', function($sce) {
 }).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
 
 testingMod.factory('TestCase', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/:basePath/:subPath/:testResource', mdw.hubParams(), {
+  return $resource(mdw.roots.services + '/:basePath/:subPath/:testResource/:item', mdw.hubParams(), {
     get: { 
       method: 'GET', 
       transformResponse: function(data, headers) {
@@ -442,7 +455,13 @@ testingMod.factory('TestCase', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName/:itemName', mdw.serviceParams(), {
+    get: { method: 'GET', isArray: false }
+  });
+}]);
+
+testingMod.factory('TestVcs', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/GitVcs/:packageName/:testCaseName', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false }
   });
 }]);
