@@ -194,6 +194,22 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    public Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException {
+        Map<String,List<AssetInfo>> pkgAssets = new HashMap<>();
+        for (String format: formats) {
+            Map<String,List<AssetInfo>> formatAssets = getAssetsOfType(format);
+            for (String pkg : formatAssets.keySet()) {
+                List<AssetInfo> assets = pkgAssets.get(pkg);
+                if (assets == null) {
+                    assets = new ArrayList<AssetInfo>();
+                    pkgAssets.put(pkg, assets);
+                }
+                assets.addAll(formatAssets.get(pkg));
+            }
+        }
+        return pkgAssets;
+    }
+
     public PackageList getPackages(boolean withVcsInfo) throws ServiceException {
         List<File> assetRoots = new ArrayList<File>();
         assetRoots.add(assetRoot);

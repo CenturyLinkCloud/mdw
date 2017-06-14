@@ -69,6 +69,11 @@ public interface AssetServices {
      * Assets do not contain VCS info.
      */
     public Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException;
+    /**
+     * Returns all assets for a list of file extensions (mapped to their package name).
+     * Assets do not contain VCS info.
+     */
+    public Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException;
 
     /**
      * Includes Git info if available.

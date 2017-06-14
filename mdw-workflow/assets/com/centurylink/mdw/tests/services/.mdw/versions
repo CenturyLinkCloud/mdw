@@ -64,6 +64,7 @@ SolutionService.yaml=1
 SolutionValues.test=2
 SolutionValues.yaml=1
 Values.json=1
+admin-apis.postman=1
 employee-request.xml=2
 process-values.json=3
 processContext.spring=1

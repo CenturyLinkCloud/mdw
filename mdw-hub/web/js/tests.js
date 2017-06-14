@@ -242,7 +242,11 @@ testingMod.controller('TestsController',
 
 testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
                                          function($scope, $routeParams, $q, $location, AutomatedTests, TestCase, TestExec) {
-  $scope.testCase = AutomatedTests.get({packageName: $routeParams.packageName, testCaseName: $routeParams.testCaseName}, function(testCaseData) {
+  $scope.testCase = AutomatedTests.get({
+    packageName: $routeParams.packageName, 
+    testCaseName: $routeParams.testCaseName,
+    item: $routeParams.itemName}, 
+  function(testCaseData) {
     
     $scope.testCasePackage = $routeParams.packageName;
     var lastDot = $scope.testCase.name.lastIndexOf('.');

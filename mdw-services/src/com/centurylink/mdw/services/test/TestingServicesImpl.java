@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +53,7 @@ import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -94,9 +94,7 @@ public class TestingServicesImpl implements TestingServices {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
         testCaseList.setPackageTests(new ArrayList<PackageTests>());
         List<TestCase> allTests = new ArrayList<TestCase>();
-        Map<String,List<AssetInfo>> pkgAssets = new HashMap<>();
-        for (String format: formats)
-            pkgAssets.putAll(assetServices.getAssetsOfType(format));
+        Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsOfTypes(formats);
         for (String pkgName : pkgAssets.keySet()) {
             List<AssetInfo> assets = pkgAssets.get(pkgName);
             PackageTests pkgTests = new PackageTests(assetServices.getPackage(pkgName));
@@ -111,9 +109,7 @@ public class TestingServicesImpl implements TestingServices {
                             JSONArray items = coll.getJSONArray("item");
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                JSONObject headerItem = new JSONObject();
-                                headerItem.put("name", item.getString("name"));
-                                testCase.addItem(headerItem);
+                                testCase.addItem(new TestCaseItem(item.getString("name")));
                             }
                         }
                     }
@@ -149,6 +145,52 @@ public class TestingServicesImpl implements TestingServices {
                                     + testCase.getAsset().getName()))));
             }
             return testCase;
+        }
+        catch (Exception ex) {
+            throw new ServiceException("IO Error reading test case: " + path, ex);
+        }
+    }
+
+    public TestCaseItem getTestCaseItem(String path) throws ServiceException {
+        try {
+            String assetPath = path.substring(0, path.lastIndexOf('/'));
+            String pkg = assetPath.substring(0, assetPath.lastIndexOf('/'));
+            String itemName = path.substring(path.lastIndexOf('/') + 1);
+            AssetInfo testCaseAsset = assetServices.getAsset(assetPath);
+            TestCaseItem item = null;
+            String json = new String(FileHelper.read(testCaseAsset.getFile()));
+            JSONObject coll = new JSONObject(json);
+            if (coll.has("item")) {
+                JSONArray items = coll.getJSONArray("item");
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject itemObj = items.getJSONObject(i);
+                    String itemObjName = itemObj.getString("name");
+                    if (itemName.equals(itemObjName)) {
+                        item = new TestCaseItem(itemName);
+                        item.setItem(itemObj);
+                    }
+                }
+            }
+            if (item != null) {
+                PackageAssets pkgAssets = assetServices.getAssets(pkg);
+                String yamlExt = Asset.getFileExtension(Asset.YAML);
+                File resultsDir = getTestResultsDir();
+                for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
+                    if (pkgAsset.getName().endsWith(yamlExt) && pkgAsset.getRootName().equals(testCaseAsset.getRootName() + "_" + itemName)) {
+                        item.setExpected(pkg + "/" + pkgAsset.getName());
+                        if (resultsDir != null) {
+                            if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
+                                item.setActual(pkg + "/" + pkgAsset.getName());
+                        }
+                    }
+                }
+                if (new File(resultsDir + "/" + pkg + "/" + testCaseAsset.getRootName() + "_" + itemName + ".log").isFile())
+                    item.setExecuteLog(pkg + "/" + testCaseAsset.getRootName() + "_" + itemName + ".log");
+            }
+
+            if (item != null)
+                addStatusInfo(new TestCase(pkg, testCaseAsset));
+            return item;
         }
         catch (Exception ex) {
             throw new ServiceException("IO Error reading test case: " + path, ex);
@@ -240,6 +282,17 @@ public class TestingServicesImpl implements TestingServices {
         testCase.setStart(sourceCase.getStart());
         testCase.setEnd(sourceCase.getEnd());
         testCase.setMessage(sourceCase.getMessage());
+        if (testCase.getItems() != null) {
+            for (TestCaseItem item : testCase.getItems()) {
+                TestCaseItem sourceItem = sourceCase.getItem(item.getItem().getString("name"));
+                if (sourceItem != null) {
+                    item.setStatus(sourceItem.getStatus());
+                    item.setStart(sourceItem.getStart());
+                    item.setEnd(sourceItem.getEnd());
+                    item.setMessage(sourceItem.getMessage());
+                }
+            }
+        }
     }
 
 

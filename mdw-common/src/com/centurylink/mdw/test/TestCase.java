@@ -18,7 +18,9 @@ package com.centurylink.mdw.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,12 +59,21 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     /**
      * impl-specific subtests (eg: postman collection)
      */
-    private JSONArray items;
-    public JSONArray getItems() { return items; }
-    public void addItem(JSONObject item) {
+    private List<TestCaseItem> items;
+    public List<TestCaseItem> getItems() { return items; }
+    public void addItem(TestCaseItem item) {
         if (items == null)
-            items = new JSONArray();
-        items.put(item);
+            items = new ArrayList<>();
+        items.add(item);
+    }
+    public TestCaseItem getItem(String name) {
+        if (items != null) {
+            for (TestCaseItem item : items) {
+                if (item.getJson().get("name").equals(name))
+                    return item;
+            }
+        }
+        return null;
     }
 
     public String getName() {
@@ -129,8 +140,13 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             this.actual = json.getString("actual");
         if (json.has("executeLog"))
             this.executeLog = json.getString("executeLog");
-        if (json.has("items"))
-            this.items = json.getJSONArray("items");
+        if (json.has("items")) {
+            this.items = new ArrayList<>();
+            JSONArray arr = json.getJSONArray("items");
+            for (int i = 0; i < arr.length(); i++) {
+                this.items.add(new TestCaseItem(arr.getJSONObject(i)));
+            }
+        }
     }
 
     public JSONObject getJson() throws JSONException {
@@ -154,6 +170,12 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             json.put("items", items);
         if (asset.getCommitInfo() != null)
             json.put("commitInfo", asset.getCommitInfo().getJson());
+        if (items != null) {
+            JSONArray arr = new JSONArray();
+            for (TestCaseItem item : items)
+                arr.put(item.getJson());
+            json.put("items", arr);
+        }
 
         return json;
     }
@@ -191,7 +213,4 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
                 fis.close();
         }
     }
-
-
-
 }
