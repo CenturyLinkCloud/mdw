@@ -598,8 +598,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
                 hasWaiters = true;
                 updateEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0, null);
-            }
-            else if (event.getStatus().equals(EventInstance.STATUS_ARRIVED)) {
+            } else if (event.getStatus().equals(EventInstance.STATUS_ARRIVED)) {
                 hasWaiters = true;
             } else {
                 throw new SQLException("The event is already recorded and in status " + event.getStatus());

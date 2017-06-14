@@ -79,7 +79,7 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
             try {
-                this.registerWaitEvents(false, true);
+                this.registerWaitEvents(true, true);
             }
             catch (Exception e) {
                 logger.info("Error in registerWaitEvents - " + e.getMessage());
@@ -267,7 +267,7 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         try {
 
             EventWaitInstance received = getEngine().createBroadcastEventWaitInstances(
-                    this.getActivityInstanceId(), eventNames, eventCompletionCodes, !checkIfArrived);
+                    this.getActivityInstanceId(), eventNames, eventCompletionCodes, !checkIfArrived, reregister);
             return received;
         }
         catch (Exception ex) {

@@ -1694,7 +1694,7 @@ class ProcessExecutorImpl {
             String[] pEventNames, String[] pWakeUpEventTypes,
             boolean[] pEventOccurances, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
-        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, false);
+        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, false, false);
     }
 
    /**
@@ -1714,7 +1714,7 @@ class ProcessExecutorImpl {
      */
     EventWaitInstance createEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean[] pEventOccurances, boolean notifyIfArrived, boolean isBroadcast)
+            boolean[] pEventOccurances, boolean notifyIfArrived, boolean isBroadcast, boolean reregister)
     throws DataAccessException, ProcessException {
 
         try {
@@ -1758,7 +1758,7 @@ class ProcessExecutorImpl {
                     ActivityInstance actInst = edao.getActivityInstance(actInstId);
                     resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
                     edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
-                } else {
+                } else if (!reregister) {
                     edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
                 }
                 ret = new EventWaitInstance();
@@ -1777,9 +1777,9 @@ class ProcessExecutorImpl {
 
     EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean notifyIfArrived)
+            boolean notifyIfArrived, boolean reregister)
     throws DataAccessException, ProcessException {
-        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, null, notifyIfArrived, true);
+        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, null, notifyIfArrived, true, reregister);
     }
 
     Integer broadcast(String pEventName, Long pEventInstId,
@@ -1802,7 +1802,7 @@ class ProcessExecutorImpl {
         else
             waiters = edao.recordEventArrive(pEventName, pEventInstId);
 
-        if (waiters!=null) {
+        if (waiters!=null && !waiters.isEmpty()) {
             boolean hasFailures = false;
             try {
                 for (EventWaitInstance inst : waiters) {

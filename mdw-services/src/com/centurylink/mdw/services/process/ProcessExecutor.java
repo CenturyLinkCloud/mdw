@@ -579,13 +579,13 @@ public class ProcessExecutor {
 
     public EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean notifyIfArrived)
+            boolean notifyIfArrived, boolean reregister)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
             return engineImpl.createBroadcastEventWaitInstances(actInstId,
-                    pEventNames, pWakeUpEventTypes, notifyIfArrived);
+                    pEventNames, pWakeUpEventTypes, notifyIfArrived, reregister);
         } finally {
             stopTransaction(transaction);
         }
