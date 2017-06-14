@@ -42,7 +42,6 @@ permalink: /docs/help/
 <ul>
   <li><a href='taskTemplates.html'>Manual Task Templates</a></li>
   <li><a href='customWeb.html'>Custom Web</a></li>
-  <li><a href='hubdev.html'>MDWHub Development</a></li>
   <li><a href='taskAction.html'>Defining Task Actions</a></li>
   <li><a href='taskNotices.html'>Task Notices</a></li>
   <li><a href='taskRouting.html'>Workgroup Routing</a></li>
@@ -65,7 +64,6 @@ permalink: /docs/help/
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
-  <li><a href='database.html'>MDW Database Models</a></li>
   <li><a href='reports.html'>MDW Reports</a></li>
   <li><a href='eventmgr.html'>Event Manager</a></li>
 </ul>
