@@ -54,6 +54,11 @@ testingMod.controller('TestsController',
       pkg.selected = $scope.selectedState.all;
       pkg.testCases.forEach(function(testCase) {
         testCase.selected = $scope.selectedState.all;
+        if (testCase.items) {
+          testCase.items.forEach(function(item) {
+            item.selected = pkg.selected;
+          });
+        }
       });
     });
   };
