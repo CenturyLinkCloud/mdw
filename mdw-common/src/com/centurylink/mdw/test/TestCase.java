@@ -61,15 +61,16 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
      */
     private List<TestCaseItem> items;
     public List<TestCaseItem> getItems() { return items; }
-    public void addItem(TestCaseItem item) {
+    public TestCaseItem addItem(TestCaseItem item) {
         if (items == null)
             items = new ArrayList<>();
         items.add(item);
+        return item;
     }
     public TestCaseItem getItem(String name) {
         if (items != null) {
             for (TestCaseItem item : items) {
-                if (item.getJson().get("name").equals(name))
+                if (name.equals(item.getName()))
                     return item;
             }
         }
@@ -87,14 +88,13 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         return pkg + "/" + asset.getName();
     }
 
+    public String getItemPath(String item) {
+        return getPath() + ": " + item;
+    }
+
     private Status status;
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
-
-    public boolean isFinished() {
-        return getStatus() != null && getStatus() != Status.Waiting
-                && getStatus() != Status.InProgress;
-    }
 
     private Date start;
     public Date getStart() { return start; }

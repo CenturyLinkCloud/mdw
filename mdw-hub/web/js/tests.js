@@ -60,6 +60,11 @@ testingMod.controller('TestsController',
   $scope.togglePackage = function(pkg) {
     pkg.testCases.forEach(function(testCase) {
       testCase.selected = pkg.selected;
+      if (testCase.items) {
+        testCase.items.forEach(function(item) {
+          item.selected = pkg.selected;
+        });
+      }
     });
     $scope.selectedState.all = false;
   };
@@ -118,10 +123,11 @@ testingMod.controller('TestsController',
     var pkgObj;
     for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
       for (var j = 0; j < $scope.testCaseList.packages[i].testCases.length; j++) {
-        if ($scope.testCaseList.packages[i].testCases[j].selected) {
+        var tc = $scope.testCaseList.packages[i].testCases[j];
+        if (tc.selected) {
           var pkgName = $scope.testCaseList.packages[i].name;
           pkgObj = null;
-          for (var k = 0; k < execTestPkgs.length; k++) {
+          for (let k = 0; k < execTestPkgs.length; k++) {
             if (execTestPkgs[k].name == pkgName) {
               pkgObj = execTestPkgs[k];
               break;
@@ -131,10 +137,14 @@ testingMod.controller('TestsController',
             pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []};
             execTestPkgs.push(pkgObj);
           }
-          var tc = $scope.testCaseList.packages[i].testCases[j];
           var tcObj = {name: tc.name};
-          if (tc.item)
-            tcObj.item = {name: tc.item.name};
+          if (tc.items) {
+            tcObj.items = [];
+            for (let k = 0; k < tc.items.length; k++) {
+              if (tc.items[k].selected)
+                tcObj.items.push({object: {name: tc.items[k].object.name}});
+            }
+          }
           pkgObj.testCases.push(tcObj);
         }
       }

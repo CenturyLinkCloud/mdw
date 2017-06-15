@@ -195,10 +195,7 @@ public class TestingServicesImpl implements TestingServices {
             if (!testCases.isEmpty()) {
                 File resultsFile = getTestResultsFile(testCases.get(0).getAsset().getExtension());
                 if (resultsFile != null && resultsFile.isFile()) {
-                    if (resultsFile.getName().endsWith(".xml"))
-                        processResultsFileXml(resultsFile, testCases);
-                    else
-                        processResultsFile(resultsFile, testCases);
+                    processResultsFile(resultsFile, testCases);
                     return resultsFile.lastModified();
                 }
             }
@@ -213,10 +210,7 @@ public class TestingServicesImpl implements TestingServices {
         try {
             File resultsFile = getTestResultsFile(testCase.getAsset().getExtension());
             if (resultsFile != null && resultsFile.isFile()) {
-                if (resultsFile.getName().endsWith(".xml"))
-                    processResultsFileXml(resultsFile, testCase);
-                else
-                    processResultsFile(resultsFile, testCase);
+                processResultsFile(resultsFile, testCase);
             }
         }
         catch (Exception ex) {
@@ -281,128 +275,6 @@ public class TestingServicesImpl implements TestingServices {
                     item.setEnd(sourceItem.getEnd());
                     item.setMessage(sourceItem.getMessage());
                 }
-            }
-        }
-    }
-
-    private void processResultsFileXml(File resultsFile, final List<TestCase> testCases) throws Exception {
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(resultsFile);
-            InputSource src = new InputSource(inputStream);
-            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-
-            SAXParser parser = parserFactory.newSAXParser();
-            parser.parse(src, new DefaultHandler() {
-                TestCase currentTestCase = null;
-
-                // attributes for workflow project
-                public void startElement(String uri, String localName, String qName,
-                        Attributes attrs) throws SAXException {
-                    if (qName.equals("testcase")) {
-                        for (TestCase testCase : testCases) {
-                            if (testCase.getPath().equals(attrs.getValue("name"))) {
-                                currentTestCase = testCase;
-                                String timestampStr = attrs.getValue("timestamp");
-                                if (timestampStr != null) {
-                                    Calendar cal = DatatypeConverter.parseDateTime(timestampStr);
-                                    testCase.setStart(cal.getTime());
-                                    String timeStr = attrs.getValue("time");
-                                    if (timeStr != null) {
-                                        int ms = (int) Float.parseFloat(timeStr) * 1000;
-                                        cal.add(Calendar.MILLISECOND, ms);
-                                        testCase.setEnd(cal.getTime());
-                                        testCase.setStatus(TestCase.Status.Passed); // assume pass
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (qName.equals("failure")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Failed);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("error")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Errored);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("running")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.InProgress);
-                        }
-                    }
-                }
-            });
-        }
-        finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-    }
-
-    private void processResultsFileXml(File resultsFile, final TestCase testCase) throws Exception {
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(resultsFile);
-            InputSource src = new InputSource(inputStream);
-            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-
-            SAXParser parser = parserFactory.newSAXParser();
-            parser.parse(src, new DefaultHandler() {
-                TestCase currentTestCase = null;
-
-                // attributes for workflow project
-                public void startElement(String uri, String localName, String qName,
-                        Attributes attrs) throws SAXException {
-                    if (qName.equals("testcase")) {
-                        String name = attrs.getValue("name");
-                        if (testCase.getPath().equals(name)) {
-                            currentTestCase = testCase;
-                            String timestampStr = attrs.getValue("timestamp");
-                            if (timestampStr != null) {
-                                Calendar cal = DatatypeConverter.parseDateTime(timestampStr);
-                                testCase.setStart(cal.getTime());
-                                String timeStr = attrs.getValue("time");
-                                if (timeStr != null) {
-                                    int ms = (int) Float.parseFloat(timeStr) * 1000;
-                                    cal.add(Calendar.MILLISECOND, ms);
-                                    testCase.setEnd(cal.getTime());
-                                    testCase.setStatus(TestCase.Status.Passed); // assume pass
-                                }
-                            }
-                        }
-                        else {
-                            currentTestCase = null;
-                        }
-                    }
-                    else if (qName.equals("failure")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Failed);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("error")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Errored);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("running")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.InProgress);
-                        }
-                    }
-                }
-            });
-        }
-        finally {
-            if (inputStream != null) {
-                inputStream.close();
             }
         }
     }
