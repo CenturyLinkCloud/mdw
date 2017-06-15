@@ -16,26 +16,16 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -112,7 +102,7 @@ public class TestingServicesImpl implements TestingServices {
                             }
                         }
                     }
-                    catch (IOException ex) {
+                    catch (Exception ex) {
                         logger.severeException(ex.getMessage(), ex);
                     }
                 }
@@ -330,21 +320,13 @@ public class TestingServicesImpl implements TestingServices {
         String summaryFile = null;
         if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format) || Asset.getFileExtension(Asset.POSTMAN).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE);
-            if (summaryFile == null) {
+            if (summaryFile == null)
                 summaryFile = "mdw-function-test-results.json";
-                // fall back to old XML results
-                if (!new File(resultsDir + "/" + summaryFile).exists() && new File(resultsDir + "/mdw-function-test-results.xml").exists())
-                    summaryFile = "mdw-function-test-results.xml";
-            }
         }
         else if (Asset.getFileExtension(Asset.FEATURE).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FEATURE_TESTS_SUMMARY_FILE);
-            if (summaryFile == null) {
+            if (summaryFile == null)
                 summaryFile = "mdw-cucumber-test-results.json";
-                // fall back to old XML results
-                if (!new File(resultsDir + "/" + summaryFile).exists() && new File(resultsDir + "/mdw-cucumber-test-results.xml").exists())
-                    summaryFile = "mdw-cucumber-test-results.xml";
-            }
         }
 
         return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);

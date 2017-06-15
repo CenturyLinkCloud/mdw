@@ -218,7 +218,7 @@ testingMod.controller('TestsController',
       if (oldPkg) {
         newPkg.testCases.forEach(function(newTestCase) {
           var oldTestCase = null;
-          for (var j = 0; j < oldPkg.testCases.length; j++) {
+          for (let j = 0; j < oldPkg.testCases.length; j++) {
             if (oldPkg.testCases[j].name == newTestCase.name) {
               oldTestCase = oldPkg.testCases[j];
               break;
@@ -231,6 +231,28 @@ testingMod.controller('TestsController',
             oldTestCase.message = newTestCase.message;
             oldTestCase.expected = newTestCase.expected;
             oldTestCase.actual = newTestCase.actual;
+            oldTestCase.log = newTestCase.log;
+            if (newTestCase.items && oldTestCase.items) {
+              for (let j = 0; j < oldTestCase.items.length; j++) {
+                var oldItem = oldTestCase.items[j];
+                var newItem = null;
+                for (let k = 0; k < newTestCase.items.length; k++) {
+                  if (oldItem.object.name == newTestCase.items[k].object.name) {
+                    newItem = newTestCase.items[k];
+                    break;
+                  }
+                }
+                if (newItem) {
+                  oldItem.status = newItem.status;
+                  oldItem.start = newItem.start;
+                  oldItem.end = newItem.end;
+                  oldItem.message = newItem.message;
+                  oldItem.expected = newItem.expected;
+                  oldItem.actual = newItem.actual;
+                  oldItem.log = newItem.log;
+                }
+              }
+            }
           }
         });
       }
@@ -308,8 +330,8 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$locat
     }
   });
   
-  $scope.runTest = function(testPkg, testName) {
-    TestExec.run({packageName: testPkg, testCaseName: testName }, {}, function(data) {
+  $scope.runTest = function(testPkg, testName, item) {
+    TestExec.run({packageName: testPkg, testCaseName: testName, itemName: item}, {}, function(data) {
       if (data.status.code !== 0) {
         $scope.testExecMessage = data.status.message;
       }
@@ -483,7 +505,7 @@ testingMod.factory('TestsExec', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName/:itemName', mdw.serviceParams(), {
     run: { method: 'POST' }
   });
 }]);

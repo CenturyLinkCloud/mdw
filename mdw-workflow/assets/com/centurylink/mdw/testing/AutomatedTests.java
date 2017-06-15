@@ -103,14 +103,12 @@ public class AutomatedTests extends JsonRestService {
                 testingServices.cancelTestExecution(user);
             }
             else {
-                TestCase singleCase = getTestCase(segments);
                 try {
-                    if (singleCase != null) {
+                    TestCase singleCase = getTestCase(segments);
+                    if (singleCase != null)
                         testingServices.executeCase(singleCase, user, config);
-                    }
-                    else {
+                    else
                         testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
-                    }
                 }
                 catch (IOException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
@@ -124,12 +122,15 @@ public class AutomatedTests extends JsonRestService {
     }
 
     private TestCase getTestCase(String[] segments) throws ServiceException {
-        if (segments.length != 7)
+        if (segments.length < 7)
             return null;
         String testCasePath = segments[5] + '/' + segments[6];
         TestCase testCase = ServiceLocator.getTestingServices().getTestCase(testCasePath);
         if (testCase == null)
             throw new ServiceException(404, "Test case not found: " + testCasePath);
+        if (segments.length == 8)
+            testCase.addItem(getTestCaseItem(segments));
+
         return testCase;
     }
 

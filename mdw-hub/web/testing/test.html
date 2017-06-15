@@ -12,8 +12,8 @@
             <span class="mdw-commit-date">{{testCase.commitInfo.date}}</span>)
           </span>
         </div>
-        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution') && !testCase.name.endsWith('.postman')">
-          <button type="button" class="btn btn-primary mdw-btn" ng-click="runTest(testCasePackage, testCase.name)">
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution') && (testCaseItem || !testCase.name.endsWith('.postman'))">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="runTest(testCasePackage, testCaseName, testCaseItem)">
             <span class="glyphicon glyphicon-play"></span> Run
           </button> 
         </div>

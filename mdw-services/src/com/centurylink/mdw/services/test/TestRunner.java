@@ -178,7 +178,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             else {
                 for (TestCaseItem item : testCase.getItems()) {
                     item.setStatus(null);
-                    testCaseStatuses.put(testCase.getPath() + ": " + item.getName(), null);
+                    testCaseStatuses.put(testCase.getItemPath(item.getName()), null);
                 }
             }
             writeTestResults(testCase);
@@ -194,22 +194,19 @@ public class TestRunner implements Runnable, MasterRequestListener {
         TestCaseList fullTestCaseList = null;
         for (TestCase testCase : testCaseList.getTestCases()) {
             boolean statusChanged = false;
+            if (!isFinished(testCase.getStatus()))
+                allDone = false;
+            Status oldStatus = testCaseStatuses.get(testCase.getPath());
+            if (oldStatus != testCase.getStatus())
+                statusChanged = true;
             if (testCase.getItems() == null) {
-                if (isFinished(testCase.getStatus()))
-                    allDone = false;
-                Status oldStatus = testCaseStatuses.get(testCase.getPath());
-                if (oldStatus != testCase.getStatus())
-                    statusChanged = true;
                 testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
             }
             else {
+                // case status applies to all running items (currently one)
                 for (TestCaseItem item : testCase.getItems()) {
-                    if (!isFinished(item.getStatus()))
-                        allDone = false;
-                    Status oldStatus = testCaseStatuses.get(testCase.getItemPath(item.getName()));
-                    if (oldStatus != item.getStatus())
-                        statusChanged = true;
-                    testCaseStatuses.put(testCase.getItemPath(item.getName()), item.getStatus());
+                    testCaseStatuses.put(testCase.getItemPath(item.getName()), testCase.getStatus());
+                    item.setStatus(testCase.getStatus());
                 }
             }
 
@@ -266,10 +263,13 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 testCase.setMessage(exeTestCase.getMessage());
             }
             else {
+                List<TestCaseItem> toAdd = new ArrayList<>();
                 for (TestCaseItem exeItem : exeTestCase.getItems()) {
                     TestCaseItem item = testCase.getItem(exeItem.getName());
-                    if (item == null)
-                        item = exeTestCase.addItem(exeItem);
+                    if (item == null) {
+                        item = exeItem;
+                        toAdd.add(item);
+                    }
                     if (item != null) {
                         item.setStatus(exeItem.getStatus());
                         item.setStart(exeItem.getStart());
@@ -277,6 +277,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
                         item.setMessage(exeItem.getMessage());
                     }
                 }
+                testCase.getItems().addAll(toAdd);
             }
             fullTestCaseList.setCount(fullTestCaseList.getTestCases().size());
             fullTestCaseList.sort();
