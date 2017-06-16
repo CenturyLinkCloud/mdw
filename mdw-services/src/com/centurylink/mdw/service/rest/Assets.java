@@ -123,7 +123,7 @@ public class Assets extends JsonRestService {
             }
             else {
                 if (asset == null) {
-                    PackageAssets pkgAssets = assetServices.getAssets(pkg);
+                    PackageAssets pkgAssets = assetServices.getAssets(pkg, true);
                     if (pkgAssets == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "No such package: " + pkg);
                     else
@@ -131,7 +131,7 @@ public class Assets extends JsonRestService {
                 }
                 else {
                     String assetPath = pkg + "/" + asset;
-                    AssetInfo theAsset = assetServices.getAsset(assetPath);
+                    AssetInfo theAsset = assetServices.getAsset(assetPath, true);
                     if (theAsset == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "No such asset: " + assetPath);
                     else

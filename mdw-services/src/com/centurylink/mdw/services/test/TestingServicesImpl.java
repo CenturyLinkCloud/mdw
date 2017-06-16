@@ -16,34 +16,22 @@
 package com.centurylink.mdw.services.test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -54,6 +42,7 @@ import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -94,9 +83,7 @@ public class TestingServicesImpl implements TestingServices {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
         testCaseList.setPackageTests(new ArrayList<PackageTests>());
         List<TestCase> allTests = new ArrayList<TestCase>();
-        Map<String,List<AssetInfo>> pkgAssets = new HashMap<>();
-        for (String format: formats)
-            pkgAssets.putAll(assetServices.getAssetsOfType(format));
+        Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsOfTypes(formats);
         for (String pkgName : pkgAssets.keySet()) {
             List<AssetInfo> assets = pkgAssets.get(pkgName);
             PackageTests pkgTests = new PackageTests(assetServices.getPackage(pkgName));
@@ -111,13 +98,11 @@ public class TestingServicesImpl implements TestingServices {
                             JSONArray items = coll.getJSONArray("item");
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                JSONObject headerItem = new JSONObject();
-                                headerItem.put("name", item.getString("name"));
-                                testCase.addItem(headerItem);
+                                testCase.addItem(new TestCaseItem(item.getString("name")));
                             }
                         }
                     }
-                    catch (IOException ex) {
+                    catch (Exception ex) {
                         logger.severeException(ex.getMessage(), ex);
                     }
                 }
@@ -139,16 +124,53 @@ public class TestingServicesImpl implements TestingServices {
         try {
             TestCase testCase = readTestCase(path);
             addStatusInfo(testCase);
-            AssetServices assetServices = ServiceLocator.getAssetServices();
-            VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
-            if (vcGit != null && PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
-                testCase.getAsset()
-                    .setCommitInfo(vcGit.getCommitInfo(
-                            vcGit.getRelativePath(new File(assetServices.getAssetRoot() + "/"
-                                    + testCase.getPackage().replace('.', '/') + "/"
-                                    + testCase.getAsset().getName()))));
-            }
             return testCase;
+        }
+        catch (Exception ex) {
+            throw new ServiceException("IO Error reading test case: " + path, ex);
+        }
+    }
+
+    public TestCaseItem getTestCaseItem(String path) throws ServiceException {
+        try {
+            String assetPath = path.substring(0, path.lastIndexOf('/'));
+            String pkg = assetPath.substring(0, assetPath.lastIndexOf('/'));
+            String itemName = path.substring(path.lastIndexOf('/') + 1);
+            AssetInfo testCaseAsset = assetServices.getAsset(assetPath);
+            TestCaseItem item = null;
+            String json = new String(FileHelper.read(testCaseAsset.getFile()));
+            JSONObject coll = new JSONObject(json);
+            if (coll.has("item")) {
+                JSONArray items = coll.getJSONArray("item");
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject itemObj = items.getJSONObject(i);
+                    String itemObjName = itemObj.getString("name");
+                    if (itemName.equals(itemObjName)) {
+                        item = new TestCaseItem(itemName);
+                        item.setObject(itemObj);
+                    }
+                }
+            }
+            if (item != null) {
+                PackageAssets pkgAssets = assetServices.getAssets(pkg);
+                String yamlExt = Asset.getFileExtension(Asset.YAML);
+                File resultsDir = getTestResultsDir();
+                for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
+                    if (pkgAsset.getName().endsWith(yamlExt) && pkgAsset.getRootName().equals(testCaseAsset.getRootName() + "_" + itemName)) {
+                        item.setExpected(pkg + "/" + pkgAsset.getName());
+                        if (resultsDir != null) {
+                            if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
+                                item.setActual(pkg + "/" + pkgAsset.getName());
+                        }
+                    }
+                }
+                if (new File(resultsDir + "/" + pkg + "/" + testCaseAsset.getRootName() + "_" + itemName + ".log").isFile())
+                    item.setExecuteLog(pkg + "/" + testCaseAsset.getRootName() + "_" + itemName + ".log");
+            }
+
+            if (item != null)
+                addStatusInfo(new TestCase(pkg, testCaseAsset));
+            return item;
         }
         catch (Exception ex) {
             throw new ServiceException("IO Error reading test case: " + path, ex);
@@ -163,10 +185,7 @@ public class TestingServicesImpl implements TestingServices {
             if (!testCases.isEmpty()) {
                 File resultsFile = getTestResultsFile(testCases.get(0).getAsset().getExtension());
                 if (resultsFile != null && resultsFile.isFile()) {
-                    if (resultsFile.getName().endsWith(".xml"))
-                        processResultsFileXml(resultsFile, testCases);
-                    else
-                        processResultsFile(resultsFile, testCases);
+                    processResultsFile(resultsFile, testCases);
                     return resultsFile.lastModified();
                 }
             }
@@ -181,10 +200,7 @@ public class TestingServicesImpl implements TestingServices {
         try {
             File resultsFile = getTestResultsFile(testCase.getAsset().getExtension());
             if (resultsFile != null && resultsFile.isFile()) {
-                if (resultsFile.getName().endsWith(".xml"))
-                    processResultsFileXml(resultsFile, testCase);
-                else
-                    processResultsFile(resultsFile, testCase);
+                processResultsFile(resultsFile, testCase);
             }
         }
         catch (Exception ex) {
@@ -240,127 +256,15 @@ public class TestingServicesImpl implements TestingServices {
         testCase.setStart(sourceCase.getStart());
         testCase.setEnd(sourceCase.getEnd());
         testCase.setMessage(sourceCase.getMessage());
-    }
-
-
-    private void processResultsFileXml(File resultsFile, final List<TestCase> testCases) throws Exception {
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(resultsFile);
-            InputSource src = new InputSource(inputStream);
-            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-
-            SAXParser parser = parserFactory.newSAXParser();
-            parser.parse(src, new DefaultHandler() {
-                TestCase currentTestCase = null;
-
-                // attributes for workflow project
-                public void startElement(String uri, String localName, String qName,
-                        Attributes attrs) throws SAXException {
-                    if (qName.equals("testcase")) {
-                        for (TestCase testCase : testCases) {
-                            if (testCase.getPath().equals(attrs.getValue("name"))) {
-                                currentTestCase = testCase;
-                                String timestampStr = attrs.getValue("timestamp");
-                                if (timestampStr != null) {
-                                    Calendar cal = DatatypeConverter.parseDateTime(timestampStr);
-                                    testCase.setStart(cal.getTime());
-                                    String timeStr = attrs.getValue("time");
-                                    if (timeStr != null) {
-                                        int ms = (int) Float.parseFloat(timeStr) * 1000;
-                                        cal.add(Calendar.MILLISECOND, ms);
-                                        testCase.setEnd(cal.getTime());
-                                        testCase.setStatus(TestCase.Status.Passed); // assume pass
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (qName.equals("failure")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Failed);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("error")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Errored);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("running")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.InProgress);
-                        }
-                    }
+        if (testCase.getItems() != null) {
+            for (TestCaseItem item : testCase.getItems()) {
+                TestCaseItem sourceItem = sourceCase.getItem(item.getName());
+                if (sourceItem != null) {
+                    item.setStatus(sourceItem.getStatus());
+                    item.setStart(sourceItem.getStart());
+                    item.setEnd(sourceItem.getEnd());
+                    item.setMessage(sourceItem.getMessage());
                 }
-            });
-        }
-        finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-    }
-
-    private void processResultsFileXml(File resultsFile, final TestCase testCase) throws Exception {
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(resultsFile);
-            InputSource src = new InputSource(inputStream);
-            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-
-            SAXParser parser = parserFactory.newSAXParser();
-            parser.parse(src, new DefaultHandler() {
-                TestCase currentTestCase = null;
-
-                // attributes for workflow project
-                public void startElement(String uri, String localName, String qName,
-                        Attributes attrs) throws SAXException {
-                    if (qName.equals("testcase")) {
-                        String name = attrs.getValue("name");
-                        if (testCase.getPath().equals(name)) {
-                            currentTestCase = testCase;
-                            String timestampStr = attrs.getValue("timestamp");
-                            if (timestampStr != null) {
-                                Calendar cal = DatatypeConverter.parseDateTime(timestampStr);
-                                testCase.setStart(cal.getTime());
-                                String timeStr = attrs.getValue("time");
-                                if (timeStr != null) {
-                                    int ms = (int) Float.parseFloat(timeStr) * 1000;
-                                    cal.add(Calendar.MILLISECOND, ms);
-                                    testCase.setEnd(cal.getTime());
-                                    testCase.setStatus(TestCase.Status.Passed); // assume pass
-                                }
-                            }
-                        }
-                        else {
-                            currentTestCase = null;
-                        }
-                    }
-                    else if (qName.equals("failure")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Failed);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("error")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.Errored);
-                            currentTestCase.setMessage(attrs.getValue("message"));
-                        }
-                    }
-                    else if (qName.equals("running")) {
-                        if (currentTestCase != null) {
-                            currentTestCase.setStatus(TestCase.Status.InProgress);
-                        }
-                    }
-                }
-            });
-        }
-        finally {
-            if (inputStream != null) {
-                inputStream.close();
             }
         }
     }
@@ -416,21 +320,13 @@ public class TestingServicesImpl implements TestingServices {
         String summaryFile = null;
         if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format) || Asset.getFileExtension(Asset.POSTMAN).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE);
-            if (summaryFile == null) {
+            if (summaryFile == null)
                 summaryFile = "mdw-function-test-results.json";
-                // fall back to old XML results
-                if (!new File(resultsDir + "/" + summaryFile).exists() && new File(resultsDir + "/mdw-function-test-results.xml").exists())
-                    summaryFile = "mdw-function-test-results.xml";
-            }
         }
         else if (Asset.getFileExtension(Asset.FEATURE).equals("." + format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FEATURE_TESTS_SUMMARY_FILE);
-            if (summaryFile == null) {
+            if (summaryFile == null)
                 summaryFile = "mdw-cucumber-test-results.json";
-                // fall back to old XML results
-                if (!new File(resultsDir + "/" + summaryFile).exists() && new File(resultsDir + "/mdw-cucumber-test-results.xml").exists())
-                    summaryFile = "mdw-cucumber-test-results.xml";
-            }
         }
 
         return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);

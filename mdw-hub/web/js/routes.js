@@ -90,7 +90,7 @@ routesSvc.factory('routes', function() {
         controller: 'TestController'
       },      
       {
-        path: '/tests/:packageName/:testCaseName/:item',
+        path: '/tests/:packageName/:testCaseName/:itemName',
         templateUrl: 'testing/test.html',
         controller: 'TestController'
       },      

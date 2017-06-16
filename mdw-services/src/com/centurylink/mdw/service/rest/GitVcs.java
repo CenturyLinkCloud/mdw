@@ -35,6 +35,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -65,7 +66,7 @@ public class GitVcs extends JsonRestService {
     }
 
     @Override
-    protected Action getAction(String path, Object content, Map<String, String> headers) {
+    protected Action getAction(String path, Object content, Map<String,String> headers) {
         if ("pull".equals(getQuery(path, headers).getFilter("gitAction")))
             return Action.Import;
         else
@@ -75,6 +76,20 @@ public class GitVcs extends JsonRestService {
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
         return Entity.Asset;
+    }
+
+
+    /**
+     * Retrieves commit info for an asset.
+     */
+    @Override
+    public JSONObject get(String assetPath, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        AssetServices assetServices = ServiceLocator.getAssetServices();
+        AssetInfo asset = assetServices.getAsset(assetPath.substring(7), true);
+        if (asset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + assetPath);
+        return asset.getCommitInfo().getJson();
     }
 
     /**

@@ -648,6 +648,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             languageToExtension.put("CAMEL_ROUTE", ".camel");
             languageToExtension.put("PROCESS", ".proc");
             languageToExtension.put("TEST", ".test");
+            languageToExtension.put("POSTMAN", ".postman");
             languageToExtension.put("FEATURE", ".feature");
             languageToExtension.put("YAML", ".yaml");
             languageToExtension.put("JSON", ".json");

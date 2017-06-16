@@ -60,18 +60,29 @@ public interface AssetServices {
 
     /**
      * Returns the assets of a workflow package latest version.
-     * Includes Git information if available.
      */
     public PackageAssets getAssets(String packageName) throws ServiceException;
+    public PackageAssets getAssets(String packageName, boolean withVcsInfo) throws ServiceException;
 
     /**
      * Returns all assets for a given file extension (mapped to their package name).
      * Assets do not contain VCS info.
      */
     public Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException;
+    /**
+     * Returns all assets for a list of file extensions (mapped to their package name).
+     * Assets do not contain VCS info.
+     */
+    public Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException;
 
     /**
-     * Includes Git info if available.
+     * @param assetPath - myPackage/myAsset.ext
+     * @param withVcsInfo - include Git info if available
+     */
+    public AssetInfo getAsset(String assetPath, boolean withVcsInfo) throws ServiceException;
+
+    /**
+     * Without VCS info.
      * @param assetPath - myPackage/myAsset.ext
      */
     public AssetInfo getAsset(String assetPath) throws ServiceException;
