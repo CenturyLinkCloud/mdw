@@ -2,24 +2,27 @@
 	"variables": [],
 	"info": {
 		"name": "admin-apis",
-		"_postman_id": "fe205975-51cd-5ea3-b7c9-acd06bed7b1b",
+		"_postman_id": "c9e58dd6-ad7f-6d97-909d-2f9c44d1c4e7",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "retrieve-workgroup-dons",
+			"name": "retrieve-workgroup",
 			"request": {
 				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "create-workgroup-dons",
+			"name": "create-workgroup",
 			"request": {
 				"url": "http://localhost:8080/mdw/services/Workgroups",
 				"method": "POST",
@@ -33,6 +36,37 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"name\": \"dons\",\r\n  \"description\": \"a group for testing\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "delete-workgroup",
+			"request": {
+				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "update-workgroup",
+			"request": {
+				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"dons\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
 				},
 				"description": ""
 			},
