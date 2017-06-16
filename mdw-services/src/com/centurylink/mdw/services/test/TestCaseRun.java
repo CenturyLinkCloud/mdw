@@ -79,6 +79,7 @@ import com.centurylink.mdw.test.TestCaseAdapterStub;
 import com.centurylink.mdw.test.TestCaseEvent;
 import com.centurylink.mdw.test.TestCaseFile;
 import com.centurylink.mdw.test.TestCaseHttp;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseMessage;
 import com.centurylink.mdw.test.TestCaseProcess;
 import com.centurylink.mdw.test.TestCaseResponse;
@@ -184,6 +185,14 @@ public class TestCaseRun implements Runnable {
         message = null;
         testCase.setStatus(TestCase.Status.InProgress);
         testCase.setStart(new Date());
+        if (testCase.getItems() != null) {
+            // may have individual start dates in the future
+            Date start = new Date();
+            for (TestCaseItem item : testCase.getItems()) {
+                item.setStatus(TestCase.Status.InProgress);
+                item.setStart(start);
+            }
+        }
 
         deleteResultsFile();
         log.format("===== execute case %s\r\n", testCase.getPath());
@@ -978,6 +987,13 @@ public class TestCaseRun implements Runnable {
         if (status != TestCase.Status.Errored && status != TestCase.Status.Stopped) {
             testCase.setEnd(endDate);
             testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
+            if (testCase.getItems() != null) {
+                // may have individual end dates in the future
+                for (TestCaseItem item : testCase.getItems()) {
+                    item.setEnd(endDate);
+                    testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
+                }
+            }
         }
     }
 

@@ -171,11 +171,9 @@ public class TestRunner implements Runnable, MasterRequestListener {
 
     private void initResults() throws JSONException, IOException {
         for (TestCase testCase : testCaseList.getTestCases()) {
-            if (testCase.getItems() == null) {
-                testCase.setStatus(null);
-                testCaseStatuses.put(testCase.getPath(), null);
-            }
-            else {
+            testCase.setStatus(null);
+            testCaseStatuses.put(testCase.getPath(), null);
+            if (testCase.getItems() != null) {
                 for (TestCaseItem item : testCase.getItems()) {
                     item.setStatus(null);
                     testCaseStatuses.put(testCase.getItemPath(item.getName()), null);
@@ -256,13 +254,11 @@ public class TestRunner implements Runnable, MasterRequestListener {
         if (testCase == null)
             testCase = fullTestCaseList.addTestCase(exeTestCase);
         if (testCase != null) {
-            if (exeTestCase.getItems() == null) {
-                testCase.setStatus(exeTestCase.getStatus());
-                testCase.setStart(exeTestCase.getStart());
-                testCase.setEnd(exeTestCase.getEnd());
-                testCase.setMessage(exeTestCase.getMessage());
-            }
-            else {
+            testCase.setStatus(exeTestCase.getStatus());
+            testCase.setStart(exeTestCase.getStart());
+            testCase.setEnd(exeTestCase.getEnd());
+            testCase.setMessage(exeTestCase.getMessage());
+            if (exeTestCase.getItems() != null) {
                 List<TestCaseItem> toAdd = new ArrayList<>();
                 for (TestCaseItem exeItem : exeTestCase.getItems()) {
                     TestCaseItem item = testCase.getItem(exeItem.getName());
