@@ -20,11 +20,13 @@
     - info annotation
 
 7 - Do a local Gradle build and Run exportAssetPackages task to update **/.mdw/package.json files
+8 - On GitHub:
+  - Close any open issues delivered with this build.
+  - Create a milestone marker for the next upcoming build.
+  - Assign any un-delivered issues for this build's milestone to the next build's milestone.
+  - Close this build's milestone in GitHub.
     
-8 - Commit and push these changes to Git.
-
-9 - Run all tests locally (TODO: on build box -- depends on issue #14).
-
+9 - Commit and push these changes to Git.
 10 - Perform the Jenkins build (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
   - MDW6-Build
   - Review console output for errors.
@@ -56,13 +58,8 @@
   - For detailed explanation on the steps of closing and releasing the build go here  [Steps] (http://central.sonatype.org/pages/releasing-the-deployment.html)
   - After completing the above step you should see new build here http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
 
-14 - On GitHub:
-  - Close any open issues delivered with this build.
-  - Create a milestone marker for the next upcoming build.
-  - Assign any un-delivered issues for this build's milestone to the next build's milestone.
-  - Close this build's milestone in GitHub.
 14b - Tag release  
-  - git tag -a v6.0.04 -m "v6.0.04"
+  - git tag -a v6.0.04 -m 'v6.0.04'
   - git push origin --tags
   
 15 - Release Notes
