@@ -246,12 +246,13 @@ uploadArchives {
 task testLocalDev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
-    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}"]
+    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}",
+       mdwConfigLocation: "" + projectDir + "/config"]
 }
 
 task testTomcatMdwdev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
-    startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}"]
+    startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}",
+        mdwConfigLocation: "" + projectDir + "/../../../../tomcat/tomcat7-mdw6/conf"]
 }
-

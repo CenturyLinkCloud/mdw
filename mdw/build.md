@@ -28,41 +28,52 @@
 10 - Perform the Jenkins build (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
   - MDW6-Build
   - Review console output for errors.
-  - MDW6-Deploy  (You might have to start the server manually if this task does not do automatically)
-  - Login to mdw-hub and run all the test cases (select Stubbing from configure icon)
-
-11 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
-  - MDW6-Publish-Formal (or -Snapshot)
-  - Publish to Maven Central using mdw6-publish-maven-central (for formal build only) 
-  - Follow the steps of closing and releasing the build here [Steps] (http://central.sonatype.org/pages/releasing-the-deployment.html)
-  - You should see new build here http://repo.maven.apache.org/maven2/com/centurylink/mdw/
-  - Review console output for errors.
-
-12 - On GitHub:
-  - Close any open issues delivered with this build.
-  - Create a milestone marker for the next upcoming build.
-  - Assign any undelivered issues for this build's milestone to the next build's milestone.
-  - Close this build's milestone in GitHub.
-  
-13 - Release Notes
-  - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
-    `gem install github_changelog_generator`
-  - github_changelog_generator --exclude-labels designer,internal,wontfix,duplicate,documentation --exclude-tags-regex  [v9.*] --no-pull-request --future-release v6.0.03
-  - commit and push generated CHANGELOG.md to GitHub 
-  - git commit CHANGELOG.md -m "Release notes"
-  - Create the release on GitHub, copy the notes from CHANGELOG.md
-
-14 - Update support items delivered with this build to Resolved status.
-
-15 - Update mdw-demo
-  - Update assets
-  -  Remove all the folders under com/centurylink/mdw except demo
+11 - Update mdw-demo
+  -  Update assets
+  -  Copy and overwrite all the folders under com/centurylink/mdw 
   -  Copy assets from mdw-workflow to mdw-demo
   -  Update MDW_VERSION in manifest.yml and manifest.yml.prod
   -  Update mdwVersion in gradle.properties
   -  Update version in com.centurylink.mdw.plugin.xml
-  -  Run test cases from mdw-hub in mdw-demo environment
   -  Commit and push to git 
+12  Deploy
+  - MDW6-Deploy  (You might have to start the server manually if this task does not do automatically)
+  - Login to mdw-hub and run all the test cases (select Stubbing from configure icon)
+
+13a - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
+  - MDW6-Publish-Formal (or -Snapshot)
+  - Publish to Maven Central staging repository by using mdw6-publish-maven-central (for formal build only) 
+  - Review console output for errors.
+
+13b - Publish to Mavan Central
+  - login to https://oss.sonatype.org/ (use Manoj's credentials for now magrawa/mdwbpmcore1 -please create your own for future)
+  - Select the staging repositories
+  - Search for comcenturylink
+  - After you deployment the repository will be in an Open status,  press the Close button above the list
+  - Wait for 2 min to close, verify by refreshing the screen
+  - Once you have successfully closed, you can release it by pressing the Release button
+  - Once done check this URL https://oss.sonatype.org/service/local/repositories/releases/content/com/centurylink/mdw/mdw-common/6.0.04/
+  - For detailed explanation on the steps of closing and releasing the build go here  [Steps] (http://central.sonatype.org/pages/releasing-the-deployment.html)
+  - After completing the above step you should see new build here http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
+
+14 - On GitHub:
+  - Close any open issues delivered with this build.
+  - Create a milestone marker for the next upcoming build.
+  - Assign any un-delivered issues for this build's milestone to the next build's milestone.
+  - Close this build's milestone in GitHub.
+14b - Tag release  
+  - git tag -a v6.0.04 -m "v6.0.04"
+  - git push origin --tags
+  
+15 - Release Notes
+  - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
+    `gem install github_changelog_generator`
+  - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release 'v6.0.04' --exclude-labels designer,internal,wontfix,duplicate,documentation
+  - commit and push generated CHANGELOG.md to GitHub 
+  - git commit CHANGELOG.md -m "Release notes"
+  - Create new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases/new), copy the notes from CHANGELOG.md
+
+14 - Update support items delivered with this build to Resolved status.
     
 16 - mdw-buildpack
    - clone https://github.com/mdw-dev/mdw-buildpack.git

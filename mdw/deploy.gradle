@@ -27,20 +27,6 @@ task stopTomcat(type: ServerStop) {
 	verifyUrl testServerUrl
 }
 
-task deleteAssets(type: Delete) {
-    def assetDir = new File(deployAssetDir + "/com")  //Do not delete Archive folder but delete .mdw folders
-    println "assetDir" +  assetDir
-    assetDir.deleteDir()
-}
-
-deleteAssets.mustRunAfter stopTomcat
-
-task deployMdwAssets(type: Copy) {
-	from("../mdw-workflow/assets") {
-	}
-	into deployAssetDir
-}
-
 task deleteWars(type: Delete) {
 	delete "${deployWarDir}/mdw.war"
 	delete "${deployWarDir}/mdw"
@@ -93,9 +79,9 @@ task startTomcat(type: Exec) {
       return standardOutput.toString()
     }
 }
-startTomcat.mustRunAfter(stopTomcat, deployMdwWar, deployJavadocs, deployMdwAssets)
+startTomcat.mustRunAfter(stopTomcat, deployMdwWar, deployJavadocs)
 
-task deployMdw(dependsOn: [stopTomcat, deleteAssets, deleteWars, deployMdwAssets, deployMdwWar, startTomcat]) {
+task deployMdw(dependsOn: [stopTomcat, deleteWars, deployMdwWar, startTomcat]) {
     doLast {
 	    println "*** MDW build ${mdwVersion} published to ${deployAssetDir}, ${deployWarDir} ***"
     }

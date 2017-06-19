@@ -19,7 +19,6 @@
     "angular-resource": "1.4.7",
     "angular-sanitize": "1.4.7",
     "bootstrap-css-only": "^3.3.7",
-    "highlightjs": "^9.10.0",
     "jsdiff": "~2.2.0",
     "diff2html": "~1.1.3",
     "jasmine": "~2.3.4",

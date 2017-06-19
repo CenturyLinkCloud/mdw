@@ -161,7 +161,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 }
                 catch (Exception ex) {
                   // let other packages continue to process
-                  logger.severeException("Failed to process Dynamic Java Managed Beans for package " + pkg.getLabel() + ": " + ex.getMessage(), ex);
+                  logger.severeException("Failed to process Dynamic Java services in package " + pkg.getLabel() + ": " + ex.getMessage(), ex);
                 }
             }
         }

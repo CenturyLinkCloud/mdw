@@ -239,8 +239,7 @@ protected boolean canBeAsynchronous() {
 </pre>
 </li>
 </ul>
-<p>The above are all the methods that you typically implement or override,
-and the MQ adapter implements only these methods, which are shown as example above.
+<p>The above are all the methods that you typically implement or override, which are shown as example above.
 The following methods may be overridden less commonly:</p>
 <ul>
 <li><code>getRequestData()</code>: this method returns the request message. The default
@@ -284,18 +283,18 @@ When you override this method, you would normally invoke this super method as th
 to preserve the above logic.
 </li>
 </ul>
-<p>You can look at out-of-box poolable adapters as samples.
-We note that the out-of-box adapters typically do not throw exceptions when
+<p>You can look at built-in poolable adapters as samples.
+We note that the built-in adapters typically do not throw exceptions when
 it receives any messages from external systems, even the messages may indicate
 some error conditions (e.g. an XML message that contains an error message).
-This is obviously due to the fact there is no generic way to identify what messages indicate
+This is obviously due to the fact that there is no generic way to identify what messages indicate
 errors. When you implement your application-specific adapters, which you may
 have knowledge as to what response messages indicate errors, you should throw
 exceptions as described above appropriately, so that the auto-retry mechanism can
 function properly. </p>
 
 <h2>Implementing Pooled Connection Adapter Activities</h2>
-<p>The out-of-box implementor <a href='ConnectionPoolAdapter.html'>ConnectionPoolAdapter</a>
+<p>The built-in implementor <a href='ConnectionPoolAdapter.html'>ConnectionPoolAdapter</a>
 is implemented as a subclass of <code>PoolableAdapterBase</code> as well,
 even though itself is not really a poolable adapter
 and should be never be used by a connection pool.

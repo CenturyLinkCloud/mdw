@@ -7,20 +7,17 @@
 <h1>Task Routing</h1>
 <a name="workgroupRouting"><h2>Workgroup Routing</h2></a>
 MDW users can belong to one or more Workgroups (sometimes referred to simply as Groups or User Groups) for the purpose of queueing or &quot;bucketizing&quot; Manual Task instances.
-Workgroups are managed by end users via the Task Manager webapp Admin GUI.
-On the Task Manager <b>Workgroup Tasks</b> tab users have visibility to those tasks that are relevant for their group.
+ 
 <br/><br/>
-<img src="images/workgroupTasks.jpg" />
-<br/><br/>
-In MDW 5, task instances can be dynamically routed to appropriate workgroups based on based on runtime criteria such as Due Date and Priority.
-The starting point for this routing is the task/workgroup relationships specified in the task definition (or Task Template in MDW 5 vernacular).
+Task instances can be dynamically routed to appropriate workgroups based on based on runtime criteria such as Due Date and Priority.
+The starting point for this routing is the task/workgroup relationships specified in the task definition (or Task Template).
 By default task instances are associated with the group(s) spelled out in the template.
 However, this default behavior can be overridden by specifying a Task Routing Strategy on the Workgroups property tab for a task activity in Designer:
 <br/>
 <img src="images/taskRouting.jpg" />
 <br/><br/>
 Strategies are provided in the form of Java classes that implement the <b>RoutingStrategy</b> interface.
-One routing strategy implementation is provided out-of-the-box with MDW:
+One routing strategy implementation is provided as a built-in with MDW:
 <ul>
   <li>Rules-Based:<br/>Determines routing based on a configured rules definition <a href="workflowAssets.html">Workflow Asset</a> (either a Drools DRL document or an Excel decision table).<br/></li> 
 </ul>

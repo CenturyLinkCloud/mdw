@@ -33,6 +33,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
 
@@ -52,8 +53,9 @@ public class AutomatedTests extends JsonRestService {
         return roles;
     }
 
-    @Path("/{testCase}")
+    @Path("/{testCase}/{item}")
     @ApiOperation(value="If {testCase} asset path not specified, returns all cases",
+        notes="{item} can be a test case item like from a postman collection",
         response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
@@ -66,13 +68,15 @@ public class AutomatedTests extends JsonRestService {
                 else
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
             }
+            TestCaseItem item = getTestCaseItem(segments);
+            if (item != null) {
+                return item.getJson();
+            }
             TestCase singleCase = getTestCase(segments);
             if (singleCase != null) {
                 return singleCase.getJson();
             }
-            else {
-                return ServiceLocator.getTestingServices().getTestCases().getJson();
-            }
+            return ServiceLocator.getTestingServices().getTestCases().getJson();
         }
         else {
             return masterServerGet(path);
@@ -99,14 +103,12 @@ public class AutomatedTests extends JsonRestService {
                 testingServices.cancelTestExecution(user);
             }
             else {
-                TestCase singleCase = getTestCase(segments);
                 try {
-                    if (singleCase != null) {
+                    TestCase singleCase = getTestCase(segments);
+                    if (singleCase != null)
                         testingServices.executeCase(singleCase, user, config);
-                    }
-                    else {
+                    else
                         testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
-                    }
                 }
                 catch (IOException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
@@ -120,13 +122,26 @@ public class AutomatedTests extends JsonRestService {
     }
 
     private TestCase getTestCase(String[] segments) throws ServiceException {
-        if (segments.length != 7)
+        if (segments.length < 7)
             return null;
         String testCasePath = segments[5] + '/' + segments[6];
         TestCase testCase = ServiceLocator.getTestingServices().getTestCase(testCasePath);
         if (testCase == null)
             throw new ServiceException(404, "Test case not found: " + testCasePath);
+        if (segments.length == 8)
+            testCase.addItem(getTestCaseItem(segments));
+
         return testCase;
+    }
+
+    private TestCaseItem getTestCaseItem(String[] segments) throws ServiceException {
+        if (segments.length != 8)
+            return null;
+        String testCaseItemPath = segments[5] + '/' + segments[6] + '/' + segments[7];
+        TestCaseItem item = ServiceLocator.getTestingServices().getTestCaseItem(testCaseItemPath);
+        if (item == null)
+            throw new ServiceException(404, "Test case item not found: " + testCaseItemPath);
+        return item;
     }
 
     /**

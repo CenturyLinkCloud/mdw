@@ -20,10 +20,10 @@ activity (Note: to use a custom page you must choose the Custom Manual Task impl
 The easiest way to get started overriding MDWHub is to create your own workflow package called, by convention, MDWHub.
 Then every web resource you locate under this package takes precedence over the corresponding standard resource.
 There are a number of examples of custom web assets in the mdw-demo GitHub repository:<br/>
-https://github.com/CenturyLinkCloud/mdw-demo (user/password are not required to clone this project).<br/>
-In the mdw-demo project the MDWHub standard resources are located under deploy/webapps/mdw, and the corresponding overrides are
+<a href="https://github.com/CenturyLinkCloud/mdw-demo">https://github.com/CenturyLinkCloud/mdw-demo</a> (user/password are not required to clone this project).<br/>
+In the mdw-demo project the MDWHub standard resources are located under <em>deploy/webapps/mdw</em>, and the corresponding overrides are
 under the MDWHub, MDWHub.layout, MDWHub.images, etc workflow packages.  If you've created your own project, 
-you can refer to the MDWHub standard resources under deploy/webapps/mdw.
+you can refer to the MDWHub standard resources under <em>deploy/webapps/mdw.</em>
 
 <br/><br/>
 <h3>Process Variables</h3>
@@ -114,7 +114,7 @@ Here's an example of how to direct flow after a user action is performed:
   &lt;t:commandButton id="myActionButton"
     value="Go To User Access Request Page"
     action="nav.xhtml?toPage=WebPages/userAccessRequestPage.xhtml"/&gt;</pre> 
-The "toPage" parameter can be set to either a custom page or a pre-existing out-of-the-box MDWHub page. 
+The "toPage" parameter can be set to either a custom page or a pre-existing built-in MDWHub page. 
 <br/><br/>
 <h3><a id="processStartPages">Process Start Pages</h3>
 By default, MDWHub will dynamically generate a start page for each process with fields for each process input variable.
@@ -132,27 +132,13 @@ The URL to launch the process is the same as above, but the browser will be redi
 <br/><br/>
 <h3><a id="updatingObjectVariables">Updating java.lang.Object Process Variables</a></h3>
 The MDW Expression Language Resolver needs to know which process variable values have been updated during a page submittal so
-that it can persist the appropriate variable values to the database.  For variables of java.lang.Object type, the MDW EL Resolver does
-not interfere with regular JSF processing (so any expression that works with standard JSF can be used).  However, to indicate to MDW 
+that it can persist the appropriate variable values to the database.  However, to indicate to MDW 
 that a Java Object variable value should be updated, you'll need to include a flag like the following within the form that
 can potentially affect the variable value:
 <pre>
   &lt;h:inputHidden value="#{process.dirtyFlag['device']}" /&gt;</pre>
-This hidden input needs to be included in any Ajax JSF submittal that can update the variable value as well.
-<br/><br/>
-<h3><a id="dynamicJavaManagedBeans">Dynamic Java Managed Beans</a></h3>
-Beyond process variables, there is frequently a need to create custom <a href="http://docs.oracle.com/javaee/6/tutorial/doc/bnaqm.html">JSF Managed Beans</a>
-which you want to hold values and perform custom logic.  These managed beans can be implemented as <a href="workflowAssets.html">Workflow Assets</a>
-using <a href="dynamicJava.html">Dynamic Java</a> 
-with JSF annotations to declare them as managed beans for access through expressions in your custom pages.
-Such an annotation for a bean declared in Session scope looks like this:
-<pre>
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 
-@ManagedBean(name="employeeLookup")
-@SessionScoped
-public class EmployeeLookupBean implements java.io.Serializable { ...</pre>
+<br/><br/>
 
 </body>
 </html>
