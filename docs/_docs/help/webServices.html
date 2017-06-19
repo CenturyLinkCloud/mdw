@@ -161,7 +161,7 @@ The steps for exposing an MDW Web Service based on a custom WSDL definition star
     &lt;wsdl:port
       binding="tns:EmployeeSOAPBinding"
       name="soap"&gt;
-      &lt;soap:address location="${MDWFramework.MDWDesigner/services.url}/SOAP/Employee.wsdl" /&gt;
+      &lt;soap:address location="${mdw.services.url}/SOAP/packageName/Employee.wsdl" /&gt;
     &lt;/wsdl:port&gt;
   &lt;/wsdl:service&gt;
 
@@ -188,14 +188,14 @@ The steps for exposing an MDW Web Service based on a custom WSDL definition star
     &lt;/tns:GetEmployee&gt;
   &lt;/env:Body&gt;
 &lt;/env:Envelope&gt;</pre>
-  <img src="images/employee_request.jpg" style="margin-left:25px;" />  
+  <img src="images/soapMessageEndpoint.png" style="margin-left:25px;" />  
 
 <hr/><br/>
 <h3>Consuming Web Services</h3>
 You can use any of the pre-built Web Service adapter activities:
 <ul>
   <li><a href="RestfulAdapter.html">RESTful Adapter</a> (for consuming REST-based services)</li>
-  <li><a href="DocWebServiceAdapter.html">Document Web Service Adapter</a> ()For SOAP services with any document-literal style WSDL)</li>
+  <li><a href="DocWebServiceAdapter.html">Document Web Service Adapter</a> (For SOAP services with any document-literal style WSDL)</li>
 </ul> 
 <hr/>
 <br/><br/>
