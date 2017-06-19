@@ -22,7 +22,7 @@ assert indexes.dateIndex == today.toString()
 assert indexes.intIndex == "8"
 assert indexes.jaxbAttrOneIndex == "attr one val"
 assert indexes.jaxbElemTwoIndex == "elem two val"
-assert indexes.nonExistentIndex == ""
+assert !indexes.nonExistentIndex
 assert indexes.stringIndex == "stringValue"
 assert indexes.stringListItemIndex == "one"
 
