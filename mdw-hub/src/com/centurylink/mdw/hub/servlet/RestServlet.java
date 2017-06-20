@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +38,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+@WebServlet(urlPatterns={"/services/*", "/Services/*", "/REST/*"}, loadOnStartup=1)
 public class RestServlet extends ServiceServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

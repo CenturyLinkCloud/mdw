@@ -75,7 +75,6 @@ public class ApplicationContext {
     private static String proxyServerName=null;
     private static String containerName="";
     private static String engineContextPath = null;
-    private static String contextPath = null;
 
     public static NamingProvider getNamingProvider() {
         return namingProvider;
@@ -537,12 +536,12 @@ public class ApplicationContext {
          return isWar() &&  (PaaSConstants.PAAS_VCAP_APPLICATION != null);
     }
 
-    private static String warDeployPath;
-    public static String getWarDeployPath() {
-        return warDeployPath;
+    private static String deployPath;
+    public static String getDeployPath() {
+        return deployPath;
     }
-    public static void setWarDeployPath(String path) {
-        warDeployPath = path;
+    public static void setDeployPath(String path) {
+        deployPath = path;
     }
 
     private static List<String> serverList;
@@ -614,14 +613,6 @@ public class ApplicationContext {
 
     public static boolean isFileBasedAssetPersist() {
         return PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) != null;
-    }
-
-    public static String getContextPath() {
-        return contextPath;
-    }
-
-    public static void setContextPath(String contextPath) {
-        ApplicationContext.contextPath = contextPath;
     }
 
     private static File assetRoot;

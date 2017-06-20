@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,6 +78,7 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
 /**
  * Provides read/update access for raw asset content.
  */
+@WebServlet(urlPatterns={"/asset/*"}, loadOnStartup=1)
 public class AssetContentServlet extends HttpServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

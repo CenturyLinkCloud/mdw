@@ -345,9 +345,9 @@ public final class FileHelper {
         // last resort is classLoader classpath
         InputStream is = classLoader.getResourceAsStream(filepath);
         if (is == null) {
-            if (ApplicationContext.getWarDeployPath() != null) {
+            if (ApplicationContext.getDeployPath() != null) {
                 // try META-INF/mdw
-                file = new File(ApplicationContext.getWarDeployPath() + "META-INF/mdw/" + filepath);
+                file = new File(ApplicationContext.getDeployPath() + "META-INF/mdw/" + filepath);
                 if (file.exists()) {
                     logger.info("Located configuration file: " + file.getAbsolutePath());
                     is = new FileInputStream(file);

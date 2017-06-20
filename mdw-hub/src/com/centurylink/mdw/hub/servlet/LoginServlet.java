@@ -18,6 +18,7 @@ package com.centurylink.mdw.hub.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+@WebServlet(urlPatterns={"/login", "/logout"}, loadOnStartup=1)
 public class LoginServlet extends HttpServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
