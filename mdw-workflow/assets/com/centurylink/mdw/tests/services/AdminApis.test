@@ -1,0 +1,4 @@
+package com.centurylink.mdw.tests.services
+
+// TODO integrated case with Postman tests
+println 'AdminApis testing'

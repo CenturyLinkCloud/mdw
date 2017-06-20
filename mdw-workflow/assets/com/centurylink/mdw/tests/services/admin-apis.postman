@@ -35,7 +35,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"dons\",\r\n  \"description\": \"a group for testing\"\r\n}"
+					"raw": "{\r\n  \"name\": \"{{groupName}}\",\r\n  \"description\": \"a group for testing\"\r\n}"
 				},
 				"description": ""
 			},
