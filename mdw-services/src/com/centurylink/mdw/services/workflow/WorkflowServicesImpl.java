@@ -51,7 +51,6 @@ import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
-import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
@@ -985,7 +984,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             EventManager eventManager = ServiceLocator.getEventManager();
             Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L, "broadcast-"+eventName, null);
-            BroadcastEventLockCache.lock(eventName);
             return eventManager.broadcast(eventName, docId, null, delay);
         }
         catch (ServiceException ex) {
@@ -994,9 +992,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);  // TODO why not throw?
             return EventInstance.RESUME_STATUS_FAILURE;
-        }
-        finally {
-            BroadcastEventLockCache.unlock(eventName);
         }
     }
 
