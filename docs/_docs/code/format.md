@@ -1,3 +1,8 @@
+---
+permalink: /docs/code/format/
+title: Code Format
+---
+
 ### Code Format
 
 1. Java, Groovy, Javascript and JSON:
