@@ -9,8 +9,8 @@
      These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
      The following screenshots illustrate how to set these:  
      - XML:                                                    
-      ![xmlformat](../images/xmlformat.png)
+      ![xmlformat](../../images/xmlformat.png)
      - HTML:                                                           
-      ![html formatter](../images/htmlformat.png)
+      ![html formatter](../../images/htmlformat.png)
      - YAML:                                           
-      ![yaml formatter](../images/yamlformat.png)
+      ![yaml formatter](../../images/yamlformat.png)
