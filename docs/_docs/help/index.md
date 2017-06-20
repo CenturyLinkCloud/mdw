@@ -55,7 +55,7 @@ permalink: /docs/help/
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='webServices.html'>Invoking Standard MDW Web Services</a></li>
-  <li><a href='http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MdwCodingGuidelines.html'>MDW Coding Guidelines</a></li>
+  <li><a href='../MDWCodingGuidelines'>MDW Coding Guidelines</a></li>
   <li><a href='../javadoc/index.html'>MDW Framework JavaDocs</a></li>
 </ul>
 
