@@ -347,7 +347,10 @@ public final class FileHelper {
         if (is == null) {
             if (ApplicationContext.getDeployPath() != null) {
                 // try META-INF/mdw
-                file = new File(ApplicationContext.getDeployPath() + "META-INF/mdw/" + filepath);
+                String deployPath = ApplicationContext.getDeployPath();
+                if (!deployPath.endsWith("/"))
+                    deployPath += "/";
+                file = new File(deployPath + "META-INF/mdw/" + filepath);
                 if (file.exists()) {
                     logger.info("Located configuration file: " + file.getAbsolutePath());
                     is = new FileInputStream(file);

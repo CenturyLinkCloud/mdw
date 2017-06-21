@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.hub;
 
-import java.util.Arrays;
-
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -42,24 +39,18 @@ public class SpringBootApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-        return args -> {
-
-            System.out.println("Let's inspect the beans provided by Spring Boot:");
-
-            String[] beanNames = ctx.getBeanDefinitionNames();
-            Arrays.sort(beanNames);
-            for (String beanName : beanNames) {
-                System.out.println(beanName);
-            }
-
-        };
-    }
-
-    @Bean
     public EmbeddedServletContainerFactory embeddedServletContainerFactory(ApplicationContext ctx) {
-        // TODO parameterized port
-        return new TomcatEmbeddedServletContainerFactory(8080);
+        String portProp = System.getProperty("mdw.server.port");
+        if (portProp == null)
+            portProp = System.getProperty("server.port");
+        if (portProp == null)
+            portProp = "8080";
+        String contextProp = System.getProperty("mdw.server.contextPath");
+        if (contextProp == null)
+            contextProp = System.getProperty("server.contextPath");
+        if (contextProp == null)
+            contextProp = "/mdw";
+        return new TomcatEmbeddedServletContainerFactory(contextProp, Integer.parseInt(portProp));
     }
 
 }

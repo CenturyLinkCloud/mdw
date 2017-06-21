@@ -3,6 +3,7 @@ apply plugin: "war"
 configurations {
     wtpExclude
     runtimeExtra // runtime libs excluded due to gradle's funky transitive mechanism
+    springBoot
     springBootLoader
 }
 
@@ -71,6 +72,10 @@ dependencies {
     
     // spring boot
     providedCompile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    springBoot group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    springBoot group: "org.springframework", name: "spring-web", version: springVersion
+    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.15"
+    springBoot group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
     springBootLoader group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion
     
     runtimeExtra group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
@@ -186,7 +191,8 @@ task springBootJar(type: Jar) {
         exclude "META-INF/**"
     }
     into("BOOT-INF/lib") {
-        from configurations.compile
+        entryCompression = org.gradle.api.tasks.bundling.ZipEntryCompression.STORED
+        from configurations.compile.minus(configurations.providedCompile).plus(configurations.springBoot)
     }
     
     from configurations.springBootLoader.asFileTree.files.collect {

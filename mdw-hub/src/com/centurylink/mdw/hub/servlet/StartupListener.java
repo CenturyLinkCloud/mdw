@@ -20,7 +20,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.centurylink.mdw.hub.context.MdwMain;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.hub.MdwMain;
 
 @WebListener
 public class StartupListener implements ServletContextListener {
@@ -31,7 +32,15 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent contextEvent) {
         ServletContext servletContext = contextEvent.getServletContext();
         mdwMain = new MdwMain();
-        mdwMain.startup(servletContext.getRealPath("/"), servletContext.getContextPath());
+        if (ApplicationContext.isSpringBoot()) {
+            String bootDir = System.getProperty("mdw.boot.dir");
+            if (bootDir == null)
+                bootDir = ApplicationContext.getTempDirectory() + "/boot";
+            mdwMain.startup(bootDir, servletContext.getContextPath());
+        }
+        else {
+            mdwMain.startup(servletContext.getRealPath("/"), servletContext.getContextPath());
+        }
     }
 
     @Override

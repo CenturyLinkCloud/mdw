@@ -528,12 +528,12 @@ public class ApplicationContext {
             return null;
     }
 
-    public static boolean isWar() {
-        return NamingProvider.TOMCAT.equals(getContainerName());
+    public static boolean isPaaS() {
+         return PaaSConstants.PAAS_VCAP_APPLICATION != null;
     }
 
-    public static boolean isPaaS() {
-         return isWar() &&  (PaaSConstants.PAAS_VCAP_APPLICATION != null);
+    public static boolean isSpringBoot() {
+        return "org.springframework.boot.loader".equals(System.getProperty("java.protocol.handler.pkgs"));
     }
 
     private static String deployPath;

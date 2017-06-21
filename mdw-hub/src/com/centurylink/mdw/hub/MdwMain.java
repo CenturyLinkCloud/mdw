@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.hub.context;
+package com.centurylink.mdw.hub;
 
+import java.io.File;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -53,7 +54,10 @@ import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupClass;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
+import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -85,8 +89,22 @@ public class MdwMain {
             containerName = NamingProvider.TOMCAT;
             ApplicationContext.setDeployPath(deployPath);
 
-              // load properties
+            // load properties
             propertyManager = PropertyManager.initializeContainerPropertyManager(containerName, deployPath);
+
+            if (ApplicationContext.isSpringBoot()) {
+                String mainLoc = ClasspathUtil.locate(MdwMain.class.getName());
+                File bootJar = new File(new java.net.URI(mainLoc.substring(0, mainLoc.indexOf('!'))));
+                if (!bootJar.exists())
+                    throw new StartupException("No Spring Boot jar: " + mainLoc);
+                System.out.println("Spring Boot Jar: " + bootJar.getAbsolutePath());
+                File bootDir = new File(deployPath);
+                if (bootDir.isDirectory())
+                    FileHelper.deleteRecursive(bootDir);
+                if (!bootDir.mkdirs())
+                    throw new StartupException("Cannot create boot dir: " + bootDir.getAbsolutePath());
+                ZipHelper.unzip(bootJar, bootDir);
+            }
 
             // initialize ApplicationContext
             logger.info("Initialize " + ApplicationContext.class.getName());
@@ -98,9 +116,10 @@ public class MdwMain {
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
-            } catch (Exception e1) {
+            }
+            catch (Exception e) {
                 throw new StartupException(StartupException.FAIL_TO_START_DATABASE_POOL,
-                        "Failed to connect through database connection pool",e1);
+                        "Failed to connect through database connection pool", e);
             }
 
             logger.refreshCache();    // now update based on properties loaded from database
@@ -123,7 +142,8 @@ public class MdwMain {
             try {
                 listener = new RMIListenerImpl(thread_pool);
                 ApplicationContext.getNamingProvider().bind(RMIListener.JNDI_NAME, listener);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 throw new StartupException(StartupException.FAIL_TO_START_RMI_LISTENER, "Failed to start RMI listener");
             }
 
@@ -133,7 +153,6 @@ public class MdwMain {
             // Spring will inject the listeners below on Tomcat
             // Check that bean is loaded, otherwise use MDW internal mechanism
             // This allows us just to switch using the bean definitions in application-context.xml
-            //
             if (!SpringAppContext.getInstance().isBeanDefined(SpringConstants.MDW_SPRING_INTERNAL_EVENT_LISTENER)) {
 
                 if (MessengerFactory.internalMessageUsingJms()) {
@@ -171,12 +190,13 @@ public class MdwMain {
             }
             logger.info("StartupListener:onStartup exits");
 
-        } catch (Exception e) {
-              e.printStackTrace();
-              if (logger != null)
-                  logger.severeException(e.getMessage(), e);
-              System.out.println("Starting up MDW failed, shut down now - " + e.getMessage());
-              shutdown();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            if (logger != null)
+                logger.severeException(e.getMessage(), e);
+            System.out.println("Starting up MDW failed, shut down now - " + e.getMessage());
+            shutdown();
         }
     }
 
@@ -185,7 +205,6 @@ public class MdwMain {
         logger.info("Shutdown MDW --> calling StartupListener:onShutdown");
 
         try {
-            // broadcastStatus(serviceContext, "stop", 0);
             Collection<StartupClass> coll = this.getAllStartupClasses(logger);
             Iterator<StartupClass> it = coll.iterator();
             while (it.hasNext()) {
@@ -200,8 +219,9 @@ public class MdwMain {
                 dynamicService.onShutdown();
             }
             StartupRegistry.getInstance().clearDynamicServices();
-        } catch (Throwable e1) {
-            logger.severeException("Failed to shutdown startup classes", e1);
+        }
+        catch (Throwable e) {
+            logger.severeException("Failed to shutdown startup classes", e);
         }
 
         try {
