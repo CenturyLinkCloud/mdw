@@ -82,7 +82,7 @@ public class EventCheckActivity extends EventWaitActivity {
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            this.registerWaitEvents(true, false);
+            this.registerWaitEvents(true, true);
             if (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))

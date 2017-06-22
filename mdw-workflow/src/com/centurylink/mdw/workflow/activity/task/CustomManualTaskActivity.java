@@ -240,7 +240,7 @@ public class CustomManualTaskActivity extends AbstractWait implements TaskActivi
             received = getEngine().createEventWaitInstance(this.getActivityInstanceId(),
                     "TaskAction-" + this.getActivityInstanceId(), null, true, false);
             if (received == null)
-                received = registerWaitEvents(false, true);
+                received = registerWaitEvents(true, true);
         }
         catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
