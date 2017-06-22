@@ -6,14 +6,14 @@
 <body>
 <h1>Groovy Test Script Syntax</h1>
 
-<p>The <a href="automatedTesting.html">MDW Automated Testing</a> facility uses <a href="http://groovy.codehaus.org/">Groovy</a>
+<p>The <a href="automatedTesting.html">MDW Automated Testing</a> facility uses <a href="http://docs.groovy-lang.org//">Groovy</a>
 DSL as its scripting language.  Groovy runs on the Java platform and supports Java language semantics, so it's
 readily adopted by developers.  But in addition, MDW test case scripting offers a friendly  
 <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> syntax that makes it easy for anyone with a 
 technical background to quickly build and run automated tests.</p>
 
 <p><span style="text-decoration:underline">Note:</span> To run Groovy test cases in Eclipse you'll need to install
-the <a href="http://groovy.codehaus.org/Eclipse+Plugin">Groovy Plugin</a>.  This will also
+the <a href="http://dist.springsource.org/snapshot/GRECLIPSE/e4.6">Groovy Plugin</a>.  This will also
 make the following examples more readable since they'll appear syntax-highlighted in the editor.</p>
 
 <h3>Sections in This Guide</h3>
@@ -37,8 +37,8 @@ make the following examples more readable since they'll appear syntax-highlighte
 
 <h3><a id="generalSemantics">General Semantics</a></h3>
 <p>Groovy and Java provide their own exhaustive documentation.  For a quick understanding of basic Groovy language constructs,
-such as comments, the Groovy <a href="http://groovy.codehaus.org/Statements">Statements</a> and 
-<a href="http://groovy.codehaus.org/Operators">Operators</a> reference pages are helpful.</p> 
+such as comments, the Groovy <a href="http://groovy-lang.org/semantics.html">Statements</a> and 
+<a href="http://groovy-lang.org/operators.html">Operators</a> reference pages are helpful.</p> 
 
 <p>STDOUT is directed to the test results execute.log file, and is also visible in Designer's Test Exec view output pane.
 Standard Groovy variable substitutions are applied to double-quoted strings, so the following lines both display the master request id for a run:</p> 
@@ -345,7 +345,7 @@ stub adapter(xpath("GetEmployee")) {
 <p>This registers a stub handler to respond to any adapter whose request content is XML with a
 "GetEmployee" root node (based on <a href="xpath.html">MDW XPath</a> evaluation), and set the response
 to the contents of the file GetEmployeeResponse.xml.  You can do the same thing 
-using <a href="http://groovy.codehaus.org/GPath">GPath</a>:</p>
+using <a href="http://groovy-lang.org/processing-xml.html#_gpath">GPath</a>:</p>
 <pre>
 stub adapter(gpath("request.name() == 'GetEmployee'")) {
     delay = 2
@@ -466,9 +466,5 @@ start process("com.centurylink.mdw.tests/TestActivityStub") {
         }]
 }
 </pre>
-
-<h3><a id="unitTests">Unit Tests</a></h3>
-<p>TODO: describe unit tests with examples</p>
-
 </body>
 </html>

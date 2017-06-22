@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +38,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 /**
  * Serves up raw test cases and related resources.
  */
+@WebServlet(urlPatterns={"/testCase/*", "/testResult/*"}, loadOnStartup=1)
 public class TestCaseServlet extends AssetContentServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

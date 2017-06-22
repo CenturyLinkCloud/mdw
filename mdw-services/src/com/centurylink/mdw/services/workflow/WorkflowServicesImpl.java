@@ -973,6 +973,28 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);  // TODO why not throw?
             return EventInstance.RESUME_STATUS_FAILURE;
+<<<<<<< HEAD
+=======
+        }
+    }
+    public Integer broadcast(String eventName) throws ServiceException {
+        Integer delay = PropertyManager.getIntegerProperty(PropertyNames.ACTIVITY_RESUME_DELAY, 2);
+        return broadcast(eventName, delay);
+    }
+
+    public Integer broadcast(String eventName, int delay) throws ServiceException {
+        try {
+            EventManager eventManager = ServiceLocator.getEventManager();
+            Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L, "broadcast-"+eventName, null);
+            return eventManager.broadcast(eventName, docId, null, delay);
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);  // TODO why not throw?
+            return EventInstance.RESUME_STATUS_FAILURE;
+>>>>>>> refs/heads/master
         }
     }
 

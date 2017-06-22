@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.hub.servlet;
+package com.centurylink.mdw.hub;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -26,10 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.config.PropertyException;
@@ -38,7 +34,6 @@ import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.SpringConstants;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -61,62 +56,30 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class StartupListener implements ServletContextListener {
-    private static ThreadPoolProvider thread_pool;
+public class MdwMain {
+
+    private static ThreadPoolProvider threadPool;
     private static InternalEventListener internalEventListener;
     private static ExternalEventListener intraMdwEventListener;
     private static ExternalEventListener externalEventListener;
     private static ConfigurationEventListener configurationEventListener;
-    private static PropertyManager propertyManager;
     private static RMIListener listener;    // do not remove - need to keep reference to prevent GC
-    private static String containerName;    // typically can get from ApplicationContext; need here when startup fails
-    private static String servletRealPath;
-    private static String contextPath;
 
-    @Override
-    public void contextInitialized(ServletContextEvent contextEvent) {
-        onStartup(contextEvent.getServletContext());
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent contextEvent) {
-        onShutdown(contextEvent.getServletContext().getContextPath());
-    }
-
-    public void onStartup(ServletContext servletContext) {
-        System.out.println("MDW Startup Listener: WebApp = " + servletContext.getServletContextName());
+    public void startup(String container, String deployPath, String contextPath) {
 
         StandardLogger logger = null;
 
         try {
-            System.out.println("MDW initialization --> calling StartupListener:onStartup");
-            String serverInfo = servletContext.getServerInfo();
-            System.out.println("ServerInfo: " + serverInfo);
-            servletRealPath = servletContext.getRealPath("/");
-            System.out.println("ServletRealPath: " + servletRealPath);
-            contextPath = servletContext.getContextPath();
-            ApplicationContext.setContextPath(contextPath);
-            System.out.println("ServletContextPath: " + contextPath);
-
-            // MyFaces dev stage if appropriate
-            if (ApplicationContext.isDevelopment())
-                System.setProperty("faces.PROJECT_STAGE", "Development");
+            System.out.println("MDW initialization...");
+            System.out.println("  deployPath: " + deployPath);
+            System.out.println("  contextPath: " + contextPath);
 
             logger = LoggerUtil.getStandardLogger();
-            if (serverInfo.startsWith("WebLogic")) {
-                throw new IllegalArgumentException("Invalid Server: WebLogic not supported");
-            }
-            else {
-                containerName = NamingProvider.TOMCAT;
-                ApplicationContext.setWarDeployPath(servletRealPath);
-            }
-
-              // load properties
-            propertyManager = PropertyManager.initializeContainerPropertyManager(containerName, servletRealPath);
+            ApplicationContext.setDeployPath(deployPath);
 
             // initialize ApplicationContext
             logger.info("Initialize " + ApplicationContext.class.getName());
-            ApplicationContext.onStartup(containerName, null);
+            ApplicationContext.onStartup(container, null);
 
             // initialize db access and set database time
             try {
@@ -124,9 +87,9 @@ public class StartupListener implements ServletContextListener {
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
-            } catch (Exception e1) {
-                throw new StartupException(StartupException.FAIL_TO_START_DATABASE_POOL,
-                        "Failed to connect through database connection pool",e1);
+            }
+            catch (Exception e) {
+                throw new StartupException("Failed to connect through database connection pool", e);
             }
 
             logger.refreshCache();    // now update based on properties loaded from database
@@ -137,20 +100,21 @@ public class StartupListener implements ServletContextListener {
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
             CacheRegistration cacheMgr = new CacheRegistration();
-            cacheMgr.registerCache(PropertyManager.class.getName(), propertyManager);
+            cacheMgr.registerCache(PropertyManager.class.getName(), PropertyManager.getInstance());
 
             logger.info("Starting Thread Pool");
-            thread_pool = ApplicationContext.getThreadPoolProvider();
-            thread_pool.start();
+            threadPool = ApplicationContext.getThreadPoolProvider();
+            threadPool.start();
 
-            MessengerFactory.init(servletContext == null ? null : servletContext.getContextPath());
+            MessengerFactory.init(contextPath);
 
             logger.info("Initialize " + RMIListener.class.getName());
             try {
-                listener = new RMIListenerImpl(thread_pool);
+                listener = new RMIListenerImpl(threadPool);
                 ApplicationContext.getNamingProvider().bind(RMIListener.JNDI_NAME, listener);
-            } catch (Exception e) {
-                throw new StartupException(StartupException.FAIL_TO_START_RMI_LISTENER, "Failed to start RMI listener");
+            }
+            catch (Exception e) {
+                throw new StartupException("Failed to start RMI listener", e);
             }
 
             logger.info("Initialize " + ConnectionPoolRegistration.class.getName()) ;
@@ -159,19 +123,18 @@ public class StartupListener implements ServletContextListener {
             // Spring will inject the listeners below on Tomcat
             // Check that bean is loaded, otherwise use MDW internal mechanism
             // This allows us just to switch using the bean definitions in application-context.xml
-            //
             if (!SpringAppContext.getInstance().isBeanDefined(SpringConstants.MDW_SPRING_INTERNAL_EVENT_LISTENER)) {
 
                 if (MessengerFactory.internalMessageUsingJms()) {
-                    internalEventListener = new InternalEventListener(thread_pool);
+                    internalEventListener = new InternalEventListener(threadPool);
                     internalEventListener.start();
                 }
 
                 if (ApplicationContext.getJmsProvider() != null) {
-                    intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, thread_pool);
+                    intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, threadPool);
                     intraMdwEventListener.start();
 
-                    externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, thread_pool);
+                    externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, threadPool);
                     externalEventListener.start();
 
                     configurationEventListener = new ConfigurationEventListener();
@@ -196,22 +159,21 @@ public class StartupListener implements ServletContextListener {
                 dynamicService.onStartup();
             }
             logger.info("StartupListener:onStartup exits");
-
-        } catch (Exception e) {
-              e.printStackTrace();
-              if (logger != null)
-                  logger.severeException(e.getMessage(), e);
-              System.out.println("Starting up MDW failed, shut down now - " + e.getMessage());
-              onShutdown(servletContext.getContextPath());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            if (logger != null)
+                logger.severeException(e.getMessage(), e);
+            System.out.println("Starting up MDW failed, shut down now - " + e.getMessage());
+            shutdown();
         }
     }
 
-    public void onShutdown(String serviceContext) {
+    public void shutdown() {
         StandardLogger logger = LoggerUtil.getStandardLogger();
         logger.info("Shutdown MDW --> calling StartupListener:onShutdown");
 
         try {
-            // broadcastStatus(serviceContext, "stop", 0);
             Collection<StartupClass> coll = this.getAllStartupClasses(logger);
             Iterator<StartupClass> it = coll.iterator();
             while (it.hasNext()) {
@@ -226,8 +188,9 @@ public class StartupListener implements ServletContextListener {
                 dynamicService.onShutdown();
             }
             StartupRegistry.getInstance().clearDynamicServices();
-        } catch (Throwable e1) {
-            logger.severeException("Failed to shutdown startup classes", e1);
+        }
+        catch (Throwable e) {
+            logger.severeException("Failed to shutdown startup classes", e);
         }
 
         try {
@@ -236,8 +199,8 @@ public class StartupListener implements ServletContextListener {
             (new TimerTaskRegistration()).onShutdown();
 
             logger.info("Shutdown common thread pool");
-            if (thread_pool != null)
-                thread_pool.stop();
+            if (threadPool != null)
+                threadPool.stop();
 
             if (configurationEventListener != null)
                 configurationEventListener.stop();
@@ -284,18 +247,6 @@ public class StartupListener implements ServletContextListener {
         }
     }
 
-    public String getContainerName() {
-        return containerName;
-    }
-
-    public String getServletRealPath() {
-        return servletRealPath;
-    }
-
-    public String getContextPath() {
-        return contextPath;
-    }
-
     List<StartupClass> getAllStartupClasses(StandardLogger logger) throws StartupException {
         List<StartupClass> startupClasses = new ArrayList<StartupClass>();
 
@@ -304,7 +255,7 @@ public class StartupListener implements ServletContextListener {
             props = PropertyManager.getInstance().getProperties(PropertyGroups.STARTUP_CLASSES);
         }
         catch (PropertyException e) {
-            throw new StartupException(StartupException.FAIL_TO_LOAD_STARTUP_CLASSES, "Failed to load startup classes", e);
+            throw new StartupException("Failed to determine startup classes", e);
         }
         Iterator<Object> it = props.keySet().iterator();
         HashMap<String,String> mamp = new HashMap<String,String>();
@@ -337,5 +288,4 @@ public class StartupListener implements ServletContextListener {
         }
         return startupClasses;
     }
-
 }

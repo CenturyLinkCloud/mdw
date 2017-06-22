@@ -24,35 +24,27 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.constant.PaaSConstants;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.MiniEncrypter;
 
 public class DefaultPropertyManager extends PropertyManager {
 
     protected Properties properties = new Properties();
-    private String containerName;
-    private String servletRealPath;
     private String mainPropertyFileName;
     public static final String APP_CONFIG_NAME = "mdw.application.config.name";
 
     /**
      * This method loads mdw.properties, application.properties and any property file defined for {@link #APP_CONFIG_NAME}
      * The property mdw.application.config.name takes property file names seperated by , without the .properties extension
-     * @param containerName
      */
-    public DefaultPropertyManager(String containerName, String servletRealPath) throws StartupException {
-        this.containerName = containerName;
-        this.servletRealPath = servletRealPath;
+    public DefaultPropertyManager() throws StartupException {
         mainPropertyFileName = getMainPropertyFileName();
         if (mainPropertyFileName == null) {
             if ("standalone".equals(ApplicationContext.getRuntimeEnvironment())) {
                 return; // no props load
             }
             else {
-                throw new StartupException(StartupException.NO_PROPERTY_FILE_FOUND,
-                        "No mdw.properties configuration file is found");
+                throw new StartupException("Cannot find mdw.properties");
             }
         }
 
@@ -102,11 +94,6 @@ public class DefaultPropertyManager extends PropertyManager {
         URL url = this.getClass().getClassLoader().getResource(MDW_PROPERTIES_FILE_NAME);
         if (url != null)
             return MDW_PROPERTIES_FILE_NAME;
-        if (containerName.equals(NamingProvider.TOMCAT)) {
-            file = new File(servletRealPath + "/../../conf/" + MDW_PROPERTIES_FILE_NAME);
-            if (file.exists())
-                return MDW_PROPERTIES_FILE_NAME;
-        }
         return null;
     }
 
@@ -193,9 +180,6 @@ public class DefaultPropertyManager extends PropertyManager {
             File file = new File(configLoc==null?filename:(configLoc+filename));
             if (file.exists()) {
                 stream = new FileInputStream(file);
-            }
-            else if (containerName.equals(NamingProvider.TOMCAT) && PaaSConstants.PAAS_VCAP_APPLICATION == null) {
-                stream = new FileInputStream(servletRealPath + "/../../conf/" + filename);
             }
             else {
                 stream = this.getClass().getClassLoader().getResourceAsStream(filename);

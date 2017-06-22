@@ -36,6 +36,23 @@ task cleanPackages(type: Delete) {
     delete fileTree(dir: "../${mdwAssetOutputDir}")
 }
 
+task updateRestApiDefinition {
+    description = "Update RestApiDefinition with Version number"
+    
+    def mdwPkgVer = mdwVersion;
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+        mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+    println "setting Rest API version to  " + mdwPkgVer
+    fileTree(dir: "../mdw-services/src/com/centurylink/mdw/service/api", include:'RestApiDefinition.java').each { pkgFile ->
+        doLast {
+            pkgFile.setWritable(true)
+            def pkgJson = pkgFile.text            
+            pkgFile.withWriter { w ->
+                w << pkgJson.replaceAll("version=\\\".*?\\\"", "version=\"${mdwPkgVer}\"");
+            }
+        }
+    } 
+}
 // export all the packages in the mdw-workflow/assets directory
 task exportAssetPackages {
     description = "Export Asset Packages"
@@ -101,7 +118,6 @@ task checkAllowed() {
 
 task publishBase(type: HttpPut) {
     dependsOn(checkAllowed, buildBaseConfigs)
-    from "../${mdwOutputDir}/mdw-config-${mdwVersion}.zip"
     from "../${mdwOutputDir}/application-context-${mdwVersion}.xml"
     baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
     user publishUser

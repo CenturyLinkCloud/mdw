@@ -138,6 +138,12 @@ task exportAssetPackages(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+task updateRestApiDefinition(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["updateRestApiDefinition"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
 task versions {
     doLast {
         println "Java Version: " + System.getProperty("java.version")

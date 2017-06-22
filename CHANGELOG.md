@@ -1,6 +1,37 @@
 # Change Log
 
-## [v6.0.03](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.03) (2017-05-09)
+## [v6.0.04](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.04) (2017-06-19)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.03...v6.0.04)
+
+**Implemented enhancements:**
+
+- Autovalidations based on Swagger API Docs [\#126](https://github.com/CenturyLinkCloud/mdw/issues/126)
+- Upgrade to swagger-ui 3.x and enable Try operations [\#114](https://github.com/CenturyLinkCloud/mdw/issues/114)
+- Oracle support on MDW 6 [\#109](https://github.com/CenturyLinkCloud/mdw/issues/109)
+- Microservice REST adapter and ServiceSummary concept [\#106](https://github.com/CenturyLinkCloud/mdw/issues/106)
+- Extensibility for Hub-UI tabs [\#104](https://github.com/CenturyLinkCloud/mdw/issues/104)
+- Self-serialization for Jsonables [\#103](https://github.com/CenturyLinkCloud/mdw/issues/103)
+- View and delete asset archive [\#101](https://github.com/CenturyLinkCloud/mdw/issues/101)
+- Internal/Enterprise package supporting WebSphere MQ messaging [\#98](https://github.com/CenturyLinkCloud/mdw/issues/98)
+- AppFog should deploy mdw-buildpack from the GitHub repository [\#95](https://github.com/CenturyLinkCloud/mdw/issues/95)
+- EventHandlers and ActivityImpls should be full-blown workflow assets. [\#66](https://github.com/CenturyLinkCloud/mdw/issues/66)
+- Error reports should be sent through a REST service instead of SMTP [\#55](https://github.com/CenturyLinkCloud/mdw/issues/55)
+- Test Case HTTP support for net proxy config [\#51](https://github.com/CenturyLinkCloud/mdw/issues/51)
+- Create Pie Chart reports in MDWHub [\#43](https://github.com/CenturyLinkCloud/mdw/issues/43)
+- Add ability to create a Task Template from mdw-admin [\#19](https://github.com/CenturyLinkCloud/mdw/issues/19)
+- Asset editing through MDWHub [\#9](https://github.com/CenturyLinkCloud/mdw/issues/9)
+- Publish mdw 6.0.x war/jars to Maven Central [\#3](https://github.com/CenturyLinkCloud/mdw/issues/3)
+
+**Closed issues:**
+
+- Date filter in MDWHub Processes/Requests pages breaks when using cookieStore [\#119](https://github.com/CenturyLinkCloud/mdw/issues/119)
+- Deadlock in ServiceSummary event processing [\#115](https://github.com/CenturyLinkCloud/mdw/issues/115)
+- Not able to deploy mdw-demo to PCF environment [\#89](https://github.com/CenturyLinkCloud/mdw/issues/89)
+- HTTP response status codes on REST requests [\#73](https://github.com/CenturyLinkCloud/mdw/issues/73)
+- Deleting a jar asset causes runtime problems [\#67](https://github.com/CenturyLinkCloud/mdw/issues/67)
+- Swagger and Browser issues [\#57](https://github.com/CenturyLinkCloud/mdw/issues/57)
+
+## [v6.0.03](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.03) (2017-05-05)
 **Implemented enhancements:**
 
 - Retain user filter selections on the Workflow tab [\#78](https://github.com/CenturyLinkCloud/mdw/issues/78)
@@ -21,7 +52,6 @@
 
 - Add workgroups and roles to a user with previous end-dated rows [\#77](https://github.com/CenturyLinkCloud/mdw/issues/77)
 - MDW Hub Process UI view does not show correct color on waiting activity of a completed process [\#74](https://github.com/CenturyLinkCloud/mdw/issues/74)
-- HTTP response status codes on REST requests [\#73](https://github.com/CenturyLinkCloud/mdw/issues/73)
 - Swagger page Try It button is non-functional [\#64](https://github.com/CenturyLinkCloud/mdw/issues/64)
 - mdw-admin caching issue [\#27](https://github.com/CenturyLinkCloud/mdw/issues/27)
 - Add group where existing with null end date [\#23](https://github.com/CenturyLinkCloud/mdw/issues/23)

@@ -6,6 +6,5 @@ issue_\<number\>_githubId  for example pull request related to 81 by Manoj will 
 ### Now switch over to remote branch you created in github
 ### Once you commit your changes to new branch you can follow instructions here for creating a pull request
 [Create a New Pull Request](https://help.github.com/articles/creating-a-pull-request/)
-### @mentions of the person or team responsible for reviewing proposed changes
 
 [Learn more about pull requests](https://help.github.com/articles/about-pull-requests/)
