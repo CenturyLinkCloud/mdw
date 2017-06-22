@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.hub;
 
-import java.io.File;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.SpringConstants;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -54,10 +52,7 @@ import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupClass;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
-import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -70,45 +65,22 @@ public class MdwMain {
     private static ConfigurationEventListener configurationEventListener;
     private static PropertyManager propertyManager;
     private static RMIListener listener;    // do not remove - need to keep reference to prevent GC
-    private static String containerName;    // typically can get from ApplicationContext; need here when startup fails
-    private static String deployPath;
-    private static String contextPath;
 
-    public void startup(String deployPath, String contextPath) {
+    public void startup(String container, String deployPath, String contextPath) {
 
         StandardLogger logger = null;
 
         try {
             System.out.println("MDW initialization...");
-            MdwMain.deployPath = deployPath;
             System.out.println("  deployPath: " + deployPath);
-            MdwMain.contextPath = contextPath;
             System.out.println("  contextPath: " + contextPath);
 
             logger = LoggerUtil.getStandardLogger();
-            containerName = NamingProvider.TOMCAT;
             ApplicationContext.setDeployPath(deployPath);
-
-            // load properties
-            propertyManager = PropertyManager.initializeContainerPropertyManager(containerName, deployPath);
-
-            if (ApplicationContext.isSpringBoot()) {
-                String mainLoc = ClasspathUtil.locate(MdwMain.class.getName());
-                File bootJar = new File(new java.net.URI(mainLoc.substring(0, mainLoc.indexOf('!'))));
-                if (!bootJar.exists())
-                    throw new StartupException("No Spring Boot jar: " + mainLoc);
-                System.out.println("Spring Boot Jar: " + bootJar.getAbsolutePath());
-                File bootDir = new File(deployPath);
-                if (bootDir.isDirectory())
-                    FileHelper.deleteRecursive(bootDir);
-                if (!bootDir.mkdirs())
-                    throw new StartupException("Cannot create boot dir: " + bootDir.getAbsolutePath());
-                ZipHelper.unzip(bootJar, bootDir);
-            }
 
             // initialize ApplicationContext
             logger.info("Initialize " + ApplicationContext.class.getName());
-            ApplicationContext.onStartup(containerName, null);
+            ApplicationContext.onStartup(container, null);
 
             // initialize db access and set database time
             try {
@@ -118,8 +90,7 @@ public class MdwMain {
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
             }
             catch (Exception e) {
-                throw new StartupException(StartupException.FAIL_TO_START_DATABASE_POOL,
-                        "Failed to connect through database connection pool", e);
+                throw new StartupException("Failed to connect through database connection pool", e);
             }
 
             logger.refreshCache();    // now update based on properties loaded from database
@@ -144,7 +115,7 @@ public class MdwMain {
                 ApplicationContext.getNamingProvider().bind(RMIListener.JNDI_NAME, listener);
             }
             catch (Exception e) {
-                throw new StartupException(StartupException.FAIL_TO_START_RMI_LISTENER, "Failed to start RMI listener");
+                throw new StartupException("Failed to start RMI listener", e);
             }
 
             logger.info("Initialize " + ConnectionPoolRegistration.class.getName()) ;
@@ -189,7 +160,6 @@ public class MdwMain {
                 dynamicService.onStartup();
             }
             logger.info("StartupListener:onStartup exits");
-
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -278,18 +248,6 @@ public class MdwMain {
         }
     }
 
-    public String getContainerName() {
-        return containerName;
-    }
-
-    public String getDeployPath() {
-        return deployPath;
-    }
-
-    public String getContextPath() {
-        return contextPath;
-    }
-
     List<StartupClass> getAllStartupClasses(StandardLogger logger) throws StartupException {
         List<StartupClass> startupClasses = new ArrayList<StartupClass>();
 
@@ -298,7 +256,7 @@ public class MdwMain {
             props = PropertyManager.getInstance().getProperties(PropertyGroups.STARTUP_CLASSES);
         }
         catch (PropertyException e) {
-            throw new StartupException(StartupException.FAIL_TO_LOAD_STARTUP_CLASSES, "Failed to load startup classes", e);
+            throw new StartupException("Failed to determine startup classes", e);
         }
         Iterator<Object> it = props.keySet().iterator();
         HashMap<String,String> mamp = new HashMap<String,String>();

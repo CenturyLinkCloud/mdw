@@ -183,8 +183,7 @@ public class ApplicationContext {
             startupTime = new Date();
         }
         catch (Exception ex) {
-            throw new StartupException(StartupException.FAIL_INIT_APPLICATION_CONTEXT,
-                    "Failed to initialize ApplicationContext", ex);
+            throw new StartupException("Failed to initialize ApplicationContext", ex);
         }
     }
 

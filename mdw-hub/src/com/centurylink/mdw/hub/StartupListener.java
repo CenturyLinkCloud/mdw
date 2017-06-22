@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.hub.servlet;
+package com.centurylink.mdw.hub;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -21,7 +21,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.hub.MdwMain;
+import com.centurylink.mdw.container.NamingProvider;
 
 @WebListener
 public class StartupListener implements ServletContextListener {
@@ -32,14 +32,12 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent contextEvent) {
         ServletContext servletContext = contextEvent.getServletContext();
         mdwMain = new MdwMain();
+        String container = NamingProvider.TOMCAT; // TODO
         if (ApplicationContext.isSpringBoot()) {
-            String bootDir = System.getProperty("mdw.boot.dir");
-            if (bootDir == null)
-                bootDir = ApplicationContext.getTempDirectory() + "/boot";
-            mdwMain.startup(bootDir, servletContext.getContextPath());
+            mdwMain.startup(container, SpringBootApplication.getBootDir().toString(), servletContext.getContextPath());
         }
         else {
-            mdwMain.startup(servletContext.getRealPath("/"), servletContext.getContextPath());
+            mdwMain.startup(container, servletContext.getRealPath("/"), servletContext.getContextPath());
         }
     }
 

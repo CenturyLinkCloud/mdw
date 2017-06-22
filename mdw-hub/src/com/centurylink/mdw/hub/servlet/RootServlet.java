@@ -44,7 +44,7 @@ public class RootServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String path = request.getServletPath();
-        if (path.equals("/root") || path.equals("/index.html")) {
+        if (path.equals("/") || path.equals("/root") || path.equals("/index.html")) {
             if (new File(WebAppContext.getMdw().getOverrideRoot() + "/index.html").isFile()) {
                 request.getRequestDispatcher("/customContent/index.html").forward(request, response);
             }

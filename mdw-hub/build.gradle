@@ -73,9 +73,11 @@ dependencies {
     // spring boot
     providedCompile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
     springBoot group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    providedCompile group: "org.springframework", name: "spring-web", version: springVersion
     springBoot group: "org.springframework", name: "spring-web", version: springVersion
     springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.15"
     springBoot group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    springBoot group: "javax.el", name: "el-api", version: "1.0"  // why?
     springBootLoader group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion
     
     runtimeExtra group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
@@ -194,7 +196,12 @@ task springBootJar(type: Jar) {
         entryCompression = org.gradle.api.tasks.bundling.ZipEntryCompression.STORED
         from configurations.compile.minus(configurations.providedCompile).plus(configurations.springBoot)
     }
-    
+
+    into("web") {
+        from "dist"
+        exclude "hub-ui/" // exclude module-dist
+    }
+
     from configurations.springBootLoader.asFileTree.files.collect {
         zipTree(it)
     }
