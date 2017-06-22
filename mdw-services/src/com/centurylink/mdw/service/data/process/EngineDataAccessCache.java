@@ -525,37 +525,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public synchronized List<EventWaitInstance> recordBroadcastEventArrive(String eventName,
-            Long documentId) throws SQLException {
-        if (cache_event==CACHE_ONLY) {
-            EventInstance eventInst = eventInstCache.get(eventName);
-            if (eventInst==null) {
-                eventInst = new EventInstance();
-                eventInst.setEventName(eventName);
-                eventInst.setDocumentId(documentId);
-                eventInst.setCreateDate(new Date());
-                eventInst.setStatus(EventInstance.STATUS_WAITING_MULTIPLE);
-                eventInst.setWaiters(new ArrayList<EventWaitInstance>());
-                eventInstCache.put(eventName, eventInst);
-                return new ArrayList<EventWaitInstance>();
-            }  else {
-                if (eventInst.getStatus().equals(EventInstance.STATUS_WAITING)) {
-                    eventInstCache.remove(eventName);
-                    return eventInst.getWaiters();
-                } else if (eventInst.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
-                    eventInst.setDocumentId(documentId);
-                    eventInst.setStatus(EventInstance.STATUS_CONSUMED);
-                    return eventInst.getWaiters();
-                } else {
-                    throw new SQLException("The event is already recorded and in status "
-                            + eventInst.getStatus());
-                }
-            }
-        } else {
-            return edadb.recordBroadcastEventArrive(eventName, documentId);
-        }
-    }
-
     public synchronized List<EventWaitInstance> recordEventArrive(String eventName, Long documentId)
             throws SQLException {
         if (cache_event == CACHE_ONLY) {
@@ -588,33 +557,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
         else {
             return edadb.recordEventArrive(eventName, documentId);
-        }
-    }
-
-    public synchronized Long recordBroadcastEventWait(String eventName,
-            int preserveSeconds, Long actInstId, String compCode) throws SQLException {
-        if (cache_event == CACHE_ONLY) {
-            EventInstance eventInst = eventInstCache.get(eventName);
-            Long documentId = null;
-            if (eventInst == null) {
-                eventInst = new EventInstance();
-                eventInst.setEventName(eventName);
-                eventInst.setCreateDate(new Date());
-                eventInst.setStatus(EventInstance.STATUS_WAITING_MULTIPLE);
-                eventInst.setWaiters(new ArrayList<EventWaitInstance>());
-                eventInstCache.put(eventName, eventInst);
-                documentId = null;
-            }
-            EventWaitInstance eventWaitInst = new EventWaitInstance();
-            eventWaitInst.setActivityInstanceId(actInstId);
-            eventWaitInst.setCompletionCode(compCode);
-            eventWaitInst.setMessageDocumentId(documentId);
-            eventInst.getWaiters().add(eventWaitInst);
-            return documentId;
-        }
-        else {
-            return edadb.recordBroadcastEventWait(eventName, preserveSeconds, actInstId,
-                    compCode);
         }
     }
 

@@ -164,9 +164,6 @@ public interface WorkflowServices {
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
 
-    public Integer broadcast(String eventName) throws ServiceException;
-    public Integer broadcast(String eventName, int delay) throws ServiceException ;
-
     public Integer notify(String event, String message, int delay) throws ServiceException;
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage, int delay) throws ServiceException;
