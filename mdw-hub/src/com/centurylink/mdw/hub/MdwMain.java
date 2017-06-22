@@ -58,12 +58,11 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 public class MdwMain {
 
-    private static ThreadPoolProvider thread_pool;
+    private static ThreadPoolProvider threadPool;
     private static InternalEventListener internalEventListener;
     private static ExternalEventListener intraMdwEventListener;
     private static ExternalEventListener externalEventListener;
     private static ConfigurationEventListener configurationEventListener;
-    private static PropertyManager propertyManager;
     private static RMIListener listener;    // do not remove - need to keep reference to prevent GC
 
     public void startup(String container, String deployPath, String contextPath) {
@@ -101,17 +100,17 @@ public class MdwMain {
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
             CacheRegistration cacheMgr = new CacheRegistration();
-            cacheMgr.registerCache(PropertyManager.class.getName(), propertyManager);
+            cacheMgr.registerCache(PropertyManager.class.getName(), PropertyManager.getInstance());
 
             logger.info("Starting Thread Pool");
-            thread_pool = ApplicationContext.getThreadPoolProvider();
-            thread_pool.start();
+            threadPool = ApplicationContext.getThreadPoolProvider();
+            threadPool.start();
 
             MessengerFactory.init(contextPath);
 
             logger.info("Initialize " + RMIListener.class.getName());
             try {
-                listener = new RMIListenerImpl(thread_pool);
+                listener = new RMIListenerImpl(threadPool);
                 ApplicationContext.getNamingProvider().bind(RMIListener.JNDI_NAME, listener);
             }
             catch (Exception e) {
@@ -127,15 +126,15 @@ public class MdwMain {
             if (!SpringAppContext.getInstance().isBeanDefined(SpringConstants.MDW_SPRING_INTERNAL_EVENT_LISTENER)) {
 
                 if (MessengerFactory.internalMessageUsingJms()) {
-                    internalEventListener = new InternalEventListener(thread_pool);
+                    internalEventListener = new InternalEventListener(threadPool);
                     internalEventListener.start();
                 }
 
                 if (ApplicationContext.getJmsProvider() != null) {
-                    intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, thread_pool);
+                    intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, threadPool);
                     intraMdwEventListener.start();
 
-                    externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, thread_pool);
+                    externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, threadPool);
                     externalEventListener.start();
 
                     configurationEventListener = new ConfigurationEventListener();
@@ -200,8 +199,8 @@ public class MdwMain {
             (new TimerTaskRegistration()).onShutdown();
 
             logger.info("Shutdown common thread pool");
-            if (thread_pool != null)
-                thread_pool.stop();
+            if (threadPool != null)
+                threadPool.stop();
 
             if (configurationEventListener != null)
                 configurationEventListener.stop();
