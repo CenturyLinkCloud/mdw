@@ -53,7 +53,7 @@
   - Review console output for errors.
 
 14 - Publish to Mavan Central
-  - login to https://oss.sonatype.org/ (use Manoj's credentials for now magrawa/mdwbpmcore1 -please create your own for future)
+  - login to https://oss.sonatype.org/ (Let Manoj create a ticket to allow you to publish mdw)
   - Select the staging repositories
   - Search for comcenturylink
   - After you deployment the repository will be in an Open status,  press the Close button above the list
