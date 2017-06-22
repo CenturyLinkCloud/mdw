@@ -87,7 +87,7 @@ public class CacheRegistration implements StartupClass {
         } catch(Exception ex){
             String message = "Failed to load caches";
             logger.severeException(message, ex);
-            throw new StartupException(-1, message, ex);
+            throw new StartupException(message, ex);
         }
     }
 
@@ -204,7 +204,7 @@ public class CacheRegistration implements StartupClass {
         } catch (Exception ex) {
              String message = "Failed to load caches";
              logger.severeException(message, ex);
-             throw new StartupException(-1, message, ex);
+             throw new StartupException(message, ex);
         }
     }
 

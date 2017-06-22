@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import com.centurylink.mdw.model.asset.AssetInfo;
 /**
  * Serves up custom content from user-override mdw-admin package.
  */
+@WebServlet(urlPatterns={"/customContent/*"}, loadOnStartup=1)
 public class CustomContentServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

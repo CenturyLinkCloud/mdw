@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -27,34 +26,27 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
-import com.centurylink.mdw.hub.context.WebAppContext;
-
 /**
- * Forwards requests to custom content servlet if override asset exists.
+ * Takes the place of welcome-files in web.xml
+ *
  */
-@WebFilter(urlPatterns={"/*"})
-public class CustomContentFilter implements Filter {
+@WebFilter(urlPatterns={"/"})
+public class RootFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
     throws IOException, ServletException {
-        if (WebAppContext.getMdw().getOverrideRoot() != null) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-            String path = httpRequest.getServletPath();
-            // forward to override servlet
-            if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile())
-                request.getRequestDispatcher("/customContent" + path).forward(request, response);
-            else
-                chain.doFilter(request, response);
+        HttpServletRequest request = (HttpServletRequest)req;
+        if (request.getServletPath().equals("/") && request.getPathInfo() == null) {
+            request.getRequestDispatcher("/index.html").forward(req, resp);
         }
         else {
-            chain.doFilter(request, response);
+            chain.doFilter(req, resp);
         }
     }
 
     public void destroy() {
     }
-
 }

@@ -28,16 +28,16 @@ import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.util.JMSServices;
 
 public class InternalMessengerJms extends InternalMessenger {
-    
+
     private static int threshold = -1;
-    
-    public void sendMessage(InternalEvent msg, EngineDataAccess edao) 
+
+    public void sendMessage(InternalEvent msg, EngineDataAccess edao)
         throws ProcessException
     {
         try {
             String msgid = addMessage(msg, edao);
             if (msgid==null) return;    // cached
-            JMSServices.getInstance().sendTextMessage(null, 
+            JMSServices.getInstance().sendTextMessage(null,
                     JMSDestinationNames.PROCESS_HANDLER_QUEUE, msg.toXml(), 0, msgid);
         } catch (Exception e) {
             throw new ProcessException(-1, "Failed to send internal event", e);
@@ -63,7 +63,7 @@ public class InternalMessengerJms extends InternalMessenger {
             }
         } catch (Exception e) {
             throw new ProcessException(-1, "Failed to send internal event", e);
-        }        
+        }
     }
 
     public void broadcastMessage(String msg) throws ProcessException {
@@ -73,6 +73,4 @@ public class InternalMessengerJms extends InternalMessenger {
             throw new ProcessException(-1, "Failed to broadcast message", e);
         }
     }
-
-    
 }

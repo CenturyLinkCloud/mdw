@@ -64,9 +64,19 @@ public class TomcatNaming implements NamingProvider {
     }
 
     public int getServerPort() throws Exception {
-        // Check for Cloud info first
-        if (PaaSConstants.PAAS_INSTANCE_PORT != null ) return Integer.parseInt(PaaSConstants.PAAS_INSTANCE_PORT);
+        // paas and spring boot configs checked first
+        String portStr = PaaSConstants.PAAS_INSTANCE_PORT;
+        if (portStr == null)
+            portStr = System.getProperty("mdw.server.port");
+        if (portStr == null)
+            portStr = System.getProperty("server.port");
+        if (portStr == null && ApplicationContext.isSpringBoot())
+            portStr = "8080";
 
+        if (portStr != null )
+            return Integer.parseInt(portStr);
+
+        // use tomcat mbean mechanism
         MBeanServer mBeanServer = MBeanServerFactory.findMBeanServer(null).get(0);
         ObjectName name = new ObjectName("Catalina", "type", "Server");
         Object server = mBeanServer.getAttribute(name, "managedResource");
