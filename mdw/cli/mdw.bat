@@ -1,1 +1,1 @@
-java -jar mdw-cli.jar %*
+java -jar %MDW_CLI%\app\mdw-cli.jar %*

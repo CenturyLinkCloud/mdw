@@ -6,13 +6,10 @@ package com.centurylink.mdw.cli;
 import java.io.IOException;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.Parameters;
 
 public class Main {
-
-    @Parameter(names="--help", help=true)
-    private boolean help;
 
     public static void main(String[] args) throws IOException {
 
@@ -22,6 +19,7 @@ public class Main {
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
+            .addCommand("help", new Help())
             .addCommand("init", init)
             .addCommand("update", update)
             .build();
@@ -31,8 +29,11 @@ public class Main {
         try {
             cmd.parse(args);
             String command = cmd.getParsedCommand();
-            if (main.help || command == null) {
+            if (command == null || command.equals("help")) {
                 cmd.usage();
+            }
+            else if (command.equals("version")) {
+                System.out.println();
             }
             else if (command.equals("init")) {
                 init.run();
@@ -47,5 +48,9 @@ public class Main {
         catch (CliException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+
+    @Parameters(commandNames="help", commandDescription="Syntax Help")
+    static class Help {
     }
 }
