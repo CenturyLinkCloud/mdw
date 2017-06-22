@@ -16,11 +16,10 @@
 5 - Edit mdw-hub/manifest.yaml:
     - path (point to new war version)
 
-6 - Edit RestApiDefinition.java (TODO: parameterize):
-    - info annotation
+6 - Do a local Gradle build and Run exportAssetPackages task to update **/.mdw/package.json files
 
-7 - Do a local Gradle build and Run exportAssetPackages task to update **/.mdw/package.json files
-
+7 - Run updateRestApiDefinition task to update RestApiDefinition.java
+    
 8 - On GitHub:
   - Close any open issues delivered with this build.
   - Create a milestone marker for the next upcoming build.
