@@ -168,7 +168,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
                 initializeScriptLibraries();
                 initializeDynamicJavaAssets();
                 String[] rootDirs = new String[] { getRootDir() };
-                if (ApplicationContext.isWar() && PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader() != null)
+                if (PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader() != null)
                     scriptEngine = new GroovyScriptEngine(rootDirs, PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader());
                 else
                     scriptEngine = new GroovyScriptEngine(rootDirs);

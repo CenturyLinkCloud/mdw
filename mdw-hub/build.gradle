@@ -2,6 +2,9 @@ apply plugin: "war"
 
 configurations {
     wtpExclude
+    runtimeExtra // runtime libs excluded due to gradle's funky transitive mechanism
+    springBoot
+    springBootLoader
 }
 
 eclipse {
@@ -40,9 +43,11 @@ dependencies {
     providedCompile group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
     providedCompile group: "javax.servlet.jsp.jstl", name: "jstl-api", version: "1.2"
     providedCompile group: "junit", name: "junit", version: "4.8.1"
+    providedCompile group: "aopalliance", name: "aopalliance", version: "1.0"
     providedCompile(group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1") { transitive = false }
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/camel", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/drools", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/testing/postman", includes: ["*.jar"])
  
 	//  Un-comment below if you add the tibco and/or ibmmq package(s) to your workspace's assets
     //providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/tibco", includes: ["*.jar"])
@@ -65,8 +70,22 @@ dependencies {
     compile group: "el-impl", name: "el-impl", version: "1.0"
     compile group: "mysql", name: "mysql-connector-java", version: "5.1.29"
     
-    // swagger
-    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.13"
+    // spring boot
+    providedCompile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    springBoot group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    providedCompile group: "org.springframework", name: "spring-web", version: springVersion
+    springBoot group: "org.springframework", name: "spring-web", version: springVersion
+    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.15"
+    springBoot group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    springBoot group: "javax.el", name: "el-api", version: "1.0"  // why?
+    springBootLoader group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion
+    
+    runtimeExtra group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    runtimeExtra group: "org.springframework", name: "spring-beans", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-context", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-core", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-expression", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-aop", version: springVersion
 }
 
 task mdwWarSourcesJar(type: Jar) {
@@ -110,7 +129,7 @@ war {
     
     archiveName = "mdw-${version}.war"
     
-    war.classpath
+    classpath = war.classpath.plus(configurations.runtimeExtra)
 
     manifest {
         attributes("MDW-Version": mdwVersion, "MDW-Build": new Date().format(mdwBuildTimeFormat))
@@ -124,8 +143,6 @@ war {
         exclude "hub-ui/" // exclude module-dist
     }
     from("../mdw-common/src") {
-        include "META-INF/mdw/namespaces.map"
-        include "META-INF/mdw/sql-queries.xml"
         include "META-INF/mdw/spring/*"
     }
     from("../mdw-workflow/src") {
@@ -145,6 +162,48 @@ war {
     manifest {
         attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+}
+
+task springBootJar(type: Jar) {
+    manifest {
+        attributes(
+            "MDW-Version": mdwVersion, 
+            "MDW-Build": new Date().format(mdwBuildTimeFormat),
+            "Main-Class": "org.springframework.boot.loader.JarLauncher",
+            "Start-Class": "com.centurylink.mdw.hub.SpringBootApplication",
+            "Spring-Boot-Classes": "BOOT-INF/classes/",
+            "Spring-Boot-Lib": "BOOT-INF/lib/",
+            "Spring-Boot-Version": springBootVersion)
+    }
+    
+    from("src") {
+        include "META-INF/mdw/**"
+        include "META-INF/services/**"
+    }
+    from("../mdw-common/src") {
+        include "META-INF/mdw/spring/*"
+    }
+    from("../mdw-workflow/src") {
+        include "META-INF/mdw/**"
+    }
+    
+    into("BOOT-INF/classes") {
+        from sourceSets.main.output
+        exclude "META-INF/**"
+    }
+    into("BOOT-INF/lib") {
+        entryCompression = org.gradle.api.tasks.bundling.ZipEntryCompression.STORED
+        from configurations.compile.minus(configurations.providedCompile).plus(configurations.springBoot)
+    }
+
+    into("web") {
+        from "dist"
+        exclude "hub-ui/" // exclude module-dist
+    }
+
+    from configurations.springBootLoader.asFileTree.files.collect {
+        zipTree(it)
     }
 }
 

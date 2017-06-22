@@ -43,7 +43,6 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
@@ -1625,22 +1624,42 @@ class ProcessExecutorImpl {
         ServiceLocator.getTaskManager().cancelTasksForProcessInstances(procInstIds);
     }
 
+    EventWaitInstance createEventWaitInstance(Long actInstId,
+            String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived)
+    throws DataAccessException, ProcessException {
+        return createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived, false);
+    }
+
     EventWaitInstance createEventWaitInstance(
             Long actInstId, String pEventName, String compCode,
-            boolean pRecurring, boolean notifyIfArrived)
+            boolean pRecurring, boolean notifyIfArrived, boolean isBroadcast)
     throws DataAccessException, ProcessException {
         try {
             String FINISH = EventType.getEventTypeName(EventType.FINISH);
             if (compCode==null||compCode.length()==0) compCode = FINISH;
             EventWaitInstance ret = null;
-            Long documentId = edao.recordEventWait(pEventName,
-                    !pRecurring,
-                    3600,       // TODO set this value in designer!
-                    actInstId, compCode);
-            if (logger.isInfoEnabled()) {
-                logger.info("registered event wait event='"
-                        + pEventName + "' actInst=" + actInstId
-                        + (pRecurring?" as recurring":"as non-recurring"));
+            Long documentId = null;
+            if (isBroadcast) {
+                documentId = edao.recordBroadcastEventWait(pEventName,
+                        3600,       // TODO set this value in designer!
+                        actInstId, compCode);
+                if (logger.isInfoEnabled()) {
+                    logger.info("registered event wait event='"
+                            + pEventName + "' actInst=" + actInstId
+                            + " as broadcast-waiting");
+                }
+            }
+            else {
+                documentId = edao.recordEventWait(pEventName,
+                        !pRecurring,
+                        3600,       // TODO set this value in designer!
+                        actInstId, compCode);
+                if (logger.isInfoEnabled()) {
+                    logger.info("registered event wait event='"
+                            + pEventName + "' actInst=" + actInstId
+                            + (pRecurring?" as recurring":"as non-recurring"));
+                }
             }
             if (documentId!=null) {
                 if (logger.isInfoEnabled()) {
@@ -1671,6 +1690,13 @@ class ProcessExecutorImpl {
 
     }
 
+    EventWaitInstance createEventWaitInstances(Long actInstId,
+            String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean[] pEventOccurances, boolean notifyIfArrived)
+    throws DataAccessException, ProcessException {
+        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, false, false);
+    }
+
    /**
      * Method that creates the event log based on the passed in params
      *
@@ -1688,7 +1714,7 @@ class ProcessExecutorImpl {
      */
     EventWaitInstance createEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean[] pEventOccurances, boolean notifyIfArrived)
+            boolean[] pEventOccurances, boolean notifyIfArrived, boolean isBroadcast, boolean reregister)
     throws DataAccessException, ProcessException {
 
         try {
@@ -1698,14 +1724,26 @@ class ProcessExecutorImpl {
             int i;
             for (i=0; i < pEventNames.length; i++) {
                 pCompCode = pWakeUpEventTypes[i];
-                documentId = edao.recordEventWait(pEventNames[i],
-                        !pEventOccurances[i],
-                        3600,       // TODO set this value in designer!
-                        actInstId, pWakeUpEventTypes[i]);
-                if (logger.isInfoEnabled()) {
-                    logger.info("registered event wait event='"
-                            + pEventNames[i] + "' actInst=" + actInstId
-                            + (pEventOccurances[i]?" as recurring":"as non-recurring"));
+                if (isBroadcast) {
+                    documentId = edao.recordBroadcastEventWait(pEventNames[i],
+                            3600,       // TODO set this value in designer!
+                            actInstId, pWakeUpEventTypes[i]);
+                    if (logger.isInfoEnabled()) {
+                        logger.info("registered event wait event='"
+                                + pEventNames[i] + "' actInst=" + actInstId
+                                + " as broadcast-waiting");
+                    }
+                }
+                else {
+                    documentId = edao.recordEventWait(pEventNames[i],
+                            !pEventOccurances[i],
+                            3600,       // TODO set this value in designer!
+                            actInstId, pWakeUpEventTypes[i]);
+                    if (logger.isInfoEnabled()) {
+                        logger.info("registered event wait event='"
+                                + pEventNames[i] + "' actInst=" + actInstId
+                                + (pEventOccurances[i]?" as recurring":"as non-recurring"));
+                    }
                 }
                    if (documentId!=null) break;
             }
@@ -1720,7 +1758,7 @@ class ProcessExecutorImpl {
                     ActivityInstance actInst = edao.getActivityInstance(actInstId);
                     resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
                     edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
-                } else {
+                } else if (!reregister) {
                     edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
                 }
                 ret = new EventWaitInstance();
@@ -1736,106 +1774,35 @@ class ProcessExecutorImpl {
             throw new ProcessException(-1, e.getMessage(), e);
         }
     }
+
     EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean notifyIfArrived)
+            boolean notifyIfArrived, boolean reregister)
     throws DataAccessException, ProcessException {
-
-        try {
-            EventWaitInstance ret = null;
-            Long documentId = null;
-            String pCompCode = null;
-            int i;
-            for (i=0; i < pEventNames.length; i++) {
-                pCompCode = pWakeUpEventTypes[i];
-                try {
-                    BroadcastEventLockCache.lock(pEventNames[i]);
-                    documentId = edao.recordBroadcastEventWait(pEventNames[i],
-                        3600,       // TODO set this value in designer!
-                        actInstId, pWakeUpEventTypes[i]);
-                    if (logger.isInfoEnabled()) {
-                    logger.info("registered event wait event='"
-                            + pEventNames[i] + "' actInst=" + actInstId
-                            + " as broadcast-waiting");
-                    }
-                } finally {
-                    BroadcastEventLockCache.unlock(pEventNames[i]);
-                }
-                if (documentId!=null) break;
-            }
-            if (documentId!=null) {
-                if (logger.isInfoEnabled()) {
-                    logger.info((notifyIfArrived?"notify":"return") +
-                            " event before registration: event='"
-                            + pEventNames[i] + "' actInst=" + actInstId);
-                }
-                if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
-                if (notifyIfArrived) {
-                    ActivityInstance actInst = edao.getActivityInstance(actInstId);
-                    resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
-                    edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
-                } else {
-                    edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
-                }
-                ret = new EventWaitInstance();
-                ret.setMessageDocumentId(documentId);
-                ret.setCompletionCode(pCompCode);
-                Document docvo = edao.getDocument(documentId, true);
-                edao.updateDocumentInfo(docvo);
-            }
-            return ret;
-        } catch (SQLException e) {
-            throw new ProcessException(-1, e.getMessage(), e);
-           } catch (MdwException e) {
-            throw new ProcessException(-1, e.getMessage(), e);
-        }
+        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, null, notifyIfArrived, true, reregister);
     }
 
     Integer broadcast(String pEventName, Long pEventInstId,
             String message, int delay) throws DataAccessException, EventException, SQLException {
-        List<EventWaitInstance> waiters = edao.recordBroadcastEventArrive(pEventName, pEventInstId);
-        if (waiters!=null) {
-            boolean hasFailures = false;
-            try {
-                for (EventWaitInstance inst : waiters) {
-                    String pCompCode = inst.getCompletionCode();
-                    if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
-                    if (logger.isInfoEnabled()) {
-                        logger.info("notify event after registration: event='"
-                                + pEventName + "' actInst=" + inst.getActivityInstanceId());
-                    }
-                    ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
-                    if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
-                        // assuming it is a service process waiting for message
-                        JSONObject json = new JsonObject();
-                        json.put("ACTION", "NOTIFY");
-                        json.put("CORRELATION_ID", pEventName);
-                        json.put("MESSAGE", message);
-                        internalMessenger.broadcastMessage(json.toString());
-                    } else {
-                        resumeActivityInstance(actInst, pCompCode, pEventInstId, message, delay);
-                    }
-                    // deregister wait instances
-                    edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
-                    if (pEventInstId!=null && pEventInstId.longValue()>0) {
-                        Document docvo = edao.getDocument(pEventInstId, true);
-                        edao.updateDocumentInfo(docvo);
-                    }
-                }
-            } catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-                throw new EventException(ex.getMessage());
-            }
-            if (hasFailures) return EventInstance.RESUME_STATUS_PARTIAL_SUCCESS;
-            else return EventInstance.RESUME_STATUS_SUCCESS;
-        } else return EventInstance.RESUME_STATUS_NO_WAITERS;
-
+        return notifyProcess(pEventName, pEventInstId, message, delay, true);
     }
+
     Integer notifyProcess(String pEventName, Long pEventInstId,
-                    String message, int delay)
+            String message, int delay)
     throws DataAccessException, EventException, SQLException {
-        List<EventWaitInstance> waiters = edao.recordEventArrive(pEventName, pEventInstId);
-        if (waiters!=null) {
+        return notifyProcess(pEventName, pEventInstId, message, delay, false);
+    }
+
+    Integer notifyProcess(String pEventName, Long pEventInstId,
+                    String message, int delay, boolean isBroadcast)
+    throws DataAccessException, EventException, SQLException {
+        List<EventWaitInstance> waiters = null;
+        if (isBroadcast)
+            waiters = edao.recordBroadcastEventArrive(pEventName, pEventInstId);
+        else
+            waiters = edao.recordEventArrive(pEventName, pEventInstId);
+
+        if (waiters!=null && !waiters.isEmpty()) {
             boolean hasFailures = false;
             try {
                 for (EventWaitInstance inst : waiters) {
@@ -1871,7 +1838,6 @@ class ProcessExecutorImpl {
             else return EventInstance.RESUME_STATUS_SUCCESS;
         } else return EventInstance.RESUME_STATUS_NO_WAITERS;
     }
-
 
     private boolean isProcessInstanceProgressable(ProcessInstance pInstance) {
 

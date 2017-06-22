@@ -34,6 +34,7 @@ slurped.tasks.each {
     else if (it.name == 'Auto Assigned From Jaxb Attr')
         autoAssignedFromJaxbAttr = it
 }
+sleep 20
 assert autoAssignedTask && autoAssignedTask.assigneeId == 'aa56486'
 assert autoAssignedFromJaxbElem && autoAssignedFromJaxbElem.assigneeId == 'dxoakes'
 assert autoAssignedFromJaxbAttr && autoAssignedFromJaxbAttr.assigneeId == 'aa56486'

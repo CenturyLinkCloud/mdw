@@ -567,6 +567,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0);
             hasWaiters = false;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event == null)
                 throw e;  // throw original SQLException
@@ -587,13 +588,17 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         boolean hasWaiters;
         try {
             this.recordEventHistory(eventName, EventLog.SUBCAT_ARRIVAL, OwnerType.DOCUMENT, documentId, null);
-            createEventInstance(eventName, documentId, EventInstance.STATUS_WAITING_MULTIPLE, null, null, null, 0);
+            createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0);
             hasWaiters = false;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event == null)
                 throw e;  // throw original SQLException
             if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
+                hasWaiters = true;
+                updateEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0, null);
+            } else if (event.getStatus().equals(EventInstance.STATUS_ARRIVED)) {
                 hasWaiters = true;
             } else {
                 throw new SQLException("The event is already recorded and in status " + event.getStatus());
@@ -611,6 +616,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     null, null, null, preserveSeconds);
             documentId = null;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
                 if (multipleRecepients) {
@@ -654,9 +660,12 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     null, null, null, preserveSeconds);
             documentId = null;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
                 documentId = null;
+            } else if (event.getStatus().equals(EventInstance.STATUS_ARRIVED)) {
+                    documentId = event.getDocumentId();
             } else {        // STATUS_FLAG
                 throw new SQLException("The event is already recorded as a FLAG");
             }
@@ -672,6 +681,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     new Date(DatabaseAccess.getCurrentTime()), null, null, preserveSeconds);
             recorded = false;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_FLAG)) {
                 recorded = true;

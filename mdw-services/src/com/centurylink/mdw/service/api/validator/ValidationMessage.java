@@ -23,10 +23,17 @@ import org.json.JSONObject;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 
-/**
- * Dynamic Java workflow asset.
- */
 public class ValidationMessage implements Jsonable {
+
+    private enum ValidationError {
+        MISSING_REQUIRED,
+        VALUE_UNDER_MINIMUM,
+        VALUE_OVER_MAXIMUM,
+        INVALID_FORMAT,
+        INVALID_BOOLEAN,
+        UNACCEPTABLE_VALUE
+    }
+
     private ValidationError code;
     private String message;
 

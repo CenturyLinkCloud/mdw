@@ -15,10 +15,13 @@
  */
 package com.centurylink.mdw.service.api.validator;
 
+import com.centurylink.mdw.common.service.ServiceException;
+import io.limberest.validate.Result;
+
 /**
- * Dynamic Java workflow asset.
+ * Validation exception to be thrown for invalid requests.
  */
-public class ValidationException extends Exception
+public class ValidationException extends ServiceException
 {
     private ValidationMessage message;
 
@@ -33,6 +36,18 @@ public class ValidationException extends Exception
 
     public ValidationMessage getValidationMessage() {
         return message;
+    }
+
+    public ValidationException(Result result) {
+        super(result.getStatus().getCode(), result.getStatus().getMessage());
+    }
+
+    public ValidationException(int code, String message) {
+        super(code, message);
+    }
+
+    public ValidationException(int code, String message, Throwable cause) {
+        super(code, message, cause);
     }
 
 }

@@ -24,6 +24,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
 import com.centurylink.mdw.hub.context.WebAppContext;
@@ -31,6 +32,7 @@ import com.centurylink.mdw.hub.context.WebAppContext;
 /**
  * Forwards requests to custom content servlet if override asset exists.
  */
+@WebFilter(urlPatterns={"/*"})
 public class CustomContentFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {

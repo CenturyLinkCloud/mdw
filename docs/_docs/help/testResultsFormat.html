@@ -14,7 +14,7 @@ These are compared after test execution to determine success or failure.</p>
 Each yaml asset represents at least one master process instance along with its subprocesses,
 sorted by process name.  In an actual results yaml file, the instance ID for each process is
 included in a (#-delimited) comment on the same line.
-Here's an example results file from <a href="tutorials/mdwdemo.html">mdwdemo</a>:</p>
+Here's an example results file from <a href="tutorials/mdwdemo.html">mdw-demo</a>:</p>
 
 <pre>
 process: # 13059
@@ -28,6 +28,7 @@ process: # 13059
       Prepare Lookup
       Request
     status: Completed
+    result: false
   activity: # 5 "2016-02-12 13:24:10"
     name: |
       Customer
@@ -63,10 +64,10 @@ process: # 13059
         &lt;firstName>Donald&lt;/firstName>
         &lt;lastName>Oakes&lt;/lastName>
       &lt;/GetEmployeeResponse>
-  variable: # 18749
+  variable: # 18809
     name: customerName
-    value: Donald Oakes
-  variable: # 18744
+    value: Don Oakes
+  variable: # 18804
     name: orderNumber
     value: ${masterRequestId}
   variable: # 18742

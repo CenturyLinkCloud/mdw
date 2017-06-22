@@ -50,7 +50,7 @@ public class PaaSPropertyManager extends PropertyManager {
         }
         catch (JSONException ex) {
             ex.printStackTrace();
-            throw new StartupException(StartupException.FAIL_TO_LOAD_PROPERTIES, ex.getMessage(), ex);
+            throw new StartupException(ex.getMessage(), ex);
         }
     }
 

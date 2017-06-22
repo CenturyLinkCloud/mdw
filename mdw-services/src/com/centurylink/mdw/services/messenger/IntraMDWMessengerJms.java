@@ -62,7 +62,7 @@ public class IntraMDWMessengerJms extends IntraMDWMessenger {
                     JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE,
                     message, ackTimeoutSeconds, msgid);
         } catch (Exception e) {
-            throw new ProcessException(0, "Faile to send certified message", e);
+            throw new ProcessException(0, "Failed to send certified message", e);
         }
         if (!msgid.equals(acknowledgment)) throw new AdapterException("Incorrect acknowledgment for certified message");
     }

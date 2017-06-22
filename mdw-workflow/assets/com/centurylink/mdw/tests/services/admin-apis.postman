@@ -1,0 +1,42 @@
+{
+	"variables": [],
+	"info": {
+		"name": "admin-apis",
+		"_postman_id": "fe205975-51cd-5ea3-b7c9-acd06bed7b1b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "retrieve-workgroup-dons",
+			"request": {
+				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "create-workgroup-dons",
+			"request": {
+				"url": "http://localhost:8080/mdw/services/Workgroups",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"dons\",\r\n  \"description\": \"a group for testing\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -54,12 +54,22 @@ testingMod.controller('TestsController',
       pkg.selected = $scope.selectedState.all;
       pkg.testCases.forEach(function(testCase) {
         testCase.selected = $scope.selectedState.all;
+        if (testCase.items) {
+          testCase.items.forEach(function(item) {
+            item.selected = pkg.selected;
+          });
+        }
       });
     });
   };
   $scope.togglePackage = function(pkg) {
     pkg.testCases.forEach(function(testCase) {
       testCase.selected = pkg.selected;
+      if (testCase.items) {
+        testCase.items.forEach(function(item) {
+          item.selected = pkg.selected;
+        });
+      }
     });
     $scope.selectedState.all = false;
   };
@@ -118,10 +128,11 @@ testingMod.controller('TestsController',
     var pkgObj;
     for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
       for (var j = 0; j < $scope.testCaseList.packages[i].testCases.length; j++) {
-        if ($scope.testCaseList.packages[i].testCases[j].selected) {
+        var tc = $scope.testCaseList.packages[i].testCases[j];
+        if (tc.selected) {
           var pkgName = $scope.testCaseList.packages[i].name;
           pkgObj = null;
-          for (var k = 0; k < execTestPkgs.length; k++) {
+          for (let k = 0; k < execTestPkgs.length; k++) {
             if (execTestPkgs[k].name == pkgName) {
               pkgObj = execTestPkgs[k];
               break;
@@ -131,7 +142,15 @@ testingMod.controller('TestsController',
             pkgObj = {name: pkgName, version: $scope.testCaseList.packages[i].version, testCases: []};
             execTestPkgs.push(pkgObj);
           }
-          pkgObj.testCases.push({name: $scope.testCaseList.packages[i].testCases[j].name});
+          var tcObj = {name: tc.name};
+          if (tc.items) {
+            tcObj.items = [];
+            for (let k = 0; k < tc.items.length; k++) {
+              if (tc.items[k].selected)
+                tcObj.items.push({object: {name: tc.items[k].object.name}});
+            }
+          }
+          pkgObj.testCases.push(tcObj);
         }
       }
     }
@@ -204,7 +223,7 @@ testingMod.controller('TestsController',
       if (oldPkg) {
         newPkg.testCases.forEach(function(newTestCase) {
           var oldTestCase = null;
-          for (var j = 0; j < oldPkg.testCases.length; j++) {
+          for (let j = 0; j < oldPkg.testCases.length; j++) {
             if (oldPkg.testCases[j].name == newTestCase.name) {
               oldTestCase = oldPkg.testCases[j];
               break;
@@ -217,6 +236,28 @@ testingMod.controller('TestsController',
             oldTestCase.message = newTestCase.message;
             oldTestCase.expected = newTestCase.expected;
             oldTestCase.actual = newTestCase.actual;
+            oldTestCase.log = newTestCase.log;
+            if (newTestCase.items && oldTestCase.items) {
+              for (let j = 0; j < oldTestCase.items.length; j++) {
+                var oldItem = oldTestCase.items[j];
+                var newItem = null;
+                for (let k = 0; k < newTestCase.items.length; k++) {
+                  if (oldItem.object.name == newTestCase.items[k].object.name) {
+                    newItem = newTestCase.items[k];
+                    break;
+                  }
+                }
+                if (newItem) {
+                  oldItem.status = newItem.status;
+                  oldItem.start = newItem.start;
+                  oldItem.end = newItem.end;
+                  oldItem.message = newItem.message;
+                  oldItem.expected = newItem.expected;
+                  oldItem.actual = newItem.actual;
+                  oldItem.log = newItem.log;
+                }
+              }
+            }
           }
         });
       }
@@ -236,45 +277,66 @@ testingMod.controller('TestsController',
   });  
 }]);
 
-testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestCase', 'TestExec',
-                                         function($scope, $routeParams, $q, $location, AutomatedTests, TestCase, TestExec) {
-  $scope.testCase = AutomatedTests.get({packageName: $routeParams.packageName, testCaseName: $routeParams.testCaseName}, function(testCaseData) {
-    
+testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$location', 'AutomatedTests', 'TestVcs', 'TestCase', 'TestExec',
+                                         function($scope, $routeParams, $q, $location, AutomatedTests, TestVcs, TestCase, TestExec) {
+  $scope.testCase = AutomatedTests.get({
+    packageName: $routeParams.packageName, 
+    testCaseName: $routeParams.testCaseName,
+    itemName: $routeParams.itemName}, 
+  function(testCaseData) {
+
     $scope.testCasePackage = $routeParams.packageName;
-    var lastDot = $scope.testCase.name.lastIndexOf('.');
-    $scope.testCase.baseName = $scope.testCase.name.substring(0, lastDot);
-    $scope.testCase.language = $scope.testCase.name.substring(lastDot + 1);
+    $scope.testCaseItem = $routeParams.itemName;
+    $scope.testCaseName = $routeParams.testCaseName; 
+
+    if ($scope.testCaseItem) {
+      $scope.testCase.baseName = $routeParams.testCaseName + ': ' + $scope.testCase.object.name;
+      $scope.testCase.language = 'json';
+    }
+    else {
+      var lastDot = $scope.testCase.name.lastIndexOf('.');
+      $scope.testCase.baseName = $scope.testCase.name.substring(0, lastDot);
+      $scope.testCase.language = $scope.testCase.name.substring(lastDot + 1);
+      $scope.testCase.commitInfo = TestVcs.get({
+        packageName: $scope.testCasePackage,
+        testCaseName: $scope.testCaseName
+      });
+    }
     
     $scope.testCase.commands = TestCase.get({
       basePath: 'testCase',
       subPath: $routeParams.packageName,
-      testResource: $scope.testCase.name
+      testResource: $scope.testCaseName,
+      item: $scope.testCaseItem
     });
     if ($scope.testCase.expected) {
       $scope.testCase.expectedResults = TestCase.get({
         basePath: 'testCase',
         subPath: $scope.testCase.expected.substring(0, $scope.testCase.expected.indexOf('/')),
-        testResource: $scope.testCase.expected.substring($scope.testCase.expected.indexOf('/') + 1)
+        testResource: $scope.testCase.expected.substring($scope.testCase.expected.indexOf('/') + 1),
+        item: $scope.testCase.item
       });
     }
     if ($scope.testCase.actual) {
       $scope.testCase.actualResults = TestCase.get({
         basePath: 'testResult',
         subPath: $scope.testCase.actual.substring(0, $scope.testCase.actual.indexOf('/')),
-        testResource: $scope.testCase.actual.substring($scope.testCase.actual.indexOf('/') + 1)
+        testResource: $scope.testCase.actual.substring($scope.testCase.actual.indexOf('/') + 1),
+        item: $scope.testCase.item
       });
     }
     if ($scope.testCase.executeLog) {
       $scope.testCase.log = TestCase.get({
         basePath: 'testResult',
         subPath: $scope.testCase.executeLog.substring(0, $scope.testCase.executeLog.indexOf('/')),
-        testResource: $scope.testCase.executeLog.substring($scope.testCase.executeLog.indexOf('/') + 1)
+        testResource: $scope.testCase.executeLog.substring($scope.testCase.executeLog.indexOf('/') + 1),
+        item: $scope.testCase.item
       });
     }
   });
   
-  $scope.runTest = function(testPkg, testName) {
-    TestExec.run({packageName: testPkg, testCaseName: testName }, {}, function(data) {
+  $scope.runTest = function(testPkg, testName, item) {
+    TestExec.run({packageName: testPkg, testCaseName: testName, itemName: item}, {}, function(data) {
       if (data.status.code !== 0) {
         $scope.testExecMessage = data.status.message;
       }
@@ -410,7 +472,7 @@ testingMod.filter('yamlDiff', function($sce) {
 }).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
 
 testingMod.factory('TestCase', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/:basePath/:subPath/:testResource', mdw.hubParams(), {
+  return $resource(mdw.roots.services + '/:basePath/:subPath/:testResource/:item', mdw.hubParams(), {
     get: { 
       method: 'GET', 
       transformResponse: function(data, headers) {
@@ -430,7 +492,13 @@ testingMod.factory('TestCase', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 testingMod.factory('AutomatedTests', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName/:itemName', mdw.serviceParams(), {
+    get: { method: 'GET', isArray: false }
+  });
+}]);
+
+testingMod.factory('TestVcs', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/services/GitVcs/:packageName/:testCaseName', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false }
   });
 }]);
@@ -442,7 +510,7 @@ testingMod.factory('TestsExec', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 testingMod.factory('TestExec', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/services/com/centurylink/mdw/testing/AutomatedTests/:packageName/:testCaseName/:itemName', mdw.serviceParams(), {
     run: { method: 'POST' }
   });
 }]);

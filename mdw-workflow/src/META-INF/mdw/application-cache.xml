@@ -32,7 +32,4 @@
   <Cache Name="AllowableTaskActions" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.task.AllowableTaskActions</Property>
   </Cache>    
-  <Cache Name="BroadcastEventLockCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.event.BroadcastEventLockCache</Property>
-  </Cache>    
 </ApplicationCache>

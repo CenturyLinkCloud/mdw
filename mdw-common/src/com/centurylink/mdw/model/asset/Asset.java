@@ -71,6 +71,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String SPRING = "SPRING";
     public static final String CAMEL_ROUTE = "CAMEL_ROUTE";
     public static final String JSON = "JSON";
+    public static final String POSTMAN = "POSTMAN";
     public static final String TEST = "TEST";
     public static final String FEATURE = "FEATURE";
     public static final String YAML = "YAML";
@@ -117,6 +118,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         CAMEL_ROUTE,
         JSON,
         TEST,
+        POSTMAN,
         FEATURE,
         YAML,
         TASK,
@@ -646,6 +648,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             languageToExtension.put("CAMEL_ROUTE", ".camel");
             languageToExtension.put("PROCESS", ".proc");
             languageToExtension.put("TEST", ".test");
+            languageToExtension.put("POSTMAN", ".postman");
             languageToExtension.put("FEATURE", ".feature");
             languageToExtension.put("YAML", ".yaml");
             languageToExtension.put("JSON", ".json");
@@ -701,6 +704,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             extensionToLanguage.put(".proc", PROCESS);
             extensionToLanguage.put(".camel", CAMEL_ROUTE);
             extensionToLanguage.put(".test", TEST);
+            extensionToLanguage.put(".postman", POSTMAN);
             extensionToLanguage.put(".feature", FEATURE);
             extensionToLanguage.put(".yaml", YAML);
             extensionToLanguage.put(".json", JSON);

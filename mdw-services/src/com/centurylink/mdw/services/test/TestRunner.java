@@ -23,7 +23,6 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +30,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +46,7 @@ import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.test.PackageTests;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -105,7 +103,6 @@ public class TestRunner implements Runnable, MasterRequestListener {
     }
 
     public void run() {
-
         threadPool = Executors.newFixedThreadPool(config.getThreads());
         processCache = new HashMap<String,Process>();
         testCaseStatuses = new HashMap<String,TestCase.Status>();
@@ -176,12 +173,13 @@ public class TestRunner implements Runnable, MasterRequestListener {
         for (TestCase testCase : testCaseList.getTestCases()) {
             testCase.setStatus(null);
             testCaseStatuses.put(testCase.getPath(), null);
-            if (resultsFile.getName().endsWith(".xml")) {
-                writeTestResultsXml(testCase);
+            if (testCase.getItems() != null) {
+                for (TestCaseItem item : testCase.getItems()) {
+                    item.setStatus(null);
+                    testCaseStatuses.put(testCase.getItemPath(item.getName()), null);
+                }
             }
-            else {
-                writeTestResults(testCase);
-            }
+            writeTestResults(testCase);
         }
     }
 
@@ -193,24 +191,36 @@ public class TestRunner implements Runnable, MasterRequestListener {
         boolean allDone = true;
         TestCaseList fullTestCaseList = null;
         for (TestCase testCase : testCaseList.getTestCases()) {
-            if (!testCase.isFinished())
+            boolean statusChanged = false;
+            if (!isFinished(testCase.getStatus()))
                 allDone = false;
             Status oldStatus = testCaseStatuses.get(testCase.getPath());
-            boolean statusChanged = oldStatus != testCase.getStatus();
-            testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
+            if (oldStatus != testCase.getStatus())
+                statusChanged = true;
+            if (testCase.getItems() == null) {
+                testCaseStatuses.put(testCase.getPath(), testCase.getStatus());
+            }
+            else {
+                // case status applies to all running items (currently one)
+                for (TestCaseItem item : testCase.getItems()) {
+                    testCaseStatuses.put(testCase.getItemPath(item.getName()), testCase.getStatus());
+                    item.setStatus(testCase.getStatus());
+                }
+            }
+
             if (statusChanged) {
-                if (resultsFile.getName().endsWith(".xml")) {
-                    writeTestResultsXml(testCase);
-                }
-                else {
-                    fullTestCaseList = writeTestResults(testCase);
-                    if (fullTestCaseList != null)
-                        updateWebSocket(fullTestCaseList);
-                }
+                fullTestCaseList = writeTestResults(testCase);
+                if (fullTestCaseList != null)
+                    updateWebSocket(fullTestCaseList);
             }
         }
 
         return allDone;
+    }
+
+    private boolean isFinished(Status status) {
+        return status != null && status != Status.Waiting
+                && status != Status.InProgress;
     }
 
     /**
@@ -248,81 +258,29 @@ public class TestRunner implements Runnable, MasterRequestListener {
             testCase.setStart(exeTestCase.getStart());
             testCase.setEnd(exeTestCase.getEnd());
             testCase.setMessage(exeTestCase.getMessage());
+            if (exeTestCase.getItems() != null) {
+                List<TestCaseItem> toAdd = new ArrayList<>();
+                for (TestCaseItem exeItem : exeTestCase.getItems()) {
+                    TestCaseItem item = testCase.getItem(exeItem.getName());
+                    if (item == null) {
+                        item = exeItem;
+                        toAdd.add(item);
+                    }
+                    if (item != null) {
+                        item.setStatus(exeItem.getStatus());
+                        item.setStart(exeItem.getStart());
+                        item.setEnd(exeItem.getEnd());
+                        item.setMessage(exeItem.getMessage());
+                    }
+                }
+                testCase.getItems().addAll(toAdd);
+            }
             fullTestCaseList.setCount(fullTestCaseList.getTestCases().size());
             fullTestCaseList.sort();
             writeFile(resultsFile, fullTestCaseList.getJson().toString(2).getBytes());
         }
         return fullTestCaseList;
     }
-
-    public void writeTestResultsXml(TestCase exeTestCase) throws IOException {
-
-        List<TestCase> testCases = testCaseList.getTestCases();
-        int errors = 0;
-        int failures = 0;
-        int completed = 0;
-
-        StringBuffer suiteBuf = new StringBuffer();
-        suiteBuf.append("<testsuite ");
-        suiteBuf.append("name=\"").append(testCaseList.getSuite()).append("\" ");
-        suiteBuf.append("tests=\"").append(testCases.size()).append("\" ");
-
-        StringBuffer results = new StringBuffer();
-        for (TestCase testCase : testCases) {
-            results.append("  <testcase ");
-            results.append("name=\"").append(testCase.getPath()).append("\" ");
-            Date start = testCase.getStart();
-            if (start != null) {
-                Calendar startCal = Calendar.getInstance();
-                startCal.setTime(start);
-                results.append("timestamp=\"").append(DatatypeConverter.printDateTime(startCal)).append("\" ");
-                Date end = testCase.getEnd();
-                if (end != null) {
-                    long ms = end.getTime() - start.getTime();
-                    results.append("time=\"").append(ms / 1000).append("\" ");
-                }
-            }
-            if (testCase.isFinished()) {
-                completed++;
-            }
-            if (testCase.getStatus() == Status.Errored) {
-                errors++;
-                results.append(">\n");
-                results.append("    <error ");
-                if (testCase.getMessage() != null)
-                    results.append("message=\"").append(testCase.getMessage()).append("\" ");
-                results.append("/>\n");
-                results.append("  </testcase>\n");
-            }
-            else if (testCase.getStatus() == Status.Failed) {
-                failures++;
-                results.append(">\n");
-                results.append("    <failure ");
-                if (testCase.getMessage() != null)
-                    results.append("message=\"").append(testCase.getMessage()).append("\" ");
-                results.append("/>\n");
-                results.append("  </testcase>\n");
-            }
-            else if (testCase.getStatus() == Status.InProgress) {
-                failures++;
-                results.append(">\n");
-                results.append("    <running />\n");
-                results.append("  </testcase>\n");
-            }
-            else {
-                results.append("/>\n");
-            }
-        }
-        suiteBuf.append("completed=\"").append(completed).append("\" ");
-        suiteBuf.append("errors=\"").append(errors).append("\" ");
-        suiteBuf.append("failures=\"").append(failures).append("\" ");
-        suiteBuf.append(">\n");
-        suiteBuf.append(results);
-        suiteBuf.append("</testsuite>");
-
-        writeFile(resultsFile, suiteBuf.toString().getBytes());
-    }
-
 
     private void writeFile(File file, byte[] contents) throws IOException {
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs())

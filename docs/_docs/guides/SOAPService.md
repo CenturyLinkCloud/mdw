@@ -7,12 +7,8 @@ title: SOAP Web Service
 
 This document contains information about creating, exposing and consuming services through a SOAP-based Web Service. For a RESTFul Web Service, refer to [MicroservicesCookbook](../MicroservicesCookbook/).
 
-### Prerequisite
-Before you can start working with MDW framework, you will need to do a one-time step. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
-     
-### Supported Java Container (Apache Tomcat 8)  
-You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  To be able to develop locally you need an Apache Tomcat: [https://tomcat.apache.org](https://tomcat.apache.org).
-  
+Before you can start working with MDW framework, you will need to do a one-time setup. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
+
 ### Workflow Services
 
 #### 1. Create a Local Project
@@ -173,33 +169,8 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Ensure Permissions:
 - To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW database (unless you have installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the `Roles and Permissions` section in the [MDW Designer User Guide](../../designer/user-guide/).
 
-##### Create a Tomcat Server:
-   Note: If you have already installed the Tomcat server from the previous step(s), you can skip this step.
-   
-- To execute a workflow process you need a server running with MDW deployed.  For debugging in Eclipse the easiest way to set this up is through a Web Tools Platform server instance. 
-  From the menu select File > New > Other > Server > Server.  Click Next and select Apache > Tomcat 8.0 (MDW) from the options.  To be able to debug your Dynamic Java it is important 
-  that you select Tomcat 8.0 (MDW) instead of the standard Tomcat 8.0 Server.  The server name is arbitrary, so you can make is something friendlier than the default.
-  
-  ![alt text](../images/addTomcatServer.png "addTomcatServer")
-  
-- If you have not previously used a Tomcat 8 runtime in Eclipse, clicking Add takes you to a page where you specify your Tomcat location.   Make sure to select a JDK to compile the code 
-  and that the selected JDK is Java 1.8.x
-  
-   ![alt text](../images/addTomcatServer2.png "addTomcatServer2")
- 
-- The final page of the New Server wizard is where you designate your workflow project to be deployed on the server.  After that, click Finish to create the server instance.
-
-- If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 8 server in this view.  You can 
-  double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
-   ![alt text](../images/addTomcatServer3.png "addTomcatServer3")
- 
-- Before you start the server, you will need to add your MyWorkflow project to your server instance. Right click the server instance, select `Add and Remove` and select the MyWorkflow from the 
-  left pane and click the Add to move it to the right pane.
-  
-   ![alt text](../images/addTomcatServer4.png "addTomcatServer4")
-
 ##### Run Your Workflow Project:
-- If you have not completed the one-time setup, please follow [this link](../SetupGuideForTomcat/) and return to continue.
+- If you have not completed the one-time setup, please follow [this link](../SetupGuideForTomcat/) and return to continue with the remaining steps.
 
 ##### Open the Process Launch Dialog:
 - Right-click on your process that is under your workflow package in Process Explorer view and Select Run. You can also right-click on your Designer and Select Run.  Designer will present the 

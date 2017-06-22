@@ -138,6 +138,12 @@ task exportAssetPackages(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+task updateRestApiDefinition(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["updateRestApiDefinition"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
 task versions {
     doLast {
         println "Java Version: " + System.getProperty("java.version")
@@ -246,12 +252,13 @@ uploadArchives {
 task testLocalDev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
-    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}"]
+    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}",
+       mdwConfigLocation: "" + projectDir + "/config"]
 }
 
 task testTomcatMdwdev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
-    startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}"]
+    startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}",
+        mdwConfigLocation: "" + projectDir + "/../../../../tomcat/tomcat7-mdw6/conf"]
 }
-

@@ -18,6 +18,7 @@ package com.centurylink.mdw.hub.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import com.centurylink.mdw.auth.MdwSecurityException;
 /**
  * Error must already have been logged elsewhere.
  */
+@WebServlet(urlPatterns={"/error"}, loadOnStartup=1)
 public class ErrorServlet extends HttpServlet {
 
     protected void service(HttpServletRequest request, HttpServletResponse response)

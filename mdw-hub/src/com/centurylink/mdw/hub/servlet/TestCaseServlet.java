@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,15 +31,32 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.common.service.ServiceException;
 
 /**
  * Serves up raw test cases and related resources.
  */
+@WebServlet(urlPatterns={"/testCase/*", "/testResult/*"}, loadOnStartup=1)
 public class TestCaseServlet extends AssetContentServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+
+        TestCaseItem subItem = null;
+        String path = request.getPathInfo().substring(1);
+        String[] segments = path.split("/");
+        if (segments.length == 3) {
+            TestingServices testingServices = ServiceLocator.getTestingServices();
+            try {
+                subItem = testingServices.getTestCaseItem(path);
+            }
+            catch (ServiceException ex) {
+                // todo log
+                throw new IOException(ex.getMessage(), ex);
+            }
+        }
 
         if ("/testResult".equals(request.getServletPath())) {
             if (ApplicationContext.isMasterServer() || request.getHeader(Listener.METAINFO_MASTER_OP) != null) {
@@ -76,7 +94,13 @@ public class TestCaseServlet extends AssetContentServlet {
             }
         }
         else {
-            super.doGet(request, response);
+            if (subItem != null) {
+                response.setContentType("application/json");
+                response.getWriter().println(subItem.getObject().toString(2));
+            }
+            else {
+                super.doGet(request, response);
+            }
         }
 
     }

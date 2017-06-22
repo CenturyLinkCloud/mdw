@@ -1,0 +1,10 @@
+{
+  "name": "dons",
+  "version": "1.0.02",
+  "description": "REST API Testing",
+  "dependencies": {
+    "newman": "^3.6.1",
+    "postman-collection": "^1.2.8",
+    "util": "^0.10.3"
+  }
+}

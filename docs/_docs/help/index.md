@@ -42,7 +42,6 @@ permalink: /docs/help/
 <ul>
   <li><a href='taskTemplates.html'>Manual Task Templates</a></li>
   <li><a href='customWeb.html'>Custom Web</a></li>
-  <li><a href='hubdev.html'>MDWHub Development</a></li>
   <li><a href='taskAction.html'>Defining Task Actions</a></li>
   <li><a href='taskNotices.html'>Task Notices</a></li>
   <li><a href='taskRouting.html'>Workgroup Routing</a></li>
@@ -56,7 +55,7 @@ permalink: /docs/help/
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='webServices.html'>Invoking Standard MDW Web Services</a></li>
-  <li><a href='http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MdwCodingGuidelines.html'>MDW Coding Guidelines</a></li>
+  <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
   <li><a href='../javadoc/index.html'>MDW Framework JavaDocs</a></li>
 </ul>
 
@@ -65,7 +64,6 @@ permalink: /docs/help/
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
-  <li><a href='database.html'>MDW Database Models</a></li>
   <li><a href='reports.html'>MDW Reports</a></li>
   <li><a href='eventmgr.html'>Event Manager</a></li>
 </ul>

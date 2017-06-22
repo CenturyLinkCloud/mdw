@@ -37,9 +37,9 @@ public class CloudClasspath {
     private String cloudClasspath;
     private List<File> tomcatBaseLibJars = new ArrayList<File>();
     private List<File> tomcatHomeLibJars = new ArrayList<File>();
-    private List<File> tomcatWebAppJars = new ArrayList<File>();
+    private List<File> webappJars = new ArrayList<File>();
     private List<File> jarAssetFiles = new ArrayList<File>();
-    private File tomcatMdwWebInfClasses;
+    private File webInfClasses;
     private String configPath;
 
 
@@ -84,7 +84,13 @@ public class CloudClasspath {
             }
         }
 
-        if (ApplicationContext.isWar()) {
+        if (ApplicationContext.isSpringBoot()) {
+            String tempDir = ApplicationContext.getTempDirectory();
+            File bootInfLib = new File(ApplicationContext.getDeployPath() + "/BOOT-INF/lib");
+            webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(bootInfLib, true)));
+            webInfClasses = new File(ApplicationContext.getDeployPath() + "/BOOT-INF/classes");
+        }
+        else {
             configPath = System.getProperty("mdw.config.location");
             String catalinaBase = System.getProperty("catalina.base");
             File tomcatWebAppDir = new File(catalinaBase + FILE_SEP + "webapps");
@@ -99,8 +105,8 @@ public class CloudClasspath {
                 if(StringHelper.isEmpty(mdwWarName))
                     mdwWarName = "mdw";
                 File mdwWebInfDir = new File(tomcatWebAppDir + FILE_SEP + mdwWarName + FILE_SEP + "WEB-INF");
-                tomcatWebAppJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true)));
-                tomcatMdwWebInfClasses = new File(mdwWebInfDir + FILE_SEP + "classes");
+                webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true)));
+                webInfClasses = new File(mdwWebInfDir + FILE_SEP + "classes");
             }
 
             // tomcat base
@@ -125,11 +131,11 @@ public class CloudClasspath {
         for (File jarFile : tomcatBaseLibJars) {
             classpath.append(PATH_SEP).append(jarFile.getAbsolutePath());
         }
-        for (File jarFile : tomcatWebAppJars) {
+        for (File jarFile : webappJars) {
             classpath.append(PATH_SEP).append(jarFile.getAbsolutePath());
         }
-        if (tomcatMdwWebInfClasses != null) {
-            classpath.append(PATH_SEP).append(tomcatMdwWebInfClasses);
+        if (webInfClasses != null) {
+            classpath.append(PATH_SEP).append(webInfClasses);
         }
         for (File jarFile : tomcatHomeLibJars) {
             classpath.append(PATH_SEP).append(jarFile.getAbsolutePath());

@@ -16,22 +16,19 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.IOException;
-import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.hub.service.SwaggerReader;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.service.api.MdwScanner;
+import com.centurylink.mdw.service.api.MdwSwagger;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -39,6 +36,7 @@ import io.swagger.util.Yaml;
 /**
  * Scans a service path for Swagger annotations and generates the service spec in JSON or YAML.
  */
+@WebServlet(urlPatterns={"/api/*"}, loadOnStartup=1)
 public class ServiceApiServlet extends HttpServlet {
 
     private static final String YAML_EXT = ".yaml";
@@ -79,27 +77,8 @@ public class ServiceApiServlet extends HttpServlet {
             svcPath = svcPath.replace('.', '/');
 
             try {
-                MdwScanner scanner = new MdwScanner(svcPath, !"false".equals(request.getParameter(PRETTY_PRINT_PARAM)));
-                Swagger swagger = new Swagger();
-                Set<Class<?>> classes = scanner.classes();
-                if (classes != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Swagger scanning classes:");
-                        for (Class<?> c : classes)
-                            logger.debug("  - " + c);
-                    }
-                    SwaggerReader.read(swagger, classes);
-                    // force same scheme as MDWHub
-                    // TODO: move this determination to swagger-ui customization when mature
-                    swagger.getSchemes().clear();
-                    String hubUrl = ApplicationContext.getMdwHubUrl();
-                    if (hubUrl.startsWith("https://"))
-                        swagger.getSchemes().add(Scheme.HTTPS);
-                    else if (hubUrl.startsWith("http://"))
-                        swagger.getSchemes().add(Scheme.HTTP);
-                    else
-                        swagger.getSchemes().add(Scheme.forValue(request.getScheme()));
-                }
+                boolean pretty = !"false".equals(request.getParameter(PRETTY_PRINT_PARAM));
+                Swagger swagger = MdwSwagger.getSwagger(svcPath, pretty);
 
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");
@@ -109,7 +88,7 @@ public class ServiceApiServlet extends HttpServlet {
                         swaggerJson.put("definitions", new JsonObject(swaggerJson.getJSONObject("definitions").toString()));
                     if (swaggerJson.has("paths"))
                         swaggerJson.put("paths", new JsonObject(swaggerJson.getJSONObject("paths").toString()));
-                    if (scanner.getPrettyPrint())
+                    if (pretty)
                         response.getWriter().println(swaggerJson.toString(2));
                     else
                         response.getWriter().println(swaggerJson.toString());

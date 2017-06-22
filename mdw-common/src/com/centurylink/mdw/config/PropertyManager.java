@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.apache.xmlbeans.XmlException;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheEnabled;
 import com.centurylink.mdw.startup.StartupException;
 
@@ -84,13 +83,9 @@ public abstract class PropertyManager implements CacheEnabled {
       * @return PropertyManager
       */
       public static PropertyManager getInstance() {
-        return getLocalInstance();
-      }
-
-      public static PropertyManager getLocalInstance() {
         if (instance == null) {
             try {
-                initializeContainerPropertyManager(ApplicationContext.getContainerName(), null);
+                initializePropertyManager();
             }
             catch (StartupException e) {
                 // should not reach here, as the property manager should be initialized by now
@@ -137,9 +132,9 @@ public abstract class PropertyManager implements CacheEnabled {
       }
 
     public synchronized static PropertyManager initializeDesignerPropertyManager() {
-        if (instance==null) {
+        if (instance == null) {
             try {
-                instance = new DefaultPropertyManager("Designer", null);
+                instance = new DefaultPropertyManager();
             }
             catch (Exception e) {
                 String msg = "Cannot create default property manager";
@@ -158,8 +153,7 @@ public abstract class PropertyManager implements CacheEnabled {
         return instance;
     }
 
-    public synchronized static PropertyManager initializeContainerPropertyManager(String containerName,
-        String servletRealPath) throws StartupException {
+    private synchronized static PropertyManager initializePropertyManager() throws StartupException {
 
         String pmname = System.getProperty(MDW_PROPERTY_MANAGER);
         if (pmname == null)
@@ -173,10 +167,11 @@ public abstract class PropertyManager implements CacheEnabled {
                 String msg = "Cannot create property manager " + pmname;
                 System.out.println(msg);
                 e.printStackTrace();
-                throw new StartupException(StartupException.FAIL_TO_LOAD_PROPERTIES, msg);
+                throw new StartupException(msg);
             }
-        } else {
-            instance = new DefaultPropertyManager(containerName, servletRealPath);
+        }
+        else {
+            instance = new DefaultPropertyManager();
         }
         return instance;
     }

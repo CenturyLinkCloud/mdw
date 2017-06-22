@@ -16,18 +16,6 @@
         "Process Design",
         "Task Execution"
       ]            
-    },
-    {
-      "name": "MDW App",
-      "cuid": "mdwapp",
-      "groups": [
-        "Developers"
-      ],
-      "roles": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ]            
-    }    
+    }   
   ]
 }

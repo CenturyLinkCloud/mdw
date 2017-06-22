@@ -205,7 +205,7 @@ CREATE TABLE EVENT_WAIT_INSTANCE
 
 CREATE TABLE EVENT_INSTANCE
 (
-  EVENT_NAME                    VARCHAR(512),
+  EVENT_NAME                    VARCHAR(512) NOT NULL,
   DOCUMENT_ID                   BIGINT,
   STATUS_CD                     SMALLINT     NOT NULL,
   CREATE_DT                     TIMESTAMP    NOT NULL,

@@ -43,7 +43,7 @@ task functionTests(type: JavaExec)  {
     
     jvmArgs = [
         "-Dmdw.asset.root=" + assetDirPath,
-        "-Dmdw.config.location=" + projectDir + "/config",
+        "-Dmdw.config.location=" + mdwConfigLocation,
         '-Dmdw.test.user=mdwapp',
         '-Dmdw.test.intervalSecs=2',
         "-Dmdw.test.server.url=" + testServerUrl,
@@ -52,7 +52,7 @@ task functionTests(type: JavaExec)  {
         '-Dmdw.test.verbose=true',
         '-Djavax.net.ssl.trustStore=C:/workspaces/GitLab/mdw-framework/deploy/certs/CenturyLinkQCA.jks',
         '-Dmdw.runtime.env=dev']
-    jvmArgs += ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
+    //jvmArgs += ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
     // arguments to pass to the application
     //args =["-byFormat", "test"]
     args = ["-includes", "C:/workspaces/mdw6/mdw-workflow/assets/com/centurylink/mdw/tests/workflow/ServiceHeteroprocSequential.test"]
