@@ -154,6 +154,19 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         return getApplicationContext().getBean(name);
     }
 
+    public Object getBean(String name, boolean optional) throws IOException {
+        if (optional) {
+            try {
+                return getBean(name);
+            } catch (NoSuchBeanDefinitionException e) {
+                return null;
+            }
+        }
+        else {
+            return getBean(name);
+        }
+    }
+
     public boolean isBeanDefined(String name) {
 
         try {
@@ -162,7 +175,6 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         } catch (Exception e) {
             //Catch it and return false;
             return false;
-
         }
     }
 

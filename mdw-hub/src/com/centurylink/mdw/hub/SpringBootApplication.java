@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.PreDestroy;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -45,6 +43,7 @@ public class SpringBootApplication {
 
     public static void main(String[] args) {
         try {
+
             SpringApplication.run(SpringBootApplication.class, args);
         }
         catch (Throwable t) {
@@ -105,10 +104,5 @@ public class SpringBootApplication {
             }
         }
         return bootDir;
-    }
-
-    @PreDestroy
-    public void shutdown() throws Exception {
-      System.out.println("Spring Container is destroy! Customer clean up");
     }
 }
