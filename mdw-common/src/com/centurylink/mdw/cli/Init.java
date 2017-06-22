@@ -1,5 +1,17 @@
-/**
- * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2017 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.centurylink.mdw.cli;
 
@@ -7,14 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
-import com.google.common.io.Files;
 
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
 public class Init {
@@ -31,7 +42,7 @@ public class Init {
     private String project;
 
     @Parameter(names="--mdw-version", description="MDW Version")
-    private String mdwVersion = "6.0.04-SNAPSHOT";
+    private String mdwVersion;
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
@@ -39,11 +50,17 @@ public class Init {
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
 
+    @Parameter(names="--snapshots", description="true to include snapshot builds")
+    private boolean snapshots;
+
+    @SuppressWarnings("unused")
+    private String user = System.getProperty("user.name");
+
     public void run() throws IOException {
         System.out.println("initializing " + project + "...");
         File projectDir = new File(project);
         if (projectDir.exists()) {
-            if (!FileHelper.isEmpty(projectDir))
+            if (!projectDir.isDirectory() || projectDir.list().length > 0)
                 throw new CliException(projectDir + " already exists and is not an empty directory");
         }
         else {
@@ -51,12 +68,25 @@ public class Init {
                 throw new IOException("Unable to create destination: " + projectDir);
         }
 
-        String url = releasesUrl;
-        if (!url.endsWith("/"))
-            url += "/";
-        url += "com/centurylink/mdw/mdw-templates/" + mdwVersion + "/mdw-templates-" + mdwVersion + ".zip";
-        System.out.println(" - retrieving templates: " + url);
-        ZipHelper.unzip(new URL(url), projectDir);
+        if (!releasesUrl.endsWith("/"))
+            releasesUrl += "/";
+
+        if (mdwVersion == null) {
+            // find latest non-snapshot
+            URL url = new URL(releasesUrl + "com/centurylink/mdw/mdw-templates/");
+            Crawl crawl = new Crawl(url, snapshots);
+            crawl.run();
+            if (crawl.getReleases().size() == 0)
+                throw new IOException("Unable to locate MDW releases: " + url);
+            mdwVersion = crawl.getReleases().get(crawl.getReleases().size() - 1);
+        }
+
+        String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + mdwVersion
+                + "/mdw-templates-" + mdwVersion + ".zip";
+        System.out.println(" - retrieving templates: " + templatesUrl);
+        File tempZip = File.createTempFile("mdw", ".zip", null);
+        new Download(new URL(templatesUrl), tempZip).run();
+        new Unzip(tempZip, projectDir).run();
         System.out.println(" - wrote: ");
         subst(projectDir);
     }
@@ -69,7 +99,7 @@ public class Init {
                 subst(child);
             }
             else {
-                String contents = new String(FileHelper.read(child));
+                String contents = new String(Files.readAllBytes(Paths.get(child.getPath())));
                 StringBuilder newContents = new StringBuilder(contents.length());
                 int index = 0;
                 Matcher matcher = SUBST_PATTERN.matcher(contents);
@@ -97,7 +127,7 @@ public class Init {
                     System.out.println("   " + child);
                 }
                 else {
-                    Files.write(newContents.toString().getBytes(), child);
+                    Files.write(Paths.get(child.getPath()), newContents.toString().getBytes());
                     System.out.println("   " + child + " *");
                 }
             }

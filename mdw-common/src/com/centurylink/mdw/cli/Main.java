@@ -1,5 +1,17 @@
-/**
- * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2017 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.centurylink.mdw.cli;
 
@@ -13,15 +25,18 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+        Help help = new Help();
         Main main = new Main();
         Init init = new Init();
         Update update = new Update();
+        Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
-            .addCommand("help", new Help())
+            .addCommand("help", help)
             .addCommand("init", init)
             .addCommand("update", update)
+            .addCommand("version", version)
             .build();
 
         cmd.setProgramName("mdw");
@@ -32,13 +47,13 @@ public class Main {
             if (command == null || command.equals("help")) {
                 cmd.usage();
             }
-            else if (command.equals("version")) {
-                System.out.println();
-            }
-            else if (command.equals("init")) {
-                init.run();
-            }
-            else if (command.equals("update")) {
+            else {
+                version.run();
+                if (command.equals("init")) {
+                    init.run();
+                }
+                else if (command.equals("update")) {
+                }
             }
         }
         catch (ParameterException ex) {
@@ -52,5 +67,6 @@ public class Main {
 
     @Parameters(commandNames="help", commandDescription="Syntax Help")
     static class Help {
+
     }
 }
