@@ -571,25 +571,8 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstances(actInstId,
-<<<<<<< HEAD
                     pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
-=======
-                    pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
-        } finally {
-            stopTransaction(transaction);
-        }
-    }
 
-    public EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
-            String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean notifyIfArrived, boolean reregister)
-    throws DataAccessException, ProcessException {
-        TransactionWrapper transaction=null;
-        try {
-            transaction = startTransaction();
-            return engineImpl.createBroadcastEventWaitInstances(actInstId,
-                    pEventNames, pWakeUpEventTypes, notifyIfArrived, reregister);
->>>>>>> refs/heads/master
         } finally {
             stopTransaction(transaction);
         }
