@@ -17,6 +17,7 @@ package com.centurylink.mdw.cli;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +34,9 @@ public class Download {
 
     private URL from;
     private File to;
+    public Download(URL from) {
+        this.from = from;
+    }
     public Download(URL from, File to) {
         this.from = from;
         this.to = to;
@@ -47,6 +51,19 @@ public class Download {
                 fileOut.write(buffer, 0, len);
                 len = urlIn.read(buffer);
             }
+        }
+    }
+
+    public String read() throws IOException {
+        try (InputStream urlIn = new BufferedInputStream(from.openStream());
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int len = urlIn.read(buffer);
+            while (len >= 0) {
+                out.write(buffer, 0, len);
+                len = urlIn.read(buffer);
+            }
+            return out.toString();
         }
     }
 }

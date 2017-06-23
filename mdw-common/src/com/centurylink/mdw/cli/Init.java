@@ -18,6 +18,7 @@ package com.centurylink.mdw.cli;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -35,6 +36,11 @@ public class Init extends Common {
 
     @Parameter(description="<project>", required=true)
     private String project;
+
+    @Parameter(names="--asset-loc", description="Asset location")
+    private String assetLoc = "assets";
+    public String getAssetLoc() { return assetLoc; }
+    public void setAssetLoc(String assetLoc) { this.assetLoc = assetLoc; }
 
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
@@ -85,7 +91,7 @@ public class Init extends Common {
         String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion()
                 + "/mdw-templates-" + getMdwVersion() + ".zip";
         System.out.println(" - retrieving templates: " + templatesUrl);
-        File tempZip = File.createTempFile("mdw", ".zip", null);
+        File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run();
         new Unzip(tempZip, projectDir).run();
         System.out.println(" - wrote: ");

@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -33,10 +35,16 @@ public class Unzip {
 
     private File zipFile;
     private File destDir;
+    private boolean overwrite;
 
     public Unzip(File zipFile, File destDir) {
+        this(zipFile, destDir, false);
+    }
+
+    public Unzip(File zipFile, File destDir, boolean overwrite) {
         this.zipFile = zipFile;
         this.destDir = destDir;
+        this.overwrite = overwrite;
     }
 
     public void run() throws IOException {
@@ -48,11 +56,12 @@ public class Unzip {
                 ZipEntry entry = entries.nextElement();
                 String outpath = destDir + "/" + entry.getName();
                 File outfile = new File(outpath);
-                if (outfile.exists())
-                    throw new IOException("Output file already exists: " + outfile);
+                if (outfile.exists() && !overwrite)
+                    throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
-                    if (!outfile.mkdirs())
-                        throw new IOException("Unable to create directory: " + outfile);
+                    if (outfile.exists())
+                        new Delete(outfile).run();
+                    Files.createDirectories(Paths.get(outfile.getPath()));
                 }
                 else {
                     InputStream is = null;

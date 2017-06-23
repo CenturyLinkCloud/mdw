@@ -15,6 +15,7 @@ configurations {
 dependencies {
 
     cli group: "com.beust", name: "jcommander", version: "1.72"
+    cli group: "org.json", name: "json", version: "20160810"
 
     // TODO: remove all dependencies on mdw-schemas
     compile fileTree(dir: '../mdw/libs', include: '*.jar')
@@ -33,7 +34,6 @@ dependencies {
     compile group: "org.springframework", name: "spring-aop", version: springVersion
     compile group: "aopalliance", name: "aopalliance", version: "1.0"
     compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.4.10"
-    compile group: "org.json", name: "json", version: "20160810"
     compile group: "org.apache.activemq", name: "activemq-all", version: "5.10.0"
     compile group: "org.apache.poi", name: "poi", version: "3.15"
     compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
@@ -109,6 +109,7 @@ jar {
 }
 
 task cliJar(type: Jar) {
+    destinationDir = file("../mdw/cli")
     archiveName = "mdw-cli.jar"
     manifest {
         attributes("MDW-Version": "${version}",
@@ -125,6 +126,16 @@ task cliJar(type: Jar) {
     }
 }
 
+task cliZip(type: Zip) {
+    dependsOn cliJar
+    destinationDir = file("../${mdwOutputDir}")
+    archiveName = "mdw-cli-${version}.zip"
+    from ("../mdw") {
+        include "cli/**/*"
+        exclude ".gitignore"
+    }
+}
+    
 archivesBaseName = "mdw-common"
 artifacts {
     archives jar, javadocJar, sourcesJar

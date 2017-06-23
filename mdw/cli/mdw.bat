@@ -1,1 +1,2 @@
-java -jar %MDW_CLI%\app\mdw-cli.jar %*
+@echo off
+java -jar %MDW_HOME%\mdw-cli.jar %*

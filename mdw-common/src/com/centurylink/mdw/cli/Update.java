@@ -17,6 +17,13 @@ package com.centurylink.mdw.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.beust.jcommander.Parameters;
 
@@ -36,16 +43,60 @@ public class Update extends Common {
     }
 
     public void run() throws IOException {
-        String discoveryUrl = getProperty("mdw.discovery.url");
-
-        System.out.println("Discovering assets from: " + discoveryUrl);
-        System.out.println("Base asset packages:");
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
         }
-        for (String pkg : getBaseAssetPackages()) {
-            System.out.println("  - " + pkg);
+
+        List<String> discovered = new ArrayList<>();
+        String discoveryUrl = getProperty("mdw.discovery.url");
+        System.out.println("Discovering assets from: " + discoveryUrl);
+        String assetsJson = new Download(new URL(discoveryUrl + "/services/Assets")).read();
+        JSONObject json = new JSONObject(assetsJson);
+        if (json.has("packages")) {
+            JSONArray pkgArr = json.getJSONArray("packages");
+            for (int i = 0; i < pkgArr.length(); i++) {
+                discovered.add(pkgArr.getJSONObject(i).getString("name"));
+            }
         }
+
+        List<String> toDownload = new ArrayList<>();
+        System.out.println("Import asset packages:");
+        for (String pkg : getBaseAssetPackages()) {
+            if (discovered.contains(pkg)) {
+                System.out.println("  - " + pkg);
+                toDownload.add(pkg);
+            }
+            else {
+                System.err.println("  - " + pkg + " not found for import");
+            }
+        }
+
+        importPackages(discoveryUrl, toDownload);
+
+        // TODO update war and/or jar if present and no mdwVersion match or snapshot
+
+    }
+
+    protected void importPackages(String discoveryUrl, List<String> packages) throws IOException {
+
+        // download packages temp zip
+        System.out.println(" - downloading packages...");
+        File tempZip = Files.createTempFile("mdw-discovery", ".zip").toFile();
+        new Download(new URL(discoveryUrl + "/asset/packages?packages=" + getPackagesParam(packages)), tempZip).run();
+
+        // import packages
+        File assetDir = new File(getProperty("mdw.asset.location"));
+        Archive archive = new Archive(assetDir);
+        archive.backup();
+        System.out.println("Unzipping " + tempZip + " into: " + assetDir);
+        new Unzip(tempZip, assetDir);
+        archive.archive(true);
+        if (!tempZip.delete())
+            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
+    }
+
+    private String getPackagesParam(List<String> packages) {
+        return null;
     }
 
 }

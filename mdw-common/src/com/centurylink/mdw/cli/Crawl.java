@@ -15,10 +15,7 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +49,7 @@ public class Crawl {
     }
 
     public void run() throws IOException {
-        String page = retrieve();
+        String page = new Download(url).read();
         String release = withSnapshots ? "[\\d\\.]*(\\-SNAPSHOT)?" : "[\\d\\.]*";
 
         // try tomcat list format (internal repo)
@@ -75,19 +72,6 @@ public class Crawl {
                 releases.add(rel);
         }
         return releases;
-    }
-
-    private String retrieve() throws IOException {
-        try (InputStream urlIn = new BufferedInputStream(url.openStream());
-                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int len = urlIn.read(buffer);
-            while (len >= 0) {
-                out.write(buffer, 0, len);
-                len = urlIn.read(buffer);
-            }
-            return out.toString();
-        }
     }
 
 }

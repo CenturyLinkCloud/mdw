@@ -73,6 +73,7 @@
   - commit and push generated CHANGELOG.md to GitHub 
   - git commit CHANGELOG.md -m "Release notes"
   - Create new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases/new), copy the notes from CHANGELOG.md
+  - Include mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries with the release.
 
 17 - Update support items delivered with this build to Resolved status.
     
