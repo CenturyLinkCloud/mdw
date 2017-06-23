@@ -14,20 +14,30 @@ title: Setup Guide for CloudFoundry
      - Copy the following url: `http://centurylinkcloud.github.io/mdw/designer/updateSite`
      - Go to `Help > Install New Software` and paste it in the `Work with` and press Enter.
      - Select the `BMP Workflow Designer` and click `Next`
+     
        ![alt text](../images/designerPlugin.png "designerPlugin")
+       
      - Highlight the `MDW Designer` and click `Finish`.
+     
        ![alt text](../images/designerPlugin2.png "designerPlugin2")
+       
      - Click `Yes` on the pop-up window to restart your Eclipse.
    
    - `Buildship (Gradle) Plug-in:` 
      - Copy the following url: `http://download.eclipse.org/buildship/updates/e46/releases/2.x`
      - Go to `Help > Install New Software` and paste it in the `Work with` and press Enter.
      - Select the `Buildship: Eclipse Plug-ins for Gradle` and click `Next`
-       ![alt text](../images/gradlePlugin.png "gradlePlugin")
-     - Highlight the `Buildship Eclipse Plug-ins for Gradle` and click `Next`.
-       ![alt text](../images/gradlePlugin2.png "gradlePlugin2")
-     - Select `I accept ...` and click `Finish`.
-       ![alt text](../images/gradlePlugin2.png "gradlePlugin3")
+     
+       ![alt text](../images/gradlePlugin.png "gradlePlugin")  
+       
+     - Highlight the `Buildship Eclipse Plug-ins for Gradle` and click `Next`.  
+     
+       ![alt text](../images/gradlePlugin2.png "gradlePlugin2")   
+       
+     - Select `I accept ...` and click `Finish`.   
+     
+       ![alt text](../images/gradlePlugin2.png "gradlePlugin3")   
+       
      - Click `Yes` on the pop-up window to restart your Eclipse.
        
  - Running MDW Locally:
