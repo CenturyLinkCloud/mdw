@@ -8,11 +8,17 @@ title: Setup Guide for CloudFoundry
 ### Prerequisite
  - Eclipse Neon for JavaEE Developers:  
    http://www.eclipse.org/downloads
- - Required Plugins:
-     - MDW Designer:                                                                         
-       http://centurylinkcloud.github.io/mdw/designer/updateSite
-     - Buildship Plugin:   
-       http://download.eclipse.org/buildship/updates/e46/releases/2.x
+ - Required Plugins: 
+   `Note: These are Eclipse plug-ins and as a result, they need to be installed and updated in the Eclipse. Please use the following steps to install the latest plug-ins`.
+   - MDW Designer:  http://centurylinkcloud.github.io/mdw/designer/updateSite
+     - Copy the following url: `http://centurylinkcloud.github.io/mdw/designer/updateSite`
+     - Go to `Help > Install New Software` and paste it in the `Work with` and press Enter.
+     - Select the `BMP Workflow Designer` and click `Next`
+     - Highlight the `MDW Designer` and `Finish`.
+     - Click `Yes` on the pop-up window to restart your Eclipse.
+   - Buildship Plugin: http://download.eclipse.org/buildship/updates/e46/releases/2.x
+     - Follow the same steps as above to install the Buildship Plugin.
+       
  - Running MDW Locally:
      - Refer to `Tomcat Container` in this guide 
  
