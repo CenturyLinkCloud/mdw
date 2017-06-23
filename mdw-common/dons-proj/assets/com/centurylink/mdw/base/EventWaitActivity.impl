@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.EventWaitActivity",
-  "icon": "receive.gif",
-  "implementorClass": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
-  "label": "Event Wait Activity",
-  "pagelet": "<PAGELET>\n  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events'>\n    <TEXT LABEL='Event Name'/>\n    <TEXT LABEL='Completion Code'/>\n    <BOOLEAN LABEL='Recurring' DEFAULT='false'/>\n  <\/TABLE>\n  <DATETIME NAME='SLA' LABEL='Timeout' UNITS='Minutes,Hours,Days'/>\n  <DROPDOWN NAME='STATUS_AFTER_TIMEOUT' LABEL='Status after timeout' DEFAULT='Cancelled' VX='160' VW='120'>\n    <OPTION>Cancelled<\/OPTION>\n    <OPTION>Hold<\/OPTION>\n    <OPTION>Waiting<\/OPTION>\n  <\/DROPDOWN>\n  <DROPDOWN NAME='rcvdMsgDocVar' LABEL='Received Message Variable (Optional)' SOURCE='DocumentVariables' VX='180' VW='160'/>\n  <HYPERLINK URL='/MDWWeb/doc/EventWaitActivity.html'>Event Wait Activity Help<\/HYPERLINK>\n<\/PAGELET>"
-}

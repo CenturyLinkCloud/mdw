@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.InvokeProcessActivity",
-  "icon": "process.jpg",
-  "implementorClass": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
-  "label": "Invoke Subprocess",
-  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='processname' LABEL='Subprocess' SOURCE='Process' EDITABLE='TRUE' REFRESH='true' VW='375'/>\n  <DROPDOWN NAME='processversion' LABEL='Version' SOURCE='ProcessVersion' REFRESH='true' VW='150' HIDDEN='true'/>\n  <BOOLEAN NAME='synchronous' LABEL='Synchronous' DEFAULT='true'/>\n  <MAPPING NAME='variables' LABEL='Bindings' SOURCE='Subprocess' VH='320'/>\n  <HYPERLINK URL='/MDWWeb/doc/InvokeSubProcessActivity.html'>Subprocess Activity Help<\/HYPERLINK>\n<\/PAGELET>"
-}

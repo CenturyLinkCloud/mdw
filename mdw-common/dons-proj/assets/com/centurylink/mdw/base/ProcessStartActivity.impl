@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.StartActivity",
-  "icon": "shape:start",
-  "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-  "label": "Process Start",
-  "pagelet": "<PAGELET>\n  <MAPPING NAME='Parameters' LABEL='Bindings' VX='160'/>\n  <HYPERLINK URL='/MDWWeb/doc/ProcessStartActivity.html'>Process Start Activity Help<\/HYPERLINK>\n<\/PAGELET>"
-}
