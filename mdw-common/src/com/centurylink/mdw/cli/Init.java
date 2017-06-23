@@ -43,22 +43,35 @@ public class Init {
 
     @Parameter(names="--mdw-version", description="MDW Version")
     private String mdwVersion;
+    public String getMdwVersion() { return mdwVersion; }
+    public void setMdwVersion(String version) { this.mdwVersion = version; }
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+    public String getDiscoveryUrl() { return discoveryUrl; }
+    public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
 
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
+    public String getReleasesUrl() { return releasesUrl; }
+    public void setReleasesUrl(String url) { this.releasesUrl = url; }
 
-    @Parameter(names="--snapshots", description="true to include snapshot builds")
+    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
     private boolean snapshots;
+    public boolean isSnapshots() { return snapshots; }
+    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
 
-    @SuppressWarnings("unused")
+    @Parameter(names="--user", description="Dev user")
     private String user = System.getProperty("user.name");
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
+
+    private File projectDir;
+    public File getProjectDir() { return projectDir; }
 
     public void run() throws IOException {
         System.out.println("initializing " + project + "...");
-        File projectDir = new File(project);
+        projectDir = new File(project);
         if (projectDir.exists()) {
             if (!projectDir.isDirectory() || projectDir.list().length > 0)
                 throw new CliException(projectDir + " already exists and is not an empty directory");

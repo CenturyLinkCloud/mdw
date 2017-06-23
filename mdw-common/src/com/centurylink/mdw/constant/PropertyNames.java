@@ -74,6 +74,7 @@ public class PropertyNames {
     public static final String MDW_STUB_SERVER = "mdw.stub.server"; // used internally, set by regression tester "<host>:<port>:<timeout>";
     public static final String WEBTOOLS_URL = "mdw.webtools.url";
     public static final String DOCS_URL = "mdw.docs.url";
+    public static final String DISCOVERY_URL = "mdw.discovery.url";
     public static final String FILEPANEL_ROOT_DIRS = "mdw.filepanel.root.dirs";
     public static final String FILEPANEL_CONFIG_DIRS = "mdw.filepanel.config.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "mdw.filepanel.exclude.patterns";

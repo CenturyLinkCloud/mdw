@@ -51,8 +51,11 @@ public class Main {
                 version.run();
                 if (command.equals("init")) {
                     init.run();
+                    update.setProjectDir(init.getProjectDir());
+                    update.run();
                 }
                 else if (command.equals("update")) {
+                    update.run();
                 }
             }
         }

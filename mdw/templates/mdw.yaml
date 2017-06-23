@@ -1,5 +1,0 @@
-endpoints:
-  discovery:
-    - {{discovery-url}}
-  releases:
-    - {{releases-url}}
