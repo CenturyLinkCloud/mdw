@@ -1,10 +1,10 @@
-build
-deploy
-target
-data
-.apt_src
+build/
+deploy/
+target/
+.metadata/
+data/
 .gradle
 .temp
 *.launch
 testResults
-.metadata
+{{asset-loc}}/Archive/
