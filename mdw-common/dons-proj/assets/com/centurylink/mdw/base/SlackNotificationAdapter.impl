@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "slack.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.slack.SlackNotificationAdapter",
+  "label": "Slack Notification Adapter",
+  "pagelet": "<PAGELET>\n  <HYPERLINK NAME='EndpointUri' LABEL='Slack Webhook URL' DEFAULT=\"#{props['mdw.slack.webhook']}\"/>\n  <TEXT NAME='SLACK_USERNAME' VW='200' DEFAULT=\"#{props['mdw.slack.user']}\"/>\n  <DROPDOWN NAME='HttpMethod' LABEL='HTTP Method' DEFAULT='POST' VW='100'>\n    <OPTION>GET<\/OPTION>\n    <OPTION>POST<\/OPTION>\n    <OPTION>PUT<\/OPTION>\n    <OPTION>DELETE<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='Local Tunnel Proxy Port' VW='200'/>\n  <TEXT NAME='ConnectTimeout' LABEL='Connect Timeout (ms)' VW='100'/>\n  <TEXT NAME='ReadTimeout' LABEL='Read Timeout (ms)' VW='100'/>\n  <TEXT LABEL='Max tries' NAME='max_tries' VW='60'/>\n  <TEXT LABEL='Retry Interval (sec)' NAME='retry_interval' VW='80'/>\n  <TEXT LABEL='Response Timeout (sec)' NAME='timeout' VW='80'/>\n  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Exception Variable' SOURCE='Variables' VW='200'/>\n  <HYPERLINK URL='/MDWWeb/doc/SlackNotificationAdapter.html'>Slack Notification Adapter Help<\/HYPERLINK>\n<\/PAGELET>"
+}

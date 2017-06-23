@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <EmployeeLookup>
+         <workstationId>dxoakes</workstationId>
+      </EmployeeLookup>
+   </soapenv:Body>
+</soapenv:Envelope>

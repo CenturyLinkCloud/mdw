@@ -1,0 +1,9 @@
+// POST request to services/MyServices/Employees
+{
+  "cuid": "aa56486",
+  "name": "Manoj Agrawal",
+  "attributes": {
+    "Email": "manoj.agrawal@centurylink.com",
+    "Phone": "303 992 9980"
+  }
+} 

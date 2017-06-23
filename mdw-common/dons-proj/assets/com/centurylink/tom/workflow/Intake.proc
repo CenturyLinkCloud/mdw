@@ -1,0 +1,98 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=62,y=111,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=244,ly=89,type=Elbow,xs=126&234,ys=131&131"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=640,y=109,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "202"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"response\",\"servicePlan\"]",
+        "Rule": "import com.centurylink.mdw.model.ExecutionPlan\r\nimport com.centurylink.mdw.model.StatusResponse\r\nimport static com.centurylink.mdw.model.Status.ACCEPTED\r\nimport com.centurylink.mdw.model.Subprocess\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\n// request is of type com.centurylink.tom.model.Order\r\nruntimeContext.logDebug 'request:\\n' + request.json.toString(2)\r\n\r\ndef orderAction = request.action\r\nruntimeContext.logInfo 'order action: ' + orderAction \r\n\r\ndef customer = request.customer\r\n\r\n// TODO validation\r\n\r\n// build the servicePlan\r\nservicePlan = new ExecutionPlan()\r\nList<Subprocess> subprocs = new ArrayList<>()\r\nSubprocess subproc = new Subprocess()\r\nsubproc.setLogicalName(\"ServiceAsyncSub\")\r\nsubproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\r\nsubproc.getParameters().put('testCase', 'calledFromIntake')\r\nsubprocs.add(subproc)\r\nservicePlan.setSubprocesses(subprocs)\r\n\r\nresponse = new StatusResponse(ACCEPTED)\r\nreturn 'Valid'\r\n\r\n\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=238,y=96,w=106,h=72"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Create \r\nService Plan",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=241,ly=213,type=Elbow,xs=288&288&128,ys=172&297&297"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "Invalid",
+          "to": "A7"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=370,ly=139,type=Elbow,xs=348&426,ys=133&133"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "Valid",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Execution Plan": "servicePlan",
+        "Force Parallel Execution": "true",
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=430,y=99,w=105,h=73",
+        "processmap": "[[\"ServiceAsyncSub\",\"com.centurylink.mdw.tests.services/ServiceSub\",\"[0.4,1)\",\"\"]]",
+        "synchronous": "false"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
+      "name": "Provisioning\r\nSubflows",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=602,ly=129,type=Elbow,xs=539&636,ys=129&129"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=64,y=278,w=60,h=40"},
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "400"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=43,y=36,w=57,h=27"
+  },
+  "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "servicePlan": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+ request: # 10273
+  url: {{base-url}}/services/tom/order
+  method: POST
+  headers: # 10274
+    Accept: application/json
+    Content-Type: application/json
+    User-Agent: PostmanRuntime/6.1.4
+    Host: localhost:8080
+    accept-encoding: gzip, deflate
+  transaction-id: abc123
+  source-system: don
+  body: |
+  {
+    "action": "N",
+    "id": "7387484",
+    "version": 1,
+    "created": "2017-04-23T18:25:43.511Z",
+    "dueDate": "2017-02-23",
+    "remarks": [
+      {
+        "type": "7007",
+        "text": "Any other pertinent info fingers and toes folks fingers and toes.",
+        "author": "1073039",
+        "created": "2017-04-23T18:25:43.511Z"
+      }
+    ],
+    "mtn": "3038411177",
+    "projectId": "CORE",
+    "originatorId": "ABC123",
+    "customer": {
+      "customerType": "External",
+      "accountType": "Residential",
+      "name": {
+        "givenNames": "JOE",
+        "familyNames": "SMITH"
+      },
+      "agent": {
+        "type": "Local",
+        "name": {
+          "formOfAddress": "Mr",
+          "givenNames": "Vineeta",
+          "familyNames": "Menon",
+          "familyGeneration": "Jr",
+          "qualifications": "MD"
+        },
+        "contactInfo": {
+          "telephoneNumber": {
+            "type": "Home",
+            "tn": "4232796548"
+          },
+          "emailAddress": {
+            "type": "Personal",
+            "email": "vm@c.com"
+          }
+        }
+      }
+    },
+    "workItem": {
+      "attributes": {
+        "ApptNumber": "27874A4"
+      },
+      "work": {
+        "action": "ADD",
+        "quantity": 3
+      },
+      "plannedDuration": {
+        "start": "2017-05-03T06:00:00Z",
+        "end": "2017-05-03T06:00:00Z",
+        "timeZone": "PST"
+      }
+    },
+    "orderItem": {
+      "product": {
+        "service": {
+          "commonName": "4356491234",
+          "attributes": {
+            "networkInfrastructure": "FTTN-ETH-V2",
+            "wireMaintenancePlan": true
+          },
+          "serviceType": "HSI",
+          "action": "ADD",
+          "serviceOrderServices": [
+            {
+              "commonName": "CFSID2",
+              "action": "ADD"
+            },
+            {
+              "commonName": "CFSID3(ID for Transport)",
+              "action": "ADD",
+              "attributes": {
+                "value": "USWNETSLKC",
+                "name": "InternetHost",
+                "action": "ADD"
+              }
+            }
+          ],
+          "serviceAddress": {
+            "unit": "APT B",
+            "geoCode": "290030080",
+            "verified": true,
+            "building": "Bldg 5",
+            "floor": "Fl 11",
+            "stateOrProvince": "UT",
+            "addressType": "S(StreetAddress)",
+            "streetNumberFirst": "450",
+            "streetNumberFirstSuffix": "1\/2",
+            "streetNumberLastSuffix": "sw",
+            "streetName": "Camino Ramon",
+            "streetType": "Lane",
+            "streetSuffix": "NW|whatever",
+            "locality": "PARK CITY",
+            "postCode": "89119",
+            "postCodeExt": "3545",
+            "addressLine1": "5150 B COVER CANYON DR"
+          }
+        }
+      }
+    }
+  }
+
+response: #10275
+  status: Accepted
+  code: 202
+  headers: # 10276
+    Content-Type: application/json
+    Server: Apache-Coyote/1.1
+  body: |
+  {
+    "status": {
+      "code": 202,
+      "message": "Accepted"
+    }
+  }

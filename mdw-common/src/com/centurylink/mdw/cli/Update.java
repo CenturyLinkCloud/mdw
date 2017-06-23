@@ -16,21 +16,19 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription="Update an MDW project")
-public class Update {
-
-    private File projectDir;
-    public File getProjectDir() { return this.projectDir; }
-    protected void setProjectDir(File projectDir) { this.projectDir = projectDir; }
+public class Update extends Common {
 
     public Update(File projectDir) {
         this.projectDir = projectDir;
+    }
+
+    public Update(Common cloneFrom) {
+        super(cloneFrom);
     }
 
     Update() {
@@ -38,13 +36,16 @@ public class Update {
     }
 
     public void run() throws IOException {
-        File propFile = new File(projectDir + "/config/mdw.properties");
-        if (!propFile.exists())
-            throw new IOException("Missing: " + propFile.getAbsolutePath());
-        Properties props = new Properties();
-        props.load(new FileInputStream(propFile));
-        String discoveryUrl = props.getProperty("mdw.discovery.url");
-        System.out.println("Discovery URL: " + discoveryUrl);
+        String discoveryUrl = getProperty("mdw.discovery.url");
+
+        System.out.println("Discovering assets from: " + discoveryUrl);
+        System.out.println("Base asset packages:");
+        if (getBaseAssetPackages() == null) {
+            initBaseAssetPackages();
+        }
+        for (String pkg : getBaseAssetPackages()) {
+            System.out.println("  - " + pkg);
+        }
     }
 
 }

@@ -5,19 +5,50 @@ title: Quick Start
 Get up and running with MDW in a hurry.
 
 ### Prerequisite
-  - Java 8
+  - Java 8   
+  This is the only hard requirement.  If you type `java -version` on the command line and see **1.8**, you're all set:
+  ```
+  java version "1.8.0_60"
+  ...
+  ```
   
 ### Install the MDW CLI
-  The MDW CLI gives you commands for common operations like initializing your workspace and updating assets. 
-   - [CLI Installation](../cli)
+  The [MDW CLI](../cli) gives you commands for common operations like initializing your workspace and updating assets. 
+   - Download **mdw-cli.zip** from the latest MDW release on GitHub:   
+     https://github.com/CenturyLinkCloud/mdw/releases
+   - Unzip anywhere on your hard drive.
+   - Create an environment variable named MDW_HOME pointing to this location, and add it to your system PATH. 
   
 ### Initialize your workspace
-```
-java -jar -Dmdw.runtime.env=dev -Dmdw.config.location=E:\workspaces\mdw6\mdw\config mdw-6.0.04.jar
-```
+  Now you can use the CLI to automatically create a new MDW workspace:
+   - Open a command window in a directory that'll be the parent of your new workspace.
+   - Use the `init` command to generate your workspace:
+     ```
+     mdw init my-mdw
+     ```
+  This sets up a basic MDW project structure using certain default values that [can be overridden](../cli).
+  It also downloads some MDW base [assets](../../help/assets.html) to get you started.
+  (You'll add your own assets on top of these as you build out your project.)
+  The MDW base assets, along with your own, should be version controlled in Git.
+  You can update these base assets at any time by running `mdw update`.
   
-### Supported Java Container (Apache Tomcat 8)  
-You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  
+### Run MDW
+  At this point you have a decision to make.  MDW comes with a rich set of REST service APIs, and also
+  enables you to quickly [spin up your own](MicroservicesCookbook).  To host these services MDW relies on a 
+  Java Servlet container.  Your options are:
+  1. Use the self-contained [MDW Spring Boot jar](spring-boot)
+  2. Install [Apache Tomcat (or Jetty)](SetupGuideForTomcat)
+  
+  Whichever option you choose, MDW behaves in exactly the same way.  To get you running quickly we'll start 
+  with the Spring Boot option.  You can always switch to Tomcat later on when you want to debug your asset,
+  or if you need more control over your container.
+  
+### Command-line startup
+  On the command line, cd into the project directory created by `mdw init`.  Then type
+  ```
+  mdw run
+  ``` 
+  
+  
 
-### MDW Database:
-- MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a database. MDW uses [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in this [readme](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/readme.txt).
+### Create a process in MDWHub

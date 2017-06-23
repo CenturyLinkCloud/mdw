@@ -29,6 +29,7 @@ public class Main {
         Main main = new Main();
         Init init = new Init();
         Update update = new Update();
+        Run run = new Run();
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
@@ -36,6 +37,7 @@ public class Main {
             .addCommand("help", help)
             .addCommand("init", init)
             .addCommand("update", update)
+            .addCommand("run", run)
             .addCommand("version", version)
             .build();
 
@@ -51,8 +53,7 @@ public class Main {
                 version.run();
                 if (command.equals("init")) {
                     init.run();
-                    update.setProjectDir(init.getProjectDir());
-                    update.run();
+                    new Update(init).run();
                 }
                 else if (command.equals("update")) {
                     update.run();

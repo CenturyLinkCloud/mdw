@@ -1,0 +1,14 @@
+Address.java=1
+Agent.java=1
+CsrNote.java=1
+Customer.java=1
+CustomerOrder.java=1
+Name.java=1
+Order.java=1 Renamed from c:mdwworkspacesdonsmdw-demoassetscomcenturylink	omCustomerOrder.java
+OrderItem.java=1
+Product.java=1
+ProvisioningServiceRequest.java=1
+Remark.java=1 Renamed from c:mdwworkspacesdonsmdw-demoassetscomcenturylink	omRemarks.java
+Remarks.java=1
+Service.java=1
+WorkItem.java=1

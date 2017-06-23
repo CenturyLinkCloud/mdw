@@ -1,0 +1,9 @@
+// GET request to services/MyServices/Employees/dxoakes
+{
+  "cuid": "dxoakes",
+  "name": "Donald Oakes",
+  "attributes": {
+    "Email": "donald.oakes@centurylink.com",
+    "Phone": "303 992 9747"
+  }
+}

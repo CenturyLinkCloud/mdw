@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+  name="wsdl-first"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tns="http://mdwdemo.centurylink.com"
+  xmlns:typens="http://mdwdemo.centurylink.com/serviceTypes"
+  targetNamespace="http://mdwdemo.centurylink.com">
+
+  <wsdl:types>
+    <xsd:schema
+      targetNamespace="http://mdwdemo.centurylink.com/serviceTypes"
+      elementFormDefault="qualified">
+      <xsd:include schemaLocation="Employee.xsd" />
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="EmployeeLookupRequest">
+    <wsdl:part
+      name="payload"
+      element="typens:EmployeeLookup" />
+  </wsdl:message>
+  <wsdl:message name="EmployeeLookupResponse">
+    <wsdl:part
+      name="payload"
+      element="typens:Employee" />
+  </wsdl:message>
+  <wsdl:message name="UnknownEmployeeFault">
+    <wsdl:part
+      name="payload"
+      element="typens:UnknownEmployeeFault" />
+  </wsdl:message>
+
+  <wsdl:portType name="EmployeeLookupPortType">
+    <wsdl:operation name="EmployeeLookup">
+      <wsdl:input message="tns:EmployeeLookupRequest" />
+      <wsdl:output message="tns:EmployeeLookupResponse" />
+      <wsdl:fault
+        name="UnknownEmployee"
+        message="tns:UnknownEmployeeFault" />
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding
+    name="EmployeeSOAPBinding"
+    type="tns:EmployeeLookupPortType">
+    <soap:binding
+      style="document"
+      transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EmployeeLookup">
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="UnknownEmployee">
+        <soap:fault
+          use="literal"
+          name="UnknownEmployee" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="EmployeeLookupService">
+    <wsdl:port
+      binding="tns:EmployeeSOAPBinding"
+      name="soap">
+      <soap:address location="${mdw.services.url}/SOAP/EmployeeLookup.wsdl" />
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

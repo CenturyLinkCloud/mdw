@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "wait.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+  "label": "Timer Wait",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='TIMER_WAIT' LABEL='Duration' UNITS_ATTR='Unit'/>\n  <SELECT NAME='Unit' SECTION='None'>\n    <OPTION>Seconds<\/OPTION>\n    <OPTION>Minutes<\/OPTION>\n    <OPTION>Hours<\/OPTION>\n  <\/SELECT>\n  <TEXT NAME='Custom Validator'/>\n  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events'>\n    <TEXT LABEL='Event Name'/>\n    <TEXT LABEL='Completion Code'/>\n    <BOOLEAN LABEL='Recurring' DEFAULT='true' READONLY='true'/>\n  <\/TABLE>\n  <DROPDOWN NAME='STATUS_AFTER_EVENT' LABEL='Status after receiving event' DEFAULT='Cancelled' LW='175' VX='200' VW='120'>\n    <OPTION>Hold<\/OPTION>\n    <OPTION>Waiting<\/OPTION>\n    <OPTION>Cancelled<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL='/MDWWeb/doc/TimerWaitActivity.html'>Timer Wait Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+}

@@ -1,0 +1,82 @@
+{
+  "activities": [
+    {
+      "attributes": {
+        "Parameters": "workstationId=xpath:/EmployeeLookup/workstationId",
+        "WORK_DISPLAY_INFO": "x=72,y=114,w=60,h=40"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=220,ly=99,type=Elbow,xs=136&225,ys=134&134"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=478,y=111,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "AppCuid": "prop:LDAP/AppCUID",
+        "AppPassword": "prop:LDAP/AppPassword",
+        "BaseDn": "prop:LDAP/BaseDN",
+        "Bindings": "firstName=givenName;lastName=sn",
+        "LdapHost": "prop:LDAP/Host",
+        "LdapPort": "prop:LDAP/Port",
+        "Output Documents": "response",
+        "PostScript": "response = \"<Employee>\\n\" +\r\n           \"  <workstationId>\" + workstationId + \"<\/workstationId>\\n\" +\r\n           \"  <firstName>\" + firstName + \"<\/firstName>\\n\" +\r\n           \"  <lastName>\" + lastName + \"<\/lastName>\\n\" +\r\n           \"<\/Employee>\"",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "SearchContext": "ou=People",
+        "SearchFilter": "(uid=${workstationId})",
+        "WORK_DISPLAY_INFO": "x=229,y=108,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter",
+      "name": "Find Employee",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=404,ly=131,type=Elbow,xs=333&474,ys=131&131"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "WORK_DISPLAY_INFO": "x=30,y=37,w=158,h=27"
+  },
+  "variables": {
+    "firstName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "lastName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "workstationId": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

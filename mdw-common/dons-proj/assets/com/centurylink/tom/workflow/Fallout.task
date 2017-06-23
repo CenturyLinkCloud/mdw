@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "Variables": "[[\"exception\",\"Exception\",\"Read Only\",\"0\",\"\",\"java.lang.Exception\"]]"
+  },
+  "category": "GEN",
+  "logicalId": "Fallout",
+  "name": "Fallout",
+  "version": "0.1"
+}

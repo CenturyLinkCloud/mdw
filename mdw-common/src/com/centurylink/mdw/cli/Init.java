@@ -17,18 +17,13 @@ package com.centurylink.mdw.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
-public class Init {
+public class Init extends Common {
 
     public Init(String project) {
         this.project = project;
@@ -40,16 +35,6 @@ public class Init {
 
     @Parameter(description="<project>", required=true)
     private String project;
-
-    @Parameter(names="--mdw-version", description="MDW Version")
-    private String mdwVersion;
-    public String getMdwVersion() { return mdwVersion; }
-    public void setMdwVersion(String version) { this.mdwVersion = version; }
-
-    @Parameter(names="--discovery-url", description="Asset Discovery URL")
-    private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
-    public String getDiscoveryUrl() { return discoveryUrl; }
-    public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
 
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
@@ -66,8 +51,10 @@ public class Init {
     public String getUser() { return user; }
     public void setUser(String user) { this.user = user; }
 
-    private File projectDir;
-    public File getProjectDir() { return projectDir; }
+    @Parameter(names="--for-eclipse", description="Generate Eclipse workspace artifacts")
+    private boolean forEclipse = true;
+    public boolean isForEclipse() { return forEclipse; }
+    public void setForEclipses(boolean forEclipse) { this.forEclipse = forEclipse; }
 
     public void run() throws IOException {
         System.out.println("initializing " + project + "...");
@@ -84,86 +71,25 @@ public class Init {
         if (!releasesUrl.endsWith("/"))
             releasesUrl += "/";
 
-        if (mdwVersion == null) {
+        if (getMdwVersion() == null) {
             // find latest non-snapshot
             URL url = new URL(releasesUrl + "com/centurylink/mdw/mdw-templates/");
             Crawl crawl = new Crawl(url, snapshots);
             crawl.run();
             if (crawl.getReleases().size() == 0)
                 throw new IOException("Unable to locate MDW releases: " + url);
-            mdwVersion = crawl.getReleases().get(crawl.getReleases().size() - 1);
+            setMdwVersion(crawl.getReleases().get(crawl.getReleases().size() - 1));
         }
 
-        String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + mdwVersion
-                + "/mdw-templates-" + mdwVersion + ".zip";
+        // TODO exclusions if not --for-eclipse
+        String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion()
+                + "/mdw-templates-" + getMdwVersion() + ".zip";
         System.out.println(" - retrieving templates: " + templatesUrl);
         File tempZip = File.createTempFile("mdw", ".zip", null);
         new Download(new URL(templatesUrl), tempZip).run();
         new Unzip(tempZip, projectDir).run();
         System.out.println(" - wrote: ");
         subst(projectDir);
-    }
-
-    static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*)}}");
-
-    protected void subst(File dir) throws IOException {
-        for (File child : dir.listFiles()) {
-            if (child.isDirectory()) {
-                subst(child);
-            }
-            else {
-                String contents = new String(Files.readAllBytes(Paths.get(child.getPath())));
-                StringBuilder newContents = new StringBuilder(contents.length());
-                int index = 0;
-                Matcher matcher = SUBST_PATTERN.matcher(contents);
-                while (matcher.find()) {
-                    String match = matcher.group();
-                    newContents.append(contents.substring(index, matcher.start()));
-                    Object value = match;
-                    try {
-                        String name = toCamel(match.substring(2, match.length() - 2));
-                        Field field = Init.class.getDeclaredField(name);
-                        field.setAccessible(true);
-                        value = field.get(this);
-                    }
-                    catch (NoSuchFieldException ex) {
-                        // no subst
-                    }
-                    catch (IllegalAccessException ex) {
-                        throw new IOException(ex.getMessage(), ex);
-                    }
-                    newContents.append(value == null ? "" : value);
-                    index = matcher.end();
-                }
-                newContents.append(contents.substring(index));
-                if (newContents.toString().equals(contents)) {
-                    System.out.println("   " + child);
-                }
-                else {
-                    Files.write(Paths.get(child.getPath()), newContents.toString().getBytes());
-                    System.out.println("   " + child + " *");
-                }
-            }
-        }
-    }
-
-    private static String toCamel(String hyphenated) {
-        StringBuilder nameBuilder = new StringBuilder(hyphenated.length());
-        boolean capNextChar = false;
-        for (char c : hyphenated.toCharArray()) {
-            if (c == '-') {
-                capNextChar = true;
-                continue;
-            }
-            if (capNextChar) {
-                nameBuilder.append(Character.toUpperCase(c));
-            }
-            else {
-                nameBuilder.append(c);
-            }
-            capNextChar = false;
-        }
-        return nameBuilder.toString();
     }
 
 }

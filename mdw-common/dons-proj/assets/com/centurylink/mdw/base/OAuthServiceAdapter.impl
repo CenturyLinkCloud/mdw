@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.oauth.OAuthServiceAdapter",
+  "label": "OAuth Service Adapter",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='OAuthTokenLocation' LABEL='OAuth Token Location' DEFAULT='prop:OAUTH/TokenLocation'/>\n  <TEXT NAME='USER' LABEL='OAuth User' VW='160'/>\n  <TEXT NAME='PASS' LABEL='OAuth Password' VW='160'/>\n  <HYPERLINK NAME='EndpointUri' LABEL='Endpoint URI'/>\n  <DROPDOWN NAME='HttpMethod' LABEL='HTTP Method' DEFAULT='GET' VW='100'>\n    <OPTION>GET<\/OPTION>\n    <OPTION>POST<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='OAuthClientId' LABEL='OAuth Client Id (leave blank if unknown)' VW='120'/>\n  <TEXT NAME='OAuthClientSecret' LABEL='OAuth Client Secret (leave blank if unknown)' VW='120'/>\n  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Request Variable' SOURCE='DocumentVariables' VW='200'/>\n  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='DocumentVariables' VW='200'/>\n  <BOOLEAN NAME='DO_LOGGING' LABEL='Log Request/Response' DEFAULT='true'/>\n  <HYPERLINK URL='/MDWWeb/doc/OAuthAdapter.html'>OAuth Adapter Activity Help<\/HYPERLINK>\n  <MAPPING NAME='Bindings' LABEL='OAuth Attribute' SECTION='Bindings' VX='160'/>\n<\/PAGELET>"
+}
