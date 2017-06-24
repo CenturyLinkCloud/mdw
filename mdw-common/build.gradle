@@ -130,8 +130,7 @@ task cliZip(type: Zip) {
     dependsOn cliJar
     destinationDir = file("../${mdwOutputDir}")
     archiveName = "mdw-cli-${version}.zip"
-    from ("../mdw") {
-        include "cli/**/*"
+    from ("../mdw/cli") {
         exclude ".gitignore"
     }
 }

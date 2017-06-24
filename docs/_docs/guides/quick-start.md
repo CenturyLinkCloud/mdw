@@ -17,7 +17,7 @@ Get up and running with MDW in a hurry.
    - Download **mdw-cli.zip** from the latest MDW release on GitHub:   
      https://github.com/CenturyLinkCloud/mdw/releases
    - Unzip anywhere on your hard drive.
-   - Create an environment variable named MDW_HOME pointing to this location, and add it to your system PATH. 
+   - Create an environment variable named MDW_HOME pointing to this location, and add its bin directory to your system PATH. 
   
 ### Initialize your workspace
   Now you can use the CLI to automatically create a new MDW workspace:
@@ -44,11 +44,11 @@ Get up and running with MDW in a hurry.
   or if you need more control over your container.
   
 ### Command-line startup
-  On the command line, cd into the project directory created by `mdw init`.  Then type
+  **(NOT YET IMPLEMENTED)**
+  On the command line, cd into the project directory created by `mdw init`.  Then type   
   ```
-  mdw run
+  mdw run 
   ``` 
-  
   
 
 ### Create a process in MDWHub
