@@ -1,8 +1,8 @@
 {
   "users":  [
     {
-      "name": "{{user.name}}",
-      "cuid": "{{user.id}}",
+      "name": "{{user}}",
+      "cuid": "{{user}}",
       "groups": [
         "Developers",
         "Site Admin"

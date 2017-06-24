@@ -43,7 +43,7 @@ The MDW Framework provides built-in event handlers and listeners for handling va
   Terminology     | Description    |
   ----------------|:---------------|
   [Process](http://centurylinkcloud.github.io/mdw/docs/help/process.html) | It consists of a number of (automated or manual) work items or steps (called activities) that should be performed in a sequential order. 
-  [Workflow Asset](http://centurylinkcloud.github.io/mdw/docs/help/workflowAssets.html) | Along with process definitions, the workflow assets contain many design-time artifacts. 
+  [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html) | Along with process definitions, assets include many other types of design-time artifacts. 
   [Activity](http://centurylinkcloud.github.io/mdw/docs/help/implementor.html) | Activity is implemented by Java class(s), called activity implementors. To allow a single activity implementor to be reused in many places, it is designed to allow configuration through a set of attributes (name-value pairs). For a complete listing of the Activity Implementors, see [Built-In Activities](http://centurylinkcloud.github.io/mdw/docs/development/built-in-activities/).
   [Adapter](http://centurylinkcloud.github.io/mdw/docs/help/AdapterActivityBase.html) | Sends outgoing messages to an external system (service invocation)
   [Attribute](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Configurable aspect of an activity or process.  This is manipulated via the property tabs in Designer

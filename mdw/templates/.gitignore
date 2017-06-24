@@ -1,0 +1,10 @@
+build/
+deploy/
+target/
+.metadata/
+data/
+.gradle
+.temp
+*.launch
+testResults
+{{asset-loc}}/Archive/
