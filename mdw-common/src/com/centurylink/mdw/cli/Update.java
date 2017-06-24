@@ -30,6 +30,8 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandDescription="Update an MDW project")
 public class Update extends Common {
 
+    private File assetDir;
+
     public Update(File projectDir) {
         this.projectDir = projectDir;
     }
@@ -43,6 +45,8 @@ public class Update extends Common {
     }
 
     public void run() throws IOException {
+        this.assetDir = new File(this.projectDir + "/" + getProperty("mdw.asset.location"));
+
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
         }
@@ -71,32 +75,43 @@ public class Update extends Common {
             }
         }
 
-        importPackages(discoveryUrl, toDownload);
+        if (toDownload.isEmpty()) {
+            System.out.println(" - no packages selected");
+        }
+        else {
+            importPackages(discoveryUrl, toDownload);
+        }
 
         // TODO update war and/or jar if present and no mdwVersion match or snapshot
+
+
+        System.out.println("done");
 
     }
 
     protected void importPackages(String discoveryUrl, List<String> packages) throws IOException {
 
         // download packages temp zip
-        System.out.println(" - downloading packages...");
+        System.out.println("Downloading packages...");
+
         File tempZip = Files.createTempFile("mdw-discovery", ".zip").toFile();
-        new Download(new URL(discoveryUrl + "/asset/packages?packages=" + getPackagesParam(packages)), tempZip).run();
+
+        String pkgsParam = "[";
+        for (int i = 0; i < packages.size(); i++) {
+            pkgsParam += packages.get(i);
+            if (i < packages.size() - 1)
+                pkgsParam += ",";
+        }
+        pkgsParam += "]";
+        new Download(new URL(discoveryUrl + "/asset/packages?packages=" + pkgsParam), tempZip).run();
 
         // import packages
-        File assetDir = new File(getProperty("mdw.asset.location"));
-        Archive archive = new Archive(assetDir);
+        Archive archive = new Archive(assetDir, packages);
         archive.backup();
-        System.out.println("Unzipping " + tempZip + " into: " + assetDir);
-        new Unzip(tempZip, assetDir);
+        System.out.println("Unzipping into: " + assetDir);
+        new Unzip(tempZip, assetDir).run();
         archive.archive(true);
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
-
-    private String getPackagesParam(List<String> packages) {
-        return null;
-    }
-
 }

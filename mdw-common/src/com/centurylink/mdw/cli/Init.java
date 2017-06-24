@@ -63,7 +63,7 @@ public class Init extends Common {
     public void setForEclipses(boolean forEclipse) { this.forEclipse = forEclipse; }
 
     public void run() throws IOException {
-        System.out.println("initializing " + project + "...");
+        System.out.println("Initializing " + project + "...");
         projectDir = new File(project);
         if (projectDir.exists()) {
             if (!projectDir.isDirectory() || projectDir.list().length > 0)
@@ -88,13 +88,13 @@ public class Init extends Common {
         }
 
         // TODO exclusions if not --for-eclipse
-        String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion()
-                + "/mdw-templates-" + getMdwVersion() + ".zip";
-        System.out.println(" - retrieving templates: " + templatesUrl);
+        String templates = "mdw-templates-" + getMdwVersion() + ".zip";
+        String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
+        System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run();
         new Unzip(tempZip, projectDir).run();
-        System.out.println(" - wrote: ");
+        System.out.println("Writing: ");
         subst(projectDir);
     }
 

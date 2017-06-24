@@ -41,6 +41,7 @@ public class Archive {
 
     public Archive(File assetDir) {
         this.assetDir = assetDir;
+        packages = new ArrayList<>();
         findPackages(assetDir);
     }
 
@@ -59,8 +60,8 @@ public class Archive {
 
         // copy packages due for import from the asset dir to the temp dir
         System.out.println("back up existing...");
+        tempPkgDirs = new ArrayList<>();
         for (Pkg pkg : pkgs) {
-
             System.out.println("  - " + pkg);
             File tempPkgDir = new File(tempDir + "/" + pkg);
             Files.copy(Paths.get(pkg.dir.getPath()), Paths.get(tempPkgDir.getPath()));
@@ -76,6 +77,8 @@ public class Archive {
      * Move replaced package(s) to archive from temp (those not found in updated asset folder).
      */
     public void archive(boolean deleteBackups) throws IOException {
+        if (tempPkgDirs == null)
+            throw new IOException("backup() must be run before archive()");
         List<Pkg> newPkgs = getPkgs(packages);
         for (File tempPkgDir : tempPkgDirs) {
             boolean found = false;
@@ -114,10 +117,12 @@ public class Archive {
         List<Pkg> pkgs = new ArrayList<>();
         for (String pkgName : packages) {
             File dir = new File(assetDir + "/" + pkgName.replace('.', '/'));
-            File pkgMeta = new File(dir + "/" + PKG_META);
-            JSONObject pkgJson = new JSONObject(new String(Files.readAllBytes(Paths.get(pkgMeta.getPath()))));
-            String ver = pkgJson.getString("version");
-            pkgs.add(new Pkg(pkgName, dir, ver));
+            if (dir.isDirectory()) {
+                File pkgMeta = new File(dir + "/" + PKG_META);
+                JSONObject pkgJson = new JSONObject(new String(Files.readAllBytes(Paths.get(pkgMeta.getPath()))));
+                String ver = pkgJson.getString("version");
+                pkgs.add(new Pkg(pkgName, dir, ver));
+            }
         }
         return pkgs;
     }
