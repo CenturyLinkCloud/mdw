@@ -53,6 +53,9 @@ public class Events extends JsonRestService {
         if (!eventId.equals(event.getId()))
             throw new ServiceException(ServiceException.BAD_REQUEST, "Event id mismatch: " + eventId + "!=" + event.getId());
 
+        if (event.getMessage() == null)
+            event.setMessage("Empty");
+
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         workflowServices.notify(eventId, event.getMessage(), event.getDelay());
         return null;

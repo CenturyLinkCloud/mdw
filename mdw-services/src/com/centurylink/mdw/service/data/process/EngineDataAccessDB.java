@@ -526,15 +526,18 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     private List<EventWaitInstance> getEventWaitInstances(String eventName) throws SQLException {
         List<EventWaitInstance> waiters = new ArrayList<EventWaitInstance>();
-        String query = "select EVENT_WAIT_INSTANCE_OWNER_ID, WAKE_UP_EVENT " +
+        String query = "select EVENT_WAIT_INSTANCE_OWNER_ID, WAKE_UP_EVENT, CREATE_DT " +
                 "from EVENT_WAIT_INSTANCE " +
-                "where EVENT_NAME=?";
+                "where EVENT_NAME=? order by EVENT_WAIT_INSTANCE_OWNER_ID, CREATE_DT desc";
         ResultSet rs = db.runSelect(query, eventName);
         while (rs.next()) {
             EventWaitInstance vo = new EventWaitInstance();
             vo.setActivityInstanceId(rs.getLong(1));
             vo.setCompletionCode(rs.getString(2));
-            waiters.add(vo);
+            // Only return the most recent registration of the event per unique activity_instance_id
+            // This situation would occur when calling the /Tasks REST service multiple times to register the same event for the same task_instance_id
+            if (waiters.size() == 0 || !(waiters.get(waiters.size()-1).getActivityInstanceId().equals(vo.getActivityInstanceId())))
+                waiters.add(vo);
         }
         return waiters;
     }
