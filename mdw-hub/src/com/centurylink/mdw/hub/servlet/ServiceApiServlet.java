@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.service.api.MdwSwagger;
+import com.centurylink.mdw.service.api.MdwSwaggerCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -78,7 +78,7 @@ public class ServiceApiServlet extends HttpServlet {
 
             try {
                 boolean pretty = !"false".equals(request.getParameter(PRETTY_PRINT_PARAM));
-                Swagger swagger = MdwSwagger.getSwagger(svcPath, pretty);
+                Swagger swagger = MdwSwaggerCache.getSwagger(svcPath, pretty);
 
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");
