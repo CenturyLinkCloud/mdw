@@ -551,6 +551,20 @@ public class ProcessExecutor {
 
     public EventWaitInstance createEventWaitInstance(
             Long actInstId, String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived, boolean reregister)
+    throws DataAccessException, ProcessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createEventWaitInstance(actInstId,
+                    pEventName, compCode, pRecurring, notifyIfArrived, reregister);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public EventWaitInstance createEventWaitInstance(
+            Long actInstId, String pEventName, String compCode,
             boolean pRecurring, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
@@ -572,6 +586,21 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstances(actInstId,
                     pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
+
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public EventWaitInstance createEventWaitInstances(Long actInstId,
+            String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean[] pEventOccurances, boolean notifyIfArrived)
+    throws DataAccessException, ProcessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createEventWaitInstances(actInstId,
+                    pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
 
         } finally {
             stopTransaction(transaction);

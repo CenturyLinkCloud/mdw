@@ -56,6 +56,7 @@ import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.system.SysInfo;
@@ -80,6 +81,7 @@ import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
+import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
@@ -88,11 +90,13 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -215,27 +219,27 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public void registerTaskWaitEvent(Long taskInstanceId, Event event) throws ServiceException {
+        registerTaskWaitEvent(taskInstanceId, event.getId(), event.getCompletionCode() == null ? "FINISH" : event.getCompletionCode());
+    }
+
     public void registerTaskWaitEvent(Long taskInstanceId, String eventName) throws ServiceException {
-        registerTaskWaitEvent(taskInstanceId, eventName, "FINISH", false);
+        registerTaskWaitEvent(taskInstanceId, eventName, "FINISH");
     }
 
     public void registerTaskWaitEvent(Long taskInstanceId, String eventName, String completionCode) throws ServiceException {
-        registerTaskWaitEvent(taskInstanceId, eventName, completionCode, false);
-    }
-
-    // FIXME confirm this implementation
-    public void registerTaskWaitEvent(Long taskInstanceId, String eventName, String completionCode,
-            boolean recurring) throws ServiceException {
-        TransactionWrapper tw = null;
-        EngineDataAccessDB dataAccess = null;
         try {
             TaskManager taskMgr = ServiceLocator.getTaskManager();
             TaskInstance taskVo = taskMgr.getTaskInstance(taskInstanceId);
             if (taskVo != null) {
                 Long activityInstanceId = taskVo.getActivityInstanceId();
-                dataAccess = new EngineDataAccessDB();
-                tw = dataAccess.startTransaction();
-                dataAccess.recordEventWait(eventName, !recurring, 3600, activityInstanceId, completionCode);
+                EngineDataAccess edao = new EngineDataAccessDB();
+                InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+                ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
+                // When registering an event on a Task via this method, the following rules apply:
+                // - Event cannot be a legacy "recurring" event (means there can be multiple waiter for same event)
+                // - Event will not trigger notification if pre-arrived. Notification will occur when event is published after this registration occurs
+                engine.createEventWaitInstance(activityInstanceId, eventName, completionCode, false, false, true);
             }
             else
                 throw new TaskException("Task Instance was not found for ID " + taskInstanceId);
@@ -243,15 +247,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
 
-        }
-        finally {
-            if (tw != null)
-                try {
-                    dataAccess.stopTransaction(tw);
-                }
-                catch (DataAccessException ex) {
-                    throw new ServiceException(ex.getMessage(), ex);
-                }
         }
     }
 

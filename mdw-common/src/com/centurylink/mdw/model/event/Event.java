@@ -37,6 +37,10 @@ public class Event implements Jsonable {
     public int getDelay() { return delay; }
     public void setDelay(int delay) { this.delay = delay; }
 
+    private String completionCode;
+    public String getCompletionCode() { return completionCode; }
+    public void setCompletionCode(String completionCode) { this.completionCode = completionCode; }
+
     public Event() {
     }
 
@@ -46,6 +50,8 @@ public class Event implements Jsonable {
             this.message = json.getString("message");
         if (json.has("delay"))
             this.delay = json.getInt("delay");
+        if (json.has("completionCode"))
+            this.completionCode = json.getString("completionCode");
     }
 
     @Override
@@ -56,6 +62,8 @@ public class Event implements Jsonable {
             json.put("message", message);
         if (delay > 0)
             json.put("delay", delay);
+        if (completionCode != null)
+            json.put("completionCode", completionCode);
         return json;
     }
 

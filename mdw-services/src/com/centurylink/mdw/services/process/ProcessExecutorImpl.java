@@ -1628,6 +1628,13 @@ class ProcessExecutorImpl {
             Long actInstId, String pEventName, String compCode,
             boolean pRecurring, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
+        return createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived, false);
+    }
+
+    EventWaitInstance createEventWaitInstance(
+            Long actInstId, String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived, boolean reregister)
+    throws DataAccessException, ProcessException {
         try {
             String FINISH = EventType.getEventTypeName(EventType.FINISH);
             if (compCode==null||compCode.length()==0) compCode = FINISH;
@@ -1641,10 +1648,10 @@ class ProcessExecutorImpl {
             if (logger.isInfoEnabled()) {
                 logger.info("registered event wait event='"
                         + pEventName + "' actInst=" + actInstId
-                        + (pRecurring?" as recurring":"as broadcast-waiting"));
+                        + (pRecurring?" as recurring":" as broadcast-waiting"));
             }
 
-            if (documentId!=null) {
+            if (documentId!=null && !reregister) {
                 if (logger.isInfoEnabled()) {
                     logger.info((notifyIfArrived?"notify":"return") +
                             " event before registration: event='"
