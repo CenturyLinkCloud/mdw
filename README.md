@@ -10,7 +10,7 @@
  - Eclipse Neon for JavaEE Developers:                              
    [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
    
- - For installing eclipse plug-ins, please follow [this link](../guides/InstallEclipsePluginsGuide/) and return to this guide to continue.
+ - For installing eclipse plug-ins, please follow [this link](http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/)  and return to this guide to continue. 
        
    - Tomcat 8:                                  
      - [https://tomcat.apache.org](https://tomcat.apache.org)
