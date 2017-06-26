@@ -15,12 +15,15 @@
  */
 package com.centurylink.mdw.util.file;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -210,7 +213,28 @@ public class ZipHelper {
         }
     }
 
+    public static void unzip(URL fromUrl, File destDir) throws IOException {
+        InputStream urlIn = null;
+        OutputStream tempOut = null;
+        File tempZip = null;;
+        try {
+            urlIn = new BufferedInputStream(fromUrl.openStream());
+            tempZip = File.createTempFile("mdw", ".zip", null);
+            tempOut = new BufferedOutputStream(new FileOutputStream(tempZip));
+            byte[] buffer = new byte[ZIP_BUFFER_KB * 1024];
+            int len = urlIn.read(buffer);
+            while (len >= 0) {
+                tempOut.write(buffer, 0, len);
+                len = urlIn.read(buffer);
+            }
+        }
+        finally {
+            urlIn.close();
+            tempOut.close();
+        }
 
-
+        unzip(tempZip, destDir);
+        tempZip.delete();
+    }
 
 }

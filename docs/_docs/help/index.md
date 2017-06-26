@@ -14,7 +14,7 @@ permalink: /docs/help/
 <ul>
   <li><a href='process.html'>Processes</a></li>
   <li><a href='variable.html'>Variables</a></li>
-  <li><a href='workflowAssets.html'>Workflow Assets</a></li>
+  <li><a href='assets.html'>Assets</a></li>
   <li><a href='assetPersistence.html'>Asset Persistence</a></li>
   <li><a href='EventWaitActivity.html'>Event Wait Activity</a></li>
   <li><a href='InvokeSubProcessActivity.html'>Invoke SubProcess Activity</a></li>

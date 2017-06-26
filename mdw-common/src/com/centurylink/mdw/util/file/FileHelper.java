@@ -443,4 +443,18 @@ public final class FileHelper {
                 fis.close();
         }
     }
+
+    public static boolean isEmpty(File directory) throws IOException {
+        if (!directory.isDirectory())
+            throw new IOException(directory + " is not a directory");
+        return directory.list().length == 0;
+    }
+
+    /**
+     * @deprecated use {@link ZipHelper#unzip(File, File, String, List, boolean)}
+     */
+    @Deprecated
+    public static void unzipFile(File zipFile, File destDir, String baseLoc, List<String> excludes, boolean overwrite) throws IOException {
+        ZipHelper.unzip(zipFile, destDir, baseLoc, excludes, overwrite);
+    }
 }

@@ -6,17 +6,7 @@ title: Setup Guide for Tomcat
 ### Prerequisite
  - Eclipse Neon for JavaEE Developers:  
    [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
- - Required Plugins:
-     - MDW Designer:                                                     
-       http://centurylinkcloud.github.io/mdw/designer/updateSite
-     - Buildship Plugin:   
-       http://download.eclipse.org/buildship/updates/e46/releases/2.x
-       
- - Recommended Plugins:
-     - Groovy:                                   
-       http://dist.springsource.org/snapshot/GRECLIPSE/e4.6
-     - Yaml:                                             
-       http://dadacoalition.org/yedit
+ - For installing eclipse plug-ins, please follow [this link](../InstallEclipsePluginsGuide/) and return to this guide to continue.
  - Tomcat 8:
      - [https://tomcat.apache.org](https://tomcat.apache.org)
  - Chrome and Postman
