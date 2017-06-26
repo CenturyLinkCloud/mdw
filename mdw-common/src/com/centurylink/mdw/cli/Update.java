@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandDescription="Update an MDW project")
-public class Update extends Common {
+public class Update extends Setup {
 
     private File assetDir;
 
@@ -36,7 +36,7 @@ public class Update extends Common {
         this.projectDir = projectDir;
     }
 
-    public Update(Common cloneFrom) {
+    public Update(Setup cloneFrom) {
         super(cloneFrom);
     }
 
@@ -82,10 +82,7 @@ public class Update extends Common {
             importPackages(discoveryUrl, toDownload);
         }
 
-        // TODO update war and/or jar if present and no mdwVersion match or snapshot
-
-
-        System.out.println("done");
+        System.out.println("Done.");
 
     }
 

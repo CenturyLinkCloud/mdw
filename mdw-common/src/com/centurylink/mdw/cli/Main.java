@@ -29,6 +29,7 @@ public class Main {
         Main main = new Main();
         Init init = new Init();
         Update update = new Update();
+        Install install = new Install();
         Run run = new Run();
         Version version = new Version();
 
@@ -37,6 +38,7 @@ public class Main {
             .addCommand("help", help)
             .addCommand("init", init)
             .addCommand("update", update)
+            .addCommand("install", install)
             .addCommand("run", run)
             .addCommand("version", version)
             .build();
@@ -58,6 +60,9 @@ public class Main {
                 else if (command.equals("update")) {
                     update.run();
                 }
+                else if (command.equals("install")) {
+                    install.run();
+                }
             }
         }
         catch (ParameterException ex) {
@@ -70,7 +75,5 @@ public class Main {
     }
 
     @Parameters(commandNames="help", commandDescription="Syntax Help")
-    static class Help {
-
-    }
+    static class Help { }
 }

@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "velocity.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.template.VelocityTemplateActivity",
+  "label": "Velocity Template",
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='Template Name' LABEL='Template' SOURCE='RuleSets' TYPE='VELOCITY' VW='300'/>\n  <TEXT NAME='velocityToolboxFile' LABEL='Toolbox File (optional)' VW='290'/>\n  <RULE NAME='Rule' TYPE='ACTION'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n<\/PAGELET>"
+}

@@ -61,6 +61,7 @@ dependencies {
     // asset package dependencies
     compile fileTree(dir: "${assetLoc}/com/centurylink/mdw/camel", includes: ["*.jar"])
     compile fileTree(dir: "${assetLoc}/com/centurylink/mdw/drools", includes: ["*.jar"])
+    compile fileTree(dir: "${assetLoc}/com/centurylink/mdw/testing/postman", includes: ["*.jar"])
     
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-context', version: springVersion

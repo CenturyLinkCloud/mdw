@@ -24,7 +24,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
-public class Init extends Common {
+public class Init extends Setup {
 
     public Init(String project) {
         this.project = project;

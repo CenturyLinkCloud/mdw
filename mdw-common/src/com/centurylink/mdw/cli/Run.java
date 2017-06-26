@@ -25,11 +25,6 @@ public class Run {
     public File getProjectDir() { return this.projectDir; }
     protected void setProjectDir(File projectDir) { this.projectDir = projectDir; }
 
-    @Parameter(names="--binaries-url", description="MDW Binaries")
-    private String binariesUrl = "https://github.com/CenturyLinkCloud/mdw/releases";
-    public String getBinariesUrl() { return binariesUrl; }
-    public void setBinariesUrl(String url) { this.binariesUrl = url; }
-
     @Parameter(names="--vmArgs", description="Java VM Arguments (enclose in quotes)")
     private String vmArgs;
     public String getVmArgs() { return vmArgs; }
