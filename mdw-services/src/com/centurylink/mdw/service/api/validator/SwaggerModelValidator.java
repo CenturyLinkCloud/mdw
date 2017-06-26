@@ -22,7 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.service.api.MdwSwagger;
+import com.centurylink.mdw.service.api.MdwSwaggerCache;
 
 import io.limberest.api.validate.SwaggerRequest;
 import io.limberest.api.validate.SwaggerValidator;
@@ -37,7 +37,7 @@ public class SwaggerModelValidator extends SwaggerValidator {
 
     public SwaggerModelValidator(String method, String path) throws ValidationException {
         super(new SwaggerRequest(HttpMethod.valueOf(method.toUpperCase()),
-                new ResourcePath('/' + path), MdwSwagger.getSwagger('/' + path)));
+                new ResourcePath('/' + path), MdwSwaggerCache.getSwagger('/' + path)));
     }
 
     public void validate(String path, Query query, JSONObject body, Map<String, String> headers)
