@@ -105,7 +105,7 @@ public class Update extends Setup {
         Archive archive = new Archive(assetDir, packages);
         archive.backup();
         System.out.println("Unzipping into: " + assetDir);
-        new Unzip(tempZip, assetDir).run();
+        new Unzip(tempZip, assetDir, true).run();
         archive.archive(true);
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());

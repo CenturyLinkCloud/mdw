@@ -59,12 +59,12 @@ public class Archive {
         tempDir = Files.createTempDirectory("mdw-archive").toFile();
 
         // copy packages due for import from the asset dir to the temp dir
-        System.out.println("back up existing...");
+        System.out.println("Back up existing...");
         tempPkgDirs = new ArrayList<>();
         for (Pkg pkg : pkgs) {
             System.out.println("  - " + pkg);
             File tempPkgDir = new File(tempDir + "/" + pkg);
-            Files.copy(Paths.get(pkg.dir.getPath()), Paths.get(tempPkgDir.getPath()));
+            new Copy(pkg.dir, tempPkgDir).run();
             tempPkgDirs.add(tempPkgDir);
         }
     }
@@ -78,8 +78,9 @@ public class Archive {
      */
     public void archive(boolean deleteBackups) throws IOException {
         if (tempPkgDirs == null)
-            throw new IOException("backup() must be run before archive()");
+            throw new IOException("Backup() must be run before archive()");
         List<Pkg> newPkgs = getPkgs(packages);
+        System.out.println("Archiving....");
         for (File tempPkgDir : tempPkgDirs) {
             boolean found = false;
             for (Pkg newPkg : newPkgs) {
@@ -89,17 +90,17 @@ public class Archive {
                 }
             }
             if (!found) {
-                System.out.println("  - archiving: " + tempPkgDir.getName());
+                System.out.println("  - " + tempPkgDir.getName());
                 File archiveDest = new File(getArchiveDir() + "/" + tempPkgDir.getName());
                 if (archiveDest.exists())
                     new Delete(archiveDest).run();
-                Files.copy(Paths.get(tempPkgDir.getPath()), Paths.get(archiveDest.getPath()));
+                new Copy(tempPkgDir, archiveDest).run();
             }
         }
 
         if (deleteBackups) {
             System.out.println("Removing temp backups...");
-            new Delete(tempDir).run();
+            new Delete(tempDir, true).run();
         }
     }
 

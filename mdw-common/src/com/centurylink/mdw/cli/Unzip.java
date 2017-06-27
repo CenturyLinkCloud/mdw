@@ -82,7 +82,7 @@ public class Unzip {
                     throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
                     if (outfile.exists())
-                        new Delete(outfile).run();
+                        new Delete(outfile, true).run();
                     Files.createDirectories(Paths.get(outfile.getPath()));
                 }
                 else {
