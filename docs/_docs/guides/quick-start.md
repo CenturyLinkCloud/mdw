@@ -52,9 +52,13 @@ Get up and running with MDW in a hurry.
     This downloads the self-contained MDW Spring-Bootable jar file that matches mdwVersion in gradle.properties or pom.xml.  
     
 ### Command-line startup
+=======
+  with the Spring Boot option.  You can always switch to Tomcat later on when you want to debug your asset,
+  or if you need more control over your container.
+  
+### Command-line startup
   On the command line, cd into the project directory created by `mdw init`.  Then type   
   ```
   mdw run 
   ``` 
-
 ### Create a process in MDWHub

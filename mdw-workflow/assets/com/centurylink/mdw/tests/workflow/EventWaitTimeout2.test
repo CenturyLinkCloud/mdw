@@ -10,9 +10,9 @@ send message("REST") {
   </Action>
 </ser:ActionRequest>'''
 }
-sleep 5
+sleep 130
 send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
-sleep 180
+sleep 10
 verify process

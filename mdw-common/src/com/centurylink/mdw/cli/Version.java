@@ -55,5 +55,4 @@ public class Version {
         props.load(new FileInputStream(gradleProps));
         return props.getProperty("mdwVersion");
     }
-
 }

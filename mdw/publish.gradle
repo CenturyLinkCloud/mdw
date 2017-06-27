@@ -124,6 +124,13 @@ task publishBase(type: HttpPut) {
     password publishPassword
 }
 
+task publishTemplate(type: HttpPut) {
+    dependsOn checkAllowed
+    from "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip"
+    baseUrl "${publishBaseUrl}/mdw-templates/${mdwVersion}"
+    user publishUser
+    password publishPassword
+}
 task publishWar(type: HttpPut) {
     dependsOn checkAllowed
     from "../${mdwOutputDir}/mdw-${mdwVersion}.war"
@@ -155,7 +162,7 @@ task publishAssets(type: HttpPut) {
     password publishPassword
 }
 
-task publishBuild(dependsOn: [publishBase, publishJars, publishWar, publishAssets]) {
+task publishBuild(dependsOn: [publishBase, publishTemplate, publishJars, publishWar, publishAssets]) {
     doLast {
         println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
     }

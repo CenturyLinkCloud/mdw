@@ -83,7 +83,6 @@ public class Update extends Setup {
         }
 
         System.out.println("Done.");
-
     }
 
     protected void importPackages(String discoveryUrl, List<String> packages) throws IOException {

@@ -41,13 +41,16 @@ public class Run {
     public File getProjectDir() { return projectDir; }
 
     Run() {
-        // cli only
-        this.projectDir = new File(".");
+        // cli use only
     }
-
     public Run(File projectDir) {
         this.projectDir = projectDir;
     }
+
+    @Parameter(names="--binaries-url", description="MDW Binaries")
+    private String binariesUrl = "https://github.com/CenturyLinkCloud/mdw/releases";
+    public String getBinariesUrl() { return binariesUrl; }
+    public void setBinariesUrl(String url) { this.binariesUrl = url; }
 
     @Parameter(names="--vm-args", description="Java VM Arguments (enclose in quotes)",
             splitter=SpaceParameterSplitter.class)
