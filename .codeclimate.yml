@@ -10,7 +10,7 @@ engines:
     enabled: true
     config:
       languages:
-      - javascript
+      - javascript:
           mass_threshold: 500
 exclude_paths:
 - mdw-hub/web/lib/**/*
