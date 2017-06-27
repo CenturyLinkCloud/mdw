@@ -1,14 +1,14 @@
 engines:
   golint:
-   	enabled: true
+    enabled: true
   eslint:
     enabled: true
   csslint:
     enabled: true
   duplication:
-  	enabled: true
+   enabled: true
     config:
-    	languages:
+     languages:
       - javascript
         #mass_threshold: 500
 exclude_paths:
