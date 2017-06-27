@@ -36,4 +36,22 @@ public class HybridService extends JsonXmlRestService
             throws ServiceException, JSONException {
         return null;
     }
+
+    /**
+     * If the expected response back from the getJson() method is not null, then we need to override getXml() in
+     * specific service class to convert to XML response.  Steps would include calling super.getXml(), then creating
+     * new JSON object specific to the expected Jsonable class for the response, and then calling
+     * JaxbTranslator.realToString(JsonableObject) to marshall it and get the XML string back to return.
+     *
+     * Here's an example
+     *
+     * @Override
+     * public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
+     *      String response = super.getXml(xml, metaInfo);
+     *      if (response != null)
+     *          response = getJaxbTranslator(pkg).realToString(new MyJsonableClass(response));
+     *
+     *      return response;
+     * }
+     */
 }

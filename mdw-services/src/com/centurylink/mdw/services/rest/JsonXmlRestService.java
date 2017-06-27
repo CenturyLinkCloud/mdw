@@ -30,7 +30,23 @@ import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 
 public abstract class JsonXmlRestService extends JsonRestService implements XmlService {
 
-
+    /**
+     * If the expected response back from the getJson() method is not null, then need to override getXml() in
+     * concrete service class to convert to XML response.  Steps would include calling super.getXml(), then creating
+     * new JSON object specific to the expected Jsonable class for the response, and then calling
+     * JaxbTranslator.realToString(JsonableObject) to marshall it and get the XML string back to return.
+     *
+     * Here's an example
+     *
+     * @Override
+     * public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
+     *      String response = super.getXml(xml, metaInfo);
+     *      if (response != null)
+     *          response = getJaxbTranslator(pkg).realToString(new MyJsonableClass(response));
+     *
+     *      return response;
+     * }
+     */
     @Override
     public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
         Package pkg = null;
