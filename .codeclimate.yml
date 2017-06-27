@@ -1,16 +1,4 @@
-engines:
-  golint:
-    enabled: true
-  eslint:
-    enabled: true
-  csslint:
-    enabled: true
-  duplication:
-   enabled: true
-    config:
-     languages:
-      - javascript
-        #mass_threshold: 500
+JavaScript: true
 exclude_paths:
 - mdw-hub/web/lib/**/*
 - docs
