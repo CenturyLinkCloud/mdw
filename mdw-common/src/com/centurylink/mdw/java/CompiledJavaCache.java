@@ -144,7 +144,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                                     logger.info("Dynamic Java JAX-RS JSON Service: " + clazz);
                                     DynamicJavaServiceRegistry.addRegisteredService(JsonService.class.getName(), clazz.getName(), resourcePath);
                                 }
-                                else if (XmlService.class.isAssignableFrom(clazz)) {
+                                if (XmlService.class.isAssignableFrom(clazz)) {
                                     logger.info("Dynamic Java JAX-RS XML Service: " + clazz);
                                     DynamicJavaServiceRegistry.addRegisteredService(XmlService.class.getName(), clazz.getName(), resourcePath);
                                 }

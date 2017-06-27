@@ -1,0 +1,40 @@
+package com.centurylink.mdw.tests.services
+
+def requestJson = '''{
+  "sapId": "jxb123456",
+  "workstationId": "X700123456",
+  "firstName": "Jack",
+  "lastName": "Brojde"
+}'''
+
+def responseJson = '''{"status": {
+  "code": 0,
+  "message": "Success"
+}}'''
+
+def requestXml = '''<GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+  <sapId>jxb123456</sapId>
+  <workstationId>jxb123456</workstationId>
+  <firstName>Jack</firstName>
+  <lastName>Brojde</lastName>
+  </GetEmployeeResponse>'''
+
+  def responseXml = '''<bpm:MDWStatusMessage xmlns:bpm="http://mdw.centurylink.com/bpm">
+  <StatusCode>0</StatusCode>
+  <bpm:StatusMessage>Success</bpm:StatusMessage>
+</bpm:MDWStatusMessage>'''
+
+def response = post http("services/com/centurylink/mdw/tests/services/HybridService") {
+    headers = [ "Content-Type": "application/json", "request-id": masterRequestId ]
+    payload = requestJson
+}
+assert response.code == 200
+assert response.content == responseJson
+
+def response2 = post http("services/com/centurylink/mdw/tests/services/HybridService") {
+    headers = [ "Content-Type": "text/xml", "request-id": masterRequestId ]
+    payload = requestXml
+}
+
+assert response2.code == 200
+assert response2.content.contains("Success")

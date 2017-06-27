@@ -96,6 +96,7 @@
         <value type="java.lang.Class">com.centurylink.mdw.common.service.types.TaskAction</value>
         <value type="java.lang.Class">com.centurylink.mdw.task.types.SubTask</value>
         <value type="java.lang.Class">com.centurylink.mdw.task.types.SubTaskPlan</value>
+        <value type="java.lang.Class">com.centurylink.mdw.model.event.Event</value>
       </list>
     </constructor-arg>
   </bean>
