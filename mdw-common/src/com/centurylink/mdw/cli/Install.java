@@ -16,36 +16,37 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Properties;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handle War download.
  */
+@Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
 public class Install {
+
+    private File projectDir;
+    public File getProjectDir() { return projectDir; }
+
+    Install() {
+        // cli only
+        this.projectDir = new File(".");
+    }
+
+    public Install(File projectDir) {
+        this.projectDir = projectDir;
+    }
 
     @Parameter(names="--mdw-version", description="MDW Version")
     private String mdwVersion;
-    /**
-     * TODO: Read mdw version from plugin.xml if present, and compare
-     * with gradle.properties.
-     * TODO: Support mdw version in pom.xml as alternative to gradle.properties.
-     */
     protected String getMdwVersion() throws IOException {
-        if (mdwVersion == null) {
-            File gradleProps = new File(getProjectDir() + "/gradle.properties");
-            if (!gradleProps.exists())
-                throw new IOException("Missing: " + gradleProps.getAbsolutePath());
-            Properties props = new Properties();
-            props.load(new FileInputStream(gradleProps));
-            return props.getProperty("mdwVersion");
-        }
+        if (mdwVersion == null)
+            mdwVersion = new Version().getMdwVersion(getProjectDir());
         return mdwVersion;
     }
     public void setMdwVersion(String version) { this.mdwVersion = version; }
@@ -54,10 +55,6 @@ public class Install {
     private String binariesUrl = "https://github.com/CenturyLinkCloud/mdw/releases";
     public String getBinariesUrl() { return binariesUrl; }
     public void setBinariesUrl(String url) { this.binariesUrl = url; }
-
-    Install() {
-        // cli only
-    }
 
     public void run() throws IOException {
         String mdwVer = getMdwVersion();
@@ -87,10 +84,5 @@ public class Install {
         System.out.println("Downloading " + jarDownloadUrl + "...");
         new Download(jarDownloadUrl, jarFile).run();
         System.out.println("Done.");
-    }
-
-
-    private File getProjectDir() {
-        return new File(".");
     }
 }

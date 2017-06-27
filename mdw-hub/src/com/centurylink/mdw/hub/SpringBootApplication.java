@@ -28,6 +28,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -39,11 +41,12 @@ import com.centurylink.mdw.util.file.ZipHelper;
 @Configuration
 @ComponentScan
 @ServletComponentScan
+@EnableMBeanExport
+@ManagedResource(objectName="com.centurylink.mdw.springboot:name=application")
 public class SpringBootApplication {
 
     public static void main(String[] args) {
         try {
-
             SpringApplication.run(SpringBootApplication.class, args);
         }
         catch (Throwable t) {
@@ -93,7 +96,7 @@ public class SpringBootApplication {
                 File bootJar = new File(new URI(mainLoc.substring(0, mainLoc.indexOf('!'))));
                 if (!bootJar.exists())
                     throw new StartupException("No Spring Boot jar: " + mainLoc);
-                System.out.println("Spring Boot Jar: " + bootJar.getAbsolutePath());
+                System.out.println("Spring Boot Jar => " + bootJar.getAbsolutePath());
                 ZipHelper.unzip(bootJar, bootDir);
             }
             catch (IOException ex) {

@@ -63,6 +63,9 @@ public class Main {
                 else if (command.equals("install")) {
                     install.run();
                 }
+                else if (command.equals("run")) {
+                    run.run();
+                }
             }
         }
         catch (ParameterException ex) {

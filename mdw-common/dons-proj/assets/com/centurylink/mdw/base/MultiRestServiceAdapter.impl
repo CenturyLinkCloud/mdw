@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
-  "icon": "adapter.png",
-  "implementorClass": "com.centurylink.mdw.workflow.adapter.rest.MultiRestServiceAdapter",
-  "label": "Multi-REST Service Adapter",
-  "pagelet": "<PAGELET>\n  <TABLE NAME='EndpointUri' LABEL='Destination Endpoints'>\n    <TEXT LABEL='Endpoint URI'/>\n  <\/TABLE>\n  <TEXT NAME='USER' LABEL='Basic Auth User' VW='120'/>\n  <TEXT NAME='PASS' LABEL='Basic Auth Password' VW='120'/>\n  <DROPDOWN NAME='HttpMethod' LABEL='HTTP Method' DEFAULT='POST' VW='100'>\n    <OPTION>GET<\/OPTION>\n    <OPTION>POST<\/OPTION>\n    <OPTION>PUT<\/OPTION>\n    <OPTION>DELETE<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='ConnectTimeout' LABEL='Connect Timeout (ms)' VW='100'/>\n  <TEXT NAME='ReadTimeout' LABEL='Read Timeout (ms)' VW='100'/>\n  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Request Variable' SOURCE='DocumentVariables' VW='200'/>\n  <DROPDOWN NAME='RESPONSE_VARIABLE' LABEL='Response Variable' SOURCE='DocumentVariables' VW='200'/>\n  <DROPDOWN NAME='HeadersVariable' LABEL='Headers Variable' SOURCE='DocumentVariables' VW='200'/>\n  <BOOLEAN NAME='DO_LOGGING' LABEL='Log Request/Response' DEFAULT='true'/>\n  <HYPERLINK NAME='REQUEST_XSD' LABEL='Request XSD'/>\n  <HYPERLINK NAME='RESPONSE_XSD' LABEL='Response XSD'/>\n  <HYPERLINK URL='/MDWWeb/doc/RestfulAdapter.html'>RESTful Adapter Help<\/HYPERLINK>\n<\/PAGELET>"
-}

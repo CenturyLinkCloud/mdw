@@ -18,6 +18,8 @@ package com.centurylink.mdw.hub.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -158,7 +160,7 @@ public abstract class ServiceServlet extends HttpServlet {
             else {
                 if ("GET".equalsIgnoreCase(request.getMethod())) {
                     // allow GET access to app summary and assets (for discovery)
-                    // TODO more general approach
+                    // TODO more general approach (also "/Services/exit)
                     String[] allowed = new String[] { "/Services/AppSummary",
                             "/Services/GetAppSummary", "/services/AppSummary",
                             "/Services/System/sysInfo", "/services/Assets" };
@@ -181,5 +183,14 @@ public abstract class ServiceServlet extends HttpServlet {
         while ((line = reader.readLine()) != null)
             requestBuffer.append(line).append('\n');
         return new ListenerHelper().createErrorResponse(requestBuffer.toString(), metaInfo, ex).getContent();
+    }
+
+    /**
+     * We cannot rely on request.getRemoteAddr().
+     * Caller must use the loopback host.
+     */
+    protected boolean isFromLocalhost(HttpServletRequest request) throws MalformedURLException {
+        String host = new URL(request.getRequestURL().toString()).getHost();
+        return host.equals("localhost") || host.equals("127.0.0.1") || host.equals("0:0:0:0:0:0:0:1");
     }
 }

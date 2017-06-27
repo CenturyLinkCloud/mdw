@@ -40,15 +40,21 @@ Get up and running with MDW in a hurry.
   2. Install [Apache Tomcat (or Jetty)](SetupGuideForTomcat)
   
   Whichever option you choose, MDW behaves in exactly the same way.  To get you running quickly we'll start 
-  with the Spring Boot option.  You can always switch to Tomcat later on when you want to debug your asset,
+  with the Spring Boot option.  You can always switch to Tomcat later when you want to debug your assets,
   or if you need more control over your container.
-  
+
+#### Spring Boot Setup
+  - Install the MDW binaries
+    On the command line, cd into the project directory created by `mdw init`.  Then type
+    ```
+    mdw install
+    ```
+    This downloads the self-contained MDW Spring-Bootable jar file that matches mdwVersion in gradle.properties or pom.xml.  
+    
 ### Command-line startup
-  **(NOT YET IMPLEMENTED)**
   On the command line, cd into the project directory created by `mdw init`.  Then type   
   ```
   mdw run 
   ``` 
-  
 
 ### Create a process in MDWHub

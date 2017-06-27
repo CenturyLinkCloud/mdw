@@ -15,8 +15,11 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -35,6 +38,22 @@ public class Version {
             Attributes attr = manifest.getMainAttributes();
             System.out.println("MDW CLI " + attr.getValue("MDW-Version") + " (" + attr.getValue("MDW-Build") + ")");
         }
+    }
+
+    /**
+     * This returns the CLIENT app MDW version (as opposed to the CLI version
+     * returned by run());
+     * TODO: Read mdw version from plugin.xml if present, and compare
+     * with gradle.properties.
+     * TODO: Support mdw version in pom.xml as alternative to gradle.properties.
+     */
+    public String getMdwVersion(File projectDir) throws IOException {
+        File gradleProps = new File(projectDir + "/gradle.properties");
+        if (!gradleProps.exists())
+            throw new IOException("Missing: " + gradleProps.getAbsolutePath());
+        Properties props = new Properties();
+        props.load(new FileInputStream(gradleProps));
+        return props.getProperty("mdwVersion");
     }
 
 }

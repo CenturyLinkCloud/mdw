@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
-  "icon": "java.jpg",
-  "implementorClass": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
-  "label": "Dynamic Java",
-  "pagelet": "<PAGELET>\n  <TEXT NAME='Java' TYPE='Java'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='/MDWWeb/doc/dynamicJavaActivity.html'>Dynamic Java Activity Help<\/HYPERLINK>\n<\/PAGELET>"
-}

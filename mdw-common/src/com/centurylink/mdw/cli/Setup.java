@@ -130,13 +130,14 @@ public abstract class Setup {
                             // no subst
                         }
                     }
-
-                    try {
-                        field.setAccessible(true);
-                        value = field.get(this);
-                    }
-                    catch (IllegalAccessException ex) {
-                        throw new IOException(ex.getMessage(), ex);
+                    if (field != null) {
+                        try {
+                            field.setAccessible(true);
+                            value = field.get(this);
+                        }
+                        catch (IllegalAccessException ex) {
+                            throw new IOException(ex.getMessage(), ex);
+                        }
                     }
 
                     newContents.append(value == null ? "" : value);
