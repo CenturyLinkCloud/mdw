@@ -101,7 +101,7 @@ public abstract class Setup {
         baseAssetPackages = cloneFrom.getBaseAssetPackages();
     }
 
-    static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*)}}");
+    static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
 
     protected void subst(File dir) throws IOException {
         for (File child : dir.listFiles()) {
@@ -116,30 +116,9 @@ public abstract class Setup {
                 while (matcher.find()) {
                     String match = matcher.group();
                     newContents.append(contents.substring(index, matcher.start()));
-                    Object value = match;
-                    String name = toCamel(match.substring(2, match.length() - 2));
-                    Field field = null;
-                    try {
-                        field = Init.class.getDeclaredField(name);
-                    }
-                    catch (NoSuchFieldException ex) {
-                        try {
-                            field = Setup.class.getDeclaredField(name);
-                        }
-                        catch (NoSuchFieldException ex2) {
-                            // no subst
-                        }
-                    }
-                    if (field != null) {
-                        try {
-                            field.setAccessible(true);
-                            value = field.get(this);
-                        }
-                        catch (IllegalAccessException ex) {
-                            throw new IOException(ex.getMessage(), ex);
-                        }
-                    }
-
+                    Object value = getValue(match.substring(2, match.length() - 2));
+                    if (value == null)
+                        value = match;
                     newContents.append(value == null ? "" : value);
                     index = matcher.end();
                 }
@@ -155,7 +134,33 @@ public abstract class Setup {
         }
     }
 
-    private static String toCamel(String hyphenated) {
+    public Object getValue(String name) {
+        name = toCamel(name);
+        Field field = null;
+        try {
+            field = Init.class.getDeclaredField(name);
+        }
+        catch (NoSuchFieldException ex) {
+            try {
+                field = Setup.class.getDeclaredField(name);
+            }
+            catch (NoSuchFieldException ex2) {
+                // no subst
+            }
+        }
+        if (field != null) {
+            try {
+                field.setAccessible(true);
+                return field.get(this);
+            }
+            catch (IllegalAccessException ex) {
+                throw new IllegalArgumentException(ex.getMessage(), ex);
+            }
+        }
+        return null;
+    }
+
+    public String toCamel(String hyphenated) {
         StringBuilder nameBuilder = new StringBuilder(hyphenated.length());
         boolean capNextChar = false;
         for (char c : hyphenated.toCharArray()) {

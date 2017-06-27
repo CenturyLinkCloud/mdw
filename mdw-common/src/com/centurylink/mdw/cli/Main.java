@@ -72,9 +72,6 @@ public class Main {
             System.err.println(ex.getMessage());
             cmd.usage();
         }
-        catch (CliException ex) {
-            System.err.println(ex.getMessage());
-        }
     }
 
     @Parameters(commandNames="help", commandDescription="Syntax Help")

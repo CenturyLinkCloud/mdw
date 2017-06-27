@@ -42,6 +42,7 @@ public class Run {
 
     Run() {
         // cli use only
+        this.projectDir = new File(".");
     }
     public Run(File projectDir) {
         this.projectDir = projectDir;

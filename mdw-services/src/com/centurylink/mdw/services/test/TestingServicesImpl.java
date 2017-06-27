@@ -210,10 +210,10 @@ public class TestingServicesImpl implements TestingServices {
 
     private TestCase readTestCase(String path) throws ServiceException, IOException {
         String pkg = path.substring(0, path.lastIndexOf('/'));
-        AssetInfo testCaseAsset = assetServices.getAsset(path);
+        AssetInfo testCaseAsset = assetServices.getAsset(path, false);
         String rootName = testCaseAsset.getRootName();
         TestCase testCase = new TestCase(pkg, testCaseAsset);
-        PackageAssets pkgAssets = assetServices.getAssets(pkg);
+        PackageAssets pkgAssets = assetServices.getAssets(pkg, false);
         String yamlExt = Asset.getFileExtension(Asset.YAML);
         File resultsDir = getTestResultsDir();
         // TODO: support specified (non-convention) expected results

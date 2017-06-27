@@ -71,7 +71,6 @@ dependencies {
     // jsr-303 for swagger validations
     compile group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
 
-
     // rabbitmq
     compile group: "com.rabbitmq", name: "amqp-client", version: "3.5.1"
     compile group: "org.springframework.amqp", name: "spring-amqp", version: "1.4.4.RELEASE"

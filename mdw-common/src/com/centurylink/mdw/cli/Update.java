@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandDescription="Update an MDW project")
+@Parameters(commandNames="update", commandDescription="Update MDW assets", separators="=")
 public class Update extends Setup {
 
     private File assetDir;

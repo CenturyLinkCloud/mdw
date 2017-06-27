@@ -1,40 +1,40 @@
+apply plugin: "eclipse-wtp"
 apply plugin: 'java'
-apply plugin: 'eclipse-wtp'
 
 eclipse {
     project {
-        natures += 'org.eclipse.wst.common.project.facet.core.nature'
+        natures += "org.eclipse.wst.common.project.facet.core.nature"
     }
     classpath {
-        defaultOutputDir = file('build/classes')
+        defaultOutputDir = file("build/classes")
         
-        containers 'GROOVY_SUPPORT'
-        containers 'GROOVY_DSL_SUPPORT'
+        containers "GROOVY_SUPPORT"
+        containers "GROOVY_DSL_SUPPORT"
         
         file {
             whenMerged { classpath ->
                 // eclipse should process dynamic java, but should not be part of build
-                def assetsSrc = new org.gradle.plugins.ide.eclipse.model.SourceFolder(assetLoc, "build/${assetLoc}")
-                assetsSrc.excludes.add('Archive/')
+                def assetsSrc = new org.gradle.plugins.ide.eclipse.model.SourceFolder("assetLoc", "build/${assetLoc}")
+                assetsSrc.excludes.add("Archive/")
                 entries.add(assetsSrc)
                 
-                def groovySupport = entries.find { it.kind == 'con' && it.path == 'GROOVY_SUPPORT' }
-                groovySupport.entryAttributes.put('minimal', 'true')
+                def groovySupport = entries.find { it.kind == "con" && it.path == "GROOVY_SUPPORT" }
+                groovySupport.entryAttributes.put("minimal", "true")
             }
         }
     }
     wtp {
         facet {
-            facet type: 'fixed', name: 'jst.web'
-            facet name: 'mdw.workflow', version: "5.1"
+            facet type: "fixed", name: "jst.web", version: "3.0"
+            facet name: "mdw.workflow", version: "5.1"
         }
     }
 }
 
-group = '{{project}}'
+group = 'com.example.{{project}}'
 version = '1.0.01'
 
-description = '{{project}}'
+description = "{{project}}"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -49,15 +49,14 @@ sourceSets {
 }
 
 repositories {
-     maven { url '{{releases-url}}' }
+     maven { url "{{releases-url}}" }
 }
 
 dependencies {
-    
-    compile group: 'com.centurylink.mdw', name: 'mdw-common', version:mdwVersion
-    compile group: 'com.centurylink.mdw', name: 'mdw-services', version:mdwVersion
-    compile group: 'com.centurylink.mdw', name: 'mdw-workflow', version:mdwVersion
-    
+    compile group: 'com.centurylink.mdw', name: 'mdw-common', version: mdwVersion
+    compile group: 'com.centurylink.mdw', name: 'mdw-services', version: mdwVersion
+    compile group: 'com.centurylink.mdw', name: 'mdw-workflow', version: mdwVersion
+
     // asset package dependencies
     compile fileTree(dir: "${assetLoc}/com/centurylink/mdw/camel", includes: ["*.jar"])
     compile fileTree(dir: "${assetLoc}/com/centurylink/mdw/drools", includes: ["*.jar"])
@@ -66,7 +65,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     compile group: 'org.springframework', name: 'spring-core', version: springVersion
-    
+
     compile group: 'javax.ws.rs', name: 'jsr311-api', version:'1.1.1'
     compile group: 'org.json', name: 'json', version: '20160810'
     compile group: 'io.limberest', name: 'limberest', version: '1.0.04'
