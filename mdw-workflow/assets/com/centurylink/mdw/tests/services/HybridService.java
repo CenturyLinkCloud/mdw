@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import org.apache.xmlbeans.XmlObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,26 +33,37 @@ import com.centurylink.mdw.services.rest.JsonXmlRestService;
 @Path("/HybridService")
 public class HybridService extends JsonXmlRestService
 {
+    public JSONObject get(String path, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        Employee emp = new Employee();
+        emp.setSapId("jxb123456");
+        emp.setWorkstationId("X700123456");
+        emp.setFirstName("Jack");
+        emp.setLastName("Brojde");
+
+        return emp.getJson();
+    }
+
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         return null;
     }
 
-    /**
-     * If the expected response back from the getJson() method is not null, then we need to override getXml() in
-     * specific service class to convert to XML response.  Steps would include calling super.getXml(), then creating
-     * new JSON object specific to the expected Jsonable class for the response, and then calling
-     * JaxbTranslator.realToString(JsonableObject) to marshall it and get the XML string back to return.
-     *
-     * Here's an example
-     *
-     * @Override
-     * public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
-     *      String response = super.getXml(xml, metaInfo);
-     *      if (response != null)
-     *          response = getJaxbTranslator(pkg).realToString(new MyJsonableClass(response));
-     *
-     *      return response;
-     * }
+    /*
+     * In the case of the GET HTTP method, the response is an Employee.java JSON string, which needs converting to XML.
+     * Since response is not null, we override getXml() here in concrete service class to do that, as mentioned in JsonXmlRestService.java
      */
+    @Override
+    public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
+        String response = super.getXml(xml, metaInfo);
+        if (response != null) {
+            try {
+                response = getJaxbTranslator(getPkg(metaInfo)).realToString(new Employee(new JSONObject(response)));
+            }
+            catch (Exception e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
+        return response;
+    }
 }

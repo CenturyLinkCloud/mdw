@@ -18,6 +18,7 @@ package com.centurylink.mdw.services.rest;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.model.Jsonable;
@@ -41,14 +42,37 @@ public abstract class JsonXmlRestService extends JsonRestService implements XmlS
      * @Override
      * public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
      *      String response = super.getXml(xml, metaInfo);
-     *      if (response != null)
-     *          response = getJaxbTranslator(pkg).realToString(new MyJsonableClass(response));
-     *
+     *      if (response != null) {
+     *          try {
+     *              response = getJaxbTranslator(getPkg(metaInfo)).realToString(new Employee(new JSONObject(response)));
+     *          }
+     *          catch (Exception e) {
+     *              throw new ServiceException(e.getMessage());
+     *          }
+     *      }
      *      return response;
-     * }
      */
     @Override
     public String getXml(XmlObject xml, Map<String, String> metaInfo) throws ServiceException {
+        try {
+            Package pkg = getPkg(metaInfo);
+            JSONObject jsonObj = null;
+            if (xml != null)
+                jsonObj = ((Jsonable)getJaxbTranslator(pkg).realToObject(xml.xmlText())).getJson();
+
+            return getJson(jsonObj, metaInfo);
+        }
+        catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    static String JAXB_TRANSLATOR_CLASS = "com.centurylink.mdw.jaxb.JaxbElementTranslator";
+    protected DocumentReferenceTranslator getJaxbTranslator(Package pkg) throws Exception {
+        return (DocumentReferenceTranslator)SpringAppContext.getInstance().getVariableTranslator(JAXB_TRANSLATOR_CLASS, pkg);
+    }
+
+    protected Package getPkg(Map<String, String> metaInfo) {
         Package pkg = null;
         String[] pathSegments = metaInfo.get(Listener.METAINFO_REQUEST_PATH) != null ? metaInfo.get(Listener.METAINFO_REQUEST_PATH).split("/") : null;
         if (pathSegments != null) {
@@ -64,16 +88,6 @@ public abstract class JsonXmlRestService extends JsonRestService implements XmlS
             }
             pkg = PackageCache.getPackage(pkgName);
         }
-        try {
-            return getJson(((Jsonable)getJaxbTranslator(pkg).realToObject(xml.xmlText())).getJson(), metaInfo);
-        }
-        catch (Exception e) {
-            throw new ServiceException(e.getMessage());
-        }
-    }
-
-    static String JAXB_TRANSLATOR_CLASS = "com.centurylink.mdw.jaxb.JaxbElementTranslator";
-    protected DocumentReferenceTranslator getJaxbTranslator(Package pkg) throws Exception {
-        return (DocumentReferenceTranslator)SpringAppContext.getInstance().getVariableTranslator(JAXB_TRANSLATOR_CLASS, pkg);
+        return pkg;
     }
 }
