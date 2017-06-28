@@ -212,3 +212,6 @@ input[type="submit"] {
   margin: 30px 0 0 0;
   font-size: 20px;
 }
+.highlighter-rouge {
+	line-height: 1.5;
+}

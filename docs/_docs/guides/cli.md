@@ -3,11 +3,11 @@ permalink: /docs/guides/cli/
 title: MDW Command Line Interface
 ---
 ## MDW CLI
-  The [MDW CLI](../cli) gives you commands for common operations like initializing your workspace and updating assets. 
+  The MDW Command Line Interface has commands for common operations like initializing a workspace and updating assets. 
 
 ### Installation
-   - Download **mdw-cli.zip** from the latest MDW release on GitHub:   
-     https://github.com/CenturyLinkCloud/mdw/releases
+   - Download **mdw-cli.zip** from the latest MDW release on GitHub:<br>   
+     <https://github.com/CenturyLinkCloud/mdw/releases>
    - Unzip anywhere on your hard drive.
    - Create an environment variable named MDW_HOME pointing to this location, and add its bin directory to your system PATH. 
    
