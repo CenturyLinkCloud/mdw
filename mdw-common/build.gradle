@@ -52,7 +52,7 @@ dependencies {
     compile group: "el-impl", name: "el-impl", version: "1.0"
     compile group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
     compile group: "org.yaml", name: "snakeyaml", version: "1.18"
-    compile group: "io.limberest", name: "limberest", version: "1.0.04"
+    // compile group: "io.limberest", name: "limberest", version: "1.0.04"
     
     // swagger
     compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"
