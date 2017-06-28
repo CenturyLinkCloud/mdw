@@ -163,11 +163,6 @@ routesSvc.factory('routes', function() {
         controller: 'ProcessController'
       },
       {
-        path: '/workflow/processes/:procPkg/:proc/:procVer',
-        templateUrl: 'workflow/processes.html',
-        controller: 'ProcessesController'
-      },
-      {
         path: '/workflow/triggers/:triggerId',
         templateUrl: 'workflow/process.html',
         controller: 'ProcessController'

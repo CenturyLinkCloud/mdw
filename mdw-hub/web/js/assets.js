@@ -290,7 +290,7 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', '$location', '
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
   }
-
+  
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
       assetName: $routeParams.assetName

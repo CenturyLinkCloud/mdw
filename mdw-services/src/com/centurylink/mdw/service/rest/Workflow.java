@@ -78,7 +78,7 @@ public class Workflow extends JsonRestService {
                     throw new ServiceException(ServiceException.NOT_FOUND, "Process ID not found: " + processId);
                 }
                 else {
-                    JSONObject json = p.getJson();
+                    JSONObject json = query.getBooleanFilter("summary") ? new JsonObject() : p.getJson();
                     json.put("id", p.getId());
                     json.put("name", p.getName());
                     json.put("package", p.getPackageName());
