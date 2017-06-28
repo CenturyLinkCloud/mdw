@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.CommaParameterSplitter;
 
-public class Common {
+public abstract class Setup {
 
     protected static List<String> defaultBasePackages = new ArrayList<>();
     static {
@@ -87,21 +87,21 @@ public class Common {
         }
     }
 
-    protected Common() {
+    protected Setup() {
         projectDir = new File(".");
     }
 
     /**
      * Copies param values
      */
-    public Common(Common cloneFrom) {
+    public Setup(Setup cloneFrom) {
         projectDir = cloneFrom.getProjectDir();
         mdwVersion = cloneFrom.getMdwVersion();
         discoveryUrl = cloneFrom.getDiscoveryUrl();
         baseAssetPackages = cloneFrom.getBaseAssetPackages();
     }
 
-    static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*)}}");
+    static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
 
     protected void subst(File dir) throws IOException {
         for (File child : dir.listFiles()) {
@@ -116,29 +116,9 @@ public class Common {
                 while (matcher.find()) {
                     String match = matcher.group();
                     newContents.append(contents.substring(index, matcher.start()));
-                    Object value = match;
-                    String name = toCamel(match.substring(2, match.length() - 2));
-                    Field field = null;
-                    try {
-                        field = Init.class.getDeclaredField(name);
-                    }
-                    catch (NoSuchFieldException ex) {
-                        try {
-                            field = Common.class.getDeclaredField(name);
-                        }
-                        catch (NoSuchFieldException ex2) {
-                            // no subst
-                        }
-                    }
-
-                    try {
-                        field.setAccessible(true);
-                        value = field.get(this);
-                    }
-                    catch (IllegalAccessException ex) {
-                        throw new IOException(ex.getMessage(), ex);
-                    }
-
+                    Object value = getValue(match.substring(2, match.length() - 2));
+                    if (value == null)
+                        value = match;
                     newContents.append(value == null ? "" : value);
                     index = matcher.end();
                 }
@@ -154,7 +134,33 @@ public class Common {
         }
     }
 
-    private static String toCamel(String hyphenated) {
+    public Object getValue(String name) {
+        name = toCamel(name);
+        Field field = null;
+        try {
+            field = Init.class.getDeclaredField(name);
+        }
+        catch (NoSuchFieldException ex) {
+            try {
+                field = Setup.class.getDeclaredField(name);
+            }
+            catch (NoSuchFieldException ex2) {
+                // no subst
+            }
+        }
+        if (field != null) {
+            try {
+                field.setAccessible(true);
+                return field.get(this);
+            }
+            catch (IllegalAccessException ex) {
+                throw new IllegalArgumentException(ex.getMessage(), ex);
+            }
+        }
+        return null;
+    }
+
+    public String toCamel(String hyphenated) {
         StringBuilder nameBuilder = new StringBuilder(hyphenated.length());
         boolean capNextChar = false;
         for (char c : hyphenated.toCharArray()) {

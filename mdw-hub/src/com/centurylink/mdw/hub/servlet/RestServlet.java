@@ -53,11 +53,23 @@ public class RestServlet extends ServiceServlet {
             response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/doc/webServices.html");
             return;
         }
-        if (request.getPathInfo().startsWith("/SOAP")) {
+        else if (request.getPathInfo().startsWith("/SOAP")) {
             // forward to SOAP servlet
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(request.getPathInfo());
             requestDispatcher.forward(request, response);
             return;
+        }
+        else if (ApplicationContext.isDevelopment() && isFromLocalhost(request)) {
+            // this is only allowed from localhost and in dev
+            if ("/System/exit".equals(request.getPathInfo())) {
+                response.setStatus(200);
+                new Thread(new Runnable() {
+                    public void run() {
+                        System.exit(0);
+                    }
+                }).start();
+                return;
+            }
         }
 
         Map<String,String> metaInfo = buildMetaInfo(request);

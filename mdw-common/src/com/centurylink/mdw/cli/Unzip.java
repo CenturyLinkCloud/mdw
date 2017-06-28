@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -36,15 +37,21 @@ public class Unzip {
     private File zipFile;
     private File destDir;
     private boolean overwrite;
+    private Predicate<String> optionsCheck;
 
     public Unzip(File zipFile, File destDir) {
         this(zipFile, destDir, false);
     }
 
     public Unzip(File zipFile, File destDir, boolean overwrite) {
+        this(zipFile, destDir, overwrite, null);
+    }
+
+    public Unzip(File zipFile, File destDir, boolean overwrite, Predicate<String> optionsCheck) {
         this.zipFile = zipFile;
         this.destDir = destDir;
         this.overwrite = overwrite;
+        this.optionsCheck = optionsCheck;
     }
 
     public void run() throws IOException {
@@ -54,13 +61,28 @@ public class Unzip {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                String outpath = destDir + "/" + entry.getName();
+                String entryName = entry.getName();
+                int curlyStart = entryName.indexOf("{{");
+                if (curlyStart >= 0 && entryName.length() > curlyStart + 2) {
+                    int curlyEnd = entryName.indexOf("}}", curlyStart + 2);
+                    if (curlyEnd >= curlyStart) {
+                        String option = entryName.substring(curlyStart + 2, curlyEnd);
+                        // if entryName consists only of option then its dir will have already been created
+                        if (entryName.equals("{{" + option + "}}/") || optionsCheck == null || !optionsCheck.test(option)) {
+                            continue;
+                        }
+                        else {
+                            entryName = entryName.substring(0, curlyStart) + entryName.substring(curlyEnd + 3);
+                        }
+                    }
+                }
+                String outpath = destDir + "/" + entryName;
                 File outfile = new File(outpath);
                 if (outfile.exists() && !overwrite)
                     throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
                     if (outfile.exists())
-                        new Delete(outfile).run();
+                        new Delete(outfile, true).run();
                     Files.createDirectories(Paths.get(outfile.getPath()));
                 }
                 else {

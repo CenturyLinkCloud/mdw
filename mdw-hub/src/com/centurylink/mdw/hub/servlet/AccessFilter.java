@@ -204,7 +204,7 @@ public class AccessFilter implements Filter {
                     user = ServiceLocator.getUserManager().loadUser(authUser);
                     session.setAttribute("authenticatedUser", user);
                     if (user == null) {
-                        if (!allowAnyAuthenticatedUser)
+                        if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))
                             throw new MdwSecurityException("User not authorized: " + authUser);
                     }
                 }

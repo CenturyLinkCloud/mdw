@@ -27,8 +27,8 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandDescription="Update an MDW project")
-public class Update extends Common {
+@Parameters(commandNames="update", commandDescription="Update MDW assets", separators="=")
+public class Update extends Setup {
 
     private File assetDir;
 
@@ -36,7 +36,7 @@ public class Update extends Common {
         this.projectDir = projectDir;
     }
 
-    public Update(Common cloneFrom) {
+    public Update(Setup cloneFrom) {
         super(cloneFrom);
     }
 
@@ -82,11 +82,7 @@ public class Update extends Common {
             importPackages(discoveryUrl, toDownload);
         }
 
-        // TODO update war and/or jar if present and no mdwVersion match or snapshot
-
-
-        System.out.println("done");
-
+        System.out.println("Done.");
     }
 
     protected void importPackages(String discoveryUrl, List<String> packages) throws IOException {
@@ -109,7 +105,7 @@ public class Update extends Common {
         Archive archive = new Archive(assetDir, packages);
         archive.backup();
         System.out.println("Unzipping into: " + assetDir);
-        new Unzip(tempZip, assetDir).run();
+        new Unzip(tempZip, assetDir, true).run();
         archive.archive(true);
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());

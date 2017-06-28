@@ -17,32 +17,36 @@ package com.centurylink.mdw.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
- * Recursively delete.
+ * Recursively copy.
  */
-public class Delete {
-
-    private File file;
+public class Copy {
+    private File from;
+    private File to;
     private boolean includeSubpackages;
 
-    public Delete(File file) {
-        this(file, false);
+    public Copy(File from, File to) {
+        this(from, to, false);
     }
 
-    public Delete(File file, boolean includeSubpackages) {
-        this.file = file;
+    public Copy(File from, File to, boolean includeSubpackages) {
+        this.from = from;
+        this.to = to;
         this.includeSubpackages = includeSubpackages;
     }
 
     public void run() throws IOException {
-        if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                if (includeSubpackages || !new File(child + "/.mdw/package.json").isFile())
-                    new Delete(child, includeSubpackages).run();
+        Files.copy(Paths.get(from.getPath()), Paths.get(to.getPath()));
+        if (from.isDirectory()) {
+            for (File childFrom : from.listFiles()) {
+                if (includeSubpackages || !new File(childFrom + "/.mdw/package.json").isFile()) {
+                    File childTo = new File(to + "/" + childFrom.getName());
+                    new Copy(childFrom, childTo, includeSubpackages).run();
+                }
             }
         }
-        if (!file.delete())
-            throw new IOException("Failed to delete: " + file.getAbsolutePath());
     }
 }

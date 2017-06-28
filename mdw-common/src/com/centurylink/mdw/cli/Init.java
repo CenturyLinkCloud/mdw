@@ -24,7 +24,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
-public class Init extends Common {
+public class Init extends Setup {
 
     public Init(String project) {
         this.project = project;
@@ -57,17 +57,27 @@ public class Init extends Common {
     public String getUser() { return user; }
     public void setUser(String user) { this.user = user; }
 
-    @Parameter(names="--for-eclipse", description="Generate Eclipse workspace artifacts")
-    private boolean forEclipse = true;
-    public boolean isForEclipse() { return forEclipse; }
-    public void setForEclipses(boolean forEclipse) { this.forEclipse = forEclipse; }
+    @Parameter(names="--eclipse", description="Generate Eclipse workspace artifacts")
+    private boolean eclipse = true;
+    public boolean isEclipse() { return eclipse; }
+    public void setEclipse(boolean eclipse) { this.eclipse = eclipse; }
+
+    @Parameter(names="--maven", description="Generate a Maven pom.xml build file")
+    private boolean maven = false;
+    public boolean isMaven() { return maven; }
+    public void setMaven(boolean maven) { this.maven = maven; }
+
+    @Parameter(names="--cloud-foundry", description="Generate a Cloud Foundry manifest.yml file")
+    private boolean cloudFoundry = false;
+    public boolean isCloudFoundry() { return cloudFoundry; }
+    public void setCloudFoundry(boolean cloudFoundry) { this.cloudFoundry = cloudFoundry; }
 
     public void run() throws IOException {
         System.out.println("Initializing " + project + "...");
         projectDir = new File(project);
         if (projectDir.exists()) {
             if (!projectDir.isDirectory() || projectDir.list().length > 0)
-                throw new CliException(projectDir + " already exists and is not an empty directory");
+                throw new IOException(projectDir + " already exists and is not an empty directory");
         }
         else {
             if (!projectDir.mkdirs())
@@ -87,13 +97,15 @@ public class Init extends Common {
             setMdwVersion(crawl.getReleases().get(crawl.getReleases().size() - 1));
         }
 
-        // TODO exclusions if not --for-eclipse
         String templates = "mdw-templates-" + getMdwVersion() + ".zip";
         String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run();
-        new Unzip(tempZip, projectDir).run();
+        new Unzip(tempZip, projectDir, false, opt -> {
+            Object value = getValue(opt);
+            return value == null ? false : Boolean.valueOf(value.toString());
+        }).run();
         System.out.println("Writing: ");
         subst(projectDir);
     }

@@ -29,7 +29,8 @@ public interface SystemServices {
         Class,
         Caches,
         JMS,
-        MBean
+        MBean,
+        Exit // only works from localhost
     }
 
     public List<SysInfoCategory> getSysInfoCategories(SysInfoType type, Query query) throws ServiceException;
