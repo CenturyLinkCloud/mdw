@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +30,7 @@ import com.centurylink.mdw.model.Jsonable;
  * Represents a workflow event notification.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-
+@XmlType(name = "", propOrder = { "id", "message", "completionCode", "delay" })
 @XmlRootElement(name = "Event")
 public class Event implements Jsonable {
 
@@ -57,26 +58,7 @@ public class Event implements Jsonable {
     }
 
     public Event(JSONObject json) throws JSONException {
-        this.id = json.getString("id");
-        if (json.has("message"))
-            this.message = json.getString("message");
-        if (json.has("delay"))
-            this.delay = json.getInt("delay");
-        if (json.has("completionCode"))
-            this.completionCode = json.getString("completionCode");
-    }
-
-    @Override
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = create();
-        json.put("id", id);
-        if (message != null)
-            json.put("message", message);
-        if (delay > 0)
-            json.put("delay", delay);
-        if (completionCode != null)
-            json.put("completionCode", completionCode);
-        return json;
+        bind(json);
     }
 
     @Override
