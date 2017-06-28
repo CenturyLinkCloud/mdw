@@ -12,6 +12,7 @@
 
 - title: Guides
   docs:
+  - guides/quick-start
   - guides/SetupGuideForTomcat
   - guides/SetupGuideForCloudFoundry
   - guides/MicroservicesCookbook
