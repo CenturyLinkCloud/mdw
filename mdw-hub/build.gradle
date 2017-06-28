@@ -166,6 +166,7 @@ war {
 }
 
 task springBootJar(type: Jar) {
+    archiveName = "mdw-boot-${version}.jar"
     manifest {
         attributes(
             "MDW-Version": mdwVersion, 

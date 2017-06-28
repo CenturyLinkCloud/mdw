@@ -122,7 +122,7 @@ public class Run {
 
     protected String getMdwJar() throws IOException {
         String mdwVersion = new Version().getMdwVersion(getProjectDir());
-        return "bin" + File.separator + "mdw-" + mdwVersion + ".jar";
+        return "bin" + File.separator + "mdw-boot-" + mdwVersion + ".jar";
     }
 
     static class SpaceParameterSplitter implements IParameterSplitter {

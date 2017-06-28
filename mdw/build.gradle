@@ -154,11 +154,11 @@ task versions {
 
 // deploy a build for testing on lxdenvmtc143
 task deployTomcatMdwDev(type: GradleBuild) {
-	buildFile = "deploy.gradle"
-	tasks = ["deployMdw"]
-	startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
-										tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
-										testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
+    buildFile = "deploy.gradle"
+    tasks = ["deployMdw"]
+    startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
+                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
+                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
 task publishToMavenCentral(type: GradleBuild) {
@@ -182,6 +182,7 @@ task pushToOrigin(type: GradleBuild) {
 def packaging = 'zip'
 
 allprojects {
+    group = "com.centurylink.mdw"
     version = "${mdwVersion}"
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
     ext.ossrhUsername = System.getProperty("ossrhUsername")
@@ -189,7 +190,7 @@ allprojects {
     
     if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
         signing {
-            required = { isReleaseVersion  && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            required = { isReleaseVersion && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
             sign configurations.archives
          }
     }
@@ -200,55 +201,56 @@ allprojects {
     uploadArchives {
         enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         repositories {
-          mavenDeployer {
-            beforeDeployment {
-                MavenDeployment deployment -> signing.signPom(deployment)
-            }
-            repository(url: mavenRepoUrl) {
-              authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            snapshotRepository(url: mavenSnapshotRepoUrl) {
-              authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            pom.project {
-              name 'MDW Templates'
-              groupId 'com.centurylink.mdw'
-              version = mdwVersion
-              packaging = packaging
-              description 'MDW is a cloud workflow framework'
-              url 'http://centurylinkcloud.github.io/mdw/'
-              scm {
-                connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
-                developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
-                url 'https://github.com/CenturyLinkCloud/mdw.git'
-              }
-              licenses {
-                license {
-                  name 'The Apache License, Version 2.0'
-                  url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            mavenDeployer {
+                beforeDeployment {
+                    MavenDeployment deployment -> signing.signPom(deployment)
                 }
-              }
-              developers {
-                developer {
-                  id 'mdwdev'
-                  name 'MDW Development'
-                  email 'mdwdev@centurylink.com'
+                repository(url: mavenRepoUrl) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
-              }
+                snapshotRepository(url: mavenSnapshotRepoUrl) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                pom.project {
+                    name 'MDW Templates'
+                    groupId 'com.centurylink.mdw'
+                    version = mdwVersion
+                    packaging = packaging
+                    description 'MDW is a cloud workflow framework'
+                    url 'http://centurylinkcloud.github.io/mdw/'
+                    scm {
+                        connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                        developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                        url 'https://github.com/CenturyLinkCloud/mdw.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'mdwdev'
+                            name 'MDW Development'
+                            email 'mdwdev@centurylink.com'
+                        }
+                    }
+                }
             }
-          }
         }
-      }
+    }
 }
 
 uploadArchives {
     repositories {
-      mavenDeployer {
-        pom.project {
-          artifactId = "mdw-templates"}
-      }
+        mavenDeployer {
+            pom.project {
+                artifactId = "mdw-templates"}
+        }
     }
 }
+
 task testLocalDev(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["autoTest"]
