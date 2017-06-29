@@ -16,6 +16,7 @@ class BootPlugin implements Plugin<Project> {
     
     @Override
     public void apply(Project project) {
+        System.out.println("HELLO");
         
         BootRepackageTask task = project.getTasks().create(BOOT_REPACKAGE_TASK_NAME,
                 BootRepackageTask.class);
@@ -31,7 +32,7 @@ class BootPlugin implements Plugin<Project> {
                 runtimeProjectDependencyJarTasks);
         // registerOutput(project, task);
         ensureTaskRunsOnAssembly(project, task);
-        ensureMainClassHasBeenFound(project, task);
+        // ensureMainClassHasBeenFound(project, task);
         
     }
 

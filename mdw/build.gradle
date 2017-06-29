@@ -18,16 +18,17 @@ eclipse {
     }
 }
 
-task hello {
-    println 'hello'
-}
-
+// this sourceSet is for mdw gradle plugins
 sourceSets {
     main {
         groovy {
             srcDir "buildSrc/src"
+            include "com/centurylink/mdw/gradle/plugin/**"
         }
-        output.classesDir = "buildSrc/classes"
+        resources {
+            srcDirs "buildSrc/src"
+            include "META-INF/**"
+        }
     }
 }
 
@@ -43,26 +44,8 @@ dependencies {
     compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
 }
 
-task zipTemplates(type: Zip) {
-    destinationDir = file("../${mdwOutputDir}")
-    archiveName = "mdw-templates-${mdwVersion}.zip"
-    from "templates"
-    include "**/*"
-}
-
-artifacts {
-    archives zipTemplates
-}
-
-task buildAll(type: GradleBuild) {
-    dependsOn zipTemplates
-    buildFile = "build.gradle"
-    tasks = ["build"]
-}
-
-task cleanAll(type: GradleBuild) {
-    buildFile = "build.gradle"
-    tasks = ["clean"]
+jar {
+    archiveName = "mdw-gradle-${mdwVersion}.jar"
 }
 
 task publishMdw(type: GradleBuild) {
@@ -284,6 +267,17 @@ allprojects {
     }
 }
 
+task zipTemplates(type: Zip) {
+    destinationDir = file("../${mdwOutputDir}")
+    archiveName = "mdw-templates-${mdwVersion}.zip"
+    from "templates"
+    include "**/*"
+}
+
+artifacts {
+    archives zipTemplates
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -305,4 +299,15 @@ task testTomcatMdwdev(type: GradleBuild) {
     tasks = ["autoTest"]
     startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}",
         mdwConfigLocation: "" + projectDir + "/../../../../tomcat/tomcat7-mdw6/conf"]
+}
+
+task buildAll(type: GradleBuild) {
+    dependsOn zipTemplates
+    buildFile = "build.gradle"
+    tasks = ["build"]
+}
+
+task cleanAll(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["clean"]
 }

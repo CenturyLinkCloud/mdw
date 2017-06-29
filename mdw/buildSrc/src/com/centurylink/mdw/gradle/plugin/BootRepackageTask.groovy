@@ -7,7 +7,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 import org.springframework.boot.gradle.repackage.ProjectLibraries
 
-class BootRepackageTask extends DefaultTask {
+public class BootRepackageTask extends DefaultTask {
 
     @TaskAction
     public void repackage() {

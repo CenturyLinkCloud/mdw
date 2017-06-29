@@ -1,5 +1,4 @@
 build/
-classes/
 deploy/
 .gradle/
 .settings/
