@@ -242,4 +242,11 @@
     "type": "User",
     "site_admin": false
   }
+}}
+}donaldoakes/repos",
+    "events_url": "https://api.github.com/users/donaldoakes/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/donaldoakes/received_events",
+    "type": "User",
+    "site_admin": false
+  }
 }

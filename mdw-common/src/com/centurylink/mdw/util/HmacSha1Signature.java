@@ -15,7 +15,10 @@
  */
 package com.centurylink.mdw.util;
 
-import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -36,13 +39,17 @@ public class HmacSha1Signature {
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
     public static String calculateRFC2104HMAC(String data, String key)
-        throws SignatureException, NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException
+        throws SignatureException, NoSuchAlgorithmException, InvalidKeyException, IllegalStateException, IOException
     {
         SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
         Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
         mac.init(signingKey);
         // Compute the hmac on input data bytes
-        byte[] rawHmac = mac.doFinal(data.getBytes());
+        byte[] payload = Files.readAllBytes(Paths.get(new File("C:/workspaces/mdw6/mdw-common/src/com/centurylink/mdw/util/payload.json").getPath()));
+        System.out.println("Payload read from file:\n" + new String(payload, "UTF-8"));
+        Files.write(Paths.get(new File("C:/workspaces/mdw6/mdw-common/src/com/centurylink/mdw/util/pay-output.json").getPath()), payload, java.nio.file.StandardOpenOption.WRITE);
+
+        byte[] rawHmac = mac.doFinal(payload);
 
         // Convert raw bytes to Hex
         byte[] hexBytes = new Hex().encode(rawHmac);
@@ -53,9 +60,10 @@ public class HmacSha1Signature {
 
     public static void main(String[] args) throws Exception {
         String payload = FileHelper.getFileContents("C:/workspaces/mdw6/mdw-common/src/com/centurylink/mdw/util/payload.json");
-        System.out.println(payload);
 
-        String hmacApache = "sha1=" + org.apache.commons.codec.digest.HmacUtils.hmacSha1Hex( "mdwcoreteam", payload);
+        //System.out.println("Payload copied from GitHub" + payload);
+
+        String hmacApache = "sha1=" + org.apache.commons.codec.digest.HmacUtils.hmacSha1Hex("mdwcoreteam", payload);
         System.out.println(hmacApache);
 
         String hmac = "sha1=" + calculateRFC2104HMAC(payload, "mdwcoreteam");
