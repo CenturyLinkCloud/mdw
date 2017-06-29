@@ -17,6 +17,7 @@ package com.centurylink.mdw.hub.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,10 +55,21 @@ public class RootServlet extends HttpServlet {
                 String realPath = request.getSession().getServletContext().getRealPath("/index.html");
                 try {
                     String contents;
-                    if (realPath == null)  // read from classpath
+                    if (realPath == null)  {
+                        // read from classpath
                         contents = new String(FileHelper.readFromResourceStream(getClass().getClassLoader().getResourceAsStream("index.html")));
-                    else
-                        contents = FileHelper.readFromFile(realPath);
+                    }
+                    else {
+                        if (!new File(realPath).isFile() && getClass().getClassLoader().getResource("/org/springframework/web/servlet/ResourceServlet.class") != null) {
+                            // spring-boot client app
+                            try (Scanner scanner = new Scanner(getClass().getClassLoader().getResourceAsStream("mdw/index.html"), "utf-8")) {
+                                contents = scanner.useDelimiter("\\Z").next();
+                            }
+                        }
+                        else {
+                            contents = FileHelper.readFromFile(realPath);
+                        }
+                    }
 
                     contents = ExpressionUtil.substitute(contents, WebAppContext.getMdw(), true);
                     response.getWriter().println("<!-- processed by MDW root servlet -->");

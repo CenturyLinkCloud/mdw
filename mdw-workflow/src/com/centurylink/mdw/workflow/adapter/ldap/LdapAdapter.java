@@ -29,18 +29,16 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.xmlbeans.XmlOptions;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.user.Attribute;
-import com.centurylink.mdw.user.UserDocument;
-import com.centurylink.mdw.user.UserDocument.User;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.ExpressionUtil;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -147,7 +145,6 @@ public class LdapAdapter extends AdapterActivityBase {
     }
 
     private Map<String,List<Object>> ldapResults = null;
-    private UserDocument userDoc = null;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -181,16 +178,17 @@ public class LdapAdapter extends AdapterActivityBase {
             Process processVO = getMainProcessDefinition();
 
 
-            Variable userDocVar = null;
+            Variable userJsonVar = null;
             for (String varName : bindings.keySet()) {
                 String mappedAttr = bindings.get(varName);
                 Variable varVO = processVO.getVariable(varName);
                 String varType = varVO.getVariableType();
 
-                if (varVO.isDocument()) {
-                    if (varVO.isXmlDocument()) {
+                if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varVO.getVariableType())) {
+                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varVO.getVariableType());
+                    if (translator instanceof JsonTranslator) {
                         if (getParameterValue(varName) == null) {
-                            userDocVar = varVO;
+                            userJsonVar = varVO;
                         }
                     }
                     else if (varVO.isJavaObject()) {
@@ -221,10 +219,8 @@ public class LdapAdapter extends AdapterActivityBase {
                     }
                 }
             }
-            if (userDocVar != null) {
-                userDoc = UserDocument.Factory.newInstance();
-                User user = userDoc.addNewUser();
-                com.centurylink.mdw.user.Attributes attributes = user.addNewAttributes();
+            if (userJsonVar != null) {
+                User user = new User();
                 for (String key : ldapResults.keySet()) {
                     List<Object> list = ldapResults.get(key);
                     if (list != null && list.size() > 0) {
@@ -232,25 +228,17 @@ public class LdapAdapter extends AdapterActivityBase {
                         if (value != null) {
                             if (key.equals(LDAP_KEY_CUID))
                                 user.setCuid(value);
-                            else if (key.equals(LDAP_KEY_SAPID))
-                                user.setSapId(value);
-                            else if (key.equals(LDAP_KEY_MNETID))
-                                user.setMnetId(value);
                             else if (key.equals(LDAP_KEY_FIRST_NAME))
-                                user.setFirstName(value);
+                                user.setName(user.getName() == null ? value : value + " " + user.getName());
                             else if (key.equals(LDAP_KEY_LAST_NAME))
-                                user.setLastName(value);
-                            else if (key.equals(LDAP_KEY_TYPE))
-                                user.setType(value);
-
-                            Attribute attribute = attributes.addNewAttribute();
-                            attribute.setName(key);
-                            attribute.setStringValue(value);
+                                user.setName(user.getName() == null ? value : user.getName() + " " + value);
+                            else
+                                user.setAttribute(key, value);
                         }
                     }
                 }
-                XmlOptions opts = new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2);
-                setParameterValueAsDocument(userDocVar.getName(), userDocVar.getVariableType(), userDoc.xmlText(opts));
+
+                setParameterValueAsDocument(userJsonVar.getName(), userJsonVar.getVariableType(), userJsonVar);
             }
         }
         catch (ActivityException ex) {

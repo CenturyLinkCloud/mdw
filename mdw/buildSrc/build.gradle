@@ -19,10 +19,11 @@ repositories {
 }
 
 dependencies {
-   compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
-   compile group: "commons-codec", name: "commons-codec", version: "1.3"
-   compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
-   compile group: "com.jcraft", name: "jsch", version: "0.1.51"
+    compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
+    compile group: "commons-codec", name: "commons-codec", version: "1.3"
+    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
+    compile group: "com.jcraft", name: "jsch", version: "0.1.51"
+    compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
 }
 
 sourceSets {

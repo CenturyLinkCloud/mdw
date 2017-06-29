@@ -7,6 +7,14 @@ eclipse {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "../mdw/classes"
+        }
+    }
+}
+
 configurations {
     cli
     compile.extendsFrom(cli)
@@ -18,7 +26,7 @@ dependencies {
     cli group: "org.json", name: "json", version: "20160810"
 
     // TODO: remove all dependencies on mdw-schemas
-    compile fileTree(dir: '../mdw/libs', include: '*.jar')
+    compile files("../mdw/classes");
     
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     compile group: "javax.el", name: "el-api", version: "1.0"
@@ -53,6 +61,8 @@ dependencies {
     compile group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
     compile group: "org.yaml", name: "snakeyaml", version: "1.18"
     // compile group: "io.limberest", name: "limberest", version: "1.0.04"
+    compile fileTree(dir: '../mdw/libs', include: '*.jar')
+    
     
     // swagger
     compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"

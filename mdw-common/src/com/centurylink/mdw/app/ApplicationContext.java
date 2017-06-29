@@ -16,13 +16,16 @@
 package com.centurylink.mdw.app;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -31,6 +34,7 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -348,9 +352,33 @@ public class ApplicationContext {
                 if (!jarFilePath.startsWith("/"))
                     jarFilePath = "/" + jarFilePath;
                 JarFile jarFile = new JarFile(new File(jarFilePath));
-                Manifest manifest = jarFile.getManifest();
-                mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
-                mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
+                String subpath = cpUtilLoc.substring(jarBangIdx + 5);
+                int subjarBang = subpath.indexOf(".jar!");
+                if (subjarBang > 0) {
+                    // subjars in spring boot client apps
+                    String subjarPath = subpath.substring(1, subjarBang + 4);
+                    ZipEntry subjar = jarFile.getEntry(subjarPath);
+                    File tempjar = Files.createTempFile("mdw", ".jar").toFile();
+                    try (InputStream is = jarFile.getInputStream(subjar);
+                            OutputStream os = new FileOutputStream(tempjar)) {
+                        int bufSize = 16 * 1024;
+                        int read = 0;
+                        byte[] bytes = new byte[bufSize];
+                        while((read = is.read(bytes)) != -1)
+                            os.write(bytes, 0, read);
+                    }
+                    JarFile tempJarFile = new JarFile(tempjar);
+                    Manifest manifest = tempJarFile.getManifest();
+                    mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
+                    mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
+                    tempJarFile.close();
+                    tempjar.delete();
+                }
+                else {
+                    Manifest manifest = jarFile.getManifest();
+                    mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
+                    mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
+                }
                 jarFile.close();
             }
             else {
@@ -373,7 +401,7 @@ public class ApplicationContext {
                 }
             }
 
-            if (mdwVersion.endsWith(".SNAPSHOT")) {
+            if (mdwVersion != null && mdwVersion.endsWith(".SNAPSHOT")) {
                 mdwVersion = mdwVersion.substring(0, mdwVersion.length() - 9) + "-SNAPSHOT";
             }
         }
