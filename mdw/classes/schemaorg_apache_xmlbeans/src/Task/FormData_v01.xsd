@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="unqualified"
+	attributeFormDefault="unqualified">
+
+    <xsd:complexType name="FormDataType">
+      <xsd:choice maxOccurs="unbounded" minOccurs="0">
+        <xsd:element
+          name="LIST"
+          type="ListType">
+        </xsd:element>
+        <xsd:element
+          name="TABLE"
+          type="TableType">
+        </xsd:element>
+        <xsd:element
+          name="FIELD"
+          type="ValueType">
+        </xsd:element>
+        <xsd:element
+          name="SUBFORM"
+          type="FormDataType">
+        </xsd:element>
+        <xsd:element
+          name="ERROR"
+          type="xsd:string">
+        </xsd:element>
+        <xsd:element
+          name="META"
+          type="ValueType">
+        </xsd:element>
+      </xsd:choice>
+      <xsd:attribute name="ID" type="xsd:string" use="optional"/>
+      <xsd:attribute name="FORM" type="xsd:string" use="optional"/>
+      <xsd:attribute name="ACTION" type="xsd:string" use="optional"/>
+	  <xsd:attribute name="APPNAME" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="ListType">
+      <xsd:sequence>
+        <xsd:element name="ENTRY" type="ValueType" maxOccurs="unbounded" minOccurs="0">
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="TableType">
+      <xsd:sequence>
+        <xsd:element name="ROW" type="RowType" maxOccurs="unbounded" minOccurs="0"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RowType">
+      <xsd:sequence>
+        <xsd:element name="ENTRY" type="ValueType" maxOccurs="unbounded" minOccurs="0">
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+        
+    <xsd:complexType name="ValueType">
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="NAME" type="xsd:string" use="optional"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:element
+      name="FORMDATA"
+      type="FormDataType">
+    </xsd:element>
+</xsd:schema>

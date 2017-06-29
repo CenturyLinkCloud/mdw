@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+  xmlns="http://mdw.centurylink.com/task" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  elementFormDefault="qualified" 
+  attributeFormDefault="unqualified"
+  targetNamespace="http://mdw.centurylink.com/task">
+
+  <xsd:element name="view">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="list" type="UiList" />
+          <xsd:element name="filter" type="UiFilter" />
+          <xsd:element name="detail" type="UiDetail" />
+          <xsd:element name="chart" type="UiChart" />
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="skin" type="xsd:string" use="optional" />
+      <xsd:attribute name="showCommonGroup" type="xsd:boolean" use="optional" default="true" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="UiList">
+    <xsd:sequence>
+      <xsd:element name="column" type="UiColumn"  maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="model" type="xsd:string" use="required" />
+    <xsd:attribute name="columnMapper" type="xsd:string" use="optional" />
+    <xsd:attribute name="controller" type="xsd:string" use="optional" />
+    <xsd:attribute name="filter" type="xsd:string" use="optional" />
+    <xsd:attribute name="defaultSortColumn" type="xsd:string" use="optional" />
+    <xsd:attribute name="defaultSortDescending" type="xsd:boolean" use="optional" />
+    <xsd:attribute name="paginatedResponse" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="displayRows" type="xsd:positiveInteger" use="optional" default="20" />
+    <xsd:attribute name="allRowsLink" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="exportable" type="xsd:boolean" use="optional" default="true" />
+    <xsd:attribute name="showTimings" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="ajaxEnabled" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="customButtons" type="xsd:string" use="optional" />
+    <xsd:attribute name="groupingOptions" type="xsd:string" use="optional" />
+    <xsd:attribute name="defaultGroupBy" type="xsd:string" use="optional" />
+    <xsd:attribute name="pageSizeOptions" type="xsd:string" use="optional" />
+    <xsd:attribute name="columnarFilters" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="searchable" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="showAllDisplayRows" type="xsd:positiveInteger" use="optional" default="200"/>    
+  </xsd:complexType>
+
+  <xsd:complexType name="UiColumn">
+    <xsd:attribute name="attribute" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="checkbox" type="xsd:boolean" use="optional" default="false" />    
+    <xsd:attribute name="decoder" type="xsd:string" use="optional" />
+    <xsd:attribute name="linkAction" type="xsd:string" use="optional" />
+    <xsd:attribute name="linkScript" type="xsd:string" use="optional" />
+    <xsd:attribute name="linkCondition" type="xsd:string" use="optional" />
+    <xsd:attribute name="linkTarget" type="xsd:string" use="optional" />
+    <xsd:attribute name="rolesAllowedToView" type="xsd:string" use="optional" />
+    <xsd:attribute name="dateFormat" type="xsd:string" use="optional" />
+    <xsd:attribute name="styleClass" type="xsd:string" use="optional" />
+    <xsd:attribute name="styleCondition" type="xsd:string" use="optional" />
+    <xsd:attribute name="expandable" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="expandedContent" type="xsd:string" use="optional" />
+    <xsd:attribute name="sortable" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="image" type="xsd:string" use="optional" />
+    <xsd:attribute name="display" type="xsd:boolean" use="optional" default="true" />
+    <xsd:attribute name="filterField" type="xsd:string" use="optional" />
+    <xsd:attribute name="onclick" type="xsd:string" use="optional" />
+    <!-- deprecated -->
+    <xsd:attribute name="expandAttribute" type="xsd:string" use="optional" />
+    <xsd:attribute name="dbColumn" type="xsd:string" use="optional" />
+  </xsd:complexType>
+  
+  <xsd:complexType name="UiFilter">
+    <xsd:sequence>
+      <xsd:element name="field" type="UiField"  maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="model" type="xsd:string" use="required" />
+    <xsd:attribute name="width" type="xsd:string" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="UiField">
+    <xsd:attribute name="attribute" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="checkbox" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="modelAttribute" type="xsd:string" use="optional" />
+    <xsd:attribute name="modelType" type="xsd:string" use="optional" />
+    <xsd:attribute name="type" type="UiInputType" use="required" />
+    <xsd:attribute name="list" type="xsd:string" use="optional" />
+    <xsd:attribute name="lister" type="xsd:string" use="optional" />
+    <xsd:attribute name="defaultValue" type="xsd:string" use="optional" />
+    <xsd:attribute name="firstItemLabel" type="xsd:string" use="optional" />
+    <xsd:attribute name="expandable" type="xsd:boolean" use="optional" />
+  </xsd:complexType>
+
+  <xsd:simpleType name="UiInputType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="textInput"/>
+      <xsd:enumeration value="digitInput"/>
+      <xsd:enumeration value="selectInput"/>
+      <xsd:enumeration value="dateInput"/>
+      <xsd:enumeration value="dateRange"/>      
+      <xsd:enumeration value="tnInput"/>
+      <xsd:enumeration value="multiSelectInput"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="UiDetail">
+    <xsd:sequence>
+      <xsd:element name="row" type="UiRow"  maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="model" type="xsd:string" use="required" />
+    <xsd:attribute name="controller" type="xsd:string" use="optional" />
+    <xsd:attribute name="labelWidth" type="xsd:string" use="optional" />
+    <xsd:attribute name="valueWidth" type="xsd:string" use="optional" />
+    <xsd:attribute name="layoutColumns" type="xsd:positiveInteger" use="optional" />
+    <xsd:attribute name="rolesAllowedToEdit" type="xsd:string" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="UiRow"> 
+    <xsd:complexContent> 
+      <xsd:extension base="UiColumn"> 
+        <xsd:attribute name="escape" type="xsd:boolean" use="optional" /> 
+        <xsd:attribute name="isUrl" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="readOnly" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="required" type="xsd:boolean" use="optional" /> 
+        <xsd:attribute name="renderedForView" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="rolesAllowedToEdit" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="validator" type="xsd:string" use="optional" />
+        <xsd:attribute name="wbrChars" type="xsd:string" use="optional" />
+      </xsd:extension> 
+    </xsd:complexContent> 
+  </xsd:complexType>  
+  
+  <xsd:complexType name="UiChart">
+    <xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="model" type="xsd:string" use="required" />
+    <xsd:attribute name="filter" type="xsd:string" use="optional" />
+  </xsd:complexType>
+  
+</xsd:schema>

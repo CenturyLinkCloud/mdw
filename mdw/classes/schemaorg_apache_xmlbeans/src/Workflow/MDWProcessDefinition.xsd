@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+    targetNamespace="http://mdw.centurylink.com/bpm"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://mdw.centurylink.com/bpm"
+    xmlns:task="http://mdw.centurylink.com/task"
+    elementFormDefault="qualified">
+  <xsd:annotation>
+    <xsd:documentation>
+      Schema Name: MDWProcessDefinition
+      Purpose: Defines processes for MDW Workflows.
+    </xsd:documentation>
+  </xsd:annotation>
+  <xsd:include schemaLocation = "MDWCommonDefinition.xsd"/>
+  <xsd:import schemaLocation="../Task/TasksTemplates_v01.xsd" namespace="http://mdw.centurylink.com/task"/>
+  <xsd:element name="package" type="MDWPackage"/>
+  <xsd:element name="processDefinition" type="MDWProcessDefinition"/>
+  <xsd:element name="activityImplementor" type="MDWActivityImplementor"/>
+  <xsd:element name="externalEventHandler" type="MDWExternalEvent"/>
+  <!-- MDW Types -->
+  <xsd:complexType name="MDWPackage">  <!-- TODO modUser, modDate, comments -->
+    <xsd:sequence>
+      <!-- ProcessDefinition Only Used for Multi-Package Old-School Import/Export -->
+      <xsd:element name="ProcessDefinition" type="MDWProcessDefinition" minOccurs="0" maxOccurs="unbounded"/> 
+      <xsd:element name="Attribute" type="MDWAttribute" minOccurs="0" maxOccurs="unbounded"/>     
+      <xsd:element ref="ApplicationProperties" minOccurs="0" maxOccurs="1" />
+      <xsd:element ref="task:taskTemplates" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" />      
+    <xsd:attribute name="version" type="xsd:string" />      
+    <xsd:attribute name="workgroup" type="xsd:string" />      
+  </xsd:complexType>
+  <xsd:complexType name="MDWProcessDefinition">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="MDWAttribute" minOccurs="0" maxOccurs="unbounded"/>
+    	<xsd:element name="Implementor" type="MDWActivityImplementor"
+    		maxOccurs="unbounded" minOccurs="0" />
+    	<xsd:element name="ExternalEventHandler" type="MDWExternalEvent"
+    		maxOccurs="unbounded" minOccurs="0" />
+    	<xsd:element name="Process" type="MDWProcess"
+    		maxOccurs="unbounded" minOccurs="0" />
+    	<xsd:element name="RuleSet" type="MDWRuleSet"
+    		maxOccurs="unbounded" minOccurs="0" />
+      <xsd:element name="TaskTemplate" type="task:TaskTemplate"
+        maxOccurs="unbounded" minOccurs="0" />
+    	<xsd:element name="CustomAttribute" type="MDWAttribute"
+    		minOccurs="0" maxOccurs="unbounded" />
+		<xsd:element ref="ApplicationProperties" 
+			minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute
+      name="schemaVersion"
+      type="xsd:string"
+      use="optional">
+    </xsd:attribute>
+    <xsd:attribute
+      name="packageVersion"
+      type="xsd:string"
+      use="optional">
+    </xsd:attribute>
+    <xsd:attribute
+      name="packageName"
+      type="xsd:string"
+      use="optional">
+    </xsd:attribute>
+    <xsd:attribute
+      name="packageWorkgroup"
+      type="xsd:string"
+      use="optional">
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="MDWActivity">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="MDWAttribute" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="Sla" type="xsd:int" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="SynchronizedOnWork" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="Id" type="xsd:string"/>
+    <xsd:attribute name="Name" type="xsd:string"/>
+    <xsd:attribute name="Description" type="xsd:string" use="optional"/>
+    <xsd:attribute name="Implementation" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="MDWActivityImplementor">
+    <xsd:sequence>
+      <xsd:element name="AttributeDescription" type="xsd:string" minOccurs="0" maxOccurs="1"/>      
+      <xsd:element name="Variables" type="MDWVariable" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="Type" type="xsd:string"/>
+    <xsd:attribute name="Implementation" type="xsd:string"/>
+    <xsd:attribute name="Label" type="xsd:string" use="optional"/>
+    <xsd:attribute name="IconFile" type="xsd:string" use="optional"/>
+    <xsd:attribute name="Hidden" type="xsd:boolean" use="optional"/>
+  </xsd:complexType>
+  <xsd:complexType name="MDWTextNote">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="MDWAttribute" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="Content" type="xsd:string"/>
+    <xsd:attribute name="Reference" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="MDWProcess">
+    <xsd:sequence>
+      <xsd:element
+        name="Activity"
+        type="MDWActivity"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="Transition"
+        type="MDWTransition"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="Attribute"
+        type="MDWAttribute"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="Variables"
+        type="MDWVariable"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="Sla"
+        type="xsd:int"
+        minOccurs="0"
+        maxOccurs="1" />
+      <xsd:element
+        name="ExternalEvent"
+        type="MDWExternalEvent"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="ProcessAlias"
+        type="MDWProcessAlias"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="SubProcess"
+        type="MDWProcess"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+      <xsd:element
+        name="TextNote"
+        type="MDWTextNote"
+        minOccurs="0"
+        maxOccurs="unbounded" />
+    </xsd:sequence>
+    <xsd:attribute
+      name="Id"
+      type="xsd:string" />
+    <xsd:attribute
+      name="name"
+      type="xsd:string" />
+    <xsd:attribute
+      name="setupClassName"
+      type="xsd:string"
+      use="optional" />
+    <xsd:attribute
+      name="description"
+      type="xsd:string"
+      use="optional" />
+
+    <xsd:attribute
+      name="version"
+      type="xsd:string" use="optional">
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="MDWExternalEvent">
+    <xsd:sequence>
+      <xsd:element name="EventName" type="xsd:string" />
+      <xsd:element name="EventHandler" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="MDWRuleSet">
+    <xsd:sequence>
+      <xsd:element name="RuleSetName" type="xsd:string" />
+      <xsd:element name="RuleSetLanguage" type="xsd:string" />
+      <xsd:element name="RuleSetContent" type="xsd:string" />
+    </xsd:sequence>
+    <xsd:attribute
+      name="version"
+      type="xsd:string" use="optional">
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="MDWTransition">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="MDWAttribute" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="Validation" type="MDWTransitionValidation" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="DependsOn" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="Id" type="xsd:string"/>
+    <xsd:attribute name="From" type="xsd:string"/>
+    <xsd:attribute name="Event" type="MDWTransitionEvent"/>
+    <xsd:attribute name="To" type="xsd:string"/>
+    <xsd:attribute name="CompletionCode" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+  <xsd:complexType name="MDWProcessAlias">
+    <xsd:sequence>
+      <xsd:element name="Attribute" type="MDWAttribute" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="Sla" type="xsd:int" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+    <xsd:attribute name="Id" type="xsd:string"/>
+    <xsd:attribute name="SetupClassName" type="xsd:string" use="optional"/>
+    <xsd:attribute name="Name" type="xsd:string"/>
+    <xsd:attribute name="Description" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+  <xsd:simpleType name="MDWTransitionEvent">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="START"/>
+      <xsd:enumeration value="FINISH"/>
+      <xsd:enumeration value="ERROR"/>
+      <xsd:enumeration value="RESUME"/>
+      <xsd:enumeration value="DELAY"/>
+      <xsd:enumeration value="HOLD"/>
+      <xsd:enumeration value="ABORT"/>
+      <xsd:enumeration value="CORRECT"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- Work Validation Defn -->
+   <xsd:complexType name="MDWTransitionValidation">
+    <xsd:attribute name="Name" type="xsd:string"/>
+    <xsd:attribute name="ValidationClass" type="xsd:string"/>
+  </xsd:complexType>
+  
+</xsd:schema>
