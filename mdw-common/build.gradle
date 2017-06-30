@@ -17,7 +17,8 @@ sourceSets {
 
 configurations {
     cli
-    compile.extendsFrom(cli)
+    schemas.extendsFrom(cli)
+    compile.extendsFrom(schemas)
 }
  
 dependencies {
@@ -25,8 +26,7 @@ dependencies {
     cli group: "com.beust", name: "jcommander", version: "1.72"
     cli group: "org.json", name: "json", version: "20160810"
 
-    // TODO: remove all dependencies on mdw-schemas
-    compile fileTree(dir: '../mdw/libs', include: '*.jar')
+    schemas fileTree(dir: '../mdw/libs', include: 'mdw-schemas.jar')
     
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     compile group: "javax.el", name: "el-api", version: "1.0"
@@ -108,6 +108,11 @@ clean {
 jar {
     // avoid confusingly including tomcat spring config(s)
     exclude "META-INF/mdw/spring/**"
+    
+    // include needed schmemas within mdw-common
+    from configurations.schemas.asFileTree.files.collect {
+        zipTree(it)
+    }
     
     manifest {
         attributes("MDW-Version": mdwVersion)

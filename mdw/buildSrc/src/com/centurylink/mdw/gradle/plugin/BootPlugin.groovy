@@ -12,16 +12,14 @@ import org.springframework.boot.gradle.repackage.RepackageTask
 
 class BootPlugin implements Plugin<Project> {
 
-    public static final String BOOT_REPACKAGE_TASK_NAME = "mdwBootRepackage";
+    public static final String BOOT_REPACKAGE_TASK_NAME = "mdwBootRepackage"
     
     @Override
     public void apply(Project project) {
-        System.out.println("HELLO");
-        
-        BootRepackageTask task = project.getTasks().create(BOOT_REPACKAGE_TASK_NAME,
-                BootRepackageTask.class);
+        System.out.println("APPLY");
+        BootRepackageTask task = project.getTasks().create(BOOT_REPACKAGE_TASK_NAME, BootRepackageTask.class)
 
-        task.setGroup(BasePlugin.BUILD_GROUP);
+        task.setGroup(BasePlugin.BUILD_GROUP)
         Configuration runtimeConfiguration = project.getConfigurations()
                 .getByName(JavaPlugin.RUNTIME_CONFIGURATION_NAME);
         TaskDependency runtimeProjectDependencyJarTasks = runtimeConfiguration
@@ -31,13 +29,13 @@ class BootPlugin implements Plugin<Project> {
                         .getAllArtifacts().getBuildDependencies(),
                 runtimeProjectDependencyJarTasks);
         // registerOutput(project, task);
-        ensureTaskRunsOnAssembly(project, task);
+        ensureTaskRunsOnAssembly(project, task)
         // ensureMainClassHasBeenFound(project, task);
         
     }
 
     private void ensureTaskRunsOnAssembly(Project project, Task task) {
-        project.getTasks().getByName(BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(task);
+        project.getTasks().getByName(BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(task)
     }
 
 }

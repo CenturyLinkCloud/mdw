@@ -36,6 +36,9 @@ dependencies {
     wtpExclude project(":mdw-services")
     wtpExclude project(":mdw-workflow")
 
+    // schemas are included in mdw-common
+    providedCompile fileTree(dir: '../mdw/libs', include: 'mdw-schemas.jar')
+    
     providedCompile group: "javax.jms", name: "javax.jms-api", version: "2.0.1"
     
     providedCompile group: "javax.el", name: "el-api", version: "1.0"
