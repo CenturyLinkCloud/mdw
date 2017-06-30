@@ -19,12 +19,14 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 
+@XmlType(name = "", propOrder = { "workstationId", "sapId", "firstName", "lastName" })
 @XmlRootElement(name="GetEmployeeResponse", namespace="http://mdw.centurylink.com/serviceTypes")
 public class Employee implements Serializable, Jsonable
 {
@@ -66,28 +68,7 @@ public class Employee implements Serializable, Jsonable
   }
 
   public Employee(JSONObject json) throws JSONException {
-      if (json.has("sapId"))
-          this.sapId = json.getString("sapId");
-      if (json.has("workstationId"))
-          this.workstationId = json.getString("workstationId");
-      if (json.has("firstName"))
-          this.firstName = json.getString("firstName");
-      if (json.has("lastName"))
-          this.lastName = json.getString("lastName");
-  }
-
-  @Override
-  public JSONObject getJson() throws JSONException {
-      JSONObject json = create();
-      if (sapId != null)
-          json.put("sapId", sapId);
-      if (workstationId != null)
-          json.put("workstationId", workstationId);
-      if (firstName != null)
-          json.put("firstName", firstName);
-      if (lastName != null)
-          json.put("lastName", lastName);
-      return json;
+      bind(json);
   }
 
   @Override

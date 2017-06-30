@@ -3,7 +3,10 @@
     <a href="{{ site.baseurl }}/">Home</a>
   </li>
   <li class="{% if page.url contains '/guides/' %}current{% endif %}">
-    <a href="{{ site.baseurl }}/docs/guides/">Guides</a>
+    <a href="{{ site.baseurl }}/docs/guides/">Getting Started</a>
+  </li>
+  <li class="{% if page.url contains '/advancedGuides/' %}current{% endif %}">
+    <a href="{{ site.baseurl }}/docs/advancedGuides/">Advanced Guides</a>
   </li>
   <li class="{% if page.url contains '/javadoc/' %}current{% endif %}">
     <a href="{{ site.baseurl }}/docs/javadoc/">Javadoc</a>

@@ -10,12 +10,11 @@
   docs:
   - link-to-demo
 
-- title: Guides
+- title: Advanced Guides
   docs:
-  - guides/quick-start
-  - guides/SetupGuideForTomcat
-  - guides/SetupGuideForCloudFoundry
-  - guides/MicroservicesCookbook
+  - advancedGuides/SetupGuideForTomcat
+  - advancedGuides/SetupGuideForCloudFoundry
+  - advancedGuides/MicroservicesCookbook
   
 - title: Documentation
   docs:
