@@ -14,30 +14,13 @@ permalink: /docs/guides/
 <section class="features">
   <div class="grid">
     <div class="unit one-third">
-      <h2>Quick Start-up Guide for Command Line Interface (CLI)</h2>
-      <p>
-        Get up and running with MDW in a hurry
-       </p>
-      <a href="quick-start">Quick Start-up Guide for Command Line Interface (CLI) &rarr;</a>
+      <a href="quick-start">QUICK START &rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Setup Guide for Tomcat</h2>
-      <p>
-        Deploying on Tomcat
-       </p>
-      <a href="SetupGuideForTomcat">Setup Guide for Tomcat &rarr;</a>
+      <a href="mdw-tutorial">TAKE a TUTORIAL &rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Setup Guide for CloudFoundry</h2>
-      <p>Deploying on CloudFoundry</p>
-      <a href="SetupGuideForCloudFoundry">Setup Guide for CloudFoundry &rarr;</a>
-    </div>
-    <div class="unit one-third">
-      <h2>Microservices Cookbook</h2>
-      <p>
-        Cookbook to get you started with Microservices 
-      </p>
-      <a href="MicroservicesCookbook">Microservices Cookbook &rarr;</a>
+      <a href="{{ site.baseurl }}/docs/advancedGuides/">ADVANCED GUIDES &rarr;</a>
     </div>
     <div class="clear"></div>
   </div>
