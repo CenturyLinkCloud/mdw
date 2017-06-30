@@ -54,17 +54,17 @@ public class Main {
             else {
                 version.run();
                 if (command.equals("init")) {
-                    init.run();
-                    new Update(init).run();
+                    init.run(getMonitor());
+                    new Update(init).run(getMonitor());
                 }
                 else if (command.equals("update")) {
-                    update.run();
+                    update.run(getMonitor());
                 }
                 else if (command.equals("install")) {
-                    install.run();
+                    install.run(getMonitor());
                 }
                 else if (command.equals("run")) {
-                    run.run();
+                    run.run(getMonitor());
                 }
             }
         }
@@ -76,4 +76,19 @@ public class Main {
 
     @Parameters(commandNames="help", commandDescription="Syntax Help")
     static class Help { }
+
+    /**
+     * Every call with >= 100% progress will print a new line.
+     */
+    private static ProgressMonitor getMonitor() {
+        return prog -> {
+            System.out.print("\b\b\b\b\b\b\b\b\b");
+            if (prog >= 100)
+                System.out.println(" --> Done");
+            else if (prog <= 0) // don't report zero progress since it may indicate unknown
+                System.out.print(" ... ");
+            else
+                System.out.printf(" --> %3d%%", prog);
+        };
+    }
 }

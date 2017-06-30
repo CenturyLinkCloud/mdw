@@ -77,7 +77,7 @@ public class Init extends Setup {
     public boolean isSpringBoot() { return springBoot; }
     public void setSpringBoot(boolean springBoot) { this.springBoot = springBoot; }
 
-    public void run() throws IOException {
+    public Init run(ProgressMonitor... progressMonitors) throws IOException {
         System.out.println("Initializing " + project + "...");
         projectDir = new File(project);
         if (projectDir.exists()) {
@@ -106,13 +106,15 @@ public class Init extends Setup {
         String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
-        new Download(new URL(templatesUrl), tempZip).run();
+        new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
         new Unzip(tempZip, projectDir, false, opt -> {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
         System.out.println("Writing: ");
         subst(projectDir);
+
+        return this;
     }
 
 }

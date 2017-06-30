@@ -44,7 +44,7 @@ public class Update extends Setup {
         // cli use only
     }
 
-    public void run() throws IOException {
+    public Update run(ProgressMonitor... progressMonitors) throws IOException {
         this.assetDir = new File(this.projectDir + "/" + getProperty("mdw.asset.location"));
 
         if (getBaseAssetPackages() == null) {
@@ -54,7 +54,7 @@ public class Update extends Setup {
         List<String> discovered = new ArrayList<>();
         String discoveryUrl = getProperty("mdw.discovery.url");
         System.out.println("Discovering assets from: " + discoveryUrl);
-        String assetsJson = new Download(new URL(discoveryUrl + "/services/Assets")).read();
+        String assetsJson = new Fetch(new URL(discoveryUrl + "/services/Assets")).run().getData();
         JSONObject json = new JSONObject(assetsJson);
         if (json.has("packages")) {
             JSONArray pkgArr = json.getJSONArray("packages");
@@ -79,13 +79,13 @@ public class Update extends Setup {
             System.out.println(" - no packages selected");
         }
         else {
-            importPackages(discoveryUrl, toDownload);
+            importPackages(discoveryUrl, toDownload, progressMonitors);
         }
 
-        System.out.println("Done.");
+        return this;
     }
 
-    protected void importPackages(String discoveryUrl, List<String> packages) throws IOException {
+    protected void importPackages(String discoveryUrl, List<String> packages, ProgressMonitor... monitors) throws IOException {
 
         // download packages temp zip
         System.out.println("Downloading packages...");
@@ -99,7 +99,7 @@ public class Update extends Setup {
                 pkgsParam += ",";
         }
         pkgsParam += "]";
-        new Download(new URL(discoveryUrl + "/asset/packages?packages=" + pkgsParam), tempZip).run();
+        new Download(new URL(discoveryUrl + "/asset/packages?packages=" + pkgsParam), tempZip).run(monitors);
 
         // import packages
         Archive archive = new Archive(assetDir, packages);

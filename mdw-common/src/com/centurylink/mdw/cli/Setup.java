@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.CommaParameterSplitter;
 
-public abstract class Setup {
+public abstract class Setup implements Operation {
 
     protected static List<String> defaultBasePackages = new ArrayList<>();
     static {

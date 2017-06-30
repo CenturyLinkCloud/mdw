@@ -26,9 +26,9 @@ import java.util.jar.Manifest;
 import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="version", commandDescription="MDW CLI Version")
-public class Version {
+public class Version implements Operation {
 
-    public void run() throws IOException {
+    public Version run(ProgressMonitor... progressMonitors) throws IOException {
 
         String name = getClass().getSimpleName() + ".class";
         String path = getClass().getResource(name).toString();
@@ -38,6 +38,7 @@ public class Version {
             Attributes attr = manifest.getMainAttributes();
             System.out.println("MDW CLI " + attr.getValue("MDW-Version") + " (" + attr.getValue("MDW-Build") + ")");
         }
+        return this;
     }
 
     /**

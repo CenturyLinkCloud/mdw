@@ -17,7 +17,6 @@ package com.centurylink.mdw.cli;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,42 +27,58 @@ import java.net.URL;
 /**
  * Bare min impl to support CLI without dependencies.
  */
-public class Download {
+public class Download implements Operation {
 
     private static final int BUFFER_KB = 16;
 
     private URL from;
+    public URL getFrom() { return from; }
+
     private File to;
-    public Download(URL from) {
-        this.from = from;
-    }
+    public File getTo() { return to; }
+
+    private long size; // if known, in bytes
+    public long getSize() { return size; }
+
     public Download(URL from, File to) {
         this.from = from;
         this.to = to;
     }
 
-    public void run() throws IOException {
-        try (InputStream urlIn = new BufferedInputStream(from.openStream());
-                OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(to))) {
-            byte[] buffer = new byte[BUFFER_KB * 1024];
-            int len = urlIn.read(buffer);
-            while (len >= 0) {
-                fileOut.write(buffer, 0, len);
-                len = urlIn.read(buffer);
-            }
-        }
+    public Download(URL from, File to, long size) {
+        this.from = from;
+        this.to = to;
+        this.size = size;
     }
 
-    public String read() throws IOException {
+    public Download run(ProgressMonitor... progressMonitors) throws IOException {
         try (InputStream urlIn = new BufferedInputStream(from.openStream());
-                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int len = urlIn.read(buffer);
-            while (len >= 0) {
-                out.write(buffer, 0, len);
-                len = urlIn.read(buffer);
+                OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(to))) {
+            if (size == 0)
+              size = urlIn.available();
+            long sofar = 0;
+            byte[] buffer = new byte[BUFFER_KB * 1024];
+
+            for (ProgressMonitor progressMonitor : progressMonitors)
+                progressMonitor.progress(0);
+
+            while (true) {
+                if (size > 0 && progressMonitors.length > 0 && sofar < size) {
+                    int prog = (int) Math.floor((sofar * 100)/size);
+                    for (ProgressMonitor progressMonitor : progressMonitors)
+                        progressMonitor.progress(prog);
+                }
+
+                int bytesRead = urlIn.read(buffer);
+                if (bytesRead == -1)
+                    break;
+                fileOut.write(buffer, 0, bytesRead);
+                sofar += bytesRead;
             }
-            return out.toString();
+            for (ProgressMonitor progressMonitor : progressMonitors)
+                progressMonitor.progress(100);
         }
+
+        return this;
     }
 }

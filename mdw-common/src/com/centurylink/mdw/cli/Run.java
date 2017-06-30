@@ -29,7 +29,7 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.IParameterSplitter;
 
 @Parameters(commandNames="run", commandDescription="Run MDW", separators="=")
-public class Run {
+public class Run implements Operation {
 
     protected static List<String> defaultVmArgs = new ArrayList<>();
     static {
@@ -59,12 +59,12 @@ public class Run {
     public List<String> getVmArgs() { return vmArgs; }
     public void setVmArgs(List<String> args) { this.vmArgs = args; }
 
-    public void run() throws IOException {
+    public Run run(ProgressMonitor... progressMonitors) throws IOException {
         List<String> cmdLine = new ArrayList<>();
         cmdLine.add(getJava());
         cmdLine.add("-jar");
         cmdLine.addAll(getVmArgs());
-        cmdLine.add(getMdwJar());
+        cmdLine.add(getBootJar());
         ProcessBuilder builder = new ProcessBuilder(cmdLine);
         builder.redirectErrorStream(true);
         System.out.println("Starting process:");
@@ -86,7 +86,7 @@ public class Run {
                             break;
                         }
                     }
-                    new Download(new URL("http://localhost:" + port + "/" + ctx + "/Services/System/exit")).read();
+                    new Fetch(new URL("http://localhost:" + port + "/" + ctx + "/Services/System/exit")).run().getData();
                     process.waitFor();
                 }
                 catch (Exception ex) {
@@ -114,13 +114,15 @@ public class Run {
         catch (InterruptedException ex) {
             process.destroy();
         }
+
+        return this;
     }
 
     protected String getJava() {
         return System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
     }
 
-    protected String getMdwJar() throws IOException {
+    protected String getBootJar() throws IOException {
         String mdwVersion = new Version().getMdwVersion(getProjectDir());
         return "bin" + File.separator + "mdw-boot-" + mdwVersion + ".jar";
     }

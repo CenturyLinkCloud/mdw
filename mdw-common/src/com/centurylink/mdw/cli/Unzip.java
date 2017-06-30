@@ -30,7 +30,7 @@ import java.util.zip.ZipFile;
 /**
  * Bare min impl to support CLI without dependencies.
  */
-public class Unzip {
+public class Unzip implements Operation {
 
     private static final int BUFFER_KB = 16;
 
@@ -54,7 +54,7 @@ public class Unzip {
         this.optionsCheck = optionsCheck;
     }
 
-    public void run() throws IOException {
+    public Unzip run(ProgressMonitor... progressMonitors) throws IOException {
         if (!destDir.exists() || !destDir.isDirectory())
             throw new IOException("Destination directory does not exist: " + destDir);
         try (ZipFile zip = new ZipFile(zipFile)) {
@@ -105,5 +105,7 @@ public class Unzip {
                 }
             }
         }
+
+        return this;
     }
 }
