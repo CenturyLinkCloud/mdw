@@ -2,6 +2,13 @@ import org.apache.xmlbeans.XmlException
 import org.apache.xmlbeans.XmlCursor
 import org.apache.xmlbeans.XmlObject
 
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'groovy'
+
+group = "com.centurylink.mdw"
+version = "${mdwGradleVersion}"
+
 buildscript {
     repositories {
         mavenCentral()
@@ -19,6 +26,8 @@ repositories {
 }
 
 dependencies {
+    compile gradleApi()
+    compile localGroovy()
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     compile group: "commons-codec", name: "commons-codec", version: "1.3"
     compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
@@ -34,3 +43,83 @@ sourceSets {
         output.classesDir = "build/classes"
     }
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+    exclude "META-INF"
+    exclude "**/.*ignore"
+}
+
+task javadocJar(type: Jar) {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    classifier = 'javadoc'
+    from javadoc
+}
+
+jar {
+    archiveName = "mdw-gradle-${mdwGradleVersion}.jar"
+}
+
+artifacts {
+    archives jar
+}
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+ext.ossrhUsername = System.getProperty("ossrhUsername")
+ext.ossrhPassword = System.getProperty("ossrhPassword")
+
+if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+    signing {
+        required = { isReleaseVersion && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+        sign configurations.archives
+     }
+}
+else {
+    tasks.withType(Javadoc).all { enabled = false }
+}
+
+uploadArchives {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    repositories {
+        mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+            repository(url: mavenRepoUrl) {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            snapshotRepository(url: mavenSnapshotRepoUrl) {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            pom.project {
+                name 'MDW Gradle'
+                groupId 'com.centurylink.mdw'
+                artifactId 'mdw-gradle'
+                version = mdwGradleVersion
+                packaging = 'jar'
+                description 'MDW Gradle Plugins'
+                url 'http://centurylinkcloud.github.io/mdw/'
+                scm {
+                    connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                    developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                    url 'https://github.com/CenturyLinkCloud/mdw.git'
+                }
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'mdwdev'
+                        name 'MDW Development'
+                        email 'mdwdev@centurylink.com'
+                    }
+                }
+            }
+        }
+    }
+}
+

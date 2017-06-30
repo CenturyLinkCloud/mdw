@@ -3,51 +3,6 @@ apply plugin: 'signing'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
-eclipse {
-    // associate Gradle API source
-    classpath {
-        file {
-            whenMerged { cp ->
-                cp.entries.each { entry ->
-                    if ((entry in org.gradle.plugins.ide.eclipse.model.AbstractLibrary) && (entry.library.file.name.startsWith('gradle-'))) {
-                        entry.sourcePath = new org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory().fromPath(gradleSrc)
-                    }
-                }
-            }
-        }
-    }
-}
-
-// this sourceSet is for mdw gradle plugins
-sourceSets {
-    main {
-        groovy {
-            srcDir "buildSrc/src"
-            include "com/centurylink/mdw/gradle/plugin/**"
-        }
-        resources {
-            srcDirs "buildSrc/src"
-            include "META-INF/**"
-        }
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile group: "commons-codec", name: "commons-codec", version: "1.3"
-    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
-    compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
-}
-
-jar {
-    archiveName = "mdw-gradle-${mdwVersion}.jar"
-}
-
 task publishMdw(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishBuild"]
@@ -204,8 +159,6 @@ task pushToOrigin(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
-def packaging = 'zip'
-
 allprojects {
     group = "com.centurylink.mdw"
     version = "${mdwVersion}"
@@ -240,7 +193,7 @@ allprojects {
                     name 'MDW Templates'
                     groupId 'com.centurylink.mdw'
                     version = mdwVersion
-                    packaging = packaging
+                    packaging = 'zip'
                     description 'MDW is a cloud workflow framework'
                     url 'http://centurylinkcloud.github.io/mdw/'
                     scm {
@@ -267,38 +220,27 @@ allprojects {
     }
 }
 
+/**
+ * The artifact for this build is mdw-templates (only because each maven artifact
+ * needs a build project, and we don't want one especially for templates).
+ */
 task zipTemplates(type: Zip) {
     destinationDir = file("../${mdwOutputDir}")
     archiveName = "mdw-templates-${mdwVersion}.zip"
     from "templates"
     include "**/*"
 }
-
 artifacts {
     archives zipTemplates
 }
-
 uploadArchives {
     repositories {
         mavenDeployer {
             pom.project {
-                artifactId = "mdw-templates"}
+                artifactId = "mdw-templates"
+            }
         }
     }
-}
-
-task testLocalDev(type: GradleBuild) {
-    buildFile = "test.gradle"
-    tasks = ["autoTest"]
-    startParameter.projectProperties = [testServerUrl: "${localTestServerUrl}", assetDirPath: "${localAssetDir}",
-       mdwConfigLocation: "" + projectDir + "/config"]
-}
-
-task testTomcatMdwdev(type: GradleBuild) {
-    buildFile = "test.gradle"
-    tasks = ["autoTest"]
-    startParameter.projectProperties = [testServerUrl: "${tomcatTestServerUrl}", assetDirPath: "${deployAssetDir}",
-        mdwConfigLocation: "" + projectDir + "/../../../../tomcat/tomcat7-mdw6/conf"]
 }
 
 task buildAll(type: GradleBuild) {
@@ -310,4 +252,43 @@ task buildAll(type: GradleBuild) {
 task cleanAll(type: GradleBuild) {
     buildFile = "build.gradle"
     tasks = ["clean"]
+}
+
+/**
+ * Eclipse setup, sourceSets and dependencies are convenience configs to enable gradle plugin
+ * debugging from Eclipse.  The actual gradle plugin build is controlled by buildSrc/build.gradle.
+ */
+eclipse {
+    // associate Gradle API source
+    classpath {
+        file {
+            whenMerged { cp ->
+                cp.entries.each { entry ->
+                    if ((entry in org.gradle.plugins.ide.eclipse.model.AbstractLibrary) && (entry.library.file.name.startsWith('gradle-'))) {
+                        entry.sourcePath = new org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory().fromPath(gradleSrc)
+                    }
+                }
+            }
+        }
+    }
+}
+sourceSets {
+    main {
+        groovy {
+            srcDir "buildSrc/src"
+            include "com/centurylink/mdw/gradle/plugin/**"
+        }
+        resources {
+            srcDirs "buildSrc/src"
+            include "META-INF/**"
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
 }
