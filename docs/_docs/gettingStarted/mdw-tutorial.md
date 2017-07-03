@@ -17,6 +17,6 @@ We assume that you are already familiar with eclipse, Java, Java Web services (R
 
 ### How to use this Tutorial
 - We have already created a detailed guide for creating a workflow from scratch. You can follow [this link](../../designer/user-guide/) and start with the step 1 in the Designer User Guide.
-- Once you are familiar with the MDW Demo project, you can start [MicroservicesCookbook](../../guides/MicroservicesCookbook/).
+
  
  
