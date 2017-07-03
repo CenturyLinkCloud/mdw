@@ -10,7 +10,7 @@
   docs:
   - link-to-demo
 
-- title: Advanced Guides
+- title: Guides
   docs:
   - advancedGuides/SetupGuideForTomcat
   - advancedGuides/SetupGuideForCloudFoundry

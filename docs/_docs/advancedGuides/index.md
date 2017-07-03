@@ -1,13 +1,13 @@
 ---
 layout: default
-title: Advanced Guides
+title: Guides
 permalink: /docs/advancedGuides/
 ---
 
 <section class="intro">
   <div class="grid">
     <div class="unit whole center-on-mobiles">
-      <p class="first">Advanced Guides</p>
+      <p class="first">Guides</p>
     </div>
   </div>
 </section>
