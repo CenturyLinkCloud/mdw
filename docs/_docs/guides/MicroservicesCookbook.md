@@ -1,5 +1,5 @@
 ---
-permalink: /docs/advancedGuides/MicroservicesCookbook/
+permalink: /docs/guides/MicroservicesCookbook/
 title: Microservices Cookbook
 ---
 ### MDW Microservices

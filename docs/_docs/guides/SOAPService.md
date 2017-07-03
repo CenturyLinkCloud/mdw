@@ -1,5 +1,5 @@
 ---
-permalink: /docs/advancedGuides/SOAPService/
+permalink: /docs/guides/SOAPService/
 title: SOAP Web Service
 ---
 

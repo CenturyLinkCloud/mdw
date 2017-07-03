@@ -34,7 +34,7 @@ Get up and running with MDW in a hurry.
   
 ### Run MDW
   At this point you have a decision to make.  MDW comes with a rich set of REST service APIs, and also
-  enables you to quickly [spin up your own](../MicroservicesCookbook).  To host these services MDW relies on a 
+  enables you to quickly [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/).  To host these services MDW relies on a 
   Java Servlet container.  Your options are:
   1. Use the self-contained [MDW Spring Boot jar](../spring-boot)
   2. Install [Apache Tomcat (or Jetty)](../SetupGuideForTomcat)

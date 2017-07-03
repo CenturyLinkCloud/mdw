@@ -1,29 +1,36 @@
 ---
 layout: default
-title: Guide
+title: Guides
 permalink: /docs/guides/
 ---
 
 <section class="intro">
   <div class="grid">
     <div class="unit whole center-on-mobiles">
-      <p class="first">Getting Started</p>
+      <p class="first">Guides</p>
     </div>
   </div>
 </section>
 <section class="features">
   <div class="grid">
     <div class="unit one-third">
-      <a href="quick-start">QUICK START &rarr;</a>
-	  <p>The quick start guide provides a quick instruction to get up and run with MDW in no time.</p>
+      <h2>Setup Guide for Tomcat</h2>
+      <p>
+        Deploying on Tomcat
+       </p>
+      <a href="SetupGuideForTomcat/">Setup Guide for Tomcat &rarr;</a>
     </div>
     <div class="unit one-third">
-      <a href="mdw-tutorial">TAKE a TUTORIAL &rarr;</a>
-      <p>The tutorial provides step-by-step instructions to setup and run with MDW Demo.</p>
+      <h2>Setup Guide for CloudFoundry</h2>
+      <p>Deploying on CloudFoundry</p>
+      <a href="SetupGuideForCloudFoundry/">Setup Guide for CloudFoundry &rarr;</a>
     </div>
     <div class="unit one-third">
-      <a href="{{ site.baseurl }}/docs/advancedGuides/">GUIDES &rarr;</a>
-      <p>The guides provide detailed, step-by-step instructions to setup and run with full-fledged MDW.</p>
+      <h2>Microservices Cookbook</h2>
+      <p>
+        Cookbook to get you started with Microservices 
+      </p>
+      <a href="MicroservicesCookbook/">Microservices Cookbook &rarr;</a>
     </div>
     <div class="clear"></div>
   </div>
