@@ -89,6 +89,8 @@ public class GitVcs extends JsonRestService {
         AssetInfo asset = assetServices.getAsset(assetPath.substring(7), true);
         if (asset == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + assetPath);
+        if (asset.getCommitInfo() == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Commit Info not found: " + assetPath);
         return asset.getCommitInfo().getJson();
     }
 

@@ -161,7 +161,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
                     this.getActivityInstanceId(),
                     eventName,
                     null, true, false);
-            if (received==null) received = registerWaitEvents(false,true);
+            if (received==null) received = registerWaitEvents(true,true);
         } catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
         }

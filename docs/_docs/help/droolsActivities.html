@@ -12,7 +12,7 @@ The regular Drools activity supports <a href="http://en.wikipedia.org/wiki/MVEL"
 The Drools Decision Table activity uses an Excel spreadsheet to define a <a href="http://docs.jboss.org/drools/release/5.4.0.Final/drools-expert-docs/html_single/index.html#d0e1157">decision matrix</a> which drives outcomes based on a tabular set of conditions.
 Both types of Drools activities have the following basic characteristics in common:
 <ul>
-  <li style="margin-bottom:5px;">At design-time you designate a <a href='workflowAssets.html'>Workflow Asset</a> (DRL file or spreadsheet) that defines the rules logic.
+  <li style="margin-bottom:5px;">At design-time you designate an <a href='assets.html'>asset</a> (DRL file or spreadsheet) that defines the rules logic.
     This is known as the Knowledge Base, and is loaded from the database and cached by the engine in the server's memory heap.
     These assets are versioned separately from the process definition that references them, and they are meant to be maintainable by business users or analysts.</li>
   <li style="margin-bottom:5px;">The defined rules have implicit runtime access to process variable values (which can be read or updated by the rules), 

@@ -43,6 +43,7 @@ import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskAction;
@@ -378,12 +379,14 @@ public class Tasks extends JsonRestService implements JsonExportable {
 
     @Override
     @Path("/{taskInstanceId}/{subData}")
-    @ApiOperation(value="Update a task instance, or update an instance's index values", response=StatusMessage.class,
-        notes="If indexes is present, body is TaskIndexes; otherwise body is a Task." +
-          "If subData is not present, returns task summary info. Options for subData: 'values', 'indexes'")
+    @ApiOperation(value="Update a task instance, update an instance's index values, or register to wait for an event", response=StatusMessage.class,
+        notes="If indexes is present, body is TaskIndexes; if regEvent is present, body is Event; otherwise body is a Task." +
+          "If subData is not present, returns task summary info. Options for subData: values, indexes, regEvent")
     @ApiImplicitParams({
-        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.task.TaskInstance"),
-        @ApiImplicitParam(name="SubData", paramType="body", dataType="java.lang.Object")})
+        @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.task.TaskInstance", value="When no subData is specified"),
+        @ApiImplicitParam(name="Indexes", paramType="body", dataType="com.centurylink.mdw.model.task.TaskIndexes", value="When {subData}=indexes"),
+        @ApiImplicitParam(name="Event", paramType="body", dataType="com.centurylink.mdw.model.event.Event", value="When {subData}=regEvent.  Only the id (event name) field is mandatory in Event object.  Optionally, a completionCode can specified - Default is FINISHED"),
+        @ApiImplicitParam(name="Values", paramType="body", dataType="java.lang.Object", value="When {subData}=values. JSON object parseable into a key/value Map.")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
@@ -423,13 +426,11 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 return null;
             }
             else if (extra.equals("regEvent")) {
-                String eventName = getSegment(path, 3);
+                Event event = new Event(content);
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                workflowServices.registerTaskWaitEvent(instanceId, eventName);
+                workflowServices.registerTaskWaitEvent(instanceId, event);
                 if (logger.isDebugEnabled())
-                    logger.debug("Registered Event : [" + eventName + "]Task Instance Id = " + instanceId);
-
-                return null;
+                    logger.debug("Registered Event : [" + event.getId() + "]Task Instance Id = " + instanceId);
             }
         }
         catch (NumberFormatException ex) {

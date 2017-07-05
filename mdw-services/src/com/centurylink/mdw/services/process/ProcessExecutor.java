@@ -551,6 +551,20 @@ public class ProcessExecutor {
 
     public EventWaitInstance createEventWaitInstance(
             Long actInstId, String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived, boolean reregister)
+    throws DataAccessException, ProcessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createEventWaitInstance(actInstId,
+                    pEventName, compCode, pRecurring, notifyIfArrived, reregister);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public EventWaitInstance createEventWaitInstance(
+            Long actInstId, String pEventName, String compCode,
             boolean pRecurring, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
@@ -565,6 +579,21 @@ public class ProcessExecutor {
 
     public EventWaitInstance createEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
+            boolean[] pEventOccurances, boolean notifyIfArrived, boolean reregister)
+    throws DataAccessException, ProcessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createEventWaitInstances(actInstId,
+                    pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
+
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public EventWaitInstance createEventWaitInstances(Long actInstId,
+            String[] pEventNames, String[] pWakeUpEventTypes,
             boolean[] pEventOccurances, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
@@ -572,20 +601,7 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstances(actInstId,
                     pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
-        } finally {
-            stopTransaction(transaction);
-        }
-    }
 
-    public EventWaitInstance createBroadcastEventWaitInstances(Long actInstId,
-            String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean notifyIfArrived)
-    throws DataAccessException, ProcessException {
-        TransactionWrapper transaction=null;
-        try {
-            transaction = startTransaction();
-            return engineImpl.createBroadcastEventWaitInstances(actInstId,
-                    pEventNames, pWakeUpEventTypes, notifyIfArrived);
         } finally {
             stopTransaction(transaction);
         }
@@ -614,21 +630,6 @@ public class ProcessExecutor {
         } catch (SQLException e) {
             throw new DataAccessException(0, "Failed to notify process of event arrival", e);
         } finally {
-            stopTransaction(transaction);
-        }
-    }
-
-    public Integer broadcast(String pEventName, Long pEventInstId, String message, int delay)
-            throws DataAccessException, EventException {
-        TransactionWrapper transaction = null;
-        try {
-            transaction = startTransaction();
-            return engineImpl.broadcast(pEventName, pEventInstId, message, delay);
-        }
-        catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to notify process of event arrival", e);
-        }
-        finally {
             stopTransaction(transaction);
         }
     }

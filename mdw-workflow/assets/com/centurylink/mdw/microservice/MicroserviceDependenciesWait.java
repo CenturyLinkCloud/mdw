@@ -21,16 +21,11 @@ import org.json.JSONException;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.event.BroadcastEventLockCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.services.EventManager;
-import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -84,7 +79,7 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
             try {
-                this.registerWaitEvents(false, true);
+                registerWaitEvents(true, true);
             }
             catch (Exception e) {
                 logger.info("Error in registerWaitEvents - " + e.getMessage());
@@ -242,44 +237,4 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
             return serviceSummary;
         }
     }
-    /**
-     * Overriden registerWaitEvents to create broadcast style event waits
-     */
-    @Override
-    protected EventWaitInstance registerWaitEvents(boolean reregister, boolean checkIfArrived)
-            throws ActivityException {
-        List<String[]> eventSpecs = this.getWaitEventSpecs();
-        if (eventSpecs.isEmpty())
-            return null;
-        String[] eventNames = new String[eventSpecs.size()];
-        String[] eventCompletionCodes = new String[eventSpecs.size()];
-        boolean[] eventOccurances = new boolean[eventSpecs.size()];
-        for (int i = 0; i < eventNames.length; i++) {
-            eventNames[i] = translatePlaceHolder(eventSpecs.get(i)[0]);
-            eventCompletionCodes[i] = eventSpecs.get(i)[1];
-            if (eventSpecs.get(i)[1] == null) {
-                eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
-            }
-            else {
-                eventCompletionCodes[i] = eventSpecs.get(i)[1].trim();
-                if (eventCompletionCodes[i].length() == 0)
-                    eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
-            }
-            String eventOccur = eventSpecs.get(i)[2];
-            eventOccurances[i] = (eventOccur == null || eventOccur.length() == 0
-                    || eventOccur.equalsIgnoreCase("true"));
-        }
-        try {
-
-            EventWaitInstance received = getEngine().createBroadcastEventWaitInstances(
-                    this.getActivityInstanceId(), eventNames, eventCompletionCodes, !checkIfArrived);
-            return received;
-        }
-        catch (Exception ex) {
-            super.logexception(ex.getMessage(), ex);
-            throw new ActivityException(ex.getMessage());
-        }
-
-    }
-
 }

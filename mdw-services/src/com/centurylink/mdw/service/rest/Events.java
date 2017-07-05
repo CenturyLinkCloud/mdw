@@ -27,7 +27,7 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.services.rest.JsonXmlRestService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -36,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Path("/Events")
 @Api("MDW workflow event notification")
-public class Events extends JsonRestService {
+public class Events extends JsonXmlRestService {
 
     @Override
     @Path("/{eventId}")
@@ -52,6 +52,9 @@ public class Events extends JsonRestService {
         Event event = new Event(content);
         if (!eventId.equals(event.getId()))
             throw new ServiceException(ServiceException.BAD_REQUEST, "Event id mismatch: " + eventId + "!=" + event.getId());
+
+        if (event.getMessage() == null)
+            event.setMessage("Empty");
 
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         workflowServices.notify(eventId, event.getMessage(), event.getDelay());

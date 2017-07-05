@@ -14,6 +14,13 @@ permalink: /docs/guides/
 <section class="features">
   <div class="grid">
     <div class="unit one-third">
+      <h2>Quick Start-up Guide for Command Line Interface (CLI)</h2>
+      <p>
+        Get up and running with MDW in a hurry
+       </p>
+      <a href="quick-start">Quick Start-up Guide for Command Line Interface (CLI) &rarr;</a>
+    </div>
+    <div class="unit one-third">
       <h2>Setup Guide for Tomcat</h2>
       <p>
         Deploying on Tomcat

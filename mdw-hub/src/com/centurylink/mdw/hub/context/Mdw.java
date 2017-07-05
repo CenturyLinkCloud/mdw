@@ -71,6 +71,10 @@ public class Mdw {
     public boolean isAllowAnyAuthenticatedUser() { return allowAnyAuthenticatedUser; }
     public void setAllowAnyAuthenticatedUser(boolean allow) { this.allowAnyAuthenticatedUser = allow; }
 
+    private String discoveryUrl;
+    public String getDiscoveryUrl() { return discoveryUrl; }
+    public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
+
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;
         this.build = build;

@@ -102,11 +102,14 @@ public class System extends JsonRestService {
         }
         LoggerUtil.getStandardLogger().refreshCache();
 
-        try {
-            propagatePut(content, headers);
-        }
-        catch (IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        if (content.has("distributed") && content.getBoolean("distributed")) {
+            try {
+
+                propagatePut(content, headers);
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
         }
 
         return null;

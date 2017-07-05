@@ -6,7 +6,7 @@
 <body>
 <h1>Asset Persistence</h1>
 
-In MDW, the process definitions and other design-time resources <a href="workflowAssets.html">workflow assets</a> are saved in a version control repository (GitHub) and 
+In MDW, the process definitions and other design-time resources <a href="assets.html">MDW assets</a> are saved in a version control repository (GitHub) and 
 the runtime data is stored in a MySQL or Oracle database. This persistence model has the key advantage for delivering flexible, powerful branching and merging capabilities. 
 This is especially important to ensure the integrity of in-flight processes when multiple versions of an MDW workflow coexist in a production environment. The VCS Assets option 
 also offers dramatically improved performance in Designer project access, as well as reduced server startup times.
@@ -35,7 +35,7 @@ When it comes time to share their output, users collaborate through a central, r
 and <a href="http://git-scm.com/docs/git-push">pushing</a> their changes.  They can do this using the GitHub tooling built into Eclipse.
 </p>
 <p>
-To make use of shared assets you'll continue to leverage the MDW <a href="workflowAssets.html#discovery">Asset Discovery</a> mechanism.
+To make use of shared assets you'll continue to leverage the MDW <a href="assets.html#discovery">Asset Discovery</a> mechanism.
 <br/><br/>
 Any asset dependencies imported this way are also checked in to GitHub, so that the same specific versions are consistently used in every environment.
 </p>

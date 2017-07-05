@@ -73,24 +73,24 @@
           "to": "A4"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=187,ly=184,type=Elbow,xs=188&188,ys=158&210"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=191,ly=179,type=Elbow,xs=190&190,ys=158&215"},
           "event": "FINISH",
           "id": "T6",
           "resultCode": "true",
-          "to": "A7"
+          "to": "A8"
         }
       ]
     },
     {
       "attributes": {
-        "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\r\n\r\npackage com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\n\nimport com.centurylink.mdw.common.service.ServiceException;\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.service.data.process.EngineDataAccessDB;\nimport com.centurylink.mdw.services.ServiceLocator;\nimport com.centurylink.mdw.services.WorkflowServices;\nimport com.centurylink.mdw.util.log.LoggerUtil;\nimport com.centurylink.mdw.util.log.StandardLogger;\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class BroadcastUpdateMessage_A7 implements JavaExecutor\r\n{\r\n    private static StandardLogger logger = LoggerUtil.getStandardLogger();\n    private ActivityRuntimeContext context;\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException\n    {\n      this.context = context;\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException\n    {\n        String event = \"servicesummary-update-\"+context.getMasterRequestId();\n        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();\n        int resume = 0;\n        try {\n            resume = workflowServices.broadcast(event);\n        } catch (ServiceException se) {\n            throw new JavaExecutionException(\"Unable to send broadcast message \"+event, se);\n        }\n        logger.info(\"ServiceSummary broadcast resume = \" + resume);\n        return null;\n    }\n\n}\r\n",
-        "WORK_DISPLAY_INFO": "x=132,y=214,w=101,h=90"
+        "Event Name": "servicesummary-update-${masterRequestId}",
+        "WORK_DISPLAY_INFO": "x=153,y=219,w=161,h=61"
       },
-      "id": "A7",
-      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
-      "name": "Broadcast \r\nUpdate\r\nMessage",
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.PublishEventMessage",
+      "name": "Broadcast Update Message",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=285,ly=206,type=Elbow,xs=237&335,ys=259&156"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=318,ly=175,type=Elbow,xs=299&299,ys=215&156"},
         "event": "FINISH",
         "id": "T7",
         "to": "A4"
@@ -121,5 +121,4 @@
       "type": "java.lang.Integer"
     }
   },
-  "version": "0.6"
 }

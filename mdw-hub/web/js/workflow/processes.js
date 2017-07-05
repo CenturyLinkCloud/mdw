@@ -2,8 +2,10 @@
 
 var processMod = angular.module('processes', ['mdw']);
 
-processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams', '$cookieStore', 'mdw', 'util', 'PROCESS_STATUSES',
-                                              function($scope, $http, $routeParams, $cookieStore, mdw, util, PROCESS_STATUSES) {
+processMod.controller('ProcessesController', 
+    ['$scope', '$http', '$cookieStore', 'mdw', 'util', 'PROCESS_STATUSES',
+    function($scope, $http, $cookieStore, mdw, util, PROCESS_STATUSES) {
+      
   // two-way bound to/from directive
   $scope.processList = {};
   
@@ -18,7 +20,6 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
   }
   else {
     // don't remember these
-    $scope.processFilter.processId = null;
     $scope.processFilter.instanceId = null;
     $scope.processFilter.masterRequestId = null;
     // fix date format stored in cookieStore
@@ -35,21 +36,12 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
   };
   
   // preselected procDef
-  if ($routeParams.procPkg && $routeParams.proc) {
-    $scope.processFilter.master = false;
-    $scope.processFilter.status = null;
-    var workflowSpec = $routeParams.procPkg + '/' + $routeParams.proc;
-    $scope.typeaheadMatchSelection = $routeParams.proc;
-    if ($routeParams.procVer) {
-      workflowSpec += ' v' + $routeParams.procVer;
-      $scope.processFilter.definition = workflowSpec;
-      $scope.typeaheadMatchSelection += ' v' + $routeParams.procVer;
-    }
-    else {
-      $scope.typeaheadMatchSelection = null;
-    }
+  if ($scope.processFilter.processId) {
+    $scope.typeaheadMatchSelection = $cookieStore.get('processSpec');
   }
-    
+  else {
+    $cookieStore.remove('processSpec');
+  }
   
   $scope.$on('page-retrieved', function(event, processList) {
     // start date and end date, adjusted for db offset
@@ -59,8 +51,26 @@ processMod.controller('ProcessesController', ['$scope', '$http', '$routeParams',
       if (processInstance.endDate)
         processInstance.endDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.endDate), dbDate));
     });
+    if ($scope.processFilter.processId) {
+      if (processList.processInstances.length > 0) {
+        let procSpec = processList.processInstances[0].processName;
+        if (processList.processInstances[0].processVersion)
+          procSpec += ' v' + processList.processInstances[0].processVersion;
+        $cookieStore.put('processSpec', procSpec);
+      }
+      else {
+        $http.get(mdw.roots.services + '/services/Workflow?id=' + $scope.processFilter.processId + '&summary=true&app=mdw-admin')
+          .then(function(response) {
+            $cookieStore.put('processSpec', response.data.name + ' v' + response.data.version);
+          }
+        );
+      }
+    }
+    else {
+      $cookieStore.remove('processSpec');
+    }
     $cookieStore.put('processFilter', $scope.processFilter);
-  });  
+  });
   
   // instanceId, masterRequestId, processName, packageName
   $scope.findTypeaheadMatches = function(typed) {
@@ -273,12 +283,31 @@ processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw',
   };
 }]);
 
-processMod.controller('ProcessDefController', ['$scope', '$routeParams', '$route', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
-                                              function($scope, $routeParams, $route, $filter, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
+processMod.controller('ProcessDefController', 
+    ['$scope', '$routeParams', '$route', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
+    function($scope, $routeParams, $route, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
+      
   $scope.process = { 
     packageName: $routeParams.packageName,
     name: $routeParams.processName,
     version: $routeParams.version
+  };
+  $scope.definitionId = null;  // stored at scope level due to vagaries in $scope.process 
+  
+  $scope.setProcessFilter = function() {
+    var procFilter = $cookieStore.get('processFilter');
+    if (!procFilter)
+      procFilter = {};
+    procFilter.processId = $scope.definitionId;
+    if (procFilter.processId) {
+      var procSpec = $scope.process.name;
+      if ($scope.process.version)
+        procSpec += ' v' + $scope.process.version;
+      procFilter.master = false;
+      procFilter.status = null;
+      $cookieStore.put('processFilter', procFilter);
+      $cookieStore.put('processSpec', procSpec);
+    }
   };
   
   $scope.isRun = $route.current.loadedTemplateUrl === 'workflow/run.html';
@@ -320,12 +349,14 @@ processMod.controller('ProcessDefController', ['$scope', '$routeParams', '$route
     $scope.process.definitionId = summary.definitionId;
     if ($scope.isRun)
       $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
+    $scope.definitionId = $scope.process.definitionId;
   }
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
         $scope.process.definitionId = defSum.id;
         if ($scope.isRun)
           $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
+        $scope.definitionId = $scope.process.definitionId;
     });
   }
 }]);

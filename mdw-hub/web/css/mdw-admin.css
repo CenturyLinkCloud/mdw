@@ -49,6 +49,7 @@
 .mdw-sidebar {
   float: left;
   padding: 0px 15px;
+  max-width: 250px;
 }
 @media (max-width: 992px) {
   .mdw-sidebar {

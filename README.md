@@ -1,8 +1,6 @@
 
 [![Build Status](https://travis-ci.org/CenturyLinkCloud/mdw.svg?branch=master)](https://travis-ci.org/CenturyLinkCloud/mdw)
 [![Dependency Status](https://gemnasium.com/badges/github.com/CenturyLinkCloud/mdw.svg)](https://gemnasium.com/github.com/CenturyLinkCloud/mdw)
-[![Code Climate](https://codeclimate.com/github/CenturyLinkCloud/mdw/badges/gpa.svg)](https://codeclimate.com/github/CenturyLinkCloud/mdw)
-[![Test Coverage](https://codeclimate.com/github/CenturyLinkCloud/mdw/badges/coverage.svg)](https://codeclimate.com/github/CenturyLinkCloud/mdw/coverage)
 [![Issue Count](https://codeclimate.com/github/CenturyLinkCloud/mdw/badges/issue_count.svg)](https://codeclimate.com/github/CenturyLinkCloud/mdw)
 
 ### Core Developer Setup 
@@ -10,17 +8,7 @@
  - Eclipse Neon for JavaEE Developers:                              
    [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
    
-   - Required Plugins:
-     - MDW Designer:                                         
-       [http://centurylinkcloud.github.io/mdw/designer/updateSite](http://centurylinkcloud.github.io/mdw/designer/updateSite)
-     - Buildship Plugin:                            
-       [http://download.eclipse.org/buildship/updates/e46/releases/2.x](http://download.eclipse.org/buildship/updates/e46/releases/2.x)
-       
-   - Recommended Plugins:
-     - Groovy:                                   
-       [http://dist.springsource.org/snapshot/GRECLIPSE/e4.6](http://dist.springsource.org/snapshot/GRECLIPSE/e4.6)
-     - Yaml:                                             
-       [http://dadacoalition.org/yedit](http://dadacoalition.org/yedit)
+ - For installing eclipse plug-ins, please follow [this link](http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/) and return to continue with the setup. 
        
    - Tomcat 8:                                  
      - [https://tomcat.apache.org](https://tomcat.apache.org)

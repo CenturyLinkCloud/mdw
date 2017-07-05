@@ -14,7 +14,7 @@ permalink: /docs/help/
 <ul>
   <li><a href='process.html'>Processes</a></li>
   <li><a href='variable.html'>Variables</a></li>
-  <li><a href='workflowAssets.html'>Workflow Assets</a></li>
+  <li><a href='assets.html'>Assets</a></li>
   <li><a href='assetPersistence.html'>Asset Persistence</a></li>
   <li><a href='EventWaitActivity.html'>Event Wait Activity</a></li>
   <li><a href='InvokeSubProcessActivity.html'>Invoke SubProcess Activity</a></li>
@@ -55,7 +55,7 @@ permalink: /docs/help/
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='webServices.html'>Invoking Standard MDW Web Services</a></li>
-  <li><a href='http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/MdwCodingGuidelines.html'>MDW Coding Guidelines</a></li>
+  <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
   <li><a href='../javadoc/index.html'>MDW Framework JavaDocs</a></li>
 </ul>
 

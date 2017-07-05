@@ -526,15 +526,18 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     private List<EventWaitInstance> getEventWaitInstances(String eventName) throws SQLException {
         List<EventWaitInstance> waiters = new ArrayList<EventWaitInstance>();
-        String query = "select EVENT_WAIT_INSTANCE_OWNER_ID, WAKE_UP_EVENT " +
+        String query = "select EVENT_WAIT_INSTANCE_OWNER_ID, WAKE_UP_EVENT, CREATE_DT " +
                 "from EVENT_WAIT_INSTANCE " +
-                "where EVENT_NAME=?";
+                "where EVENT_NAME=? order by EVENT_WAIT_INSTANCE_OWNER_ID, CREATE_DT desc";
         ResultSet rs = db.runSelect(query, eventName);
         while (rs.next()) {
             EventWaitInstance vo = new EventWaitInstance();
             vo.setActivityInstanceId(rs.getLong(1));
             vo.setCompletionCode(rs.getString(2));
-            waiters.add(vo);
+            // Only return the most recent registration of the event per unique activity_instance_id
+            // This situation would occur when calling the /Tasks REST service multiple times to register the same event for the same task_instance_id
+            if (waiters.size() == 0 || !(waiters.get(waiters.size()-1).getActivityInstanceId().equals(vo.getActivityInstanceId())))
+                waiters.add(vo);
         }
         return waiters;
     }
@@ -567,36 +570,16 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0);
             hasWaiters = false;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event == null)
                 throw e;  // throw original SQLException
+            hasWaiters = true;
             if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
                 deleteEventInstance(eventName);
-                hasWaiters = true;
             } else if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
                 event.setDocumentId(documentId);
                 consumeEventInstance(event, 0);
-                hasWaiters = true;
-            } else {
-                throw new SQLException("The event is already recorded and in status " + event.getStatus());
-            }
-        }
-        return hasWaiters?this.getEventWaitInstances(eventName):null;
-    }
-    public List<EventWaitInstance> recordBroadcastEventArrive(String eventName, Long documentId) throws SQLException {
-        boolean hasWaiters;
-        try {
-            this.recordEventHistory(eventName, EventLog.SUBCAT_ARRIVAL, OwnerType.DOCUMENT, documentId, null);
-            createEventInstance(eventName, documentId, EventInstance.STATUS_WAITING_MULTIPLE, null, null, null, 0);
-            hasWaiters = false;
-        } catch (SQLException e) {
-            EventInstance event = lockEventInstance(eventName);
-            if (event == null)
-                throw e;  // throw original SQLException
-            if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
-                hasWaiters = true;
-            } else {
-                throw new SQLException("The event is already recorded and in status " + event.getStatus());
             }
         }
         return hasWaiters?this.getEventWaitInstances(eventName):null;
@@ -611,6 +594,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     null, null, null, preserveSeconds);
             documentId = null;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
                 if (multipleRecepients) {
@@ -645,25 +629,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         createEventWaitInstance(actInstId, eventName, compCode);
         return documentId;
     }
-    public Long recordBroadcastEventWait(String eventName,
-            int preserveSeconds, Long actInstId, String compCode) throws SQLException {
-        Long documentId;
-        try {
-            createEventInstance(eventName, null,
-                    EventInstance.STATUS_WAITING_MULTIPLE,
-                    null, null, null, preserveSeconds);
-            documentId = null;
-        } catch (SQLException e) {
-            EventInstance event = lockEventInstance(eventName);
-            if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
-                documentId = null;
-            } else {        // STATUS_FLAG
-                throw new SQLException("The event is already recorded as a FLAG");
-            }
-        }
-        createEventWaitInstance(actInstId, eventName, compCode);
-        return documentId;
-    }
 
     public boolean recordEventFlag(String eventName, int preserveSeconds) throws SQLException {
         boolean recorded;
@@ -672,6 +637,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     new Date(DatabaseAccess.getCurrentTime()), null, null, preserveSeconds);
             recorded = false;
         } catch (SQLException e) {
+            if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_FLAG)) {
                 recorded = true;

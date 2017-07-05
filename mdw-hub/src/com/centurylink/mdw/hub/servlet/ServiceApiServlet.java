@@ -19,12 +19,13 @@ import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.service.api.MdwSwagger;
+import com.centurylink.mdw.service.api.MdwSwaggerCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -35,6 +36,7 @@ import io.swagger.util.Yaml;
 /**
  * Scans a service path for Swagger annotations and generates the service spec in JSON or YAML.
  */
+@WebServlet(urlPatterns={"/api/*"}, loadOnStartup=1)
 public class ServiceApiServlet extends HttpServlet {
 
     private static final String YAML_EXT = ".yaml";
@@ -76,7 +78,7 @@ public class ServiceApiServlet extends HttpServlet {
 
             try {
                 boolean pretty = !"false".equals(request.getParameter(PRETTY_PRINT_PARAM));
-                Swagger swagger = MdwSwagger.getSwagger(svcPath, pretty);
+                Swagger swagger = MdwSwaggerCache.getSwagger(svcPath, pretty);
 
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");

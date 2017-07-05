@@ -133,15 +133,6 @@ public class EventManagerBean implements EventManager {
         return engine.notifyProcess(pEventName, pEventInstId, message, delay);
     }
 
-    public Integer broadcast(String pEventName, Long pEventInstId,
-            String message, int delay)
-    throws DataAccessException, EventException {
-        EngineDataAccess edao = new EngineDataAccessDB();
-        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-        return engine.broadcast(pEventName, pEventInstId, message, delay);
-    }
-
     /**
      * Method that returns distinct event log sources
      *

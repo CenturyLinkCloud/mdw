@@ -8,6 +8,7 @@ mdwMod.factory('mdw', function() {
     version: $mdwVersion,
     build: $mdwBuild,
     autoTestWebSocketUrl: $mdwAutoTestWebSocketUrl,
+    discoveryUrl: $mdwDiscoveryUrl,
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot,

@@ -28,11 +28,11 @@
   <Cache Name="UserGroupCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.task.UserGroupCache</Property>
   </Cache>
+  <Cache Name="MdwSwaggerCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.api.MdwSwaggerCache</Property>
+  </Cache>
   <!-- AllowableTasks is empty for non-VCS Assets, which use the classic MDWHub mechanism -->
   <Cache Name="AllowableTaskActions" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.task.AllowableTaskActions</Property>
-  </Cache>    
-  <Cache Name="BroadcastEventLockCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.event.BroadcastEventLockCache</Property>
   </Cache>    
 </ApplicationCache>

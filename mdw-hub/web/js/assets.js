@@ -121,7 +121,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
 
   $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
   if (!$scope.discoveryUrl)
-    $scope.discoveryUrl = 'https://mdw.useast.appfog.ctl.io/mdw';
+    $scope.discoveryUrl = mdw.discoveryUrl;
   $scope.discover = function() {
     $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
     $scope.discoveredPkgList = null;
@@ -290,7 +290,7 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', '$location', '
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
   }
-
+  
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
       assetName: $routeParams.assetName

@@ -98,7 +98,7 @@ MDW includes a number of prebuilt, extensible options for hosting Web services.
 See the general <a href="webServices.html">MDW Web Services</a> documentation for details.
  
 <h3>Document (SOAP) Web Service Listener</h3>
-To expose document-literal style services using a custom WSDL definition, MDW provides a mechanism whereby the WSDL document is created as a <a href="workflowAssets.html">Workflow Asset</a>.
+To expose document-literal style services using a custom WSDL definition, MDW provides a mechanism whereby the WSDL document is created as an <a href="assets.html">Asset</a>.
 An HTTP GET request against a custom WSDL asset called Employee looks like:<br/>http://localhost:8080/mdw/services/SOAP/Employee.wsdl<br/><br/>
 A similar URL can be used as the endpoint for an HTTP POST request which will invoke the service.
 In this case the request is unwrapped from the SOAP envelope, and based on the top-level element the usual message pattern matching procedure is followed.

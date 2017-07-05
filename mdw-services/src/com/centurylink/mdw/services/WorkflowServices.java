@@ -24,6 +24,7 @@ import org.json.JSONException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.ActivityCount;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
@@ -96,10 +97,10 @@ public interface WorkflowServices {
      */
     public List<String> getValueHolderIds(String valueName, String valuePattern, String ownerType) throws ServiceException;
 
-    public void registerTaskWaitEvent(Long taskInstanceId, String eventName)
+    public void registerTaskWaitEvent(Long taskInstanceId, Event event)
             throws ServiceException;
 
-    public void registerTaskWaitEvent(Long taskInstanceId, String eventName, String completionCode)
+    public void registerTaskWaitEvent(Long taskInstanceId, String eventName)
             throws ServiceException;
 
     /**
@@ -111,7 +112,7 @@ public interface WorkflowServices {
      * @throws ServiceException
      */
     public void registerTaskWaitEvent(Long taskInstanceId, String eventName,
-            String completionCode, boolean recurring) throws ServiceException;
+            String completionCode) throws ServiceException;
     /**
      * @param activityInstanceId
      * @param action
@@ -163,9 +164,6 @@ public interface WorkflowServices {
             Long ownerId, Map<String, String> params) throws ServiceException;
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
-
-    public Integer broadcast(String eventName) throws ServiceException;
-    public Integer broadcast(String eventName, int delay) throws ServiceException ;
 
     public Integer notify(String event, String message, int delay) throws ServiceException;
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;

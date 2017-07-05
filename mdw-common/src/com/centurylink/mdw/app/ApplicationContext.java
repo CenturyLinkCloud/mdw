@@ -75,7 +75,6 @@ public class ApplicationContext {
     private static String proxyServerName=null;
     private static String containerName="";
     private static String engineContextPath = null;
-    private static String contextPath = null;
 
     public static NamingProvider getNamingProvider() {
         return namingProvider;
@@ -184,8 +183,7 @@ public class ApplicationContext {
             startupTime = new Date();
         }
         catch (Exception ex) {
-            throw new StartupException(StartupException.FAIL_INIT_APPLICATION_CONTEXT,
-                    "Failed to initialize ApplicationContext", ex);
+            throw new StartupException("Failed to initialize ApplicationContext", ex);
         }
     }
 
@@ -529,20 +527,20 @@ public class ApplicationContext {
             return null;
     }
 
-    public static boolean isWar() {
-        return NamingProvider.TOMCAT.equals(getContainerName());
-    }
-
     public static boolean isPaaS() {
-         return isWar() &&  (PaaSConstants.PAAS_VCAP_APPLICATION != null);
+         return PaaSConstants.PAAS_VCAP_APPLICATION != null;
     }
 
-    private static String warDeployPath;
-    public static String getWarDeployPath() {
-        return warDeployPath;
+    public static boolean isSpringBoot() {
+        return "org.springframework.boot.loader".equals(System.getProperty("java.protocol.handler.pkgs"));
     }
-    public static void setWarDeployPath(String path) {
-        warDeployPath = path;
+
+    private static String deployPath;
+    public static String getDeployPath() {
+        return deployPath;
+    }
+    public static void setDeployPath(String path) {
+        deployPath = path;
     }
 
     private static List<String> serverList;
@@ -614,14 +612,6 @@ public class ApplicationContext {
 
     public static boolean isFileBasedAssetPersist() {
         return PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) != null;
-    }
-
-    public static String getContextPath() {
-        return contextPath;
-    }
-
-    public static void setContextPath(String contextPath) {
-        ApplicationContext.contextPath = contextPath;
     }
 
     private static File assetRoot;

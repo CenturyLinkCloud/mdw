@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +38,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+@WebServlet(urlPatterns={"/services/*", "/Services/*", "/REST/*"}, loadOnStartup=1)
 public class RestServlet extends ServiceServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -51,11 +53,23 @@ public class RestServlet extends ServiceServlet {
             response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/doc/webServices.html");
             return;
         }
-        if (request.getPathInfo().startsWith("/SOAP")) {
+        else if (request.getPathInfo().startsWith("/SOAP")) {
             // forward to SOAP servlet
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(request.getPathInfo());
             requestDispatcher.forward(request, response);
             return;
+        }
+        else if (ApplicationContext.isDevelopment() && isFromLocalhost(request)) {
+            // this is only allowed from localhost and in dev
+            if ("/System/exit".equals(request.getPathInfo())) {
+                response.setStatus(200);
+                new Thread(new Runnable() {
+                    public void run() {
+                        System.exit(0);
+                    }
+                }).start();
+                return;
+            }
         }
 
         Map<String,String> metaInfo = buildMetaInfo(request);

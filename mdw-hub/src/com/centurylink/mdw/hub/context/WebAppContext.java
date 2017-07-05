@@ -71,6 +71,11 @@ public class WebAppContext {
             mdw.setWebToolsRoot(webToolsUrl);
 
             mdw.setDocsRoot(ApplicationContext.getDocsUrl());
+
+            String discoveryUrl = PropertyManager.getProperty(PropertyNames.DISCOVERY_URL);
+            if (discoveryUrl == null)
+                discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+            mdw.setDiscoveryUrl(discoveryUrl);
         }
         return mdw;
     }

@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.MessageFactory;
@@ -66,6 +67,7 @@ import com.centurylink.mdw.xml.DomHelper;
  * pulled out of the SOAP envelope and forwarded to the MDW external event
  * handler mechanism.
  */
+@WebServlet(urlPatterns={"/SOAP/*"}, loadOnStartup=1)
 public class SoapServlet extends ServiceServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

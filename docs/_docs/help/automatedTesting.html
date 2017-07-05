@@ -45,7 +45,7 @@
 
 <h3><a id="testCases">Test Cases</a></h3>
 <p>A test case is a way to specify how to run an automated function or load test.
-   Each test case is stored as a <a href="workflowAssets.html">workflow asset</a>.
+   Each test case is stored as an <a href="assets.html">MDW Asset</a>.
    A typical test case will make use of the following resources:</p>
 <ul>
    <li><code>&lt;<i>test_case_name></i>.test</code> or <code>&lt;<i>test_case_name></i>.feature</code> (required) - The main test execution script in 
@@ -104,7 +104,7 @@ verify process
   refer to the <a href="groovyTestScriptSyntax.html">Groovy Test Script Syntax</a> guide.</p> 
 
   <p><span style="text-decoration:underline">Note:</span> You can import the MDW framework test cases (or any other shared cases)
-  using the MDW <a href="workflowAssets.html#discovery">Asset Discovery</a> mechanism.  The framework test cases
+  using the MDW <a href="assets.html#discovery">Asset Discovery</a> mechanism.  The framework test cases
   provide examples of over one hundred functioning tests that you can refer to when creating your own. The framework test case assets 
   are in workflow packages com.centurylink.mdw.tests and com.centurylink.mdw.tests.cases.</p>
   
@@ -122,7 +122,7 @@ verify process
      
   <p><span style="text-decoration:underline">Note:</span> Test cases run on the client in Designer and interact with the
   server through built-in REST services.  Since test scripts are run on the client, this means that you need the 
-  <a href="http://groovy.codehaus.org/Eclipse+Plugin">Groovy Plugin</a> installed to run test cases in Eclipse.
+  <a href="http://dist.springsource.org/snapshot/GRECLIPSE/e4.6">Groovy Plugin</a> installed to run test cases in Eclipse.
   In Designer RCP, Groovy is already included so no additional plugin is necessary.</p>
 
   There are three main ways to launch automated tests in Designer:
@@ -317,7 +317,15 @@ using the test report task:</p>
 </pre>
 
 <h3><a id="webUI">Web UI for Automated Tests</a></h3>
-<p>TODO: describe this feature with screenshots from AdminUI</p>
-
+<p>Here is an example for testing your process from AdminUI</p>
+<li>Make sure your server is up and running.</li>
+<li>Bring up the mdw hub: localhost:8080/mdw</li>
+<li>Click the Admin tab and click Testing from the left navigation to bring up a list of your test cases. </li>
+<li>Expand the package that contains your test case.</li>
+<li>Put a check mark on the test case and click the Run button (it is at the top right corner.):</li>
+   <img src="images/testCase.jpg" />
+<li>Once it is suceefully run, you will see a green chek mark on your test case. By clicking it will bring up three different tabs: Test Case, Result and Log.</li>
+  <img src="images/testCase.jpg" />
+  <img src="images/testResults.jpg" />
 </body>
 </html>

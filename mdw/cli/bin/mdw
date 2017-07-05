@@ -1,0 +1,2 @@
+#!/bin/sh
+java -jar ${MDW_HOME}/mdw-cli.jar "$@"

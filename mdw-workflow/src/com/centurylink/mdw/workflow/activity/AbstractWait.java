@@ -66,15 +66,14 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
                     eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             }
             String eventOccur = eventSpecs.get(i)[2];
-            eventOccurances[i] = (eventOccur==null || eventOccur.length()==0
-                    || eventOccur.equalsIgnoreCase("true"));
+            eventOccurances[i] = (eventOccur!=null && eventOccur.equalsIgnoreCase("true"));
         }
         try {
             EventWaitInstance received = getEngine().createEventWaitInstances(
                     this.getActivityInstanceId(),
                     eventNames,
                     eventCompletionCodes,
-                    eventOccurances, !check_if_arrvied);
+                    eventOccurances, !check_if_arrvied, reregister);
             return received;
         } catch (Exception ex) {
             super.logexception(ex.getMessage(), ex);
@@ -126,7 +125,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         else compCode = actInstStatusName + "::" + compCode;
         this.setReturnCode(compCode);
         if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
-            this.registerWaitEvents(true, false);
+            this.registerWaitEvents(true, true);
         }
         return actInstStatus;
     }

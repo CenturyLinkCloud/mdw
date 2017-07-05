@@ -30,6 +30,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -46,6 +47,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.yaml.YamlLoader;
 
+@WebFilter(urlPatterns={"/*"})
 public class AccessFilter implements Filter {
 
     private static String ACCESS_CONFIG_FILE = "access.yaml";
@@ -202,7 +204,7 @@ public class AccessFilter implements Filter {
                     user = ServiceLocator.getUserManager().loadUser(authUser);
                     session.setAttribute("authenticatedUser", user);
                     if (user == null) {
-                        if (!allowAnyAuthenticatedUser)
+                        if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))
                             throw new MdwSecurityException("User not authorized: " + authUser);
                     }
                 }

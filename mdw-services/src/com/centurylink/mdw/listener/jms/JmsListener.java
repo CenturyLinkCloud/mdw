@@ -72,7 +72,7 @@ public abstract class JmsListener  {
         consumer = null;
         StandardLogger logger = LoggerUtil.getStandardLogger();
         try {
-            logger.info("JMS listener " + name + " is listening");
+            logger.info("JMS listener " + name + " (" + queue_name + ") is listening");
             JMSServices jmsServices = JMSServices.getInstance();
 
             // ActiveMQ is not able to listen on a topic when connected as a queue
@@ -110,7 +110,10 @@ public abstract class JmsListener  {
                     }
                     catch (JMSException e) {
                         if ("org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
-                            logger.severeException("Terminating JMS Listener due to Transport Disposed", e);
+                            if (ApplicationContext.isSpringBoot()) // dueling shutdown hooks (spring and activemq) can cause this
+                                logger.severe("Terminating JMS Listener due to Transport Disposed: " + e.getMessage());
+                            else
+                                logger.severeException("Terminating JMS Listener due to Transport Disposed", e);
                             _terminating = true;
                         }
                         else {
@@ -140,7 +143,7 @@ public abstract class JmsListener  {
                                 message = null;  // Make null so we get next message from queue
                             }
                             else {
-                                String msg = "JMS listener " + name + " has no thread available";
+                                String msg = "JMS listener " + name + " (" + queue_name + ") has no thread available";
                                 // make this stand out
                                 logger.severeException(msg, new Exception(msg));
                                 logger.info(thread_pool.currentStatus());
@@ -153,7 +156,10 @@ public abstract class JmsListener  {
                     }
                     catch (JMSException e) {
                         if ("org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
-                            logger.severeException("Terminating JMS Listener due to Transport Disposed", e);
+                            if (ApplicationContext.isSpringBoot()) // dueling shutdown hooks (spring and activemq) can cause this
+                                logger.severe("Terminating JMS Listener due to Transport Disposed: " + e.getMessage());
+                            else
+                                logger.severeException("Terminating JMS Listener due to Transport Disposed", e);
                             _terminating = true;
                         }
                         else {
@@ -165,10 +171,10 @@ public abstract class JmsListener  {
                     }
                 }
             }
-            logger.info("JMS listener " + name + " is terminated");
+            logger.info("JMS listener " + name + " (" + queue_name + ") is terminated");
         }
         catch (Exception e) {
-            logger.severeException("JMS listener " + name + " terminated due to exception " + e.getMessage(), e);
+            logger.severeException("JMS listener " + name + " (" + queue_name + ") terminated due to exception " + e.getMessage(), e);
         }
         finally {
             try {

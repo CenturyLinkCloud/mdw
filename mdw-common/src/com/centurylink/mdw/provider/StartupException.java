@@ -20,9 +20,9 @@ public class StartupException extends com.centurylink.mdw.startup.StartupExcepti
     public StartupException(String message) {
         super(message);
     }
-    
-    public StartupException(String message, Throwable th) {
-        super(-1, message, th);
+
+    public StartupException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

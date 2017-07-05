@@ -15,6 +15,11 @@
  */
 package com.centurylink.mdw.model.event;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,19 +28,30 @@ import com.centurylink.mdw.model.Jsonable;
 /**
  * Represents a workflow event notification.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+
+@XmlRootElement(name = "Event")
 public class Event implements Jsonable {
 
+    @XmlElement(name = "Id", required = true)
     private String id;
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
+    @XmlElement(name = "Message")
     private String message;
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
+    @XmlElement(name = "Delay")
     private int delay;
     public int getDelay() { return delay; }
     public void setDelay(int delay) { this.delay = delay; }
+
+    @XmlElement(name = "CompletionCode")
+    private String completionCode;
+    public String getCompletionCode() { return completionCode; }
+    public void setCompletionCode(String completionCode) { this.completionCode = completionCode; }
 
     public Event() {
     }
@@ -46,6 +62,8 @@ public class Event implements Jsonable {
             this.message = json.getString("message");
         if (json.has("delay"))
             this.delay = json.getInt("delay");
+        if (json.has("completionCode"))
+            this.completionCode = json.getString("completionCode");
     }
 
     @Override
@@ -56,6 +74,8 @@ public class Event implements Jsonable {
             json.put("message", message);
         if (delay > 0)
             json.put("delay", delay);
+        if (completionCode != null)
+            json.put("completionCode", completionCode);
         return json;
     }
 
