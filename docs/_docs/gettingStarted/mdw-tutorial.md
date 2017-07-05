@@ -80,6 +80,6 @@ We assume that you are already familiar with eclipse, Java, Java Web services (R
   
   ![alt text](../images/mdwWorkflowProcessRunResult2.png "mdwWorkflowProcessRunResult2")
   
-- Please note that the response has no data, as we did not implement any code to build it.  Details for creating and implementing custom activities, building a response object, etc., please refer to the MDW cookbooks listed above, under section: `How to Use MDW Designer`. 
+- Please note that the response has no data, as we did not implement any code to build it.  Details for creating and implementing custom activities, building a response object, etc., please refer to the help docs and guides listed on the home page. 
 
 - You can also explore any of the existing MDW processes by expanding the existing packages in mdw-demo project from MDW Designer perspective. You can start with the HandleOrder in com.centurylink.mdw.demo.intro package.
