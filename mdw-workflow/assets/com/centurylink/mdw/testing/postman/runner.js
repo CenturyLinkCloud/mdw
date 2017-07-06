@@ -1,73 +1,59 @@
-'use strict'; 
+'use strict';
+var testCase = null;
+var logFile = null;
 try {
-  var testCase = getTestCase();
+  // TODO
+  //const limberest = require('limberest');
+  const limberest = require('../../../../../../../../limberest-js/index.js');
+  const fs = require('fs-extra');
+  const path = require('path');
+  
+  testCase = getTestCase();
   console.log('running test case:\n  ' + JSON.stringify(testCase, null, 2));
   
-  var fs = require('fs');
-  var postman = JSON.parse(fs.readFileSync(testCase.coll, 'utf8'));
+  var testLoc = path.dirname(testCase.file);
+  var env = limberest.env(testLoc + path.sep + testCase.env);
   
-  var jsYaml = require('js-yaml');
+  var options = {
+    caseDir: testLoc,
+    resultDir: testCase.resultDir,
+    logDir: testCase.resultDir,
+    debug: true, // TODO
+    color: false
+  };
   
-  console.log('read postman test collection:\n ' + testCase.coll);
+  var group = limberest.group(testCase.file);
   
-  var request = require('request');
-  
-  var postmanItems = [];
-  for (let i = 0; i < testCase.items.length; i++) {
-    
-    var pmItem = (testCase.items[i] && postman.item.find(function(item) {
-      return item.name == testCase.items[i].name;
-    }));
-    
-    if (pmItem) {
-      postmanItems.push(pmItem);
-    }
-  }
-  
-  postmanItems.forEach(function(postmanItem) {
-    console.log('will run: ' + JSON.stringify(postmanItem, null, 2));
-    console.log('postmanItem.request.url: ' + postmanItem.request.url);
-    
-    // TODO substs in req 
-    var req = {
-      url: postmanItem.request.url,
-      method: postmanItem.request.method,
-    };
-    if (postmanItem.request.header) {
-      req.header = {};
-      for (let i = 0; i < postmanItem.request.header.length; i++) {
-        var postmanHeader = postmanItem.request.header[i];
-        req.header[postmanHeader.key] = postmanHeader.value;
-      }
-    }
-    if (postmanItem.request.body && postmanItem.request.body.raw) {
-      req.body = postmanItem.request.body.raw.replace(/\r/g, '');
-    }
+  var values = Object.assign({}, env);
+  values['group-name'] = 'GroupA';
 
-    console.log('REQUEST JSON:\n' + JSON.stringify(req, null, 2));
-    
-    // save request yaml
-    var reqYaml = jsYaml.safeDump(req, {noCompatMode: true});
-    console.log('REQUEST YAML:\n' + reqYaml);
-    
-    // expected result (request and response) YAML
-    request(postmanItem.request.url, function(error, response, body) {
-      if (error) {
-        console.log('error:', error);
-        setTestResult({ status: 'Errored', message: error.toString() });
-      }
-      else {
-        // TODO set actual result (request and response) YAML
-        console.log('statusCode:', response && response.statusCode); 
-        console.log('body:', body); 
-        setTestResult({ status: 'Passed', message: 'Test succeeded' });
-      }
+  if (testCase.items) {
+    testCase.items.forEach(item => {
+      var test = group.test(item.method, item.name);
+      logFile = testCase.resultDir + path.sep + item.name + '.log';
+      test.run(values, options, (response, result, error) => {
+        console.log("RESP:\n" + JSON.stringify(response, null, 2));
+        console.log("RES:\n" + JSON.stringify(result, null, 2));
+        setTestResult(result);
+      });
     });
-  });
+  }
 }
 catch (err) {
   // if not caught, VM can System.exit()
   console.log(err);
-  setTestResult({ status: 'Errored', message: err.toString() });  
-  
+  console.log(err.stack);
+  try {
+    // try to log to file and set status
+    if (logFile) {
+      const fs = require('fs-extra');
+      fs.ensureFileSync(logFile);
+      fs.appendFileSync(logFile, err.stack);
+    }
+    setTestResult({ status: 'Errored', message: err.toString() });  
+  }
+  catch (e) {
+    console.log(err);
+    console.log(err.stack);
+  }
 }

@@ -15,6 +15,10 @@
  */
 package com.centurylink.mdw.testing.postman;
 
+import java.io.IOException;
+
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -63,10 +67,22 @@ public class NodeRunner {
 
         nodeJS = NodeJS.createNodeJS();
 
-        V8Object testObj = new V8Object(nodeJS.getRuntime()).add("coll", testCase.getAsset().getFile().getAbsolutePath());
+        V8Object testObj = new V8Object(nodeJS.getRuntime()).add("file", testCase.getAsset().getFile().getAbsolutePath());
+        testObj.add("env", "localhost.env"); // TODO hardcoded
+        try {
+            testObj.add("resultDir", ServiceLocator.getTestingServices().getTestResultsDir() + "/" + testCase.getPackage());
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
         final V8Array testItems = new V8Array(nodeJS.getRuntime());
         for (TestCaseItem item : testCase.getItems()) {
             V8Object itemObj = new V8Object(nodeJS.getRuntime()).add("name", item.getName());
+            if (item.getObject().has("request")) {
+                JSONObject request = item.getObject().getJSONObject("request");
+                if (request.has("method"))
+                    itemObj.add("method", request.getString("method"));
+            }
             testItems.push(itemObj);
             itemObj.release();
         }
