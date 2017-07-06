@@ -3,8 +3,8 @@ var testCase = null;
 var logFile = null;
 try {
   // TODO
-  //const limberest = require('limberest');
-  const limberest = require('../../../../../../../../limberest-js/index.js');
+  const limberest = require('limberest');
+  //const limberest = require('../../../../../../../../limberest-js/index.js');
   const fs = require('fs-extra');
   const path = require('path');
   
