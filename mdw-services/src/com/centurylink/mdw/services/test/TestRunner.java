@@ -262,6 +262,11 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 List<TestCaseItem> toAdd = new ArrayList<>();
                 for (TestCaseItem exeItem : exeTestCase.getItems()) {
                     TestCaseItem item = testCase.getItem(exeItem.getName());
+                    if (exeItem.getObject().has("request")) {
+                        JSONObject request = exeItem.getObject().getJSONObject("request");
+                        if (request.has("method"))
+                            item = testCase.getItem(exeItem.getName(), request.getString("method"));
+                    }
                     if (item == null) {
                         item = exeItem;
                         toAdd.add(item);

@@ -76,6 +76,20 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         }
         return null;
     }
+    public TestCaseItem getItem(String name, String method) {
+        if (items != null) {
+            for (TestCaseItem item : items) {
+                if (name.equals(item.getName())) {
+                    if (item.getObject().has("request")) {
+                        JSONObject request = item.getObject().getJSONObject("request");
+                        if (request.has("method") && request.getString("method").equals(method))
+                            return item;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     public String getName() {
         return asset.getName();

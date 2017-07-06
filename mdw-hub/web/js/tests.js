@@ -12,6 +12,18 @@ testingMod.controller('TestsController',
       pkg.selected = false;
       pkg.testCases.forEach(function(tc) {
         tc.baseName = tc.name.substring(0, tc.name.lastIndexOf('.'));
+        if (tc.items) {
+          tc.items.forEach(function(item) {
+            item.meth = item.object && item.object.request ? item.object.request.method : '';
+            if (item.meth === 'DELETE')
+              item.meth = 'DEL';
+            else if (item.meth === 'OPTIONS')
+              item.meth = 'OPT';
+            item.path = item.object.name.replace('/', '~');
+            if (item.meth)
+              item.path = item.meth + ':' + item.path;
+          });
+        }
         $scope.testCaseCount++;
       });
       $scope.applyPkgCollapsedState();
@@ -147,7 +159,7 @@ testingMod.controller('TestsController',
             tcObj.items = [];
             for (let k = 0; k < tc.items.length; k++) {
               if (tc.items[k].selected)
-                tcObj.items.push({object: {name: tc.items[k].object.name}});
+                tcObj.items.push({object: {name: tc.items[k].object.name, request: { method: tc.items[k].object.request.method }}});
             }
           }
           pkgObj.testCases.push(tcObj);
@@ -243,8 +255,17 @@ testingMod.controller('TestsController',
                 var newItem = null;
                 for (let k = 0; k < newTestCase.items.length; k++) {
                   if (oldItem.object.name == newTestCase.items[k].object.name) {
-                    newItem = newTestCase.items[k];
-                    break;
+                    if (oldItem.object.request && oldItem.object.request.method) {
+                      var newReq = newTestCase.items[k].object.request;
+                      if (newReq && newReq.method === oldItem.object.request.method) {
+                        newItem = newTestCase.items[k];
+                        break;
+                      }
+                    }
+                    else {
+                      newItem = newTestCase.items[k];
+                      break;
+                    }
                   }
                 }
                 if (newItem) {

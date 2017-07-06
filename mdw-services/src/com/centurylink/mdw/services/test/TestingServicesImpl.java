@@ -98,7 +98,15 @@ public class TestingServicesImpl implements TestingServices {
                             JSONArray items = coll.getJSONArray("item");
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                testCase.addItem(new TestCaseItem(item.getString("name")));
+                                TestCaseItem testCaseItem = new TestCaseItem(item.getString("name"));
+                                if (item.has("request")) {
+                                    JSONObject request = item.getJSONObject("request");
+                                    JSONObject req = new JSONObject();
+                                    if (request.has("method"))
+                                        req.put("method", request.getString("method"));
+                                    testCaseItem.getObject().put("request", req);
+                                }
+                                testCase.addItem(testCaseItem);
                             }
                         }
                     }
@@ -135,7 +143,17 @@ public class TestingServicesImpl implements TestingServices {
         try {
             String assetPath = path.substring(0, path.lastIndexOf('/'));
             String pkg = assetPath.substring(0, assetPath.lastIndexOf('/'));
-            String itemName = path.substring(path.lastIndexOf('/') + 1);
+            String itemName = path.substring(path.lastIndexOf('/') + 1).replace('~', '/');
+            String method = null;
+            int colon = itemName.indexOf(':');
+            if (colon > 0) {
+                method = itemName.substring(0, colon);
+                itemName = itemName.substring(colon + 1);
+                if (method.equals("DEL"))
+                    method = "DELETE";
+                else if (method.equals("OPT"))
+                    method = "OPTIONS";
+            }
             AssetInfo testCaseAsset = assetServices.getAsset(assetPath);
             TestCaseItem item = null;
             String json = new String(FileHelper.read(testCaseAsset.getFile()));
@@ -146,8 +164,20 @@ public class TestingServicesImpl implements TestingServices {
                     JSONObject itemObj = items.getJSONObject(i);
                     String itemObjName = itemObj.getString("name");
                     if (itemName.equals(itemObjName)) {
-                        item = new TestCaseItem(itemName);
-                        item.setObject(itemObj);
+                        if (method == null) {
+                            item = new TestCaseItem(itemName);
+                        }
+                        else {
+                            if (itemObj.has("request")) {
+                                JSONObject request = itemObj.getJSONObject("request");
+                                if (request.has("method") && request.getString("method").equals(method))
+                                    item = new TestCaseItem(itemName);
+                            }
+                        }
+                        if (item != null) {
+                            item.setObject(itemObj);
+                            break;
+                        }
                     }
                 }
             }
@@ -259,6 +289,11 @@ public class TestingServicesImpl implements TestingServices {
         if (testCase.getItems() != null) {
             for (TestCaseItem item : testCase.getItems()) {
                 TestCaseItem sourceItem = sourceCase.getItem(item.getName());
+                if (item.getObject().has("request")) {
+                    JSONObject request = item.getObject().getJSONObject("request");
+                    if (request.has("method"))
+                        sourceItem = sourceCase.getItem(item.getName(), request.getString("method"));
+                }
                 if (sourceItem != null) {
                     item.setStatus(sourceItem.getStatus());
                     item.setStart(sourceItem.getStart());

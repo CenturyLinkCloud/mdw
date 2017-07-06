@@ -8,23 +8,26 @@
 	},
 	"item": [
 		{
-			"name": "retrieve-workgroup",
+			"name": "workgroups/{group-name}",
 			"request": {
-				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
 				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"header": [
+					{
+						"key": "header-a",
+						"value": "header-a-value",
+						"description": ""
+					}
+				],
+				"body": {},
 				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "create-workgroup",
+			"name": "workgroups",
 			"request": {
-				"url": "http://localhost:8080/mdw/services/Workgroups",
+				"url": "{{base-url}}/Workgroups",
 				"method": "POST",
 				"header": [
 					{
@@ -35,16 +38,16 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"{{groupName}}\",\r\n  \"description\": \"a group for testing\"\r\n}"
+					"raw": "{\r\n  \"name\": \"{{group-name}}\",\r\n  \"description\": \"a group for testing\"\r\n}"
 				},
 				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "delete-workgroup",
+			"name": "workgroups/{group-name}",
 			"request": {
-				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
 				"method": "DELETE",
 				"header": [],
 				"body": {},
@@ -53,9 +56,9 @@
 			"response": []
 		},
 		{
-			"name": "update-workgroup",
+			"name": "workgroups/{group-name}",
 			"request": {
-				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
 				"method": "PUT",
 				"header": [
 					{
@@ -66,7 +69,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"dons\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
+					"raw": "{\r\n  \"name\": \"{{group-name}}\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
 				},
 				"description": ""
 			},
