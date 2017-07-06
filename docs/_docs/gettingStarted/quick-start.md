@@ -1,5 +1,5 @@
 ---
-permalink: /docs/guides/quick-start/
+permalink: /docs/gettingStarted/quick-start/
 title: Quick Start
 ---
 Get up and running with MDW in a hurry.
