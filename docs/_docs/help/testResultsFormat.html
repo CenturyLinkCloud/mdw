@@ -107,7 +107,7 @@ in your test case script.  Certain built-in values are also available:
 </p>
 <ul>
   <li><code>${masterRequestId}</code> (String) - always populated with either the default generated value or the value assigned in the test case script</li>
-  <li><code>${masterProcessInstance}</code> (ProcessInstanceVO) - populated when "verify process" is executed</li>
+  <li><code>${masterProcessInstance}</code> (ProcessInstance) - populated when "verify process" is executed</li>
   <li><code>${responseMessage}</code> (String) - raw response value for most recent "send" command</li>
 </ul>
 <p>These implicit variables are accessible using standard Java Bean conventions.  For example, to access the
