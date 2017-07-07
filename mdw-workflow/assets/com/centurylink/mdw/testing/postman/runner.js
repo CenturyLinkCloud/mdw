@@ -1,10 +1,22 @@
 'use strict';
+
+// prevent unhandled errors from crashing the VM
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection', err);
+  if (err.stack)
+    console.error(err.stack);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception', err);
+  if (err.stack)
+    console.error(err.stack);
+});
+
 var testCase = null;
-var logFile = null;
 try {
   // TODO
-  const limberest = require('limberest');
-  //const limberest = require('../../../../../../../../limberest-js/index.js');
+  // const limberest = require('limberest');
+  const limberest = require('../../../../../../../../limberest-js/index.js');
   const fs = require('fs-extra');
   const path = require('path');
   
@@ -18,8 +30,7 @@ try {
     caseDir: testLoc,
     resultDir: testCase.resultDir,
     logDir: testCase.resultDir,
-    debug: true, // TODO
-    color: false
+    debug: true // TODO
   };
   
   var group = limberest.group(testCase.file);
@@ -30,7 +41,7 @@ try {
   if (testCase.items) {
     testCase.items.forEach(item => {
       var test = group.test(item.method, item.name);
-      logFile = testCase.resultDir + path.sep + item.name + '.log';
+      var logFile = testCase.resultDir + path.sep + item.name + '.log';
       test.run(values, options, (response, result, error) => {
         console.log("RESP:\n" + JSON.stringify(response, null, 2));
         console.log("RES:\n" + JSON.stringify(result, null, 2));
@@ -40,20 +51,19 @@ try {
   }
 }
 catch (err) {
-  // if not caught, VM can System.exit()
-  console.log(err);
-  console.log(err.stack);
+  // if not caught, VM can crash
+  console.error(err);
+  console.error(err.stack);
   try {
     // try to log to file and set status
-    if (logFile) {
-      const fs = require('fs-extra');
-      fs.ensureFileSync(logFile);
-      fs.appendFileSync(logFile, err.stack);
+    if (testCase && testCase.logger) {
+      testCase.logger.error(err);
+      testCase.logger.error(err.stack);
     }
     setTestResult({ status: 'Errored', message: err.toString() });  
   }
   catch (e) {
-    console.log(err);
-    console.log(err.stack);
+    console.error(err);
+    console.error(err.stack);
   }
 }

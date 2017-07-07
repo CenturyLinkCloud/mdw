@@ -42,6 +42,8 @@ public class NodeRunner {
 
         NodeJS nodeJS = NodeJS.createNodeJS();
 
+        System.out.println("NODE JS: " + nodeJS.getNodeVersion());
+
         final Result parseResult = new Result();
         JavaCallback callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
