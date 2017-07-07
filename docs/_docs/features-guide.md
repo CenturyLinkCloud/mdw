@@ -9,7 +9,7 @@ overview: true
 - Design-time tools for modeling and simulating workflow processes
 - Built for the cloud, enabling users to build in the cloud
 - Declarative business rules in the form of intuitive Excel decision tables
-- Services orchestration for SOAP, REST, JMS, MQSeries, Tibco RVD, LDAP, JDBC, SMTP and File I/O
+- Services orchestration for SOAP, REST, JMS, LDAP, JDBC, SMTP and File I/O
 - Web tools for business users to manage manual tasks integrated into their workflows
 - Automated or manual retry and fallout handling
 - Alerts, notifications and jeopardy management based on business-owned due dates and SLAs 
