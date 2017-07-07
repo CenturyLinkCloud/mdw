@@ -29,6 +29,8 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.RegressionTestEventHandler;
@@ -45,6 +47,7 @@ import com.centurylink.mdw.service.action.InstanceLevelActionHandler;
 import com.centurylink.mdw.service.resource.AppSummary;
 import com.centurylink.mdw.service.rest.Users;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.HmacSha1Signature;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
@@ -188,6 +191,12 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                 }
                 else {
                     metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
+                    if (metaInfo.containsKey("x-hub-signature")) {
+                        logger.debug("payload [" + request.trim() + "]");
+                        if (isValidGitHubPayload(metaInfo, request.trim().getBytes("UTF-8"))) {
+                            metaInfo.put("x-hub-signature-verified", "true");
+                        }
+                    }
                     String json = jsonService.getJson((JSONObject)requestObj, metaInfo);
                     if (json == null)
                         response = createSuccessResponse(Format.json);
@@ -367,5 +376,18 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
             }
         }
         return format;
+    }
+    /**
+     * Validates the GitHub payload
+     */
+    protected boolean isValidGitHubPayload(Map<String,String> headers, byte[] payloadBytes) {
+         String signature = headers.get("x-hub-signature");
+         logger.debug("signature " + signature);
+         String key = PropertyManager.getProperty(PropertyNames.MDW_GITHUB_SECRET_TOKEN);
+         String payloadSig = "sha1=" + HmacSha1Signature.getHMACHexdigestSignature(payloadBytes, key);
+         logger.debug("payloadSignature " + payloadSig);
+         if (payloadSig.equals(signature))
+             return true;
+         return false;
     }
 }

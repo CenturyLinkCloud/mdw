@@ -104,14 +104,53 @@ public class AutomatedTests extends JsonRestService {
             }
             else {
                 try {
-                    TestCase singleCase = getTestCase(segments);
-                    if (singleCase != null)
-                        testingServices.executeCase(singleCase, user, config);
-                    else
-                        testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                    if (segments.length > 6 && segments[6].equals("allTests")) {
+                        if (headers.get("x-hub-signature-verified") != null && headers.get("x-hub-signature-verified").equals("true")) {
+                            testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), "mdwapp", config);
+                            //fire websocket scubscription
+                            //Startup class in test package
+                            //return;
+                            boolean running = true;
+                            int runs = 0;
+                            while (running) {
+                                runs++;
+                                List <TestCase> testCaseList = ServiceLocator.getTestingServices().getTestCases().getTestCases();
+                                int testCount = testCaseList.size();
+                                int i = 0;
+                                for (TestCase testCase : testCaseList) {
+                                    i++;
+                                    if (testCase.getStatus() == TestCase.Status.InProgress) {
+                                        running = true;
+                                        Thread.sleep(10000);
+                                        break;
+                                    }
+                                    else if (testCase.getStatus() == TestCase.Status.Failed || runs >= 10) {
+                                        //send fail notification to dev team
+                                        running = false;
+                                        return null;
+                                    }
+                                    else if (i == testCount) {
+                                        running = false;
+                                        //send success notification to dev team
+                                        return null;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        TestCase singleCase = getTestCase(segments);
+                        if (singleCase != null)
+                            testingServices.executeCase(singleCase, user, config);
+                        else
+                            testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                    }
                 }
                 catch (IOException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+                }
+                catch (InterruptedException e) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage());
                 }
             }
             return null;

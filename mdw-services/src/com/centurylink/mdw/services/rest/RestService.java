@@ -33,6 +33,7 @@ import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
@@ -44,6 +45,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.HmacSha1Signature;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -313,5 +315,19 @@ public abstract class RestService {
         UserAction exportAction = new UserAction(user.getName(), action, entity, entityId, descrip);
         exportAction.setSource(getSource());
         auditLog(exportAction);
+    }
+
+    /**
+     * Validates the GitHub payload
+     */
+    protected boolean isValidGitHubPayload(Map<String,String> headers, byte[] payloadBytes) {
+         String signature = headers.get("x-hub-signature");
+         logger.debug("signature " + signature);
+         String key = PropertyManager.getProperty(PropertyNames.MDW_GITHUB_SECRET_TOKEN);
+         String payloadSig = "sha1=" + HmacSha1Signature.getHMACHexdigestSignature(payloadBytes, key);
+         logger.debug("payloadSignature " + payloadSig);
+         if (payloadSig.equals(signature))
+             return true;
+         return false;
     }
 }
