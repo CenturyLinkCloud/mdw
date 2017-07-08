@@ -73,3 +73,4 @@ process-values.json=3
 processContext.spring=1
 processJaxb.xsd=1
 serviceContext.spring=2
+workgroups_{group-name}.yaml=1

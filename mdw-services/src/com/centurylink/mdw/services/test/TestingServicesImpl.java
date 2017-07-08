@@ -185,8 +185,9 @@ public class TestingServicesImpl implements TestingServices {
                 PackageAssets pkgAssets = assetServices.getAssets(pkg);
                 String yamlExt = Asset.getFileExtension(Asset.YAML);
                 File resultsDir = getTestResultsDir();
+                String rootName = item.getName().replace('/', '_');
                 for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
-                    if (pkgAsset.getName().endsWith(yamlExt) && pkgAsset.getRootName().equals(testCaseAsset.getRootName() + "_" + itemName)) {
+                    if (pkgAsset.getName().endsWith(yamlExt) && pkgAsset.getRootName().equals(rootName)) {
                         item.setExpected(pkg + "/" + pkgAsset.getName());
                         if (resultsDir != null) {
                             if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
@@ -194,8 +195,8 @@ public class TestingServicesImpl implements TestingServices {
                         }
                     }
                 }
-                if (new File(resultsDir + "/" + pkg + "/" + testCaseAsset.getRootName() + "_" + itemName + ".log").isFile())
-                    item.setExecuteLog(pkg + "/" + testCaseAsset.getRootName() + "_" + itemName + ".log");
+                if (new File(resultsDir + "/" + pkg + "/" + rootName + ".log").isFile())
+                    item.setExecuteLog(pkg + "/" + rootName + ".log");
             }
 
             if (item != null)

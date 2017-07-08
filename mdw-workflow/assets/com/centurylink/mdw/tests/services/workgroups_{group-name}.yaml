@@ -1,6 +1,5 @@
 test: 'workgroups/{group-name}'
-something: expected
-request:
+request: # 12345678
   url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
   method: GET
   headers:
@@ -9,7 +8,7 @@ response:
   status:
     code: 200
     message: ''
-  time: ${~[0-9]*}
+  time: ${~[0-9]*} # my comment
   headers:
     set-cookie:
       - JSESSIONID=${~.*}

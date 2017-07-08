@@ -438,10 +438,11 @@ testingMod.filter('instanceLinks', function($sce) {
 }).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
 
 testingMod.filter('yamlDiff', function($sce) {
-  return function(one, two) {
+  return function(one, two, testCaseItem) {
     if (one) {
       one = one.replace(/&/g,'&amp;').replace(/</g,'&lt;');
       if (two) {
+        console.log("YAML DIFF: " + testCaseItem);
         two = two.replace(/&/g,'&amp;').replace(/</g,'&lt;');
         var pureOne = one.replace(/#.*$/gm, '');
         var pureTwo = two.replace(/#.*$/gm, '');
