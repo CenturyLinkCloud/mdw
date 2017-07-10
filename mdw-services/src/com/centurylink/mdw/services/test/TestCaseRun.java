@@ -207,7 +207,10 @@ public class TestCaseRun implements Runnable {
                 Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
                 Object runner = nodeRunnerClass.newInstance();
                 Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
-                runMethod.invoke(runner, testCase);
+                Object result = runMethod.invoke(runner, testCase);
+
+                System.out.println("  TEST RESULT: " + result);
+
                 finishExecution(null);
             }
             else {

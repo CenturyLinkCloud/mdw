@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.test.TestResult;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseItem;
 import com.eclipsesource.v8.JavaCallback;
@@ -36,7 +37,7 @@ public class NodeRunner {
     static final String PARSER = "com.centurylink.mdw.testing.postman/parser.js";
     static final String RUNNER = "com.centurylink.mdw.testing.postman/runner.js";
 
-    public void run(TestCase testCase) throws ServiceException {
+    public TestResult run(TestCase testCase) throws ServiceException {
 
         AssetServices assets = ServiceLocator.getAssetServices();
 
@@ -44,12 +45,12 @@ public class NodeRunner {
 
         System.out.println("NODE JS: " + nodeJS.getNodeVersion());
 
-        final Result parseResult = new Result();
+        final TestResult parseResult = new TestResult();
         JavaCallback callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
                 V8Object resultObj = parameters.getObject(0);
-                parseResult.status = resultObj.getString("status");
-                parseResult.message = resultObj.getString("message");
+                parseResult.setStatus(resultObj.getString("status"));
+                parseResult.setMessage(resultObj.getString("message"));
                 System.out.println("  Parse Result: " + parseResult);
                 resultObj.release();
                 return null;
@@ -62,7 +63,7 @@ public class NodeRunner {
             nodeJS.handleMessage();
         }
 
-        if (!parseResult.status.equals("OK"))
+        if (!parseResult.getStatus().equals("OK"))
             throw new ServiceException(PARSER + parseResult);
 
         nodeJS.release();
@@ -98,13 +99,12 @@ public class NodeRunner {
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "getTestCase");
 
-        final Result testResult = new Result();
+        final TestResult testResult = new TestResult();
         callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
-                V8Object resultObj =parameters.getObject(0);
-                testResult.status = resultObj.getString("status");
-                testResult.message = resultObj.getString("message");
-                System.out.println("  Test Result: " + testResult);
+                V8Object resultObj = parameters.getObject(0);
+                testResult.setStatus(resultObj.getString("status"));
+                testResult.setMessage(resultObj.getString("message"));
                 resultObj.release();
                 return null;
             }
@@ -118,13 +118,8 @@ public class NodeRunner {
 
         testObj.release();
         nodeJS.release();
+
+        return testResult;
     }
 
-    private class Result {
-        String status;
-        String message;
-        public String toString() {
-            return status + ": " + message;
-        }
-    }
 }

@@ -4,13 +4,6 @@
   "description": "REST API Testing",
   "dependencies": {
     "acorn": "^5.0.3",
-    "defaults": "^1.0.3",
-    "diff": "^3.2.0",
-    "fs": "^0.0.1-security",
-    "js-yaml": "^3.8.4",
-    "limberest": "^1.0.1",
-    "request": "^2.81.0",
-    "sanitize-filename": "^1.6.1",
-    "util": "^0.10.3"
+    "limberest": "^1.0.4"
   }
 }
