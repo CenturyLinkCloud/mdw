@@ -16,6 +16,8 @@
 package com.centurylink.mdw.testing.postman;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -24,6 +26,7 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.test.TestResult;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseItem;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
@@ -37,7 +40,7 @@ public class NodeRunner {
     static final String PARSER = "com.centurylink.mdw.testing.postman/parser.js";
     static final String RUNNER = "com.centurylink.mdw.testing.postman/runner.js";
 
-    public TestResult run(TestCase testCase) throws ServiceException {
+    public void run(TestCase testCase) throws ServiceException {
 
         AssetServices assets = ServiceLocator.getAssetServices();
 
@@ -78,15 +81,20 @@ public class NodeRunner {
         catch (IOException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
+        final Map<String,TestCaseItem> testCaseItems = new HashMap<>();
         final V8Array testItems = new V8Array(nodeJS.getRuntime());
         for (TestCaseItem item : testCase.getItems()) {
+            String itemId = item.getName();
             V8Object itemObj = new V8Object(nodeJS.getRuntime()).add("name", item.getName());
             if (item.getObject().has("request")) {
                 JSONObject request = item.getObject().getJSONObject("request");
-                if (request.has("method"))
+                if (request.has("method")) {
                     itemObj.add("method", request.getString("method"));
+                    itemId = request.getString("method") + ":" + itemId;
+                }
             }
             testItems.push(itemObj);
+            testCaseItems.put(itemId, item);
             itemObj.release();
         }
         testObj.add("items", testItems);
@@ -99,12 +107,15 @@ public class NodeRunner {
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "getTestCase");
 
-        final TestResult testResult = new TestResult();
         callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
-                V8Object resultObj = parameters.getObject(0);
-                testResult.setStatus(resultObj.getString("status"));
-                testResult.setMessage(resultObj.getString("message"));
+                String itemId = parameters.getString(0);
+                V8Object resultObj = parameters.getObject(1);
+                TestCaseItem item = testCaseItems.get(itemId);
+                if (item != null) {
+                    item.setStatus(Status.valueOf(resultObj.getString("status")));
+                    item.setMessage(resultObj.getString("message"));
+                }
                 resultObj.release();
                 return null;
             }
@@ -118,8 +129,5 @@ public class NodeRunner {
 
         testObj.release();
         nodeJS.release();
-
-        return testResult;
     }
-
 }

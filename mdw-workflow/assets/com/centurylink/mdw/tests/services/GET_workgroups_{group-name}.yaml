@@ -1,5 +1,5 @@
-test: 'workgroups/{group-name}'
-request: # 12345678
+test: 'GET_workgroups/{group-name}'
+request:
   url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
   method: GET
   headers:
@@ -8,19 +8,19 @@ response:
   status:
     code: 200
     message: ''
-  time: ${~[0-9]*} # my comment
+  time: ${~[0-9]*}
   headers:
     set-cookie:
       - JSESSIONID=${~.*}
     x-ua-compatible: IE=Edge
-    document-id: '0'
+    mdw-request-id: '0'
     content-type: application/json
-    content-length: '${~[0-9]*}'
+    content-length: '77'
     date: '${~.*}'
     connection: close
   body: |-
     {
       "description": "a group for testing",
-      "name": "${group-name}",
+      "name": "GroupA",
       "users": []
     }

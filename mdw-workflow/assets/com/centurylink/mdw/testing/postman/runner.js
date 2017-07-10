@@ -45,7 +45,7 @@ try {
         console.log("RESP:\n" + JSON.stringify(response, null, 2));
         var result = test.verify(values);
         console.log("RES:\n" + JSON.stringify(result, null, 2));
-        setTestResult(result);
+        setTestResult(item.method + ':' + item.name, result);
       });
     });
   }

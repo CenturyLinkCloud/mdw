@@ -145,9 +145,10 @@ public class TestingServicesImpl implements TestingServices {
             String pkg = assetPath.substring(0, assetPath.lastIndexOf('/'));
             String itemName = path.substring(path.lastIndexOf('/') + 1).replace('~', '/');
             String method = null;
+            String meth = null;
             int colon = itemName.indexOf(':');
             if (colon > 0) {
-                method = itemName.substring(0, colon);
+                method = meth = itemName.substring(0, colon);
                 itemName = itemName.substring(colon + 1);
                 if (method.equals("DEL"))
                     method = "DELETE";
@@ -186,6 +187,8 @@ public class TestingServicesImpl implements TestingServices {
                 String yamlExt = Asset.getFileExtension(Asset.YAML);
                 File resultsDir = getTestResultsDir();
                 String rootName = item.getName().replace('/', '_');
+                if (meth != null)
+                    rootName = meth + '_' + rootName;
                 for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
                     if (pkgAsset.getName().endsWith(yamlExt) && pkgAsset.getRootName().equals(rootName)) {
                         item.setExpected(pkg + "/" + pkgAsset.getName());

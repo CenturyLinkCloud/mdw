@@ -38,4 +38,8 @@ public class TestResult implements Jsonable {
     public TestResult(JSONObject json) {
         bind(json);
     }
+
+    public String toString() {
+        return getJson().toString(2);
+    }
 }

@@ -203,8 +203,12 @@ public class TestRunner implements Runnable, MasterRequestListener {
             else {
                 // case status applies to all running items (currently one)
                 for (TestCaseItem item : testCase.getItems()) {
+                    if (!isFinished(item.getStatus()))
+                        allDone = false;
+                    Status oldItemStatus = testCaseStatuses.get(testCase.getItemPath(item.getName()));
+                    if (oldItemStatus != item.getStatus())
+                        statusChanged = true;
                     testCaseStatuses.put(testCase.getItemPath(item.getName()), testCase.getStatus());
-                    item.setStatus(testCase.getStatus());
                 }
             }
 

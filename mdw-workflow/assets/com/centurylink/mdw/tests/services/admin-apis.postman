@@ -25,6 +25,17 @@
 			"response": []
 		},
 		{
+			"name": "workgroups/{group-name}",
+			"request": {
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "workgroups",
 			"request": {
 				"url": "{{base-url}}/Workgroups",
@@ -40,17 +51,6 @@
 					"mode": "raw",
 					"raw": "{\r\n  \"name\": \"{{group-name}}\",\r\n  \"description\": \"a group for testing\"\r\n}"
 				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "workgroups/{group-name}",
-			"request": {
-				"url": "{{base-url}}/Workgroups/{{group-name}}",
-				"method": "DELETE",
-				"header": [],
-				"body": {},
 				"description": ""
 			},
 			"response": []

@@ -442,7 +442,6 @@ testingMod.filter('yamlDiff', function($sce) {
     if (one) {
       one = one.replace(/&/g,'&amp;').replace(/</g,'&lt;');
       if (two) {
-        console.log("YAML DIFF: " + testCaseItem);
         two = two.replace(/&/g,'&amp;').replace(/</g,'&lt;');
         var pureOne = one.replace(/#.*$/gm, '');
         var pureTwo = two.replace(/#.*$/gm, '');
