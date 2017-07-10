@@ -15,7 +15,7 @@ A local project is useful if you want to debug your custom Java source code and 
 ##### Open the Designer Perspective in Eclipse:
 - Launch Eclipse (with the MDW Plug-In installed).
 - From the menus select Window > Open Perspective > Other > MDW Designer.
-- For detailed documentation covering the designer, refer to the [MDW Designer User Guide](../../designer/user-guide/)
+- For detailed documentation covering the designer, refer to the [Designer User Guide](../../designer/user-guide/)
  
 ##### Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you will be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you will use.
