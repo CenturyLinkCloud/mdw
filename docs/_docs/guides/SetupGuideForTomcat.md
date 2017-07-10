@@ -62,4 +62,16 @@ You can perform many cloud development activities using a remote workflow projec
 - Make sure your project is added to your Java Build Path/Source. You will need to do this from a Java or Resource perspective. 
 
 - You can confirm that MDW was successfully deployed by accessing MDWHub in your browser: [http://localhost:8080/mdw](http://localhost:8080/mdw).
+
+##### Next Steps:
+-	Check out some of the other MDW developer docs:       
+    - [Microservices Cookbook](../MicroservicesCookbook/)            
+    - [SOAP-based Web Service](../SOAPService/)
+    
+-	Browse through the online help docs, which are the same as those in Eclipse:                             
+ 	  [http://centurylinkcloud.github.io/mdw/help](http://centurylinkcloud.github.io/mdw/docs/help)
+ 	  
+-	The MDW JavaDocs:                                                     
+      [http://centurylinkcloud.github.io/mdw/javadoc/index.html](http://centurylinkcloud.github.io/mdw/docs/javadoc/index.html)
+
  
