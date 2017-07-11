@@ -18,7 +18,7 @@ var testCase = null;
 try {
   // TODO
   // const limberest = require('limberest');
-  const limberest = require('../../../../../../../../limberest-js/index.js');
+  const limberest = require('limberest');
   const path = require('path');
   
   testCase = getTestCase();
