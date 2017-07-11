@@ -17,6 +17,7 @@ package com.centurylink.mdw.services.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,17 +26,26 @@ import org.apache.xmlbeans.XmlObject;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.test.ApiResponse;
+import com.centurylink.mdw.test.ApiTest;
 import com.centurylink.mdw.test.PreFilter;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseActivityStub;
 import com.centurylink.mdw.test.TestCaseAdapterStub;
 import com.centurylink.mdw.test.TestCaseEvent;
 import com.centurylink.mdw.test.TestCaseHttp;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseMessage;
 import com.centurylink.mdw.test.TestCaseProcess;
 import com.centurylink.mdw.test.TestCaseResponse;
@@ -117,6 +127,66 @@ public abstract class TestCaseScript extends Script {
     // no-op methods for keywords
     public TestCaseProcess process() { return process; }
     public TestCaseResponse response() { return response; }
+    public ApiTest apiTest() { return apiTest; }
+
+    private ApiTest apiTest; // current api test
+    public ApiTest apiTest(String target) throws TestException {
+        return apiTest(target, null);
+    }
+
+    public ApiTest apiTest(String target, Closure<?> cl) throws TestException {
+        int dotPostmanSlash = target.lastIndexOf(".postman/");
+        if (dotPostmanSlash == -1)
+            throw new TestException("Bad API test path: " + target);
+        String assetPath = target.substring(0, dotPostmanSlash + 8);
+        Asset asset = asset(assetPath);
+        if (asset == null)
+            throw new TestException("API test case asset not found: " + assetPath);
+        TestCase apiTestCase = new TestCase(asset.getPackageName(), new AssetInfo(asset.file()));
+        try {
+            String itemPath = asset.getPackageName() + "/" + asset.getName() + "/"
+                    + target.substring(dotPostmanSlash + 9).replace('/', '~');
+            TestCaseItem item = ServiceLocator.getTestingServices().getTestCaseItem(itemPath);
+            if (item == null)
+                throw new TestException("Test case item not found: " + itemPath);
+            apiTestCase.addItem(item);
+            apiTest = new ApiTest(apiTestCase);
+            if (cl != null) {
+                cl.setResolveStrategy(Closure.DELEGATE_FIRST);
+                cl.setDelegate(apiTest);
+                cl.call();
+            }
+
+            return apiTest;
+        }
+        catch (TestException ex) {
+            throw ex;
+        }
+        catch (ServiceException ex) {
+            throw new TestException(ex.getMessage(), ex);
+        }
+    }
+
+    public ApiResponse submit(ApiTest apiTest) throws TestException {
+        TestCase apiTestCase = apiTest.getTestCase();
+        TestCaseItem testItem = apiTest.getTestCase().getItems().get(0); // TODO
+        if (testItem.getCaseName() == null)
+            testItem.setCaseName(getTestCase().getAsset().getRootName());
+        try {
+            String runnerClass = TestCaseRun.POSTMAN_PKG + ".NodeRunner";
+            Package pkg = PackageCache.getPackage(apiTestCase.getPackage());
+            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+            Object runner = nodeRunnerClass.newInstance();
+            Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+            runMethod.invoke(runner, apiTestCase);
+
+            return new ApiResponse(testItem.getResponseObject());
+        }
+        catch (Exception ex) {
+            throw new TestException(ex.getMessage(), ex);
+        }
+    }
+
 
     public TestCaseProcess start(String target) throws TestException {
         return start(process(target));

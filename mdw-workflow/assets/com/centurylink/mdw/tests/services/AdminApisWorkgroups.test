@@ -1,0 +1,27 @@
+import groovy.json.JsonSlurper
+
+// AdminApisWorkgroups
+
+println 'Workgroups API CRUD...'
+
+def res = submit apiTest('admin-apis.postman/GET:workgroups/{group-name}') {
+  values = ['group-name': 'GroupA']
+}
+
+assert res.time < 1000 // less than a second
+
+if (res.status.code == 200) {
+    def workgroup = new JsonSlurper().parseText(res.body)
+    assert workgroup.name == 'GroupA'
+    // delete the workgroup so we can submit a POST
+    res = submit apiTest('admin-apis.postman/DEL:workgroups/{group-name}') {
+      values = ['group-name': 'GroupA']
+    }
+
+    assert res.status.code == 200;
+}
+
+// create workgroup
+res = submit apiTest('admin-apis.postman/POST:workgroups') {
+  values = ['group-name': 'GroupA']
+}

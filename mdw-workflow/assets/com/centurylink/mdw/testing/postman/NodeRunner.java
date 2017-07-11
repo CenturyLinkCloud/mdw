@@ -24,12 +24,12 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.test.TestResult;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseItem;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
+import com.eclipsesource.v8.V8;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 
@@ -48,12 +48,12 @@ public class NodeRunner {
 
         System.out.println("NODE JS: " + nodeJS.getNodeVersion());
 
-        final TestResult parseResult = new TestResult();
+        final Result parseResult = new Result();
         JavaCallback callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
                 V8Object resultObj = parameters.getObject(0);
-                parseResult.setStatus(resultObj.getString("status"));
-                parseResult.setMessage(resultObj.getString("message"));
+                parseResult.status = resultObj.getString("status");
+                parseResult.message = resultObj.getString("message");
                 System.out.println("  Parse Result: " + parseResult);
                 resultObj.release();
                 return null;
@@ -66,7 +66,7 @@ public class NodeRunner {
             nodeJS.handleMessage();
         }
 
-        if (!parseResult.getStatus().equals("OK"))
+        if (!parseResult.status.equals("OK"))
             throw new ServiceException(PARSER + parseResult);
 
         nodeJS.release();
@@ -86,6 +86,8 @@ public class NodeRunner {
         for (TestCaseItem item : testCase.getItems()) {
             String itemId = item.getName();
             V8Object itemObj = new V8Object(nodeJS.getRuntime()).add("name", item.getName());
+            if (item.getCaseName() != null)
+                itemObj.add("caseName", item.getCaseName());
             if (item.getObject().has("request")) {
                 JSONObject request = item.getObject().getJSONObject("request");
                 if (request.has("method")) {
@@ -111,6 +113,12 @@ public class NodeRunner {
             public Object invoke(V8Object receiver, V8Array parameters) {
                 String itemId = parameters.getString(0);
                 V8Object resultObj = parameters.getObject(1);
+                if (itemId == null) {
+                    for (TestCaseItem item : testCase.getItems()) {
+                      item.setStatus(Status.valueOf(resultObj.getString("status")));
+                      item.setMessage(resultObj.getString("message"));
+                    }
+                }
                 TestCaseItem item = testCaseItems.get(itemId);
                 if (item != null) {
                     item.setStatus(Status.valueOf(resultObj.getString("status")));
@@ -122,6 +130,26 @@ public class NodeRunner {
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "setTestResult");
 
+        final V8 v8 = nodeJS.getRuntime();
+        callback = new JavaCallback() {
+            public Object invoke(V8Object receiver, V8Array parameters) {
+                String itemId = parameters.getString(0);
+                V8Object responseObj = parameters.getObject(1);
+                TestCaseItem item = testCaseItems.get(itemId);
+                if (item != null) {
+                    V8Object json = v8.getObject("JSON");
+                    V8Array params = new V8Array(v8).push(responseObj);
+                    String jsonStr = json.executeStringFunction("stringify", params);
+                    params.release();
+                    json.release();
+                    item.setResponseObject(new JSONObject(jsonStr));
+                }
+                responseObj.release();
+                return null;
+            }
+        };
+        nodeJS.getRuntime().registerJavaMethod(callback, "setTestResponse");
+
         nodeJS.exec(assets.getAsset(RUNNER).getFile());
         while (nodeJS.isRunning()) {
             nodeJS.handleMessage();
@@ -129,5 +157,13 @@ public class NodeRunner {
 
         testObj.release();
         nodeJS.release();
+    }
+
+    private class Result {
+        String status;
+        String message;
+        public String toString() {
+            return status + ": " + message;
+        }
     }
 }

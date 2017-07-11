@@ -32,7 +32,6 @@ import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Simple test case model for automated testing services.
- * (Designer version is too tightly coupled to test engine to move to mdw-common).
  */
 public class TestCase implements Jsonable, Comparable<TestCase> {
 

@@ -1,5 +1,7 @@
 'use strict';
 
+// Runs multiple test items, each with their own case.
+
 // prevent unhandled errors from crashing the VM
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection', err);
@@ -20,7 +22,6 @@ try {
   const path = require('path');
   
   testCase = getTestCase();
-  console.log('running test case:\n  ' + JSON.stringify(testCase, null, 2));
   
   var testLoc = path.dirname(testCase.file);
   var env = limberest.env(testLoc + '/' + testCase.env);
@@ -29,23 +30,28 @@ try {
     location: testLoc,
     resultLocation: testCase.resultDir,
     logLocation: testCase.resultDir,
-    debug: true // TODO
+    debug: true, // TODO
   };
-  
+
+  if (options.debug)
+    console.log('running test case:\n  ' + JSON.stringify(testCase, null, 2));
+    
   var group = limberest.group(testCase.file);
   
-  var values = Object.assign({}, env);
-  values['group-name'] = 'GroupA';
-
+  var values = Object.assign({}, env); // TODO
+  
   if (testCase.items) {
     testCase.items.forEach(item => {
       var test = group.test(item.method, item.name);
-      var logFile = testCase.resultDir + '/' + item.name + '.log';
-      test.run(options, values, (response, error) => {
-        console.log("RESP:\n" + JSON.stringify(response, null, 2));
-        var result = test.verify(values);
-        console.log("RES:\n" + JSON.stringify(result, null, 2));
-        setTestResult(item.method + ':' + item.name, result);
+      var retain = (item.caseName != null);
+      var opts = Object.assign({retainLog: retain, retainResult: retain}, options);
+      test.run(opts, values, (response, error) => {
+        var itemId = item.method + ':' + item.name;
+        setTestResponse(itemId, response);
+        if (!item.caseName) {
+          var result = test.verify(values);
+          setTestResult(itemId, result);
+        }
       });
     });
   }
@@ -62,7 +68,7 @@ catch (err) {
       testCase.logger.error(err);
       testCase.logger.error(err.stack);
     }
-    setTestResult({ status: 'Errored', message: err.toString() });  
+    setTestResult(null, {status: 'Errored', message: err.toString()});  
   }
   catch (e) {
     console.error(err);
