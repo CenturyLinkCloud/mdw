@@ -1,0 +1,76 @@
+test: AdminApisWorkgroups
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups/GroupA'
+  method: GET
+  headers:
+    header-a: header-a-value
+response:
+  status:
+    code: 200
+    message: ''
+  time: ${~[0-9]*}
+  headers:
+    set-cookie:
+      - JSESSIONID=${~.*}
+    x-ua-compatible: IE=Edge
+    mdw-request-id: '0'
+    content-type: application/json
+    content-length: '${~[0-9]*}'
+    date: '${~.*}'
+    connection: close
+  body: |-
+    {
+      "description": "a group for testing",
+      "name": "${group-name}",
+      "users": []
+    }
+test: AdminApisWorkgroups
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups/GroupA'
+  method: DELETE
+  headers: {}
+response:
+  status:
+    code: 200
+    message: ''
+  time: ${~[0-9]*}
+  headers:
+    set-cookie:
+      - JSESSIONID=${~.*}
+    x-ua-compatible: IE=Edge
+    mdw-request-id: '0'
+    content-type: application/json
+    content-length: '${~[0-9]*}'
+    date: '${~.*}'
+    connection: close
+  body: |-
+    {"status": {
+      "code": 0,
+      "message": "Success"
+    }}
+test: AdminApisWorkgroups
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: "{\r\n  \"name\": \"GroupA\",\r\n  \"description\": \"a group for testing\"\r\n}"
+response:
+  status:
+    code: 200
+    message: ''
+  time: ${~[0-9]*}
+  headers:
+    set-cookie:
+      - JSESSIONID=${~.*}
+    x-ua-compatible: IE=Edge
+    mdw-request-id: '${~[0-9]*}'
+    content-type: application/json
+    content-length: '${~[0-9]*}'
+    date: '${~.*}'
+    connection: close
+  body: |-
+    {"status": {
+      "code": 0,
+      "message": "Success"
+    }}

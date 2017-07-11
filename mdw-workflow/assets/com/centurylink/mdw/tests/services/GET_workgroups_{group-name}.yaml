@@ -1,0 +1,26 @@
+test: 'GET_workgroups/{group-name}'
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
+  method: GET
+  headers:
+    header-a: header-a-value
+response:
+  status:
+    code: 200
+    message: ''
+  time: ${~[0-9]*}
+  headers:
+    set-cookie:
+      - JSESSIONID=${~.*}
+    x-ua-compatible: IE=Edge
+    mdw-request-id: '0'
+    content-type: application/json
+    content-length: '77'
+    date: '${~.*}'
+    connection: close
+  body: |-
+    {
+      "description": "a group for testing",
+      "name": "GroupA",
+      "users": []
+    }

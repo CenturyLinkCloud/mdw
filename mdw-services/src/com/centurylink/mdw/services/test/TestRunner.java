@@ -203,8 +203,12 @@ public class TestRunner implements Runnable, MasterRequestListener {
             else {
                 // case status applies to all running items (currently one)
                 for (TestCaseItem item : testCase.getItems()) {
+                    if (!isFinished(item.getStatus()))
+                        allDone = false;
+                    Status oldItemStatus = testCaseStatuses.get(testCase.getItemPath(item.getName()));
+                    if (oldItemStatus != item.getStatus())
+                        statusChanged = true;
                     testCaseStatuses.put(testCase.getItemPath(item.getName()), testCase.getStatus());
-                    item.setStatus(testCase.getStatus());
                 }
             }
 
@@ -262,6 +266,11 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 List<TestCaseItem> toAdd = new ArrayList<>();
                 for (TestCaseItem exeItem : exeTestCase.getItems()) {
                     TestCaseItem item = testCase.getItem(exeItem.getName());
+                    if (exeItem.getObject().has("request")) {
+                        JSONObject request = exeItem.getObject().getJSONObject("request");
+                        if (request.has("method"))
+                            item = testCase.getItem(exeItem.getName(), request.getString("method"));
+                    }
                     if (item == null) {
                         item = exeItem;
                         toAdd.add(item);

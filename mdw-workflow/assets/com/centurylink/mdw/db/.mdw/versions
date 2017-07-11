@@ -4,6 +4,7 @@ add_fkeys.sql=2
 add_user_attribute.sql=1
 add_user_to_common_role.sql=1
 add_user_to_group.sql=1
+add_user_to_group_role.sql=1
 add_user_to_role_for_group.sql=1
 baseline_inserts.sql=3
 commons-exec-1.3.jar=1
