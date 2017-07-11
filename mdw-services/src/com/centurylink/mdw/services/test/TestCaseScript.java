@@ -38,7 +38,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.test.ApiResponse;
-import com.centurylink.mdw.test.ApiTest;
+import com.centurylink.mdw.test.ApiRequest;
 import com.centurylink.mdw.test.PreFilter;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseActivityStub;
@@ -127,14 +127,14 @@ public abstract class TestCaseScript extends Script {
     // no-op methods for keywords
     public TestCaseProcess process() { return process; }
     public TestCaseResponse response() { return response; }
-    public ApiTest apiTest() { return apiTest; }
+    public ApiRequest apiTest() { return apiTest; }
 
-    private ApiTest apiTest; // current api test
-    public ApiTest apiTest(String target) throws TestException {
-        return apiTest(target, null);
+    private ApiRequest apiTest; // current api test
+    public ApiRequest request(String target) throws TestException {
+        return request(target, null);
     }
 
-    public ApiTest apiTest(String target, Closure<?> cl) throws TestException {
+    public ApiRequest request(String target, Closure<?> cl) throws TestException {
         int dotPostmanSlash = target.lastIndexOf(".postman/");
         if (dotPostmanSlash == -1)
             throw new TestException("Bad API test path: " + target);
@@ -150,7 +150,7 @@ public abstract class TestCaseScript extends Script {
             if (item == null)
                 throw new TestException("Test case item not found: " + itemPath);
             apiTestCase.addItem(item);
-            apiTest = new ApiTest(apiTestCase);
+            apiTest = new ApiRequest(apiTestCase);
             if (cl != null) {
                 cl.setResolveStrategy(Closure.DELEGATE_FIRST);
                 cl.setDelegate(apiTest);
@@ -167,9 +167,9 @@ public abstract class TestCaseScript extends Script {
         }
     }
 
-    public ApiResponse submit(ApiTest apiTest) throws TestException {
-        TestCase apiTestCase = apiTest.getTestCase();
-        TestCaseItem testItem = apiTest.getTestCase().getItems().get(0); // TODO
+    public ApiResponse submit(ApiRequest apiRequest) throws TestException {
+        TestCase apiTestCase = apiRequest.getTestCase();
+        TestCaseItem testItem = apiRequest.getTestCase().getItems().get(0); // TODO
         if (testItem.getCaseName() == null)
             testItem.setCaseName(getTestCase().getAsset().getRootName());
         try {
@@ -186,7 +186,6 @@ public abstract class TestCaseScript extends Script {
             throw new TestException(ex.getMessage(), ex);
         }
     }
-
 
     public TestCaseProcess start(String target) throws TestException {
         return start(process(target));

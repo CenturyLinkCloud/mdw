@@ -17,12 +17,12 @@ package com.centurylink.mdw.test;
 
 import java.util.Map;
 
-public class ApiTest {
+public class ApiRequest {
 
     private TestCase testCase;
     public TestCase getTestCase() { return testCase; }
 
-    public ApiTest(TestCase testCase) {
+    public ApiRequest(TestCase testCase) {
         this.testCase = testCase;
     }
 

@@ -44,7 +44,10 @@ try {
     testCase.items.forEach(item => {
       var test = group.test(item.method, item.name);
       var retain = (item.caseName != null);
-      var opts = Object.assign({retainLog: retain, retainResult: retain}, options);
+      var opts = Object.assign({
+        retainLog: retain, 
+        retainResult: retain,
+        caseName: item.caseName}, options);
       test.run(opts, values, (response, error) => {
         var itemId = item.method + ':' + item.name;
         setTestResponse(itemId, response);
