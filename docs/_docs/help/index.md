@@ -7,8 +7,6 @@ permalink: /docs/help/
 <div class="grid">
 <h3>General Information</h3>
 <ul>
-  <li><a href='../development/built-in-activities'>Built-In Activities</a></li>   
-  <li><a href='../development/built-in-variable-types'>Built-In Variable Types</a></li>
   <li><a href='../release-notes'>Release Notes</a></li>
 </ul>
 <h3>Web Services</h3>
@@ -54,6 +52,8 @@ permalink: /docs/help/
 </ul>
 <h3>Coding and Development</h3>
 <ul>
+  <li><a href='../development/built-in-activities'>Built-In Activities</a></li>   
+  <li><a href='../development/built-in-variable-types'>Built-In Variable Types</a></li>
   <li><a href='implementor.html'>Developing Activity Implementors</a></li>
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='listener.html'>Developing Listeners and External Event Handlers</a></li>
