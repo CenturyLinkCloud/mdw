@@ -1,6 +1,6 @@
 spool baseline_inserts.lst;
-insert into ATTRIBUTE (ATTRIBUTE_OWNER,ATTRIBUTE_OWNER_ID,ATTRIBUTE_NAME,ATTRIBUTE_VALUE,CREATE_DT,CREATE_USR)
-    values ('SYSTEM',0,'mdw.database.version','5005',now(),'MDWDEV');
+insert into ATTRIBUTE (ATTRIBUTE_ID,ATTRIBUTE_OWNER,ATTRIBUTE_OWNER_ID,ATTRIBUTE_NAME,ATTRIBUTE_VALUE,CREATE_DT,CREATE_USR)
+    values (MDW_COMMON_ID_SEQ.NEXTVAL,'SYSTEM',0,'mdw.database.version','5005',sysdate,'MDWDEV');
 
 INSERT INTO USER_ROLE (USER_ROLE_ID,USER_ROLE_NAME,CREATE_USR,COMMENTS) 
     values (6,'Supervisor', 'BASELINE5.5', 'reassign tasks, acting as a group member');
