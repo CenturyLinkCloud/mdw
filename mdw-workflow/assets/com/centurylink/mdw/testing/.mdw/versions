@@ -1,4 +1,5 @@
-AutomatedTests.java=16
+AutoTestWebSocketClient.java=1
+AutomatedTests.java=17
 TestCaseActivityMonitor.java=8
 function-test-results.xsl=2
 load-test-results.xsl=1
