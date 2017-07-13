@@ -184,13 +184,13 @@ A local project is useful if you want to debug your custom Java source code and 
 
    ![alt textr](../images/runPrcoess.png "runPrcoess")
  
-##### Populate the Input Variable:
-  
-  ```xml  
-   order> 
-      <orderId>N12345678</orderId>
-   </order>
-  ```   
+- Populate the Input Variable:   
+ 
+  ```xml
+  <order> 
+     <orderId>N12345678</orderId>
+  </order>
+  ```
   
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![alt textr](../images/runPrcoess2.png "runPrcoess2")
