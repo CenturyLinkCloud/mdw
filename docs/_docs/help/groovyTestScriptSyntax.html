@@ -381,7 +381,26 @@ start process("com.centurylink.mdw.tests/TestActivityStub") {
 <h3><a id="serviceApiTesting">Service API Testing</a></h3>
 <p>
 Service API tests start with request template assets that are most easily created in
-<a href="https://www.getpostman.com">Postman</a>.
+<a href="https://www.getpostman.com">Postman</a>.  Export your Postman test collection
+to an asset with extension '.postman'.  You can then execute the Postman tests directory,
+or you can use them in a Groovy test.
+</p>
+<p>In the following example <em>admin-apis.postman</em> is the asset, <em>GET</em>
+is the HTTP method, and <em>workgroups/{group-name}</em> is the Postman test:</p>
+<pre>
+def res = submit request('admin-apis.postman/GET:workgroups/{group-name}') {
+  values = ['group-name': 'GroupA']
+}
+assert res.time &lt; 1000 // less than a second
+assert res.status.code == 200
+assert res.headers['content-type'] == 'application/json'
+def workgroup = new JsonSlurper().parseText(res.body)
+assert workgroup.name == 'GroupA'
+</pre> 
+<p>The response for each <code>submit</code> in a test case is appended to the yaml results file,
+so multiple tests can be chained together, and their output compared.  Process verification
+outcomes can also be included, so that the overall results for service orchestration workflows
+can be verified</p> 
 
 <h3><a id="submitHttpRequest">Submit an HTTP Request</a></h3>
 <p><strong>NOTE:</strong> The <a href="#serviceApiTesting">Service API Testing</a> section
