@@ -443,8 +443,8 @@ testingMod.filter('yamlDiff', function($sce) {
       one = one.replace(/&/g,'&amp;').replace(/</g,'&lt;');
       if (two) {
         two = two.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-        var pureOne = one.replace(/#.*$/gm, '');
-        var pureTwo = two.replace(/#.*$/gm, '');
+        var pureOne = one.removeCrs().replace(/#.*$/gm, '');
+        var pureTwo = two.removeCrs().replace(/#.*$/gm, '');
   
         var diffs = JsDiff.diffWordsWithSpace(pureOne, pureTwo);
         var hlOne = '';

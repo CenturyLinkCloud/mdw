@@ -262,7 +262,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             testCase.setStart(exeTestCase.getStart());
             testCase.setEnd(exeTestCase.getEnd());
             testCase.setMessage(exeTestCase.getMessage());
-            if (exeTestCase.getItems() != null) {
+            if (exeTestCase.getItems() != null && testCase.getItems() != null) {
                 List<TestCaseItem> toAdd = new ArrayList<>();
                 for (TestCaseItem exeItem : exeTestCase.getItems()) {
                     TestCaseItem item = testCase.getItem(exeItem.getName());

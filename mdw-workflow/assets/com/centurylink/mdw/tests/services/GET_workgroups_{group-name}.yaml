@@ -7,7 +7,7 @@ request:
 response:
   status:
     code: 200
-    message: ''
+    message: OK
   time: ${~[0-9]*}
   headers:
     set-cookie:

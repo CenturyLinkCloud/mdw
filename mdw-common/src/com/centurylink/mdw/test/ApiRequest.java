@@ -34,6 +34,18 @@ public class ApiRequest {
     public String getEnvironment() { return environment; }
     public void setEnvironment(String environment) { this.environment = environment; }
 
+    /**
+     * Runner options.
+     */
+    private Map<String,Object> options;
+    public Map<String,Object> getOptions() { return options; }
+    public void setOptions(Map<String,Object> options) {
+        this.options = options;
+    }
+
+    /**
+     * Runtime values.
+     */
     private Map<String,Object> values;
     public Map<String,Object> getValues() { return values; }
     public void setValues(Map<String,Object> values) {
