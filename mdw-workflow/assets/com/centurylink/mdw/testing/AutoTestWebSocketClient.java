@@ -72,26 +72,29 @@ public class AutoTestWebSocketClient extends WebSocketClient  implements Startup
 
     @Override
     public void onMessage( String message ) {
-        //System.out.println( "received: " + message );
         TestCaseList testList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(message));
         List<TestCase> testCaseList = testList.getTestCases();
         for (TestCase testCase : testCaseList) {
             if (testCase.getStatus() == TestCase.Status.Failed || testCase.getStatus() == TestCase.Status.Errored) {
                 //Send a message on Slack
-                //System.out.println( "testCase failed: " + testCase.getName());
                 HttpHelper helper;
                 try {
-                    helper = HttpHelper.getHttpHelper("POST", new URL(PropertyManager.getProperty("mdw.slack.team")));
-                    helper.getConnection().setHeader("Content-Type", "application/json");
-                    helper.post("{\"text\": "+ "\"testCase failed: " + testCase.getName() +"\"}");
-                    //System.out.println( "response from slack: " + response);
+                    String testCaseUrl = ApplicationContext.getMdwHubUrl() + "/#/tests/" + testCase.getPackage() + "/" + testCase.getName();
+                    String slackWebhook = System.getenv(PropertyNames.MDW_TEAM_SLACK_CHANNEL);
+                    if (slackWebhook != null) {
+                        helper = HttpHelper.getHttpHelper("POST", new URL(slackWebhook));
+                        helper.getConnection().setHeader("Content-Type", "application/json");
+                        String payload = "\"test case failed: <" +testCaseUrl + "|" + testCase.getName() + ">\"}";
+                        helper.post("{\"text\": "+ payload);
+                    }
+                    else {
+                        System.out.println("testCase failed: " + testCaseUrl);
+                    }
                 }
                 catch (MalformedURLException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
