@@ -11,7 +11,7 @@ Once you get a little familiar with MDW, feel free to explore other guides and h
 We assume that you are already familiar with eclipse, Java, Java Web services (RESTFul/JSON and/or SOAP/XML and HTTP protocol), use of Java container concept and Maven or Gradle for building a Java project in eclipse.
 
 - First, you will need to setup your environment. Please complete the steps 1 - 4 only in [mdw-demo/README.md](https://github.com/CenturyLinkCloud/mdw-demo) and return to this tutorial. 
-- When you have your eclipse workspace setup and deployed the mdw-demo project on the Tomcat server successfully, move on to step `1. Create a  Workflow Process` bellow to continue with this tutorial.
+- When you have your eclipse workspace setup and deployed the mdw-demo project on the Tomcat server successfully, proceed with `1. Create a  Workflow Process` bellow to continue with this tutorial.
 
 #### Getting Started with MDW Designer
 #####  1.  Create a  Workflow Process
