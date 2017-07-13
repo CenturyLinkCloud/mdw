@@ -1,10 +1,10 @@
-test: POST_workgroups
+test: 'PUT_workgroups/{group-name}'
 request:
-  url: 'http://localhost:8080/mdw/Services/Workgroups'
-  method: POST
+  url: 'http://localhost:8080/mdw/Services/Workgroups/GroupA'
+  method: PUT
   headers:
     Content-Type: application/json
-  body: "{\r\n  \"name\": \"GroupA\",\r\n  \"description\": \"a group for testing\"\r\n}"
+  body: "{\r\n  \"name\": \"GroupA\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
 response:
   status:
     code: 200
@@ -18,7 +18,7 @@ response:
     mdw-request-id: '${~[0-9]*}'
     content-type: application/json
     content-length: '${~[0-9]*}'
-    date: '${~.*}'
+    date: ${~.*}'
     connection: close
   body: |-
     {"status": {

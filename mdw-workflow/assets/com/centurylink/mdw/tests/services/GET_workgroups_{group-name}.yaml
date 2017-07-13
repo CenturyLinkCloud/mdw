@@ -10,17 +10,18 @@ response:
     message: OK
   time: ${~[0-9]*}
   headers:
+    server: ${~Apache.*}
     set-cookie:
       - JSESSIONID=${~.*}
     x-ua-compatible: IE=Edge
     mdw-request-id: '0'
     content-type: application/json
-    content-length: '77'
+    content-length: '${~[0-9]*}'
     date: '${~.*}'
     connection: close
   body: |-
     {
-      "description": "a group for testing",
+      "description": "a group for testing (updated)",
       "name": "GroupA",
       "users": []
     }
