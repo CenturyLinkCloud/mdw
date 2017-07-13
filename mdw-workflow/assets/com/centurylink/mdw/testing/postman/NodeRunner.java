@@ -54,7 +54,6 @@ public class NodeRunner {
                 V8Object resultObj = parameters.getObject(0);
                 parseResult.status = resultObj.getString("status");
                 parseResult.message = resultObj.getString("message");
-                System.out.println("  Parse Result: " + parseResult);
                 resultObj.release();
                 return null;
             }
@@ -86,14 +85,30 @@ public class NodeRunner {
         for (TestCaseItem item : testCase.getItems()) {
             String itemId = item.getName();
             V8Object itemObj = new V8Object(nodeJS.getRuntime()).add("name", item.getName());
-            if (item.getCaseName() != null)
-                itemObj.add("caseName", item.getCaseName());
             if (item.getObject().has("request")) {
                 JSONObject request = item.getObject().getJSONObject("request");
                 if (request.has("method")) {
                     itemObj.add("method", request.getString("method"));
                     itemId = request.getString("method") + ":" + itemId;
                 }
+            }
+            if (item.getOptions() != null) {
+                V8Object json = nodeJS.getRuntime().getObject("JSON");
+                V8Array params = new V8Array(nodeJS.getRuntime()).push(item.getOptions().toString());
+                V8Object jsonObj = json.executeObjectFunction("parse", params);
+                itemObj.add("options", jsonObj);
+                params.release();
+                json.release();
+                jsonObj.release();
+            }
+            if (item.getValues() != null) {
+                V8Object json = nodeJS.getRuntime().getObject("JSON");
+                V8Array params = new V8Array(nodeJS.getRuntime()).push(item.getValues().toString());
+                V8Object jsonObj = json.executeObjectFunction("parse", params);
+                itemObj.add("values", jsonObj);
+                params.release();
+                json.release();
+                jsonObj.release();
             }
             testItems.push(itemObj);
             testCaseItems.put(itemId, item);
@@ -142,7 +157,7 @@ public class NodeRunner {
                     String jsonStr = json.executeStringFunction("stringify", params);
                     params.release();
                     json.release();
-                    item.setResponseObject(new JSONObject(jsonStr));
+                    item.setResponse(new JSONObject(jsonStr));
                 }
                 responseObj.release();
                 return null;

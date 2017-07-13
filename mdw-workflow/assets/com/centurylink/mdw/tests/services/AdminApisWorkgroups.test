@@ -1,27 +1,36 @@
 import groovy.json.JsonSlurper
 
 // AdminApisWorkgroups
-
 println 'Workgroups API CRUD...'
 
-def res = submit request('admin-apis.postman/GET:workgroups/{group-name}') {
-  values = ['group-name': 'GroupA']
+def vals = ['group-name': 'GroupA'];
+
+def response = submit request('admin-apis.postman/GET:workgroups/{group-name}') {
+  values = vals
 }
 
-assert res.time < 1000 // less than a second
+assert response.time < 1000 // less than a second
 
-if (res.status.code == 200) {
-    def workgroup = new JsonSlurper().parseText(res.body)
+if (response.status.code == 200) {
+    // assert response.headers['content-type'] == 'application/json'
+    def workgroup = new JsonSlurper().parseText(response.body)
     assert workgroup.name == 'GroupA'
     // delete the workgroup so we can submit a POST
-    res = submit request('admin-apis.postman/DEL:workgroups/{group-name}') {
-      values = ['group-name': 'GroupA']
+    response = submit request('admin-apis.postman/DEL:workgroups/{group-name}') {
+      values = vals
     }
 
-    assert res.status.code == 200;
+    assert response.status.code == 200;
 }
 
 // create workgroup
-res = submit request('admin-apis.postman/POST:workgroups') {
-  values = ['group-name': 'GroupA']
+response = submit request('admin-apis.postman/POST:workgroups') {
+  values = vals
+}
+
+// case-insensitive header check
+// assert response.checkHeader('content-type', 'application/json')
+
+verify(response) {
+  values = vals
 }
