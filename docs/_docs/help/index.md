@@ -11,7 +11,8 @@ permalink: /docs/help/
 </ul>
 <h3>Web Services</h3>
 <ul>
-  <li><a href='webServices.html'>MDW Web Services</a></li>
+  <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/'>Microservices</a></li>
+  <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/SOAPService/'>SOAP Web Service</a></li>
 </ul>
 
 <h3>Workflow Design</h3>
@@ -58,7 +59,6 @@ permalink: /docs/help/
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='listener.html'>Developing Listeners and External Event Handlers</a></li>
   <li><a href='dynamicJava.html'>Dynamic Java</a></li>
-  <li><a href='webServices.html'>Invoking Standard MDW Web Services</a></li>
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
   <li><a href='../javadoc/index.html'>MDW Framework JavaDocs</a></li>

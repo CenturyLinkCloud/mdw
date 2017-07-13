@@ -7,9 +7,16 @@ title: SOAP Web Service
 
 This document contains information about creating, exposing and consuming services through a SOAP-based Web Service. For a RESTFul Web Service, refer to [MicroservicesCookbook](../MicroservicesCookbook/).
 
-Before you can start working with MDW framework, you will need to do a one-time setup. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
+If you have not done a one-time setup, please follow [this link](../SetupGuideForTomcat/) to setup your environment & eclipse workspace first then return to this guide to continue.
 
-### Workflow Services
+In this guide, you will be guided to perform the following:
+
+- Creating a Workflow Process
+- Implementing a Web Service
+- Consuming a Web Service
+- Exposing a Web Service to External Systems
+
+### Creating a Workflow Process
 
 #### 1. Create a Local Project
 A local project is useful if you want to debug your custom Java source code and Groovy scripts. 
@@ -167,24 +174,24 @@ A local project is useful if you want to debug your custom Java source code and 
 #### 3. Running Your Process
 
 ##### Ensure Permissions:
-- To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW database (unless you have installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the `Roles and Permissions` section in the [MDW Designer User Guide](../../designer/user-guide/).
-
-##### Run Your Workflow Project:
-- If you have not completed the one-time setup, please follow [this link](../SetupGuideForTomcat/) and return to continue with the remaining steps.
+- To follow the remaining steps in this tutorial you need to be granted the appropriate roles in the MDW database (unless you have installed a database locally).  An administrator can grant you appropriate access using the MDWHub webapp.  For a detailed discussion of this topic, refer to the `Roles and Permissions` section in the [Designer User Guide](../../designer/user-guide/).
 
 ##### Open the Process Launch Dialog:
 - Right-click on your process that is under your workflow package in Process Explorer view and Select Run. You can also right-click on your Designer and Select Run.  Designer will present the 
   launch dialog and open a connection to the server to confirm that it is running (`required for launching a process`).
   
 - On the Process tab in the launch dialog, select `Monitor Runtime Log` and `Process Instance Live View` to get a feel for how you can watch your process flow in real time.
+
    ![alt textr](../images/runPrcoess.png "runPrcoess")
  
 ##### Populate the Input Variable:
-   ```xml
-      <order> 
-         <orderId>N12345678</orderId>
-     </order>
-  ```
+  
+  ```xml  
+   order> 
+      <orderId>N12345678</orderId>
+   </order>
+  ```   
+  
 - Select the Variables tab in the launch dialog, and populate the request variable with the following content.
    ![alt textr](../images/runPrcoess2.png "runPrcoess2")
 
@@ -220,7 +227,96 @@ A local project is useful if you want to debug your custom Java source code and 
 - When you are done debugging, continue execution to let the process complete.  You can view the new instance by right-clicking on the process in Process Explorer and selecting View Instances. 
   Double-click on the top instance row to confirm that this second instance took the Bad Request path.  Make sure that your Tomcat server is up to view the Process Instances.
  
-#### 4. Consume a Web Service
+### Implementing a Web Service
+- The easiest way to expose your process as a SOAP service is to create a document-style WSDL workflow asset that describes it.  In Process Explorer view, right-click on your workflow package and 
+  select  New > XML Document.  Name it something appropriate for your service, and select the language/format as WSDL.
+  
+   ![alt text](../images/soapService.png "soapService")
+   
+- Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response.
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <wsdl:definitions name="wsdl-first"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tns="http://mdw-servicemix.centurylink.com" targetNamespace="http://mdw-servicemix.centurylink.com">
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:element name="MyOrderValidationRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="orderId" type="xsd:string" />
+						<xsd:element name="employeeId" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="MyOrderValidationResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Code" type="xsd:string" />
+						<xsd:element name="Message" type="xsd:string"
+							minOccurs="0" />
+					</xsd:sequence>
+					<xsd:attribute name="orderId" type="xsd:string" use="required" />
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="MyOrderValidationRequestMessage">
+		<wsdl:part name="payload" element="MyOrderValidationRequest" />
+	</wsdl:message>
+	<wsdl:message name="MyOrderalidationResponseMessage">
+		<wsdl:part name="payload" element=MyOrderValidationResponse" />
+	</wsdl:message>
+	<wsdl:portType name="ValidateOrder">
+		<wsdl:operation name="ValidateOrder">
+			<wsdl:input message="tns:MyOrderValidationRequestMessage" />
+			<wsdl:output message="tns:MyOrderValidationResponseMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="MyOrderValidationSOAPBinding" type="tns:ValidateOrder">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="ValidateOrder">
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="MyOrderValidationService">
+		<wsdl:port binding="tns:MyOrderValidationSOAPBinding" name="soap">
+			<soap:address
+				location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
+		</wsdl:port>
+	</wsdl:service>
+  </wsdl:definitions>
+  ```   
+    
+  
+- Use the MDW HTTP test tool to submit a SOAP request.
+- Click on the Send Message button, and your service process should be executed and you should see a SOAP response like in this screenshot: 
+
+   ![alt text](../images/soapMessageEndpoint.png "soapMessageEndpoint")
+   
+##### Invoke Your Service through JMS:
+- To invoke through JMS use the raw payload without the SOAP envelope:
+
+  ```xml	
+  <GetEmployee>
+     <workstationId>ab64967</workstationId>
+  </GetEmployee>
+  ``` 
+- On the MDWHub System tab you can use the JMS Messenger as illustrated below.   
+
+   ![alt text](../images/jmsMessageEndpoint.png "jmsMessageEndpoint")
+   
+- If you have trouble getting Site Admin access, or you prefer to use another tool like SoapUI or SOAtest, you can accomplish the same thing by just making sure the endpoint URL is like that in the screenshot and that your request content inside the SOAP body matches your registered External Event Handler.
+
+### Consuming a Web Service
 
 MDW comes with the Document Web Service Activity for consuming document-style services hosted by external providers.  In this exercise we will invoke the GetEmployee service hosted in the MDW Demo environment (and this service itself is implemented as an MDW workflow process; the sections ahead describe how to create and expose a service process).
 
@@ -297,7 +393,17 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   
    ![alt text](../images/soapReqestResponse.png "soapReqestResponse")
   
-#### 5. Expose Your Process to External Systems
+### Exposing a Web Service to External Systems
+Just as for all supported protocols, you can create and register Web Service Handlers using the MDW Plug-In External Event wizard (File > New > Other > MDW Event Handlers > External Event Handler). Your handler is registered to respond to a specified incoming document content (the Message Pattern), regardless of how the message was received (SOAP, REST, JMS, etc). Typically you'll choose to launch a Service Process which is responsible for handling the request and generating a response in real-time. However, you can also choose to implement a custom handler that can perform actions such as parsing the request before launching a process, or can generate a response without involving a workflow process at all. If you choose a custom handler, a reasonable skeleton implementation is generated by the wizard, and its handleEventMessage() method will be automatically invoked whenever a matching request message is received.
+
+The incoming SOAP request consists of an XML document with a SOAP Envelope, optional Headers, and a SOAP Body. In a document-literal style service (the type supported built-in by MDW) the SOAP Body contains a top-level XML schema type that comprises the message payload. The MDW SOAP listener unpacks the message payload from the SOAP body and matches it against your event handler. The SOAP headers are passed on in the protocol metadata to your custom event handler method.
+
+To expose an MDW Web Service based on a custom WSDL definition starting point are as follows:
+- Create a WSDL document as a workflow asset. 
+- In the Eclipse Process Explorer view, right-click on a workflow package and select New > XML Document. 
+- Type the document name and select the language as "WSDL". 
+- When your server is running, the WSDL will be exposed via the standard MDW SOAP service endpoint URL (such as: http://localhost:8080/mdw/services/SOAP/Employee.wsdl)
+
 
 ##### Designate Your Process as an MDW Service Process:
 - On the Design property tab for your process check the box labeled `Service Process`.  In MDW terminology this designates your process as one that runs synchronously and is able to 
@@ -316,25 +422,24 @@ MDW comes with the Document Web Service Activity for consuming document-style se
 	<TEXT NAME="responseCode" LABEL="Response Code" VW="100"/>
 	<TEXT NAME="responseMessage" LABEL="Message" VW="300"/>
   </PAGELET>
-  ```   
-   
+  ```      
+  
   ![alt text](../images/newActivity.png "newActivity")
   
 - Click Next.  Give a name for the class and click Finish.
  
   ![alt text](../images/newActivity2.png "newActivity2")
     
-- Make your activity implementor source code look something like this:
+- Make your activity implementor source code look something like this:   
 
-```
-package MyPackage;
+  ```java    
+  package MyPackage;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.utilities.logger.StandardLogger.LogLevel;
 import com.centurylink.mdw.common.utilities.timer.Tracked;
 import com.centurylink.mdw.model.value.activity.ActivityRuntimeContext;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-import com.centurylink.mdw.xml.DomHelper;                                  
-
+import com.centurylink.mdw.xml.DomHelper; 
 @Tracked(LogLevel.TRACE)
 public class MyOrderResponseBuilder extends DefaultActivityImpl {
 	@Override
@@ -355,7 +460,8 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
             return null;
     	}
     }
- ```
+}
+  ```  
 
 - Now rework your process so that the three possible outcomes all generate a response using this activity.  For the two error paths set the Response Code to be non-zero in the Design tab.
   Since the validation result is kept in a process variable, you can use a Java Expression as illustrated below to parameterize the Message attribute value.
@@ -386,89 +492,25 @@ public class MyOrderResponseBuilder extends DefaultActivityImpl {
  
 - After successfully invoking your External Event Handler, you should see the expected response in the console view, and you should also find that a new instance of your service process was created.
 
-##### Implement a SOAP Web Service:
-- The easiest way to expose your process as a SOAP service is to create a document-style WSDL workflow asset that describes it.  In Process Explorer view, right-click on your workflow package and 
-  select  New > XML Document.  Name it something appropriate for your service, and select the language/format as WSDL.
-  
-   ![alt text](../images/soapService.png "soapService")
-   
-- Edit the content of your WSDL to look something like the following with appropriate substitutions based on your request and response.
+### Support for Basic Authentication
 
-```xml 
-<?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="wsdl-first"
-	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:tns="http://mdw-servicemix.centurylink.com" targetNamespace="http://mdw-servicemix.centurylink.com">
-	<wsdl:types>
-		<xsd:schema>
-			<xsd:element name="MyOrderValidationRequest">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="orderId" type="xsd:string" />
-						<xsd:element name="employeeId" type="xsd:string" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="MyOrderValidationResponse">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="Code" type="xsd:string" />
-						<xsd:element name="Message" type="xsd:string"
-							minOccurs="0" />
-					</xsd:sequence>
-					<xsd:attribute name="orderId" type="xsd:string" use="required" />
-				</xsd:complexType>
-			</xsd:element>
-		</xsd:schema>
-	</wsdl:types>
-	<wsdl:message name="MyOrderValidationRequestMessage">
-		<wsdl:part name="payload" element="MyOrderValidationRequest" />
-	</wsdl:message>
-	<wsdl:message name="MyOrderalidationResponseMessage">
-		<wsdl:part name="payload" element=MyOrderValidationResponse" />
-	</wsdl:message>
-	<wsdl:portType name="ValidateOrder">
-		<wsdl:operation name="ValidateOrder">
-			<wsdl:input message="tns:MyOrderValidationRequestMessage" />
-			<wsdl:output message="tns:MyOrderValidationResponseMessage" />
-		</wsdl:operation>
-	</wsdl:portType>
-	<wsdl:binding name="MyOrderValidationSOAPBinding" type="tns:ValidateOrder">
-		<soap:binding style="document"
-			transport="http://schemas.xmlsoap.org/soap/http" />
-		<wsdl:operation name="ValidateOrder">
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-	</wsdl:binding>
-	<wsdl:service name="MyOrderValidationService">
-		<wsdl:port binding="tns:MyOrderValidationSOAPBinding" name="soap">
-			<soap:address
-				location="${mdw.services.url}/SOAP/MyPackage/MyOrderValidation.wsdl" />
-		</wsdl:port>
-	</wsdl:service>
-</wsdl:definitions>
-```
+MDW provides support for Basic Authentication in the following adapters and web services
 
-- Click on the Send Message button, and your service process should be executed and you should see a SOAP response like in this screenshot: 
+##### Outgoing adapters
 
-   ![alt text](../images/soapMessageEndpoint.png "soapMessageEndpoint")
-   
-##### Invoke Your Service through JMS:
-- To invoke through JMS use the raw payload without the SOAP envelope:
+The adapters below include configuration to set a user/password Basic Authentication combination that will be sent with each request
 
-  ```xml	
-  <GetEmployee>
-     <workstationId>ab64967</workstationId>
-  </GetEmployee>
-  ``` 
-- On the MDWHub System tab you can use the JMS Messenger as illustrated below.   
+- SoapWebServiceAdapter
+- DocumentWebServiceAdapter
 
-   ![alt text](../images/jmsMessageEndpoint.png "jmsMessageEndpoint")
-   
-- If you have trouble getting Site Admin access, or you prefer to use another tool like SoapUI or SOAtest, you can accomplish the same thing by just making sure the endpoint URL is like that in the screenshot and that your request content inside the SOAP body matches your registered External Event Handler.
+For specific details on how to configure the above adapters for Basic Authentication, please refer to these adapters in the eclipse help.
+
+##### Hosted web services
+
+The MDW servlets below support HTTP Basic Authentication for hosted web services.
+- SoapServlet
+
+To enable these servlets to use Basic authentication, you should set the following property in your mdw.properties configuration file. 
+   `mdw.http.listeners.auth.mode=Basic`
+
+- After authentication is successful, the authenticated username will be available in the metaInfo property "AuthenticatedUser" or Listener.AUTHENTICATED_USER_HEADER
