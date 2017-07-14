@@ -6,9 +6,15 @@ title: Microservices Cookbook
 
 This document contains information about creating, exposing and consuming services through a RESTFul Web Service. For a SOAP document-style Web Service, refer to [SOAP Service](../SOAPService/).
 
-Before you can start working with MDW framework, you will need to do a one-time setup. Please follow [this link](../SetupGuideForTomcat/) to setup your workspace and return to this guide to continue.
-  
-### Local Development:
+If you have not done a one-time setup, please follow [this link](../SetupGuideForTomcat/) to setup your environment & eclipse workspace first then return to this guide to continue.
+
+In this guide, you will be guided to perform the following exercises:
+
+- Creating a Workflow Process
+- Exposing a Web Service
+- Consuming a Web Service
+
+### Creating a Workflow Process
 #### 1. Create a Local Project
 A local project is useful if you want to debug your custom Java source code and Groovy scripts.  The standard MDW war file is deployed as part of the steps outlined in this tutorial.
 
@@ -84,19 +90,18 @@ A local project is useful if you want to debug your custom Java source code and 
 - In step 1 you were granted permissions in the MDW environment to create and modify workflow assets.
 - With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 
-- Update the generated Java source code to resemble the following:  
+- Update the generated Java source code to resemble the following:   
 
-```java
-package MyServices;
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
-import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-import org.json.JSONObject;
-  
-@Tracked(LogLevel.TRACE)
-public class MyOrderValidatorActivity extends DefaultActivityImpl {
+  ```java  
+  package MyServices;
+  import com.centurylink.mdw.activity.ActivityException;
+  import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+  import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+  import com.centurylink.mdw.util.timer.Tracked;
+  import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+  import org.json.JSONObject;
+  @Tracked(LogLevel.TRACE)
+  public class MyOrderValidatorActivity extends DefaultActivityImpl {
 	@Override
 	public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
 		loginfo("Validating order...");
@@ -119,8 +124,8 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 		}
 		return valid;
 	}
-}
-```
+  }
+  ```   
 
 - Now if you switch back to your process the new activity should appear in the Toolbox View. From the toolbox, drag your activity onto the canvas and insert it into your process flow between the Start and Stop activities.
 - Tip: To draw a link (or transition in MDW terminology) between activities on the designer canvas, hold down the Shift key on your keyboard, Click on the upstream activity, and continue holding down the mouse left click button while dragging the cursor to the downstream activity (shift+click+drag).
@@ -166,7 +171,7 @@ public class MyOrderValidatorActivity extends DefaultActivityImpl {
 
   ![alt text](../images/viewOrderInstance.png "viewOrderInstance")
  
-#### 3. Expose a RESTFul Web Service using JAX-RS API
+### Exposing a Web Service
 #### 1. Implement a JAX-RS Web Service
 
 Besides implementing services by way of an MDW workflow process, you can easily expose your Dynamic Java class as a REST service using JAX-RS annotations.
@@ -222,25 +227,25 @@ public class Orders extends JsonRestService {
 ##### Add @ApiOperation Annotations to Your Methods:
 - The ApiOperation annotation documents the specifics of a service endpoint operation, including any input or output model types.  The ApiImplicitParams annotation is useful for indicating the body content of a POST or PUT requests.  After adding these annotations to Orders.java, the code will look something like this:   
 
-```java
-package MyServices;
-import java.util.HashMap;
-import java.util.Map;
-import javax.ws.rs.Path;
-import org.json.JSONObject;
-import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.rest.JsonRestService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+  ```java
+  package MyServices;
+  import java.util.HashMap;
+  import java.util.Map;
+  import javax.ws.rs.Path;
+  import org.json.JSONObject;
+  import com.centurylink.mdw.common.service.ServiceException;
+  import com.centurylink.mdw.common.service.types.StatusMessage;
+  import com.centurylink.mdw.services.ServiceLocator;
+  import com.centurylink.mdw.services.WorkflowServices;
+  import com.centurylink.mdw.services.rest.JsonRestService;
+  import io.swagger.annotations.Api;
+  import io.swagger.annotations.ApiImplicitParam;
+  import io.swagger.annotations.ApiImplicitParams;
+  import io.swagger.annotations.ApiOperation;
 
-@Path("/Order")
-@Api("CenturyLink orders service")
-public class Orders extends JsonRestService {
+  @Path("/Order")
+  @Api("CenturyLink orders service")
+  public class Orders extends JsonRestService {
 	@Override
 	@ApiOperation(value="Create an order",
 	notes="Does not actually create anything as yet.", response=StatusMessage.class)
@@ -251,8 +256,8 @@ public class Orders extends JsonRestService {
 		Object response = workflowServices.invokeServiceProcess("MyServices/MyOrderProcess", content, null, stringParams, headers);
 		return (JSONObject) response;
 	}
-}
-```
+  }
+  ```
 
 ##### Add Swagger Annotations to the Orders Class:
 - To enable consumers to easily create request content and interpret responses, you can annotate the related model objects so that they're discovered when documentation is generated.  In the Orders dynamic Java class, add the following class-level annotation:
@@ -291,7 +296,7 @@ MDWHub comes with a UI for displaying your generated Swagger API documentation, 
 - Now that your sample requests have been created in accordance with the MDW naming convention, they will automatically be associated with the corresponding service path.  And they'll also be displayed in the Samples tab for your service in MDWHub:
    ![alt text](../images/jsonSamples.png "jsonSamples")
 
-#### 4. Consume a RESTFul Web Service
+### Consuming a RESTFul Web Service
 MDW comes with Adapter activities for consuming services over many protocols from within your workflow processes.  In this exercise we'll use the REST Service Adapter activity to invoke the OrderProcess service you just created.
  
 ##### Create a Process with a REST Service Activity:
