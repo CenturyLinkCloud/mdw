@@ -37,16 +37,17 @@ MDW Framework comes with many built-in components:
 
   Terminology     | Description    |
   ----------------|:---------------|
-  [Process](http://centurylinkcloud.github.io/mdw/docs/help/process.html) | It consists of a number of (automated or manual) work items or steps (called activities) that should be performed in a sequential order. 
-  [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html) | Along with process definitions, assets include many other types of design-time artifacts. 
   [Activity](http://centurylinkcloud.github.io/mdw/docs/help/implementor.html) | Activity is implemented by Java class(s), called activity implementors. For a complete listing of the activity implementors, see [Built-In Activities](http://centurylinkcloud.github.io/mdw/docs/development/built-in-activities/).
   [Adapter](http://centurylinkcloud.github.io/mdw/docs/help/AdapterActivityBase.html) | Sends outgoing messages to an external system (service invocation)
+  [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html) | Along with process definitions, assets include many other types of design-time artifacts. 
   [Attribute](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Configurable aspect of an activity or process.  
-  Transition |Transition is the link between activities that model dependencies between steps. 
-  [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A variable has a name and will be give a specific value at runtime. 
-  [Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Task is used to express the more general concept that we call activity (both manual and automated) in MDW.
   Note | Text-based annotations attached to workflow entities such as Orders or Tasks.  
   Package | The top-level branch in the project tree that represents a workflow package, which is like a java package that contains processes, activity implementors, test cases, event handler configurations and other resources. Your work should be incorporated in a dedicated package, which will be used for managing resources and for insulating your work from that of other users.  Package also facilitates importing/exporting between environments.
+  [Process](http://centurylinkcloud.github.io/mdw/docs/help/process.html) | It consists of a number of (automated or manual) work items or steps (called activities) that should be performed in a sequential order. 
+  [Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Task is used to express the more general concept that we call activity (both manual and automated) in MDW.
+  Transition |Transition is the link between activities that model dependencies between steps. 
+  [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A variable has a name and will be give a specific value at runtime. 
+
   
   
   

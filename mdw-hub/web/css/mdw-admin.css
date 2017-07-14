@@ -1086,6 +1086,24 @@
 .mdw-task-configurator .mdw-widget {
 	margin-bottom: 5px;
 }
+.mdw-test-item-method {
+  font-size: 14px;
+  font-weight: bold;
+  color: #848484;
+  margin-right: 6px;
+}
+.mdw-test-item-meth-POST {
+  color: #4caf50;
+}
+.mdw-test-item-meth-GET {
+  color: #2196f3;
+}
+.mdw-test-item-meth-PUT {
+  color: #f5a623;
+}
+.mdw-test-item-meth-DEL {
+  color: #f44336;
+}
 .panel-heading a {
   font-weight: bold;
   text-decoration: none;

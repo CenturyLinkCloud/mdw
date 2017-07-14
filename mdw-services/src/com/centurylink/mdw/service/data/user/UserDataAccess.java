@@ -254,7 +254,7 @@ public class UserDataAccess extends UserDataAccessDb {
         try {
             db.openConnection();
             String sql = "select USER_GROUP_ID, COMMENTS, PARENT_GROUP_ID, END_DATE "
-                    + " from USER_GROUP where GROUP_NAME=?";
+                    + " from USER_GROUP where GROUP_NAME=? && END_DATE is null";
             ResultSet rs = db.runSelect(sql, groupName);
             if (rs.next()) {
                 Long id = rs.getLong(1);

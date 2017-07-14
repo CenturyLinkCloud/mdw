@@ -48,16 +48,16 @@
 	</mdw-actions>
 
 </div>
-<div class="mdw-section" ng-switch on="chartType">
-	<div class="mdw-section" ng-switch-when="chart chart-line">
+<div class="mdw-section">
+	<div class="mdw-section" ng-if="chartType != 'chart chart-pie'">
 		<canvas id="line" class="chart chart-line"
 			chart-options="chartOptions" chart-data="data" chart-labels="labels"
 			chart-legend="true" chart-series="series" chart-click="onClick"
 			chart-hover="onHover">
-  </canvas>
+    </canvas>
 		<div ng-bind-html="chartLegend | markdown | unsafe"></div>
 	</div>
-	<div class="mdw-section" ng-switch-when="chart chart-pie">
+	<div class="mdw-section" ng-if="chartType == 'chart chart-pie'">
 		<canvas id="line" class="chart chart-pie" chart-options="chartOptions"
 			chart-data="data" chart-labels="labels" chart-legend="true"
 			chart-series="series" chart-click="onClick" chart-hover="onHover">

@@ -32,18 +32,21 @@ values (MDW_COMMON_ID_SEQ.nextVal,
        
 -- add me to MDW Support group
 insert into user_group_mapping
-(user_info_id, user_group_id,create_usr)
-values ((select user_info_id from user_info where cuid = 'dxoakes' and end_date is null), 
+(user_group_mapping_id, user_info_id, user_group_id,create_usr)
+values (MDW_COMMON_ID_SEQ.nextVal,
+		(select user_info_id from user_info where cuid = 'dxoakes' and end_date is null), 
         (select user_group_id from user_group where group_name = 'MDW Support'),'MDW');
 
 insert into user_group_mapping
-(user_info_id, user_group_id,create_usr)
-values ((select user_info_id from user_info where cuid = 'aa56486' and end_date is null), 
+(user_group_mapping_id, user_info_id, user_group_id,create_usr)
+values (MDW_COMMON_ID_SEQ.nextVal,
+		(select user_info_id from user_info where cuid = 'aa56486' and end_date is null), 
         (select user_group_id from user_group where group_name = 'MDW Support'),'MDW');
 
 insert into user_group_mapping
-(user_info_id, user_group_id,create_usr)
-values ((select user_info_id from user_info where cuid = 'jbrojde' and end_date is null), 
+(user_group_mapping_id, user_info_id, user_group_id,create_usr)
+values (MDW_COMMON_ID_SEQ.nextVal,
+		(select user_info_id from user_info where cuid = 'jbrojde' and end_date is null), 
         (select user_group_id from user_group where group_name = 'MDW Support'),'MDW');
         
 -- add User Admin role to my Site Admin group

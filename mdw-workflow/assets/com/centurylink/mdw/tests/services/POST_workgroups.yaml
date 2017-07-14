@@ -1,0 +1,25 @@
+test: 'POST:workgroups'
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing"
+    }
+response:
+  status:
+    code: 201
+    message: Created
+  headers:
+    mdw-request-id: '${~[0-9]*}'
+    content-type: application/json
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

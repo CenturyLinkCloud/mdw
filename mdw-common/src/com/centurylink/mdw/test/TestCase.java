@@ -32,7 +32,6 @@ import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Simple test case model for automated testing services.
- * (Designer version is too tightly coupled to test engine to move to mdw-common).
  */
 public class TestCase implements Jsonable, Comparable<TestCase> {
 
@@ -72,6 +71,20 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
             for (TestCaseItem item : items) {
                 if (name.equals(item.getName()))
                     return item;
+            }
+        }
+        return null;
+    }
+    public TestCaseItem getItem(String name, String method) {
+        if (items != null) {
+            for (TestCaseItem item : items) {
+                if (name.equals(item.getName())) {
+                    if (item.getObject().has("request")) {
+                        JSONObject request = item.getObject().getJSONObject("request");
+                        if (request.has("method") && request.getString("method").equals(method))
+                            return item;
+                    }
+                }
             }
         }
         return null;

@@ -250,7 +250,7 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
             function(data) {
               $scope.mdwMessages = null;
               console.log('created asset: ' + $routeParams.packageName + '/' + assetName);
-              $route.reload();
+              $location.path('/edit/' + $routeParams.packageName + '/' + assetName);
             },
             function(error) {
               if (error.data.status)

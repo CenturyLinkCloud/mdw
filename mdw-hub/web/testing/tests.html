@@ -72,8 +72,8 @@
                   <span ng-if="item.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
                   <span ng-if="item.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
                   <span ng-if="item.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
-                  <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}/{{item.object.name}}" style="position:relative;top:-2px">
-                    {{item.object.name}}
+                  <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}/{{item.path}}" style="position:relative;top:-2px">
+                    <span class="mdw-test-item-method {{'mdw-test-item-meth-' + item.meth}}">{{item.meth}}</span>{{item.object.name}}
                   </a>
                   <span class="mdw-item-substat" ng-if="item.start"> {{item.start}}</span>
                 </div>

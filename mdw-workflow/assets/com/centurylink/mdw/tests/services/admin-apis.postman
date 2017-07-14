@@ -2,16 +2,33 @@
 	"variables": [],
 	"info": {
 		"name": "admin-apis",
-		"_postman_id": "fe205975-51cd-5ea3-b7c9-acd06bed7b1b",
+		"_postman_id": "c9e58dd6-ad7f-6d97-909d-2f9c44d1c4e7",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "retrieve-workgroup-dons",
+			"name": "workgroups/{group-name}",
 			"request": {
-				"url": "http://localhost:8080/mdw/services/Workgroups/dons",
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
 				"method": "GET",
+				"header": [
+					{
+						"key": "header-a",
+						"value": "header-a-value",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "workgroups/{group-name}",
+			"request": {
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
+				"method": "DELETE",
 				"header": [],
 				"body": {},
 				"description": ""
@@ -19,9 +36,9 @@
 			"response": []
 		},
 		{
-			"name": "create-workgroup-dons",
+			"name": "workgroups",
 			"request": {
-				"url": "http://localhost:8080/mdw/services/Workgroups",
+				"url": "{{base-url}}/Workgroups",
 				"method": "POST",
 				"header": [
 					{
@@ -32,7 +49,27 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"dons\",\r\n  \"description\": \"a group for testing\"\r\n}"
+					"raw": "{\r\n  \"name\": \"{{group-name}}\",\r\n  \"description\": \"a group for testing\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "workgroups/{group-name}",
+			"request": {
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{group-name}}\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
 				},
 				"description": ""
 			},

@@ -21,17 +21,18 @@ make the following examples more readable since they'll appear syntax-highlighte
 <ul>
   <li><a href="#generalSemantics">General Semantics</a></li>
   <li><a href="#launchProcess">Launch a Process</a></li>
-  <li><a href="#sendMessage">Send a Message</a></li>
-  <li><a href="#submitHttpRequest">Submit an HTTP Request</a></li>
   <li><a href="#performTaskAction">Perform a Task Action</a></li>
   <li><a href="#notifyWaitingProcesses">Notify Waiting Processes</a></li>
   <li><a href="#waitForProcessCompletion">Wait for Process Completion</a></li>
   <li><a href="#verifyProcessResults">Verify Process Results</a></li>
-  <li><a href="#verifyMessageResponse">Verify a Message Response</a></li>
   <li><a href="#stubAdapterResponse">Stub an Adapter Response</a></li>
   <li><a href="#stubEndpointResponse">Stub an Endpoint Response</a></li>
   <li><a href="#stubSubstitutions">Stub Substitutions</a></li>
   <li><a href="#stubActivity">Stub Any Activity</a></li>
+  <li><a href="#serviceApiTesting">Service API Testing</a></li>
+  <li><a href="#submitHttpRequest">Submit an HTTP Request</a></li>
+  <li><a href="#sendMessage">Send a Message</a></li>
+  <li><a href="#verifyMessageResponse">Verify a Message Response</a></li>
   <li><a href="#unitTests">Unit Tests</a></li>
 </ul>
 
@@ -101,67 +102,6 @@ start process("com.centurylink.mdw.mytests/MyProcess") {
 </pre>
 <p>By default the Employee.xml asset is loaded from the same workflow package where the test case resides,
 but this path can also be qualified with the package name ("com.centurylink.mdw.mytests/Employee.xml"). 
-<h3><a id="sendMessage">Send a Message</a></h3>
-<p>Another way to trigger your workflow is to send an event message:</p>
-<pre>
-send asset("GetEmployeeRequest.xml").text
-</pre>
-<p>This sends a message to MDW with the contents of the specified file over the default REST protocol.
-To send a message using another supported protocol use a form like this:</p>
-<pre>
-send message("SOAP") {
-    payload = '''\
-&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
-   &lt;soapenv:Header/&gt;
-   &lt;soapenv:Body&gt;
-      &lt;EmployeeLookupRequest&gt;
-         &lt;workstationId&gt;dxoakes&lt;workstationId&gt;
-      &lt;/EmployeeLookupRequest&gt;
-   &lt;/soapenv:Body&gt;
-&lt;/soapenv:Envelope&gt;'''
-}
-println "Message Sent..."
-</pre>
-<p>The <em>payload</em> keyword indicates the contents to send to MDW.
-(Naturally, the SOAP protocol requires that the payload include a SOAP envelope element).
-In either form, the raw message contents can contain dynamic values in the form
-${myRequestPlaceholder}.  Standard Groovy expression evaluation is performed for these values.
-The evaluation context is the same as described in 
-<a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
-
-<h3><a id="submitHttpRequest">Submit an HTTP Request</a></h3>
-<p>Sometimes it can be useful to submit a raw HTTP request to an MDW service or other endpoint.
-An example usage is to invoke a REST resource request to verify some test case outcome.</p>
-<pre>
-def resp = get http("Services/Tasks/" + task.getId() + "/indexes?format=json")
-</pre>
-<p>This submits an HTTP GET request and captures the response in a TestCaseResponse object named 'resp'.
-The response contents can them be accessed to compare with what's expected:</p>
-<pre>
-def indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
-assert indexes.dateIndex == today.toString()
-</pre>
-<p>The parameter to the get() method can be a full HTTP URL, or a path relative to the 
-MDW services endpoint URL.
-</p>
-<p>
-Similarly, an HTTP POST request can be submitted:
-</p>
-<pre>
-def resp = post http("Services/MyUpdateService") {
-    payload = asset('com.centurylink.mytests/my-request.yaml').text
-}
-</pre>
-<p>
-The HTTP PUT and DELETE methods are also supported using the same syntax.
-You can verify the response vs. an asset (with expression substitutions) this way:
-</p>
-<pre>
-assert response.code == 200
-verify response {
-  expected = asset("my-json-asset.json").text
-}
-</pre>
 
 <h3><a id="performTaskAction">Perform a Task Action</a></h3>
 <p>For processes that include manual task activities, you can trigger a task action like so:</p>
@@ -303,35 +243,6 @@ assert jaxbVar.RequiredElement.text() == 'requiredElementValue'
 <p>In this example "load process" is used instead of "verify process" (which would fail due to unrelated dynamic elements).
 Then the master process instance status is checked, along with selected values from a specific jaxb variable.</p>
 
-<h3><a id="verifyMessageResponse">Verify Message Response</a></h3>
-<p>When a test case involves a <em><a href="#sendMessage">send message</a></em> step to a service process,
-frequently success needs to be evaluated according to the contents of the response:</p>
-<pre>
-verify response {
-    expected = '''\
-&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
-   &lt;soapenv:Header/&gt;
-   &lt;soapenv:Body&gt;
-      &lt;EmployeeLookupResponse&gt;
-         &lt;workstationId&gt;dxoakes&lt;workstationId&gt;
-         &lt;sapId&gt;DHO115360&lt;sapId&gt;
-         &lt;firstName&gt;dxoakes&lt;firstName&gt;
-         &lt;lastName&gt;dxoakes&lt;lastName&gt;
-      &lt;/EmployeeLookupResponse&gt;
-   &lt;/soapenv:Body&gt;
-&lt;/soapenv:Envelope&gt;'''
-}
-</pre>
-<p>Usually it's handy to keep the expected response in a separate asset:</p>
-<pre>
-verify response {
-    expected = asset("EmployeeLookupResponse.xml").text
-}
-</pre>
-<p>An easy way to initially populate the expected response is to run the test case once and copy/paste
-the actual response from the Text Exec view console window.  In your expected response content you can 
-embed dynamic expressions as described in <a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
-
 <h3><a id="stubAdapterResponse">Stub an Adapter Response</a></h3>
 <p>If your test process involves an adapter activity, you may want to inject a stubbed response
 to the adapter call so that the test doesn't depend on availability of an external system.
@@ -466,5 +377,122 @@ start process("com.centurylink.mdw.tests/TestActivityStub") {
         }]
 }
 </pre>
+
+<h3><a id="serviceApiTesting">Service API Testing</a></h3>
+<p>
+Service API tests start with request template assets that are most easily created in
+<a href="https://www.getpostman.com">Postman</a>.  Export your Postman test collection
+to an asset with extension '.postman'.  You can then execute the Postman tests directory,
+or you can use them in a Groovy test.
+</p>
+<p>In the following example <em>admin-apis.postman</em> is the asset, <em>GET</em>
+is the HTTP method, and <em>workgroups/{group-name}</em> is the Postman test:</p>
+<pre>
+def res = submit request('admin-apis.postman/GET:workgroups/{group-name}') {
+  values = ['group-name': 'GroupA']
+}
+assert res.time &lt; 1000 // less than a second
+assert res.status.code == 200
+assert res.headers['content-type'] == 'application/json'
+def workgroup = new JsonSlurper().parseText(res.body)
+assert workgroup.name == 'GroupA'
+</pre> 
+<p>The response for each <code>submit</code> in a test case is appended to the yaml results file,
+so multiple tests can be chained together, and their output compared.  Process verification
+outcomes can also be included, so that the overall results for service orchestration workflows
+can be verified</p> 
+
+<h3><a id="submitHttpRequest">Submit an HTTP Request</a></h3>
+<p><strong>NOTE:</strong> The <a href="#serviceApiTesting">Service API Testing</a> section
+above describes a better to perform this testing that supports declarative results expectations.
+Sometimes it can be useful to submit a raw HTTP request to an MDW service or other endpoint.
+An example usage is to invoke a REST resource request to verify some test case outcome.</p>
+<pre>
+def resp = get http("Services/Tasks/" + task.getId() + "/indexes?format=json")
+</pre>
+<p>This submits an HTTP GET request and captures the response in a TestCaseResponse object named 'resp'.
+The response contents can them be accessed to compare with what's expected:</p>
+<pre>
+def indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
+assert indexes.dateIndex == today.toString()
+</pre>
+<p>The parameter to the get() method can be a full HTTP URL, or a path relative to the 
+MDW services endpoint URL.
+</p>
+<p>
+Similarly, an HTTP POST request can be submitted:
+</p>
+<pre>
+def resp = post http("Services/MyUpdateService") {
+    payload = asset('com.centurylink.mytests/my-request.yaml').text
+}
+</pre>
+<p>
+The HTTP PUT and DELETE methods are also supported using the same syntax.
+You can verify the response vs. an asset (with expression substitutions) this way:
+</p>
+<pre>
+assert response.code == 200
+verify response {
+  expected = asset("my-json-asset.json").text
+}
+</pre>
+
+<h3><a id="sendMessage">Send a Message</a></h3>
+<p>Another way to trigger your workflow is to send an event message:</p>
+<pre>
+send asset("GetEmployeeRequest.xml").text
+</pre>
+<p>This sends a message to MDW with the contents of the specified file over the default REST protocol.
+To send a message using another supported protocol use a form like this:</p>
+<pre>
+send message("SOAP") {
+    payload = '''\
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;EmployeeLookupRequest&gt;
+         &lt;workstationId&gt;dxoakes&lt;workstationId&gt;
+      &lt;/EmployeeLookupRequest&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;'''
+}
+println "Message Sent..."
+</pre>
+<p>The <em>payload</em> keyword indicates the contents to send to MDW.
+(Naturally, the SOAP protocol requires that the payload include a SOAP envelope element).
+In either form, the raw message contents can contain dynamic values in the form
+${myRequestPlaceholder}.  Standard Groovy expression evaluation is performed for these values.
+The evaluation context is the same as described in 
+<a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
+
+<h3><a id="verifyMessageResponse">Verify Message Response</a></h3>
+<p>When a test case involves a <em><a href="#sendMessage">send message</a></em> step to a service process,
+frequently success needs to be evaluated according to the contents of the response:</p>
+<pre>
+verify response {
+    expected = '''\
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;EmployeeLookupResponse&gt;
+         &lt;workstationId&gt;dxoakes&lt;workstationId&gt;
+         &lt;sapId&gt;DHO115360&lt;sapId&gt;
+         &lt;firstName&gt;dxoakes&lt;firstName&gt;
+         &lt;lastName&gt;dxoakes&lt;lastName&gt;
+      &lt;/EmployeeLookupResponse&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;'''
+}
+</pre>
+<p>Usually it's handy to keep the expected response in a separate asset:</p>
+<pre>
+verify response {
+    expected = asset("EmployeeLookupResponse.xml").text
+}
+</pre>
+<p>An easy way to initially populate the expected response is to run the test case once and copy/paste
+the actual response from the Text Exec view console window.  In your expected response content you can 
+embed dynamic expressions as described in <a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
 </body>
 </html>

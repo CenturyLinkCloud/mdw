@@ -1,0 +1,18 @@
+test: 'DEL:workgroups/{group-name}'
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
+  method: DELETE
+  headers: {}
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

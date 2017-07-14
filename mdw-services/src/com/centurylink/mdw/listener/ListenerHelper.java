@@ -216,11 +216,11 @@ public class ListenerHelper {
             if (!StringHelper.isEmpty(request) && persistMessage(metaInfo)) {
                 eeid = createRequestDocument(request, 0L);
                 requestDoc.setId(eeid);
-
-                if (persistMeta(metaInfo))
-                    requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, eeid));
             }
 
+            // persist meta even if no request doc
+            if (persistMeta(metaInfo))
+                requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, eeid));
 
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
                 CodeTimer timer = new CodeTimer(monitor.getClass().getSimpleName() + ".onHandle()", true);
@@ -371,6 +371,11 @@ public class ListenerHelper {
 
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
+            if (metaInfo.containsKey(Listener.METAINFO_DOCUMENT_ID)) {
+                metaInfo.put(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
+                metaInfo.remove(Listener.METAINFO_DOCUMENT_ID);
+            }
+
 
             if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                 Long ownerId = createResponseDocument(response, eeid);
@@ -497,6 +502,7 @@ public class ListenerHelper {
                     && !Listener.METAINFO_HTTP_STATUS_CODE.equals(key)
                     && !Listener.METAINFO_ACCEPT.equals(key)
                     && !Listener.METAINFO_DOWNLOAD_FORMAT.equals(key)
+                    && !Listener.METAINFO_MDW_REQUEST_ID.equals(key)
                     && !reqMetaInfo.contains(key))
                 headers.put(key, metaInfo.get(key));
             else {
@@ -507,12 +513,10 @@ public class ListenerHelper {
         // these always get populated if present
         if (metaInfo.get(Listener.METAINFO_REQUEST_ID) != null)
             headers.put(Listener.METAINFO_REQUEST_ID, metaInfo.get(Listener.METAINFO_REQUEST_ID));
-        if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null)
+        if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null && !metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID).equals("0"))
             headers.put(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID));
         if (metaInfo.get(Listener.METAINFO_CORRELATION_ID) != null)
             headers.put(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));
-        if (metaInfo.get(Listener.METAINFO_DOCUMENT_ID) != null)
-            headers.put(Listener.METAINFO_DOCUMENT_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
         if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) != null)
             headers.put(Listener.METAINFO_CONTENT_TYPE, metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
 

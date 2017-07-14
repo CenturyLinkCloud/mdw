@@ -19,23 +19,32 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.test.ApiRequest;
+import com.centurylink.mdw.test.ApiResponse;
 import com.centurylink.mdw.test.PreFilter;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseActivityStub;
 import com.centurylink.mdw.test.TestCaseAdapterStub;
 import com.centurylink.mdw.test.TestCaseEvent;
 import com.centurylink.mdw.test.TestCaseHttp;
+import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseMessage;
 import com.centurylink.mdw.test.TestCaseProcess;
 import com.centurylink.mdw.test.TestCaseResponse;
@@ -118,6 +127,69 @@ public abstract class TestCaseScript extends Script {
     public TestCaseProcess process() { return process; }
     public TestCaseResponse response() { return response; }
 
+    private ApiRequest apiRequest; // current api test
+    public ApiRequest request(String target) throws TestException {
+        return request(target, null);
+    }
+
+    public ApiRequest request(String target, Closure<?> cl) throws TestException {
+        return request(target, null, cl);
+    }
+
+    public ApiRequest request(String target, Map<String,String> options, Closure<?> cl) throws TestException {
+        int dotPostmanSlash = target.lastIndexOf(".postman/");
+        if (dotPostmanSlash == -1)
+            throw new TestException("Bad API test path: " + target);
+        String assetPath = target.substring(0, dotPostmanSlash + 8);
+        Asset asset = asset(assetPath);
+        if (asset == null)
+            throw new TestException("API test case asset not found: " + assetPath);
+        TestCase apiTestCase = new TestCase(asset.getPackageName(), new AssetInfo(asset.file()));
+        try {
+            String itemPath = asset.getPackageName() + "/" + asset.getName() + "/"
+                    + target.substring(dotPostmanSlash + 9).replace('/', '~');
+            TestCaseItem item = ServiceLocator.getTestingServices().getTestCaseItem(itemPath);
+            if (item == null)
+                throw new TestException("Test case item not found: " + itemPath);
+            apiTestCase.addItem(item);
+            apiRequest = new ApiRequest(apiTestCase, options);
+            if (cl != null) {
+                cl.setResolveStrategy(Closure.DELEGATE_FIRST);
+                cl.setDelegate(apiRequest);
+                cl.call();
+            }
+
+            return apiRequest;
+        }
+        catch (TestException ex) {
+            throw ex;
+        }
+        catch (ServiceException ex) {
+            throw new TestException(ex.getMessage(), ex);
+        }
+    }
+
+    public ApiResponse submit(ApiRequest apiRequest) throws TestException {
+        TestCase apiTestCase = apiRequest.getTestCase();
+        TestCaseItem testItem = apiRequest.getTestCase().getItems().get(0); // TODO
+        if (apiRequest.getOptions() != null)
+            testItem.setOptions(new JSONObject(apiRequest.getOptions()));
+        if (testItem.getOption("caseName") == null)
+            testItem.setOption("caseName", getTestCase().getAsset().getRootName());
+        if (testItem.getOption("retainLog") == null)
+            testItem.setOption("retainLog", "true");
+        if (testItem.getOption("retainResult") == null)
+            testItem.setOption("retainResult", "true");
+        testItem.setOption("debug", String.valueOf(getTestCaseRun().isVerbose()));
+        if (apiRequest.getValues() != null)
+            testItem.setValues(new JSONObject(apiRequest.getValues()));
+        JSONObject itemResponse = getTestCaseRun().submitItem(apiTestCase, testItem);
+        if (itemResponse == null)
+            return new ApiResponse(new JSONObject());
+        else
+            return new ApiResponse(testItem.getResponse());
+    }
+
     public TestCaseProcess start(String target) throws TestException {
         return start(process(target));
     }
@@ -181,6 +253,8 @@ public abstract class TestCaseScript extends Script {
             return verify(new TestCaseProcess[]{(TestCaseProcess)object}, null);
         else if (object instanceof TestCaseResponse)
             return verify((TestCaseResponse)object);
+        else if (object instanceof ApiResponse)
+            return verify((ApiResponse)object);
         else if (object instanceof File) {
             try {
                 response.setExpected(new String(getTestCaseRun().read((File)object)));
@@ -205,8 +279,44 @@ public abstract class TestCaseScript extends Script {
     public List<ProcessInstance> load(TestCaseProcess[] processes) throws TestException {
         Asset expectedResults = process.getExpectedResults();
         if (expectedResults == null)
-            expectedResults = getDefaultExpectedResults(process);
+            expectedResults = getDefaultExpectedResults();
         return getTestCaseRun().loadProcess(processes, expectedResults);
+    }
+
+    public Verifiable verify(ApiResponse response) throws TestException {
+        return verify(response, null);
+    }
+
+    public Verifiable verify(ApiResponse response, Closure<?> cl) throws TestException {
+
+        if (cl != null) {
+            cl.setResolveStrategy(Closure.DELEGATE_FIRST);
+            cl.setDelegate(response);
+            cl.call();
+        }
+
+        try {
+            TestCase testCase = getTestCaseRun().getTestCase();
+            TestCaseItem item = new TestCaseItem(testCase.getName());
+            if (response.getOptions() != null)
+                item.setOptions(new JSONObject(response.getOptions()));
+            if (item.getOption("caseName") == null)
+                item.setOption("caseName", getTestCase().getAsset().getRootName());
+            if (item.getOption("retainLog") == null)
+                item.setOption("retainLog", "true");
+            if (item.getOption("retainResult") == null)
+                item.setOption("retainResult", "true");
+            item.setOption("verify", "true");
+            if (response.getValues() != null)
+                item.setValues(new JSONObject(apiRequest.getValues()));
+            item.setStatus(Status.Stopped); // otherwise this adhoc item causes havoc
+            testCase.addItem(item);
+            getTestCaseRun().verifyItem(testCase, item);
+            return response;
+        }
+        catch (Exception ex) {
+            throw new TestException(ex.getMessage(), ex);
+        }
     }
 
     public Verifiable verify(TestCaseProcess process, Closure<?> cl) throws TestException {
@@ -226,7 +336,7 @@ public abstract class TestCaseScript extends Script {
             cl.call();
         }
         if (process.getExpectedResults() == null)
-            process.setExpectedResults(getDefaultExpectedResults(process));
+            process.setExpectedResults(getDefaultExpectedResults());
 
         process.setSuccess(getTestCaseRun().verifyProcess(processes, process.getExpectedResults()));
         return process;
@@ -235,7 +345,7 @@ public abstract class TestCaseScript extends Script {
     /**
      * Default naming convention for expected results asset (need not exist).
      */
-    public Asset getDefaultExpectedResults(TestCaseProcess process) throws TestException {
+    public Asset getDefaultExpectedResults() throws TestException {
         String testAssetName = getTestCaseRun().getTestCase().getName();
         String resultsAssetName = testAssetName.substring(0, testAssetName.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML);
         if (getTestCaseRun().isCreateReplace()) {

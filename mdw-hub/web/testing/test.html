@@ -31,14 +31,16 @@
             <div class="mdw-test-message" ng-if="testCase.message">{{testCase.message}}</div>
             <div class="mdw-inner-content">
               <div class="col-md-6 mdw-split-left" ng-if="testCase.expectedResults">
-                <div class="mdw-resource-heading">{{testCase.expected}}</div>
+                <div class="mdw-resource-heading"><a href="#/asset/{{testCase.expected}}">{{testCase.expected}}</a></div>
                 <pre class="mdw-line-nums">{{testCase.expectedResults.lineNumbers}}</pre>
-                <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.expectedResults.content | yamlDiff:testCase.actualResults.content | unsafe"></code></pre>
+                <pre class="mdw-resource-content"><code class="mdw-code" 
+                  ng-bind-html="testCase.expectedResults.content | yamlDiff:testCase.actualResults.content:testCaseItem | unsafe"></code></pre>
               </div>      
               <div class="col-md-6 mdw-split-right" ng-if="testCase.actualResults">
                 <div class="mdw-resource-heading">Actual Results</div>
                 <pre class="mdw-line-nums">{{testCase.actualResults.lineNumbers}}</pre>
-                <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.actualResults.content | yamlDiff:testCase.expectedResults.content | instanceLinks | unsafe"></code></pre>
+                <pre class="mdw-resource-content"><code class="mdw-code" 
+                  ng-bind-html="testCase.actualResults.content | yamlDiff:testCase.expectedResults.content:testCaseItem | instanceLinks | unsafe"></code></pre>
               </div>
             </div>
           </uib-tab>

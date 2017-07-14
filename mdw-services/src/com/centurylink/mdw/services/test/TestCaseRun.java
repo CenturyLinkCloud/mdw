@@ -18,6 +18,7 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -38,6 +39,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xmlbeans.XmlException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -74,6 +76,7 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.PreFilter;
 import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseActivityStub;
 import com.centurylink.mdw.test.TestCaseAdapterStub;
 import com.centurylink.mdw.test.TestCaseEvent;
@@ -186,11 +189,8 @@ public class TestCaseRun implements Runnable {
         testCase.setStatus(TestCase.Status.InProgress);
         testCase.setStart(new Date());
         if (testCase.getItems() != null) {
-            // may have individual start dates in the future
-            Date start = new Date();
             for (TestCaseItem item : testCase.getItems()) {
                 item.setStatus(TestCase.Status.InProgress);
-                item.setStart(start);
             }
         }
 
@@ -730,14 +730,14 @@ public class TestCaseRun implements Runnable {
                 log.println("actual response:");
                 log.println(response.getActual());
             }
-            return executeVerifyResponse(response.getExpected(), response.getActual(), null); // TODO reference doc for subst
+            return executeVerifyResponse(response.getExpected(), response.getActual());
         }
         catch (Exception ex) {
             throw new TestException(ex.getMessage(), ex);
         }
     }
 
-    protected boolean executeVerifyResponse(String expected, String actual, String reference)
+    protected boolean executeVerifyResponse(String expected, String actual)
     throws TestException,IOException,DataAccessException,ParseException {
         expected = expected.replaceAll("\r", "");
         if (isVerbose())
@@ -928,6 +928,48 @@ public class TestCaseRun implements Runnable {
         return passthroughResponse;
     }
 
+    public JSONObject submitItem(TestCase apiTestCase, TestCaseItem testItem) throws TestException {
+        try {
+            // close log stream and reopen after js runner to sync file access
+            getLog().close();
+            String runnerClass = TestCaseRun.POSTMAN_PKG + ".NodeRunner";
+            Package pkg = PackageCache.getPackage(apiTestCase.getPackage());
+            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+            Object runner = nodeRunnerClass.newInstance();
+            Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+            runMethod.invoke(runner, apiTestCase);
+            setLog(new PrintStream(new FileOutputStream(getResultsDir()
+                    + "/" + getTestCase().getAsset().getRootName() + ".log", true)));
+
+            return testItem.getResponse();
+        }
+        catch (Exception ex) {
+            throw new TestException(ex.getMessage(), ex);
+        }
+    }
+
+    public boolean verifyItem(TestCase testCase, TestCaseItem item) throws TestException {
+        // close log stream and reopen after js runner to sync file access
+        getLog().close();
+        String runnerClass = TestCaseRun.POSTMAN_PKG + ".NodeRunner";
+        Package pkg = PackageCache.getPackage(testCase.getPackage());
+        try {
+            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+            Object runner = nodeRunnerClass.newInstance();
+            Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+            runMethod.invoke(runner, testCase);
+            setLog(new PrintStream(new FileOutputStream(getResultsDir()
+                    + "/" + getTestCase().getAsset().getRootName() + ".log", true)));
+            testCase.setStatus(item.getStatus());
+            testCase.setMessage(item.getMessage());
+            passed = testCase.getStatus() == Status.Passed;
+            return passed;
+        }
+        catch (Exception ex) {
+            throw new TestException(ex.getMessage(), ex);
+        }
+    }
+
     public void finishExecution(Throwable e) {
         if (isLoadTest()) {
             if (e != null)
@@ -987,11 +1029,18 @@ public class TestCaseRun implements Runnable {
         if (status != TestCase.Status.Errored && status != TestCase.Status.Stopped) {
             testCase.setEnd(endDate);
             testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
-            if (testCase.getItems() != null) {
-                // may have individual end dates in the future
-                for (TestCaseItem item : testCase.getItems()) {
-                    item.setEnd(endDate);
-                    testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
+        }
+
+        if (testCase.getItems() != null) {
+            if (e != null)
+                e.printStackTrace();  // else would have to dig in testCase (not item) log
+            for (TestCaseItem item : testCase.getItems()) {
+                if (e != null) {
+                    // don't leave unfinished items
+                    if (item.getStatus() == Status.InProgress) {
+                        item.setStatus(testCase.getStatus());
+                        item.setMessage(testCase.getMessage());
+                    }
                 }
             }
         }

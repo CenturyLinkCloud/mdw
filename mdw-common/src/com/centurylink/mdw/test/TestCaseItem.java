@@ -76,6 +76,39 @@ public class TestCaseItem implements Jsonable {
     public JSONObject getObject() { return object; }
     public void setObject(JSONObject object) { this.object = object; }
 
+    /**
+     * Test case runner options.
+     * The caseName option indicates running without verification as part of a large
+     * test script execution.  In this case responseObject will be populated.
+     */
+    private JSONObject options;
+    public JSONObject getOptions() { return options; }
+    public void setOptions(JSONObject options) { this.options = options; }
+    public String getOption(String name) {
+        if (options == null || !options.has(name))
+            return null;
+        return options.getString(name);
+    }
+    public void setOption(String name, String value) {
+        if (options == null)
+            options = new JSONObject();
+        options.put(name, value);
+    }
+
+    /**
+     * Runtime values for results comparisons.
+     */
+    private JSONObject values;
+    public JSONObject getValues() { return values; }
+    public void setValues(JSONObject values) { this.values = values; }
+
+    /**
+     * Response object.
+     */
+    private JSONObject response;
+    public JSONObject getResponse() { return response; }
+    public void setResponse(JSONObject object) { this.response = object; }
+
     @ApiModelProperty(hidden=true)
     public String getName() {
         return object == null ? null : object.optString("name");
