@@ -1,27 +1,25 @@
-test: 'PUT_workgroups/{group-name}'
+test: 'PUT:workgroups/{group-name}'
 request:
-  url: 'http://localhost:8080/mdw/Services/Workgroups/GroupA'
+  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
   method: PUT
   headers:
     Content-Type: application/json
-  body: "{\r\n  \"name\": \"GroupA\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing (updated)"
+    }
 response:
   status:
     code: 200
     message: OK
-  time: ${~[0-9]*}
   headers:
-    server: ${~Apache.*}
-    set-cookie:
-      - JSESSIONID=${~.*}
-    x-ua-compatible: IE=Edge
     mdw-request-id: '${~[0-9]*}'
     content-type: application/json
-    content-length: '${~[0-9]*}'
-    date: ${~.*}'
-    connection: close
   body: |-
-    {"status": {
-      "code": 0,
-      "message": "Success"
-    }}
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

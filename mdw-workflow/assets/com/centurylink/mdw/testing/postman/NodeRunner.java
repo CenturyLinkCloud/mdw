@@ -16,6 +16,11 @@
 package com.centurylink.mdw.testing.postman;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +32,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseItem;
+import com.centurylink.mdw.test.TestExecConfig;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8;
@@ -92,9 +98,15 @@ public class NodeRunner {
                     itemId = request.getString("method") + ":" + itemId;
                 }
             }
-            if (item.getOptions() != null) {
+            JSONObject options = item.getOptions() == null ? new JSONObject() : item.getOptions();
+            TestExecConfig config = ServiceLocator.getTestingServices().getTestExecConfig();
+            if (config.isVerbose() && !options.has("debug"))
+                options.put("debug", "true");
+            if (config.isCreateReplace() && !options.has("overwriteExpected"))
+                options.put("overwriteExpected", "true");
+            if (JSONObject.getNames(options) != null) {
                 V8Object json = nodeJS.getRuntime().getObject("JSON");
-                V8Array params = new V8Array(nodeJS.getRuntime()).push(item.getOptions().toString());
+                V8Array params = new V8Array(nodeJS.getRuntime()).push(options.toString());
                 V8Object jsonObj = json.executeObjectFunction("parse", params);
                 itemObj.add("options", jsonObj);
                 params.release();
@@ -130,14 +142,14 @@ public class NodeRunner {
                 V8Object resultObj = parameters.getObject(1);
                 if (itemId == null) {
                     for (TestCaseItem item : testCase.getItems()) {
-                      item.setStatus(Status.valueOf(resultObj.getString("status")));
-                      item.setMessage(resultObj.getString("message"));
+                        updateItem(item, resultObj);
                     }
                 }
-                TestCaseItem item = testCaseItems.get(itemId);
-                if (item != null) {
-                    item.setStatus(Status.valueOf(resultObj.getString("status")));
-                    item.setMessage(resultObj.getString("message"));
+                else {
+                    TestCaseItem item = testCaseItems.get(itemId);
+                    if (item != null) {
+                        updateItem(item, resultObj);
+                    }
                 }
                 resultObj.release();
                 return null;
@@ -179,6 +191,25 @@ public class NodeRunner {
         String message;
         public String toString() {
             return status + ": " + message;
+        }
+    }
+
+    private void updateItem(TestCaseItem item, V8Object resultObj) {
+        if (Arrays.asList(resultObj.getKeys()).contains("start"))
+            item.setStart(parseIso(resultObj.getString("start")));
+        item.setStatus(Status.valueOf(resultObj.getString("status")));
+        item.setMessage(resultObj.getString("message"));
+        if (Arrays.asList(resultObj.getKeys()).contains("end"))
+            item.setEnd(parseIso(resultObj.getString("end")));
+    }
+
+    private static DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private Date parseIso(String iso) {
+        try {
+            return isoDateFormat.parse(iso);
+        }
+        catch (ParseException ex) {
+            return null;
         }
     }
 }

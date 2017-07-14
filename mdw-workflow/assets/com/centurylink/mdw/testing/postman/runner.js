@@ -3,7 +3,8 @@
 // Runs multiple test items, each with their own case.
 var testCase = null;
 try {
-  const limberest = require('limberest');
+  //const limberest = require('limberest');
+  const limberest = require('../../../../../../../../limberest-js/index.js');
   const path = require('path');
   
   testCase = getTestCase();
@@ -13,7 +14,8 @@ try {
   var options = {
     location: testLoc,
     resultLocation: testCase.resultDir,
-    logLocation: testCase.resultDir
+    logLocation: testCase.resultDir,
+    responseHeaders: ['content-type', 'mdw-request-id']
   };
 
   if (testCase.items) {
@@ -33,6 +35,8 @@ try {
         console.log("values: " + JSON.stringify(vals, null, 2));
       if (opts.caseName && opts.verify) {
         // verify test results only
+        opts.retainResult = opts.retainLog = true;
+        opts.overwriteExpected = false;
         var theCase = new (limberest.Case)(opts.caseName, opts);
         setTestResult(null, theCase.verify(vals));
       }
@@ -40,11 +44,13 @@ try {
         // execute test case 
         var group = limberest.group(testCase.file);
         var test = group.test(item.method, item.name);
+        var result = { start: new Date().toISOString() };
         test.run(opts, vals, (response, error) => {
           var itemId = item.method + ':' + item.name;
           setTestResponse(itemId, response);
           if (!opts.caseName) {
-            var result = test.verify(vals);
+            result = Object.assign(result, test.verify(vals));
+            result.end = new Date().toISOString();
             setTestResult(itemId, result);
           }
         });

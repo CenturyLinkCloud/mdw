@@ -51,6 +51,7 @@ public abstract class ServiceServlet extends HttpServlet {
                     && !Listener.METAINFO_ACCEPT.equals(key)
                     && !Listener.METAINFO_CONTENT_TYPE.equals(key)
                     && !Listener.METAINFO_DOWNLOAD_FORMAT.equals(key)
+                    && !Listener.METAINFO_MDW_REQUEST_ID.equals(key)
                     && !requestHeaderKeys.contains(key))
                 response.setHeader(key, metaInfo.get(key));
         }
@@ -58,7 +59,7 @@ public abstract class ServiceServlet extends HttpServlet {
         // these always get populated if present
         if (metaInfo.get(Listener.METAINFO_REQUEST_ID) != null)
             response.setHeader(Listener.METAINFO_REQUEST_ID, metaInfo.get(Listener.METAINFO_REQUEST_ID));
-        if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null)
+        if (metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID) != null && !metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID).equals("0"))
             response.setHeader(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_MDW_REQUEST_ID));
         if (metaInfo.get(Listener.METAINFO_CORRELATION_ID) != null)
             response.setHeader(Listener.METAINFO_CORRELATION_ID, metaInfo.get(Listener.METAINFO_CORRELATION_ID));

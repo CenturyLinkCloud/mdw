@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ApiRequest {
@@ -26,20 +27,17 @@ public class ApiRequest {
         this.testCase = testCase;
     }
 
-    private String caseName;
-    public String getCaseName() { return caseName; }
-    public void setCaseName(String caseName) { this.caseName = caseName; }
-
-    private String environment;
-    public String getEnvironment() { return environment; }
-    public void setEnvironment(String environment) { this.environment = environment; }
+    public ApiRequest(TestCase testCase, Map<String,String> options) {
+        this.testCase = testCase;
+        this.options = options;
+    }
 
     /**
-     * Runner options.
+     * Runner options (eg: environment, capture)
      */
-    private Map<String,Object> options;
-    public Map<String,Object> getOptions() { return options; }
-    public void setOptions(Map<String,Object> options) {
+    private Map<String,String> options;
+    public Map<String,String> getOptions() { return options; }
+    public void setOptions(Map<String,String> options) {
         this.options = options;
     }
 
@@ -50,5 +48,21 @@ public class ApiRequest {
     public Map<String,Object> getValues() { return values; }
     public void setValues(Map<String,Object> values) {
         this.values = values;
+    }
+
+    /**
+     * Creates a clone with overridden values.
+     * Options are not deeply cloned.
+     */
+    public ApiRequest leftShift(Map<String,Object> newValues) {
+        ApiRequest newOne = new ApiRequest(testCase, options);
+        if (values != null) {
+            newOne.values = new HashMap<>();
+            for (String key : values.keySet())
+                newOne.values.put(key, values.get(key));
+            for (String key : newValues.keySet())
+                newOne.values.put(key, newValues.get(key));
+        }
+        return newOne;
     }
 }

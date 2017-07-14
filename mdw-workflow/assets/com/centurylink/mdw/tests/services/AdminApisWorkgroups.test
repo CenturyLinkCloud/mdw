@@ -1,35 +1,47 @@
 import groovy.json.JsonSlurper
 
-// AdminApisWorkgroups
-println 'Workgroups API CRUD...'
+def vals = [
+    'group-name': 'GroupA',
+    'group-description': 'a group for testing'
+];
 
-def vals = ['group-name': 'GroupA'];
-
-def response = submit request('admin-apis.postman/GET:workgroups/{group-name}') {
-  values = vals
+// initially no capture (possible cleanup)
+def GET = request('admin-apis.postman/GET:workgroups/{group-name}') {
+    values = vals;
+    options = [ captureResult: false ]
+}
+def DEL = request('admin-apis.postman/DEL:workgroups/{group-name}') {
+    values = vals;
+    options = [ captureResult: false ]
 }
 
-assert response.time < 1000 // less than a second
+def response = submit GET
 
 if (response.status.code == 200) {
-    // assert response.headers['content-type'] == 'application/json'
-    def workgroup = new JsonSlurper().parseText(response.body)
-    assert workgroup.name == 'GroupA'
     // delete the workgroup so we can submit a POST
-    response = submit request('admin-apis.postman/DEL:workgroups/{group-name}') {
-      values = vals
-    }
-
+    response = submit DEL
     assert response.status.code == 200;
+    response = submit GET
+    assert response.status.code == 404;
 }
 
+// now start capturing
+GET.options['captureResult'] = DEL.options['captureResult'] = true
+
 // create workgroup
-response = submit request('admin-apis.postman/POST:workgroups') {
+def POST = request('admin-apis.postman/POST:workgroups') {
   values = vals
 }
 
+response = submit POST
+assert response.status.code == 201;
+assert response.time < 1000 // less than a second
 // case-insensitive header check
-// assert response.checkHeader('content-type', 'application/json')
+assert response.checkHeader('content-type', 'application/json')
+
+// ensure no dups
+response = submit POST
+assert response.status.code == 409;
 
 verify(response) {
   values = vals

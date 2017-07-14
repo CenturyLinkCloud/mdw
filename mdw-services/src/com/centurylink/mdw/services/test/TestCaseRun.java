@@ -189,11 +189,8 @@ public class TestCaseRun implements Runnable {
         testCase.setStatus(TestCase.Status.InProgress);
         testCase.setStart(new Date());
         if (testCase.getItems() != null) {
-            // may have individual start dates in the future
-            Date start = new Date();
             for (TestCaseItem item : testCase.getItems()) {
                 item.setStatus(TestCase.Status.InProgress);
-                item.setStart(start);
             }
         }
 
@@ -1032,11 +1029,18 @@ public class TestCaseRun implements Runnable {
         if (status != TestCase.Status.Errored && status != TestCase.Status.Stopped) {
             testCase.setEnd(endDate);
             testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
-            if (testCase.getItems() != null) {
-                // may have individual end dates in the future
-                for (TestCaseItem item : testCase.getItems()) {
-                    item.setEnd(endDate);
-                    testCase.setStatus(passed ? TestCase.Status.Passed : TestCase.Status.Failed);
+        }
+
+        if (testCase.getItems() != null) {
+            if (e != null)
+                e.printStackTrace();  // else would have to dig in testCase (not item) log
+            for (TestCaseItem item : testCase.getItems()) {
+                if (e != null) {
+                    // don't leave unfinished items
+                    if (item.getStatus() == Status.InProgress) {
+                        item.setStatus(testCase.getStatus());
+                        item.setMessage(testCase.getMessage());
+                    }
                 }
             }
         }

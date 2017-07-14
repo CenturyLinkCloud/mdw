@@ -28,6 +28,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -107,12 +108,13 @@ public class Workgroups extends JsonRestService {
 
         UserServices userServices = ServiceLocator.getUserServices();
         try {
-            Workgroup existing = userServices.getWorkgroups().get(name);
             if (rel == null) {
-                if (existing != null)
-                    throw new ServiceException(HTTP_409_CONFLICT, "Workgroup name already exists: " + name);
                 Workgroup workgroup = new Workgroup(content);
+                Workgroup existing = userServices.getWorkgroups().get(workgroup.getName());
+                if (existing != null)
+                    throw new ServiceException(HTTP_409_CONFLICT, "Workgroup name already exists: " + workgroup.getName());
                 userServices.createWorkgroup(workgroup);
+                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, "201");
             }
             else if (rel.equals("users")) {
                 String cuid = getSegment(path, 3);

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -132,6 +133,10 @@ public abstract class TestCaseScript extends Script {
     }
 
     public ApiRequest request(String target, Closure<?> cl) throws TestException {
+        return request(target, null, cl);
+    }
+
+    public ApiRequest request(String target, Map<String,String> options, Closure<?> cl) throws TestException {
         int dotPostmanSlash = target.lastIndexOf(".postman/");
         if (dotPostmanSlash == -1)
             throw new TestException("Bad API test path: " + target);
@@ -147,7 +152,7 @@ public abstract class TestCaseScript extends Script {
             if (item == null)
                 throw new TestException("Test case item not found: " + itemPath);
             apiTestCase.addItem(item);
-            apiRequest = new ApiRequest(apiTestCase);
+            apiRequest = new ApiRequest(apiTestCase, options);
             if (cl != null) {
                 cl.setResolveStrategy(Closure.DELEGATE_FIRST);
                 cl.setDelegate(apiRequest);
@@ -302,7 +307,6 @@ public abstract class TestCaseScript extends Script {
             if (item.getOption("retainResult") == null)
                 item.setOption("retainResult", "true");
             item.setOption("verify", "true");
-            item.setOption("debug", String.valueOf(getTestCaseRun().isVerbose()));
             if (response.getValues() != null)
                 item.setValues(new JSONObject(apiRequest.getValues()));
             item.setStatus(Status.Stopped); // otherwise this adhoc item causes havoc
