@@ -16,7 +16,6 @@ class BootPlugin implements Plugin<Project> {
     
     @Override
     public void apply(Project project) {
-        System.out.println("APPLY");
         BootRepackageTask task = project.getTasks().create(BOOT_REPACKAGE_TASK_NAME, BootRepackageTask.class)
 
         task.setGroup(BasePlugin.BUILD_GROUP)
