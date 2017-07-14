@@ -3,8 +3,7 @@
 // Runs multiple test items, each with their own case.
 var testCase = null;
 try {
-  //const limberest = require('limberest');
-  const limberest = require('../../../../../../../../limberest-js/index.js');
+  const limberest = require('limberest');
   const path = require('path');
   
   testCase = getTestCase();

@@ -43,6 +43,16 @@ assert response.checkHeader('content-type', 'application/json')
 response = submit POST
 assert response.status.code == 409;
 
+// update workgroup
+def PUT = request('admin-apis.postman/PUT:workgroups/{group-name}') {
+  values = vals
+}
+response = submit PUT
+// confirm update
+response = submit GET
+def workgroup = new JsonSlurper().parseText(response.body)
+assert workgroup.description == 'a group for testing (updated)'
+
 verify(response) {
   values = vals
 }

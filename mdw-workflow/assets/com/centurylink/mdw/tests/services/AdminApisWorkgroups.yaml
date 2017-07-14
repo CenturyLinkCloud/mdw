@@ -4,7 +4,61 @@ request:
   method: POST
   headers:
     Content-Type: application/json
-  body: "{\r\n  \"name\": \"${group-name}\",\r\n  \"description\": \"${group-description}\"\r\n}"
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing"
+    }
+response:
+  status:
+    code: 201
+    message: Created
+  headers:
+    mdw-request-id: '${~[0-9]*}'
+    content-type: application/json
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }
+test: AdminApisWorkgroups
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing"
+    }
+response:
+  status:
+    code: 409
+    message: Conflict
+  headers:
+    mdw-request-id: '${~[0-9]*}'
+    content-type: application/json
+  body: |-
+    {
+      "status": {
+        "code": 409,
+        "message": "Workgroup name already exists: ${group-name}"
+      }
+    }
+test: AdminApisWorkgroups
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
+  method: PUT
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing (updated)"
+    }
 response:
   status:
     code: 200
@@ -13,7 +67,27 @@ response:
     mdw-request-id: '${~[0-9]*}'
     content-type: application/json
   body: |-
-    {"status": {
-      "code": 0,
-      "message": "Success"
-    }}
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }
+test: AdminApisWorkgroups
+request:
+  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
+  method: GET
+  headers:
+    header-a: header-a-value
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "description": "a group for testing (updated)",
+      "name": "${group-name}",
+      "users": []
+    }

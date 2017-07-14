@@ -1,5 +1,5 @@
-AdminApisWorkgroups.test=5
-AdminApisWorkgroups.yaml=1
+AdminApisWorkgroups.test=6
+AdminApisWorkgroups.yaml=2
 DEL_workgroups_{group-name}.yaml=2
 DeleteNon200.test=2
 DeleteNon200.yaml=1
