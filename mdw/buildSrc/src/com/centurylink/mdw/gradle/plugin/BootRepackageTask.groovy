@@ -1,12 +1,9 @@
 package com.centurylink.mdw.gradle.plugin
 
-import java.io.IOException
-import java.io.OutputStream
 import java.util.jar.JarFile
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import java.util.zip.Deflater
 
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
@@ -15,6 +12,8 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
+
+import groovy.io.FileType
 
 public class BootRepackageTask extends DefaultTask {
 
@@ -34,11 +33,17 @@ public class BootRepackageTask extends DefaultTask {
             Project project = getProject()
             project.getConfigurations().getByName(Dependency.ARCHIVES_CONFIGURATION).getAllArtifacts().files.each { f ->
                 getLogger().lifecycle("Archive: " + f)
-                if (f.name.endsWith('.jar'))
+                if (f.name.endsWith('.jar')) {
                     repackageJar(f)
-                else if (f.name.endsWith('.war'))
+                }
+                else if (f.name.endsWith('.war')) {
                     repackageWar(f)
+                }
             }
+        }
+        
+        private boolean hasMdwWar(File archiveFile) {
+            
         }
         
         private void repackageJar(File jar) {
@@ -128,15 +133,14 @@ public class BootRepackageTask extends DefaultTask {
             byte[] buffer = new byte[16 * 1024]
             new ZipOutputStream(new FileOutputStream(jar)).withCloseable { zipOut ->
                 // zipOut.setLevel(Deflater.NO_COMPRESSION)
-                new FileNameFinder().getFileNames(fromDir.toString(), '**/*').each { name ->
-                    File file = new File(name);
+                fromDir.eachFileRecurse(FileType.ANY) { file ->
                     String entryName = file.getPath().substring(fromDir.getPath().length() + 1).replace('\\', '/')
-                    println 'ENTRY: ' + entryName
                     if (file.isDirectory())
-                        name += '/'
+                        entryName += '/'
+                    println 'ENTRY: ' + entryName
                     ZipEntry ze = new ZipEntry(entryName)
-                    ze.setMethod(ZipOutputStream.STORED)
                     if (file.isFile()) {
+                        ze.setMethod(ZipOutputStream.STORED)
                         // calculate crc32
                         new Crc32OutputStream().withCloseable { crcOut ->
                             file.withInputStream { fileIn ->

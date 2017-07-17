@@ -58,6 +58,7 @@ task javadocJar(type: Jar) {
 }
 
 jar {
+    destinationDir = file("../../mdw/deploy/app")
     archiveName = "mdw-gradle-${mdwGradleVersion}.jar"
 }
 
@@ -69,18 +70,16 @@ ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 ext.ossrhUsername = System.getProperty("ossrhUsername")
 ext.ossrhPassword = System.getProperty("ossrhPassword")
 
-if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
-    signing {
-        required = { isReleaseVersion && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
-        sign configurations.archives
-     }
-}
-else {
-    tasks.withType(Javadoc).all { enabled = false }
+signing {
+    required = {"true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+    sign configurations.archives
 }
 
-uploadArchives {
+uploadArchives {    
     enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    ext.ossrhUsername = System.getProperty("ossrhUsername")
+    ext.ossrhPassword = System.getProperty("ossrhPassword")
+
     repositories {
         mavenDeployer {
             beforeDeployment {

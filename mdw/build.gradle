@@ -162,13 +162,12 @@ task pushToOrigin(type: GradleBuild) {
 allprojects {
     group = "com.centurylink.mdw"
     version = "${mdwVersion}"
-    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
     ext.ossrhUsername = System.getProperty("ossrhUsername")
     ext.ossrhPassword = System.getProperty("ossrhPassword")
     
     if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
         signing {
-            required = { isReleaseVersion && "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
             sign configurations.archives
          }
     }
