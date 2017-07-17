@@ -12,7 +12,7 @@ response:
     content-type: application/json
   body: |-
     {
-      "description": "a group for testing",
+      "description": "${~.*}",
       "name": "${group-name}",
       "users": []
     }
