@@ -6,7 +6,7 @@ layout: help
 
   Activity Implementor                            | Description                                                |
   ------------------------------------------------|:-----------------------------------------------------------|
-  [Auto Form Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/bindingExpressions.html) | Used for performing Auto Form Manual task.
+  [Auto Form Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for performing Auto Form Manual task.
   [Camel Route Adapter](http://centurylinkcloud.github.io/mdw/docs/help/MDWCamelIntegration.html) | Camel is an "integration framework" that enables to link together services through declarative route definitions.
   [Crossmap Activity](http://centurylinkcloud.github.io/mdw/docs/help/crossmap.html) | Used for simple Groovy-based DSL that enables to transform JSON/XML input documents to JSON/XML output documents.
   [Custom Manual Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Used to create a custom manual task instance.
