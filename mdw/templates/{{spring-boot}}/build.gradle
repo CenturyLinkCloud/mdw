@@ -1,0 +1,33 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.4.RELEASE'
+        mdwGradleVersion = '1.0.05'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository" } // TODO: maven-central
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("com.centurylink.mdw:mdw-gradle:${mdwGradleVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.centurylink.mdw.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }  // TODO: maven-central
+}
+
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web') { exclude(module: 'logback-classic') }
+    compile("com.centurylink.mdw:mdw:${mdwVersion}")
+}

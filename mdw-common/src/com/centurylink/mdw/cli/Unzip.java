@@ -62,6 +62,7 @@ public class Unzip implements Operation {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
+                boolean overwriteEntry = overwrite;
                 int curlyStart = entryName.indexOf("{{");
                 if (curlyStart >= 0 && entryName.length() > curlyStart + 2) {
                     int curlyEnd = entryName.indexOf("}}", curlyStart + 2);
@@ -73,12 +74,13 @@ public class Unzip implements Operation {
                         }
                         else {
                             entryName = entryName.substring(0, curlyStart) + entryName.substring(curlyEnd + 3);
+                            overwriteEntry = true; // allow options to overwrite previously-created files (TODO: okay?)
                         }
                     }
                 }
                 String outpath = destDir + "/" + entryName;
                 File outfile = new File(outpath);
-                if (outfile.exists() && !overwrite)
+                if (outfile.exists() && !overwriteEntry)
                     throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
                     if (outfile.exists())

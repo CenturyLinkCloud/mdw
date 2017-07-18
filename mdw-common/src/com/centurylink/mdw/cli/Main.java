@@ -16,6 +16,7 @@
 package com.centurylink.mdw.cli;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -47,7 +48,10 @@ public class Main {
 
         try {
             cmd.parse(args);
+            if (!init.isEclipse() && Arrays.asList(args).contains("--eclipse"))
+                init.setEclipse(true); // needed to support superfluous setting
             String command = cmd.getParsedCommand();
+
             if (command == null || command.equals("help")) {
                 cmd.usage();
             }

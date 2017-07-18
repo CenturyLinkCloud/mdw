@@ -72,7 +72,7 @@ public class Init extends Setup {
     public boolean isCloudFoundry() { return cloudFoundry; }
     public void setCloudFoundry(boolean cloudFoundry) { this.cloudFoundry = cloudFoundry; }
 
-    @Parameter(names="--spring-boot", description="Generate a Spring Boot build file (currently only Gradle)")
+    @Parameter(names="--spring-boot", description="Generate Spring Boot build artifacts (currently only Gradle)")
     private boolean springBoot = false;
     public boolean isSpringBoot() { return springBoot; }
     public void setSpringBoot(boolean springBoot) { this.springBoot = springBoot; }
@@ -116,5 +116,4 @@ public class Init extends Setup {
 
         return this;
     }
-
 }
