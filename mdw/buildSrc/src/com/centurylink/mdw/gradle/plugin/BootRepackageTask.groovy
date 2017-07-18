@@ -12,7 +12,6 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.internal.impldep.org.hamcrest.core.StringStartsWith
 
 import groovy.io.FileType
 

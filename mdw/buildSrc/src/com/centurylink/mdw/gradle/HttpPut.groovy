@@ -1,4 +1,4 @@
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.tooling.BuildException

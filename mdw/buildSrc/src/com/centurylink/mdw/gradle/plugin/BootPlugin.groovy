@@ -8,7 +8,6 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.TaskDependency
-import org.springframework.boot.gradle.repackage.RepackageTask
 
 class BootPlugin implements Plugin<Project> {
 
