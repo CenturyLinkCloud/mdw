@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -177,7 +179,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             if (!storageDir.exists() || !storageDir.isDirectory())
                 throw new DataAccessException("Directory does not exist: " + storageDir);
             pkgDirs = new ArrayList<PackageDir>();
-            for (File pkgNode : getPkgDirFiles(storageDir, includeArchive)) {
+            for (File pkgNode : getPkgDirFiles(storageDir, includeArchive, new ArrayList<>())) {
                 PackageDir pkgDir = new PackageDir(storageDir, pkgNode, versionControl);
                 pkgDir.parse();
                 pkgDirs.add(pkgDir);
@@ -187,20 +189,36 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return pkgDirs;
     }
 
-    protected List<File> getPkgDirFiles(File parentDir) {
-        return getPkgDirFiles(parentDir, true);
+    protected List<File> getPkgDirFiles(File parentDir, List<File> excludes) throws DataAccessException {
+        return getPkgDirFiles(parentDir, true, excludes);
     }
 
     /**
      * For recursively finding package directories based on the filter.
      */
-    protected List<File> getPkgDirFiles(File parentDir, boolean includeArchive) {
-        List<File> pkgDirFiles = new ArrayList<File>();
-        for (File pkgDirFile : parentDir.listFiles(pkgDirFilter))
-            pkgDirFiles.add(pkgDirFile);
+    protected List<File> getPkgDirFiles(File parentDir, boolean includeArchive, List<File> excludes)
+            throws DataAccessException {
+        List<File> pkgDirFiles = new ArrayList<>();
+        File mdwIgnore = new File(parentDir + "/.mdwignore");
+        if (mdwIgnore.exists()) {
+            try {
+                // currently only supports a straight directory list (no wildcards)
+                String list = new String(Files.readAllBytes(Paths.get(mdwIgnore.getPath()))).trim();
+                for (String dirPath : list.split("\n"))
+                    excludes.add(new File(parentDir + "/" + dirPath.trim()));
+            }
+            catch (IOException ex) {
+                throw new DataAccessException(ex.getMessage(), ex);
+            }
+        }
+
+        for (File pkgDirFile : parentDir.listFiles(pkgDirFilter)) {
+            if (!excludes.contains(pkgDirFile))
+                pkgDirFiles.add(pkgDirFile);
+        }
         for (File subDir : parentDir.listFiles(subDirFilter)) {
             if (includeArchive || !subDir.equals(archiveDir))
-                pkgDirFiles.addAll(getPkgDirFiles(subDir));
+                pkgDirFiles.addAll(getPkgDirFiles(subDir, excludes));
         }
         return pkgDirFiles;
     }

@@ -18,6 +18,8 @@ package com.centurylink.mdw.services.asset;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -176,7 +178,7 @@ public class AssetServicesImpl implements AssetServices {
         assetRoots.add(assetRoot);
         try {
             CodeTimer timer = new CodeTimer("AssetServices", true);
-            List<PackageDir> pkgDirs = findPackageDirs(assetRoots);
+            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<File>());
             for (PackageDir pkgDir : pkgDirs) {
                 List<AssetInfo> assets = null;
                 for (File file : pkgDir.listFiles())
@@ -222,7 +224,7 @@ public class AssetServicesImpl implements AssetServices {
             File vcsRoot = getVersionControl() == null ? null : getGitRoot();
             PackageList pkgList = new PackageList(ApplicationContext.getServerHostPort(), assetRoot, vcsRoot);
             CodeTimer timer = new CodeTimer("AssetServices", true);
-            List<PackageDir> pkgDirs = findPackageDirs(assetRoots);
+            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<File>());
             timer.logTimingAndContinue("findPackageDirs()");
             pkgList.setPackageDirs(pkgDirs);
             if (withVcsInfo)
@@ -242,7 +244,7 @@ public class AssetServicesImpl implements AssetServices {
     public AssetPackageList getAssetPackageList(Query query) throws ServiceException {
         try {
             List<PackageAssets> packageAssetList = new ArrayList<>();
-            for (PackageDir pkgDir : findPackageDirs(Arrays.asList(new File[]{assetRoot}))) {
+            for (PackageDir pkgDir : findPackageDirs(Arrays.asList(new File[]{assetRoot}), new ArrayList<File>())) {
 
                 Stream<File> stream = Arrays.asList(pkgDir.listFiles()).stream();
 
@@ -325,13 +327,20 @@ public class AssetServicesImpl implements AssetServices {
     /**
      * Finds the next level of sibling PackageDirs under a set of non-package dirs.
      */
-    private List<PackageDir> findPackageDirs(List<File> dirs) throws IOException, DataAccessException {
+    private List<PackageDir> findPackageDirs(List<File> dirs, List<File> excludes) throws IOException, DataAccessException {
         List<PackageDir> pkgSubDirs = new ArrayList<PackageDir>();
         List<File> allSubDirs = new ArrayList<File>();
 
         for (File dir : dirs) {
+            File mdwIgnore = new File(dir + "/.mdwignore");
+            if (mdwIgnore.exists()) {
+                // currently only supports a straight directory list (no wildcards)
+                String list = new String(Files.readAllBytes(Paths.get(mdwIgnore.getPath()))).trim();
+                for (String dirPath : list.split("\n"))
+                    excludes.add(new File(dir + "/" + dirPath.trim()));
+            }
             for (File sub : dir.listFiles()) {
-                if (sub.isDirectory() && !sub.equals(getArchiveDir())) {
+                if (sub.isDirectory() && !sub.equals(getArchiveDir()) && !excludes.contains(sub)) {
                     if (new File(sub + "/.mdw").isDirectory()) {
                         PackageDir pkgSubDir = new PackageDir(getAssetRoot(), sub, getAssetVersionControl());
                         pkgSubDir.parse();
@@ -343,7 +352,7 @@ public class AssetServicesImpl implements AssetServices {
         }
 
         if (!allSubDirs.isEmpty())
-            pkgSubDirs.addAll(findPackageDirs(allSubDirs));
+            pkgSubDirs.addAll(findPackageDirs(allSubDirs, excludes));
 
         return pkgSubDirs;
     }
