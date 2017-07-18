@@ -41,7 +41,7 @@ sourceSets {
 jar {
     destinationDir = file("../../mdw/deploy/app")
     archiveName = "mdw-gradle-${mdwGradleVersion}.jar"
-    exclude "*.class" // exclude default build srcs
+    // exclude "*.class" // exclude default build srcs
 }
 
 pluginBundle {
