@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 /**
  * Recursively copy.
  */
-public class Copy {
+public class Copy implements Operation {
     private File from;
     private File to;
     private boolean includeSubpackages;
@@ -38,7 +38,7 @@ public class Copy {
         this.includeSubpackages = includeSubpackages;
     }
 
-    public void run() throws IOException {
+    public Copy run(ProgressMonitor... progressMonitors) throws IOException {
         Files.copy(Paths.get(from.getPath()), Paths.get(to.getPath()));
         if (from.isDirectory()) {
             for (File childFrom : from.listFiles()) {
@@ -48,5 +48,6 @@ public class Copy {
                 }
             }
         }
+        return this;
     }
 }

@@ -16,10 +16,14 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -28,7 +32,7 @@ import com.beust.jcommander.Parameters;
  * Handle War download.
  */
 @Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
-public class Install {
+public class Install implements Operation {
 
     private File projectDir;
     public File getProjectDir() { return projectDir; }
@@ -56,14 +60,14 @@ public class Install {
     public String getBinariesUrl() { return binariesUrl; }
     public void setBinariesUrl(String url) { this.binariesUrl = url; }
 
-    public void run() throws IOException {
+    public Install run(ProgressMonitor... progressMonitors) throws IOException {
         String mdwVer = getMdwVersion();
         File binDir = new File(getProjectDir() + "/bin");
-        File jarFile = new File(binDir + "/mdw-" + mdwVer + ".jar");
+        File jarFile = new File(binDir + "/mdw-boot-" + mdwVer + ".jar");
         if (binDir.isDirectory()) {
             if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
                 System.out.println("Already up-to-date.");
-                return;
+                return this;
             }
 
             for (File file : binDir.listFiles()) {
@@ -77,12 +81,42 @@ public class Install {
             Files.createDirectories(Paths.get(binDir.getPath()));
         }
 
-        // https://github.com/CenturyLinkCloud/mdw/releases/download/v6.0.05-SNAPSHOT/mdw-6.0.05-SNAPSHOT.jar
-        if (!binariesUrl.endsWith("/"))
-            binariesUrl += "/";
-        URL jarDownloadUrl = new URL(binariesUrl + "download/v" + mdwVer + "/mdw-" + mdwVer + ".jar");
-        System.out.println("Downloading " + jarDownloadUrl + "...");
-        new Download(jarDownloadUrl, jarFile).run();
-        System.out.println("Done.");
+        Download download = null;
+        if (binariesUrl.startsWith("https://github.com/")) {
+            // use the github api to find the boot jar size
+            URL releasesApiUrl = new URL("https://api.github.com/repos/" + binariesUrl.substring(19));
+            JSONArray releasesArr = new JSONArray(new Fetch(releasesApiUrl).run().getData());
+            JSONObject releaseJson = null;
+            for (int i = 0; i < releasesArr.length(); i++) {
+                JSONObject relObj = releasesArr.getJSONObject(i);
+                if (relObj.optString("name").equals(mdwVer)) {
+                    releaseJson = relObj;
+                    break;
+                }
+            }
+            if (releaseJson == null)
+                throw new FileNotFoundException("Release not found: " + mdwVer);
+            if (releaseJson.has("assets")) {
+                JSONArray assetsArr = releaseJson.getJSONArray("assets");
+                for (int i = 0; i < assetsArr.length(); i++) {
+                    JSONObject assetObj = assetsArr.getJSONObject(i);
+                    if (assetObj.optString("name").equals(jarFile.getName()) && assetObj.has("browser_download_url")) {
+                        if (assetObj.has("size"))
+                            download = new Download(new URL(assetObj.getString("browser_download_url")), jarFile, assetObj.getInt("size"));
+                        else
+                            download = new Download(new URL(assetObj.getString("browser_download_url")), jarFile);
+                    }
+                }
+            }
+        }
+        else {
+            if (!binariesUrl.endsWith("/"))
+                binariesUrl += "/";
+            download = new Download(new URL(binariesUrl + "download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile);
+        }
+        System.out.println("Downloading " + jarFile + "...");
+        download.run(progressMonitors);
+
+        return this;
     }
 }

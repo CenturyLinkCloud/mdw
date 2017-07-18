@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * Recursively delete.
  */
-public class Delete {
+public class Delete implements Operation {
 
     private File file;
     private boolean includeSubpackages;
@@ -35,7 +35,7 @@ public class Delete {
         this.includeSubpackages = includeSubpackages;
     }
 
-    public void run() throws IOException {
+    public Delete run(ProgressMonitor... progressMonitors) throws IOException {
         if (file.isDirectory()) {
             for (File child : file.listFiles()) {
                 if (includeSubpackages || !new File(child + "/.mdw/package.json").isFile())
@@ -44,5 +44,7 @@ public class Delete {
         }
         if (!file.delete())
             throw new IOException("Failed to delete: " + file.getAbsolutePath());
+
+        return this;
     }
 }

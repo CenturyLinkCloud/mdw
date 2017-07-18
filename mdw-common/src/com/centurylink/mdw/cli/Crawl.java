@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * Find mdw releases.  Supported page formats are Maven Central and
  * Tomcat Directory Listing.
  */
-public class Crawl {
+public class Crawl implements Operation {
 
     private URL url;
     private boolean withSnapshots;
@@ -48,8 +48,8 @@ public class Crawl {
         this.withSnapshots = withSnapshots;
     }
 
-    public void run() throws IOException {
-        String page = new Download(url).read();
+    public Crawl run(ProgressMonitor... progressMonitors) throws IOException {
+        String page = new Fetch(url).run().getData();
         String release = withSnapshots ? "[\\d\\.]*(\\-SNAPSHOT)?" : "[\\d\\.]*";
 
         // try tomcat list format (internal repo)
@@ -58,6 +58,7 @@ public class Crawl {
             // try maven-central list format
             releases = findReleases(page, "<a href=\"", release, "/\"");
         }
+        return this;
     }
 
     private List<String> findReleases(String page, String start, String release, String end) {

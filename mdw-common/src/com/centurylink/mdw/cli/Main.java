@@ -16,6 +16,7 @@
 package com.centurylink.mdw.cli;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -47,24 +48,27 @@ public class Main {
 
         try {
             cmd.parse(args);
+            if (!init.isEclipse() && Arrays.asList(args).contains("--eclipse"))
+                init.setEclipse(true); // needed to support superfluous setting
             String command = cmd.getParsedCommand();
+
             if (command == null || command.equals("help")) {
                 cmd.usage();
             }
             else {
                 version.run();
                 if (command.equals("init")) {
-                    init.run();
-                    new Update(init).run();
+                    init.run(getMonitor());
+                    new Update(init).run(getMonitor());
                 }
                 else if (command.equals("update")) {
-                    update.run();
+                    update.run(getMonitor());
                 }
                 else if (command.equals("install")) {
-                    install.run();
+                    install.run(getMonitor());
                 }
                 else if (command.equals("run")) {
-                    run.run();
+                    run.run(getMonitor());
                 }
             }
         }
@@ -76,4 +80,19 @@ public class Main {
 
     @Parameters(commandNames="help", commandDescription="Syntax Help")
     static class Help { }
+
+    /**
+     * Every call with >= 100% progress will print a new line.
+     */
+    private static ProgressMonitor getMonitor() {
+        return prog -> {
+            System.out.print("\b\b\b\b\b\b\b\b\b");
+            if (prog >= 100)
+                System.out.println(" --> Done");
+            else if (prog <= 0) // don't report zero progress since it may indicate unknown
+                System.out.print(" ... ");
+            else
+                System.out.printf(" --> %3d%%", prog);
+        };
+    }
 }

@@ -30,7 +30,7 @@ import java.util.zip.ZipFile;
 /**
  * Bare min impl to support CLI without dependencies.
  */
-public class Unzip {
+public class Unzip implements Operation {
 
     private static final int BUFFER_KB = 16;
 
@@ -54,7 +54,7 @@ public class Unzip {
         this.optionsCheck = optionsCheck;
     }
 
-    public void run() throws IOException {
+    public Unzip run(ProgressMonitor... progressMonitors) throws IOException {
         if (!destDir.exists() || !destDir.isDirectory())
             throw new IOException("Destination directory does not exist: " + destDir);
         try (ZipFile zip = new ZipFile(zipFile)) {
@@ -62,6 +62,7 @@ public class Unzip {
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
+                boolean overwriteEntry = overwrite;
                 int curlyStart = entryName.indexOf("{{");
                 if (curlyStart >= 0 && entryName.length() > curlyStart + 2) {
                     int curlyEnd = entryName.indexOf("}}", curlyStart + 2);
@@ -73,12 +74,13 @@ public class Unzip {
                         }
                         else {
                             entryName = entryName.substring(0, curlyStart) + entryName.substring(curlyEnd + 3);
+                            overwriteEntry = true; // allow options to overwrite previously-created files (TODO: okay?)
                         }
                     }
                 }
                 String outpath = destDir + "/" + entryName;
                 File outfile = new File(outpath);
-                if (outfile.exists() && !overwrite)
+                if (outfile.exists() && !overwriteEntry)
                     throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
                     if (outfile.exists())
@@ -105,5 +107,7 @@ public class Unzip {
                 }
             }
         }
+
+        return this;
     }
 }

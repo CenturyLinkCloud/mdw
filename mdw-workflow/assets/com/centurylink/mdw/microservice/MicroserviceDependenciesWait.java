@@ -24,7 +24,6 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.EventType;
-import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;

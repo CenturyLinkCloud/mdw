@@ -29,18 +29,13 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.bpm.ApplicationPropertiesDocument.ApplicationProperties;
-import com.centurylink.mdw.bpm.PackageDocument;
-import com.centurylink.mdw.bpm.ProcessDefinitionDocument;
-import com.centurylink.mdw.bpm.PropertyDocument.Property;
-import com.centurylink.mdw.bpm.PropertyGroupDocument.PropertyGroup;
 import com.centurylink.mdw.cloud.CloudClassLoader;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.MdwJavaException;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.ExternalEvent;
@@ -386,27 +381,6 @@ public class Package implements Serializable, Jsonable {
         if (metaContent.trim().startsWith("{")) {
             Package metaPkg = new Package(new JsonObject(metaContent));
             return metaPkg.getAttributes();
-        }
-        else {
-            ApplicationProperties props = null;
-            if (metaContent.startsWith("<bpm:package") || metaContent.startsWith("<package")) {
-                PackageDocument pkgDefDoc = PackageDocument.Factory.parse(metaContent);
-                props = pkgDefDoc.getPackage().getApplicationProperties();
-            }
-            else {
-                // compatibility for imported non-VCS packages
-                ProcessDefinitionDocument procDefDoc = ProcessDefinitionDocument.Factory.parse(getMetaContent(), Compatibility.namespaceOptions());
-                props = procDefDoc.getProcessDefinition().getApplicationProperties();
-            }
-            if (props != null) {
-                for (PropertyGroup group : props.getPropertyGroupList()) {
-                    for (Property prop : group.getPropertyList()) {
-                        Attribute metaAttribute = new Attribute(prop.getName(), prop.getStringValue());
-                        metaAttribute.setAttributeGroup(group.getName());
-                        metaAttributes.add(metaAttribute);
-                    }
-                }
-            }
         }
         return metaAttributes;
     }

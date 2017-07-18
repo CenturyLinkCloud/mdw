@@ -1,8 +1,8 @@
-import org.gradle.api.internal.file.FileResolver;
-import org.gradle.process.ExecResult;
-import org.gradle.process.internal.ExecAction;
-import org.gradle.process.internal.ExecHandle;
-import org.gradle.process.internal.ExecHandleBuilder;
+import org.gradle.api.internal.file.FileResolver
+import org.gradle.process.ExecResult
+import org.gradle.process.internal.ExecAction
+import org.gradle.process.internal.ExecHandle
+import org.gradle.process.internal.ExecHandleBuilder
 
 import org.gradle.api.tasks.TaskAction
 import org.gradle.tooling.BuildException

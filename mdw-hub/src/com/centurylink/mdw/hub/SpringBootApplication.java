@@ -28,7 +28,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.centurylink.mdw.config.PropertyManager;
@@ -41,7 +40,6 @@ import com.centurylink.mdw.util.file.ZipHelper;
 @Configuration
 @ComponentScan
 @ServletComponentScan
-@EnableMBeanExport
 @ManagedResource(objectName="com.centurylink.mdw.springboot:name=application")
 public class SpringBootApplication {
 
