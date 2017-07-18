@@ -5,11 +5,11 @@ buildscript {
     }
     repositories {
         mavenCentral()
-        maven { url "http://lxdenvmtc143.dev.qintra.com:7021/maven/repository" } // TODO: maven-central
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("com.centurylink.mdw:mdw-gradle:${mdwGradleVersion}")
+        classpath("gradle.plugin.com.centurylink.mdw:buildSrc:${mdwGradleVersion}")
     }
 }
 
