@@ -275,11 +275,12 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         }
         catch (NoSuchBeanDefinitionException ex) {
             // Add to map of known classes that have no bean declared
-            //     set = undefinedActivityBeans.get(key);
-            if (set == null)
+            set = undefinedActivityBeans.get(key);
+            if (set == null) {
                 set = new ConcurrentHashMap<String, Boolean>();
+                undefinedActivityBeans.put(key, set);
+            }
             set.put(type,true);
-            undefinedActivityBeans.put(key, set);
 
             return null; // no bean declared
         }
@@ -305,11 +306,12 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         }
         catch (NoSuchBeanDefinitionException ex) {
             // Add to map of known classes that have no bean declared
-            //         set = undefinedEventBeans.get(key);
-            if (set == null)
+            set = undefinedEventBeans.get(key);
+            if (set == null) {
                 set = new ConcurrentHashMap<String, Boolean>();
+                undefinedEventBeans.put(key, set);
+            }
             set.put(type,true);
-            undefinedEventBeans.put(key, set);
 
             return null; // no bean declared
         }
@@ -331,11 +333,12 @@ public class SpringAppContext implements CacheEnabled, CacheService {
         }
         catch (NoSuchBeanDefinitionException ex) {
             // Add to map of known classes that have no bean declared
-            //    set = undefinedVariableBeans.get(key);
-            if (set == null)
+            set = undefinedVariableBeans.get(key);
+            if (set == null) {
                 set = new ConcurrentHashMap<String, Boolean>();
+                undefinedVariableBeans.put(key, set);
+            }
             set.put(type, true);
-            undefinedVariableBeans.put(key, set);
 
             return null; // no bean declared
         }

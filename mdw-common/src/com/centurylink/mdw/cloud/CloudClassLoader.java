@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -59,7 +60,7 @@ public class CloudClassLoader extends ClassLoader {
 
     private static List<Asset> cachedJarAssets = null;
     private List<Asset> jarAssets = null;
-    public List<Asset> getJarAssets() {
+    public synchronized List<Asset> getJarAssets() {
         List<Asset> newJarAssets = AssetCache.getJarAssets();
 
         if (cachedJarAssets != newJarAssets) {
@@ -120,7 +121,7 @@ public class CloudClassLoader extends ClassLoader {
     /**
      * TODO: allow packages to isolate their classes
      */
-    private static Map<String,Class<?>> sharedClassCache = new HashMap<String,Class<?>>();
+    private static Map<String,Class<?>> sharedClassCache = new ConcurrentHashMap<String,Class<?>>();
 
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         byte[] b = null;
@@ -131,9 +132,7 @@ public class CloudClassLoader extends ClassLoader {
                 return CompiledJavaCache.getClass(getParent(), packageVO, name, javaAsset.getStringContent());
             // try shared cache
             Class<?> found;
-            synchronized(sharedClassCache) {
-                found = sharedClassCache.get(name);
-            }
+            found = sharedClassCache.get(name);
             if (found != null)
                 return found;
             // next try dynamic jar assets
@@ -162,13 +161,12 @@ public class CloudClassLoader extends ClassLoader {
         if (pkg == null)
             definePackage(pkgName, null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
         Class<?> clz = defineClass(name, b, 0, b.length);
-        synchronized(sharedClassCache) {
-            Class<?> found = sharedClassCache.get(name);
-            if (found != null)
-                clz = found;
-            else
-                sharedClassCache.put(name, clz);
-        }
+        Class<?> found = sharedClassCache.get(name);
+        if (found != null)
+            clz = found;
+        else
+            sharedClassCache.put(name, clz);
+
         return clz;
     }
 
@@ -258,15 +256,13 @@ public class CloudClassLoader extends ClassLoader {
         return b;
     }
 
-    private Map<String,Boolean> classesFound;
+    private Map<String,Boolean> classesFound = new ConcurrentHashMap<String,Boolean>();
 
     /**
      * Looks for classes in Jar assets or on the prop-specified classpath.
      * Results are cached, so Jar/CP changes require app redeployment.
      */
     public boolean hasClass(String name) {
-        if (classesFound == null)
-            classesFound = new HashMap<String,Boolean>();
         Boolean found = classesFound.get(name);
         if (found != null)
             return found;
