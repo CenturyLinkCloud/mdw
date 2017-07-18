@@ -1,28 +1,28 @@
 'use strict';
 
 // example of REST api testing directly through NodeJS
-const wsLoc = '../../../../../../..';
+const wsLoc = '../../../../../../../..';
 const limberest = require('limberest');
 
 const testLoc = '../../tests/services/';
 const resLoc = wsLoc + '/mdw-workflow/testResults/com.centurylink.mdw.tests.services';
   
-var env = limberest.env(testLoc + '/localhost.env');
-var group = limberest.group(testLoc + '/admin-apis.postman');
+var env = limberest.loadEnvSync(testLoc + '/localhost.env');
+var group = limberest.loadGroupSync(testLoc + '/admin-apis.postman');
 
 var options = {
   location: testLoc,
   resultLocation: resLoc,
-  logLocation: resLoc,
   debug: true,
+  responseHeaders: ['content-type', 'mdw-request-id']
 };
 
 // run one test
-var test = group.test('POST', 'workgroups');
+var test = group.getTest('POST', 'workgroups');
 
 var values = Object.assign({}, env);
 values['group-name'] = 'GroupA';
 
-test.run(options, values, (response, error) => {
-  var result = test.verify(values);
+test.run(options, values, (error, response) => {
+  test.verify(values);
 });

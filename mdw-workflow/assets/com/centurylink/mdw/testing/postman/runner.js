@@ -13,7 +13,6 @@ try {
   var options = {
     location: testLoc,
     resultLocation: testCase.resultDir,
-    logLocation: testCase.resultDir,
     responseHeaders: ['content-type', 'mdw-request-id']
   };
 
@@ -25,10 +24,10 @@ try {
       // deep clone for values
       var vals = {};
       if (opts.env) {
-        vals = Object.assign({}, limberest.env(opts.env), item.values);
+        vals = Object.assign({}, limberest.loadEnvSync(opts.env), item.values);
       }
       else if (require('fs').existsSync(testLoc + '/localhost.env')) {
-        vals = Object.assign({}, limberest.env(testLoc + '/localhost.env'), item.values);
+        vals = Object.assign({}, limberest.loadEnvSync(testLoc + '/localhost.env'), item.values);
       }
       if (opts.debug)
         console.log("values: " + JSON.stringify(vals, null, 2));
@@ -37,18 +36,18 @@ try {
         opts.retainResult = opts.retainLog = true;
         opts.overwriteExpected = false;
         var theCase = new (limberest.Case)(opts.caseName, opts);
-        setTestResult(null, theCase.verify(vals));
+        setTestResult(null, theCase.verifySync(vals));
       }
       else {
         // execute test case 
-        var group = limberest.group(testCase.file);
-        var test = group.test(item.method, item.name);
+        var group = limberest.loadGroupSync(testCase.file);
+        var test = group.getTest(item.method, item.name);
         var result = { start: new Date().toISOString() };
-        test.run(opts, vals, (response, error) => {
+        test.run(opts, vals, (error, response) => {
           var itemId = item.method + ':' + item.name;
           setTestResponse(itemId, response);
           if (!opts.caseName) {
-            result = Object.assign(result, test.verify(vals));
+            result = Object.assign(result, test.verifySync(vals));
             result.end = new Date().toISOString();
             setTestResult(itemId, result);
           }
