@@ -9,7 +9,7 @@ The following standards should be followed as generally accepted good programmin
 
 ##### General
 1. To ensure compliance with coding style and formatting conventions, import the following into your Eclipse workspace preferences (Window > Preferences > Java > Code Style > Code Templates and Formatter 
-     - Templates: [https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeTemplates.xml](https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeTemplates.xml)
+     - Templates: [https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeTemplates](https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeTemplates.xml)
      - Formatter: [https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeFormatter](https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeFormatter.xml)
        
 2. Incorporate JavaDoc comments into your code for each top-level type (class or interface), and for each method whose implementation contains significant processing logic.  A method whose purpose is readily apparent from its name (such as a simple getter or setter) does not require a JavaDoc comment.
