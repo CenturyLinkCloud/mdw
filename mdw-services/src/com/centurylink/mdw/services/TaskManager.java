@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.services;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +24,7 @@ import javax.naming.NamingException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.event.EventLog;
-import com.centurylink.mdw.model.note.InstanceNote;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -158,87 +155,6 @@ public interface TaskManager {
     */
    public void closeTaskInstance(TaskInstance ti, String action, String comment)
    throws ServiceException, DataAccessException;
-
-   /**
-    * Returns the available notes for the given owner type and ID
-    *
-    * @param owner the owner type
-    * @param id the owner id
-    * @return collection of notes for the given owner
-    */
-   public Collection<InstanceNote> getNotes(String owner, Long instanceId)
-   throws DataAccessException;
-
-   /**
-    * Creates a instance note.
-    */
-   public Long addNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-   throws DataAccessException, ServiceException;
-
-   /**
-    * Updates a task instance note.
-    */
-   public void updateNote(Long noteId, String noteName, String noteDetails, String user)
-   throws DataAccessException, ServiceException;
-
-   /**
-    * Updates a note based on ownerId.
-    */
-   public void updateNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-   throws DataAccessException, ServiceException;
-
-   /**
-    * Deletes the passed in TaskInstanceNote
-    *
-    * @param pTaskNote
-    */
-   public void deleteNote(Long noteId, Long userId)
-   throws ServiceException, DataAccessException;
-
-   /**
-    * Returns the collection of attachments
-    *
-    * @param pTaskInstId
-    * @return Collection of Attachment
-    */
-   public Collection<Attachment> getAttachments(String attachName,String attachmentLocation)
-   throws DataAccessException;
-
-   /**
-    * Creates and adds a task attachment
-    */
-   public Long addAttachment(String attachName,
-           String attachLoc, String contentType, String user,String owner,Long ownerId)
-   throws DataAccessException, ServiceException;
-
-   /**
-    * Removes the attachment from the task instance
-    *
-    * @param pTaskInstId
-    * @param pAttachName
-    * @param pAttachLocation
-    * @return Attachment
-    */
-   public void removeAttachment(Long pAttachId, Long userId)
-   throws DataAccessException, ServiceException;
-
-   /**
-    * Returns the attachment
-    *
-    * @param pTaskInstId
-    * @param pAttachName
-    * @return Attachment
-    */
-   public Attachment getAttachment(String attachName,String pAttachLocation)
-   throws DataAccessException;
-
-   /**
-    * Return the attachment by its ID
-    * @param pAttachmentId
-    * @return
-    * @throws DataAccessException
-    */
-   public Attachment getAttachment(Long pAttachmentId) throws DataAccessException;
 
    /**
     * get the task instance for the activity instance.

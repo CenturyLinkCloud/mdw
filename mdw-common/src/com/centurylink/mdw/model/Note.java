@@ -15,11 +15,12 @@
  */
 package com.centurylink.mdw.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.json.JSONObject;
 
-public class Attachment implements Jsonable, Comparable<Attachment> {
+public class Note implements Serializable, Jsonable, Comparable<Note> {
 
     private Long id;
     public Long getId() { return id; }
@@ -28,6 +29,10 @@ public class Attachment implements Jsonable, Comparable<Attachment> {
     private String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    private String content;
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
     private String ownerType;
     public String getOwnerType() { return ownerType; }
@@ -53,22 +58,14 @@ public class Attachment implements Jsonable, Comparable<Attachment> {
     public String getModifyUser() { return modifyUser; }
     public void setModifyUser(String modifyUser) { this.modifyUser = modifyUser; }
 
-    private String location;
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    private String contentType;
-    public String getContentType() { return contentType; }
-    public void setContentType(String contentType) { this.contentType = contentType; }
-
-    public Attachment() {
+    public Note() {
     }
 
-    public Attachment(JSONObject json) {
+    public Note(JSONObject json) {
         bind(json);
     }
 
-    public int compareTo(Attachment other) {
+    public int compareTo(Note other) {
         return this.getModified().compareTo(other.getModified());
     }
 }

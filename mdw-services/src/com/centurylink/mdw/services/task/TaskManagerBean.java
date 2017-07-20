@@ -18,7 +18,6 @@ package com.centurylink.mdw.services.task;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,21 +38,18 @@ import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.MiscConstants;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.note.InstanceNote;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -391,17 +387,6 @@ public class TaskManagerBean implements TaskManager {
         } catch (Exception e) {
             throw new ServiceException("Failed to unschedule task SLA", e);
         }
-    }
-
-    /**
-     * Returns the available notes for the given id
-     *
-     * @param instanceId
-     * @return Notes
-     */
-    public Collection<InstanceNote> getNotes(String owner, Long id)
-    throws DataAccessException {
-        return getTaskDAO().getInstanceNotes(owner, id);
     }
 
     /**
@@ -994,128 +979,6 @@ public class TaskManagerBean implements TaskManager {
         }
     }
 
-
-    /**
-     * Creates a task instance note.
-     */
-    public Long addNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-    throws DataAccessException, ServiceException {
-        CodeTimer timer = new CodeTimer("TaskManager.addNote()", true);
-        Long id = getTaskDAO().createInstanceNote(owner, ownerId, noteName, noteDetails, user);
-        auditLogActionPerformed(UserAction.Action.Create.toString(), user, Entity.Note, id, null, noteName);
-        timer.stopAndLogTiming("");
-        return id;
-    }
-
-    /**
-     * Updates a note.
-     */
-    public void updateNote(Long noteId, String noteName, String noteDetails, String user)
-    throws DataAccessException, ServiceException {
-        CodeTimer timer = new CodeTimer("TaskManager.updateNote()", true);
-        getTaskDAO().updateInstanceNote(noteId, noteName, noteDetails, user);
-        auditLogActionPerformed(UserAction.Action.Change.toString(), user, Entity.Note, noteId, null, noteName);
-        timer.stopAndLogTiming("");
-    }
-
-    /**
-     * Updates a note based on ownerId.
-     */
-    public void updateNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-    throws DataAccessException, ServiceException {
-        CodeTimer timer = new CodeTimer("TaskManager.updateNote()", true);
-        getTaskDAO().updateInstanceNote(owner, ownerId, noteName, noteDetails, user);
-        auditLogActionPerformed(UserAction.Action.Change.toString(), user, Entity.Note, ownerId, null, noteName);
-        timer.stopAndLogTiming("");
-    }
-
-    /**
-     * Deletes the passed in TaskInstanceNote
-     *
-     * @param pTaskNote
-     */
-    public void deleteNote(Long noteId, Long userId)
-    throws ServiceException, DataAccessException {
-        this.getTaskDAO().deleteInstanceNote(noteId);
-        auditLogActionPerformed(UserAction.Action.Delete.toString(), userId, Entity.Note, noteId, null, null);
-    }
-
-    /**
-     * Creates and adds a task attachment
-     */
-    public Long addAttachment(String attachName,
-            String attachLoc, String contentType, String user, String owner, Long ownerId)
-    throws DataAccessException, ServiceException {
-        CodeTimer timer = new CodeTimer("TaskManager.addTaskInstanceAttachment()", true);
-        if (! attachLoc.startsWith(MiscConstants.ATTACHMENT_LOCATION_PREFIX)
-             && ! attachLoc.endsWith("/")) {
-            attachLoc += "/";
-        }
-        Attachment att = getAttachment(attachName,attachLoc);
-        if (att != null) {
-            getTaskDAO().updateAttachment(att.getId(), attachLoc, user);
-            timer.stopAndLogTiming("UpdatedExistingOne");
-            return att.getId();
-        }
-
-
-        Long id = this.getTaskDAO().createAttachment(owner, ownerId,
-                Attachment.STATUS_ATTACHED, attachName, attachLoc, contentType, user);
-        auditLogActionPerformed(UserAction.Action.Create.toString(), user, Entity.Attachment, id, null, attachName);
-
-        timer.stopAndLogTiming("");
-        return id;
-    }
-
-    /**
-     * Removes the attachment from the task instance
-     *
-     * @param pTaskInstId
-     * @param pAttachName
-     * @param pAttachLocation
-     * @return Attachment
-     */
-    public void removeAttachment(Long pAttachId, Long userId)
-    throws DataAccessException, ServiceException {
-        CodeTimer timer = new CodeTimer("TaskManager.removeAttachment()", true);
-        this.getTaskDAO().deleteAttachment(pAttachId);
-        timer.stopAndLogTiming("");
-        auditLogActionPerformed(UserAction.Action.Delete.toString(), userId, Entity.Attachment, pAttachId, null, null);
-    }
-
-    /**
-     * Returns the collection of attachments
-     *
-     * @param pTaskInstId
-     * @return Collection of Attachment
-     */
-    public Collection<Attachment> getAttachments(String pAttachName,String attachmentLocation)
-    throws DataAccessException {
-        Collection<Attachment> attColl = null;
-        CodeTimer timer = new CodeTimer("TaskManager.getTaskInstanceAttachments()", true);
-        attColl = this.getTaskDAO().getAttachments(pAttachName,attachmentLocation);
-        timer.stopAndLogTiming("");
-        return attColl;
-
-    }
-
-    /**
-     * Method provides attachment based on attachment location
-     */
-    public Attachment getAttachment(String pAttachName,
-            String attachmentLocation) throws DataAccessException {
-        Collection<Attachment> attColl = null;
-        Attachment att = null;
-        CodeTimer timer = new CodeTimer("TaskManager.getTaskInstanceAttachment()", true);
-        attColl = getAttachments(pAttachName,attachmentLocation);
-        for (Attachment attachment : attColl) {
-            att = attachment;
-            break;
-        }
-        timer.stopAndLogTiming("");
-        return att;
-    }
-
    /**
     * Notifies the Observer about the Task State
     *
@@ -1528,16 +1391,6 @@ public class TaskManagerBean implements TaskManager {
         if (taskInst.isShallow())
             this.getTaskInstanceAdditionalInfo(taskInst);
         return taskInst.getGroups();
-    }
-
-    @Override
-    public Attachment getAttachment(Long pAttachmentId)
-    throws DataAccessException {
-         Attachment attachment= null;
-         CodeTimer timer = new CodeTimer("TaskManager.getAttachment()", true);
-         attachment = this.getTaskDAO().getAttachment(pAttachmentId);
-         timer.stopAndLogTiming("");
-         return attachment;
     }
 
     public void updateTaskIndices(Long taskInstanceId, Map<String,String> indices)

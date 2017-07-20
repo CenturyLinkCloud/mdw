@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +26,12 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.note.InstanceNote;
-import com.centurylink.mdw.model.note.NotesList;
+import com.centurylink.mdw.model.Note;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.services.CollaborationServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -65,7 +61,7 @@ public class Notes extends JsonRestService {
     @Override
     @ApiOperation(value="Retrieve instance notes",
         notes="Includes all notes for the given owner type and ownerId.",
-        response=InstanceNote.class, responseContainer="List")
+        response=Note.class, responseContainer="List")
     @ApiImplicitParams({
         @ApiImplicitParam(name="user", paramType="query", required=true, dataType="string"),
         @ApiImplicitParam(name="ownerType", paramType="query", required=true, dataType="string"),
@@ -84,15 +80,11 @@ public class Notes extends JsonRestService {
         Long ownerId = new Long(ownerIdStr);
 
         try {
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            Collection<InstanceNote> notesColl = taskMgr.getNotes(ownerType.toUpperCase(), ownerId);
-            List<InstanceNote> notes = new ArrayList<InstanceNote>(notesColl);
+            CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+            List<Note> notes = collabServices.getNotes(ownerType.toUpperCase(), ownerId);
             Collections.sort(notes);
             String name = ownerType.toLowerCase() + "Notes";
-            NotesList notesList = new NotesList(name, ownerType, ownerId, notes);
-            notesList.setRetrieveDate(DatabaseAccess.getDbDate());
-            notesList.setCount(notes.size());
-            return notesList.getJson();
+            return new JSONObject();  // TODO
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -110,13 +102,13 @@ public class Notes extends JsonRestService {
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         try {
-            InstanceNote note = new InstanceNote(content);
-            String user = note.getCreatedBy();
+            Note note = new Note(content);
+            String user = note.getCreateUser();
             User userVO = ServiceLocator.getUserManager().getUser(user);
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            Long id = taskMgr.addNote(note.getOwnerType(), note.getOwnerId(), note.getNoteName(), note.getNoteDetails(), user);
+            CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+            Long id = collabServices.createNote(note);
 
             if (logger.isDebugEnabled())
                 logger.debug("Added instance note id: " + id);
@@ -127,11 +119,12 @@ public class Notes extends JsonRestService {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
+
     /**
      * For update of note.
      */
     @Override
-    @Path("/{ownerId}")
+    @Path("/{noteId}")
     @ApiOperation(value="Update an instance note",
         notes="Note must contain a valid user, and content ownerId must match path.", response=StatusMessage.class)
     @ApiImplicitParams({
@@ -142,14 +135,14 @@ public class Notes extends JsonRestService {
         try {
             validateOwnerId(path, ownerId, content.getLong("ownerId"));
 
-            InstanceNote note = new InstanceNote(content);
-            String user = note.getCreatedBy();  // createdBy populated by ctor (not modBy)
+            Note note = new Note(content);
+            String user = note.getModifyUser();  // createdBy populated by ctor (not modBy)
             User userVO = ServiceLocator.getUserManager().getUser(user);
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
 
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            taskMgr.updateNote(note.getOwnerType(), note.getOwnerId(), note.getNoteName(), note.getNoteDetails(), user);
+            CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+            collabServices.updateNote(note);
 
             if (logger.isDebugEnabled())
                 logger.debug("Updated instance for owner " + note.getOwnerType() + ", id: " + note.getOwnerId());
@@ -164,27 +157,20 @@ public class Notes extends JsonRestService {
      * Delete a note
      */
     @Override
-    @Path("/{ownerId}/{user}")
+    @Path("/{noteId}")
     @ApiOperation(value="Delete an instance note",
         notes="Path must include ownerId and valid user.", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
 
-        String ownerId = getSegment(path, 1);
-        String user = getSegment(path, 2);
-        try {
-            if (user == null) {
-                throw new ServiceException(HTTP_400_BAD_REQUEST, "URL for removal of Notes should be e.g /Notes/123/user : ");
-            }
-            User userVO = ServiceLocator.getUserManager().getUser(user);
-            if (userVO == null)
-                throw new ServiceException("User not found: " + user);
+        String noteId = getSegment(path, 1);
 
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            taskMgr.deleteNote(Long.valueOf(ownerId), userVO.getId());
+        try {
+            CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+            collabServices.deleteNote(Long.valueOf(noteId), getAuthUser(headers));
 
             if (logger.isDebugEnabled())
-                logger.debug("Deleted note id: " + ownerId + ", user: " + user);
+                logger.debug("Deleted note id: " + noteId);
 
             return null;
         }

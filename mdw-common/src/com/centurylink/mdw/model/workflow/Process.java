@@ -36,7 +36,6 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.ExternalEvent;
-import com.centurylink.mdw.model.note.TextNote;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.util.JsonUtil;
