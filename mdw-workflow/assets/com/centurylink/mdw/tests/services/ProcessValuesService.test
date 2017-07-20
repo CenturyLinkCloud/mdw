@@ -60,7 +60,7 @@ response = get http("services/Processes/${procInst.id}/values/jaxbVar") {
 assert response.code == 200
 json = new JSONObject(response.actual)
 
-assert json.getString('value').replaceAll("\\r\\n", "").replaceAll("\\n", "") == '''<ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
+assert json.getString('value').replaceAll("\\r\\n", "").replaceAll("\\n", "") == '''<ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue" xmlns:ns2="http://mdw.centurylink.com/serviceTypes">
     <elementOne>elementOneValue</elementOne>
     <elementTwo>elementTwoValue</elementTwo>
 </ProcessJaxb>'''.replaceAll("\\r\\n", "").replaceAll("\\n", "")

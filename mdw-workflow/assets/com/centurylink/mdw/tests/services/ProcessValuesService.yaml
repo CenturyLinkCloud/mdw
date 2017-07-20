@@ -13,7 +13,7 @@ process: # 19154
   variable: # 33464
     name: jaxbVar
     value: |
-      <ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
+      <ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue" xmlns:ns2="http://mdw.centurylink.com/serviceTypes">
           <elementOne>elementOneValue</elementOne>
           <elementTwo>elementTwoValue</elementTwo>
       </ProcessJaxb>

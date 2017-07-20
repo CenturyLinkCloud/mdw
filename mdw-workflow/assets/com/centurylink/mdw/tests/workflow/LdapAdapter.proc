@@ -239,7 +239,7 @@
     },
     "userDocument": {
       "category": "LOCAL",
-      "type": "org.apache.xmlbeans.XmlObject"
+      "type": "org.json.JSONObject"
     }
   }
 }

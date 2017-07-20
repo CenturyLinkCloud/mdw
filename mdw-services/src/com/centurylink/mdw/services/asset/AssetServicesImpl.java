@@ -336,8 +336,11 @@ public class AssetServicesImpl implements AssetServices {
             if (mdwIgnore.exists()) {
                 // currently only supports a straight directory list (no wildcards)
                 String list = new String(Files.readAllBytes(Paths.get(mdwIgnore.getPath()))).trim();
-                for (String dirPath : list.split("\n"))
-                    excludes.add(new File(dir + "/" + dirPath.trim()));
+                for (String line : list.split("\n")) {
+                    line = line.trim();
+                    if (!line.startsWith("#"))
+                        excludes.add(new File(dir + "/" + line));
+                }
             }
             for (File sub : dir.listFiles()) {
                 if (sub.isDirectory() && !sub.equals(getArchiveDir()) && !excludes.contains(sub)) {

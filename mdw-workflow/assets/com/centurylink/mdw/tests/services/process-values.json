@@ -13,7 +13,7 @@
   "jaxbVar": {
     "display": "Optional",
     "type": "javax.xml.bind.JAXBElement",
-    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ProcessJaxb attributeOne=\"attrOneValue\" attributeTwo=\"requiredAttributeValue\">\n    <elementOne>elementOneValue<\/elementOne>\n    <elementTwo>elementTwoValue<\/elementTwo>\n<\/ProcessJaxb>\n"
+    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ProcessJaxb xmlns:ns2=\"http://mdw.centurylink.com/serviceTypes\" attributeOne=\"attrOneValue\" attributeTwo=\"requiredAttributeValue\">\n    <elementOne>elementOneValue<\/elementOne>\n    <elementTwo>elementTwoValue<\/elementTwo>\n<\/ProcessJaxb>\n"
   },
   "objectVar": {
     "display": "Required",

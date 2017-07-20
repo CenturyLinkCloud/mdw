@@ -204,8 +204,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             try {
                 // currently only supports a straight directory list (no wildcards)
                 String list = new String(Files.readAllBytes(Paths.get(mdwIgnore.getPath()))).trim();
-                for (String dirPath : list.split("\n"))
-                    excludes.add(new File(parentDir + "/" + dirPath.trim()));
+                for (String line : list.split("\n")) {
+                    line = line.trim();
+                    if (!line.startsWith("#"))
+                        excludes.add(new File(parentDir + "/" + line));
+                }
             }
             catch (IOException ex) {
                 throw new DataAccessException(ex.getMessage(), ex);
