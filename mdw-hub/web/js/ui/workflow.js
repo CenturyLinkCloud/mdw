@@ -434,7 +434,7 @@ workflowMod.factory('Diagram',
       }
     }
     // not found -- return placeholder
-    return { implementorClass: className };
+    return { implementorClass: className, category: 'com.centurylink.mdw.activity.types.GeneralActivity', icon: 'shape:activity', label: 'Unknown Implementer' };
   };
   
   Diagram.prototype.addStep = function(impl, x, y) {
