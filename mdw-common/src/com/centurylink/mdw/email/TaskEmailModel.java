@@ -64,7 +64,7 @@ public class TaskEmailModel implements TemplatedEmail.Model {
         if (taskInstanceJson.has("dueDate"))
             taskInstance.setDueDate(taskInstanceJson.getString("dueDate"));
         if (taskInstanceJson.has("assignee"))
-            taskInstance.setTaskClaimUserCuid(taskInstanceJson.getString("assignee"));
+            taskInstance.setAssigneeCuid(taskInstanceJson.getString("assignee"));
         if (taskInstanceJson.has("userId"))
             taskInstance.setUserIdentifier(taskInstanceJson.getString("userId"));
         taskInstance.setStatusCode(taskInstanceJson.getInt("statusCode"));
@@ -117,10 +117,10 @@ public class TaskEmailModel implements TemplatedEmail.Model {
     public String getTaskInstanceUrl() { return taskInstance.getTaskInstanceUrl(); }
     public String getInstanceUrl() { return getTaskInstanceUrl(); }
     public String getMasterRequestId() { return taskInstance.getMasterRequestId(); }
-    public String getOrderId() { return taskInstance.getOrderId(); }
+    public String getOrderId() { return taskInstance.getMasterRequestId(); }
     public Date getStartDate() { return StringHelper.stringToDate(taskInstance.getStartDate()); }
     public Date getEndDate() { return StringHelper.stringToDate(taskInstance.getEndDate()); }
-    public String getAssignee() { return taskInstance.getTaskClaimUserCuid();  }
+    public String getAssignee() { return taskInstance.getAssigneeCuid();  }
     public Date getDueDate() { return taskInstance.getDueDate(); }
     public String getUserIdentifier() { return taskInstance.getUserIdentifier(); }
     public Integer getStatusCode() { return taskInstance.getStatusCode(); }

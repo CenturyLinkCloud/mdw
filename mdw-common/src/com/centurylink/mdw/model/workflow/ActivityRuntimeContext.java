@@ -30,27 +30,28 @@ import com.sun.el.ValueExpressionLiteral;
 
 public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jsonable {
 
-    private Activity activityVO;
-    public Activity getActivity() { return activityVO; }
+    private Activity activity;
+    public Activity getActivity() { return activity; }
 
-    private ActivityInstance activityInstanceVO;
-    public ActivityInstance getActivityInstance() { return activityInstanceVO; }
+    private ActivityInstance activityInstance;
+    public ActivityInstance getActivityInstance() { return activityInstance; }
 
     private Map<String,String> attributes;
     public Map<String,String> getAttributes() {
         if (attributes == null) {
             attributes = new HashMap<String,String>();
-            for (Attribute attribute : activityVO.getAttributes()) {
+            for (Attribute attribute : activity.getAttributes()) {
                 attributes.put(attribute.getAttributeName(), attribute.getAttributeValue());
             }
         }
         return attributes;
     }
 
-    public ActivityRuntimeContext(Package packageVO, Process processVO, ProcessInstance processInstanceVO, Activity activityVO, ActivityInstance activityInstanceVO) {
-        super(packageVO, processVO, processInstanceVO);
-        this.activityVO = activityVO;
-        this.activityInstanceVO = activityInstanceVO;
+    public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance,
+            Activity activity, ActivityInstance activityInstance) {
+        super(pkg, process, processInstance);
+        this.activity = activity;
+        this.activityInstance = activityInstance;
     }
 
     public Long getActivityId() {
@@ -94,19 +95,19 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {
-            packageVO = new Package();
-            packageVO.setName(procPath.substring(0, slash));
-            processVO = new Process();
-            processVO.setName(procPath.substring(slash + 1));
-            processVO.setPackageName(packageVO.getName());
+            pkg = new Package();
+            pkg.setName(procPath.substring(0, slash));
+            process = new Process();
+            process.setName(procPath.substring(slash + 1));
+            process.setPackageName(pkg.getName());
         }
         else {
-            processVO = new Process();
-            processVO.setName(procPath);
+            process = new Process();
+            process.setName(procPath);
         }
-        this.activityVO = new Activity(json.getJSONObject("activity"));
-        this.activityInstanceVO = new ActivityInstance(json.getJSONObject("activityInstance"));
-        this.processInstanceVO = new ProcessInstance(json.getJSONObject("processInstance"));
+        this.activity = new Activity(json.getJSONObject("activity"));
+        this.activityInstance = new ActivityInstance(json.getJSONObject("activityInstance"));
+        this.processInstance = new ProcessInstance(json.getJSONObject("processInstance"));
         if (json.has("variables")) {
             Map<String,String> varMap = JsonUtil.getMap(json.getJSONObject("variables"));
             for (String name : varMap.keySet()) {

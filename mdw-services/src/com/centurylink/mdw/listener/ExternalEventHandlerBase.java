@@ -176,7 +176,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
      *    c. use 3.
      * For additional information, see javadoc for ProcessEngineDriver:invokeService
      *
-     * @param processVO the process definition. You can use {@link #getProcessDefinition(Long)}
+     * @param process the process definition. You can use {@link #getProcessDefinition(Long)}
      *      to retrieve the process definition from a process ID.
      * @param eventInstId external event instance ID
      * @param masterRequestId master request ID

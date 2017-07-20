@@ -127,7 +127,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      */
     protected void sendEmail(TaskRuntimeContext runTimeContext, String outcome)
     throws ObserverException {
-        TaskInstance taskInstance = runTimeContext.getTaskInstanceVO();
+        TaskInstance taskInstance = runTimeContext.getTaskInstance();
         TaskEmailModel emailModel = new TaskEmailModel(taskInstance, new VariablesModel(taskInstance.getOwnerId()));
         TemplatedEmail templatedEmail = new TemplatedEmail();
         templatedEmail.setFromAddress(getFromAddress());
@@ -457,7 +457,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     }
 
     protected Address getAssigneeEmailAddress(TaskInstance taskInstance) throws AddressException {
-        return new InternetAddress(taskInstance.getTaskClaimUserCuid() + "@centurylink.com");
+        return new InternetAddress(taskInstance.getAssigneeCuid() + "@centurylink.com");
     }
 
     /**

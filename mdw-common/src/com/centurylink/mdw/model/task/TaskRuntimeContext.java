@@ -22,10 +22,11 @@ import java.util.Map;
 
 import javax.el.ValueExpression;
 
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.StringHelper;
 import com.sun.el.ValueExpressionLiteral;
 
@@ -41,21 +42,23 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
         return taskTemplate.getAttribute(name);
     }
 
-    private TaskInstance taskInstanceVO;
-    public TaskInstance getTaskInstanceVO() { return taskInstanceVO; }
+    private TaskInstance taskInstance;
+    public TaskInstance getTaskInstance() { return taskInstance; }
 
-    public TaskRuntimeContext(Package packageVO, Process processVO,
-            ProcessInstance processInstanceVO, TaskTemplate taskVO, TaskInstance taskInstanceVO) {
-        super(packageVO, processVO, processInstanceVO);
-        this.taskTemplate = taskVO;
-        this.taskInstanceVO = taskInstanceVO;
+    private User assignee;
+    public User getAssignee() { return assignee; }
+
+    public TaskRuntimeContext(Package pkg, Process process,
+            ProcessInstance processInstance, Map<String,Object> variables, TaskTemplate template, TaskInstance taskInstance, User assignee) {
+        super(pkg, process, processInstance, variables);
+        this.taskTemplate = template;
+        this.taskInstance = taskInstance;
+        this.assignee = assignee;
     }
 
-    public TaskRuntimeContext(Package packageVO, Process processVO,
-            ProcessInstance processInstanceVO, TaskTemplate taskVO, TaskInstance taskInstanceVO, Map<String, Object> variables) {
-        super(packageVO, processVO, processInstanceVO, variables);
-        this.taskTemplate = taskVO;
-        this.taskInstanceVO = taskInstanceVO;
+    public TaskRuntimeContext(ProcessRuntimeContext processContext, TaskTemplate template, TaskInstance taskInstance, User assignee) {
+        this(processContext.getPackage(), processContext.getProcess(),
+                processContext.getProcessInstance(), processContext.getVariables(), template, taskInstance, assignee);
     }
 
 
@@ -66,32 +69,25 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
             valueExpressionMap = super.getValueExpressionMap();
             valueExpressionMap.put("context", new ValueExpressionLiteral(this, Object.class));
             valueExpressionMap.put("task", new ValueExpressionLiteral(this, Object.class));  //for backward compatibility
-            valueExpressionMap.put("taskInstanceId", new ValueExpressionLiteral(this.getTaskInstanceVO().getTaskInstanceId(), String.class));
+            valueExpressionMap.put("taskInstanceId", new ValueExpressionLiteral(this.getTaskInstance().getTaskInstanceId(), String.class));
             valueExpressionMap.put("taskName", new ValueExpressionLiteral(this.getTaskTemplate().getTaskName(), String.class));
-            valueExpressionMap.put("dueDate", new ValueExpressionLiteral(this.getTaskInstanceVO().getDueDate(), String.class));
-            valueExpressionMap.put("orderId", new ValueExpressionLiteral(this.getTaskInstanceVO().getOrderId(), String.class));
-            valueExpressionMap.put("taskInstanceUrl", new ValueExpressionLiteral(this.getTaskInstanceVO().getTaskInstanceUrl(), String.class));
-            valueExpressionMap.put("taskClaimUserCuid", new ValueExpressionLiteral(this.getTaskInstanceVO().getTaskClaimUserCuid(), String.class));
+            valueExpressionMap.put("dueDate", new ValueExpressionLiteral(this.getTaskInstance().getDueDate(), String.class));
+            valueExpressionMap.put("taskInstanceUrl", new ValueExpressionLiteral(this.getTaskInstance().getTaskInstanceUrl(), String.class));
+            valueExpressionMap.put("assignee", new ValueExpressionLiteral(this.getTaskInstance().getAssignee(), String.class));
         }
         return valueExpressionMap;
     }
     public Long getTaskInstanceId() {
-        return this.taskInstanceVO.getTaskInstanceId();
+        return this.taskInstance.getTaskInstanceId();
     }
     public String getTaskName() {
         return this.taskTemplate.getTaskName();
     }
     public Date getDueDate() {
-        return this.taskInstanceVO.getDueDate();
-    }
-    public String getOrderId() {
-        return this.taskInstanceVO.getOrderId();
+        return this.taskInstance.getDueDate();
     }
     public String getTaskInstanceUrl() {
-            return this.taskInstanceVO.getTaskInstanceUrl();
-    }
-    public String getTaskClaimUserCuid() {
-        return this.taskInstanceVO.getTaskClaimUserCuid();
+            return this.taskInstance.getTaskInstanceUrl();
     }
     private String description;
     public String getDescription() { return description; }
@@ -108,18 +104,17 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public String getName() { return getTaskName(); }
     public Long getInstanceId() { return getTaskInstanceId(); }
     public String getInstanceUrl() { return getTaskInstanceUrl(); }
-    public String getMasterRequestId() { return taskInstanceVO.getMasterRequestId(); }
-    public Date getStartDate() { return StringHelper.stringToDate(taskInstanceVO.getStartDate()); }
-    public Date getEndDate() { return StringHelper.stringToDate(taskInstanceVO.getEndDate()); }
-    public String getAssignee() { return taskInstanceVO.getTaskClaimUserCuid();  }
-    public String getUserIdentifier() { return taskInstanceVO.getUserIdentifier(); }
-    public Integer getStatusCode() { return taskInstanceVO.getStatusCode(); }
-    public Integer getStateCode() { return taskInstanceVO.getStateCode(); }
+    public String getMasterRequestId() { return taskInstance.getMasterRequestId(); }
+    public Date getStartDate() { return StringHelper.stringToDate(taskInstance.getStartDate()); }
+    public Date getEndDate() { return StringHelper.stringToDate(taskInstance.getEndDate()); }
+    public String getUserIdentifier() { return taskInstance.getUserIdentifier(); }
+    public Integer getStatusCode() { return taskInstance.getStatusCode(); }
+    public Integer getStateCode() { return taskInstance.getStateCode(); }
     public String getStatus() { return TaskStatuses.getTaskStatuses().get(getStatusCode()); }
-    public String getComments() { return taskInstanceVO.getComments(); }
-    public String getMessage() { return taskInstanceVO.getActivityMessage(); }
-    public String getActivityName() { return taskInstanceVO.getActivityName(); }
-    public Long getTaskId() { return taskInstanceVO.getTaskId(); }
+    public String getComments() { return taskInstance.getComments(); }
+    public String getMessage() { return taskInstance.getActivityMessage(); }
+    public String getActivityName() { return taskInstance.getActivityName(); }
+    public Long getTaskId() { return taskInstance.getTaskId(); }
     public String getLogicalId() { return getTaskLogicalId(); }
 
 

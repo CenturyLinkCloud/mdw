@@ -292,7 +292,7 @@ class ProcessExecutorImpl {
 
     /**
      * Create a process instance. The status is PENDING_PROCESS
-     * @param processVO
+     * @param process
      * @param eventMessageDoc
      * @return
      * @throws ProcessException
@@ -1196,7 +1196,7 @@ class ProcessExecutorImpl {
     /**
      *
      * @param processInstVO
-     * @param processVO
+     * @param process
      * @param pMessage
      */
     private void completeProcessInstance(ProcessInstance processInst, String completionCode, boolean noNotify)

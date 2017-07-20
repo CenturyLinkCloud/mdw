@@ -19,7 +19,6 @@ import static com.centurylink.mdw.constant.TaskAttributeConstant.TASK_INSTANCE_J
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +27,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Instance;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.common.service.types.Task;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.model.Instance;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
 
 import io.swagger.annotations.ApiModel;
@@ -48,10 +45,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
 
     private static Long db_time_diff = 0l;
 
-    private String orderId;
+    private String masterRequestId;
     private Date dueDate;
     private Long taskInstanceId;
-    private Long taskId;
+    private Long templateId;
     private String taskName;
     private Integer statusCode;
     private Integer stateCode;
@@ -59,18 +56,14 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     private String endDate;
     private String comments;
     private String description;
-    private Long taskClaimUserId;
-    private String taskClaimUserCuid;
-    private String ownerApplicationName;
-    private Long associatedTaskInstanceId;
-    //R2 Changes
+    private Long assigneeId;
+    private String assigneeCuid;
     private String categoryCode;
-    //R4 changes
     private String ownerType;
     private Long ownerId;
     private String secondaryOwnerType;
     private Long secondaryOwnerId;
-    private List<String> groups; // for MDW 5.1 template based task instances
+    private List<String> groups;
     private Integer priority;
 
     private Date retrieveDate;
@@ -81,54 +74,33 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public String getTemplate() { return template; }
     public void setTemplate(String template) { this.template = template; }
 
-    public TaskInstance(Long pTaskInstId, Long pTaskId, String pTaskName, String pOrderId, Date pStartDate,
-            Date pEndDate, Date pDueDate, Integer pStatusCd, Integer pStateCd, String pComments, String pClaimUserCuid,
-            String pTaskMessage, String pActivityName, String pCategoryCd, String pOwnerAppName, Long pAssTaskInstId) {
-        this.dueDate = pDueDate;
-        this.endDate = StringHelper.dateToString(pEndDate);
-        this.startDate = StringHelper.dateToString(pStartDate);
-        this.stateCode = pStateCd;
-        this.statusCode = pStatusCd;
-        this.taskId = pTaskId;
-        this.taskInstanceId = pTaskInstId;
-        this.orderId = pOrderId;
-        this.comments = pComments;
-        this.taskName = pTaskName;
-        this.taskClaimUserCuid = pClaimUserCuid;
-        this.activityMessage = pTaskMessage;
-        this.activityName = pActivityName;
-        this.categoryCode = pCategoryCd;
-        this.ownerApplicationName = pOwnerAppName;
-        this.associatedTaskInstanceId = pAssTaskInstId;
-    }
-
-    public TaskInstance(Task jaxbTask) {
-        this.taskInstanceId = jaxbTask.getInstanceId();
-        this.orderId = jaxbTask.getMasterRequestId();
-        this.priority = jaxbTask.getPriority();
-        if (jaxbTask.getDueInSeconds() != null) {
-            this.dueDate = new Date(System.currentTimeMillis() + db_time_diff + jaxbTask.getDueInSeconds() * 1000);
-        }
-        this.taskClaimUserCuid = jaxbTask.getAssignee();
-        if (jaxbTask.getWorkgroups() != null)
-            this.groups = Arrays.asList(jaxbTask.getWorkgroups().split(","));
-        this.comments = jaxbTask.getComments();
-        this.ownerApplicationName = jaxbTask.getOwnerApplicationName();
-        this.associatedTaskInstanceId = jaxbTask.getAssociatedTaskInstanceId();
+    public TaskInstance(Long id, Long templateId, String name, String masterRequestId, Date start,
+            Date end, Date due, Integer statusCode, Integer stateCode, String comments, String assigneeCuid,
+            String message, String activityName, String categoryCode) {
+        this.dueDate = due;
+        this.endDate = StringHelper.dateToString(end);
+        this.startDate = StringHelper.dateToString(start);
+        this.stateCode = stateCode;
+        this.statusCode = statusCode;
+        this.templateId = templateId;
+        this.taskInstanceId = id;
+        this.masterRequestId = masterRequestId;
+        this.comments = comments;
+        this.taskName = name;
+        this.assigneeCuid = assigneeCuid;
+        this.activityMessage = message;
+        this.activityName = activityName;
+        this.categoryCode = categoryCode;
     }
 
     public TaskInstance() {
-    }
-
-    public TaskInstance(String json) throws JSONException {
-        this(new JsonObject(json));
     }
 
     public TaskInstance(JSONObject jsonObj) throws JSONException {
         if (jsonObj.has("id"))
             taskInstanceId = jsonObj.getLong("id");
         if (jsonObj.has("taskId"))
-            taskId = jsonObj.getLong("taskId");
+            templateId = jsonObj.getLong("taskId");
         if (jsonObj.has("name"))
             taskName = jsonObj.getString("name");
         if (jsonObj.has("startDate"))
@@ -138,11 +110,11 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         if (jsonObj.has("advisory"))
             setAdvisory(jsonObj.getString("advisory"));
         if (jsonObj.has("masterRequestId"))
-            orderId = jsonObj.getString("masterRequestId");
+            masterRequestId = jsonObj.getString("masterRequestId");
         if (jsonObj.has("dueDate"))
             dueDate = StringHelper.stringToDate(jsonObj.getString("dueDate"));
         if (jsonObj.has("assignee"))
-            taskClaimUserCuid = jsonObj.getString("assignee");
+            assigneeCuid = jsonObj.getString("assignee");
         if (jsonObj.has("instanceUrl"))
             taskInstanceUrl = jsonObj.getString("instanceUrl");
         if (jsonObj.has("category"))
@@ -155,8 +127,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             description = jsonObj.getString("description");
         if (jsonObj.has("comments"))
             comments = jsonObj.getString("comments");
-        if (jsonObj.has("ownerApp"))
-            ownerApplicationName = jsonObj.getString("ownerApp");
         if (jsonObj.has("dueInSeconds")) {
             int dueInSeconds = jsonObj.getInt("dueInSeconds");
             if (dueInSeconds == -1)
@@ -182,7 +152,7 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             }
         }
         if (jsonObj.has("assigneeId"))
-            taskClaimUserCuid = jsonObj.getString("assigneeId");
+            assigneeCuid = jsonObj.getString("assigneeId");
         if (jsonObj.has("assignee"))
             assignee = jsonObj.getString("assignee");
         if (jsonObj.has("retrieveDate"))
@@ -195,17 +165,16 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("id", associatedTaskInstanceId == null || associatedTaskInstanceId == 0L ? taskInstanceId
-                : associatedTaskInstanceId);
-        if (taskId != null)
-            json.put("taskId", taskId);
+        json.put("id", taskInstanceId);
+        if (templateId != null)
+            json.put("taskId", templateId);
         json.put("name", taskName);
         json.put("startDate", startDate);
         json.put("status", getStatus());
         String advisory = getAdvisory();
         if (advisory != null)
             json.put("advisory", getAdvisory());
-        json.put("masterRequestId", orderId);
+        json.put("masterRequestId", masterRequestId);
         if (dueDate != null) {
             json.put("dueDate", dueDate);
             json.put("dueInSeconds", (dueDate.getTime() - (System.currentTimeMillis() + db_time_diff))/1000);
@@ -216,7 +185,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         json.put("endDate", endDate);
         json.put("description", description);
         json.put("comments", comments);
-        json.put("ownerApp", ownerApplicationName);
         json.put("ownerId", ownerId);
         json.put("ownerType", ownerType);
         json.put("secondaryOwnerId", secondaryOwnerId);
@@ -228,8 +196,8 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             }
             json.put("workgroups", workGroupsJson);
         }
-        if (taskClaimUserCuid != null)
-            json.put("assigneeId", taskClaimUserCuid);
+        if (assigneeCuid != null)
+            json.put("assigneeId", assigneeCuid);
         if (assignee != null)
             json.put("assignee", assignee);
         if (retrieveDate != null)
@@ -277,17 +245,11 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public void setDueDate(String dueDateString) {
         this.dueDate = StringHelper.stringToDate(dueDateString);
     }
-    public String getOrderId() {
-        return orderId;
-    }
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
     public String getMasterRequestId() {
-        return orderId;
+        return masterRequestId;
     }
     public void setMasterRequestId(String id) {
-        this.orderId = id;
+        this.masterRequestId = id;
     }
     public String getEndDate() {
         return endDate;
@@ -362,10 +324,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
 
     @ApiModelProperty(hidden=true)
     public Long getTaskId() {
-        return taskId;
+        return templateId;
     }
     public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+        this.templateId = taskId;
     }
 
     public String getComments() {
@@ -396,30 +358,19 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         this.taskName = pName;
     }
 
-    @ApiModelProperty(hidden=true)
-    public String getTaskClaimUserCuid(){
-        return taskClaimUserCuid;
-    }
-    public void setTaskClaimUserCuid(String pCuid){
-        this.taskClaimUserCuid = pCuid;
-    }
     public String getAssigneeCuid() {
-        return taskClaimUserCuid;
+        return assigneeCuid;
     }
     public void setAssigneeCuid(String cuid) {
-        taskClaimUserCuid = cuid;
+        assigneeCuid = cuid;
     }
 
-    @ApiModelProperty(hidden=true)
-    public Long getTaskClaimUserId(){
-        return taskClaimUserId;
-    }
-    public void setTaskClaimUserId(Long id){
-        this.taskClaimUserId = id;
+    public void setAssigneeId(Long id){
+        this.assigneeId = id;
     }
     @ApiModelProperty(hidden=true)
     public Long getAssigneeId() {
-        return taskClaimUserId;
+        return assigneeId;
     }
 
     private String assignee; // assignee name

@@ -187,7 +187,7 @@ public class TaskDataAccess extends CommonDataAccess {
         task.setOwnerId(rs.getLong("TASK_INSTANCE_OWNER_ID"));
         task.setSecondaryOwnerType(rs.getString("TASK_INST_SECONDARY_OWNER"));
         task.setSecondaryOwnerId(rs.getLong("TASK_INST_SECONDARY_OWNER_ID"));
-        task.setTaskClaimUserId(rs.getLong("TASK_CLAIM_USER_ID"));
+        task.setAssigneeId(rs.getLong("TASK_CLAIM_USER_ID"));
         task.setStartDate(StringHelper.dateToString(rs.getTimestamp("TASK_START_DT")));
         task.setEndDate(StringHelper.dateToString(rs.getTimestamp("TASK_END_DT")));
         task.setComments(rs.getString("COMMENTS"));
@@ -209,7 +209,7 @@ public class TaskDataAccess extends CommonDataAccess {
             task.setTaskName(taskVO.getTaskName());
         }
         if (isVOversion) {
-            task.setTaskClaimUserCuid(rs.getString("CUID"));
+            task.setAssigneeCuid(rs.getString("CUID"));
             if (taskVO != null)
               task.setDescription(taskVO.getComment());
         }
@@ -940,7 +940,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 if (assigneeId != null && assigneeId.longValue() != 0) {
                     User user = UserGroupCache.getUser(assigneeId);
                     if (user != null)
-                      taskInst.setTaskClaimUserCuid(user.getCuid());
+                      taskInst.setAssigneeCuid(user.getCuid());
                 }
                 taskInstances.add(taskInst);
             }
@@ -1736,7 +1736,7 @@ public class TaskDataAccess extends CommonDataAccess {
             ResultSet rs = db.runSelect(query, null);
             while (rs.next()) {
                 TaskInstance taskInst = getTaskInstanceSub(rs, false);
-                taskInst.setTaskClaimUserCuid(rs.getString("CUID"));
+                taskInst.setAssigneeCuid(rs.getString("CUID"));
                 taskInstances.add(taskInst);
             }
             if (loadIndices && taskInstances.size()>0) {
@@ -1816,7 +1816,7 @@ public class TaskDataAccess extends CommonDataAccess {
             db.openConnection();
             ResultSet rs = db.runSelect(query, taskInst.getTaskInstanceId());
             if (rs.next()) {
-                taskInst.setTaskClaimUserCuid(rs.getString(1));
+                taskInst.setAssigneeCuid(rs.getString(1));
             }
             // load indices
             Map<String,Object> indices = new HashMap<String,Object>();
@@ -1833,36 +1833,12 @@ public class TaskDataAccess extends CommonDataAccess {
                 indexValue = rs.getString(2);
                 indices.put(indexKey, indexValue);
                 if (indexKey.equals("MASTER_REQUEST_ID"))
-                    taskInst.setOrderId(indexValue);
+                    taskInst.setMasterRequestId(indexValue);
             }
             // load groups
             getTaskInstanceGroups(taskInst);
         } catch (Exception e) {
             throw new DataAccessException(0, "failed to query task instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     *
-     * @param taskInst
-     * @throws DataAccessException
-     */
-    public List<String> getGroupsForTask(Long taskId) throws DataAccessException {
-        try {
-            List<String> groups = new ArrayList<String>();
-            db.openConnection();
-            String sql = "select ug.GROUP_NAME " +
-                "from USER_GROUP ug, TASK_USR_GRP_MAPP tugm " +
-                "where tugm.TASK_ID = ? and tugm.USER_GROUP_ID = ug.USER_GROUP_ID";
-             ResultSet rs = db.runSelect(sql, taskId);
-             while (rs.next()) {
-                 groups.add(rs.getString(1));
-             }
-             return groups;
-        } catch(Exception ex){
-            throw new DataAccessException(-1, "Failed to get user group", ex);
         } finally {
             db.closeConnection();
         }

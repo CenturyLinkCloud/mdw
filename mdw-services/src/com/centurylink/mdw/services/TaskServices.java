@@ -39,13 +39,14 @@ public interface TaskServices {
      * Returns tasks (optionally associated with the specified user's workgroups).
      */
     public TaskList getTasks(Query query, String cuid) throws ServiceException;
+    public TaskList getTasks(Query query) throws ServiceException;
 
     public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException;
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException;
 
     public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId, String comments) throws TaskException, DataAccessException, CachingException;
+            Long activityInstanceId, Long transitionId, String comments) throws ServiceException, DataAccessException, CachingException;
 
     public TaskInstance getInstance(Long instanceId) throws DataAccessException;
 
@@ -63,10 +64,10 @@ public interface TaskServices {
     public Long createTask(String userCuid, String logicalId) throws ServiceException;
 
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
-    throws TaskException, DataAccessException;
+    throws ServiceException, DataAccessException;
 
     public void createSubTasks(List<SubTask> subTaskList, TaskRuntimeContext masterTaskContext)
-    throws TaskException, DataAccessException;
+    throws ServiceException, DataAccessException;
 
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException;
 
@@ -76,7 +77,8 @@ public interface TaskServices {
 
     public Map<Date,List<TaskCount>> getTaskInstanceBreakdown(Query query) throws ServiceException;
 
-    public TaskRuntimeContext getRuntimeContext(Long instanceId) throws ServiceException;
+    public TaskRuntimeContext getContext(Long instanceId) throws ServiceException;
+    public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException;
 
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException;
 

@@ -18,6 +18,7 @@ package com.centurylink.mdw.workflow.task.strategy;
 import java.util.HashMap;
 import java.util.List;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
@@ -45,7 +46,7 @@ public class ShortestQueueAutoAssignStrategy implements AutoAssignStrategy {
             User assignee = taskUsers[0];
             int shortest = Integer.MAX_VALUE;
             for (User user : taskUsers) {
-                int depth = taskManager.getAssignedTasks(user.getId(), new HashMap<String,String>()).length;
+                int depth = ServiceLocator.getTaskServices().getTasks(new Query().setFilter("assigneee", user.getCuid())).getCount();
                 if (depth < shortest) {
                     assignee = user;
                     shortest = depth;

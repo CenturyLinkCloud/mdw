@@ -307,7 +307,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         List<Parameter> params = xmlbean.getActionRequest().getAction().getParameterList();
         TaskManager taskManager = ServiceLocator.getTaskManager();
         if (params!=null && !params.isEmpty()) {
-            TaskInstance taskInst = taskManager.getTaskInstanceVO(taskInstId);
+            TaskInstance taskInst = taskManager.getTaskInstance(taskInstId);
             if (taskInst.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
                 EventManager eventManager = ServiceLocator.getEventManager();
                 Long procInstId = taskInst.getOwnerId();

@@ -48,14 +48,14 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    protected Package packageVO;
-    public Package getPackage() { return packageVO; }
+    protected Package pkg;
+    public Package getPackage() { return pkg; }
 
-    protected Process processVO;
-    public Process getProcess() { return processVO; }
+    protected Process process;
+    public Process getProcess() { return process; }
 
-    protected ProcessInstance processInstanceVO;
-    public ProcessInstance getProcessInstance() { return processInstanceVO; }
+    protected ProcessInstance processInstance;
+    public ProcessInstance getProcessInstance() { return processInstance; }
 
     /**
      * Purposely separate from processInstanceVO.getVariables().
@@ -64,14 +64,14 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
     public Map<String,Object> getVariables() { return variables; }
 
     public String getMasterRequestId() {
-        return processInstanceVO.getMasterRequestId();
+        return processInstance.getMasterRequestId();
     }
 
     private Map<String,String> attributes;
     public Map<String,String> getAttributes() {
         if (attributes == null) {
-            attributes = new HashMap<String,String>();
-            for (Attribute attribute : processVO.getAttributes()) {
+            attributes = new HashMap<>();
+            for (Attribute attribute : process.getAttributes()) {
                 attributes.put(attribute.getAttributeName(), attribute.getAttributeValue());
             }
         }
@@ -82,30 +82,30 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         return getAttributes().get(name);
     }
 
-    public ProcessRuntimeContext(Package packageVO, Process processVO, ProcessInstance processInstanceVO) {
-        this.packageVO = packageVO;
-        this.processVO = processVO;
-        this.processInstanceVO = processInstanceVO;
+    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance) {
+        this.pkg = pkg;
+        this.process = process;
+        this.processInstance = processInstance;
         this.variables = new HashMap<String,Object>();
     }
 
-    public ProcessRuntimeContext(Package packageVO, Process processVO, ProcessInstance processInstanceVO, Map<String,Object> variables) {
-        this.packageVO = packageVO;
-        this.processVO = processVO;
-        this.processInstanceVO = processInstanceVO;
+    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, Map<String,Object> variables) {
+        this.pkg = pkg;
+        this.process = process;
+        this.processInstance = processInstance;
         this.variables = variables;
     }
 
     public String getProperty(String name) {
-        return packageVO.getProperty(name);
+        return pkg.getProperty(name);
     }
 
     public Long getProcessId() {
-        return processVO.getId();
+        return process.getId();
     }
 
     public Long getProcessInstanceId() {
-        return processInstanceVO.getId();
+        return processInstance.getId();
     }
 
     public void logInfo(String message) {
@@ -146,11 +146,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
     }
 
     public String getCompletionCode() {
-        return processInstanceVO.getCompletionCode();
+        return processInstance.getCompletionCode();
     }
 
     public void setProcessCompletionCode(String code) {
-        processInstanceVO.setCompletionCode(code);
+        processInstance.setCompletionCode(code);
     }
 
     public Object evaluate(String expression) {
@@ -244,8 +244,8 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             valueExpressionMap.put("masterRequestId", new ValueExpressionLiteral(getMasterRequestId(), String.class));
             valueExpressionMap.put("mdwHubUrl", new ValueExpressionLiteral(ApplicationContext.getMdwHubUrl(), String.class));
             valueExpressionMap.put("processInstanceId", new ValueExpressionLiteral(this.getProcessInstanceId(), String.class));
-            valueExpressionMap.put("processName", new ValueExpressionLiteral(this.processVO.getProcessName(), String.class));
-            valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstanceVO, Object.class));
+            valueExpressionMap.put("processName", new ValueExpressionLiteral(this.process.getProcessName(), String.class));
+            valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstance, Object.class));
             valueExpressionMap.put("variables", new ValueExpressionLiteral(this.getVariables() , Object.class));
             valueExpressionMap.put("props", new ValueExpressionLiteral(this.getPropertyAccessorMap(), Map.class));
 

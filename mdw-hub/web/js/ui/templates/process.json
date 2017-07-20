@@ -16,6 +16,12 @@
       "default": "0"
     },
     {
+      "type": "asset",
+      "name": "PROCESS_START_PAGE",
+      "label": "Start Page",
+      "source": "jsx"
+    },
+    {
       "name": "Process Design Help",
       "type": "link",
       "url": "/MDWWeb/doc/process.html"

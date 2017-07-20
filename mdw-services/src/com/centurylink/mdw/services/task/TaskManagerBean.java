@@ -89,7 +89,6 @@ import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
-import com.centurylink.mdw.service.data.task.TaskDataException;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
@@ -97,8 +96,8 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.task.factory.TaskInstanceNotifierFactory;
 import com.centurylink.mdw.services.task.factory.TaskInstanceStrategyFactory;
@@ -123,76 +122,6 @@ public class TaskManagerBean implements TaskManager {
     private TaskDataAccess getTaskDAO() {
         DatabaseAccess db = new DatabaseAccess(null);
         return new TaskDataAccess(db);
-    }
-
-    /**
-     * Returns the claimed tasks for a given user
-     *
-     * @param userId
-     * @param criteria
-     * @return Array of TaskInstanceVOs
-     */
-    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria)
-    throws TaskException, DataAccessException {
-        return getAssignedTasks(userId, criteria, null, null);
-    }
-
-    /**
-     * Returns the claimed tasks for a given user, including specified variable values
-     *
-     * @param userId
-     * @param criteria
-     * @param variables
-     * @param variablesCriteria
-     * @return Array of TaskInstanceVOs
-     */
-    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria)
-    throws TaskException, DataAccessException {
-        return getAssignedTasks(userId, criteria, variables, variablesCriteria, null, null);
-    }
-
-   /**
-    *
-    */
-    @Override
-    public TaskInstance[] getAssignedTasks(Long userId, Map<String, String> criteria, List<String> variables, Map<String, String> variablesCriteria,
-            List<String> indexKeys, Map<String, String> indexCriteria) throws TaskException, DataAccessException {
-        TaskInstance[] retInstances = null;
-        CodeTimer timer = new CodeTimer("TaskManager.getClaimedTaskInstanceVOs()", true);
-
-        criteria.put("taskClaimUserId", " = " + userId);
-        if (!(criteria.containsKey("statusCode"))) {
-            criteria.put("statusCode", " in (" + TaskStatus.STATUS_ASSIGNED.toString() + ", " + TaskStatus.STATUS_IN_PROGRESS.toString() + ")");
-        }
-
-        List<TaskInstance> taskInstances = getTaskDAO().queryTaskInstances(criteria, variables, variablesCriteria, indexKeys, indexCriteria);
-
-        // update instances flagged as invalid (missing template)
-        for (TaskInstance taskInstance : taskInstances) {
-            if (taskInstance.isInvalid()) {
-                taskInstance.setStateCode(TaskState.STATE_INVALID);
-            }
-        }
-        retInstances = taskInstances.toArray(new TaskInstance[taskInstances.size()]);
-        timer.stopAndLogTiming("");
-        return retInstances;
-    }
-
-    /**
-     * Returns a task instance VO
-     *
-     * @param pTaskInstId
-     * @return the taskInst and associated data
-     * @throws TaskDataException
-     * @throws DataAccessException
-     */
-    public TaskInstance getTaskInstanceVO(Long pTaskInstId)
-    throws TaskException, DataAccessException {
-        CodeTimer timer = new CodeTimer("TaskManager.getTaskInstanceVO()", true);
-        TaskInstance retVO = this.getTaskDAO().getTaskInstanceAllInfo(pTaskInstId);
-        retVO.setTaskInstanceUrl(getTaskInstanceUrl(retVO));
-        timer.stopAndLogTiming("");
-        return retVO;
     }
 
     /**
@@ -231,8 +160,8 @@ public class TaskManagerBean implements TaskManager {
      * Retrieve additional info for task instance, including
      * assignee user name, due date, groups, master request id, etc.
      */
-    public void getTaskInstanceAdditionalInfo(TaskInstance taskInst)
-    throws DataAccessException, TaskException {
+    private void getTaskInstanceAdditionalInfo(TaskInstance taskInst)
+    throws DataAccessException, ServiceException {
         getTaskDAO().getTaskInstanceAdditionalInfoGeneral(taskInst);
         taskInst.setTaskInstanceUrl(getTaskInstanceUrl(taskInst));
     }
@@ -240,7 +169,7 @@ public class TaskManagerBean implements TaskManager {
     private TaskInstance createTaskInstance0(Long taskId, String owner, Long ownerId,
             String secondaryOwner, Long secondaryOwnerId, String message,
             String label, Date dueDate, String masterRequestId, int priority)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
 
         TaskInstance ti = new TaskInstance();
         ti.setTaskId(taskId);
@@ -264,16 +193,8 @@ public class TaskManagerBean implements TaskManager {
      * Convenience method for below.
      */
     public TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId)
-    throws TaskException, DataAccessException {
-        return createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, null);
-    }
-
-    /**
-     * Convenience method for below.
-     */
-    public TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId, Map<String,String> indices)
-    throws TaskException, DataAccessException {
-        return createTaskInstance(taskId, procInstId, secOwner, secOwnerId, null, null, null, null, 0, indices, null, masterRequestId);
+    throws ServiceException, DataAccessException {
+        return createTaskInstance(taskId, procInstId, secOwner, secOwnerId, null, null, null, null, 0, null, null, masterRequestId);
     }
 
     /**
@@ -310,7 +231,7 @@ public class TaskManagerBean implements TaskManager {
                 String secondaryOwner, Long secondaryOwnerId, String comment,
                 String ownerApp, Long asgnTaskInstId, String taskName, int dueInSeconds,
                 Map<String,String> indices, String assignee, String masterRequestId)
-        throws TaskException, DataAccessException {
+        throws ServiceException, DataAccessException {
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
         String label = task.getLabel();
         Package taskPkg = PackageCache.getTaskTemplatePackage(taskId);
@@ -329,7 +250,7 @@ public class TaskManagerBean implements TaskManager {
             }
         }
         catch (Exception ex) {
-            throw new TaskException(ex.getMessage(), ex);
+            throw new ServiceException(ex.getMessage(), ex);
         }
 
         TaskInstance ti = createTaskInstance0(taskId, (procInstId == null || procInstId == 0) ? OwnerType.EXTERNAL : OwnerType.PROCESS_INSTANCE,
@@ -360,7 +281,7 @@ public class TaskManagerBean implements TaskManager {
             {
                User user =  UserGroupCache.getUser(assignee);
                if(user == null)
-                 throw new TaskException("Assignee user not found to perform auto-assign : " + assignee);
+                 throw new ServiceException("Assignee user not found to perform auto-assign : " + assignee);
                assignTaskInstance(ti, user.getId()); // Performing auto assign on summary
             }
             catch (CachingException e)
@@ -390,13 +311,12 @@ public class TaskManagerBean implements TaskManager {
      */
     public TaskInstance createTaskInstance(Long taskId, String masterOwnerId,
             String comment, Date dueDate, Long userId, Long documentId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("TaskManager.createTaskInstance()", true);
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
-        int pri = 0; //AK added
         TaskInstance ti = createTaskInstance0(taskId,  OwnerType.USER, userId,
                 (documentId != null?OwnerType.DOCUMENT : null), documentId, comment,
-                task.getTaskName(), dueDate, masterOwnerId, pri);
+                task.getTaskName(), dueDate, masterOwnerId, 0);
         if (dueDate!=null) {
             String alertIntervalString = task.getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
             int alertInterval = StringHelper.isEmpty(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
@@ -459,7 +379,7 @@ public class TaskManagerBean implements TaskManager {
         }
     }
 
-    private void unscheduleTaskSlaEvent(Long taskInstId) throws TaskException {
+    private void unscheduleTaskSlaEvent(Long taskInstId) throws ServiceException {
         ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
         String eventName = ScheduledEvent.SPECIAL_EVENT_PREFIX
             + "TaskDueDate." + taskInstId.toString();
@@ -469,7 +389,7 @@ public class TaskManagerBean implements TaskManager {
             queue.unscheduleEvent(eventName);   // this broadcasts
             queue.unscheduleEvent(backwardCompatibleEventName); // this broadcasts
         } catch (Exception e) {
-            throw new TaskException("Failed to unschedule task SLA", e);
+            throw new ServiceException("Failed to unschedule task SLA", e);
         }
     }
 
@@ -492,10 +412,10 @@ public class TaskManagerBean implements TaskManager {
      * @return the updated task instance
      */
     private void assignTaskInstance(TaskInstance ti, Long userId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         if (this.isTaskInstanceAssignable(ti)) {
             ti.setStatusCode(TaskStatus.STATUS_ASSIGNED);
-            ti.setTaskClaimUserId(userId);
+            ti.setAssigneeId(userId);
             Map<String,Object> changes = new HashMap<String,Object>();
             changes.put("TASK_CLAIM_USER_ID", userId);
             changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_ASSIGNED);
@@ -510,7 +430,7 @@ public class TaskManagerBean implements TaskManager {
                         String cuid = UserGroupCache.getUser(userId).getCuid();
                         if (cuid == null)
                             throw new DataAccessException("User not found for id: " + userId);
-                        TaskRuntimeContext runtimeContext = getTaskRuntimeContext(ti);
+                        TaskRuntimeContext runtimeContext = getContext(ti);
                         String prevCuid;
                         if (runtimeContext.isExpression(assigneeVarSpec))
                             prevCuid = runtimeContext.evaluateToString(assigneeVarSpec);
@@ -563,7 +483,7 @@ public class TaskManagerBean implements TaskManager {
     private void releaseTaskInstance(TaskInstance ti)
     throws DataAccessException {
         ti.setStatusCode(TaskStatus.STATUS_OPEN);
-        ti.setTaskClaimUserId(null);
+        ti.setAssigneeId(null);
         Map<String,Object> changes = new HashMap<String,Object>();
         changes.put("TASK_CLAIM_USER_ID", null);
         changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_OPEN);
@@ -575,7 +495,7 @@ public class TaskManagerBean implements TaskManager {
             String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
             if (!StringHelper.isEmpty(assigneeVarSpec)) {
                 try {
-                    TaskRuntimeContext runtimeContext = getTaskRuntimeContext(ti);
+                    TaskRuntimeContext runtimeContext = getContext(ti);
                     EventManager eventMgr = ServiceLocator.getEventManager();
                     if (runtimeContext.isExpression(assigneeVarSpec)) {
                         // create or update document variable referenced by expression
@@ -625,7 +545,7 @@ public class TaskManagerBean implements TaskManager {
      * @return Array of TaskInstance
      */
     private TaskInstance[] getAllTaskInstancesForProcessInstance(Long pProcessInstanceId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("TaskManager.getAllTaskInstancesForProcessInstance()", true);
         List<TaskInstance> daoResults = this.getTaskDAO()
                 .getTaskInstancesForProcessInstance(pProcessInstanceId);
@@ -638,11 +558,11 @@ public class TaskManagerBean implements TaskManager {
      *
      * @param pTaskInstance
      * @return boolean status
-     * @throws TaskException
+     * @throws ServiceException
      * @throws DataAccessException
      */
     private boolean isTaskInstanceOpen(TaskInstance pTaskInstance)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         if (pTaskInstance.getStatusCode().intValue() == TaskStatus.STATUS_COMPLETED.intValue()) {
             return false;
         }
@@ -660,12 +580,12 @@ public class TaskManagerBean implements TaskManager {
      * @return boolean status
      */
     private boolean isTaskInstanceAssignable(TaskInstance pTaskInstance)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         return isTaskInstanceOpen(pTaskInstance);
     }
 
     public void cancelTaskInstance(TaskInstance taskInst)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         if (taskInst.isInFinalStatus()) {
             logger.info("Cannot change the state of the TaskInstance to Cancel.");
             return;
@@ -687,7 +607,7 @@ public class TaskManagerBean implements TaskManager {
      * @param pProcessInstance
      */
     public void cancelTasksForProcessInstance(Long pProcessInstId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("TaskManager.cancelTaskInstancesForProcessInstance()", true);
         TaskInstance[] instances = this.getAllTaskInstancesForProcessInstance(pProcessInstId);
         if (instances == null || instances.length == 0) {
@@ -747,7 +667,7 @@ public class TaskManagerBean implements TaskManager {
      * @param destination the logical destination = the new workgroup name
      */
     private void forwardTaskInstance(TaskInstance taskInst, String destination, String comment)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         List<String> prevWorkgroups = taskInst.getWorkgroups();
         if (prevWorkgroups == null || prevWorkgroups.isEmpty()) {
             TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInst.getTaskId());
@@ -766,7 +686,7 @@ public class TaskManagerBean implements TaskManager {
         try {
             for(String groupName:destWorkgroups) {
                 if (UserGroupCache.getWorkgroup(groupName) == null) {
-                    throw new TaskException( "Invalid Workgroup: " + groupName);
+                    throw new ServiceException( "Invalid Workgroup: " + groupName);
                 }
             }
         } catch (CachingException ex) {
@@ -799,13 +719,13 @@ public class TaskManagerBean implements TaskManager {
 
     public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
             Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine)
-        throws TaskException, DataAccessException {
+        throws ServiceException, DataAccessException {
         return performActionOnTaskInstance(action, taskInstanceId, userId, assigneeId, comment, destination, notifyEngine, true);
     }
 
     public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
             Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine, boolean allowResumeEndpoint)
-        throws TaskException, DataAccessException {
+        throws ServiceException, DataAccessException {
 
         if (logger.isInfoEnabled())
             logger.info("task action '" + action + "' on instance " + taskInstanceId);
@@ -838,10 +758,6 @@ public class TaskManagerBean implements TaskManager {
         else if (action.equalsIgnoreCase(TaskAction.WORK)) {
             workTaskInstance(ti);
         }
-//        else if (action.equalsIgnoreCase(TaskAction.ABORT)) {
-        // now handled by ProcessControllerMDBHelper - by falling through the else case
-//            abortTaskInstance(ti);
-//        }
         else if (action.equalsIgnoreCase(TaskAction.FORWARD)) {
             forwardTaskInstance(ti, destination, comment);
             auditLogActionPerformed(action, userId, Entity.TaskInstance, taskInstanceId, destination, TaskTemplateCache.getTaskTemplate(ti.getTaskId()).getTaskName());
@@ -849,7 +765,7 @@ public class TaskManagerBean implements TaskManager {
         }
         else {
             isComplete = true;
-            TaskRuntimeContext runtimeContext = getTaskRuntimeContext(ti);
+            TaskRuntimeContext runtimeContext = getContext(ti);
             // update the indexes
             setIndexes(runtimeContext);
             // option to notify through service (eg: to offload to workflow server instance)
@@ -916,7 +832,7 @@ public class TaskManagerBean implements TaskManager {
         return ti;
     }
 
-    public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws TaskException {
+    public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws ServiceException {
         SubTaskPlan subTaskPlan = getSubTaskPlan(runtimeContext);
         if (subTaskPlan != null) {
             return subTaskPlan.getSubTaskList();
@@ -924,11 +840,11 @@ public class TaskManagerBean implements TaskManager {
         return null;
     }
 
-    public List<TaskInstance> getSubTaskInstances(Long masterTaskInstanceId) throws DataAccessException {
+    private List<TaskInstance> getSubTaskInstances(Long masterTaskInstanceId) throws DataAccessException {
         return getTaskDAO().getSubTaskInstances(masterTaskInstanceId);
     }
 
-    private void resumeAutoFormTaskInstance(String taskAction, TaskInstance ti) throws TaskException {
+    private void resumeAutoFormTaskInstance(String taskAction, TaskInstance ti) throws ServiceException {
         try {
             String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + ti.getTaskInstanceId().toString();
             JSONObject jsonMsg = new JsonObject();
@@ -961,11 +877,11 @@ public class TaskManagerBean implements TaskManager {
             notifyProcess(ti, eventName, docid, message, delay);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            throw new TaskException(ex.getMessage(), ex);
+            throw new ServiceException(ex.getMessage(), ex);
         }
     }
 
-    private void resumeCustomTaskInstance(String action, TaskInstance ti) throws TaskException {
+    private void resumeCustomTaskInstance(String action, TaskInstance ti) throws ServiceException {
         try {
             Long actInstId = getActivityInstanceId(ti, false);
 
@@ -996,7 +912,7 @@ public class TaskManagerBean implements TaskManager {
             notifyProcess(ti, correlationId, docid, message, delay);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            throw new TaskException(ex.getMessage(), ex);
+            throw new ServiceException(ex.getMessage(), ex);
         }
     }
 
@@ -1007,7 +923,7 @@ public class TaskManagerBean implements TaskManager {
     }
 
     public void resumeThroughService(String taskResumeEndpoint, Long taskInstanceId, String action, Long userId, String comment)
-        throws TaskException {
+        throws ServiceException {
         UserTaskAction taskAction = new UserTaskAction();
         taskAction.setTaskInstanceId(taskInstanceId);
         taskAction.setTaskAction(action);
@@ -1023,12 +939,12 @@ public class TaskManagerBean implements TaskManager {
                        taskResumeEndpoint + ": " + statusMessage.getMessage());
         }
         catch (Exception ex) {
-            throw new TaskException("Failed to resume task instance: " + taskInstanceId, ex);
+            throw new ServiceException("Failed to resume task instance: " + taskInstanceId, ex);
         }
     }
 
     public void closeTaskInstance(TaskInstance ti, String action, String comment)
-            throws TaskException, DataAccessException {
+            throws ServiceException, DataAccessException {
         // set the new task instance status appropriately
         Integer newStatus = TaskStatus.STATUS_COMPLETED;
         if (action.equals(TaskAction.CANCEL) || action.equals(TaskAction.ABORT) || action.startsWith(TaskAction.CANCEL + "::"))
@@ -1043,7 +959,7 @@ public class TaskManagerBean implements TaskManager {
 
 
     private void auditLogActionPerformed(String action, Long userId, Entity entity, Long entityId, String destination, String comments)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         String userCuid = null;
         if (userId != null) {
             UserDataAccess uda = new UserDataAccess(new DatabaseAccess(null));
@@ -1055,7 +971,7 @@ public class TaskManagerBean implements TaskManager {
     }
 
     private void auditLogActionPerformed(String action, String user, Entity entity, Long entityId, String destination, String comments)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         try {
             if (user == null)
                 user = "N/A";
@@ -1074,7 +990,7 @@ public class TaskManagerBean implements TaskManager {
             EventManager eventManager = ServiceLocator.getEventManager();
             eventManager.createAuditLog(userAction);
         } catch (Exception e) {
-            throw new TaskException("Failed to create audit log", e);
+            throw new ServiceException("Failed to create audit log", e);
         }
     }
 
@@ -1083,7 +999,7 @@ public class TaskManagerBean implements TaskManager {
      * Creates a task instance note.
      */
     public Long addNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-    throws DataAccessException, TaskException {
+    throws DataAccessException, ServiceException {
         CodeTimer timer = new CodeTimer("TaskManager.addNote()", true);
         Long id = getTaskDAO().createInstanceNote(owner, ownerId, noteName, noteDetails, user);
         auditLogActionPerformed(UserAction.Action.Create.toString(), user, Entity.Note, id, null, noteName);
@@ -1095,7 +1011,7 @@ public class TaskManagerBean implements TaskManager {
      * Updates a note.
      */
     public void updateNote(Long noteId, String noteName, String noteDetails, String user)
-    throws DataAccessException, TaskException {
+    throws DataAccessException, ServiceException {
         CodeTimer timer = new CodeTimer("TaskManager.updateNote()", true);
         getTaskDAO().updateInstanceNote(noteId, noteName, noteDetails, user);
         auditLogActionPerformed(UserAction.Action.Change.toString(), user, Entity.Note, noteId, null, noteName);
@@ -1106,7 +1022,7 @@ public class TaskManagerBean implements TaskManager {
      * Updates a note based on ownerId.
      */
     public void updateNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-    throws DataAccessException, TaskException {
+    throws DataAccessException, ServiceException {
         CodeTimer timer = new CodeTimer("TaskManager.updateNote()", true);
         getTaskDAO().updateInstanceNote(owner, ownerId, noteName, noteDetails, user);
         auditLogActionPerformed(UserAction.Action.Change.toString(), user, Entity.Note, ownerId, null, noteName);
@@ -1119,7 +1035,7 @@ public class TaskManagerBean implements TaskManager {
      * @param pTaskNote
      */
     public void deleteNote(Long noteId, Long userId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         this.getTaskDAO().deleteInstanceNote(noteId);
         auditLogActionPerformed(UserAction.Action.Delete.toString(), userId, Entity.Note, noteId, null, null);
     }
@@ -1129,7 +1045,7 @@ public class TaskManagerBean implements TaskManager {
      */
     public Long addAttachment(String attachName,
             String attachLoc, String contentType, String user, String owner, Long ownerId)
-    throws DataAccessException, TaskException {
+    throws DataAccessException, ServiceException {
         CodeTimer timer = new CodeTimer("TaskManager.addTaskInstanceAttachment()", true);
         if (! attachLoc.startsWith(MiscConstants.ATTACHMENT_LOCATION_PREFIX)
              && ! attachLoc.endsWith("/")) {
@@ -1160,7 +1076,7 @@ public class TaskManagerBean implements TaskManager {
      * @return Attachment
      */
     public void removeAttachment(Long pAttachId, Long userId)
-    throws DataAccessException, TaskException {
+    throws DataAccessException, ServiceException {
         CodeTimer timer = new CodeTimer("TaskManager.removeAttachment()", true);
         this.getTaskDAO().deleteAttachment(pAttachId);
         timer.stopAndLogTiming("");
@@ -1207,7 +1123,7 @@ public class TaskManagerBean implements TaskManager {
     */
     // TODO: handle non-standard status changes
     public void notifyTaskAction(TaskInstance taskInstance, String action, Integer previousStatus, Integer previousState)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("TaskManager.notifyStatusChange()", true);
 
         try {
@@ -1226,8 +1142,8 @@ public class TaskManagerBean implements TaskManager {
                         logger.severe("No users found for auto-assignment of task instance ID: " + taskInstance.getTaskInstanceId());
                     else
                     {
-                      taskInstance.setTaskClaimUserId(assignee.getId());
-                      taskInstance.setTaskClaimUserCuid(assignee.getCuid());
+                      taskInstance.setAssigneeId(assignee.getId());
+                      taskInstance.setAssigneeCuid(assignee.getCuid());
                       performActionOnTaskInstance(TaskAction.ASSIGN, taskInstance.getTaskInstanceId(),
                           assignee.getId(), assignee.getId(), "Auto-assigned", null, false, false);
                     }
@@ -1244,7 +1160,7 @@ public class TaskManagerBean implements TaskManager {
         timer.stopAndLogTiming("");
     }
 
-    public AutoAssignStrategy getAutoAssignStrategy(TaskInstance taskInstance) throws StrategyException, TaskException {
+    public AutoAssignStrategy getAutoAssignStrategy(TaskInstance taskInstance) throws StrategyException, ServiceException {
       TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
       String autoAssignAttr = taskVO.getAttribute(TaskAttributeConstant.AUTO_ASSIGN);
       AutoAssignStrategy strategy = null;
@@ -1261,7 +1177,7 @@ public class TaskManagerBean implements TaskManager {
           }
         }
         catch (Exception ex) {
-            throw new TaskException(ex.getMessage(), ex);
+            throw new ServiceException(ex.getMessage(), ex);
         }
       }
       return strategy;
@@ -1271,11 +1187,11 @@ public class TaskManagerBean implements TaskManager {
      * Determines a task instance's workgroups based on the defined strategy.  If no strategy exists,
      * default to the workgroups defined in the task template.
      *
-     * By default this method propagates StrategyException as TaskException.  If users wish to continue
+     * By default this method propagates StrategyException as ServiceException.  If users wish to continue
      * processing they can override the default strategy implementation to catch StrategyExceptions.
      */
     private List<String> determineWorkgroups(TaskTemplate taskTemplate, TaskInstance taskInstance, Map<String,String> indices)
-    throws TaskException {
+    throws ServiceException {
         String routingStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.ROUTING_STRATEGY);
         if (StringHelper.isEmpty(routingStrategyAttr)) {
             return taskTemplate.getWorkgroups();
@@ -1291,7 +1207,7 @@ public class TaskManagerBean implements TaskManager {
                 return strategy.determineWorkgroups(taskTemplate, taskInstance);
             }
             catch (Exception ex) {
-                throw new TaskException(ex.getMessage(), ex);
+                throw new ServiceException(ex.getMessage(), ex);
             }
         }
     }
@@ -1299,18 +1215,18 @@ public class TaskManagerBean implements TaskManager {
     /**
      * Returns the subTaskPlan for a master task instance
      *
-     * By default this method propagates StrategyException as TaskException.  If users wish to continue
+     * By default this method propagates StrategyException as ServiceException.  If users wish to continue
      * processing they can override the default strategy implementation to catch StrategyExceptions.
      */
     public SubTaskPlan getSubTaskPlan(TaskRuntimeContext runtimeContext)
-    throws TaskException {
+    throws ServiceException {
         String subTaskStrategyAttr = runtimeContext.getTaskAttribute(TaskAttributeConstant.SUBTASK_STRATEGY);
         if (StringHelper.isEmpty(subTaskStrategyAttr)) {
             return null;
         }
         else {
             try {
-                TaskInstance taskInstance = runtimeContext.getTaskInstanceVO();
+                TaskInstance taskInstance = runtimeContext.getTaskInstance();
                 SubTaskStrategy strategy = TaskInstanceStrategyFactory.getSubTaskStrategy(subTaskStrategyAttr,
                         OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()) ? taskInstance.getOwnerId() : null);
                 if (strategy instanceof ParameterizedStrategy) {
@@ -1321,7 +1237,7 @@ public class TaskManagerBean implements TaskManager {
                 return subTaskPlanDoc.getSubTaskPlan();
             }
             catch (Exception ex) {
-                throw new TaskException(ex.getMessage(), ex);
+                throw new ServiceException(ex.getMessage(), ex);
             }
         }
     }
@@ -1369,7 +1285,7 @@ public class TaskManagerBean implements TaskManager {
      * @param activityInstId activity instance ID
      */
     public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         TaskInstance taskInst;
         taskInst = getTaskDAO().getTaskInstanceByActivityInstanceId(activityInstanceId);
 
@@ -1385,7 +1301,7 @@ public class TaskManagerBean implements TaskManager {
      * @param pDueDate
      */
     public void updateTaskInstanceDueDate(Long pTaskInstanceId, Date pDueDate, String cuid, String comment)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         boolean hasOldSlaInstance;
         EventManager eventManager = ServiceLocator.getEventManager();
         EventInstance event = eventManager.getEventInstance(ScheduledEvent.SPECIAL_EVENT_PREFIX + "TaskDueDate." + pTaskInstanceId.toString());
@@ -1409,7 +1325,7 @@ public class TaskManagerBean implements TaskManager {
     }
 
     public void updateTaskInstanceComments(Long taskInstanceId, String comments)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         Map<String,Object> changes = new HashMap<String,Object>();
         changes.put("COMMENTS", comments);
         getTaskDAO().updateTaskInstance(taskInstanceId, changes, false);
@@ -1424,7 +1340,7 @@ public class TaskManagerBean implements TaskManager {
      * @return the list of task actions
      */
     public List<TaskAction> getDynamicTaskActions(Long taskInstanceId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
 
         CodeTimer timer = new CodeTimer("TaskManager.getDynamicTaskActions()", true);
 
@@ -1475,7 +1391,7 @@ public class TaskManagerBean implements TaskManager {
      * @return the list of task actions
      */
     public List<TaskAction> filterStandardTaskActions(Long taskInstanceId, List<TaskAction> standardTaskActions)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
 
         CodeTimer timer = new CodeTimer("TaskManager.filterStandardTaskActions()", true);
 
@@ -1577,17 +1493,12 @@ public class TaskManagerBean implements TaskManager {
      * @return Collection of EventLog objects
      */
     public List<EventLog> getEventLogs(Long taskInstanceId)
-    throws TaskException, DataAccessException {
+    throws ServiceException, DataAccessException {
         EventManager eventManager = ServiceLocator.getEventManager();
         return eventManager.getEventLogs(null, null, "TaskInstance", taskInstanceId);
     }
 
-    public Document getTaskInstanceData(TaskInstance taskInst) throws DataAccessException {
-        EventManager eventManager = ServiceLocator.getEventManager();
-        return eventManager.getDocumentVO(taskInst.getSecondaryOwnerId());
-    }
-
-    public VariableInstance[] getProcessInstanceVariables(Long procInstId)
+    private VariableInstance[] getProcessInstanceVariables(Long procInstId)
     throws DataAccessException {
         try {
             EventManager eventManager = ServiceLocator.getEventManager();
@@ -1613,10 +1524,10 @@ public class TaskManagerBean implements TaskManager {
         }
     }
 
-    public List<String> getGroupsForTaskInstance(TaskInstance taskInst) throws DataAccessException, TaskException {
-        if (taskInst.isShallow()) this.getTaskInstanceAdditionalInfo(taskInst);
-        if (taskInst.isTemplateBased()) return taskInst.getGroups();
-        else return getTaskDAO().getGroupsForTask(taskInst.getTaskId());
+    public List<String> getGroupsForTaskInstance(TaskInstance taskInst) throws DataAccessException, ServiceException {
+        if (taskInst.isShallow())
+            this.getTaskInstanceAdditionalInfo(taskInst);
+        return taskInst.getGroups();
     }
 
     @Override
@@ -1644,86 +1555,39 @@ public class TaskManagerBean implements TaskManager {
         getTaskDAO().setTaskInstancePriority(taskInstanceId, priority);
     }
 
+    public void setIndexes(TaskRuntimeContext runtimeContext) throws DataAccessException {
+        TaskIndexProvider indexProvider = getIndexProvider(runtimeContext);
+        if (indexProvider != null) {
+            Map<String,String> indexes = indexProvider.collect(runtimeContext);
+            if (indexes != null)
+                getTaskDAO().setTaskInstanceIndices(runtimeContext.getTaskInstanceId(), indexes);
+        }
+    }
 
-  public TaskRuntimeContext getTaskRuntimeContext(TaskInstance taskInstanceVO) {
-      EventManager eventMgr = null;
-      TaskRuntimeContext taskRunTime = null;
+    private TaskIndexProvider getIndexProvider(TaskRuntimeContext runtimeContext) throws DataAccessException {
+        String indexProviderClass = runtimeContext.getTaskAttribute(TaskAttributeConstant.INDEX_PROVIDER);
+        if (indexProviderClass == null) {
+            return TaskTemplateCache.getTaskTemplate(runtimeContext.getTaskId()).isAutoformTask() ?
+                    new AutoFormTaskIndexProvider() : new CustomTaskIndexProvider();
+        }
+        else {
+            if (indexProviderClass.equals(AutoFormTaskIndexProvider.class.getName()))
+                return new AutoFormTaskIndexProvider();
+            else if (indexProviderClass.equals(CustomTaskIndexProvider.class.getName()))
+                return new CustomTaskIndexProvider();
 
-      try {
-          eventMgr = ServiceLocator.getEventManager();
-          TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstanceVO.getTaskId());
-          Map<String,Object> vars = new HashMap<String,Object>();
+            TaskIndexProvider provider = TaskServiceRegistry.getInstance().getIndexProvider(runtimeContext.getPackage(), indexProviderClass);
+            if (provider == null)
+                logger.severe("ERROR: cannot create TaskIndexProvider: " + indexProviderClass);
+            return provider;
+        }
+    }
 
-          if(OwnerType.PROCESS_INSTANCE.equals(taskInstanceVO.getOwnerType())) {
-              ProcessInstance procInstVO = eventMgr.getProcessInstance(taskInstanceVO.getOwnerId(), true);
-                if (procInstVO.isEmbedded()) {
-                    Long procInstanceId = procInstVO.getOwnerId();
-                    procInstVO = eventMgr.getProcessInstance(procInstanceId, true);
-                }
-                Long processId = procInstVO.getProcessId();
-              Process processVO = ProcessCache.getProcess(processId);
-              Package packageVO = PackageCache.getProcessPackage(processId);
-
-              if (procInstVO.getVariables() != null) {
-                  for (VariableInstance var : procInstVO.getVariables()) {
-                      Object value = var.getData();
-                      if (value instanceof DocumentReference) {
-                          try {
-                              Document docVO = eventMgr.getDocument((DocumentReference)value, false);
-                              value = docVO == null ? null : docVO.getObject(var.getType(), packageVO);
-                          }
-                          catch (DataAccessException ex) {
-                              logger.severeException(ex.getMessage(), ex);
-                          }
-                      }
-                      vars.put(var.getName(), value);
-                  }
-              }
-              taskRunTime = new TaskRuntimeContext(packageVO, processVO, procInstVO, taskVO, taskInstanceVO, vars);
-          } else {
-              taskRunTime = new TaskRuntimeContext(null, null, null, taskVO, taskInstanceVO, vars);
-          }
-
-
-      } catch (Exception e) {
-          logger.severeException("Failed to get Task Runtime context" + e.getMessage(), e);
-      }
-      return taskRunTime;
-  }
-
-  public void setIndexes(TaskRuntimeContext runtimeContext) throws DataAccessException {
-      TaskIndexProvider indexProvider = getIndexProvider(runtimeContext);
-      if (indexProvider != null) {
-          Map<String,String> indexes = indexProvider.collect(runtimeContext);
-          if (indexes != null)
-              getTaskDAO().setTaskInstanceIndices(runtimeContext.getTaskInstanceId(), indexes);
-      }
-  }
-
-  private TaskIndexProvider getIndexProvider(TaskRuntimeContext runtimeContext) throws DataAccessException {
-      String indexProviderClass = runtimeContext.getTaskAttribute(TaskAttributeConstant.INDEX_PROVIDER);
-      if (indexProviderClass == null) {
-          return TaskTemplateCache.getTaskTemplate(runtimeContext.getTaskId()).isAutoformTask() ?
-                  new AutoFormTaskIndexProvider() : new CustomTaskIndexProvider();
-      }
-      else {
-          if (indexProviderClass.equals(AutoFormTaskIndexProvider.class.getName()))
-              return new AutoFormTaskIndexProvider();
-          else if (indexProviderClass.equals(CustomTaskIndexProvider.class.getName()))
-              return new CustomTaskIndexProvider();
-
-          TaskIndexProvider provider = TaskServiceRegistry.getInstance().getIndexProvider(runtimeContext.getPackage(), indexProviderClass);
-          if (provider == null)
-              logger.severe("ERROR: cannot create TaskIndexProvider: " + indexProviderClass);
-          return provider;
-      }
-  }
-
-   public void cancelTasksOfActivityInstance(Long actInstId)
+    public void cancelTasksOfActivityInstance(Long actInstId)
             throws NamingException, MdwException {
         TaskInstance taskInstance = getTaskInstanceByActivityInstanceId(actInstId);
         if (taskInstance == null)
-            throw new TaskException("Cannot find the task instance for the activity instance");
+            throw new ServiceException("Cannot find the task instance for the activity instance");
         if (taskInstance.getStatusCode().equals(TaskStatus.STATUS_ASSIGNED)
                 || taskInstance.getStatusCode().equals(TaskStatus.STATUS_IN_PROGRESS)
                 || taskInstance.getStatusCode().equals(TaskStatus.STATUS_OPEN)) {
@@ -1732,13 +1596,13 @@ public class TaskManagerBean implements TaskManager {
     }
 
     public void cancelTasksForProcessInstances(List<Long> procInstIds)
-            throws TaskException, DataAccessException {
+            throws ServiceException, DataAccessException {
         for (Long procInstId : procInstIds) {
             cancelTasksForProcessInstance(procInstId);
         }
     }
 
-    public String getTaskInstanceUrl(TaskInstance taskInst) throws TaskException {
+    public String getTaskInstanceUrl(TaskInstance taskInst) throws ServiceException {
         String baseUrl = ApplicationContext.getMdwHubUrl();
         if (!baseUrl.endsWith("/"))
           baseUrl += "/";
@@ -1753,7 +1617,7 @@ public class TaskManagerBean implements TaskManager {
             notifierSpecs = notifierFactory.getNotifierSpecs(taskInst.getTaskId(), processInstId, outcome);
             if (notifierSpecs == null || notifierSpecs.isEmpty()) return;
             getTaskInstanceAdditionalInfo(taskInst);
-            TaskRuntimeContext taskRuntime = getTaskRuntimeContext(taskInst);
+            TaskRuntimeContext taskRuntime = getContext(taskInst);
             for (String notifierSpec : notifierSpecs) {
                 try {
                     TaskNotifier notifier = notifierFactory.getNotifier(notifierSpec, processInstId);
@@ -1772,5 +1636,41 @@ public class TaskManagerBean implements TaskManager {
         }
     }
 
+    private TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException, DataAccessException {
+        TaskTemplate template = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+        Map<String,Object> vars = new HashMap<>();
+        User assignee = null;
+        if (taskInstance.getAssigneeCuid() != null) {
+            assignee = ServiceLocator.getUserServices().getUser(taskInstance.getAssigneeCuid());
+        }
+
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+
+        if (OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType())) {
+            ProcessInstance procInst = workflowServices.getProcess(taskInstance.getOwnerId());
+            if (procInst.isEmbedded()) {
+                Long procInstanceId = procInst.getOwnerId();
+                procInst = workflowServices.getProcess(procInstanceId);
+            }
+            Long processId = procInst.getProcessId();
+            Process proc = ProcessCache.getProcess(processId);
+            Package pkg = PackageCache.getProcessPackage(processId);
+
+            if (procInst.getVariables() != null) {
+                for (VariableInstance var : procInst.getVariables()) {
+                    Object value = var.getData();
+                    if (value instanceof DocumentReference) {
+                        Document docVO = workflowServices.getDocument(((DocumentReference)value).getDocumentId());
+                        value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                    }
+                    vars.put(var.getName(), value);
+                }
+            }
+            return new TaskRuntimeContext(pkg, proc, procInst, vars, template, taskInstance, assignee);
+        }
+        else {
+            return new TaskRuntimeContext(null, null, null, vars, template, taskInstance, assignee);
+        }
+    }
 }
 

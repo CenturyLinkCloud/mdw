@@ -35,8 +35,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
@@ -51,6 +49,8 @@ import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
@@ -87,7 +87,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskException;
 import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
@@ -242,7 +241,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 engine.createEventWaitInstance(activityInstanceId, eventName, completionCode, false, false, true);
             }
             else
-                throw new TaskException("Task Instance was not found for ID " + taskInstanceId);
+                throw new ServiceException("Task Instance was not found for ID " + taskInstanceId);
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);

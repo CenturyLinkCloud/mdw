@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.event.EventLog;
@@ -30,60 +31,10 @@ import com.centurylink.mdw.model.note.InstanceNote;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.service.data.task.TaskDataException;
 import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.SubTaskPlanDocument.SubTaskPlan;
 
 public interface TaskManager {
-
-    /**
-     * Return the claimed tasks for a given user, including specified variable values and index keys
-     * @param userId
-     * @param criteria
-     * @param variables
-     * @param variablesCriteria
-     * @param indexKeys
-     * @param indexCriteria
-     * @return
-     * @throws TaskException
-     * @throws DataAccessException
-     */
-    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria, List<String> indexKeys, Map<String,String> indexCriteria)
-            throws TaskException, DataAccessException;
-    /**
-     * Returns the claimed tasks for a given user, including specified variable values
-     *
-     * @param userId
-     * @param criteria
-     * @param variables
-     * @return Array of TaskInstanceVOs
-     */
-    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria)
-    throws TaskException, DataAccessException;
-
-
-    /**
-     * Returns the claimed tasks for a given user
-     *
-     * @param userId
-     * @param criteria
-     * @return Array of TaskInstanceVOs
-     */
-    public TaskInstance[] getAssignedTasks(Long userId, Map<String,String> criteria)
-    throws TaskException, DataAccessException;
-
-    /**
-     * Returns a task with all associated information
-     *
-     * @param pTaskInstId
-     * @return the taskInst and associated data
-     * @throws TaskDataException
-     * @throws DataAccessException
-     */
-    public TaskInstance getTaskInstanceVO(Long pTaskInstId)
-    throws TaskException, DataAccessException;
 
     /**
      * Returns task instance basic info (only from task_instance table)
@@ -94,37 +45,10 @@ public interface TaskManager {
     throws DataAccessException;
 
     /**
-     * Get additional information about the task instance (data
-     * not stored in TASK_INSTANCE table), which include:
-     * - task name (classic task or non-template task)
-     * - due date
-     * - assignee cuid
-     * - task category (classic task or non-template task)
-     * - master request id (classic task or non-template task)
-     * - activity message (classic task or non-template task)
-     * - activity name (classic task or non-template task)
-     * - indices (general template task)
-     * - groups (template task)
-     *
-     * @param taskInstId
-     * @param allInfo
-     * @return
-     * @throws DataAccessException
-     */
-    public void getTaskInstanceAdditionalInfo(TaskInstance taskInst)
-    throws DataAccessException, TaskException;
-
-    /**
      * Convenience method for below.
      */
     public TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId)
-    throws TaskException, DataAccessException;
-
-    /**
-     * Convenience method for below.
-     */
-    public TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId, String secOwner, Long secOwnerId, Map<String,String> indices)
-    throws TaskException, DataAccessException;
+    throws ServiceException, DataAccessException;
 
     /**
      * Creates a task instance. This is the main version. There is another version
@@ -160,7 +84,7 @@ public interface TaskManager {
            String secondaryOwner, Long secondaryOwnerId, String message,
            String pOwnerAppName, Long pAssTaskInstId, String taskName,
            int dueInSeconds, Map<String,String> indices, String assignee, String masterRequestId)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * This version is used by the task manager to create a task instance
@@ -176,16 +100,16 @@ public interface TaskManager {
     */
    public TaskInstance createTaskInstance(Long taskId, String masterOwnerId,
       String comment, Date dueDate, Long userId, Long documentId)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Cancel the task
     * @param taskInst the task instance object
-    * @throws TaskException
+    * @throws ServiceException
     * @throws DataAccessException
     */
    public void cancelTaskInstance(TaskInstance taskInst)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Cancels all tasks of the given process instance if they are not complete.
@@ -193,17 +117,17 @@ public interface TaskManager {
     * @param pProcessInstance
     */
    public void cancelTasksForProcessInstance(Long pProcessInstId)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    public void cancelTasksForProcessInstances(List<Long> procInstIds)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    public void cancelTasksOfActivityInstance(Long actInstId)
    throws NamingException, MdwException;
 
    public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
            Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Performs an action on a task instance.  Updates the task instance to the appropriate status
@@ -222,18 +146,18 @@ public interface TaskManager {
     */
    public TaskInstance performActionOnTaskInstance(String action, Long taskInstanceId,
            Long userId, Long assigneeId, String comment, String destination, boolean notifyEngine, boolean allowResumeEndpoint)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Used by detail-only task manager in place of performActionOnTaskInstance
     * @param ti
     * @param action
     * @param comment
-    * @throws TaskException
+    * @throws ServiceException
     * @throws DataAccessException
     */
    public void closeTaskInstance(TaskInstance ti, String action, String comment)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Returns the available notes for the given owner type and ID
@@ -249,19 +173,19 @@ public interface TaskManager {
     * Creates a instance note.
     */
    public Long addNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-   throws DataAccessException, TaskException;
+   throws DataAccessException, ServiceException;
 
    /**
     * Updates a task instance note.
     */
    public void updateNote(Long noteId, String noteName, String noteDetails, String user)
-   throws DataAccessException, TaskException;
+   throws DataAccessException, ServiceException;
 
    /**
     * Updates a note based on ownerId.
     */
    public void updateNote(String owner, Long ownerId, String noteName, String noteDetails, String user)
-   throws DataAccessException, TaskException;
+   throws DataAccessException, ServiceException;
 
    /**
     * Deletes the passed in TaskInstanceNote
@@ -269,7 +193,7 @@ public interface TaskManager {
     * @param pTaskNote
     */
    public void deleteNote(Long noteId, Long userId)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Returns the collection of attachments
@@ -285,7 +209,7 @@ public interface TaskManager {
     */
    public Long addAttachment(String attachName,
            String attachLoc, String contentType, String user,String owner,Long ownerId)
-   throws DataAccessException, TaskException;
+   throws DataAccessException, ServiceException;
 
    /**
     * Removes the attachment from the task instance
@@ -296,7 +220,7 @@ public interface TaskManager {
     * @return Attachment
     */
    public void removeAttachment(Long pAttachId, Long userId)
-   throws DataAccessException, TaskException;
+   throws DataAccessException, ServiceException;
 
    /**
     * Returns the attachment
@@ -322,7 +246,7 @@ public interface TaskManager {
     * @param activityInstId activity instance ID
     */
    public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Updates the due date for a task instance.
@@ -331,17 +255,17 @@ public interface TaskManager {
     * @param pDueDate
     */
    public void updateTaskInstanceDueDate(Long pTaskInstanceId, Date pDueDate, String cuid, String comment)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Update comments of a task instance
     * @param taskInstanceId
     * @param comments
-    * @throws TaskException
+    * @throws ServiceException
     * @throws DataAccessException
     */
    public void updateTaskInstanceComments(Long taskInstanceId, String comments)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Gets the dynamic task actions associated with a task instance as determined by
@@ -352,7 +276,7 @@ public interface TaskManager {
     * @return the list of task actions
     */
    public List<TaskAction> getDynamicTaskActions(Long taskInstanceId)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Gets the standard task actions, filtered according to what's applicable
@@ -363,7 +287,7 @@ public interface TaskManager {
     * @return the list of task actions
     */
    public List<TaskAction> filterStandardTaskActions(Long taskInstanceId, List<TaskAction> standardTaskActions)
-   throws TaskException, DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Gets the event log entries for a task instance.
@@ -372,19 +296,7 @@ public interface TaskManager {
     * @return Collection of EventLog objects
     */
    public List<EventLog> getEventLogs(Long taskInstanceId)
-   throws TaskException, DataAccessException;
-
-   /**
-    * Return the data associated with the task instance
-    * @param taskInst
-    * @return the form data document containing the task instance data
-    * @throws DataAccessException
-    */
-   public Document getTaskInstanceData(TaskInstance taskInst)
-   throws DataAccessException;
-
-   public VariableInstance[] getProcessInstanceVariables(Long procInstId)
-   throws DataAccessException;
+   throws ServiceException, DataAccessException;
 
    /**
     * Get the list of group names to which the given task instance is associated with
@@ -393,15 +305,9 @@ public interface TaskManager {
     * @throws DataAccessException
     */
    public List<String> getGroupsForTaskInstance(TaskInstance taskInst)
-   throws DataAccessException, TaskException;
+   throws DataAccessException, ServiceException;
 
-   public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws TaskException;
-
-   /**
-   * Get all subtask instances for a specified master task instance id.
-   */
-  public List<TaskInstance> getSubTaskInstances(Long masterTaskInstanceId)
-  throws DataAccessException;
+   public List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws ServiceException;
 
   /**
    * Update task index values for an instance.
@@ -422,21 +328,15 @@ public interface TaskManager {
   throws DataAccessException;
 
   /**
-   * Get the runtime context for a taskInstance.
-   */
-  public TaskRuntimeContext getTaskRuntimeContext(TaskInstance taskInstanceVO)
-      throws DataAccessException;
-
-  /**
    * Get the Subtask plan for a specified taskInstance
    */
-  public SubTaskPlan getSubTaskPlan(TaskRuntimeContext runtimeContext) throws TaskException;
+  public SubTaskPlan getSubTaskPlan(TaskRuntimeContext runtimeContext) throws ServiceException;
 
   public void setIndexes(TaskRuntimeContext runtimeContext) throws DataAccessException;
 
   public Long getActivityInstanceId(TaskInstance taskInstance, boolean sourceActInst);
 
   public void notifyTaskAction(TaskInstance taskInstance, String action, Integer previousStatus, Integer previousState)
-  throws TaskException, DataAccessException;
+  throws ServiceException, DataAccessException;
 
 }
