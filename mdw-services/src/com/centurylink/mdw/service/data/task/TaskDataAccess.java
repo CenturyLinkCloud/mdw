@@ -86,6 +86,10 @@ public class TaskDataAccess extends CommonDataAccess {
 
     private static boolean hasInstanceGroupMappings;
 
+    public TaskDataAccess() {
+        this(new DatabaseAccess(null));
+    }
+
     public TaskDataAccess(DatabaseAccess db) {
         super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
     }

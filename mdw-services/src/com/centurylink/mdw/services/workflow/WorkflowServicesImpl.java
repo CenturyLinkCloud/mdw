@@ -87,7 +87,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -228,10 +227,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void registerTaskWaitEvent(Long taskInstanceId, String eventName, String completionCode) throws ServiceException {
         try {
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskInstance taskVo = taskMgr.getTaskInstance(taskInstanceId);
-            if (taskVo != null) {
-                Long activityInstanceId = taskVo.getActivityInstanceId();
+            TaskInstance taskInstance = ServiceLocator.getTaskServices().getInstance(taskInstanceId);
+            if (taskInstance != null) {
+                Long activityInstanceId = taskInstance.getActivityInstanceId();
                 EngineDataAccess edao = new EngineDataAccessDB();
                 InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
                 ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);

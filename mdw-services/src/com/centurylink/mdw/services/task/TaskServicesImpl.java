@@ -23,21 +23,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.task.TaskState;
+import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.user.User;
@@ -47,7 +49,6 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
@@ -55,11 +56,10 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -81,26 +81,22 @@ public class TaskServicesImpl implements TaskServices {
         return new AggregateDataAccessVcs();
     }
 
-    public Long createTask(String userCuid, String logicalId) throws ServiceException {
+    public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
+            String secOwner, Long secOwnerId, String comments) throws ServiceException, DataAccessException {
+        return TaskWorkflowHelper.createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, comments);
+    }
 
+    public TaskInstance createTask(String userCuid, String logicalId) throws ServiceException {
+        TaskTemplate template = TaskTemplateCache.getTaskTemplate(logicalId);
+        if (template == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
+        User user = UserGroupCache.getUser(userCuid);
+        if (user == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "User '" + userCuid + "' not found");
         try {
-            TaskManager taskManager = ServiceLocator.getTaskManager();
-            TaskTemplate template = TaskTemplateCache.getTaskTemplate(logicalId);
-            if (template == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
-
-            User user = UserGroupCache.getUser(userCuid);
-            if (user == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "User '" + userCuid + "' not found");
-            TaskInstance instance = taskManager.createTaskInstance(template.getId(), null, null, null, user.getId(), (Long)null);
-
-            logger.info("Task instance created: " + instance.getTaskInstanceId());
-            return instance.getTaskInstanceId();
+            return TaskWorkflowHelper.createTaskInstance(template.getId(), null, OwnerType.USER, user.getId(), null, null, null, null, null, 0);
         }
-        catch (ServiceException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
+        catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
@@ -220,76 +216,35 @@ public class TaskServicesImpl implements TaskServices {
 
     }
 
-    public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId, String comments) throws ServiceException, DataAccessException, CachingException {
-
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
-        if (taskVO == null)
-            throw new DataAccessException("Task template not found: " + spec);
-
-        TaskManager taskManager = ServiceLocator.getTaskManager();
-
-        TaskInstance instance = taskManager.createTaskInstance(taskVO.getTaskId(), processInstanceId,
-                OwnerType.WORK_TRANSITION_INSTANCE, transitionId, comments, null, null, null, 0, null, null, masterRequestId);
-
-        TaskRuntimeContext runtimeContext = getContext(instance);
-        taskManager.setIndexes(runtimeContext);
-
-        List<SubTask> subTaskList = taskManager.getSubTaskList(runtimeContext);
-        if (subTaskList != null && !subTaskList.isEmpty())
-            createSubTasks(subTaskList, runtimeContext);
-
-        logger.info("Created task instance " + instance.getId() + " (" + taskVO.getTaskName() + ")");
-
-        return instance;
-    }
-
-    public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException {
-        return getTaskDAO().getTaskInstIndices(taskInstanceId);
+    public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException {
+        try {
+            return getTaskDAO().getTaskInstIndices(taskInstanceId);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
             throws ServiceException, DataAccessException {
-        TaskManager taskManager = ServiceLocator.getTaskManager();
         TaskTemplate subTaskVo = TaskTemplateCache.getTaskTemplate(subtaskLogicalId);
         if (subTaskVo == null)
             throw new ServiceException("Task Template '" + subtaskLogicalId + "' does not exist");
 
-        TaskInstance masterTaskInstance = taskManager.getTaskInstance(masterTaskInstanceId);
+        TaskInstance masterTaskInstance = getInstance(masterTaskInstanceId);
         TaskRuntimeContext masterTaskContext = getContext(masterTaskInstance);
-        TaskInstance subTaskInstance = taskManager.createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
-                masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId());
+        TaskInstance subTaskInstance = TaskWorkflowHelper.createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
+                masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null);
         logger.info("SubTask instance created - ID: " + subTaskInstance.getTaskInstanceId());
     }
 
-    public void createSubTasks(List<SubTask> subTaskList, TaskRuntimeContext masterTaskContext)
-            throws ServiceException, DataAccessException {
-        TaskManager taskManager = ServiceLocator.getTaskManager();
-        for (SubTask subTask : subTaskList) {
-            TaskTemplate subTaskVo = TaskTemplateCache.getTaskTemplate(subTask.getLogicalId());
-            if (subTaskVo == null)
-                throw new ServiceException("Task Template '" + subTask.getLogicalId() + "' does not exist");
-
-            TaskInstance subTaskInstance = taskManager.createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
-                    masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId());
-            logger.info("SubTask instance created - ID " + subTaskInstance.getTaskInstanceId());
-            // TODO recursive subtask creation
-        }
-    }
-
-    public TaskInstance getInstance(Long instanceId) throws DataAccessException {
-        TaskManager taskMgr = ServiceLocator.getTaskManager();
-        TaskInstance taskInstance = taskMgr.getTaskInstance(instanceId);
-        if (taskInstance == null)
-            return null;
-        taskInstance.setRetrieveDate(DatabaseAccess.getDbDate());
-        return taskInstance;
+    public TaskInstance getInstance(Long taskInstanceId) throws DataAccessException {
+        return TaskWorkflowHelper.getTaskInstance(taskInstanceId);
     }
 
     public TaskRuntimeContext getContext(Long instanceId) throws ServiceException {
         try {
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskInstance taskInstance = taskMgr.getTaskInstance(instanceId);
+            TaskInstance taskInstance = getInstance(instanceId);
             if (taskInstance == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
             return getContext(taskInstance);
@@ -299,10 +254,13 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
+    public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException {
+        return new TaskWorkflowHelper(taskInstance).getContext();
+    }
+
     public Map<String,Value> getValues(Long instanceId) throws ServiceException {
         try {
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskInstance taskInstance = taskMgr.getTaskInstance(instanceId);
+            TaskInstance taskInstance = getInstance(instanceId);
             if (taskInstance == null) {
                 throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
             }
@@ -363,6 +321,22 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
+    public void performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
+            String destination, boolean notifyEngine) throws ServiceException, DataAccessException {
+        TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
+        User user = UserGroupCache.getUser(userCuid);
+        if (user == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
+        Long assigneeId = null;
+        if (assigneeCuid != null) {
+            User assignee = UserGroupCache.getUser(assigneeCuid);
+            if (assignee == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Assignee not found: " + assigneeCuid);
+            assigneeId = assignee.getId();
+        }
+        helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
+    }
+
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException {
         String action = taskAction.getTaskAction();
         String userCuid = taskAction.getUser();
@@ -397,9 +371,8 @@ public class TaskServicesImpl implements TaskServices {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Missing TaskAction field: 'taskInstanceId' or 'taskInstanceIds'");
             }
 
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
             for (Long instanceId : taskInstanceIds) {
-                TaskInstance taskInst = taskMgr.getTaskInstance(instanceId);
+                TaskInstance taskInst = getInstance(instanceId);
                 if (taskInst == null)
                     throw new TaskValidationException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
 
@@ -407,8 +380,8 @@ public class TaskServicesImpl implements TaskServices {
                 TaskActionValidator validator = new TaskActionValidator(runtimeContext);
                 validator.validateAction(taskAction);
 
-                taskMgr.performActionOnTaskInstance(action, instanceId, user.getId(), assigneeId, comment,
-                        destination, true, false);
+                TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInst);
+                helper.performAction(action, user.getId(), assigneeId, comment, destination, true, false);
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);
@@ -507,8 +480,7 @@ public class TaskServicesImpl implements TaskServices {
     public void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException {
         try {
             Long instanceId = taskInstance.getTaskInstanceId();
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskInstance oldTaskInstance = taskMgr.getTaskInstance(instanceId);
+            TaskInstance oldTaskInstance = getInstance(instanceId);
             if (oldTaskInstance == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
             if (!userCuid.equals(oldTaskInstance.getAssigneeCuid()))
@@ -516,45 +488,46 @@ public class TaskServicesImpl implements TaskServices {
             if (oldTaskInstance.isInFinalStatus())
                 throw new ServiceException(ServiceException.FORBIDDEN, "Updates not allowed for task " + instanceId + " with status " + oldTaskInstance.getStatus());
 
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(oldTaskInstance);
 
             // due date
             if (taskInstance.getDueDate() == null) {
                 if (oldTaskInstance.getDueDate() != null)
-                    taskMgr.updateTaskInstanceDueDate(instanceId, null, userCuid, null);
+                    helper.updateDueDate(null, userCuid, null);
             }
             else if (!taskInstance.getDueDate().equals(oldTaskInstance.getDueDate())) {
                 if (taskInstance.getDueDate().compareTo(DatabaseAccess.getDbDate()) < 0)
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Cannot set due date in the past for task instance " + instanceId);
-                taskMgr.updateTaskInstanceDueDate(instanceId, taskInstance.getDueDate(), userCuid, null);
+                helper.updateDueDate(taskInstance.getDueDate(), userCuid, null);
             }
 
             // priority
             if (taskInstance.getPriority() == null) {
                 if (oldTaskInstance.getPriority() != null && oldTaskInstance.getPriority().intValue() != 0)
-                    taskMgr.updateTaskInstancePriority(instanceId, 0);
+                    helper.updatePriority(0);
             }
             else if (!taskInstance.getPriority().equals(oldTaskInstance.getPriority()))
-                taskMgr.updateTaskInstancePriority(instanceId, taskInstance.getPriority());
+                helper.updatePriority(taskInstance.getPriority());
 
             // comments
             if (taskInstance.getComments() == null) {
                 if (oldTaskInstance.getComments() != null)
-                    taskMgr.updateTaskInstanceComments(instanceId, null);
+                    helper.updateComments(null);
             }
             else if (!taskInstance.getComments().equals(oldTaskInstance.getComments())) {
-                taskMgr.updateTaskInstanceComments(instanceId, taskInstance.getComments());
+                helper.updateComments(taskInstance.getComments());
             }
 
             // workgroups
             if (taskInstance.getWorkgroups() == null || taskInstance.getWorkgroups().isEmpty()) {
                 if (oldTaskInstance.getWorkgroups() != null && !oldTaskInstance.getWorkgroups().isEmpty())
-                    taskMgr.updateTaskInstanceWorkgroups(instanceId, new ArrayList<String>());
+                    helper.updateWorkgroups(new ArrayList<String>());
             }
             else if (!taskInstance.getWorkgroupsString().equals(oldTaskInstance.getWorkgroupsString())) {
-                taskMgr.updateTaskInstanceWorkgroups(instanceId, taskInstance.getWorkgroups());
+                helper.updateWorkgroups(taskInstance.getWorkgroups());
             }
 
-            taskMgr.notifyTaskAction(taskInstance, TaskAction.SAVE, null, null);
+            helper.notifyTaskAction(TaskAction.SAVE, null, null);
             // audit log
             UserAction userAction = new UserAction(userCuid, Action.Change, Entity.TaskInstance, instanceId, "summary");
             userAction.setSource("Task Services");
@@ -602,29 +575,91 @@ public class TaskServicesImpl implements TaskServices {
         return taskCounts;
     }
 
-    public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException {
-        TaskTemplate template = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
-        User assignee = null;
-        if (taskInstance.getAssigneeCuid() != null) {
-            try {
-                assignee = ServiceLocator.getUserServices().getUser(taskInstance.getAssigneeCuid());
-            }
-            catch (DataAccessException ex) {
-                throw new ServiceException(ex.getMessage(), ex);
-            }
+    @Override
+    public List<EventLog> getHistory(Long taskInstanceId) throws ServiceException {
+        try {
+            EventManager eventManager = ServiceLocator.getEventManager();
+            return eventManager.getEventLogs(null, null, "TaskInstance", taskInstanceId);
         }
-
-        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-
-        ProcessRuntimeContext processContext = null;
-        if (OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()))
-            processContext = workflowServices.getContext(taskInstance.getOwnerId());
-
-        if (processContext != null) {
-            return new TaskRuntimeContext(processContext, template, taskInstance, assignee);
-        }
-        else {
-            return new TaskRuntimeContext(null, null, null, new HashMap<>(), template, taskInstance, assignee);
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
+
+    @Override
+    public void updateIndexes(Long taskInstanceId, Map<String,String> indexes)
+            throws ServiceException {
+        try {
+            new TaskDataAccess().setTaskInstanceIndices(taskInstanceId, indexes);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public void cancelTaskInstancesForProcess(Long processInstanceId)
+            throws ServiceException, DataAccessException {
+        CodeTimer timer = new CodeTimer("cancelTaskInstancesForProcess()", true);
+        List<TaskInstance> instances = getTaskInstancesForProcess(processInstanceId);
+        if (instances == null || instances.size() == 0) {
+            timer.stopAndLogTiming("NoTaskInstances");
+            return;
+        }
+        TaskDataAccess dataAccess = new TaskDataAccess();
+        for (TaskInstance instance : instances) {
+            instance.setComments("Task has been cancelled by ProcessInstance.");
+            String instantStatus = instance.getStatus();
+            if (instantStatus == null) {
+                TaskStatus taskStatus = DataAccess.getBaselineData().getTaskStatuses().get(instance.getStatusCode());
+                if (taskStatus != null)
+                    instantStatus = taskStatus.getDescription();
+            }
+            if (!instance.isInFinalStatus()) {
+                Integer prevStatus = instance.getStatusCode();
+                Integer prevState = instance.getStateCode();
+
+                instance.setStateCode(TaskState.STATE_CLOSED);
+                instance.setStatusCode(TaskStatus.STATUS_CANCELLED);
+                Map<String,Object> changes = new HashMap<String,Object>();
+                changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_CANCELLED);
+                changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
+                dataAccess.updateTaskInstance(instance.getTaskInstanceId(), changes, true);
+                new TaskWorkflowHelper(instance).notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
+            }
+        }
+        timer.stopAndLogTiming("");
+    }
+
+    private List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
+    throws ServiceException, DataAccessException {
+        CodeTimer timer = new CodeTimer("getTaskInstancesForProcess()", true);
+        List<TaskInstance> daoResults = getTaskDAO().getTaskInstancesForProcessInstance(processInstanceId);
+        timer.stopAndLogTiming("");
+        return daoResults;
+    }
+
+    public void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException {
+        TaskInstance taskInstance = getTaskInstanceForActivity(activityInstanceId);
+        if (taskInstance == null)
+            throw new ServiceException("Cannot find the task instance for the activity instance: " + activityInstanceId);
+        if (taskInstance.getStatusCode().equals(TaskStatus.STATUS_ASSIGNED)
+                || taskInstance.getStatusCode().equals(TaskStatus.STATUS_IN_PROGRESS)
+                || taskInstance.getStatusCode().equals(TaskStatus.STATUS_OPEN)) {
+            new TaskWorkflowHelper(taskInstance).cancel();
+        }
+    }
+
+    public TaskInstance getTaskInstanceForActivity(Long activityInstanceId)
+            throws ServiceException, DataAccessException {
+        return getTaskDAO().getTaskInstanceByActivityInstanceId(activityInstanceId);
+    }
+
+    public List<String> getGroupsForTaskInstance(TaskInstance taskInstance)
+            throws DataAccessException, ServiceException {
+        if (taskInstance.isShallow())
+            new TaskWorkflowHelper(taskInstance).getTaskInstanceAdditionalInfo();
+        return taskInstance.getGroups();
+    }
+
 }

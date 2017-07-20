@@ -58,7 +58,6 @@ import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserException;
 import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.MiniEncrypter;
@@ -438,16 +437,17 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
     /**
      * Finds the relevant users for a task instance and returns their e-mail addresses
-     * @param taskInstanceVO
+     * @param taskInstance
      * @return an array with the valid e-mail addresses
      */
-    protected Address[] getTaskUserEmailAddresses(TaskInstance taskInstanceVO)
+    protected Address[] getTaskUserEmailAddresses(TaskInstance taskInstance)
     throws ObserverException {
         try {
-            TaskManager taskManager = ServiceLocator.getTaskManager();
             List<String> groups;
-            if (taskInstanceVO.isTemplateBased()) groups = taskInstanceVO.getGroups();
-            else groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
+            if (taskInstance.isTemplateBased())
+                groups = taskInstance.getGroups();
+            else
+                groups = ServiceLocator.getTaskServices().getGroupsForTaskInstance(taskInstance);
             return toMailAddresses(getGroupEmails(groups));
         }
         catch (Exception ex) {

@@ -27,7 +27,6 @@ public interface OwnerType {
     public static final String PROCESS = "PROCESS";
     public static final String PROCESS_INSTANCE = "PROCESS_INSTANCE";
     public static final String MAIN_PROCESS_INSTANCE = "MAIN_PROCESS_INSTANCE";    // for embedded proc inst
-    public static final String EXTERNAL = "EXTERNAL";
 
     public static final String ACTIVITY = "ACTIVITY";
     public static final String ACTIVITY_INSTANCE = "ACTIVITY_INSTANCE";

@@ -35,8 +35,6 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.task.AllowableAction;
 import com.centurylink.mdw.task.BulkTaskActions;
 import com.centurylink.mdw.task.ForTask;
@@ -204,8 +202,8 @@ public class AllowableTaskActions implements PreloadableCache {
             }
         }
         else {
-            TaskManager taskManager = ServiceLocator.getTaskManager();
-            filteredActions = taskManager.filterStandardTaskActions(runtimeContext.getInstanceId(), taskActions);
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(runtimeContext.getTaskInstance());
+            filteredActions = helper.filterStandardActions(taskActions);
             if (!runtimeContext.getTaskInstance().isInFinalStatus()) {
                 boolean isWorkActionApplicable = false;
                 for (TaskAction action : taskActions) {
@@ -216,7 +214,7 @@ public class AllowableTaskActions implements PreloadableCache {
                 }
                 // if 'Work' action is applicable, no dynamic actions unless 'In Progress' status
                 if (!isWorkActionApplicable || runtimeContext.getStatus().equals(TaskStatus.STATUSNAME_IN_PROGRESS)) {
-                    List<TaskAction> dynamicTaskActions = taskManager.getDynamicTaskActions(runtimeContext.getInstanceId());
+                    List<TaskAction> dynamicTaskActions = helper.getDynamicActions();
                     if (dynamicTaskActions != null) {
                         for (TaskAction dynamicTaskAction : dynamicTaskActions) {
                             if (!filteredActions.contains(dynamicTaskAction)) {

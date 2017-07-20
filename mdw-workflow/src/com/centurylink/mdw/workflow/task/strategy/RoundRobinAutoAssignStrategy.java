@@ -24,7 +24,6 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -34,10 +33,9 @@ public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<Long,User> latestAssignees = new HashMap<Long,User>();
 
-    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
+    public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
         try {
-            TaskManager taskManager = ServiceLocator.getTaskManager();
-            List<String> groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
+            List<String> groups = ServiceLocator.getTaskServices().getGroupsForTaskInstance(taskInstance);
             UserManager userManager = ServiceLocator.getUserManager();
             User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
             if (taskUsers == null || taskUsers.length == 0) {
@@ -45,7 +43,7 @@ public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
             }
 
             User assignee = taskUsers[0];
-            User lastAssignee = latestAssignees.get(taskInstanceVO.getTaskId());
+            User lastAssignee = latestAssignees.get(taskInstance.getTaskId());
 
             if (lastAssignee != null) {
                 for (int i = 0; i < taskUsers.length; i++) {
@@ -59,7 +57,7 @@ public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
                 }
             }
 
-            latestAssignees.put(taskInstanceVO.getTaskId(), assignee);
+            latestAssignees.put(taskInstance.getTaskId(), assignee);
             return assignee;
         }
         catch (Exception ex) {

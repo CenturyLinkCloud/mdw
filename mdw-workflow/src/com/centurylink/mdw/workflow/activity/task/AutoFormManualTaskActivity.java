@@ -24,35 +24,20 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
-import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 @Tracked(LogLevel.TRACE)
-public class AutoFormManualTaskActivity extends AbstractWait implements TaskActivity {
-
-    protected static final String WAIT_FOR_TASK = "Wait for Task";
-
-    public boolean needSuspend() {
-        String waitForTask = this.getAttributeValue(WAIT_FOR_TASK);
-        return waitForTask==null || waitForTask.equalsIgnoreCase("true");
-    }
+public class AutoFormManualTaskActivity extends ManualTaskActivity {
 
     /**
      *
@@ -64,34 +49,9 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
     @Override
     public void execute() throws ActivityException {
         try {
-            String taskTemplate = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE);
-            if (taskTemplate == null)
-                throw new ActivityException("Missing attribute: " + ATTRIBUTE_TASK_TEMPLATE);
-            // new-style task templates
-            String templateVersion = getAttributeValue(ATTRIBUTE_TASK_TEMPLATE_VERSION);
-            AssetVersionSpec spec = new AssetVersionSpec(taskTemplate, templateVersion == null ? "0" : templateVersion);
-            TaskTemplate template = TaskTemplateCache.getTaskTemplate(spec);
-            if (template == null)
-                throw new ActivityException("Task template not found: " + spec);
-            TaskServices taskServices = ServiceLocator.getTaskServices();
-            String comments = null;
-            Exception exception = (Exception) getVariableValue("exception");
-            if (exception != null) {
-                comments = exception.toString();
-                if (exception instanceof ActivityException) {
-                    ActivityRuntimeContext rc = ((ActivityException)exception).getRuntimeContext();
-                    if (rc != null && rc.getProcess() != null) {
-                        comments = rc.getProcess().getFullLabel() + "\n" + comments;
-                    }
-                }
-            }
-            Long taskInstanceId = taskServices
-                    .createTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
-                            getActivityInstanceId(), getWorkTransitionInstanceId(), comments)
-                    .getTaskInstanceId();
-
-            String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInstanceId.toString();
-            super.loginfo("Task instance created - ID " + taskInstanceId);
+            TaskInstance taskInstance = createTaskInstance();
+            String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInstance.getId();
+            super.loginfo("Task instance created - ID " + taskInstance.getId());
             if (this.needSuspend()) {
                 getEngine().createEventWaitInstance(
                         this.getActivityInstanceId(),
@@ -107,71 +67,14 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
         }
     }
 
-    public final boolean resume(InternalEvent event)
-            throws ActivityException {
-        // secondary owner type must be OwnerType.EXTERNAL_EVENT_INSTANCE
-        String messageString = super.getMessageFromEventMessage(event);
-        return resume(messageString, event.getCompletionCode());
-    }
-
-    protected boolean resume(String message, String completionCode) throws ActivityException {
-        if (messageIsTaskAction(message)) {
-            processTaskAction(message);
-            return true;
-        } else {
-            this.setReturnCode(completionCode);
-            processOtherMessage(message);
-            Integer actInstStatus = super.handleEventCompletionCode();
-            if (actInstStatus.equals(WorkStatus.STATUS_CANCELLED)) {
-                try {
-                    ServiceLocator.getTaskManager().
-                        cancelTasksOfActivityInstance(getActivityInstanceId());
-                } catch (Exception e) {
-                    logger.severeException("Failed to cancel task instance - process moves on", e);
-                }
-            } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
-                try {
-                    TaskManager taskMgr = ServiceLocator.getTaskManager();
-                    TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId());
-                    String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
-
-                    getEngine().createEventWaitInstance(
-                            this.getActivityInstanceId(),
-                            eventName,
-                            null, true, true);
-                } catch (Exception e) {
-                    logger.severeException("Failed to re-register task action listening", e);
-                }
-                // unsolicited event listening is already registered by handleEventCompletionCode
-            }
-            return true;
-        }
-    }
-
-    public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
-        boolean done;
-        EventWaitInstance received;
+    protected String getWaitEvent() throws ActivityException {
         try {
-            // re-register wait events
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskInstance taskInst = taskMgr.getTaskInstanceByActivityInstanceId(this.getActivityInstanceId());
-            String eventName = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId().toString();
-
-            received = getEngine().createEventWaitInstance(
-                    this.getActivityInstanceId(),
-                    eventName,
-                    null, true, false);
-            if (received==null) received = registerWaitEvents(true,true);
-        } catch (Exception e) {
-            throw new ActivityException(-1, e.getMessage(), e);
+            TaskInstance taskInst = ServiceLocator.getTaskServices().getTaskInstanceForActivity(getActivityInstanceId());
+            return TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInst.getTaskInstanceId();
         }
-        if (received!=null) {
-            done = resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
-                    received.getCompletionCode());
-        } else {
-            done = false;
+        catch (Exception ex) {
+            throw new ActivityException(ex.getMessage(), ex);
         }
-        return done;
     }
 
     protected boolean messageIsTaskAction(String messageString) throws ActivityException {
@@ -267,8 +170,7 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
             throws ActivityException {
         if (value == null || value.length() == 0)
             return;
-        // w/o above, hit oracle constraints that variable value must not be
-        // null
+        // w/o above, hit oracle constraints that variable value must not be null
         // shall we consider removing that constraint? and shall we check
         // if the variable should be updated?
         String pType = this.getParameterType(datapath);
@@ -279,24 +181,4 @@ public class AutoFormManualTaskActivity extends AbstractWait implements TaskActi
         else
             this.setParameterValue(datapath, value);
     }
-
-    /**
-     * This method is invoked to process a received event (other than task completion).
-     * You will need to override this method to customize processing of the event.
-     *
-     * The default method does nothing.
-     *
-     * The status of the activity after processing the event is configured in the designer, which
-     * can be either Hold or Waiting.
-     *
-     * When you override this method, you can optionally set different completion
-     * code from those configured in the designer by calling setReturnCode().
-     *
-     * @param messageString the entire message content of the external event (from document table)
-     * @throws ActivityException
-     */
-    protected void processOtherMessage(String messageString)
-        throws ActivityException {
-    }
-
 }

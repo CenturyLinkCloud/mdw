@@ -73,6 +73,7 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -1621,7 +1622,10 @@ class ProcessExecutorImpl {
             Process pidef = getProcessDefinition(pi);
             if (pidef.isEmbeddedProcess()) procInstIds.add(pi.getId());
         }
-        ServiceLocator.getTaskManager().cancelTasksForProcessInstances(procInstIds);
+        TaskServices taskServices = ServiceLocator.getTaskServices();
+        for (Long procInstId : procInstIds) {
+            taskServices.cancelTaskInstancesForProcess(procInstId);
+        }
     }
 
     EventWaitInstance createEventWaitInstance(

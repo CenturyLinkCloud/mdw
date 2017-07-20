@@ -19,18 +19,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.task.SubTask;
+import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.task.types.TaskList;
 
 public interface TaskServices {
@@ -43,10 +41,8 @@ public interface TaskServices {
 
     public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException;
 
-    public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException;
-
-    public TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId, String comments) throws ServiceException, DataAccessException, CachingException;
+    public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException;
+    public void updateIndexes(Long taskInstanceId, Map<String,String> indexes) throws ServiceException;
 
     public TaskInstance getInstance(Long instanceId) throws DataAccessException;
 
@@ -57,16 +53,15 @@ public interface TaskServices {
 
     public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException;
 
+    public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
+            String secOwner, Long secOwnerId, String comments) throws ServiceException, DataAccessException;
     /**
      * Create an ad-hoc manual task instance.
-     * @return the newly-created instance id
+     * @return the newly-created instance
      */
-    public Long createTask(String userCuid, String logicalId) throws ServiceException;
+    public TaskInstance createTask(String logicalId, String userCuid) throws ServiceException;
 
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
-    throws ServiceException, DataAccessException;
-
-    public void createSubTasks(List<SubTask> subTaskList, TaskRuntimeContext masterTaskContext)
     throws ServiceException, DataAccessException;
 
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException;
@@ -81,9 +76,25 @@ public interface TaskServices {
     public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException;
 
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException;
+    public void performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
+            String destination, boolean notifyEngine) throws ServiceException, DataAccessException;
+
+    public List<EventLog> getHistory(Long taskInstanceId) throws ServiceException;
 
     /**
      * Update a task instance.
      */
     public void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException;
+
+    public void cancelTaskInstancesForProcess(Long processInstanceId)
+            throws ServiceException, DataAccessException;
+
+    public void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException;
+
+    public TaskInstance getTaskInstanceForActivity(Long activityInstanceId)
+            throws ServiceException, DataAccessException;
+
+    public List<String> getGroupsForTaskInstance(TaskInstance taskInstance)
+            throws DataAccessException, ServiceException;
+
 }
