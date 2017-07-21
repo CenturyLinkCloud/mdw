@@ -1,5 +1,6 @@
 <PAGELET>
   <TEXT NAME="name" LABEL="Task Name" VW="300"/>
+  <NOTE VH="50">(Set Task Name to an expression for dynamic task labels.)</NOTE>
   <TEXT NAME="logicalId" LABEL="Logical ID" VW="300"/>
   <DROPDOWN NAME="category" LABEL="Category" SOURCE="TaskCategory" VW="250"/>
   <TEXT NAME="description" MULTILINE="true"/>

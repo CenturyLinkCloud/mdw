@@ -315,6 +315,10 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 if (!content.has(LOGICAL_ID))
                     throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing content field: " + LOGICAL_ID);
                 String taskLogicalId = content.getString(LOGICAL_ID);
+                // TODO: title, comments, dueDate
+                String title = null;
+                String comments = null;
+                Date dueDate = null;
                 if (content.has("masterTaskInstanceId")) {
                     // subtask instance
                     Long masterTaskInstId = content.getLong("masterTaskInstanceId");
@@ -323,8 +327,9 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 }
                 else {
                     // top-level task instance
-                    Long taskInstanceId = taskServices.createTask(taskLogicalId, headers.get(Listener.AUTHENTICATED_USER_HEADER))
-                            .getTaskInstanceId();
+                    Long taskInstanceId = taskServices
+                            .createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER),
+                                    taskLogicalId, title, comments, dueDate).getTaskInstanceId();
                     JSONObject json = new JsonObject();
                     json.put("taskInstanceId", taskInstanceId);
                     return json;

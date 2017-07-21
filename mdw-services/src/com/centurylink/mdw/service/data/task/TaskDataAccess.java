@@ -34,10 +34,6 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
-import com.centurylink.mdw.model.monitor.ServiceLevelAgreementInstance;
-import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskState;
@@ -46,7 +42,6 @@ import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.task.types.TaskList;
-import com.centurylink.mdw.util.CollectionUtil;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -59,32 +54,55 @@ public class TaskDataAccess extends CommonDataAccess {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static String TASK_INSTANCE_SELECT_SHALLOW =
-        " ti.TASK_INSTANCE_ID," +
-        " ti.TASK_ID," +
+        " ti.TASK_INSTANCE_ID, " +
+        " ti.TASK_ID, " +
         " ti.TASK_INSTANCE_STATUS, " +
-        " ti.TASK_INSTANCE_OWNER," +
-        " ti.TASK_INSTANCE_OWNER_ID," +
-        " ti.TASK_INST_SECONDARY_OWNER," +
-        " ti.TASK_INST_SECONDARY_OWNER_ID," +
-        " ti.TASK_CLAIM_USER_ID," +
-        " ti.TASK_START_DT," +
-        " ti.TASK_END_DT," +
-        " ti.COMMENTS," +
-        " ti.TASK_INSTANCE_STATE," +
+        " ti.TASK_INSTANCE_OWNER, " +
+        " ti.TASK_INSTANCE_OWNER_ID, " +
+        " ti.TASK_INST_SECONDARY_OWNER, " +
+        " ti.TASK_INST_SECONDARY_OWNER_ID, " +
+        " ti.TASK_CLAIM_USER_ID, " +
+        " ti.TASK_START_DT, " +
+        " ti.TASK_END_DT, " +
+        " ti.COMMENTS, " +
+        " ti.TASK_INSTANCE_STATE, " +
         " ti.TASK_INSTANCE_REFERRED_AS, " +
-        " ti.DUE_DATE," +
-        " ti.PRIORITY," +
+        " ti.DUE_DATE, " +
+        " ti.PRIORITY, " +
         " ti.MASTER_REQUEST_ID";
 
-    private static String TASK_INSTANCE_SELECT =
-        "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
-        " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID," +
-        " ui.CUID, ui.NAME as USER_NAME";
+    private static String TASK_INSTANCE_SELECT;
+    private static boolean hasTaskTitleColumn;
 
     private static String TASK_INSTANCE_FROM =
         "TASK_INSTANCE ti, USER_INFO ui ";
 
-    private static boolean hasInstanceGroupMappings;
+    private String getTaskInstanceSelect() throws SQLException {
+        return getTaskInstanceSelect(false);
+    }
+    private String getTaskInstanceSelect(boolean deep) throws SQLException {
+        if (TASK_INSTANCE_SELECT == null) {
+            // need to check if task_title supported
+            String q;
+            if (db.isMySQL())
+                q = "SHOW COLUMNS FROM `task_instance` LIKE 'task_title'";
+            else
+                q = "select column_name from all_tab_columns where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
+            try {
+                db.openConnection();
+                if (db.runSelect(q, null).next()) {
+                    hasTaskTitleColumn = true;
+                    TASK_INSTANCE_SELECT_SHALLOW += ", TI.TASK_TITLE";
+                }
+                TASK_INSTANCE_SELECT = "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
+                        " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID, ui.CUID, ui.NAME as USER_NAME";
+            }
+            finally {
+                db.closeConnection();
+            }
+        }
+        return deep ? TASK_INSTANCE_SELECT : TASK_INSTANCE_SELECT_SHALLOW;
+    }
 
     public TaskDataAccess() {
         this(new DatabaseAccess(null));
@@ -102,83 +120,10 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     /**
-     * This is preserved for backward compatibility on early versions of MDW 4
-     */
-    public ServiceLevelAgreement getServiceLevelAgreement(Long taskId)
-    throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "select SLA_ID, SLA_HR, SLA_START_DT, SLA_END_DT from SLA sla " +
-                "where sla.SLA_OWNER_ID = ? and sla.SLA_OWNER = '" + OwnerType.TASK + "'" +
-                "   and (sla.SLA_START_DT is null or sysdate > sla.SLA_START_DT)" +
-                "   and (sla.SLA_END_DT is null or sla.SLA_END_DT > sysdate )";
-            ResultSet rs = db.runSelect(query, taskId);
-            if (rs.next()) {
-                ServiceLevelAgreement sla = new ServiceLevelAgreement();
-                sla.setId(rs.getLong(1));
-                sla.setSLAInHours(rs.getFloat(2));
-                sla.setSlaStartDate(rs.getTimestamp(3));
-                sla.setSlaEndDate(rs.getTimestamp(4));
-                if (rs.next()) throw new SQLException("Non-unique SLA for task " + taskId);
-                return sla;
-            } else return null;
-        } catch (Exception e) {
-            throw new DataAccessException(0,"failed to get SLA for task", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public ServiceLevelAgreementInstance getSLAInstance(Long taskId)
-            throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "select SLA_INSTANCE_ID,SLA_INST_OWNER,SLA_INST_OWNER_ID," +
-                "  SLA_ESTM_COMP_DT, SLA_BRK_REPTD_IND " +
-                "from SLA_INSTANCE where SLA_INST_OWNER='" +
-                OwnerType.TASK_INSTANCE + "' and SLA_INST_OWNER_ID=?";
-            ResultSet rs = db.runSelect(query, taskId);
-            if (rs.next()) {
-                ServiceLevelAgreementInstance slaInst = new ServiceLevelAgreementInstance();
-                slaInst.setId(rs.getLong(1));
-                slaInst.setOwnerType(rs.getString(2));
-                slaInst.setOwnerId(rs.getLong(3));
-                slaInst.setEstimatedCompletionDate(rs.getTimestamp(4));
-                slaInst.setSLABreakReportedInd(rs.getInt(5));
-                return slaInst;
-            } else return null;
-        } catch (Exception e) {
-            throw new DataAccessException(0,"failed to get SLA instance", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void removeSLAInstance(Long taskId)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "delete from SLA_INSTANCE where SLA_INST_OWNER='" +
-                OwnerType.TASK_INSTANCE + "' and SLA_INST_OWNER_ID=?";
-            db.runUpdate(query, taskId);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to remove SLA instance", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    private TaskInstance getTaskInstanceSub(ResultSet rs, boolean isVOversion) throws SQLException {
-        return getTaskInstanceSub(rs, isVOversion, null, null);
-    }
-
-    /**
-     * Returns with state=Invalid for task instance exists whose definition no longer exists (can happen esp. in VCS assets
+     * Returns with state=Invalid for task instance exists whose definition no longer exists (can happen
      * if previous task definitions were not archived properly).
      */
-    private TaskInstance getTaskInstanceSub(ResultSet rs, boolean isVOversion, List<String> variables, List<String> indexNames) throws SQLException {
+    private TaskInstance getTaskInstanceSub(ResultSet rs, boolean isVOversion) throws SQLException {
 
         TaskInstance task = new TaskInstance();
         task.setTaskInstanceId(rs.getLong("TASK_INSTANCE_ID"));
@@ -196,6 +141,7 @@ public class TaskDataAccess extends CommonDataAccess {
         task.setDueDate(rs.getTimestamp("DUE_DATE"));
         task.setPriority(rs.getInt("PRIORITY"));
         task.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
+
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(task.getTaskId());
         if (taskVO == null) {
             String ref = rs.getString("TASK_INSTANCE_REFERRED_AS");
@@ -209,34 +155,13 @@ public class TaskDataAccess extends CommonDataAccess {
         if (task.getTaskName() == null) {
             task.setTaskName(taskVO.getTaskName());
         }
+        if (hasTaskTitleColumn)
+            task.setTitle(rs.getString("TASK_TITLE"));
         if (isVOversion) {
             task.setAssigneeCuid(rs.getString("CUID"));
             if (taskVO != null)
               task.setDescription(taskVO.getComment());
         }
-        Map<String,Object> varMap = null;
-        if (indexNames != null && indexNames.size() > 0) {
-            varMap = new HashMap<String,Object>();
-            for (String indexName : indexNames) {
-                String value = rs.getString(indexName.toUpperCase());
-                if (indexName.equals("MASTER_REQUEST_ID"))
-                    task.setMasterRequestId(value);
-                else
-                    varMap.put(indexName, value);
-            }
-        }
-        if (task.getVariables() == null && variables != null && variables.size() > 0) {
-            if (varMap == null)
-             varMap = new HashMap<String,Object>();
-            for (String varName : variables) {
-                String name = varName;
-                if (varName.startsWith("DATE:"))
-                    name = varName.substring(5);
-                String varVal = rs.getString(name.toUpperCase());
-                varMap.put(name, varVal);
-            }
-        }
-        task.setVariables(varMap);
         return task;
     }
 
@@ -244,7 +169,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             StringBuilder query = new StringBuilder();
-            query.append("select ").append(TASK_INSTANCE_SELECT_SHALLOW).append(", GROUP_NAME\n");
+            query.append("select ").append(getTaskInstanceSelect()).append(", GROUP_NAME\n");
             query.append("from TASK_INSTANCE ti\n");
             query.append("left join TASK_INST_GRP_MAPP tigm on ti.TASK_INSTANCE_ID = tigm.TASK_INSTANCE_ID\n");
             query.append("left join USER_GROUP ug on tigm.USER_GROUP_ID = ug.USER_GROUP_ID\n");
@@ -275,7 +200,7 @@ public class TaskDataAccess extends CommonDataAccess {
     public List<TaskInstance> getSubTaskInstances(Long masterTaskInstId) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "select " + TASK_INSTANCE_SELECT_SHALLOW +
+            String query = "select " + getTaskInstanceSelect() +
                 " from TASK_INSTANCE ti where TASK_INST_SECONDARY_OWNER_ID=?";
             ResultSet rs = db.runSelect(query, masterTaskInstId);
             List<TaskInstance> taskInsts = new ArrayList<TaskInstance>();
@@ -290,13 +215,12 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    // this is only used for classic task in local task manager
     public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId)
         throws DataAccessException {
         try {
             db.openConnection();
             StringBuffer sql = new StringBuffer("select ");
-            sql.append(TASK_INSTANCE_SELECT_SHALLOW);
+            sql.append(getTaskInstanceSelect());
             sql.append(" from TASK_INSTANCE ti, WORK_TRANSITION_INSTANCE wti ");
             sql.append(" where ti.TASK_INST_SECONDARY_OWNER=?");
             sql.append("   and ti.TASK_INST_SECONDARY_OWNER_ID=wti.WORK_TRANS_INST_ID");
@@ -319,16 +243,21 @@ public class TaskDataAccess extends CommonDataAccess {
         throws DataAccessException {
         try {
             db.openConnection();
-            Long id = db.isMySQL()?null:this.getNextId("MDW_COMMON_INST_ID_SEQ");
+            Long id = db.isMySQL() ? null : this.getNextId("MDW_COMMON_INST_ID_SEQ");
             String query = "insert into TASK_INSTANCE " +
                 "(TASK_INSTANCE_ID, TASK_ID, TASK_INSTANCE_STATUS, " +
                 " TASK_INSTANCE_OWNER, TASK_INSTANCE_OWNER_ID, TASK_CLAIM_USER_ID, COMMENTS, " +
                 " TASK_START_DT, TASK_END_DT, TASK_INSTANCE_STATE, " +
                 " TASK_INST_SECONDARY_OWNER, TASK_INST_SECONDARY_OWNER_ID, " +
                 " TASK_INSTANCE_REFERRED_AS, DUE_DATE, PRIORITY, MASTER_REQUEST_ID, " +
-                " CREATE_DT, CREATE_USR) " +
-                "values (?, ?, ?, ?, ?, ?, ?, " + now() + ", ?, ?, ?, ?, ?, ?, ?, ?, " + now() + ",'TaskManager')";
-            Object[] args = new Object[15];
+                " CREATE_DT, CREATE_USR";
+            if (taskInst.getTitle() != null)
+                query += ", TASK_TITLE";
+            query += ") values (?, ?, ?, ?, ?, ?, ?, " + now() + ", ?, ?, ?, ?, ?, ?, ?, ?, " + now() + ", 'mdw'";
+            if (taskInst.getTitle() != null)
+                query += ", ?";
+            query += ")";
+            Object[] args = taskInst.getTitle() == null ? new Object[15] : new Object[16];
             args[0] = id;
             args[1] = taskInst.getTaskId();
             args[2] = taskInst.getStatusCode();
@@ -347,13 +276,17 @@ public class TaskDataAccess extends CommonDataAccess {
             args[12] = dueDate;
             args[13] = taskInst.getPriority() == null ? 0 : taskInst.getPriority();
             args[14] = taskInst.getMasterRequestId();
-            if (db.isMySQL()) id = db.runInsertReturnId(query, args);
-            else db.runUpdate(query, args);
+            if (taskInst.getTitle() != null)
+              args[15] = taskInst.getTitle();
+            if (db.isMySQL())
+                id = db.runInsertReturnId(query, args);
+            else
+                db.runUpdate(query, args);
             db.commit();
             return id;
         } catch (Exception e) {
             db.rollback();
-            throw new DataAccessException(0,"failed to create task instance", e);
+            throw new DataAccessException(0, "failed to create task instance", e);
         } finally {
             db.closeConnection();
         }
@@ -410,403 +343,6 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    /**
-     * Creates the where clause based on the passed in params
-     * @param criteria
-     * @param pPersistable Class Impl
-     * @param pTableAlias
-     */
-    private String buildWhereClause(Map<String,String> criteria) throws DataAccessException {
-        StringBuffer buff = new StringBuffer();
-        if(criteria.isEmpty()){
-            return "";
-        }
-        for (String key : criteria.keySet()) {
-            String value = criteria.get(key);
-            if (value==null) value = " is null ";
-            if (key.equals("taskName") && value != null) {
-                buff.append(" and substr(task_instance_referred_as, instr(task_instance_referred_as, '/') + 1) " + value);
-            } else if (key.equals("categoryId") && value != null) {
-                String catTasksClause = buildCategoryTasksClause(Integer.parseInt(value.replaceAll("'", "").replaceAll("=", "").trim()));
-                if (catTasksClause != null)
-                    buff.append(" and " + catTasksClause);
-            } else if (key.equals("estimatedCompletionDate")) {
-                if (db.isMySQL())
-                    value = dateConditionToMySQL(value);
-                buff.append(" and ti.due_date " + value);
-            } else if (key.equals("orderId") || key.equals("masterRequestId")){
-                buff.append(" and ti.master_request_id " + value);
-            } else if (key.equals("id")) {
-                buff.append(" and ti.task_instance_id " + value);
-            } else if (key.equals("definitionId")) {
-                buff.append(" and ti.task_id " + value);
-            } else if (key.equals("statusCode")) {
-                buff.append(" and ti.task_instance_status " + value);
-            } else if (key.equals("stateCode")) {
-                buff.append(" and ti.task_instance_state " + value);
-            } else if (key.equals("owner")) {
-                buff.append(" and ti.task_instance_owner " + value);
-            } else if (key.equals("ownerId")) {
-                buff.append(" and ti.task_instance_owner_id " + value);
-            } else if (key.equals("secondaryOwner")) {
-                buff.append(" and ti.task_inst_secondary_owner " + value);
-            } else if (key.equals("secondaryOwnerId")) {
-                buff.append(" and ti.task_inst_secondary_owner " + value);
-            } else if (key.equals("taskClaimUserId")) {
-                buff.append(" and ti.task_claim_user_id " + value);
-            } else if (key.equals("startDate")) {
-                if (db.isMySQL()) value = dateConditionToMySQL(value);
-                buff.append(" and ti.task_start_dt " + value);
-            } else if (key.equals("endDate")) {
-                if (db.isMySQL()) value = dateConditionToMySQL(value);
-                buff.append(" and ti.task_end_dt " + value);
-            } else if (key.equals("comment")) {
-                buff.append(" and ti.comments " + value);
-            } else {
-                buff.append(" and ti.").append(key).append(" ").append(value);
-            }
-        }
-        return buff.toString();
-    }
-
-    private String buildVariablesWhereClause(Map<String,String> variablesCriteria) {
-        StringBuffer buff = new StringBuffer();
-        if (variablesCriteria != null && !variablesCriteria.isEmpty()) {
-            int i = variablesCriteria.size();
-            buff.append("\nand ti.task_instance_owner_id in (");
-            for (String varName : variablesCriteria.keySet()) {
-                buff.append("select pi.process_instance_id ");
-                buff.append("from process_instance pi, variable_instance vi ");
-                buff.append("where pi.process_instance_id = vi.process_inst_id ");
-                String varValue = variablesCriteria.get(varName);
-                boolean isDate = varName.startsWith("DATE:");
-                if (isDate) {
-                    varName = varName.substring(5);
-                }
-                buff.append("and vi.variable_name = '" + varName + "' ");
-                if (isDate) {
-                    buff.append("and v.variable_type_id = 5 "); // date var type
-                    // inline view to avoid sql parse errors
-                    buff.append("\n and (select to_date(substr(ivi.VARIABLE_VALUE, 5, 7) || substr(ivi.VARIABLE_VALUE, 25), 'MON DD YYYY')"
-                      + " from variable iv, variable_instance ivi"
-                      + " where iv.variable_type_id = 5"
-                      + " and ivi.variable_id = iv.variable_id"
-                      + " and ivi.variable_inst_id = vi.variable_inst_id"
-                      + " and iv.variable_name = '" + varName + "') " + varValue + " ");
-                }
-                else {
-                    buff.append("and vi.variable_value " + varValue + " ");
-                }
-                if (--i > 0)
-                  buff.append("\nintersect\n");
-            }
-            buff.append(")\n");
-        }
-        return buff.toString();
-    }
-
-    private String buildIndexCriteriaWhereClause(Map<String,String> indexCriteria) {
-        StringBuffer buff = new StringBuffer();
-        if (indexCriteria != null && !indexCriteria.isEmpty()) {
-            for (String keyName : indexCriteria.keySet()) {
-                buff.append("\nand tidx.index_key = '").append(keyName).append("' ");
-                buff.append("and tidx.index_value ").append(indexCriteria.get(keyName));
-            }
-            buff.append("\n");
-        }
-        return buff.toString();
-    }
-
-    /**
-     * Creates the order by clause based on the passed in column
-     * @param orderBy
-     * @param ascending
-     * @param tableAlias
-     */
-    private String buildOrderByClause(String orderBy, boolean ascending, List<String> variables) throws DataAccessException{
-        if (orderBy == null || orderBy.length() == 0)
-            return "";
-
-        StringBuffer buff = new StringBuffer();
-        buff.append(" order by ");
-
-        if (orderBy.equals("TASK_CATEGORY_CD")) {
-            buff.append("cat.category");
-        }
-        else if (orderBy.equals("SLA_ESTM_COMP_DT")) {
-            buff.append("DUE_DATE");
-        }
-        else if (orderBy.equals("TASK_INSTANCE_STATE")) {
-            if (db.isOracle()) {
-                buff.append("decode(ti.task_instance_state");
-                for (TaskState state : getAllTaskStates()) {
-                    if (state.getId() != 1 && state.getId() != 4)
-                        buff.append(", " + state.getId() + ", '" + state.getDescription() + "'");
-                }
-
-                buff.append(", NULL)");
-            }
-            else {  // mySQL
-                buff.append("case ");
-                for (TaskState state : getAllTaskStates())
-                    if (state.getId() != 1 && state.getId() != 4)
-                        buff.append("when ti.task_instance_state = " + state.getId() + " THEN '" + state.getDescription() + "' ");
-                    else
-                        buff.append("when ti.task_instance_state = " + state.getId() + " THEN NULL ");
-
-                buff.append("END");
-            }
-        }
-        else if (orderBy.equals("TASK_INSTANCE_STATUS")) {
-            if (db.isOracle()) {
-                buff.append("decode(ti.task_instance_status");
-                for (TaskStatus status : getAllTaskStatuses())
-                    buff.append(", " + status.getId() + ", '" + status.getDescription() + "'");
-
-                buff.append(", 'ZZ')");
-            }
-            else { // mySQL
-                buff.append("case ");
-                for (TaskStatus status : getAllTaskStatuses())
-                    buff.append("when ti.task_instance_status = " + status.getId() + " THEN '" + status.getDescription() + "' ");
-
-                buff.append("END");
-            }
-        }
-        else if (variables != null && variables.contains("DATE:" + orderBy))
-            buff.append("to_date(substr(" + orderBy + ", 5, 7) || substr(" + orderBy + ", 25), 'MON DD YYYY')");
-        else
-            buff.append(orderBy);
-
-        if (ascending) {
-            buff.append(" asc");
-        } else {
-            buff.append(" desc");
-        }
-        return buff.toString();
-    }
-
-    /**
-     * Builds the Task Instance Query with the passed in params and optional variables
-     * @param criteria
-     * @param variables
-     * @param variablesCriteria
-     * @param userGroups
-     * @param orderBy
-     * @param ascendingOrder
-     * @return query string
-     */
-    private String buildTaskInstanceQuery(Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria,
-            List<String> indexNames, Map<String,String> indexCriteria, List<String> searchColumns, Object searchKey, String[] userGroups, String orderBy, boolean ascendingOrder)
-    throws DataAccessException {
-        boolean inclProcessInst = !CollectionUtil.isEmpty(variables) || !CollectionUtil.isEmpty(variablesCriteria);
-
-        StringBuffer buff = new StringBuffer();
-        buff.append("select ").append(TASK_INSTANCE_SELECT);
-        if (inclProcessInst)
-            buff.append(", pi.master_request_id as pi_master_request_id");
-        buff.append(getIndexSelectString(indexNames));
-        buff.append(getVariablesSelectString(variables));
-        if ("TASK_CATEGORY_CD".equals(orderBy))
-            buff.append(", cat.category");
-        if (db.isMySQL()) {
-            buff.append("\nfrom TASK_INSTANCE ti left join USER_INFO ui ");
-            buff.append("on ui.user_info_id = ti.task_claim_user_id ");
-            if ("TASK_CATEGORY_CD".equals(orderBy)) {
-                buff.append("left join (");
-                boolean catCount = false;
-                for (TaskTemplate category : TaskTemplateCache.getTaskTemplates()) {
-                    if (catCount)
-                        buff.append(" UNION ALL ");
-                    else
-                        catCount = true;
-
-                    buff.append("select '" + category.getTaskId() + "' AS taskid, '" + category.getTaskCategory() + "' AS category");
-                }
-                if (catCount)
-                    buff.append(") as cat on ti.task_id = cat.taskid");
-            }
-            if (inclProcessInst)
-                buff.append("left join process_instance pi on pi.process_instance_id = ti.task_instance_owner_id ");
-            if (searchKey != null || indexCriteria != null)
-                buff.append("left join task_inst_index tidx on tidx.TASK_INSTANCE_ID = ti.TASK_INSTANCE_ID ");
-        } else {
-            buff.append("\nfrom ").append(TASK_INSTANCE_FROM);
-            if ("TASK_CATEGORY_CD".equals(orderBy)) {
-                buff.append(", (");
-                boolean catCount = false;
-                for (TaskTemplate category : TaskTemplateCache.getTaskTemplates()) {
-                    if (catCount)
-                        buff.append(" UNION ALL ");
-                    else
-                        catCount = true;
-
-                    buff.append("select '" + category.getTaskId() + "' AS taskid, '" + category.getTaskCategory() + "' AS category from dual");
-                }
-                if (catCount)
-                    buff.append(") cat");
-            }
-        }
-        if (userGroups != null && hasInstanceGroupMappings && !containsSiteAdmin(userGroups))
-            buff.append(", task_inst_grp_mapp tigm");
-        if (inclProcessInst && !db.isMySQL())
-            buff.append(", process_instance pi");
-        if (!db.isMySQL() && (searchKey != null || indexCriteria != null))
-            buff.append(", task_inst_index tidx");
-        if (db.isMySQL()) {
-            buff.append("\nwhere 1=1 ");
-        } else {
-            buff.append("\nwhere ui.user_info_id(+) = ti.task_claim_user_id ");
-        }
-        if (inclProcessInst && !db.isMySQL())
-            buff.append("and pi.process_instance_id(+) = ti.task_instance_owner_id ");
-        else if (!db.isMySQL() && "TASK_CATEGORY_ID".equals(orderBy))
-            buff.append("and ti.task_id = cat.taskid(+) ");
-        if (!db.isMySQL() && (searchKey != null || indexCriteria != null)) {
-            buff.append("and tidx.task_instance_id(+) = ti.task_instance_id ");
-        }
-
-        String addWhereClause = buildWhereClause(criteria);
-        if(!StringHelper.isEmpty(addWhereClause)){
-            buff.append(addWhereClause);
-        }
-        //TaskList Search
-        if (searchKey != null && searchColumns != null && !searchColumns.isEmpty()) {
-            String serachClause = buildTaskSearchWhereClause(searchKey, searchColumns);
-            if (!StringHelper.isEmpty(serachClause)) {
-                buff.append(serachClause);
-            }
-        }
-
-        if (userGroups != null && !containsSiteAdmin(userGroups))
-          buff.append(buildUserGroupsTaskClause(userGroups));
-
-        String variablesWhereClause = buildVariablesWhereClause(variablesCriteria);
-        if (!StringHelper.isEmpty(variablesWhereClause)) {
-            buff.append(variablesWhereClause);
-        }
-        String indexCriteriaWhereClause = buildIndexCriteriaWhereClause(indexCriteria);
-        if (!StringHelper.isEmpty(indexCriteriaWhereClause)) {
-            buff.append(indexCriteriaWhereClause);
-        }
-
-        String orderByClause = buildOrderByClause(orderBy, ascendingOrder, variables);
-        if(!StringHelper.isEmpty(orderByClause)){
-            buff.append(orderByClause);
-        }
-        return buff.toString();
-    }
-
-    /**
-     * To build search where clause for TaskList search
-     * @param searchKey
-     * @param visibleDbColumns
-     * @return
-     */
-    private String buildTaskSearchWhereClause(Object searchKey, List<String> visibleDbColumns) {
-        StringBuffer searchClause = new StringBuffer();
-        String searchValue = searchKey.toString().toUpperCase();
-        boolean isSearchKeyNumeric = false;
-        boolean isStateOrStatus = false;
-        try {
-            Long.parseLong(searchKey.toString());
-            isSearchKeyNumeric = true;
-        }
-        catch (NumberFormatException nfe) {
-            isSearchKeyNumeric = false;
-        }
-        searchClause.append(" and (");
-        if (!isSearchKeyNumeric) {
-            if (visibleDbColumns.contains("TASK_INSTANCE_STATE")) {
-                Integer stateCode = TaskState.getStatusForNameContains(searchValue);
-                if (stateCode != null) {
-                    searchClause.append("ti.task_instance_state =").append(stateCode).append(")");
-                    isStateOrStatus = true;
-                }
-            }
-            if (visibleDbColumns.contains("TASK_INSTANCE_STATUS")) {
-                Integer statusCode = TaskStatus.getStatusCodeForNameContains(searchValue);
-                if (statusCode != null) {
-                    searchClause.append("ti.task_instance_status =").append(statusCode).append(")");
-                    isStateOrStatus = true;
-                }
-            }
-        }
-
-        if (isStateOrStatus) {
-            return searchClause.toString();
-        }
-
-        for (String column : visibleDbColumns) {
-            if (isSearchKeyNumeric) {
-                if ("TASK_INSTANCE_ID".equals(column)) {
-                    searchClause.append("ti.task_instance_id like ").append("'%").append(searchKey).append("%'").append(" OR ");
-                }
-                else if ("MASTER_REQUEST_ID".equals(column)) {
-                    searchClause.append("UPPER(ti.MASTER_REQUEST_ID) like ").append("'%").append(searchKey).append("%'").append(" OR ");
-                }
-                else if ("TASK_INSTANCE_OWNER_ID".equals(column)) {
-                    searchClause.append("UPPER(ti.TASK_INSTANCE_OWNER_ID) like ").append("'%").append(searchKey).append("%'").append(" OR ");
-                }
-            }
-            else {
-                if ("TASK_CATEGORY_CD".equals(column) && !(searchValue.length() > 3)) {
-                    searchClause.append("t.task_category_id in (select tc.task_category_id from task_category tc where UPPER(tc.task_category_cd) like ")
-                            .append("'%").append(searchValue).append("%')").append(" OR ");
-                }
-                else if ("TASK_NAME".equals(column)) {
-                    searchClause.append("UPPER(t.task_name) like ").append("'%").append(searchValue).append("%'").append(" OR ");
-                    //searchClause.append("UPPER(ti.TASK_INSTANCE_REFERRED_AS) like ").append("'%").append(searchValue).append("%'").append(" OR ");
-                }
-                else if ("MASTER_REQUEST_ID".equals(column)) {
-                    searchClause.append("UPPER(ti.MASTER_REQUEST_ID) like ").append("'%").append(searchValue).append("%'").append(" OR ");
-                }
-                else if ("USER_NAME".equals(column)) {
-                    searchClause.append("UPPER(ui.NAME) like ").append("'%").append(searchValue).append("%'").append(" OR ");
-                }
-                else if ("TASK_START_DT".equals(column)) {
-                    // TODO : based on requirement
-                }
-                else if ("SLA_ESTM_COMP_DT".equals(column)) {
-                    // TODO : based on requirement
-                }
-            }
-        }
-        searchClause.append("UPPER(tidx.index_value) like ").append("'%").append(searchValue).append("%')");
-        //searchClause.replace(searchClause.length() - 3, searchClause.length(), ")"); // To remove last appended " OR"
-        return searchClause.toString();
-    }
-
-    /**
-     * Determine tasks to include in the query based on appropriate user groups.
-     */
-    private String buildUserGroupsTaskClause(String[] userGroups) throws DataAccessException {
-        StringBuffer buff = new StringBuffer();
-        if (userGroups != null) {
-            // determine group ids according to instance-level mappings
-            List<Long> groupIds = getGroupIds(userGroups);
-            String instGroupIdsClause = null;
-            if (!groupIds.isEmpty() && hasInstanceGroupMappings) {
-                StringBuffer instSb = new StringBuffer();
-                instSb.append("ti.task_instance_id = tigm.task_instance_id ");
-                instSb.append("and tigm.user_group_id in (");
-
-                for (int i = 0; i < groupIds.size(); i++) {
-                    instSb.append(groupIds.get(i));
-                    if (i < groupIds.size() - 1) {
-                        instSb.append(", ");
-                    }
-                }
-                instSb.append(") ");
-                instGroupIdsClause = instSb.toString();
-            }
-
-            if (instGroupIdsClause != null)
-                buff.append(instGroupIdsClause);
-        }
-        return buff.length() == 0 ? "" : " and " + buff.toString();
-    }
-
     private String buildCategoryTasksClause(int categoryId) throws DataAccessException {
         StringBuffer clause = new StringBuffer("task_id in (");
         List<TaskTemplate> tasks = TaskTemplateCache.getTaskTemplatesForCategory(categoryId);
@@ -832,93 +368,6 @@ public class TaskDataAccess extends CommonDataAccess {
         return false;
     }
 
-    private List<Long> getGroupIds(String[] groups) throws DataAccessException {
-        try {
-            List<Long> groupIds = new ArrayList<Long>();
-            for (String group : groups) {
-                if (!group.equals(Workgroup.COMMON_GROUP)) {
-                  Long id = UserGroupCache.getWorkgroup(group).getId();
-                  if (!groupIds.contains(id))
-                      groupIds.add(id);
-                }
-            }
-            return groupIds;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(-1, ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * Returns all the task instances that are mapped to the user group
-     * that match with the passed in params, including optional variables
-     * (used for workgroupTasks query when All link is selected)
-     * @param criteria
-     * @param variables
-     * @param variablesCriteria
-     * @param userGroups
-     * @param orderBy
-     * @param ascendingOrder
-     * @return list of task instance vos
-     */
-    public List<TaskInstance> queryTaskInstances(Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria,
-            List<String> indexNames, Map<String,String> indexCriteria, List<String> searchColumns, Object searchKey, String[] userGroups, String orderBy, boolean ascendingOrder)
-    throws DataAccessException {
-        String query = buildTaskInstanceQuery(criteria, variables, variablesCriteria, indexNames, indexCriteria, searchColumns, searchKey, userGroups, orderBy, ascendingOrder);
-        if(logger.isMdwDebugEnabled()){
-            logger.mdwDebug("queryTaskInstances() Query --> "+query) ;
-        }
-        try {
-            db.openConnection();
-            List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
-            ResultSet rs = db.runSelect(query, null);
-            while (rs.next()) {
-                TaskInstance taskInst = getTaskInstanceSub(rs, true, variables, indexNames);
-                if (taskInst != null)
-                    taskInstances.add(taskInst);
-            }
-            return taskInstances;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to query task instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     * Retrieve task instances with specified variable values
-     * (Used for myTasks query)
-     * @param criteria selection criteria
-     * @param variables variables to include
-     * @param variablesCriteria
-     * @return list of task instance VOs
-     */
-    public List<TaskInstance> queryTaskInstances(Map<String,String> criteria, List<String> variables, Map<String,String> variablesCriteria,
-            List<String> indexNames, Map<String,String> indexCriteria)
-    throws DataAccessException {
-
-        String query = buildTaskInstanceQuery(criteria, variables, variablesCriteria, indexNames, indexCriteria, null, null, null, null, false);
-
-        if(logger.isMdwDebugEnabled()){
-            logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
-        }
-        try {
-            db.openConnection();
-            List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
-            ResultSet rs = db.runSelect(query, null);
-            while (rs.next()) {
-                TaskInstance taskInst = getTaskInstanceSub(rs, true, variables, indexNames);
-                if (taskInst != null)
-                    taskInstances.add(taskInst);
-            }
-            return taskInstances;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to query task instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
     public List<TaskInstance> getTaskInstancesForProcessInstance(Long procInstId)
     throws DataAccessException {
         return getTaskInstancesForProcessInstance(procInstId, false);
@@ -931,7 +380,7 @@ public class TaskDataAccess extends CommonDataAccess {
             List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
             StringBuffer query = new StringBuffer();
             query.append("select ");
-            query.append(TASK_INSTANCE_SELECT_SHALLOW);
+            query.append(getTaskInstanceSelect());
             query.append(" from TASK_INSTANCE ti");
             query.append(" where ti.TASK_INSTANCE_OWNER='PROCESS_INSTANCE' and ti.TASK_INSTANCE_OWNER_ID = ?");
             ResultSet rs = db.runSelect(query.toString(), procInstId);
@@ -968,24 +417,23 @@ public class TaskDataAccess extends CommonDataAccess {
      *
      */
     public TaskInstance getTaskInstanceAllInfo(Long pTaskInstId)
-        throws DataAccessException {
-
-        StringBuffer buff = new StringBuffer();
-        buff.append("select ").append(TASK_INSTANCE_SELECT);
-        if (db.isMySQL()) {
-            buff.append(" from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id ");
-        } else {
-            buff.append(" from ").append(TASK_INSTANCE_FROM);
-        }
-
-        buff.append(" where ti.task_instance_id = ? ");
-        if (!db.isMySQL()) buff.append("and ui.user_info_id(+) = ti.task_claim_user_id ");
-
-        String query = buff.toString();
-        if(logger.isMdwDebugEnabled()){
-            logger.mdwDebug("getTaskInstanceAllInfo() Query-->"+query) ;
-        }
+            throws DataAccessException {
         try {
+            StringBuffer buff = new StringBuffer();
+            buff.append("select ").append(getTaskInstanceSelect(true));
+            if (db.isMySQL()) {
+                buff.append(" from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id ");
+            } else {
+                buff.append(" from ").append(TASK_INSTANCE_FROM);
+            }
+
+            buff.append(" where ti.task_instance_id = ? ");
+            if (!db.isMySQL()) buff.append("and ui.user_info_id(+) = ti.task_claim_user_id ");
+
+            String query = buff.toString();
+            if(logger.isMdwDebugEnabled()){
+                logger.mdwDebug("getTaskInstanceAllInfo() Query-->"+query) ;
+            }
             db.openConnection();
             ResultSet rs = db.runSelect(query, pTaskInstId);
             if (rs.next()) {
@@ -1007,188 +455,12 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    public List<TaskAction> getAllTaskActions()
-                throws DataAccessException {
-        try {
-            db.openConnection();
-            List<TaskAction> actions = new ArrayList<TaskAction>();
-            String query = "select TASK_ACTION_ID,TASK_ACTION_NAME,COMMENTS from TASK_ACTION";
-            ResultSet rs = db.runSelect(query, null);
-            while (rs.next()) {
-                TaskAction one = new TaskAction();
-                one.setTaskActionId(rs.getLong(1));
-                one.setTaskActionName(rs.getString(2));
-                actions.add(one);
-            }
-            return actions;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task actions", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public TaskAction createTaskAction(String action, String description)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            Long id = db.isMySQL()?null:this.getNextId("MDW_COMMON_ID_SEQ");
-            String query = "insert into TASK_ACTION " +
-                "(TASK_ACTION_ID,TASK_ACTION_NAME,CREATE_DT,CREATE_USR,COMMENTS) " +
-                "values (?,?,sysdate,'MDW',?)";
-            Object[] args = new Object[3];
-            args[0] = id;
-            args[1] = action;
-            args[2] = description;
-            if (db.isMySQL()) id = db.runInsertReturnId(query, args);
-            else db.runUpdate(query, args);
-            db.commit();
-            TaskAction ret = new TaskAction();
-            ret.setTaskActionId(id);
-            ret.setTaskActionName(action);
-            return ret;
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to create task action", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public TaskAction getTaskAction(String action)
-        throws DataAccessException {
-        TaskAction one = new TaskAction();
-        one.setTaskActionId(0L);
-        one.setTaskActionName(action);
-        return one;
-    }
-
     public List<TaskStatus> getAllTaskStatuses() throws DataAccessException {
         return DataAccess.getBaselineData().getAllTaskStatuses();
     }
 
     public List<TaskState> getAllTaskStates() throws DataAccessException {
         return DataAccess.getBaselineData().getAllTaskStates();
-    }
-
-    public class TaskInstanceReportItem {
-        public String entityName;
-        public int state;
-        public int count;
-    }
-
-    public List<TaskInstanceReportItem> getTaskInstanceReport(String query)
-            throws DataAccessException {
-
-        try {
-            db.openConnection();
-            List<TaskInstanceReportItem> reports = new ArrayList<TaskInstanceReportItem>();
-            ResultSet rs = db.runSelect(query, null);
-            while (rs.next()) {
-                TaskInstanceReportItem report = new TaskInstanceReportItem();
-                report.entityName = rs.getString(1);
-                report.state = rs.getInt(2);
-                report.count = rs.getInt(3);
-                reports.add(report);
-            }
-            return reports;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task instance report", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public List<Attribute> getTaskAttributes(Long taskId)
-        throws DataAccessException {
-        if (taskId==null) return new ArrayList<Attribute>(0); // jxxu - this can happen, not sure why
-        try {
-            db.openConnection();
-            return super.getAttributes1(OwnerType.TASK, taskId);
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task attributes", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void updateAttribute(Long attributeId, String attributeName, String attributeValue)
-    throws DataAccessException {
-        try {
-            db.openConnection();
-            String query;
-            if (attributeValue==null) {
-                query = "delete ATTRIBUTE where ATTRIBUTE_ID=?";
-                db.runUpdate(query, attributeId);
-            } else {
-                query = "update ATTRIBUTE set ATTRIBUTE_NAME=?, ATTRIBUTE_VALUE=? where ATTRIBUTE_ID=?";
-                Object[] args = new Object[3];
-                args[0] = attributeName;
-                args[1] = attributeValue;
-                args[2] = attributeId;
-                db.runUpdate(query, args);
-            }
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to update task attribute", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void setTaskAttribute(Long taskId, String attrname, String attrvalue)
-            throws DataAccessException {
-        try {
-            db.openConnection();
-            setAttribute0(OwnerType.TASK, taskId, attrname, attrvalue);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0, "failed to set task attribute", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public String getVariablesSelectString(List<String> variables) {
-        StringBuffer buff = new StringBuffer();
-        if (variables != null && variables.size() > 0) {
-            for (String varName : variables) {
-                String name = varName;
-                if (varName.startsWith("DATE:")) {
-                    name = varName.substring(5);
-                }
-
-                buff.append(",\n");
-                buff.append("(select vi.variable_value from variable_instance vi "
-                        + " where pi.process_instance_id= vi.process_inst_id "
-                        + " and vi.variable_name = '" + name + "' ");
-               if (db.isMySQL())
-                   buff.append(" limit 1) ");
-               else
-                   buff.append(" and rownum < 2) ");
-               buff.append(name);
-            }
-        }
-        return buff.toString();
-    }
-
-    public String getIndexSelectString(List<String> indexNames) {
-        StringBuffer buff = new StringBuffer();
-        if (indexNames != null) {
-            for (String name : indexNames) {
-                buff.append(",\n");
-                buff.append("(select tii.index_value from task_inst_index tii where tii.task_instance_id = ti.task_instance_id and tii.index_key= '").append(name)
-                    .append("'");
-                if (db.isMySQL())
-                    buff.append(" limit 1) ");
-                else
-                    buff.append(" and rownum < 2) ");
-                buff.append(name);
-            }
-        }
-        return buff.toString();
     }
 
     // new task instance group mapping
@@ -1272,195 +544,6 @@ public class TaskDataAccess extends CommonDataAccess {
         } catch (Exception e) {
             db.rollback();
             throw new DataAccessException(0,"failed to update task instance priority", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    private void buildValueSpec(StringBuffer buff, String value) {
-        if (value==null) buff.append(" is null");
-        else if (value.startsWith("~")) {
-            buff.append(" like '").append(value.substring(1)).append("'");
-        } else if (value.startsWith(">=")) {
-            if (db.isMySQL()) buff.append(">='").append(value.substring(1)).append("'");
-            else buff.append(">=to_date('").append(value.substring(1)).append("','yyyy-mm-dd')");
-        } else if (value.startsWith("<=")) {
-            if (db.isMySQL()) buff.append("<='").append(value.substring(1)).append("'");
-            else buff.append("<=to_date('").append(value.substring(1)).append("','yyyy-mm-dd')");
-        } else buff.append("='").append(value).append("'");
-    }
-
- // Final query should look like:
-//  select distinct ti.task_instance_id,ti.task_instance_referred_as, si.SLA_ESTM_COMP_DT, ui.CUID
-//  from task_instance ti, SLA_INSTANCE si, USER_INFO ui, task_inst_grp_mapp tg, user_group g, task_inst_index ix1, task_inst_index ix2
-//  where si.SLA_INST_OWNER_ID(+)= ti.TASK_INSTANCE_ID
-//  and si.SLA_INST_OWNER(+) = 'TASK_INSTANCE'
-//  and ui.USER_INFO_ID(+) = ti.TASK_CLAIM_USER_ID
-//  and ti.task_instance_id=tg.task_instance_id
-//  and tg.user_group_id=g.user_group_id
-//  and g.group_name in ('CSO Users', 'Fallout')
-//  and ix1.index_key='State' and ix1.index_value='CO' and ix1.task_instance_id=ti.task_instance_id
-//  and ix2.index_key='City' and ix2.index_value in ('Superior','Boulder') and ix2.task_instance_id=ti.task_instance_id
-    public String buildFromWhereClause(Map<String,String> criteria) {
-         boolean hasGroups = false;
-         int numberOfIndices = 0;
-         int k;
-         for (String key : criteria.keySet()) {
-             if (key.startsWith("ix_")) {
-                 numberOfIndices++;
-             } else if (key.equals("groups")) {
-                 hasGroups = true;
-             }
-         }
-         StringBuffer buff = new StringBuffer();
-         if (db.isMySQL()) {
-             buff.append("from TASK_INSTANCE ti left join USER_INFO ui ");
-             buff.append("on ui.USER_INFO_ID = ti.TASK_CLAIM_USER_ID ");
-         } else {
-             buff.append("from TASK_INSTANCE ti, USER_INFO ui");
-         }
-         if (hasGroups) buff.append(", TASK_INST_GRP_MAPP tg, USER_GROUP g");
-         for (k=1; k<=numberOfIndices; k++) buff.append(", TASK_INST_INDEX ix").append(k);
-         buff.append("\n");
-         buff.append("where ");
-         if (db.isMySQL()) {
-             buff.append("1=1 ");    // just to avoid checking if need "and"
-         } else {
-             buff.append("ui.USER_INFO_ID(+) = ti.TASK_CLAIM_USER_ID\n");
-         }
-         k = 0;
-         for (String key : criteria.keySet()) {
-             String value = criteria.get(key);
-             if (key.startsWith("ti_")) {
-                 buff.append("and ").append("ti.").append(key.substring(3));
-                 buildValueSpec(buff, value);
-                 buff.append("\n");
-             } else if (key.startsWith("ix_")) {
-                 k++;
-                 buff.append("and ix").append(k).append(".TASK_INSTANCE_ID=ti.TASK_INSTANCE_ID ");
-                 buff.append("and ix").append(k).append(".INDEX_KEY='").append(key.substring(3));
-                 buff.append("' and ix").append(k).append(".INDEX_VALUE");
-                 buildValueSpec(buff, value);
-                 buff.append("\n");
-             } else if (key.equals("cuid")) {
-                 buff.append("AND ui.CUID='").append(value).append("'\n");
-             } else if (key.equals("groups")) {
-                 buff.append("and ti.TASK_INSTANCE_ID=tg.TASK_INSTANCE_ID ");
-                 buff.append("and tg.USER_GROUP_ID=g.USER_GROUP_ID ");
-                 buff.append("and g.GROUP_NAME in (");
-                 String[] groups = value.split(",");
-                 for (int i=0; i<groups.length; i++) {
-                     int s = groups[i].indexOf(':');
-                     String groupName = s>0?groups[i].substring(0,s):groups[i];
-                     if (i>0) buff.append(",");
-                     buff.append("'").append(groupName).append("'");
-                 }
-                 buff.append(")\n");
-             }
-         }
-         return buff.toString();
-    }
-
-    public int countTaskInstancesNew(String fromWhereClause)
-    throws DataAccessException {
-        StringBuffer buff = new StringBuffer();
-
-        buff.append("select count(distinct ti.TASK_INSTANCE_ID)\n");
-        buff.append(fromWhereClause);
-        String query = buff.toString();
-        if(logger.isMdwDebugEnabled()){
-            logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
-        }
-        try {
-            db.openConnection();
-            ResultSet rs = db.runSelect(query, null);
-            if (rs.next()) {
-                return rs.getInt(1);
-            } else throw new Exception("Failed to get count result");
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to count task instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public List<TaskInstance> queryTaskInstancesNew(String fromWhereClause,
-            int startIndex, int endIndex, String sortOn, boolean loadIndices)
-    throws DataAccessException {
-        StringBuffer buff = new StringBuffer();
-        buff.append(db.pagingQueryPrefix());
-        buff.append("select distinct ").append(TASK_INSTANCE_SELECT_SHALLOW);
-        // note there are two additional parameters, indices 16 & 17
-        buff.append(",ui.CUID\n");
-        buff.append(fromWhereClause);
-        if (sortOn!=null) {
-            boolean desc = false;
-            if (sortOn.startsWith("-")) {
-                desc = true;
-                sortOn = sortOn.substring(1);
-            }
-            if (sortOn.startsWith("ti_")) {
-                buff.append(" order by ti.").append(sortOn.substring(3));
-            } else if (sortOn.startsWith("si_")) {
-                // TODO should not sort on si.SLA_ESTM_COMP_DT, instead on ti.TASK_END_DT
-                buff.append(" order by si.").append(sortOn.substring(3));
-            } else {
-                buff.append(" order by ti.TASK_INSTANCE_ID");
-            }
-            // does not select and sort on indices
-            if (desc) buff.append(" desc\n");
-            else buff.append("\n");
-        } else buff.append(" order by ti.TASK_INSTANCE_ID\n");
-        buff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
-        String query = buff.toString();
-        if(logger.isMdwDebugEnabled()){
-            logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
-        }
-        try {
-            db.openConnection();
-            List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
-            ResultSet rs = db.runSelect(query, null);
-            while (rs.next()) {
-                TaskInstance taskInst = getTaskInstanceSub(rs, false);
-                taskInst.setAssigneeCuid(rs.getString("CUID"));
-                taskInstances.add(taskInst);
-            }
-            if (loadIndices && taskInstances.size()>0) {
-                Map<Long,TaskInstance> map = new HashMap<Long,TaskInstance>();
-                Map<String,Object> indices;
-                buff.setLength(0);
-                buff.append("select task_instance_id,index_key,index_value ");
-                buff.append("from task_inst_index ");
-                buff.append("where task_instance_id in (");
-                TaskInstance taskInst;
-                Long taskInstId;
-                String indexKey, indexValue;
-                for (int i=0; i<taskInstances.size(); i++) {
-                    if (i>0) buff.append(",");
-                    taskInst = taskInstances.get(i);
-                    taskInstId = taskInst.getTaskInstanceId();
-                    buff.append(taskInstId);
-                    map.put(taskInstId, taskInst);
-                }
-                buff.append(")");
-                query = buff.toString();
-                rs = db.runSelect(query, null);
-                while (rs.next()) {
-                    taskInstId = rs.getLong(1);
-                    indexKey = rs.getString(2);
-                    indexValue = rs.getString(3);
-                    taskInst = map.get(taskInstId);
-                    indices = taskInst.getVariables();
-                    if (indices==null) {
-                        indices = new HashMap<String,Object>();
-                        taskInst.setVariables(indices);
-                    }
-                    indices.put(indexKey, indexValue);
-                }
-            }
-            return taskInstances;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to query task instances", e);
         } finally {
             db.closeConnection();
         }
@@ -1552,62 +635,59 @@ public class TaskDataAccess extends CommonDataAccess {
         return null;
     }
 
-    /**
-     * Only for 5.5+ VCS Assets.
-     */
     public TaskList getTaskInstances(Query query) throws DataAccessException {
         long start = System.currentTimeMillis();
-        StringBuilder sql = new StringBuilder();
-        if (query.getMax() != -1)
-            sql.append(db.pagingQueryPrefix());
-
-        sql.append("select ").append(TASK_INSTANCE_SELECT).append("\n");
-        StringBuilder countSql = new StringBuilder();
-        countSql.append("select count(ti.task_instance_id)\n");
-
-        if (db.isMySQL()) {
-            sql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
-            countSql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
-        }
-        else {
-            sql.append("from task_instance ti, user_info ui\n");
-            countSql.append("from task_instance ti, user_info ui\n");
-        }
-
-        String[] workgroups = query.getArrayFilter("workgroups");
-        if (workgroups != null && workgroups.length > 0 && !containsSiteAdmin(workgroups)) {
-            String tigm = ", task_inst_grp_mapp tigm ";
-            sql.append(tigm);
-            countSql.append(tigm);
-        }
-        sql.append("\n");
-
-        String where;
-        if (query.getFind() != null) {
-            try {
-                // numeric value means instance id
-                long findInstId = Long.parseLong(query.getFind());
-                where = "where ti.task_instance_id like '" + findInstId + "%'\n";
-            }
-            catch (NumberFormatException ex) {
-                // otherwise master request id
-                where = "where ti.master_request_id like '" + query.getFind() + "%'\n";
-            }
-        }
-        else {
-            where = buildTaskInstanceWhere(query);
-        }
-
-        if(!StringHelper.isEmpty(where)) {
-            sql.append(where);
-            countSql.append(where);
-        }
-
-        String orderBy = buildTaskInstanceOrderBy(query);
-        if(!StringHelper.isEmpty(orderBy))
-            sql.append(orderBy);
-
         try {
+            StringBuilder sql = new StringBuilder();
+            if (query.getMax() != -1)
+                sql.append(db.pagingQueryPrefix());
+
+            sql.append("select ").append(getTaskInstanceSelect(true)).append("\n");
+            StringBuilder countSql = new StringBuilder();
+            countSql.append("select count(ti.task_instance_id)\n");
+
+            if (db.isMySQL()) {
+                sql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
+                countSql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
+            }
+            else {
+                sql.append("from task_instance ti, user_info ui\n");
+                countSql.append("from task_instance ti, user_info ui\n");
+            }
+
+            String[] workgroups = query.getArrayFilter("workgroups");
+            if (workgroups != null && workgroups.length > 0 && !containsSiteAdmin(workgroups)) {
+                String tigm = ", task_inst_grp_mapp tigm ";
+                sql.append(tigm);
+                countSql.append(tigm);
+            }
+            sql.append("\n");
+
+            String where;
+            if (query.getFind() != null) {
+                try {
+                    // numeric value means instance id
+                    long findInstId = Long.parseLong(query.getFind());
+                    where = "where ti.task_instance_id like '" + findInstId + "%'\n";
+                }
+                catch (NumberFormatException ex) {
+                    // otherwise master request id
+                    where = "where ti.master_request_id like '" + query.getFind() + "%'\n";
+                }
+            }
+            else {
+                where = buildTaskInstanceWhere(query);
+            }
+
+            if (!StringHelper.isEmpty(where)) {
+                sql.append(where);
+                countSql.append(where);
+            }
+
+            String orderBy = buildTaskInstanceOrderBy(query);
+            if (!StringHelper.isEmpty(orderBy))
+                sql.append(orderBy);
+
             Long total = 0L;
             db.openConnection();
             ResultSet rs = db.runSelect(countSql.toString(), null);
@@ -1623,7 +703,7 @@ public class TaskDataAccess extends CommonDataAccess {
             List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
             rs = db.runSelect(sql.toString(), null);
             while (rs.next()) {
-                TaskInstance taskInst = getTaskInstanceSub(rs, true, null, null);
+                TaskInstance taskInst = getTaskInstanceSub(rs, true);
                 if (taskInst != null) {
                     if (taskInst.getAssigneeCuid() != null) {
                         try {

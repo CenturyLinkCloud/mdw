@@ -54,9 +54,11 @@ public interface JsonTranslator {
         while (keys.hasNext()) {
             String key = keys.next().toString();
             if (!JSONABLE_TYPE.equals(key)) {
-                JSONObject objectJson = json.getJSONObject(key);
-                com.centurylink.mdw.model.Jsonable jsonable = ctor.newInstance(objectJson);
-                return jsonable;
+                JSONObject objectJson = json.optJSONObject(key);
+                if (objectJson != null) {
+                    com.centurylink.mdw.model.Jsonable jsonable = ctor.newInstance(objectJson);
+                    return jsonable;
+                }
             }
         }
         throw new JSONException("Object not found for " + JSONABLE_TYPE + ": " + clazz);

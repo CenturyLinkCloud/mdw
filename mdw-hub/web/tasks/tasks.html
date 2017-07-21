@@ -5,7 +5,7 @@
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-checklist">
           <input type="checkbox" ng-if="!create" ng-model="model.taskList.selectedState.all" ng-change="model.taskList.toggleAll()"></input>
-          <span ng-if="!create">Tasks</span>
+          <span ng-if="!create">{{tasksLabel ? tasksLabel : 'Tasks'}}</span>
           <span class="mdw-heading-sub" ng-if="!create"> ({{model.taskList.total}})</span>
           <div class="mdw-heading-label" ng-if="create">New Task</div>
         </div>

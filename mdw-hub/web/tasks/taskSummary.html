@@ -2,7 +2,7 @@
 <div class="panel panel-default mdw-panel">
   <div class="panel-heading mdw-heading">
     <div class="mdw-heading-label">
-      {{task.name}} &nbsp;{{task.id}}
+      {{task.title ? task.title : task.name}} &nbsp;{{task.id}}
     </div>
     <div class="mdw-heading-actions">
       <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'tasks/taskActions.html'" popover-placement="left"> 

@@ -47,6 +47,13 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
             TaskTemplate template = TaskTemplateCache.getTaskTemplate(spec);
             if (template == null)
                 throw new ActivityException("Task template not found: " + spec);
+
+            String taskName = template.getTaskName();
+            String title = null;
+            if (ActivityRuntimeContext.isExpression(taskName)) {
+                title = getRuntimeContext().evaluateToString(taskName);
+            }
+
             String comments = null;
             Exception exception = (Exception) getVariableValue("exception");
             if (exception != null) {
@@ -58,8 +65,9 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
                     }
                 }
             }
+
             return createTaskInstance(spec, getMasterRequestId(), getProcessInstanceId(),
-                            getActivityInstanceId(), getWorkTransitionInstanceId(), comments);
+                            getActivityInstanceId(), getWorkTransitionInstanceId(), title, comments);
         }
         catch (Exception ex) {
             throw new ActivityException(ex.getMessage(), ex);
@@ -67,7 +75,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
     }
 
     protected TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId, String comments) throws ServiceException, DataAccessException {
+            Long activityInstanceId, Long transitionId, String title, String comments) throws ServiceException, DataAccessException {
 
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
         if (taskVO == null)
@@ -76,7 +84,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
         TaskServices taskServices = ServiceLocator.getTaskServices();
 
         TaskInstance instance = taskServices.createTask(taskVO.getTaskId(), masterRequestId, processInstanceId,
-                OwnerType.WORK_TRANSITION_INSTANCE, transitionId, comments);
+                OwnerType.WORK_TRANSITION_INSTANCE, transitionId, title, comments);
 
         logger.info("Created task instance " + instance.getId() + " (" + taskVO.getTaskName() + ")");
 

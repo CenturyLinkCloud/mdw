@@ -45,7 +45,7 @@ public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
         try {
             TaskRuntimeContext runtimeContext = ServiceLocator.getTaskServices().getContext(taskInstance);
             String cuid;
-            if (runtimeContext.isExpression(assigneeVarSpec))
+            if (TaskRuntimeContext.isExpression(assigneeVarSpec))
                 cuid = runtimeContext.evaluateToString(assigneeVarSpec);
             else
                 cuid = runtimeContext.getVariables().get(assigneeVarSpec).toString();

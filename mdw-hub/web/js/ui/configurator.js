@@ -142,6 +142,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     
     // padding
     this.template.pagelet.widgets.forEach(function(widget) {
+      console.log("WIDG: " + widget.name);
         widget.pad = util.padTrailing('', labelWidth - widget.label.length);
     });
   };

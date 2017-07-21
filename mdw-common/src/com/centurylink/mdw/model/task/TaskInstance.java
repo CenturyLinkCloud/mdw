@@ -74,6 +74,13 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public String getTemplate() { return template; }
     public void setTemplate(String template) { this.template = template; }
 
+    private String title;
+    /**
+     * Title allows dynamic override of display label.
+     */
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
     public TaskInstance(Long id, Long templateId, String name, String masterRequestId, Date start,
             Date end, Date due, Integer statusCode, Integer stateCode, String comments, String assigneeCuid,
             String message, String activityName, String categoryCode) {
@@ -161,6 +168,8 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             activityInstanceId = jsonObj.getLong("activityInstanceId");
         if (jsonObj.has("template"))
             template = jsonObj.getString("template");
+        if (jsonObj.has("title"))
+            title = jsonObj.getString("title");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -206,6 +215,8 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             json.put("activityInstanceId", activityInstanceId);
         if (template != null)
             json.put("template", template);
+        if (title != null)
+            json.put("title", title);
         return json;
     }
 
