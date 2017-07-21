@@ -54,8 +54,7 @@ process: # 10298
   variable: # 10735
     name: userDocument
     value: |
-      <user:user xmlns:user="http://mdw.centurylink.com/user">
-          <user:firstName>Donald</user:firstName>
-          <user:lastName>Oakes</user:lastName>
-          <user:cuid>dxoakes</user:cuid>
-      </user:user>
+      {
+        "cuid": "dxoakes",
+        "name": "Donald Oakes"
+      }

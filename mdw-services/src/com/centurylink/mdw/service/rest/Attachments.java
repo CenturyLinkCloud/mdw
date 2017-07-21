@@ -24,11 +24,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.services.CollaborationServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -64,9 +65,8 @@ public class Attachments extends JsonRestService {
             if (userVO == null)
                 throw new ServiceException("User not found: " + user);
 
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            Long id = taskMgr.addAttachment(content.getString("name"), content.getString("location"), content.getString("contentType"),
-                    user,content.getString("owner"),content.getLong("ownerId"));
+            CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+            Long id = collabServices.createAttachment(new Attachment(content));
             if (logger.isDebugEnabled())
                 logger.debug("Added attachment id: " + id);
 

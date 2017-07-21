@@ -29,17 +29,14 @@ import java.util.Set;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.constant.MiscConstants;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.model.monitor.ServiceLevelAgreementInstance;
-import com.centurylink.mdw.model.note.InstanceNote;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -88,6 +85,10 @@ public class TaskDataAccess extends CommonDataAccess {
         "TASK_INSTANCE ti, USER_INFO ui ";
 
     private static boolean hasInstanceGroupMappings;
+
+    public TaskDataAccess() {
+        this(new DatabaseAccess(null));
+    }
 
     public TaskDataAccess(DatabaseAccess db) {
         super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
@@ -187,7 +188,7 @@ public class TaskDataAccess extends CommonDataAccess {
         task.setOwnerId(rs.getLong("TASK_INSTANCE_OWNER_ID"));
         task.setSecondaryOwnerType(rs.getString("TASK_INST_SECONDARY_OWNER"));
         task.setSecondaryOwnerId(rs.getLong("TASK_INST_SECONDARY_OWNER_ID"));
-        task.setTaskClaimUserId(rs.getLong("TASK_CLAIM_USER_ID"));
+        task.setAssigneeId(rs.getLong("TASK_CLAIM_USER_ID"));
         task.setStartDate(StringHelper.dateToString(rs.getTimestamp("TASK_START_DT")));
         task.setEndDate(StringHelper.dateToString(rs.getTimestamp("TASK_END_DT")));
         task.setComments(rs.getString("COMMENTS"));
@@ -209,7 +210,7 @@ public class TaskDataAccess extends CommonDataAccess {
             task.setTaskName(taskVO.getTaskName());
         }
         if (isVOversion) {
-            task.setTaskClaimUserCuid(rs.getString("CUID"));
+            task.setAssigneeCuid(rs.getString("CUID"));
             if (taskVO != null)
               task.setDescription(taskVO.getComment());
         }
@@ -940,7 +941,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 if (assigneeId != null && assigneeId.longValue() != 0) {
                     User user = UserGroupCache.getUser(assigneeId);
                     if (user != null)
-                      taskInst.setTaskClaimUserCuid(user.getCuid());
+                      taskInst.setAssigneeCuid(user.getCuid());
                 }
                 taskInstances.add(taskInst);
             }
@@ -1145,321 +1146,6 @@ public class TaskDataAccess extends CommonDataAccess {
         } catch (Exception e) {
             db.rollback();
             throw new DataAccessException(0, "failed to set task attribute", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public List<InstanceNote> getInstanceNotes(String ownerType, Long ownerId)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            List<InstanceNote> notes = new ArrayList<InstanceNote>();
-            String query = "select INSTANCE_NOTE_ID,INSTANCE_NOTE_NAME,INSTANCE_NOTE_DETAILS," +
-                " CREATE_DT,CREATE_USR,MOD_DT,MOD_USR " +
-                "from INSTANCE_NOTE " +
-                "where INSTANCE_NOTE_OWNER='" + ownerType + "' and INSTANCE_NOTE_OWNER_ID=?";
-            ResultSet rs = db.runSelect(query, ownerId);
-            while (rs.next()) {
-                InstanceNote note = new InstanceNote();
-                note.setId(rs.getLong(1));
-                note.setOwnerType(ownerType);
-                note.setOwnerId(ownerId);
-                note.setNoteName(rs.getString(2));
-                note.setNoteDetails(rs.getString(3));
-                note.setCreatedDate(rs.getTimestamp(4));
-                note.setCreatedBy(rs.getString(5));
-                note.setModifiedDate(rs.getTimestamp(6));
-                note.setModifiedBy(rs.getString(7));
-                notes.add(note);
-            }
-            return notes;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task instance notes", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public Long createInstanceNote(String pOwner, Long pOwnerId,
-            String pNoteName, String pNoteDetails, String pCreatedBy)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            Long id = db.isMySQL()?null:this.getNextId("INSTANCE_NOTE_ID_SEQ");
-            String query = "insert into INSTANCE_NOTE " +
-                "(INSTANCE_NOTE_ID,INSTANCE_NOTE_OWNER,INSTANCE_NOTE_OWNER_ID," +
-                " INSTANCE_NOTE_NAME,INSTANCE_NOTE_DETAILS," +
-                " CREATE_DT,CREATE_USR) " +
-                "values (?,?,?,?,?,"+now()+",?)";
-            Object[] args = new Object[6];
-            args[0] = id;
-            args[1] = pOwner;
-            args[2] = pOwnerId;
-            args[3] = pNoteName;
-            args[4] = pNoteDetails;
-            args[5] = pCreatedBy;
-            if (db.isMySQL()) id = db.runInsertReturnId(query, args);
-            else db.runUpdate(query, args);
-            db.commit();
-            return id;
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to create task instance note", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void deleteInstanceNote(Long instanceNoteId)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "delete INSTANCE_NOTE where INSTANCE_NOTE_ID=?";
-            db.runUpdate(query, instanceNoteId);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to delete task instance note", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void updateInstanceNote(Long pInstNoteId, String pNoteName, String pNoteDetails, String pCuid)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "update INSTANCE_NOTE " +
-            "set INSTANCE_NOTE_NAME=?,INSTANCE_NOTE_DETAILS=?,MOD_DT="+now()+",MOD_USR=? " +
-            "where INSTANCE_NOTE_ID=?";
-            Object[] args = new Object[4];
-            args[0] = pNoteName;
-            args[1] = pNoteDetails;
-            args[2] = pCuid;
-            args[3] = pInstNoteId;
-            db.runUpdate(query, args);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to update instance note", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void updateInstanceNote(String owner, Long ownerId, String name, String details, String cuid)
-            throws DataAccessException {
-            int found = 0;
-            try {
-                db.openConnection();
-                String query = "update INSTANCE_NOTE " +
-                "set INSTANCE_NOTE_NAME=?,INSTANCE_NOTE_DETAILS=?,MOD_DT="+now()+",MOD_USR=? " +
-                "where INSTANCE_NOTE_OWNER=? and INSTANCE_NOTE_OWNER_ID=? and INSTANCE_NOTE_NAME=?";
-                Object[] args = new Object[6];
-                args[0] = name;
-                args[1] = details;
-                args[2] = cuid;
-                args[3] = owner;
-                args[4] = ownerId;
-                args[5] = name;
-                found = db.runUpdate(query, args);
-                db.commit();
-            } catch (Exception e) {
-                db.rollback();
-                throw new DataAccessException(0,"failed to update instance note", e);
-            } finally {
-                db.closeConnection();
-            }
-            if (found == 0)
-                throw new DataAccessException("Note '" + name + "' not found for owner " + owner + " with ID " + ownerId);
-        }
-
-    public List<Attachment> getTaskInstanceAttachments(String attachmentLocation, Long taskInstanceId)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            List<Attachment> attachments = new ArrayList<Attachment>();
-            String query = "select ATTACHMENT_ID,ATTACHMENT_OWNER,ATTACHMENT_OWNER_ID,ATTACHMENT_NAME,ATTACHMENT_LOCATION," +
-                    "ATTACHMENT_CONTENT_TYPE," +
-                " CREATE_DT,CREATE_USR,MOD_DT,MOD_USR " +
-                "from ATTACHMENT " +
-                "where ATTACHMENT_LOCATION=? and ATTACHMENT_STATUS=?";
-            Object[] args = new Object[2];
-            if (attachmentLocation.startsWith(MiscConstants.ATTACHMENT_LOCATION_PREFIX)) {
-                args[0] = MiscConstants.ATTACHMENT_LOCATION_PREFIX+taskInstanceId;
-            } else {
-                args[0] = attachmentLocation + taskInstanceId + "/";
-            }
-            args[1] = Attachment.STATUS_ATTACHED;
-            ResultSet rs = db.runSelect(query, args);
-            while (rs.next()) {
-                Attachment attachment = new Attachment();
-                attachment.setId(rs.getLong(1));
-                attachment.setOwnerType(rs.getString(2));
-                attachment.setOwnerId(rs.getLong(3));
-                attachment.setAttachmentName(rs.getString(4));
-                attachment.setAttachmentLocation(rs.getString(5));
-                attachment.setAttachmentContentType(rs.getString(6));
-                attachment.setCreatedDate(rs.getTimestamp(7));
-                attachment.setCreatedBy(rs.getString(8));
-                attachment.setModifiedDate(rs.getTimestamp(9));
-                attachment.setModifiedBy(rs.getString(10));
-                attachments.add(attachment);
-            }
-            return attachments;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task instance attachments", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public List<Attachment> getAttachments(String attachmentName,String attachmentLocation)
-            throws DataAccessException {
-         try {
-             db.openConnection();
-             int argumentSize = 2;
-             if (! StringHelper.isEmpty(attachmentName)) {
-                 argumentSize = 3;
-             }
-             List<Attachment> attachments = new ArrayList<Attachment>();
-             String query = "select ATTACHMENT_ID,ATTACHMENT_OWNER,ATTACHMENT_OWNER_ID,ATTACHMENT_NAME," +
-                  "ATTACHMENT_CONTENT_TYPE," +
-                 " CREATE_DT,CREATE_USR,MOD_DT,MOD_USR " +
-                 "from ATTACHMENT " +
-                 "where ATTACHMENT_STATUS=? and ATTACHMENT_LOCATION=?";
-             Object[] args = new Object[argumentSize];
-             args[0] = Attachment.STATUS_ATTACHED;
-             if (! attachmentLocation.startsWith(MiscConstants.ATTACHMENT_LOCATION_PREFIX)
-                     && ! attachmentLocation.endsWith("/")) {
-                 attachmentLocation += "/";
-             }
-             args[1] = attachmentLocation;
-             if (! StringHelper.isEmpty(attachmentName)){
-                 query = query + " and ATTACHMENT_NAME=?";
-                 args[2] = attachmentName;
-             }
-             ResultSet rs = db.runSelect(query, args);
-             while (rs.next()) {
-                 Attachment attachment = new Attachment();
-                 attachment.setId(rs.getLong(1));
-                 attachment.setOwnerType(rs.getString(2));
-                 attachment.setOwnerId(rs.getLong(3));
-                 attachment.setAttachmentName(rs.getString(4));
-                 attachment.setAttachmentLocation((String)args[1]);
-                 attachment.setAttachmentContentType(rs.getString(5));
-                 attachment.setCreatedDate(rs.getTimestamp(6));
-                 attachment.setCreatedBy(rs.getString(7));
-                 attachment.setModifiedDate(rs.getTimestamp(8));
-                 attachment.setModifiedBy(rs.getString(9));
-                 attachments.add(attachment);
-             }
-             return attachments;
-         } catch (Exception e) {
-             throw new DataAccessException(0, "failed to get task instance attachments", e);
-         } finally {
-             db.closeConnection();
-         }
-
-    }
-
-
-
-
-    public Long createAttachment(String pOwner, Long pOwnerId, Integer status,
-            String attachmentName, String attachmentLocation, String contentType, String pCreatedBy)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            Long id = db.isMySQL()?null:this.getNextId("ATTACHMENT_ID_SEQ");
-            String query = "insert into ATTACHMENT " +
-                "(ATTACHMENT_ID,ATTACHMENT_OWNER,ATTACHMENT_OWNER_ID," +
-                " ATTACHMENT_NAME,ATTACHMENT_LOCATION,ATTACHMENT_CONTENT_TYPE,ATTACHMENT_STATUS," +
-                " CREATE_DT,CREATE_USR) " +
-                "values (?,?,?,?,?,?,?,"+now()+",?)";
-            Object[] args = new Object[8];
-            args[0] = id;
-            args[1] = pOwner;
-            args[2] = pOwnerId;
-            args[3] = attachmentName;
-            args[4] = attachmentLocation;
-            args[5] = contentType;
-            args[6] = status;
-            args[7] = pCreatedBy;
-            if (db.isMySQL()) id = db.runInsertReturnId(query, args);
-            else db.runUpdate(query, args);
-            db.commit();
-            return id;
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to create task instance attachment", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public void deleteAttachment(Long AttachmentId)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "update ATTACHMENT set ATTACHMENT_STATUS=? where ATTACHMENT_ID=?";
-            Object[] args = new Object[2];
-            args[0] = Attachment.STATUS_DETTACHED;
-            args[1] = AttachmentId;
-            db.runUpdate(query, args);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to delete task instance attachment", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public Attachment getAttachment(Long pAttachmentId)
-            throws DataAccessException {
-            try {
-                db.openConnection();
-                Attachment attachment = null;
-                String query = " SELECT ATTACHMENT_OWNER,ATTACHMENT_OWNER_ID," +
-                        "ATTACHMENT_NAME,ATTACHMENT_LOCATION,ATTACHMENT_CONTENT_TYPE " +
-                        "FROM ATTACHMENT where ATTACHMENT_ID=?";
-                Object[] args = new Object[1];
-                args[0] = pAttachmentId;
-                ResultSet rs = db.runSelect(query, args);
-                if (rs.next()) {
-                    attachment = new Attachment();
-                    attachment.setOwnerType(rs.getString(1));
-                    attachment.setOwnerId(rs.getLong(2));
-                    attachment.setAttachmentName(rs.getString(3));
-                    attachment.setAttachmentLocation(rs.getString(4));
-                    attachment.setAttachmentContentType(rs.getString(5));
-                }
-                return attachment;
-            } catch (Exception e) {
-                throw new DataAccessException(0,"failed to retrieve attachment for AttachmentId "+pAttachmentId, e);
-            } finally {
-                db.closeConnection();
-            }
-        }
-
-    public void updateAttachment(Long id, String attachmentLocation, String pCuid)
-        throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "update ATTACHMENT " +
-                "set ATTACHMENT_LOCATION=?,MOD_DT="+now()+",MOD_USR=? " +
-                "where ATTACHMENT_ID=?";
-            Object[] args = new Object[3];
-            args[0] = attachmentLocation;
-            args[1] = pCuid;
-            args[2] = id;
-            db.runUpdate(query, args);
-            db.commit();
-        } catch (Exception e) {
-            db.rollback();
-            throw new DataAccessException(0,"failed to updat instance attachment", e);
         } finally {
             db.closeConnection();
         }
@@ -1736,7 +1422,7 @@ public class TaskDataAccess extends CommonDataAccess {
             ResultSet rs = db.runSelect(query, null);
             while (rs.next()) {
                 TaskInstance taskInst = getTaskInstanceSub(rs, false);
-                taskInst.setTaskClaimUserCuid(rs.getString("CUID"));
+                taskInst.setAssigneeCuid(rs.getString("CUID"));
                 taskInstances.add(taskInst);
             }
             if (loadIndices && taskInstances.size()>0) {
@@ -1816,7 +1502,7 @@ public class TaskDataAccess extends CommonDataAccess {
             db.openConnection();
             ResultSet rs = db.runSelect(query, taskInst.getTaskInstanceId());
             if (rs.next()) {
-                taskInst.setTaskClaimUserCuid(rs.getString(1));
+                taskInst.setAssigneeCuid(rs.getString(1));
             }
             // load indices
             Map<String,Object> indices = new HashMap<String,Object>();
@@ -1833,36 +1519,12 @@ public class TaskDataAccess extends CommonDataAccess {
                 indexValue = rs.getString(2);
                 indices.put(indexKey, indexValue);
                 if (indexKey.equals("MASTER_REQUEST_ID"))
-                    taskInst.setOrderId(indexValue);
+                    taskInst.setMasterRequestId(indexValue);
             }
             // load groups
             getTaskInstanceGroups(taskInst);
         } catch (Exception e) {
             throw new DataAccessException(0, "failed to query task instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     *
-     * @param taskInst
-     * @throws DataAccessException
-     */
-    public List<String> getGroupsForTask(Long taskId) throws DataAccessException {
-        try {
-            List<String> groups = new ArrayList<String>();
-            db.openConnection();
-            String sql = "select ug.GROUP_NAME " +
-                "from USER_GROUP ug, TASK_USR_GRP_MAPP tugm " +
-                "where tugm.TASK_ID = ? and tugm.USER_GROUP_ID = ug.USER_GROUP_ID";
-             ResultSet rs = db.runSelect(sql, taskId);
-             while (rs.next()) {
-                 groups.add(rs.getString(1));
-             }
-             return groups;
-        } catch(Exception ex){
-            throw new DataAccessException(-1, "Failed to get user group", ex);
         } finally {
             db.closeConnection();
         }

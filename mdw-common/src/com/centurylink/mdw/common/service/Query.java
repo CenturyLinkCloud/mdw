@@ -108,8 +108,9 @@ public class Query {
     public void setFilters(Map<String,String> filters) { this.filters = filters; }
     public boolean hasFilters() { return !filters.isEmpty(); }
 
-    public void setFilter(String key, String value) {
+    public Query setFilter(String key, String value) {
         filters.put(key, value);
+        return this;
     }
     public String getFilter(String key) {
         return filters.get(key);
@@ -136,7 +137,7 @@ public class Query {
         }
         return array;
     }
-    public void setArrayFilter(String key, String[] array) {
+    public Query setArrayFilter(String key, String[] array) {
         if (array == null || array.length == 0) {
             filters.remove(key);
         }
@@ -150,6 +151,7 @@ public class Query {
             value += "]";
             filters.put(key, value);
         }
+        return this;
     }
 
     public Long[] getLongArrayFilter(String key) {
@@ -166,35 +168,39 @@ public class Query {
         String value = filters.get(key);
         return "true".equalsIgnoreCase(value);
     }
-    public void setFilter(String key, boolean value) {
+    public Query setFilter(String key, boolean value) {
         setFilter(key, String.valueOf(value));
+        return this;
     }
 
     public int getIntFilter(String key) {
         String value = filters.get(key);
         return value == null ? -1 : Integer.parseInt(value);
     }
-    public void setFilter(String key, int value) {
+    public Query setFilter(String key, int value) {
         setFilter(key, String.valueOf(value));
+        return this;
     }
 
     public long getLongFilter(String key) {
         String value = filters.get(key);
         return value == null ? -1 : Long.parseLong(value);
     }
-    public void setFilter(String key, long value) {
+    public Query setFilter(String key, long value) {
         setFilter(key, String.valueOf(value));
+        return this;
     }
 
     public Date getDateFilter(String key) throws ParseException {
         return getDate(filters.get(key));
     }
-    public void setFilter(String key, Date date) {
+    public Query setFilter(String key, Date date) {
         String value = getString(date);
         if (value == null)
             filters.remove(key);
         else
             filters.put(key, value);
+        return this;
     }
 
     private static DateFormat dateTimeFormat;

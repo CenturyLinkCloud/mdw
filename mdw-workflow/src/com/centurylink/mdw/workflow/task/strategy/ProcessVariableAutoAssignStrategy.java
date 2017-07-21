@@ -25,7 +25,6 @@ import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.util.StringHelper;
 
 /**
@@ -37,15 +36,14 @@ import com.centurylink.mdw.util.StringHelper;
  */
 public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
 
-    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstanceVO.getTaskId());
+    public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
+        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
         String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
         if (StringHelper.isEmpty(assigneeVarSpec))
             throw new ObserverException("Missing task attribute: " + TaskAttributeConstant.ASSIGNEE_VAR);
 
         try {
-            TaskManager taskMgr = ServiceLocator.getTaskManager();
-            TaskRuntimeContext runtimeContext = taskMgr.getTaskRuntimeContext(taskInstanceVO);
+            TaskRuntimeContext runtimeContext = ServiceLocator.getTaskServices().getContext(taskInstance);
             String cuid;
             if (runtimeContext.isExpression(assigneeVarSpec))
                 cuid = runtimeContext.evaluateToString(assigneeVarSpec);
@@ -55,7 +53,7 @@ public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
             return UserGroupCache.getUser(cuid);
         }
         catch (Exception ex) {
-            throw new ObserverException(-1, "Problem auto-assigning task: " + taskInstanceVO.getId()
+            throw new ObserverException(-1, "Problem auto-assigning task: " + taskInstance.getId()
                     + " based on process variable: " + assigneeVarSpec, ex);
         }
     }

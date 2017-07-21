@@ -238,7 +238,7 @@ public class LdapAdapter extends AdapterActivityBase {
                     }
                 }
 
-                setParameterValueAsDocument(userJsonVar.getName(), userJsonVar.getVariableType(), userJsonVar);
+                setParameterValueAsDocument(userJsonVar.getName(), userJsonVar.getVariableType(), user.getJson());
             }
         }
         catch (ActivityException ex) {

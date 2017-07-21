@@ -69,48 +69,41 @@ process: # 10463
   variable: # 11234
     name: userDocument
     value: |
-      <user:user xmlns:user="http://mdw.centurylink.com/user">
-          <user:firstName>Donald</user:firstName>
-          <user:lastName>Oakes</user:lastName>
-          <user:cuid>dxoakes</user:cuid>
-          <user:sapId>DHO115360</user:sapId>
-          <user:mnetId>420104</user:mnetId>
-          <user:attributes>
-              <user:attribute name="tier3">BUSINESS ORCHESTRATION</user:attribute>
-              <user:attribute name="telephoneNumber">+13039929747</user:attribute>
-              <user:attribute name="roomNumber">COQ184SD00E20.10</user:attribute>
-              <user:attribute name="tier2">TESTING &amp; INTEG</user:attribute>
-              <user:attribute name="mail">Donald.Oakes@CenturyLink.com</user:attribute>
-              <user:attribute name="displayName">Oakes, Donald H</user:attribute>
-              <user:attribute name="postalCode">80120</user:attribute>
-              <user:attribute name="companynumber">T600</user:attribute>
-              <user:attribute name="preferredname">Donald</user:attribute>
-              <user:attribute name="joblevel">6</user:attribute>
-              <user:attribute name="title">SR LEAD SOFTWARE DEVELOPER</user:attribute>
-              <user:attribute name="nationname">United States</user:attribute>
-              <user:attribute name="employeeNumber">00115360</user:attribute>
-              <user:attribute name="uid">dxoakes</user:attribute>
-              <user:attribute name="legacycompany">Q</user:attribute>
-              <user:attribute name="street">700 W MINERAL AVE</user:attribute>
-              <user:attribute name="mnetid">420104</user:attribute>
-              <user:attribute name="sn">Oakes</user:attribute>
-              <user:attribute name="tier1">PRODUCT DEVELOPMENT &amp; TECHNOLOGY</user:attribute>
-              <user:attribute name="costcenter">T6009533</user:attribute>
-              <user:attribute name="st">CO</user:attribute>
-              <user:attribute name="docshareaccess">TRUE</user:attribute>
-              <user:attribute name="manager">uid=aa06274,ou=People,dc=mnet,dc=qintra,dc=com</user:attribute>
-              <user:attribute name="sAMAccountName">dxoakes</user:attribute>
-              <user:attribute name="initials">H</user:attribute>
-              <user:attribute name="givenName">Donald</user:attribute>
-              <user:attribute name="objectClass">top</user:attribute>
-              <user:attribute name="mobile">+13036706952</user:attribute>
-              <user:attribute name="cn">Donald Oakes</user:attribute>
-              <user:attribute name="l">LITTLETON</user:attribute>
-              <user:attribute name="nationnumber">USA</user:attribute>
-              <user:attribute name="employeeType">Management</user:attribute>
-              <user:attribute name="saploginid">DHO115360</user:attribute>
-              <user:attribute name="departmentname">OSS_NTWK FUL_TRANSPORT</user:attribute>
-              <user:attribute name="companyname">QWEST CORPORATION</user:attribute>
-              <user:attribute name="departmentNumber">32.1.6.5.2</user:attribute>
-          </user:attributes>
-      </user:user>
+      {
+        "attributes": {
+          "tier3": "BUSINESS ORCHESTRATION",
+          "roomNumber": "COQ184SD00E20.10",
+          "telephoneNumber": "+13039929747",
+          "tier2": "TESTING & INTEG",
+          "mail": "Donald.Oakes@CenturyLink.com",
+          "displayName": "Oakes, Donald H",
+          "postalCode": "80120",
+          "companynumber": "T600",
+          "preferredname": "Donald",
+          "joblevel": "6",
+          "nationname": "United States",
+          "title": "SR LEAD SOFTWARE DEVELOPER",
+          "employeeNumber": "00115360",
+          "legacycompany": "Q",
+          "mnetid": "420104",
+          "street": "700 W MINERAL AVE",
+          "tier1": "PRODUCT DEVELOPMENT & TECHNOLOGY",
+          "costcenter": "T6009533",
+          "st": "CO",
+          "docshareaccess": "TRUE",
+          "manager": "uid=aa06274,ou=People,dc=mnet,dc=qintra,dc=com",
+          "sAMAccountName": "dxoakes",
+          "initials": "H",
+          "objectClass": "top",
+          "cn": "Donald Oakes",
+          "l": "LITTLETON",
+          "nationnumber": "USA",
+          "employeeType": "Management",
+          "saploginid": "DHO115360",
+          "companyname": "QWEST CORPORATION",
+          "departmentname": "OSS_NTWK FUL_TRANSPORT",
+          "departmentNumber": "32.1.6.5.2"
+        },
+        "cuid": "dxoakes",
+        "name": "Donald Oakes"
+      }

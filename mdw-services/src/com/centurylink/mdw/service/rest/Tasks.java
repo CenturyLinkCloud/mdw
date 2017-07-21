@@ -19,7 +19,6 @@ import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,7 +59,6 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -249,8 +247,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                             return JsonUtil.getJson(indexes);
                         }
                         else if (extra.equals("history")) {
-                            TaskManager taskMgr = ServiceLocator.getTaskManager();
-                            Collection<EventLog> eventLogs = taskMgr.getEventLogs(instanceId);
+                            List<EventLog> eventLogs = taskServices.getHistory(instanceId);
                             JSONObject json = new JsonObject();
                             if (eventLogs !=null && eventLogs.size() >0) {
                                 JSONArray historyJson = new JSONArray();
@@ -264,7 +261,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         }
                         else if (extra.equals("actions")) {
                             // actions for an individual task based on its status and custom outcomes
-                            TaskRuntimeContext runtimeContext = taskServices.getRuntimeContext(instanceId);
+                            TaskRuntimeContext runtimeContext = taskServices.getContext(instanceId);
                             if (runtimeContext == null)
                                 throw new ServiceException(HTTP_404_NOT_FOUND, "Unable to load runtime context for task instance: " + instanceId);
                             List<TaskAction> taskActions = AllowableTaskActions.getTaskDetailActions(userCuid, runtimeContext);
@@ -326,7 +323,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 }
                 else {
                     // top-level task instance
-                    Long taskInstanceId = taskServices.createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER), taskLogicalId);
+                    Long taskInstanceId = taskServices.createTask(taskLogicalId, headers.get(Listener.AUTHENTICATED_USER_HEADER))
+                            .getTaskInstanceId();
                     JSONObject json = new JsonObject();
                     json.put("taskInstanceId", taskInstanceId);
                     return json;
@@ -417,8 +415,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 TaskIndexes taskIndexes = new TaskIndexes(content);
                 if (instanceId != taskIndexes.getTaskInstanceId())
                     throw new ServiceException(HTTP_400_BAD_REQUEST, "Content/path mismatch (instanceId): " + taskIndexes.getTaskInstanceId() + " is not: " + instanceId);
-                TaskManager taskMgr = ServiceLocator.getTaskManager();
-                taskMgr.updateTaskIndices(taskIndexes.getTaskInstanceId(), taskIndexes.getIndexes());
+                ServiceLocator.getTaskServices().updateIndexes(taskIndexes.getTaskInstanceId(), taskIndexes.getIndexes());
 
                 if (logger.isDebugEnabled())
                     logger.debug("Updated task indexes for instance ID: " + taskIndexes.getTaskInstanceId());

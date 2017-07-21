@@ -26,7 +26,6 @@ import org.json.JSONObject;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -38,7 +37,6 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.task.UserTaskAction;
-import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
@@ -51,8 +49,6 @@ import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.util.StringHelper;
@@ -299,15 +295,9 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         String directAction = getParameter(xmlbean, "DirectAction", false);
         String masterRequestId = getParameter(xmlbean, "MasterRequestId", true);
         Long taskInstId = this.findTaskInstanceId(taskName, masterRequestId);
-        UserManager userManager = ServiceLocator.getUserManager();
-        User user = userManager.getUser(cuid);
-        if (user == null)
-            throw new ServiceException("Unrecognized user: " + cuid);
-        Long userId = user.getId();
         List<Parameter> params = xmlbean.getActionRequest().getAction().getParameterList();
-        TaskManager taskManager = ServiceLocator.getTaskManager();
         if (params!=null && !params.isEmpty()) {
-            TaskInstance taskInst = taskManager.getTaskInstanceVO(taskInstId);
+            TaskInstance taskInst = ServiceLocator.getTaskServices().getInstance(taskInstId);
             if (taskInst.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
                 EventManager eventManager = ServiceLocator.getEventManager();
                 Long procInstId = taskInst.getOwnerId();
@@ -344,7 +334,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                 }
             }
         }
-        taskManager.performActionOnTaskInstance(directAction, taskInstId, userId, userId, null, null, true);
+        ServiceLocator.getTaskServices().performAction(taskInstId, directAction, cuid, cuid, null, null, true);
         UserTaskAction taskAction = new UserTaskAction();
         taskAction.setTaskAction(directAction);
         taskAction.setTaskInstanceId(taskInstId);

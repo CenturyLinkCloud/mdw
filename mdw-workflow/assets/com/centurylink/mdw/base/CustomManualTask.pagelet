@@ -8,7 +8,7 @@
   </DROPDOWN>
   <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" />   
   <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
-  <DROPDOWN NAME="CustomPage" LABEL="Custom Page" SOURCE="RuleSets" TYPE="HTML"/>
+  <DROPDOWN NAME="CustomPage" LABEL="Custom Page" SOURCE="RuleSets" TYPE="JSX"/>
   <HYPERLINK URL="/MDWWeb/doc/customPages.html">Custom Page Help</HYPERLINK>
   <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
   <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />

@@ -50,8 +50,8 @@ public class TaskActionValidator {
                 msg.append("Action '").append(action.getTaskAction());
                 msg.append("' not allowed by user ").append(action.getUser());
                 msg.append(" on task instance: ").append(runtimeContext.getInstanceId());
-                if (runtimeContext.getAssignee() != null && !runtimeContext.getAssignee().isEmpty())
-                    msg.append(" assigned to ").append(runtimeContext.getAssignee());
+                if (runtimeContext.getAssignee() != null && !runtimeContext.getAssignee().getCuid().isEmpty())
+                    msg.append(" assigned to ").append(runtimeContext.getAssignee().getCuid());
                 if (!TaskStatus.STATUSNAME_ASSIGNED.equals(runtimeContext.getStatus()))
                     msg.append(" with status ").append(runtimeContext.getStatus());
                 msg.append(".");
@@ -62,7 +62,7 @@ public class TaskActionValidator {
                         + " for task instance: " + runtimeContext.getInstanceId() + " with status " + runtimeContext.getStatus());
             }
             if (TaskAction.isCompleting(action.getTaskAction())) {
-                if (!action.getUser().equals(runtimeContext.getAssignee())) {
+                if (runtimeContext.getAssignee() == null || !action.getUser().equals(runtimeContext.getAssignee().getCuid())) {
                     throw new TaskValidationException(ServiceException.NOT_AUTHORIZED, "Task Instance "
                         + runtimeContext.getInstanceId() + " not assigned to user " + action.getUser());
                 }

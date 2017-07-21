@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.model.note;
+package com.centurylink.mdw.model.workflow;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.JsonUtil;
 

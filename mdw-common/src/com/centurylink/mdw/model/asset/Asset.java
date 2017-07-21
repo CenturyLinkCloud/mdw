@@ -47,6 +47,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String IMAGE_PNG = "IMAGE_PNG";
     public static final String CSS = "CSS";
     public static final String JAVASCRIPT = "JAVASCRIPT";
+    public static final String JSX = "JSX";
     public static final String WEBSCRIPT = "WEBSCRIPT";
     public static final String CONFIG = "CONFIG";
     public static final String DROOLS = "DROOLS";
@@ -94,6 +95,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         IMAGE_PNG,
         CSS,
         JAVASCRIPT,
+        JSX,
         WEBSCRIPT,
         CONFIG, // used internally for package config
         DROOLS,
@@ -368,6 +370,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             contentTypes.put(IMAGE_JPEG, "image/jpeg");
             contentTypes.put(IMAGE_PNG, "image/png");
             contentTypes.put(JAVASCRIPT, "application/javascript");
+            contentTypes.put(JSX, "application/javascript");
             contentTypes.put(WEBSCRIPT, "application/javascript");
             contentTypes.put(JSON, "application/json");
             contentTypes.put(WSDL, "text/xml");
@@ -606,6 +609,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             languageToExtension.put("GROOVY", ".groovy");
             languageToExtension.put("JavaScript", ".js");
             languageToExtension.put("JAVASCRIPT", ".js");
+            languageToExtension.put("JSX", ".jsx");
             languageToExtension.put("WEBSCRIPT", ".js");
             languageToExtension.put("MagicBox", ".mb");
             languageToExtension.put("MAGICBOX", ".mb");
@@ -677,6 +681,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             // TODO map should be driven from properties
             extensionToLanguage.put(".groovy", GROOVY);
             extensionToLanguage.put(".js", JAVASCRIPT);
+            extensionToLanguage.put(".jsx", JSX);
             extensionToLanguage.put(".xhtml", FACELET);
             extensionToLanguage.put(".jsp", JSP);
             extensionToLanguage.put(".drl", DROOLS);

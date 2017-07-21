@@ -73,6 +73,7 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -292,7 +293,7 @@ class ProcessExecutorImpl {
 
     /**
      * Create a process instance. The status is PENDING_PROCESS
-     * @param processVO
+     * @param process
      * @param eventMessageDoc
      * @return
      * @throws ProcessException
@@ -1196,7 +1197,7 @@ class ProcessExecutorImpl {
     /**
      *
      * @param processInstVO
-     * @param processVO
+     * @param process
      * @param pMessage
      */
     private void completeProcessInstance(ProcessInstance processInst, String completionCode, boolean noNotify)
@@ -1621,7 +1622,10 @@ class ProcessExecutorImpl {
             Process pidef = getProcessDefinition(pi);
             if (pidef.isEmbeddedProcess()) procInstIds.add(pi.getId());
         }
-        ServiceLocator.getTaskManager().cancelTasksForProcessInstances(procInstIds);
+        TaskServices taskServices = ServiceLocator.getTaskServices();
+        for (Long procInstId : procInstIds) {
+            taskServices.cancelTaskInstancesForProcess(procInstId);
+        }
     }
 
     EventWaitInstance createEventWaitInstance(

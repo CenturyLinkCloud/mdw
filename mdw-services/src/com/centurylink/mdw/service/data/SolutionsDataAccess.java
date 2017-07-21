@@ -414,7 +414,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         task.setOwnerId(rs.getLong("task_instance_owner_id"));
         task.setSecondaryOwnerType(rs.getString("task_inst_secondary_owner"));
         task.setSecondaryOwnerId(rs.getLong("task_inst_secondary_owner_id"));
-        task.setTaskClaimUserId(rs.getLong("task_claim_user_id"));
+        task.setAssigneeId(rs.getLong("task_claim_user_id"));
         task.setStartDate(rs.getTimestamp("task_start_dt"));
         task.setEndDate(rs.getTimestamp("task_end_dt"));
         task.setComments(rs.getString("comments"));
@@ -435,12 +435,12 @@ public class SolutionsDataAccess extends CommonDataAccess {
             task.setDescription(taskVO.getComment());
         }
         try {
-            if (task.getTaskClaimUserId() != 0L) {
-                User user = UserGroupCache.getUser(task.getTaskClaimUserId());
+            if (task.getAssigneeId() != 0L) {
+                User user = UserGroupCache.getUser(task.getAssigneeId());
                 if (user == null)
-                    logger.severe("ERROR: Cannot find user for id: " + task.getTaskClaimUserId());
+                    logger.severe("ERROR: Cannot find user for id: " + task.getAssigneeId());
                 else
-                    task.setTaskClaimUserCuid(user.getCuid());
+                    task.setAssigneeCuid(user.getCuid());
             }
         }
         catch (CachingException ex) {

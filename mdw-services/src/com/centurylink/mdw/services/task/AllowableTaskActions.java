@@ -28,15 +28,13 @@ import org.apache.xmlbeans.XmlOptions;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskException;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.task.AllowableAction;
 import com.centurylink.mdw.task.BulkTaskActions;
 import com.centurylink.mdw.task.ForTask;
@@ -173,7 +171,7 @@ public class AllowableTaskActions implements PreloadableCache {
     }
 
     public static List<TaskAction> getTaskDetailActions(String userCuid, TaskRuntimeContext runtimeContext)
-    throws IOException, XmlException, TaskException, DataAccessException {
+    throws IOException, XmlException, ServiceException, DataAccessException {
         List<TaskAction> taskActions = new ArrayList<TaskAction>();
         String status = runtimeContext.getStatus();
         for (TaskAction taskAction : getTaskStatusAllowableActions().get(status)) {
@@ -193,7 +191,7 @@ public class AllowableTaskActions implements PreloadableCache {
 
         // return filtered task actions (logic copied from TaskDetail but could stand refactoring)
         List<TaskAction> filteredActions = new ArrayList<TaskAction>();
-        if (!userCuid.equalsIgnoreCase(runtimeContext.getAssignee())) {
+        if (runtimeContext.getAssignee() == null || !userCuid.equalsIgnoreCase(runtimeContext.getAssignee().getCuid())) {
             // if the task is not assigned to the current user, the only possible actions are Assign, Claim and Release
             for (TaskAction action : taskActions) {
                 if (action.getTaskActionName().equalsIgnoreCase(TaskAction.ASSIGN)
@@ -204,9 +202,9 @@ public class AllowableTaskActions implements PreloadableCache {
             }
         }
         else {
-            TaskManager taskManager = ServiceLocator.getTaskManager();
-            filteredActions = taskManager.filterStandardTaskActions(runtimeContext.getInstanceId(), taskActions);
-            if (!runtimeContext.getTaskInstanceVO().isInFinalStatus()) {
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(runtimeContext.getTaskInstance());
+            filteredActions = helper.filterStandardActions(taskActions);
+            if (!runtimeContext.getTaskInstance().isInFinalStatus()) {
                 boolean isWorkActionApplicable = false;
                 for (TaskAction action : taskActions) {
                     if (action.getTaskActionName().equals(TaskAction.WORK)) {
@@ -216,7 +214,7 @@ public class AllowableTaskActions implements PreloadableCache {
                 }
                 // if 'Work' action is applicable, no dynamic actions unless 'In Progress' status
                 if (!isWorkActionApplicable || runtimeContext.getStatus().equals(TaskStatus.STATUSNAME_IN_PROGRESS)) {
-                    List<TaskAction> dynamicTaskActions = taskManager.getDynamicTaskActions(runtimeContext.getInstanceId());
+                    List<TaskAction> dynamicTaskActions = helper.getDynamicActions();
                     if (dynamicTaskActions != null) {
                         for (TaskAction dynamicTaskAction : dynamicTaskActions) {
                             if (!filteredActions.contains(dynamicTaskAction)) {

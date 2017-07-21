@@ -40,8 +40,8 @@ import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
@@ -50,8 +50,6 @@ import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -184,10 +182,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                         return createErrorResponse("Cannot find the task instance for masterRequestId: " + masterRequestId + " and name: '" + taskName + "'");
                     taskInstanceId = tiList.get(k);
                 }
-                UserManager userManager = ServiceLocator.getUserManager();
-                Long userId = userManager.getUser(user).getId();
-                TaskManager taskManager = ServiceLocator.getTaskManager();
-                taskManager.performActionOnTaskInstance(actionType, taskInstanceId, userId, userId, null, null, true);
+                ServiceLocator.getTaskServices().performAction(taskInstanceId, actionType, user, user, null, null, true);
                 return createSuccessResponse("Action performed on Task: '" + actionType + "'");
             }
             else {

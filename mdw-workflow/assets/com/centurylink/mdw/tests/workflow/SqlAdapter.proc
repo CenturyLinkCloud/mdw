@@ -7,7 +7,7 @@
       "name": "Start",
       "transitions": [
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=253,ly=9,type=Elbow,xs=246&205,ys=31&161"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=253,ly=9,type=Elbow,xs=246&207,ys=31&161"},
           "event": "FINISH",
           "id": "T1",
           "to": "A3"
@@ -39,10 +39,10 @@
       "attributes": {
         "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
         "Output Documents": "userDocument",
-        "PostScript": "import java.sql.ResultSet\r\n\r\nimport com.centurylink.mdw.user.UserDocument\r\nimport com.centurylink.mdw.user.UserDocument.User\r\n\r\nResultSet rs = (ResultSet) response;\r\nif (rs.next()) {\r\n  userDocument = UserDocument.Factory.newInstance();\r\n  User user = userDocument.addNewUser();\r\n  user.setCuid(rs.getString(\"cuid\"));\r\n  String name = rs.getString(\"name\");\r\n  String[] names = name.split(\" \");\r\n  user.setFirstName(names[0]);\r\n  user.setLastName(names[1]);\r\n}\r\nelse {\r\n  throw new RuntimeException(\"User query returns no results: \" + runtimeContext.getAttributes().get(\"sqlQuery\"));\r\n}",
+        "PostScript": "import java.sql.ResultSet\r\nimport com.centurylink.mdw.model.user.User\r\n\r\nResultSet rs = (ResultSet) response;\r\nif (rs.next()) {\r\n    User user = new User();\r\n    user.setCuid(rs.getString(\"cuid\"))\r\n    user.setName(rs.getString(\"name\"))\r\n    userDocument = user.getJson();\r\n}\r\nelse {\r\n    throw new RuntimeException(\"User query returns no results: \" + runtimeContext.getAttributes().get(\"sqlQuery\"));\r\n}",
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
-        "WORK_DISPLAY_INFO": "x=99,y=124,w=102,h=75",
+        "WORK_DISPLAY_INFO": "x=101,y=124,w=102,h=75",
         "jdbcDataSource": "#{props['mdw.database.url']}?user=#{props['mdw.database.username']}&password=#{props['mdw.database.password']}",
         "parameterVariable": "userCuid",
         "queryType": "Select",
@@ -52,7 +52,7 @@
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
       "name": "Query Using\r\nJDBC URL",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=179,ly=246,type=Elbow,xs=150&278,ys=203&289"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=181,ly=246,type=Elbow,xs=152&278,ys=203&289"},
         "event": "FINISH",
         "id": "T2",
         "to": "A5"
@@ -213,7 +213,7 @@
     },
     "userDocument": {
       "category": "LOCAL",
-      "type": "org.apache.xmlbeans.XmlObject"
+      "type": "org.json.JSONObject"
     }
   }
 }

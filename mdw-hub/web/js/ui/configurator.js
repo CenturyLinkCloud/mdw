@@ -73,6 +73,8 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           widget.value = this.diagramObj.getDisplay().xs.length;
         else
           widget.value = this.workflowObj.attributes[widget.name];
+        if (widget.type === 'asset')
+          this.initAssetOptions([widget]);
       }
       else {
         widget.value = this.workflowObj.attributes[widget.name];

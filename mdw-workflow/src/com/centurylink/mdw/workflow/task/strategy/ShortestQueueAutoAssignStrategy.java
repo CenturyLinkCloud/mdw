@@ -15,15 +15,14 @@
  */
 package com.centurylink.mdw.workflow.task.strategy;
 
-import java.util.HashMap;
 import java.util.List;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskManager;
 import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -32,10 +31,9 @@ public class ShortestQueueAutoAssignStrategy implements AutoAssignStrategy {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException {
+    public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
         try {
-            TaskManager taskManager = ServiceLocator.getTaskManager();
-            List<String> groups = taskManager.getGroupsForTaskInstance(taskInstanceVO);
+            List<String> groups = ServiceLocator.getTaskServices().getGroupsForTaskInstance(taskInstance);
             UserManager userManager = ServiceLocator.getUserManager();
             User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
             if (taskUsers == null || taskUsers.length == 0) {
@@ -45,7 +43,7 @@ public class ShortestQueueAutoAssignStrategy implements AutoAssignStrategy {
             User assignee = taskUsers[0];
             int shortest = Integer.MAX_VALUE;
             for (User user : taskUsers) {
-                int depth = taskManager.getAssignedTasks(user.getId(), new HashMap<String,String>()).length;
+                int depth = ServiceLocator.getTaskServices().getTasks(new Query().setFilter("assigneee", user.getCuid())).getCount();
                 if (depth < shortest) {
                     assignee = user;
                     shortest = depth;

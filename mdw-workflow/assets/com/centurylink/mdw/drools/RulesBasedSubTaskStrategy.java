@@ -42,7 +42,7 @@ public class RulesBasedSubTaskStrategy extends RulesBasedStrategy implements Sub
 
     @SuppressWarnings("unchecked")
     public String getSubTaskPlan(TaskRuntimeContext masterTaskContext) throws StrategyException {
-        TaskInstance masterTaskInstance = masterTaskContext.getTaskInstanceVO();
+        TaskInstance masterTaskInstance = masterTaskContext.getTaskInstance();
         KieBase knowledgeBase = getKnowledgeBase();
 
         StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();

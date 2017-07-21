@@ -91,12 +91,15 @@ public abstract class JsonRestService extends RestService implements JsonService
         String method = headers.get(Listener.METAINFO_HTTP_METHOD);
         if ("GET".equals(method))
             return get(path, headers);
+        else if ("DELETE".equals(method))
+            return delete(path, content, headers);
+        else if (content == null) // content couldn't be parsed
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Malformed JSON in request body");
+
         if ("POST".equals(method))
             return post(path, content, headers);
         else if ("PUT".equals(method))
             return put(path, content, headers);
-        else if ("DELETE".equals(method))
-            return delete(path, content, headers);
         else if ("PATCH".equals(method))
             return patch(path, content, headers);
         else
