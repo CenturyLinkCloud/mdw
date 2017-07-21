@@ -3,10 +3,6 @@
   <TEXT NAME="logicalId" LABEL="Logical ID" VW="300"/>
   <DROPDOWN NAME="category" LABEL="Category" SOURCE="TaskCategory" VW="250"/>
   <TEXT NAME="description" LABEL="Description" MULTILINE="true"/>
-  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
-    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" /> 
   <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
   <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
   <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />
@@ -15,6 +11,10 @@
     <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
   </DROPDOWN>
   <HYPERLINK URL="/MDWWeb/doc/taskSLA.html">SLA Help</HYPERLINK>
+  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
+    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
+  </DROPDOWN>
+  <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" /> 
   <LIST NAME="Groups" SOURCE="UserGroup" SECTION="Workgroups"/>
   <DROPDOWN NAME="RoutingStrategy" LABEL="Routing Strategy" VW="250" SECTION="Workgroups">
     <OPTION PARAMETER="Routing Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>

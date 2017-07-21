@@ -1,13 +1,8 @@
 <PAGELET>
   <TEXT NAME="name" LABEL="Task Name" VW="300"/>
-  <NOTE VH="50">(Set Task Name to an expression for dynamic task labels.)</NOTE>
   <TEXT NAME="logicalId" LABEL="Logical ID" VW="300"/>
   <DROPDOWN NAME="category" LABEL="Category" SOURCE="TaskCategory" VW="250"/>
-  <TEXT NAME="description" MULTILINE="true"/>
-  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
-    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" />   
+  <TEXT NAME="description" LABEL="Description" MULTILINE="true"/>
   <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
   <DROPDOWN NAME="CustomPage" LABEL="Custom Page" SOURCE="RuleSets" TYPE="JSX"/>
   <HYPERLINK URL="/MDWWeb/doc/customPages.html">Custom Page Help</HYPERLINK>
@@ -18,6 +13,10 @@
     <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
   </DROPDOWN>
   <HYPERLINK URL="/MDWWeb/doc/taskSLA.html">Task SLA/Alert Help</HYPERLINK>
+  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
+    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
+  </DROPDOWN>
+  <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" />   
   <LIST NAME="Groups" SOURCE="UserGroup" SECTION="Workgroups"/>
   <DROPDOWN NAME="RoutingStrategy" LABEL="Routing Strategy" VW="250" SECTION="Workgroups">
     <OPTION PARAMETER="Routing Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>

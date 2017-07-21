@@ -33,6 +33,7 @@ import com.centurylink.mdw.cache.CacheEnabled;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.dataaccess.BaselineData;
+import com.centurylink.mdw.dataaccess.file.CombinedBaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.model.asset.Asset;
@@ -245,8 +246,14 @@ public class SpringAppContext implements CacheEnabled, CacheService {
                 else
                     injectedBaselineData = baselineData;
             }
-            if (baselineDatas.size() > 2)
-                throw new IOException("Too many BaselineData implementations.");
+            if (baselineDatas.size() > 2) {
+                List<BaselineData> injectedBaselineDatas = new ArrayList<>();
+                for (BaselineData bd : baselineDatas) {
+                    if (bd != mdwBaselineData)
+                        injectedBaselineDatas.add(bd);
+                }
+                injectedBaselineData = new CombinedBaselineData(injectedBaselineDatas);
+            }
             return injectedBaselineData == null ? mdwBaselineData : injectedBaselineData;
         }
         catch (Exception ex) {
