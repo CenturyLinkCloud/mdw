@@ -9,7 +9,7 @@ title: Setup Guide for Tomcat
  - For installing eclipse plug-ins, please follow [this link](../InstallEclipsePluginsGuide/) and return to this guide to continue.
  - Tomcat 8:
      - [https://tomcat.apache.org](https://tomcat.apache.org)
- - Chrome and Postman
+ - Chrome and Postman for testing RESTFul Web service: 
      - [https://www.google.com/chrome](https://www.google.com/chrome)     
      - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
      
