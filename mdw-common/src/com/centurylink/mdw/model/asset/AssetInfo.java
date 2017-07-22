@@ -39,6 +39,7 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         extToContentType.put("html", "text/html");
         extToContentType.put("jpg", "image/jpeg");
         extToContentType.put("js", "application/javascript");
+        extToContentType.put("jsx", "application/javascript");
         extToContentType.put("json", "application/json");
         extToContentType.put("pagelet", "text/xml");
         extToContentType.put("png", "image/png");
@@ -87,6 +88,10 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
 
     private File file;
     public File getFile() { return file; }
+
+    public boolean exists() {
+        return file != null && file.isFile();
+    }
 
     private CommitInfo commitInfo;
     public CommitInfo getCommitInfo() { return commitInfo; }

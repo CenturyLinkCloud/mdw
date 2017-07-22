@@ -32,7 +32,7 @@ import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.asset.AssetInfo;
 
 /**
- * Serves up custom content from user-override mdw-admin package.
+ * Serves up custom content from user-override mdw-hub package.
  */
 @WebServlet(urlPatterns={"/customContent/*"}, loadOnStartup=1)
 public class CustomContentServlet extends HttpServlet {
