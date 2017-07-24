@@ -151,7 +151,29 @@ public class SpringAppContext implements CacheEnabled, CacheService {
     }
 
     public Object getBean(String name) throws IOException {
-        return getApplicationContext().getBean(name);
+        try {
+            return getApplicationContext().getBean(name);
+        }
+        catch (NoSuchBeanDefinitionException e) {  // Search in pkg contexts if not found in ApplicationContext
+            if (packageContexts != null) {
+                Object bean = null;
+                for (ApplicationContext pkgContext : packageContexts.values()) {
+                    bean = getBean(name, pkgContext);
+                    if (bean != null)
+                        return bean;
+                }
+            }
+            throw e;
+        }
+    }
+
+    private Object getBean(String name, ApplicationContext context) {
+        try {
+            return context.getBean(name);
+        }
+        catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
     }
 
     public Object getBean(String name, boolean optional) throws IOException {

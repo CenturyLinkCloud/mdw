@@ -16,6 +16,7 @@
 package com.centurylink.mdw.container.plugin.tomcat;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -25,12 +26,12 @@ import com.centurylink.mdw.spring.SpringAppContext;
 
 public class TomcatDataSource implements DataSourceProvider {
 
-    private DataSource dataSource;
+    private HashMap<String,DataSource> dataSource = new HashMap<String,DataSource>();
 
     public DataSource getDataSource(String dataSourceName) throws NamingException {
-        if (dataSource == null) {
+        if (dataSource.get(dataSourceName) == null) {
             try {
-                dataSource = (DataSource)SpringAppContext.getInstance().getApplicationContext().getBean(dataSourceName);
+                dataSource.put(dataSourceName, (DataSource)SpringAppContext.getInstance().getBean(dataSourceName));
             }
             catch (IOException ex) {
                 NamingException ne = new NamingException(ex.getMessage());
@@ -38,6 +39,6 @@ public class TomcatDataSource implements DataSourceProvider {
                 throw ne;
             }
         }
-        return dataSource;
+        return dataSource.get(dataSourceName);
     }
 }
