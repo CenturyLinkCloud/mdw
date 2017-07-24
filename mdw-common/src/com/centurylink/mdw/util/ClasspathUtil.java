@@ -125,6 +125,11 @@ public class ClasspathUtil {
 
         // attempt to locate the file using the class loader
         URL classUrl = classLoader.getResource(resource);
+        if (classUrl == null && classLoader == ClasspathUtil.class.getClassLoader()) {
+            // Apparently clazz.getResource() works sometimes when clazz.getClassLoader().getResource() does not.
+            // TODO: why?
+            classUrl = ClasspathUtil.class.getResource(resource);
+        }
 
         if (classUrl == null) {
             return "\nClass not found: [" + className + "]";

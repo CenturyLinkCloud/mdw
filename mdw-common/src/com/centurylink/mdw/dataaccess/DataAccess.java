@@ -114,7 +114,6 @@ public class DataAccess {
         return myLoaderPersisterVcs;
     }
 
-
     protected static RuntimeDataAccess getVcsRuntimeDataAccess(DatabaseAccess db, File rootDir) throws DataAccessException {
         return new RuntimeDataAccessVcs(db, currentSchemaVersion, supportedSchemaVersion, getBaselineData());
     }
@@ -145,17 +144,18 @@ public class DataAccess {
                             if (gitTrustedHost != null)
                                 DesignatedHostSslVerifier.setupSslVerification(gitTrustedHost);
 
+                            String assetPath = vcGit.getRelativePath(rootDir);
+                            logger.info("Loading assets from path: " + assetPath);
+
                             if (!gitLocal.isDirectory()) {
                                 if (!gitLocal.mkdirs())
                                     throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
                             }
                             if (!vcGit.localRepoExists()) {
-                                logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning with no checkout...");
+                                logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
                                 vcGit.cloneNoCheckout();
+                                vcGit.hardCheckout(branch, assetPath);
                             }
-
-                            String assetPath = vcGit.getRelativePath(rootDir);
-                            logger.info("Loading assets from path: " + assetPath);
 
                             // sanity checks
                             String gitBranch = vcGit.getBranch();
@@ -182,8 +182,7 @@ public class DataAccess {
                                     logger.info("Differences:\n============\n" + diffs);
                                 }
 
-                                String strGitAutoPull = PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL);
-                                boolean gitAutoPull = strGitAutoPull == null ? false : Boolean.parseBoolean(strGitAutoPull);
+                                boolean gitAutoPull = "true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL));
                                 if (gitAutoPull) {
                                     // force checkout all assets
                                     File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
