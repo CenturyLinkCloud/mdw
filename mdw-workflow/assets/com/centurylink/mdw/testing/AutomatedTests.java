@@ -105,10 +105,8 @@ public class AutomatedTests extends JsonRestService {
             else {
                 try {
                     if (segments.length > 6 && segments[6].equals("allTests")) {
-                        if (headers.get("x-hub-signature-verified") != null && headers.get("x-hub-signature-verified").equals("true")) {
-                            testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), "mdwapp", config);
+                            testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
                             return null;
-                        }
                     }
                     else {
                         TestCase singleCase = getTestCase(segments);

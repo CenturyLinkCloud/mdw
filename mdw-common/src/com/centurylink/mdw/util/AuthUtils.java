@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
@@ -36,6 +37,7 @@ public class AuthUtils {
 
     //TODO Add more as required
     public static final String HTTP_BASIC_AUTHENTICATION = "Basic";
+    public static final String GIT_HUB_SECRETE_KEY = "GitHub";
    /**
      * <p>
      * Currently uses the metainfo property "Authorization" and checks
@@ -141,5 +143,29 @@ public class AuthUtils {
 
     public static void oauthAuthenticate(String user, String password) throws MdwSecurityException {
         new OAuthAuthenticator().authenticate(user, password);
+    }
+
+    public static boolean authenticate(Map<String,String> headers, String authMethod, String payload) {
+        headers.remove(Listener.AUTHENTICATED_USER_HEADER); // avoid any fishiness -- only we should populate this header
+        String signature = headers.get("x-hub-signature");
+        logger.debug("signature " + signature);
+        String key = PropertyManager.getProperty(PropertyNames.MDW_GITHUB_SECRET_TOKEN);
+        String payloadSig;
+        try {
+            payloadSig = "sha1=" + HmacSha1Signature.getHMACHexdigestSignature(payload.trim().getBytes("UTF-8"), key);
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
+        }
+        logger.debug("payloadSignature " + payloadSig);
+        if (payloadSig.equals(signature)) {
+            headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
+            if (logger.isDebugEnabled()) {
+                logger.debug("authentication successful for user mdwapp");
+            }
+            return true;
+        }
+        return false;
     }
 }

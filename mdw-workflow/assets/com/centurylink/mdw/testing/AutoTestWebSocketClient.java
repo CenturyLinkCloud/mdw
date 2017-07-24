@@ -80,7 +80,7 @@ public class AutoTestWebSocketClient extends WebSocketClient  implements Startup
                 HttpHelper helper;
                 try {
                     String testCaseUrl = ApplicationContext.getMdwHubUrl() + "/#/tests/" + testCase.getPackage() + "/" + testCase.getName();
-                    String slackWebhook = System.getenv(PropertyNames.MDW_TEAM_SLACK_CHANNEL);
+                    String slackWebhook = System.getenv("MDW_TESTING_SLACK_CHANNEL");
                     if (slackWebhook != null) {
                         helper = HttpHelper.getHttpHelper("POST", new URL(slackWebhook));
                         helper.getConnection().setHeader("Content-Type", "application/json");
