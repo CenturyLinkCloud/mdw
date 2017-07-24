@@ -42,18 +42,20 @@ public class NotFoundServlet extends HttpServlet {
         if (path != null) {
             Mdw mdw = WebAppContext.getMdw();
             AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), path);
-            if (!asset.exists() && asset.getExtension() == null) {
-                // try appending page extensions
-                // TODO: make this a method
-                asset = new AssetInfo(mdw.getAssetRoot(), path + ".html");
-                if (!asset.exists()) {
-                    asset = new AssetInfo(mdw.getAssetRoot(), path + ".md");
+            if (!asset.exists()) {
+                if (asset.getExtension() == null) {
+                    // try appending page extensions
+                    // TODO: make this a method
+                    asset = new AssetInfo(mdw.getAssetRoot(), path + ".html");
                     if (!asset.exists()) {
-                        asset = new AssetInfo(mdw.getAssetRoot(), path + ".jsx");
+                        asset = new AssetInfo(mdw.getAssetRoot(), path + ".md");
+                        if (!asset.exists()) {
+                            asset = new AssetInfo(mdw.getAssetRoot(), path + ".jsx");
+                        }
                     }
                 }
                 if (asset.exists()) {
-                    path += asset.getExtension(); // append extension to the path
+                    path += '.' + asset.getExtension(); // append extension to the path
                 }
                 else {
                     path = "/error/404.html";
@@ -66,8 +68,15 @@ public class NotFoundServlet extends HttpServlet {
                     // TODO: render markdown
                 }
                 else if (asset.getExtension().equals("jsx")) {
+                    String pkg = path.substring(1, path.length() - asset.getName().length() - 1).replace('/', '.');
+                    request.setAttribute("mdw.jsx.asset", pkg + '/' + asset.getName());
+                    request.getRequestDispatcher("/index.html").forward(request, response);
                     // TODO: forward to jsx handler
                     System.out.println("Requested JSX asset: " + asset);
+                    // dispatch to index.html
+                    // which will now include jsx.js
+                    // and this will dynamically build js from components through babel
+                    // request attribute tells which jsx to transpile
                 }
                 else {
                     response.setContentType(asset.getContentType());
@@ -95,8 +104,8 @@ public class NotFoundServlet extends HttpServlet {
                         }
                     }
                 }
+                return;
             }
-            return;
         }
 
         request.getRequestDispatcher("/error/404.html").forward(request, response);
