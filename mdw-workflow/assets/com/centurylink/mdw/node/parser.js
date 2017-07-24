@@ -5,8 +5,10 @@
 // (https://github.com/eclipsesource/J2V8/issues/217)
 try {
   // TODO runner is passed
-  var js = require('fs').readFileSync(__dirname + '/runner.js', 'utf8');
+  var runner = getRunner();
+  var js = require('fs').readFileSync(runner.file, 'utf8');
   require('acorn').parse(js);
+  
   setParseResult({ status: 'OK', message: 'Success' });  
 }
 catch (err) {

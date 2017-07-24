@@ -1,7 +1,7 @@
 {
-  "name": "mdw-postman",
+  "name": "mdw-node",
   "version": "1.0.02",
-  "description": "REST API Testing",
+  "description": "NodeJS for MDW",
   "dependencies": {
     "acorn": "^5.0.3",
     "limberest": "^1.0.4"

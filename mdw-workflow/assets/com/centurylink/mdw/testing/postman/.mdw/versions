@@ -1,12 +1,3 @@
-NodeRunner.java=4
-Runner.js=
-j2v8-4.7.1.jar=1
-movies-queries.jstest=1
-package.json=6
-parser.js=1
-rRunner.js=1 Renamed from e:workspacesmdw6mdw-workflowassetscomcenturylinkmdw	estingpostman	estRunner.js
-runner.js=11
-testRunner.js=1 Renamed from e:workspacesmdw6mdw-workflowassetscomcenturylinkmdw	estingpostman
-unner.js=
+NodeRunner.java=5
 workgroup-create.js=2
 workgroup-retrieve.js=3
