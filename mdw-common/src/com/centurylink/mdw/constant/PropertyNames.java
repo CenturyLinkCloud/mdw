@@ -177,7 +177,7 @@ public class PropertyNames {
     public static final String MDW_GIT_BRANCH = "mdw.git.branch";
     public static final String MDW_GIT_TRUSTED_HOST = "mdw.git.trusted.host";
     public static final String MDW_GIT_AUTO_PULL = "mdw.git.auto.pull";
-    public static final String MDW_GITHUB_SECRET_TOKEN = "mdw.github.secret.token";
+    public static final String MDW_GITHUB_SECRET_TOKEN = "MDW_GITHUB_SECRET_TOKEN";
 
     // Task with these status will not be cancelled when process instance completes
     public static final String FINAL_TASK_STATUSES = "mdw.task.statuses.final";
