@@ -23,8 +23,9 @@ When you drag a scripting activity onto your process canvas, the first configura
 In Eclipse Designer, this appears as a dropdown on the Script tab in the properties view for an "Execute Script" activity, or on the Expression tab for a "Script Expression Evaluator". 
 <br/><br/>
 Groovy is the recommended general-purpose scripting language for MDW.  With Groovy scripting you have the ability to reference classes and closures declared in separate libraries, leading to greater power and flexibility.
-Also, if you have the <a href="http://dist.springsource.org/snapshot/GRECLIPSE/e4.6">Groovy Plug-In</a> installed, you can set breakpoints and debug your scripts and libraries in Eclipse.   
-<br/><br/>
+<p>Also, if you have the Groovy Plug-In installed in your Eclipse, you can set breakpoints and debug your scripts and libraries in Eclipse. 
+If you have not installed the Groovy Plug-In in your Eclipse, follow <a href="http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/">this link</a> to installed it. 
+</p>
 JavaScript is supported via the Java 8 generic ScriptEngine mechanism.
 <br/><br/>
 Whichever scripting language you choose, the activities behave similarly, with the main difference being the syntax of the script itself.
@@ -104,7 +105,7 @@ If you change a script or library and save it in Eclipse, the cache is automatic
 
 <br/>
 <h3>Debugging Groovy Scripts</h3>
-If you have the <a href="http://dist.springsource.org/snapshot/GRECLIPSE/e4.6">Groovy Plug-In</a> installed on your eclipse, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
+If you have the Groovy Plug-In http://dist.springsource.org/snapshot/GRECLIPSE/e4.6 installed on your eclipse, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
 This only works for local (not remote) workflow projects, and the server must be running in debug mode.
 When a breakpoint is encountered, you can evaluate variables and change values just as you would when debugging Java code in Eclipse.
 Note that in the context of a script activity, there is a wrapper class that contains your process variable bind values.
