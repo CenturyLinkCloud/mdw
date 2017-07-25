@@ -70,7 +70,7 @@ permalink: /docs/help/
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
   <li><a href='eventmgr.html'>Event Manager</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
-  <li><a href='reports.html'>MDW Reports</a></li>
+  <li><a href='todo.html'>MDW Reports</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
 </ul>
 </div>

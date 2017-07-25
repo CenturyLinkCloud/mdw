@@ -51,7 +51,7 @@ and it should always invoke the base constructor first.</p>
    and Eclipse IDE makes it easy to find out what methods are available.
 <p>Additional notes:</p>
 <ul>
-<li>Do not reference to variables by their names directly – use attributes to get their names.
+<li>Do not reference to variables by their names directly, use attributes to get their names instead.
     In this way, your implementor can easily be reused in a different place, as
     variable names can be configured at design time.</li>
 <li>Use getAttributeValue, so that attribute value
@@ -60,7 +60,7 @@ and it should always invoke the base constructor first.</p>
 you will need to implement resume(), or override it from an existing implementor implementing the activity interface. </li> 
 <li>Use setReturnCode() to set return code (default null). You can also set it to <code>ABORT:</code>, 
 <code>CORRECT:</code>, <code>DELAY:</code>, <code>ABORT:mycode</code>, etc.
- Do not set it to <code>ERROR:</code> – throw exception instead.  </li>
+ Do not set it to <code>ERROR:</code> throw exception instead.  </li>
 </ul>
 
 <h2>Attribute Descriptor</h2>
