@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.util;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -30,32 +28,12 @@ public class HmacSha1Signature {
     //TODO Add more as required
     public static final String ALGORITHM = "HmacSHA1";
 
-
-    public static void main(String[] args) {
-        System.out.println("16e815d41ae493afca08ec4b8428f79e54dbeeba");
-        try {
-            //byte[] payloadBytes = Files.readAllBytes(new File("C:/workspaces/mdw6/mdw-common/src/com/centurylink/mdw/util/pay-output.json").toPath());
-            byte[] payloadBytes = Files.readAllBytes(new File("C:/Users/aa56486/Downloads/webhook.json").toPath());
-            String hexEncoded = HmacSha1Signature.getHMACHexdigestSignature(payloadBytes,"mdwcoreteam");
-            System.out.println(hexEncoded);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
-    public static String getHMACHexdigestSignature (byte[] payloadBytes, String key) {
+    public static String getHMACHexdigestSignature (byte[] payloadBytes, String key)
+    throws InvalidKeyException, NoSuchAlgorithmException {
         SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), ALGORITHM);
-        String hexEncoded = "";
-        try {
-            Mac mac = Mac.getInstance(ALGORITHM);
-            mac.init(keySpec);
-            byte[] rawHmac = mac.doFinal(payloadBytes);
-            hexEncoded = Hex.encodeHexString(rawHmac);
-        }
-        catch (InvalidKeyException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return hexEncoded;
+        Mac mac = Mac.getInstance(ALGORITHM);
+        mac.init(keySpec);
+        byte[] rawHmac = mac.doFinal(payloadBytes);
+        return Hex.encodeHexString(rawHmac);
     }
 }

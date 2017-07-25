@@ -127,11 +127,11 @@ public abstract class ServiceServlet extends HttpServlet {
         return metaInfo;
     }
 
-    protected void authenticate(HttpServletRequest request, Map<String,String> headers) throws ServiceException {
+    protected void authenticate(HttpServletRequest request, Map<String,String> headers, String payload) throws ServiceException {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
         if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase())) {
             // perform http basic auth, which populates the auth user header
-            AuthUtils.authenticate(headers, AuthUtils.HTTP_BASIC_AUTHENTICATION);
+            AuthUtils.authenticate(AuthUtils.HTTP_BASIC_AUTHENTICATION, headers);
         }
         else {
             // check for user authenticated in session
@@ -170,21 +170,9 @@ public abstract class ServiceServlet extends HttpServlet {
                     }
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
-                    try {
-                        BufferedReader reader = request.getReader();
-                        StringBuffer requestBuffer = new StringBuffer(request.getContentLength() < 0 ? 0 : request.getContentLength());
-                        String line;
-                        while ((line = reader.readLine()) != null)
-                            requestBuffer.append(line).append('\n');
-                        String payload = requestBuffer.substring(0, requestBuffer.length() -2);
-                        // perform http GitGub auth, which populates the auth user header
-                        AuthUtils.authenticate(headers, AuthUtils.GIT_HUB_SECRETE_KEY, payload);
+                    // perform http GitGub auth, which populates the auth user header
+                    if (AuthUtils.authenticate(AuthUtils.GIT_HUB_SECRET_KEY, headers, payload))
                         return;
-                    }
-                    catch (IOException e) {
-                        throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
-                    }
-
                 }
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
                 throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
