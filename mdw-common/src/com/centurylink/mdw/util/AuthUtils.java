@@ -34,8 +34,28 @@ public class AuthUtils {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    //TODO Add more as required
     public static final String HTTP_BASIC_AUTHENTICATION = "Basic";
+    public static final String GIT_HUB_SECRET_KEY = "GitHub";
+    public static final String OAUTH_AUTHENTICATION = "OAuth";
+
+    public static boolean authenticate(String authMethod, Map<String,String> headers) {
+        return authenticate(authMethod, headers);
+    }
+
+    public static boolean authenticate(String authMethod, Map<String,String> headers, String payload) {
+        // avoid any fishiness -- only we should populate this header
+        headers.remove(Listener.AUTHENTICATED_USER_HEADER);
+        if (authMethod.equals(HTTP_BASIC_AUTHENTICATION)) {
+            return authenticateHttpBasic(headers);
+        }
+        else if (authMethod.equals(GIT_HUB_SECRET_KEY)) {
+            return authenticateGitHubSecretKey(headers, payload);
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported authentication method: " + authMethod);
+        }
+    }
+
    /**
      * <p>
      * Currently uses the metainfo property "Authorization" and checks
@@ -49,8 +69,7 @@ public class AuthUtils {
      * @param headers
      * @return
      */
-    public static boolean authenticate(Map<String,String> headers, String authMethod) {
-        headers.remove(Listener.AUTHENTICATED_USER_HEADER); // avoid any fishiness -- only we should populate this header
+    private static boolean authenticateHttpBasic(Map<String,String> headers) {
         String hdr = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
         if (hdr == null)
             hdr = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
@@ -78,10 +97,27 @@ public class AuthUtils {
         }
     }
 
+    private static boolean authenticateGitHubSecretKey(Map<String,String> headers, String payload) {
+        String signature = headers.get(Listener.X_HUB_SIGNATURE);
+        String key = System.getenv(PropertyNames.MDW_GITHUB_SECRET_TOKEN);
+        try {
+            String payloadSig = "sha1=" + HmacSha1Signature.getHMACHexdigestSignature(payload.trim().getBytes("UTF-8"), key);
+            if (payloadSig.equals(signature)) {
+                headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
+                return true;
+            }
+        }
+        catch (Exception ex) {
+            logger.severeException("Secret key authentication failure", ex);
+            return false;
+        }
+        return false;
+    }
+
     /**
      * @return true if no authentication at all or authentication is successful
      */
-    public static boolean checkBasicAuthenticationHeader(Map<String,String> headers) {
+    private static boolean checkBasicAuthenticationHeader(Map<String,String> headers) {
 
         String authorizationHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
         if (authorizationHeader == null)
@@ -142,4 +178,5 @@ public class AuthUtils {
     public static void oauthAuthenticate(String user, String password) throws MdwSecurityException {
         new OAuthAuthenticator().authenticate(user, password);
     }
+
 }

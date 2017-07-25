@@ -104,11 +104,17 @@ public class AutomatedTests extends JsonRestService {
             }
             else {
                 try {
-                    TestCase singleCase = getTestCase(segments);
-                    if (singleCase != null)
-                        testingServices.executeCase(singleCase, user, config);
-                    else
-                        testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                    if (segments.length > 6 && segments[6].equals("allTests")) {
+                            testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
+                            return null;
+                    }
+                    else {
+                        TestCase singleCase = getTestCase(segments);
+                        if (singleCase != null)
+                            testingServices.executeCase(singleCase, user, config);
+                        else
+                            testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                    }
                 }
                 catch (IOException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());

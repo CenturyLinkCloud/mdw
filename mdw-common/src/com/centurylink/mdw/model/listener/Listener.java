@@ -63,6 +63,8 @@ public interface Listener {
     public static final String METAINFO_RESOURCE_SUBPATH = "ResourceSubPath"; // after any '/' in RequestPath
 
     public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+    public static final String X_HUB_SIGNATURE = "x-hub-signature";
+
     // Will be populated when authentication happens
     public static final String AUTHENTICATED_USER_HEADER = "AuthenticatedUser";
     // Will be populated when authentication fails

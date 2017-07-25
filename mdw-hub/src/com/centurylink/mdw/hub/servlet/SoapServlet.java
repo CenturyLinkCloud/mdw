@@ -216,7 +216,7 @@ public class SoapServlet extends ServiceServlet {
             ListenerHelper helper = new ListenerHelper();
 
             try {
-               authenticate(request, metaInfo);
+               authenticate(request, metaInfo, requestXml);
                String handlerResponse = helper.processEvent(requestXml, metaInfo);
 
                try {

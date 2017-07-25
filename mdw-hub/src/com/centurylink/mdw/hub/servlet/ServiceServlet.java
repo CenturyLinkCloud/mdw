@@ -128,11 +128,11 @@ public abstract class ServiceServlet extends HttpServlet {
         return metaInfo;
     }
 
-    protected void authenticate(HttpServletRequest request, Map<String,String> headers) throws ServiceException {
+    protected void authenticate(HttpServletRequest request, Map<String,String> headers, String payload) throws ServiceException {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
         if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase())) {
-            // perform http basic auth, which populatest the auth user header
-            AuthUtils.authenticate(headers, AuthUtils.HTTP_BASIC_AUTHENTICATION);
+            // perform http basic auth, which populates the auth user header
+            AuthUtils.authenticate(AuthUtils.HTTP_BASIC_AUTHENTICATION, headers);
         }
         else {
             // check for user authenticated in session
@@ -169,6 +169,11 @@ public abstract class ServiceServlet extends HttpServlet {
                         if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + allow))
                             return;
                     }
+                }
+                else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
+                    // perform http GitGub auth, which populates the auth user header
+                    if (AuthUtils.authenticate(AuthUtils.GIT_HUB_SECRET_KEY, headers, payload))
+                        return;
                 }
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
                 throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");

@@ -228,7 +228,7 @@ public class RestServlet extends ServiceServlet {
             }
         }
 
-        authenticate(request, metaInfo);
+        authenticate(request, metaInfo, requestString);
         Set<String> reqHeaderKeys = new HashSet<String>(metaInfo.keySet());
         String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
         populateResponseHeaders(reqHeaderKeys, metaInfo, response);
