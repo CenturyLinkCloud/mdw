@@ -13,7 +13,7 @@ readily adopted by developers.  But in addition, MDW test case scripting offers 
 technical background to quickly build and run automated tests.</p>
 
 <p><span style="text-decoration:underline">Note:</span> To run Groovy test cases in Eclipse you'll need to follow this link 
-<a href="http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/">Recommended Plug-Ins</a> to install Groovy Plugin.  This will also
+<a href="http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/">Recommended Plug-Ins</a> to install Groovy Plug-In.  This will
 make the following examples more readable since they'll appear syntax-highlighted in the editor.</p>
 
 <h3>Sections in This Guide</h3>
@@ -75,7 +75,7 @@ start "com.centurylink.mdw.mytests/MyProcess v1.2"
 start "com.centurylink.mdw.mytests/MyProcess v[1.2,2)"
 </pre>
 
-<p>Frequently when launching a process you"ll want specify input variable values, which can be done this way:</p>
+<p>Frequently when launching a process you"ll want to specify input variable values, which can be done this way:</p>
 <pre>
 start process("com.centurylink.mdw.mytests/MyProcess") {
     // set the input variables firstName and LastName
@@ -494,5 +494,8 @@ verify response {
 <p>An easy way to initially populate the expected response is to run the test case once and copy/paste
 the actual response from the Text Exec view console window.  In your expected response content you can 
 embed dynamic expressions as described in <a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
+
+<h3><a id="unitTests">Unit Tests</a></h3>
+<p>TODO: describe unit tests with examples</p>
 </body>
 </html>
