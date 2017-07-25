@@ -80,13 +80,20 @@ public class Init extends Setup {
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
         System.out.println("Initializing " + project + "...");
         projectDir = new File(project);
-        if (projectDir.exists()) {
-            if (!projectDir.isDirectory() || projectDir.list().length > 0)
-                throw new IOException(projectDir + " already exists and is not an empty directory");
-        }
-        else {
-            if (!projectDir.mkdirs())
-                throw new IOException("Unable to create destination: " + projectDir);
+        int slashIndex = project.lastIndexOf("/");
+        if (slashIndex > 0)
+            project = project.substring(slashIndex + 1);
+        else
+        {
+            if (projectDir.exists()) {
+                if (!projectDir.isDirectory() || projectDir.list().length > 0)
+                    throw new IOException(
+                            projectDir + " already exists and is not an empty directory");
+            }
+            else {
+                if (!projectDir.mkdirs())
+                    throw new IOException("Unable to create destination: " + projectDir);
+            }
         }
 
         if (!releasesUrl.endsWith("/"))
