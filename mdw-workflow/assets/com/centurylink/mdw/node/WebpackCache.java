@@ -58,7 +58,7 @@ public class WebpackCache implements CacheService {
         File file = null;
         synchronized(WebpackCache.class) {
             file = webpackAssets.get(asset);
-            if (file == null) {
+            if (file == null || file.lastModified() < asset.getFile().lastModified()) {
                 file = compile(asset);
             }
         }

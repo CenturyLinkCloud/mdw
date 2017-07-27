@@ -16,10 +16,11 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -30,18 +31,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -51,12 +48,27 @@ import com.centurylink.mdw.util.log.StandardLogger;
 @WebServlet(urlPatterns={"/jsx.js", "*.jsx"})
 public class JsxServlet extends HttpServlet {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
+    private static final String WEBPACK_CACHE_CLASS = NODE_PACKAGE + ".WebpackCache";
     private AssetServices assetServices;
+    private CacheService webpackCacheInstance;
+    private Method compiledAssetGetter;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         this.assetServices = ServiceLocator.getAssetServices();
+
+        try {
+            Class<?> webpackCacheClass = CompiledJavaCache.getResourceClass(WEBPACK_CACHE_CLASS,
+                    getClass().getClassLoader(), PackageCache.getPackage(NODE_PACKAGE));
+            webpackCacheInstance = CacheRegistration.getInstance().getCache(WEBPACK_CACHE_CLASS);
+            compiledAssetGetter = webpackCacheClass.getMethod("getCompiled", AssetInfo.class);
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new ServletException(ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -67,8 +79,31 @@ public class JsxServlet extends HttpServlet {
                 response.getWriter().println(getJsxJs());
             }
             else if (request.getServletPath().endsWith(".jsx")) {
-                response.getWriter().println(getTranspiledJsx(request.getServletPath()));
+                String path = request.getServletPath();
+                String p = path.substring(0);
+                int lastSlash = p.lastIndexOf('/');
+                if (lastSlash == -1)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Bad path: " + path);
 
+                String pkgName = p.substring(0, lastSlash).replace('/', '.');
+                String assetPath = pkgName + p.substring(lastSlash);
+                AssetInfo jsxAsset = assetServices.getAsset(assetPath);
+
+                File file = (File) compiledAssetGetter.invoke(webpackCacheInstance, jsxAsset);
+
+                if (shouldCache(file, request.getHeader("If-None-Match"))) {
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                }
+                else {
+                    response.setHeader("ETag", String.valueOf(file.lastModified()));
+                    OutputStream out = response.getOutputStream();
+                    try (InputStream in = new FileInputStream(file)) {
+                        int read = 0;
+                        byte[] bytes = new byte[1024 * 16];
+                        while((read = in.read(bytes)) != -1)
+                            out.write(bytes, 0, read);
+                    }
+                }
             }
         }
         catch (ServiceException ex) {
@@ -80,6 +115,18 @@ public class JsxServlet extends HttpServlet {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
+        }
+    }
+
+    private boolean shouldCache(File file, String ifNoneMatchHeader) {
+        if (ifNoneMatchHeader == null)
+            return false; // no cache
+        try {
+            long clientTime = Long.parseLong(ifNoneMatchHeader);
+            return clientTime >= file.lastModified();
+        }
+        catch (NumberFormatException ex) {
+            return false;
         }
     }
 
@@ -106,32 +153,4 @@ public class JsxServlet extends HttpServlet {
         return sb.toString();
     }
 
-    private String getTranspiledJsx(String path) throws ServiceException {
-        String p = path.substring(0);
-        int lastSlash = p.lastIndexOf('/');
-        if (lastSlash == -1)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Bad path: " + path);
-
-        // TODO: cache file if no need to compile
-        File outputFile = new File(ApplicationContext.getTempDirectory() + "/jsx" + path);
-        JSONObject json;
-        try {
-            String pkgName = p.substring(0, lastSlash).replace('/', '.');
-            String assetPath = pkgName + p.substring(lastSlash);
-            AssetInfo jsxAsset = assetServices.getAsset(assetPath);
-            String webpackCacheClass = "com.centurylink.mdw.node.WebpackCache";
-            Package pkg = PackageCache.getPackage(pkgName);
-//            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
-//            Object runner = nodeRunnerClass.newInstance();
-//            Method webpackMethod = nodeRunnerClass.getMethod("webpack", AssetInfo.class, File.class);
-//            json = (JSONObject)webpackMethod.invoke(runner, jsxAsset, outputFile);
-            return new String(Files.readAllBytes(Paths.get(outputFile.getPath())));
-        }
-        catch (ServiceException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
-    }
 }
