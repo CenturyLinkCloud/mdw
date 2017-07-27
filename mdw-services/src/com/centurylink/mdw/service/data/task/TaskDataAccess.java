@@ -88,18 +88,12 @@ public class TaskDataAccess extends CommonDataAccess {
                 q = "SHOW COLUMNS FROM `task_instance` LIKE 'task_title'";
             else
                 q = "select column_name from all_tab_columns where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
-            try {
-                db.openConnection();
-                if (db.runSelect(q, null).next()) {
-                    hasTaskTitleColumn = true;
-                    TASK_INSTANCE_SELECT_SHALLOW += ", TI.TASK_TITLE";
-                }
-                TASK_INSTANCE_SELECT = "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
-                        " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID, ui.CUID, ui.NAME as USER_NAME";
+            if (db.runSelect(q, null).next()) {
+                hasTaskTitleColumn = true;
+                TASK_INSTANCE_SELECT_SHALLOW += ", TI.TASK_TITLE";
             }
-            finally {
-                db.closeConnection();
-            }
+            TASK_INSTANCE_SELECT = "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
+                    " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID, ui.CUID, ui.NAME as USER_NAME";
         }
         return deep ? TASK_INSTANCE_SELECT : TASK_INSTANCE_SELECT_SHALLOW;
     }
@@ -420,6 +414,7 @@ public class TaskDataAccess extends CommonDataAccess {
             throws DataAccessException {
         try {
             StringBuffer buff = new StringBuffer();
+            db.openConnection();
             buff.append("select ").append(getTaskInstanceSelect(true));
             if (db.isMySQL()) {
                 buff.append(" from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id ");
@@ -434,7 +429,6 @@ public class TaskDataAccess extends CommonDataAccess {
             if(logger.isMdwDebugEnabled()){
                 logger.mdwDebug("getTaskInstanceAllInfo() Query-->"+query) ;
             }
-            db.openConnection();
             ResultSet rs = db.runSelect(query, pTaskInstId);
             if (rs.next()) {
                 TaskInstance taskInst = getTaskInstanceSub(rs, true);
@@ -642,6 +636,7 @@ public class TaskDataAccess extends CommonDataAccess {
             if (query.getMax() != -1)
                 sql.append(db.pagingQueryPrefix());
 
+            db.openConnection();
             sql.append("select ").append(getTaskInstanceSelect(true)).append("\n");
             StringBuilder countSql = new StringBuilder();
             countSql.append("select count(ti.task_instance_id)\n");
@@ -689,7 +684,6 @@ public class TaskDataAccess extends CommonDataAccess {
                 sql.append(orderBy);
 
             Long total = 0L;
-            db.openConnection();
             ResultSet rs = db.runSelect(countSql.toString(), null);
             if (rs.next())
                 total = rs.getLong(1);
