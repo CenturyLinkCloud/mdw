@@ -39,7 +39,7 @@ public class AuthUtils {
     public static final String OAUTH_AUTHENTICATION = "OAuth";
 
     public static boolean authenticate(String authMethod, Map<String,String> headers) {
-        return authenticate(authMethod, headers);
+        return authenticate(authMethod, headers, null);
     }
 
     public static boolean authenticate(String authMethod, Map<String,String> headers, String payload) {
