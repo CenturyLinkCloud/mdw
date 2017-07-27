@@ -49,9 +49,6 @@ public class NotFoundServlet extends HttpServlet {
                     asset = new AssetInfo(mdw.getAssetRoot(), path + ".html");
                     if (!asset.exists()) {
                         asset = new AssetInfo(mdw.getAssetRoot(), path + ".md");
-                        if (!asset.exists()) {
-                            asset = new AssetInfo(mdw.getAssetRoot(), path + ".jsx");
-                        }
                     }
                 }
                 if (asset.exists()) {
@@ -66,17 +63,6 @@ public class NotFoundServlet extends HttpServlet {
             if (asset.exists()) {
                 if (asset.getExtension().equals("md")) {
                     // TODO: render markdown
-                }
-                else if (asset.getExtension().equals("jsx")) {
-                    String pkg = path.substring(1, path.length() - asset.getName().length() - 1).replace('/', '.');
-                    request.setAttribute("mdw.jsx.asset", pkg + '/' + asset.getName());
-                    request.getRequestDispatcher("/index.html").forward(request, response);
-                    // TODO: forward to jsx handler
-                    System.out.println("Requested JSX asset: " + asset);
-                    // dispatch to index.html
-                    // which will now include jsx.js
-                    // and this will dynamically build js from components through babel
-                    // request attribute tells which jsx to transpile
                 }
                 else {
                     response.setContentType(asset.getContentType());

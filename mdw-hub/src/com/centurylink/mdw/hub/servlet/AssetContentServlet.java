@@ -54,6 +54,7 @@ import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -98,7 +99,9 @@ public class AssetContentServlet extends HttpServlet {
         if ("packages".equals(path)) {
             String packages = request.getParameter("packages");
             if (packages == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameter: 'packages'");
+                StatusResponse sr = new StatusResponse(Status.BAD_REQUEST, "Missing parameter: 'packages'");
+                response.setStatus(sr.getStatus().getCode());
+                response.getWriter().println(sr.getJson().toString(2));
             }
             else {
                 response.setHeader("Content-Disposition", "attachment;filename=\"packages.zip\"");
@@ -117,7 +120,9 @@ public class AssetContentServlet extends HttpServlet {
         else {
             if (path.indexOf('/') == -1) {
                 // must be qualified
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                StatusResponse sr = new StatusResponse(Status.NOT_FOUND);
+                response.setStatus(sr.getStatus().getCode());
+                response.getWriter().println(sr.getJson().toString(2));
                 return;
             }
 
@@ -155,7 +160,9 @@ public class AssetContentServlet extends HttpServlet {
                 }
                 else {
                     if (!assetFile.isFile()) {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Asset file '" + assetFile + "' not found");
+                        StatusResponse sr = new StatusResponse(Status.NOT_FOUND, "Asset file '" + assetFile + "' not found");
+                        response.setStatus(sr.getStatus().getCode());
+                        response.getWriter().println(sr.getJson().toString(2));
                         return;
                     }
                     in = new FileInputStream(assetFile);
@@ -310,12 +317,16 @@ public class AssetContentServlet extends HttpServlet {
             catch (ServiceException ex) {
                 logger.severeException(ex.getMessage(), ex);
                 response.getWriter().write(ex.getStatusResponse().getJson().toString(2));
-                response.sendError(ex.getCode(), ex.getMessage());
+                StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
+                response.setStatus(sr.getStatus().getCode());
+                response.getWriter().println(sr.getJson().toString(2));
             }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+            StatusResponse sr = new StatusResponse(Status.INTERNAL_SERVER_ERROR, ex.getMessage());
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
         }
     }
 

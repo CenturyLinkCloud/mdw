@@ -41,12 +41,11 @@ public class RootServlet extends HttpServlet {
 
     private static final String MDW_ADMIN_JS = "<script src=\"js/admin.js\"></script>";
     private static final String MDW_ADMIN_CSS = "<link rel=\"stylesheet\" href=\"css/mdw-admin.css\">";
-    private static final String HEAD_CLOSE = "</head>";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String path = request.getServletPath();
-        if (path.equals("/") || path.equals("/root") || path.equals("/index.html")) {
+        if (path.equals("/") || path.equals("/root") || path.equals("/index.html") || path.equals("/index.html/#/bugs")) {
             if (new File(WebAppContext.getMdw().getOverrideRoot() + "/index.html").isFile()) {
                 request.getRequestDispatcher("/customContent/index.html").forward(request, response);
             }
@@ -74,9 +73,8 @@ public class RootServlet extends HttpServlet {
 
                     contents = ExpressionUtil.substitute(contents, WebAppContext.getMdw(), true);
                     response.getWriter().println("<!-- processed by MDW root servlet -->");
-                    String jsxAsset = (String)request.getAttribute("mdw.jsx.asset");
                     for (String line : contents.split("\\r?\\n")) {
-                        response.getWriter().println(processLine(line, jsxAsset));
+                        response.getWriter().println(processLine(line));
                     }
                 }
                 catch (IOException ex) {
@@ -97,7 +95,7 @@ public class RootServlet extends HttpServlet {
      * Inserts custom CSS and JS files.
      * TODO: redundantly re-adds override files (not harmful but ugly)
      */
-    private String processLine(String line, String jsxAsset) throws IOException {
+    private String processLine(String line) throws IOException {
         if (line.trim().equals(MDW_ADMIN_CSS)) {
             // insert custom user stylesheets
             String indent = line.substring(0, line.indexOf(MDW_ADMIN_CSS));
@@ -121,12 +119,6 @@ public class RootServlet extends HttpServlet {
                 insert.append("\"></script>");
             }
             return insert.toString();
-        }
-        else if (line.trim().equals("<head>") && jsxAsset != null) {
-            return line + "\n" + "  <base href=\"http://localhost:8080" + WebAppContext.getMdw().getHubRoot() + "/\">\n";
-        }
-        else if (line.trim().equals(HEAD_CLOSE) && jsxAsset != null) {
-            return "  <script src=\"asset/" + jsxAsset + "\"></script>\n" + line;
         }
         else {
             return line;

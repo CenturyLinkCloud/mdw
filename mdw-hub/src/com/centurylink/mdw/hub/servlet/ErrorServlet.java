@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.auth.MdwSecurityException;
+import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
 
 /**
  * Error must already have been logged elsewhere.
@@ -35,13 +37,19 @@ public class ErrorServlet extends HttpServlet {
     throws ServletException, IOException {
         Object error = request.getAttribute("error");
         if (error instanceof MdwSecurityException) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, ((MdwSecurityException)error).getMessage());
+            StatusResponse sr = new StatusResponse(Status.FORBIDDEN, ((MdwSecurityException)error).getMessage());
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
         }
         else if (error != null) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, error.toString());
+            StatusResponse sr = new StatusResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, error.toString());
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
         }
         else {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unknown error");
+            StatusResponse sr = new StatusResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unknown error");
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
         }
     }
 

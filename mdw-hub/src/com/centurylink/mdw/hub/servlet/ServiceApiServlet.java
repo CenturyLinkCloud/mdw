@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.service.api.MdwSwaggerCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -64,8 +66,11 @@ public class ServiceApiServlet extends HttpServlet {
             pathInfo += JSON_EXT;
         }
         String ext = pathInfo.substring(dot);
-        if (!ext.equals(YAML_EXT) && !ext.equals(JSON_EXT))
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unsupported extension: " + ext);
+        if (!ext.equals(YAML_EXT) && !ext.equals(JSON_EXT)) {
+            StatusResponse sr = new StatusResponse(Status.BAD_REQUEST, "Unsupported extension: " + ext);
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
+        }
         else {
             String root = pathInfo.substring(0, dot);
             String svcPath;
@@ -101,7 +106,9 @@ public class ServiceApiServlet extends HttpServlet {
             catch (Exception ex) {
                 String msg = "Swagger generation failure for : " + pathInfo;
                 logger.severeException(msg, ex);
-                response.sendError(501, msg);
+                StatusResponse sr = new StatusResponse(Status.NOT_IMPLEMENTED, msg);
+                response.setStatus(sr.getStatus().getCode());
+                response.getWriter().println(sr.getJson().toString(2));
             }
         }
     }
