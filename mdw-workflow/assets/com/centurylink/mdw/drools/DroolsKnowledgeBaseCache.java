@@ -39,6 +39,7 @@ import org.kie.api.runtime.KieContainer;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.impl.AssetCache;
@@ -47,7 +48,6 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 

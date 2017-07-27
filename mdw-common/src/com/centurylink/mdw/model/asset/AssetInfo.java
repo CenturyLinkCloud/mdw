@@ -187,8 +187,22 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         return String.valueOf(getFile().lastModified());
     }
 
+    @Override
     public int compareTo(AssetInfo other) {
         return getName().compareToIgnoreCase(other.getName());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof AssetInfo)
+            return file.equals(((AssetInfo)other).file);
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return file.hashCode();
     }
 
     /**

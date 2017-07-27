@@ -119,20 +119,12 @@ public class JsxServlet extends HttpServlet {
             String pkgName = p.substring(0, lastSlash).replace('/', '.');
             String assetPath = pkgName + p.substring(lastSlash);
             AssetInfo jsxAsset = assetServices.getAsset(assetPath);
-            String runnerClass = "com.centurylink.mdw.node.WebpackJsx";
+            String webpackCacheClass = "com.centurylink.mdw.node.WebpackCache";
             Package pkg = PackageCache.getPackage(pkgName);
-            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
-            Object runner = nodeRunnerClass.newInstance();
-            Method webpackMethod = nodeRunnerClass.getMethod("webpack", AssetInfo.class, File.class);
-            json = (JSONObject)webpackMethod.invoke(runner, jsxAsset, outputFile);
-            if (logger.isDebugEnabled()) {
-                logger.debug("*** Webpack stats:\n" + json.toString(2));
-            }
-            if (json.has("errors")) {
-                JSONArray errors = json.getJSONArray("errors");
-                if (errors.length() > 0)
-                    throw new ServiceException(new Status(Status.OK, "console.error(JSON.stringify({webpackErrors: " + errors + "}, null, 2));"));
-            }
+//            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+//            Object runner = nodeRunnerClass.newInstance();
+//            Method webpackMethod = nodeRunnerClass.getMethod("webpack", AssetInfo.class, File.class);
+//            json = (JSONObject)webpackMethod.invoke(runner, jsxAsset, outputFile);
             return new String(Files.readAllBytes(Paths.get(outputFile.getPath())));
         }
         catch (ServiceException ex) {

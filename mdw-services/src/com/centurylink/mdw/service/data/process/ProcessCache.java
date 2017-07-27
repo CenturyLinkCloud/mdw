@@ -20,13 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -36,7 +35,7 @@ import com.centurylink.mdw.util.timer.CodeTimer;
 /**
  * Lazily loads the Processes for use by the RuntimeEngine.
  */
-public class ProcessCache implements CacheEnabled, CacheService {
+public class ProcessCache implements CacheService {
 
     public static String name = "ProcessCache";
     private static ProcessCache singleton = null;

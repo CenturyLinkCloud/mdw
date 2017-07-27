@@ -24,13 +24,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.RemoteAccess;
 import com.centurylink.mdw.model.Changes;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -578,37 +577,6 @@ public class Process extends Asset implements Jsonable {
         deletedTransitions.add(workTransID);
     }
 
-    @Override
-    public Process getNextVersion() {
-        return (Process)super.getNextVersion();
-    }
-
-    @Override
-    public Process getPrevVersion() {
-        return (Process)super.getPrevVersion();
-    }
-
-    public String getNewVersionString(boolean major) {
-        int version = getNewVersion(major);
-        return version/1000 + "." + version%1000;
-    }
-
-    public String getRemoteServer() {
-        return remoteServer;
-    }
-
-    public void setRemoteServer(String v) {
-        remoteServer = v;
-    }
-
-    public boolean isRemote() {
-        return remoteServer!=null;
-    }
-
-    public String getRemoteName() {
-        return getProcessName() + RemoteAccess.REMOTE_NAME_DELIMITER + remoteServer;
-    }
-
     public boolean isEmbeddedProcess() {
         String procVisibility = getAttribute(WorkAttributeConstant.PROCESS_VISIBILITY);
         return (procVisibility != null && procVisibility.equals(ProcessVisibilityConstant.EMBEDDED));
@@ -756,33 +724,6 @@ public class Process extends Asset implements Jsonable {
             return (v==null)?0:Integer.parseInt(v);
         } catch (NumberFormatException e) {
             return 0;
-        }
-    }
-
-    public void remove(Process processVO) {
-        Process prev = null;
-        while ((prev = getPrevVersion()) != null) {
-            if (prev.equals(processVO)) {
-                if (prev.getPrevVersion() != null) {
-                    prev.getPrevVersion().setNextVersion(prev.getNextVersion());
-                }
-                if (prev.getNextVersion() != null) {
-                    prev.getNextVersion().setPrevVersion(prev.getPrevVersion());
-                }
-                break;
-            }
-        }
-        Process next = null;
-        while ((next = getNextVersion()) != null) {
-            if (next.equals(processVO)) {
-                if (next.getPrevVersion() != null) {
-                    next.getPrevVersion().setNextVersion(next.getNextVersion());
-                }
-                if (getNextVersion() != null) {
-                    getNextVersion().setPrevVersion(next.getPrevVersion());
-                }
-                break;
-            }
         }
     }
 
