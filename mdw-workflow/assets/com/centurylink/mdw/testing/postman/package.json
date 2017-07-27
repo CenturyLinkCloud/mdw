@@ -1,9 +1,0 @@
-{
-  "name": "mdw-postman",
-  "version": "1.0.02",
-  "description": "REST API Testing",
-  "dependencies": {
-    "acorn": "^5.0.3",
-    "limberest": "^1.0.4"
-  }
-}

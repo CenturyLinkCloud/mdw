@@ -27,6 +27,8 @@ import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.auth.OAuthAuthenticator;
 import com.centurylink.mdw.hub.context.WebAppContext;
+import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -43,10 +45,14 @@ public class LoginServlet extends HttpServlet {
         String authMethod = WebAppContext.getMdw().getAuthMethod();
         if ("ct".equals(authMethod))
             request.getRequestDispatcher("auth/ctLogin.html").forward(request, response);
-        else if ("af".equals(authMethod))
+        else if ("af".equals(authMethod)) {
             request.getRequestDispatcher("auth/afLogin.html").forward(request, response);
-        else
-            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Unsupported authMethod: " + authMethod);
+        }
+        else {
+            StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED, "Unsupported authMethod: " + authMethod);
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
+        }
     }
 
     @Override

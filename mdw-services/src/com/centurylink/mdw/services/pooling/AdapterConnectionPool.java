@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.PoolableAdapter;
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -33,7 +33,6 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.CertifiedMessageManager;
@@ -45,7 +44,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 public class AdapterConnectionPool
-        extends MDWConnectionPool implements CacheEnabled, CacheService {
+        extends MDWConnectionPool implements CacheService {
 
     public static final String PROP_ADAPTER = "Adapter";
     public static final String PROP_CONNECTOR_CLASS = "ConnectorClass";

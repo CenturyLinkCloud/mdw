@@ -4,7 +4,7 @@
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          {{task.name}} &nbsp;{{task.id}} <span ng-if="task.dirty" class="mdw-dirty">*</span>
+          {{task.title ? task.title : task.name}} &nbsp;{{task.id}} <span ng-if="task.dirty" class="mdw-dirty">*</span>
         </div>
         <!-- NOTE: wrap attribute must be adjusted if more action buttons are added
            TODO: include this wrap calculation in the directive so it's not hard-coded in each usage -->

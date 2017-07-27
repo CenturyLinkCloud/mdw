@@ -23,11 +23,11 @@ import java.util.Date;
 import java.util.HashMap;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 
-public class SimpleLogger extends AbstractStandardLoggerBase implements CacheEnabled {
+public class SimpleLogger extends AbstractStandardLoggerBase implements CacheService {
 
     private static final long serialVersionUID = 1L;
     private static final int WARN_LEVEL = 1;

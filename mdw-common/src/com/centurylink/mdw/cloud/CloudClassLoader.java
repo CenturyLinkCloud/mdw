@@ -53,7 +53,7 @@ public class CloudClassLoader extends ClassLoader {
     private List<File> classpath;
     public List<File> getClasspath() { return classpath; }
 
-    private Package packageVO;
+    private Package mdwPackage;
 
     private File assetRoot;
 
@@ -73,7 +73,7 @@ public class CloudClassLoader extends ClassLoader {
             // same-package jars go first
             Collections.sort(jarAssets, new Comparator<Asset>() {
                 public int compare(Asset rs1, Asset rs2) {
-                    String pkgName = packageVO.getName();
+                    String pkgName = mdwPackage.getName();
                     if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
                         return -1;
                     else if (pkgName.equals(rs2.getPackageName()) && !pkgName.equals(rs1.getPackageName()))
@@ -89,7 +89,7 @@ public class CloudClassLoader extends ClassLoader {
 
     public CloudClassLoader(Package pkg) {
         super(pkg.getClassLoader());
-        packageVO = pkg;
+        mdwPackage = pkg;
 
         classpath = new ArrayList<File>();
 
@@ -128,7 +128,7 @@ public class CloudClassLoader extends ClassLoader {
             Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
             // try dynamic java first
             if (javaAsset != null)
-                return CompiledJavaCache.getClass(getParent(), packageVO, name, javaAsset.getStringContent());
+                return CompiledJavaCache.getClass(getParent(), mdwPackage, name, javaAsset.getStringContent());
             // try shared cache
             Class<?> found;
             found = sharedClassCache.get(name);
@@ -149,16 +149,16 @@ public class CloudClassLoader extends ClassLoader {
             throw new ClassNotFoundException(name);
 
         if (logger.isMdwDebugEnabled())
-            logger.mdwDebug("Class " + name + " loaded by Cloud classloader for package: " + packageVO.getLabel());
+            logger.mdwDebug("Class " + name + " loaded by Cloud classloader for package: " + mdwPackage.getLabel());
 
-        String pkgName = packageVO.getName();
+        String pkgName = mdwPackage.getName();
         int lastDot = name.lastIndexOf('.');
         if (lastDot > 0)
             pkgName = name.substring(0, lastDot);
 
         java.lang.Package pkg = getPackage(pkgName);
         if (pkg == null)
-            definePackage(pkgName, null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
+            definePackage(pkgName, null, null, null, "MDW", mdwPackage.getVersionString(), "CenturyLink", null);
         Class<?> clz = defineClass(name, b, 0, b.length);
         Class<?> found = sharedClassCache.get(name);
         if (found != null)
@@ -290,7 +290,7 @@ public class CloudClassLoader extends ClassLoader {
     public InputStream getResourceAsStream(String name) {
         byte[] b = null;
         try {
-            Asset resource = AssetCache.getAsset(packageVO.getName() + "/" + name);
+            Asset resource = AssetCache.getAsset(mdwPackage.getName() + "/" + name);
             if (resource != null)
                 b = resource.getRawContent();
             if (b == null)
@@ -392,6 +392,10 @@ public class CloudClassLoader extends ClassLoader {
                 logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
             return loaded;
         }
+    }
+
+    public String toString() {
+        return this.getClass() + (mdwPackage == null ? "null" : mdwPackage.getLabel());
     }
 
 }

@@ -43,8 +43,8 @@ import com.eclipsesource.v8.V8Object;
  * Runs NodeJS test assets (through runner.js).
  */
 public class NodeRunner {
-    static final String PARSER = "com.centurylink.mdw.testing.postman/parser.js";
-    static final String RUNNER = "com.centurylink.mdw.testing.postman/runner.js";
+    static final String PARSER = "com.centurylink.mdw.node/parser.js";
+    static final String RUNNER = "com.centurylink.mdw.node/testRunner.js";
 
     public void run(TestCase testCase) throws ServiceException {
 
@@ -54,8 +54,16 @@ public class NodeRunner {
 
         System.out.println("NODE JS: " + nodeJS.getNodeVersion());
 
-        final Result parseResult = new Result();
+        V8Object fileObj = new V8Object(nodeJS.getRuntime()).add("file", assets.getAsset(RUNNER).getFile().getAbsolutePath());
         JavaCallback callback = new JavaCallback() {
+            public Object invoke(V8Object receiver, V8Array parameters) {
+              return fileObj;
+            }
+        };
+        nodeJS.getRuntime().registerJavaMethod(callback, "getRunner");
+
+        final Result parseResult = new Result();
+        callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
                 V8Object resultObj = parameters.getObject(0);
                 parseResult.status = resultObj.getString("status");
@@ -71,10 +79,11 @@ public class NodeRunner {
             nodeJS.handleMessage();
         }
 
+        fileObj.release();
+        nodeJS.release();
+
         if (!parseResult.status.equals("OK"))
             throw new ServiceException(PARSER + parseResult);
-
-        nodeJS.release();
 
         nodeJS = NodeJS.createNodeJS();
 

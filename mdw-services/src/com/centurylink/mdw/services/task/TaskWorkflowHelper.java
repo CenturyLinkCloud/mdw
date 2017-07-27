@@ -120,8 +120,8 @@ public class TaskWorkflowHelper {
      * Convenience method for below.
      */
     static TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId,
-            String secOwner, Long secOwnerId, String comments) throws ServiceException, DataAccessException {
-        return createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, null, comments, 0, null, null);
+            String secOwner, Long secOwnerId, String title, String comments) throws ServiceException, DataAccessException {
+        return createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, title, comments, 0, null, null);
     }
 
     /**
@@ -140,22 +140,19 @@ public class TaskWorkflowHelper {
      * - record in audit log
      *
      * @param taskId    task template ID
-     * @param procInstId    process instance ID
+     * @param masterRequestId
+     * @param processInstanceId    process instance ID
      * @param secondaryOwner    can be DOCUMENT (general task), TASK_INSTANCE (subtask) or WORK_TRANSITION_INSTANCE (for classic task)
      * @param secondaryOwnerId  document ID or transition instance ID
-     * @param comment   return message (typically stacktrace for fallout tasks) of the activity for classic task
-     * @param ownerApp  owner system MAL, optionally followed by ":" and engine URL.
-     *                  The field is only populated when the task manager is remote
-     * @param asgnTaskInstId when the task manager is remote and for summary only, this field
-     *                  is populated with the task instance ID of the local task manager
-     * @param taskName  task name. Taken from task template when not populated (for VCS assets is task template label)
+     * @param title  Taken from task template name when not populated
+     * @param comments  message (typically stacktrace for fallout tasks) of the activity for classic task
      * @param dueInSeconds  SLA. When it is 0, check if template has specified SLA
      * @param indexes   indices for general task based on templates
      * @param assignee  assignee CUID if this is to be auto-assigned by process variable
      * @return TaskInstance
      */
-    static TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId,
-                String secondaryOwner, Long secondaryOwnerId, String taskName, String comment,
+    static TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long processInstanceId,
+                String secondaryOwner, Long secondaryOwnerId, String title, String comments,
                 int dueInSeconds, Map<String,String> indexes, String assignee)
         throws ServiceException, DataAccessException {
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
@@ -167,7 +164,7 @@ public class TaskWorkflowHelper {
         int pri = 0;
         // use the prioritization strategy if one is defined for the task
         try {
-            PrioritizationStrategy prioritizationStrategy = getPrioritizationStrategy(task, procInstId, indexes);
+            PrioritizationStrategy prioritizationStrategy = getPrioritizationStrategy(task, processInstanceId, indexes);
             if (prioritizationStrategy != null) {
                 Date calcDueDate = prioritizationStrategy.determineDueDate(task);
                 if (calcDueDate != null)
@@ -180,7 +177,7 @@ public class TaskWorkflowHelper {
         }
 
         TaskInstance ti = createTaskInstance(taskId, masterRequestId, OwnerType.PROCESS_INSTANCE,
-                procInstId, secondaryOwner, secondaryOwnerId, label, comment, dueDate, pri);
+                processInstanceId, secondaryOwner, secondaryOwnerId, label, title, comments, dueDate, pri);
         ti.setTaskName(task.getTaskName()); // Reset task name back (without package name pre-pended)
         TaskWorkflowHelper helper = new TaskWorkflowHelper(ti);
         if (dueDate != null) {
@@ -242,13 +239,13 @@ public class TaskWorkflowHelper {
      * @return TaskInstance
      */
     static TaskInstance createTaskInstance(Long taskId, String masterOwnerId,
-            String comment, Date dueDate, Long userId, Long secondaryOwner)
+            String title, String comment, Date dueDate, Long userId, Long secondaryOwner)
     throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("createTaskInstance()", true);
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
         TaskInstance ti = createTaskInstance(taskId,  masterOwnerId, OwnerType.USER, userId,
                 (secondaryOwner != null ? OwnerType.DOCUMENT : null), secondaryOwner,
-                task.getTaskName(), comment, dueDate, 0);
+                task.getTaskName(), title, comment, dueDate, 0);
 
         TaskWorkflowHelper helper = new TaskWorkflowHelper(ti);
 
@@ -268,7 +265,7 @@ public class TaskWorkflowHelper {
     }
 
     static TaskInstance createTaskInstance(Long taskId, String masterRequestId, String owner, Long ownerId,
-            String secondaryOwner, Long secondaryOwnerId, String label, String message, Date dueDate, int priority)
+            String secondaryOwner, Long secondaryOwnerId, String label, String title, String message, Date dueDate, int priority)
     throws ServiceException, DataAccessException {
 
         TaskInstance ti = new TaskInstance();
@@ -280,9 +277,10 @@ public class TaskWorkflowHelper {
         ti.setStatusCode(TaskStatus.STATUS_OPEN);
         ti.setStateCode(TaskState.STATE_OPEN);
         ti.setComments(message);
-        ti.setTaskName(label);
+        ti.setTaskName(label); // actually populates referred_as
+        ti.setTitle(title);
         ti.setMasterRequestId(masterRequestId);
-        ti.setPriority(priority); //AK..changed from ti.setPriority(0);
+        ti.setPriority(priority);
         ti.setDueDate(dueDate);
         Long id = new TaskDataAccess().createTaskInstance(ti, dueDate);
         ti.setTaskInstanceId(id);
@@ -558,7 +556,7 @@ public class TaskWorkflowHelper {
                 throw new ServiceException("Task Template '" + subTask.getLogicalId() + "' does not exist");
 
             TaskInstance subTaskInstance = createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
-                    masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null);
+                    masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null, null);
             logger.info("SubTask instance created - ID " + subTaskInstance.getTaskInstanceId());
             // TODO recursive subtask creation
         }
@@ -971,7 +969,7 @@ public class TaskWorkflowHelper {
                             throw new DataAccessException("User not found for id: " + userId);
                         TaskRuntimeContext runtimeContext = getContext();
                         String prevCuid;
-                        if (runtimeContext.isExpression(assigneeVarSpec))
+                        if (TaskRuntimeContext.isExpression(assigneeVarSpec))
                             prevCuid = runtimeContext.evaluateToString(assigneeVarSpec);
                         else {
                             Object varVal = runtimeContext.getVariables().get(assigneeVarSpec);
@@ -981,7 +979,7 @@ public class TaskWorkflowHelper {
                         if (!cuid.equals(prevCuid)) {
                             // need to update variable to match new assignee
                             WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                            if (runtimeContext.isExpression(assigneeVarSpec)) {
+                            if (TaskRuntimeContext.isExpression(assigneeVarSpec)) {
                                 // create or update document variable referenced by expression
                                 runtimeContext.set(assigneeVarSpec, cuid);
                                 String rootVar = assigneeVarSpec.substring(2, assigneeVarSpec.indexOf('.'));
@@ -1028,7 +1026,7 @@ public class TaskWorkflowHelper {
                 try {
                     TaskRuntimeContext runtimeContext = getContext();
                     WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                    if (runtimeContext.isExpression(assigneeVarSpec)) {
+                    if (TaskRuntimeContext.isExpression(assigneeVarSpec)) {
                         // create or update document variable referenced by expression
                         runtimeContext.set(assigneeVarSpec, null);
                         String rootVar = assigneeVarSpec.substring(2, assigneeVarSpec.indexOf('.'));

@@ -5,7 +5,7 @@
       <div
         class="panel-heading mdw-heading"
         ng-if="!edit &&  !add">
-        <div class="mdw-heading-label" ng-if="!create">Notes for {{task.name}} &nbsp;{{task.id}}</div>
+        <div class="mdw-heading-label" ng-if="!create">Notes for {{task.title ? task.title : task.name}} &nbsp;{{task.id}}</div>
         <div class="mdw-heading-actions">
           <div ng-if="confirm">
             <div>{{note.message}}</div>

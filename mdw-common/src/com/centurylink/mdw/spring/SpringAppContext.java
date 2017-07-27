@@ -29,15 +29,15 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.dataaccess.BaselineData;
+import com.centurylink.mdw.dataaccess.file.CombinedBaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -46,7 +46,7 @@ import com.centurylink.mdw.variable.VariableTranslator;
 /**
  * Currently only used in Tomcat.  Allows injection through Spring workflow assets.
  */
-public class SpringAppContext implements CacheEnabled, CacheService {
+public class SpringAppContext implements CacheService {
 
     public static final String SPRING_CONTEXT_FILE = "spring/application-context.xml";
 
@@ -267,8 +267,14 @@ public class SpringAppContext implements CacheEnabled, CacheService {
                 else
                     injectedBaselineData = baselineData;
             }
-            if (baselineDatas.size() > 2)
-                throw new IOException("Too many BaselineData implementations.");
+            if (baselineDatas.size() > 2) {
+                List<BaselineData> injectedBaselineDatas = new ArrayList<>();
+                for (BaselineData bd : baselineDatas) {
+                    if (bd != mdwBaselineData)
+                        injectedBaselineDatas.add(bd);
+                }
+                injectedBaselineData = new CombinedBaselineData(injectedBaselineDatas);
+            }
             return injectedBaselineData == null ? mdwBaselineData : injectedBaselineData;
         }
         catch (Exception ex) {

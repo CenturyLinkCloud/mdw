@@ -142,7 +142,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     private Asset nextVersion;          // for designer use
     private Asset prevVersion;          // for designer use
     private List<Attribute> attributes;
-    private Object compiledObject;
     private Long ownerId;
     private String ownerType;
     private String packageName;
@@ -269,12 +268,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     }
     public void setVersion(int version) {
         this.version = version;
-    }
-    public Object getCompiledObject() {
-        return compiledObject;
-    }
-    public void setCompiledObject(Object compiledObject) {
-        this.compiledObject = compiledObject;
     }
 
     public boolean isLoaded() {
@@ -430,34 +423,11 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         return language != null && language.equals(JAR);
     }
 
-    public Asset getNextVersion() {
-        return nextVersion;
-    }
-
-    public void setNextVersion(Asset nextVersion) {
-        this.nextVersion = nextVersion;
-    }
-
-    public Asset getPrevVersion() {
-        return prevVersion;
-    }
-
-    public void setPrevVersion(Asset prevVersion) {
-        this.prevVersion = prevVersion;
-    }
-
     /**
      * @return Returns the version.
      */
     public String getVersionString() {
         return formatVersion(version);
-    }
-
-    public int getNewVersion(boolean major) {
-        if (major)
-          return (version/1000 + 1) * 1000;
-        else
-          return version + 1;
     }
 
     @Override

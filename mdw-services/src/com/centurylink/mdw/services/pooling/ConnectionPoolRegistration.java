@@ -22,13 +22,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.startup.StartupClass;
 import com.centurylink.mdw.startup.StartupException;
@@ -39,7 +38,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * Startup class that manages registration of all the caches
  */
 
-public class ConnectionPoolRegistration implements StartupClass, CacheEnabled, CacheService {
+public class ConnectionPoolRegistration implements StartupClass, CacheService {
 
     private static ConnectionPoolRegistration singleton;
 

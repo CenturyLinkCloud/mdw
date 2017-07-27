@@ -18,17 +18,15 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.model.RoutesDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.centurylink.mdw.camel.MdwComponent;
-import com.centurylink.mdw.camel.TomcatCamelContext;
+import com.centurylink.mdw.annotations.RegisteredService;
+import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.provider.CacheService;
-import com.centurylink.mdw.model.asset.Asset;
 
 @RegisteredService(CacheService.class)
 public class CamelRouteCache implements PreloadableCache, CamelContextAware {

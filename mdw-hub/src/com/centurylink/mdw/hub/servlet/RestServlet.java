@@ -103,7 +103,8 @@ public class RestServlet extends ServiceServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(ex.getCode(), createErrorResponseMessage(request, metaInfo, ex));
+            response.setStatus(ex.getCode());
+            response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
         finally {
             timer.stopAndLogTiming("");
@@ -129,7 +130,8 @@ public class RestServlet extends ServiceServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(ex.getCode(), createErrorResponseMessage(request, metaInfo, ex));
+            response.setStatus(ex.getCode());
+            response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
         finally {
             timer.stopAndLogTiming("");
@@ -148,7 +150,8 @@ public class RestServlet extends ServiceServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(ex.getCode(), createErrorResponseMessage(request, metaInfo, ex));
+            response.setStatus(ex.getCode());
+            response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
         finally {
             timer.stopAndLogTiming("");
@@ -168,7 +171,8 @@ public class RestServlet extends ServiceServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(ex.getCode(), createErrorResponseMessage(request, metaInfo, ex));
+            response.setStatus(ex.getCode());
+            response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
         finally {
             timer.stopAndLogTiming("");
@@ -186,7 +190,8 @@ public class RestServlet extends ServiceServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
-            response.sendError(ex.getCode(), createErrorResponseMessage(request, metaInfo, ex));
+            response.setStatus(ex.getCode());
+            response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
         finally {
             timer.stopAndLogTiming("");

@@ -1,5 +1,5 @@
-AutoFormManualTask.pagelet=3
-CustomManualTask.pagelet=2
+AutoFormManualTask.pagelet=4
+CustomManualTask.pagelet=4
 MdwRpcWebService.wsdl=2
 SimplePrioritizationRules.xlsx=1
 activity.png=1

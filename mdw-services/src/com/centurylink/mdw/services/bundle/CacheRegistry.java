@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.ExcludableCache;
 import com.centurylink.mdw.common.service.DynamicJavaServiceRegistry;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 

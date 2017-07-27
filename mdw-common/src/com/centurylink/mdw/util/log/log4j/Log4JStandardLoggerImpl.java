@@ -18,10 +18,11 @@ package com.centurylink.mdw.util.log.log4j;
 import java.io.PrintStream;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import com.centurylink.mdw.cache.CacheEnabled;
+
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
 
-public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implements CacheEnabled {
+public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implements CacheService {
 
     private Logger selfLogger = Logger.getLogger(Log4JStandardLoggerImpl.class);
     private Logger logger = null;

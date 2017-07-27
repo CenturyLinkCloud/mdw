@@ -23,18 +23,17 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
 
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.email.Template;
 import com.centurylink.mdw.email.Template.Format;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class TemplateCache implements CacheEnabled, CacheService {
+public class TemplateCache implements CacheService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static volatile Map<String,Template> templates = new Hashtable<String,Template>();

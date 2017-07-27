@@ -54,12 +54,12 @@ public interface TaskServices {
     public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException;
 
     public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
-            String secOwner, Long secOwnerId, String comments) throws ServiceException, DataAccessException;
+            String secOwner, Long secOwnerId, String name, String comments) throws ServiceException, DataAccessException;
     /**
      * Create an ad-hoc manual task instance.
      * @return the newly-created instance
      */
-    public TaskInstance createTask(String logicalId, String userCuid) throws ServiceException;
+    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Date dueDate) throws ServiceException;
 
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
     throws ServiceException, DataAccessException;

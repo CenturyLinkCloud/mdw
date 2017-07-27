@@ -23,12 +23,12 @@ import java.util.Properties;
 
 import org.apache.xmlbeans.XmlException;
 
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.startup.StartupException;
 
 /**
  */
-public abstract class PropertyManager implements CacheEnabled {
+public abstract class PropertyManager implements CacheService {
 
     public static final String MDW_PROPERTIES_FILE_NAME = "mdw.properties";
     public static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";

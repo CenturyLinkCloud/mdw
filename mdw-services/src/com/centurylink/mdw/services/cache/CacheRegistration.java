@@ -33,13 +33,12 @@ import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument.ApplicationCache;
 import com.centurylink.mdw.bpm.CacheDocument.Cache;
 import com.centurylink.mdw.bpm.PropertyDocument.Property;
-import com.centurylink.mdw.cache.CacheEnabled;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.ExcludableCache;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.spring.SpringAppContext;
@@ -61,8 +60,8 @@ public class CacheRegistration implements StartupClass {
     private static final String APPLICATION_CACHE_FILE_NAME = "application-cache.xml";
     // following 2 lines cannot be initialized in onStartup() - too late
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static Map<String,CacheEnabled> allCaches
-        = new LinkedHashMap<String,CacheEnabled>();
+    private static Map<String,CacheService> allCaches
+        = new LinkedHashMap<String,CacheService>();
 
     private static CacheRegistration instance;
     public static synchronized CacheRegistration getInstance() {
@@ -103,7 +102,7 @@ public class CacheRegistration implements StartupClass {
             Properties cacheProps = (Properties)caches.get(cacheName);
             String cacheClassName = cacheProps.getProperty("ClassName");
             logger.info(" - loading cache " + cacheName);
-            CacheEnabled cachingObj = getCacheInstance(cacheClassName, cacheProps);
+            CacheService cachingObj = getCacheInstance(cacheClassName, cacheProps);
 
             if (cachingObj != null) {
                 if (cachingObj instanceof PreloadableCache) {
@@ -135,18 +134,18 @@ public class CacheRegistration implements StartupClass {
         }
     }
 
-    private CacheEnabled getCacheInstance(String className, Properties cacheProps) {
+    private CacheService getCacheInstance(String className, Properties cacheProps) {
         try {
             Class<?> cl = Class.forName(className);
             if (cacheProps == null)
-                return (CacheEnabled) cl.newInstance();
+                return (CacheService) cl.newInstance();
             Class<?>[] argTypes = new Class<?>[] { Map.class };
             try {
                 Constructor<?> constructor = cl.getConstructor(argTypes);
-                return (CacheEnabled) constructor.newInstance(getMap(cacheProps));
+                return (CacheService) constructor.newInstance(getMap(cacheProps));
             }
             catch (NoSuchMethodException notFound) {
-                return (CacheEnabled) cl.newInstance();
+                return (CacheService) cl.newInstance();
             }
         }
         catch (Exception ex) {
@@ -175,7 +174,7 @@ public class CacheRegistration implements StartupClass {
         CacheRegistry.getInstance().clearDynamicServices();// clear dynamic cache services
         synchronized (allCaches) {
             for (String cacheName : allCaches.keySet()) {
-                CacheEnabled cachingObj= allCaches.get(cacheName);
+                CacheService cachingObj= allCaches.get(cacheName);
                 cachingObj.clearCache();
             }
         }
@@ -212,12 +211,16 @@ public class CacheRegistration implements StartupClass {
         refreshCache(cacheName, null);
     }
 
+    public CacheService getCache(String name) {
+        return allCaches.get(name);
+    }
+
     /**
      * Refreshes a particular cache by name.
      * @param name the cache to refresh
      */
     public void refreshCache(String cacheName, List<String> excludedFormats) {
-        CacheEnabled cache = allCaches.get(cacheName);
+        CacheService cache = allCaches.get(cacheName);
         if (cache != null) {
             if (excludedFormats != null && cache instanceof ExcludableCache && excludedFormats.contains(((ExcludableCache)cache).getFormat())) {
                 logger.debug(" - omitting cache " + cacheName);
@@ -233,7 +236,7 @@ public class CacheRegistration implements StartupClass {
         }
     }
 
- /**
+    /**
      * Returns the list of all the start up classes that has been
      * defined in the application properties file
      * @throws Exception
@@ -282,7 +285,7 @@ public class CacheRegistration implements StartupClass {
 
     }
 
-    public void registerCache(String name, CacheEnabled cache) {
+    public void registerCache(String name, CacheService cache) {
         logger.info("Register cache " + name);
         synchronized(allCaches) {
             allCaches.put(name, cache);

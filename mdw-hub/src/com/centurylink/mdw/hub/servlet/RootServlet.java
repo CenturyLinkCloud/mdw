@@ -45,7 +45,7 @@ public class RootServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String path = request.getServletPath();
-        if (path.equals("/") || path.equals("/root") || path.equals("/index.html")) {
+        if (path.equals("/") || path.equals("/root") || path.equals("/index.html") || path.equals("/index.html/#/bugs")) {
             if (new File(WebAppContext.getMdw().getOverrideRoot() + "/index.html").isFile()) {
                 request.getRequestDispatcher("/customContent/index.html").forward(request, response);
             }
@@ -73,8 +73,9 @@ public class RootServlet extends HttpServlet {
 
                     contents = ExpressionUtil.substitute(contents, WebAppContext.getMdw(), true);
                     response.getWriter().println("<!-- processed by MDW root servlet -->");
-                    for (String line : contents.split("\\r?\\n"))
+                    for (String line : contents.split("\\r?\\n")) {
                         response.getWriter().println(processLine(line));
+                    }
                 }
                 catch (IOException ex) {
                     // TODO: logging

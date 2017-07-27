@@ -3,7 +3,7 @@
     <div>
       <input type="checkbox" ng-if="!task" ng-model="item.selected" ng-change="listModel.notAllSelected()"></input>
       <div>
-        <a class="mdw-item-link" href="#/tasks/{{item.id}}" ng-if="!task">{{item.name}} &nbsp;{{item.id}}</a>
+        <a class="mdw-item-link" href="#/tasks/{{item.id}}" ng-if="!task">{{item.title ? item.title : item.name}} &nbsp;{{item.id}}</a>
         <div class="mdw-item-sub">
           <span ng-if="item.masterRequestId">Master request: 
             <a href="#/workflow/masterRequests/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a>

@@ -4,10 +4,14 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="mdw-hub" version="3.0">
   <display-name>MDW</display-name>
 
-   <!-- TODO error page in Spring Boot -->
+   <!-- TODO error pages in Spring Boot -->
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404</location>
+  </error-page>
   <error-page>
     <error-code>500</error-code>
     <location>/error</location>
   </error-page>
-  
+    
 </web-app>

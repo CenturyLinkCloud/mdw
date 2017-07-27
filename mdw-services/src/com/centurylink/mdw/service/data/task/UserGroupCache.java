@@ -26,7 +26,6 @@ import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.provider.CacheService;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -38,7 +37,7 @@ import com.centurylink.mdw.util.timer.CodeTimer;
  * may become unwieldy.  For MDW 6.0 we'll investigate a NoSQL, BigData solution.
  *
  */
-public class UserGroupCache implements PreloadableCache, CacheService {
+public class UserGroupCache implements PreloadableCache {
 
     private static UserGroupCache instance;
 

@@ -82,11 +82,11 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
-            String secOwner, Long secOwnerId, String comments) throws ServiceException, DataAccessException {
-        return TaskWorkflowHelper.createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, comments);
+            String secOwner, Long secOwnerId, String title, String comments) throws ServiceException, DataAccessException {
+        return TaskWorkflowHelper.createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, title, comments);
     }
 
-    public TaskInstance createTask(String userCuid, String logicalId) throws ServiceException {
+    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Date dueDate) throws ServiceException {
         TaskTemplate template = TaskTemplateCache.getTaskTemplate(logicalId);
         if (template == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
@@ -94,7 +94,7 @@ public class TaskServicesImpl implements TaskServices {
         if (user == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "User '" + userCuid + "' not found");
         try {
-            return TaskWorkflowHelper.createTaskInstance(template.getId(), null, OwnerType.USER, user.getId(), null, null, null, null, null, 0);
+            return TaskWorkflowHelper.createTaskInstance(template.getId(), null, title, comments, dueDate, user.getId(), 0L);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -234,7 +234,7 @@ public class TaskServicesImpl implements TaskServices {
         TaskInstance masterTaskInstance = getInstance(masterTaskInstanceId);
         TaskRuntimeContext masterTaskContext = getContext(masterTaskInstance);
         TaskInstance subTaskInstance = TaskWorkflowHelper.createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
-                masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null);
+                masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null, null);
         logger.info("SubTask instance created - ID: " + subTaskInstance.getTaskInstanceId());
     }
 
@@ -298,7 +298,7 @@ public class TaskServicesImpl implements TaskServices {
                 valuesProvider.apply(runtimeContext, values);
                 Map<String,Object> newValues = new HashMap<String,Object>();
                 for (String name : values.keySet()) {
-                    if (runtimeContext.isExpression(name)) {
+                    if (TaskRuntimeContext.isExpression(name)) {
                         String rootVar;
                         if (name.indexOf('.') > 0)
                           rootVar = name.substring(2, name.indexOf('.'));

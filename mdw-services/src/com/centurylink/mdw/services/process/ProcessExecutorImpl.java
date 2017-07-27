@@ -1620,7 +1620,8 @@ class ProcessExecutorImpl {
         procInstIds.add(procInst.getId());
         for (ProcessInstance pi : processInstanceList) {
             Process pidef = getProcessDefinition(pi);
-            if (pidef.isEmbeddedProcess()) procInstIds.add(pi.getId());
+            if (pidef.isEmbeddedProcess())
+                procInstIds.add(pi.getId());
         }
         TaskServices taskServices = ServiceLocator.getTaskServices();
         for (Long procInstId : procInstIds) {

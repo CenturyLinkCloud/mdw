@@ -280,7 +280,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         return ApplicationContext.getMdwVersion();
     }
 
-    public boolean isExpression(String str) {
+    public static boolean isExpression(String str) {
         if (str == null)
             return false;
         int start;

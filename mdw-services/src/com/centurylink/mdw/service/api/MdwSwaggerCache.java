@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.provider.CacheService;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
