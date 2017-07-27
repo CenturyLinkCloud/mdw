@@ -98,7 +98,7 @@ MDW includes a number of prebuilt, extensible options for hosting Web services.
 See the <a href="http://centurylinkcloud.github.io/mdw/docs/help/">Web Services</a> documentation for details.
  
 <h3>Document (SOAP) Web Service Listener</h3>
-To expose document-literal style services using a custom WSDL definition, MDW provides a mechanism whereby the WSDL document is created as an <a href="assets.html">Asset</a>.
+To expose document-literal style services using a custom WSDL definition, MDW provides a mechanism whereby the WSDL document is created as an <a href="assets.html">asset</a>.
 An HTTP GET request against a custom WSDL asset called Employee looks like:<br/>http://localhost:8080/mdw/services/SOAP/Employee.wsdl<br/><br/>
 A similar URL can be used as the endpoint for an HTTP POST request which will invoke the service.
 In this case the request is unwrapped from the SOAP envelope, and based on the top-level element the usual message pattern matching procedure is followed.
@@ -129,12 +129,12 @@ The URL for accessing the servlet is http://host:port#/mdw/Services/packageName/
 The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/RestServlet.html">   
 <code>com.centurylink.mdw.hub.servlet.RestServlet</code></a>.. 
 <p>
-MDW also provides a helper class, <code>com.centurylink.mdw.common.utilities.HttpHelper</code>,
+MDW also provides a helper class, <code>com.centurylink.mdw.util.HttpHelper</code>,
 that can be used to simplify the client coding. The following sample code
 demonstrates the client side code:
 <pre>
     String message = "&lt;ping&gt;an XML document&lt;/ping&gt;";
-    String httpServletUrl = "http://localhost:7001/mdw/Services";
+    String httpServletUrl = "http://localhost:8080/mdw/services";
     HttpHelper httpHelper = new HttpHelper(new URL(httpServletUrl));
     String response = httpHelper.post(message);
 </pre>

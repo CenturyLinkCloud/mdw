@@ -5,47 +5,45 @@ title: Take a Tutorial with MDW Demo
 
 This tutorial will guide you through creating a short, simple workflow using an existing MDW Demo project, which is hosted in CenturyLink's GitHub repository.  But before you can start with this tutorial, you will need to do a `one-time` setup described in the Prerequisites bellow.
 
-Once you get a little familiar with MDW, feel free to explore other guides and help docs listed on the home page to learn more about MDW features and what it can do.  
+Once you become familiar with MDW, feel free to explore other guides and help docs listed on the home page to learn more about MDW features and what it can do.  
 
 ### Prerequisites
-We assume that you are already familiar with eclipse, Java, Java Web services (RESTFul/JSON and/or SOAP/XML and HTTP protocol), use of Java container concept and Maven or Gradle for building a Java project in eclipse.
+We assume that you are already familiar with Eclipse, Java, Java Web services (RESTFul/JSON and/or SOAP/XML and HTTP protocol), use of Java container concept and Maven or Gradle for building a Java project in Eclipse.
 
 - First, you will need to setup your environment. Please complete the steps 1 - 4 only in [mdw-demo/README.md](https://github.com/CenturyLinkCloud/mdw-demo) and return to this tutorial. 
-- When you have your eclipse workspace setup and deployed the mdw-demo project on the Tomcat server successfully, proceed with `1. Create a  Workflow Process` bellow to continue with this tutorial.
+- When you have your Eclipse workspace setup and deployed the mdw-demo project on the Tomcat server successfully, proceed with `Getting Started with MDW Designer` bellow to continue with this tutorial.
 
 #### Getting Started with MDW Designer
 #####  1.  Create a  Workflow Process
-- From Java perspective, click MDW Designer. If you do not see the MDW Designer, click Open Perspective and click MDW Designer. Then click MDW Designer icon at the top and you should be in Process Explore now. 
+- From the Java perspective, click MDW Designer. If you do not see the MDW Designer, click Open Perspective and click MDW Designer. Then click MDW Designer icon at the top and you will be in the Process Explore view. 
 - Expand the mdw-demo project. 
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 
   package by clicking on the `New Package` toolbar button, second from the right at the top of Process Explorer, or you can right-click mdw-demo project > New > MDW Package.
   
   ![alt text](../images/mdwWorkflowPackage.png "mdwWorkflowPackage")
  
-- Click Finish.  Your package should appear in your project's tree.
+- Give a package name and click Finish.  Your package should appear in your project's tree.
 
 - To create a new process, launch the New Process wizard.  Just like many aspects of MDW and Eclipse, there are a number of ways to launch the wizards.  To illustrate a 
   different method versus the package creation above, this time from the Eclipse menus select File > New > Other > MDW Designer > MDW Process.  Alternatively, you could 
   right-click on the package you'd like to contain the process and select > New > MDW Process.  Either way, choose a name for your new process when the dialog comes up,
   and optionally select a package you would like the process to belong to.  You can also add a description and click Finish.  
 
-- TIP: you can hover your mouse over a toolbar button to get a tooltip description of what the button does.
+- TIP: you can hover your mouse over a toolbar button to get a tooltip description of what each button does.
 
   ![alt text](../images/mdwWorkflowPackage2.png "mdwWorkflowPackage2")
  
-- Once the process has been created it will be opened in the Process Editor view, and the Toolbox view will be populated with the available activities for insertion into
-  your process flow. Double-click on the process title or on a blank area somewhere in the canvas to display the Properties View. Select the Design properties tab and check `Service Process` to identify OrderProcess as a synchronous process returning a response. 
+- Once the process has been created it will be opened in the Process Editor view, and the Toolbox view will be populated with available activities for inserting into
+  your process flow. Double-click on the process title or on a blank area somewhere in the canvas to display the Properties View. Select `Design properties` tab and check `Service Process` to identify OrderProcess as a synchronous process returning a response. 
    
    ![alt text](../images/mdwWorkflowProcess.png "mdwWorkflowProcess")
 
 ##### Add some Process Variables:
--  Once you have a process created, you will need to add some variables to receive and respond to a request. The convention in MDW is that a service request variable is named "request" and a service response variable is named "response".  You have option to name them differently, but for simplicity we will name them as request and response.  On the Variables property tab, create these two variables in your process with type org.json.JSONObject.  Set the mode for the request variable to be Input, and the mode for the response to be Output.  Add String variables orderId and validationResult.
+-  Once you have a process created, you will need to add some variables to receive and respond to a request. The convention in MDW is that a service request variable is named "request" and a service response variable is named "response".  You have option to name them differently, but for simplicity we will name them as request and response.  On the `Variables` property tab, create these two variables in your process with type `org.json.JSONObject`.  Set the mode for the request variable to be `Input`, and the mode for the response to be `Output`.  Add String variables orderId and validationResult.
 
    ![alt text](../images/myOrderProcessVariable.png "myOrderProcessVariable")
    
-- Note: MDW implements a locking feature to facilitate collaborative process development.  Initially your newly-created process will be locked to you.  Once you make 
-  changes and save the process, your lock will automatically removed, and the process will display as read-only.  There is an icon on the Process Editor toolbar that 
-  shows the locked state of your process and enables you to perform the lock and unlock actions.
+- Note: MDW implements a locking feature to facilitate collaborative process development.  Initially your newly-created process will be locked.  Once you make changes and save the process, your lock will automatically removed, and the process will display as read-only.  There is an icon on the Process Editor toolbar that shows the locked state of your process and enables you to perform the lock and unlock actions.
   
 - The Process Editor toolbar looks like this:
 

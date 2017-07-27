@@ -15,14 +15,14 @@ layout: help
   [Dynamic Java General Activity](http://centurylinkcloud.github.io/mdw/docs/help/dynamicJavaActivity.html) | Used to edit Java Code in a local or remote environment without needing to re-deploy or restart the server.
   [Event Check Activity](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for checking various statuses and events in a workflow process. 
   [Event Wait Activity](http://centurylinkcloud.github.io/mdw/docs/help/EventWaitActivity.html) | Used to wait for an external event to be executed.
-  [Execute Script](http://centurylinkcloud.github.io/mdw/docs/help/scriptActivity.html) | Used for executing Groovy Scripts, JavaScript or MagicBox rule language.
-  [Expression Evaluator](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used to evaluate the value of a script expression.
+  [Execute Script](http://centurylinkcloud.github.io/mdw/docs/help/scriptActivity.html) | Used for executing Groovy Script, JavaScript, etc.
+  [Expression Evaluator](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used to evaluate a value of a script expression.
   [File Writer](http://centurylinkcloud.github.io/mdw/docs/help/FileWriterActivity.html) | Used for writing to a file on the server file system. 
  [Invoke Multiple Subprocesses](http://centurylinkcloud.github.io/mdw/docs/help/InvokeMultipleSubprocesses.html) | Used to invoke multiple heterogeneous subprocesses.
-  [Invoke Subprocess](http://centurylinkcloud.github.io/mdw/docs/help/InvokeSubProcessActivity.html) | Used to invoke another process as subprocess.
+  [Invoke Subprocess](http://centurylinkcloud.github.io/mdw/docs/help/InvokeSubProcessActivity.html) | Used to invoke another process as a subprocess.
   [JDBC SQL Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for connecting to databases.
   [JMS Adapter](http://centurylinkcloud.github.io/mdw/docs/help/JmsAdapter.html) | Used to send JMS messages.
-  [LDAP Adapter](http://centurylinkcloud.github.io/mdw/docs/help/LdapAdapter.html) | Used to query LDAP directory for entities and attributes and to bind results to process variables.
+  [LDAP Adapter](http://centurylinkcloud.github.io/mdw/docs/help/LdapAdapter.html) | Used to query LDAP directory for entities and attributes to bind results to process variables.
   [Multi-REST Service Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for invoking multiple RESTful Web Services.
   [Notification](http://centurylinkcloud.github.io/mdw/docs/help/notification.html) | Used to send email notifications.
   [OAuth Service Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for user authentication.

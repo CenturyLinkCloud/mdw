@@ -15,7 +15,7 @@ permalink: /docs/gettingStarted/
   <div class="grid">
     <div class="unit one-third">
       <a href="quick-start">QUICK START &rarr;</a>
-	  <p>The quick start guide provides a quick instruction to get up and run with MDW in no time.</p>
+	  <p>The quick start guide provides a quick instruction to setup and run with MDW in no time.</p>
     </div>
     <div class="unit one-third">
       <a href="mdw-tutorial">TAKE a TUTORIAL &rarr;</a>
