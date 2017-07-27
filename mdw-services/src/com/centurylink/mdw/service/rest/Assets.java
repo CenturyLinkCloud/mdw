@@ -42,6 +42,7 @@ import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
@@ -208,6 +209,7 @@ public class Assets extends JsonRestService {
         String[] segments = getSegments(path);
         if (segments.length == 2) {
             ServiceLocator.getAssetServices().createPackage(segments[1]);
+            CacheRegistration.getInstance().refreshCache("PackageCache");
         }
         else if (segments.length == 3) {
             String asset = segments[1] + '/' + segments[2];

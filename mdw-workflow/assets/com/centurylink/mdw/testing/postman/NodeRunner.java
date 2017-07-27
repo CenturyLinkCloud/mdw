@@ -54,7 +54,6 @@ public class NodeRunner {
 
         System.out.println("NODE JS: " + nodeJS.getNodeVersion());
 
-
         V8Object fileObj = new V8Object(nodeJS.getRuntime()).add("file", assets.getAsset(RUNNER).getFile().getAbsolutePath());
         JavaCallback callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
