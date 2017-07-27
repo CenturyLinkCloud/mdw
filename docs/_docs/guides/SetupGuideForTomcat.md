@@ -5,26 +5,26 @@ title: Setup Guide for Tomcat
 
 ### Prerequisite
  - Eclipse Neon for JavaEE Developers:  
-   [http://www.eclipse.org/downloads](http://www.eclipse.org/downloads)
- - For installing eclipse plug-ins, please follow [this link](../InstallEclipsePluginsGuide/) and return to this guide to continue.
+   Follow [this link](http://www.eclipse.org/downloads) to download Eclipse.
+ - For installing Eclipse Plug-Ins, please follow [this link](../InstallEclipsePluginsGuide/) and return to this guide to continue.
  - Tomcat 8:
-     - [https://tomcat.apache.org](https://tomcat.apache.org)
+     - Follow [this link](https://tomcat.apache.org) to download Tomcat.
  - Chrome and Postman for testing RESTFul Web service: 
-     - [https://www.google.com/chrome](https://www.google.com/chrome)     
-     - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+     - Follow [this link](https://www.google.com/chrome/browser/desktop/) to download Chrome.     
+     - Follow [this link](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) to launch Postman.
      
 ### Supported Java Container (Apache Tomcat 8)  
 You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  
 
 ### MDW Database:
-- MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a database. MDW uses [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in this [readme](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/readme.txt).
+- MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a database. MDW uses [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or setup an external MySQL database as described in this [readme](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/readme.txt).
   
 ### Tomcat Server:
  
 ##### Create a Tomcat Server Instance:
 - To execute a workflow process you need a server running with MDW deployed.  For debugging in Eclipse the easiest way to set this up is through a Web Tools Platform (WTP) server instance. 
-  From the menu select File > New > Other > Server > Server.  Click Next and select Apache > Tomcat 8 (MDW) from the options.  To be able to debug your Dynamic Java it is important 
-  that you select Tomcat 8 (MDW) instead of the standard Tomcat 8.0 Server.  The server name is arbitrary, so you can make is something friendlier than the default.
+  From the menu select File > New > Other > Server > Server.  Click Next and select Apache > Tomcat 8 (MDW) from the options.  To be able to debug your Dynamic Java, it is important 
+  that you select `Tomcat 8 (MDW)` instead of the standard Tomcat 8.0 Server.  The server name is arbitrary, so you can make it something friendlier than the default.
   
   ![alt text](../images/addTomcatServer.png "addTomcatServer")
   
@@ -35,7 +35,7 @@ You can perform many cloud development activities using a remote workflow projec
  
 - The final page of the New Server wizard is where you designate your workflow project to be deployed on the server.  After that, click Finish to create the server instance.
 
-- If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 8 server in this view.  You can 
+- If the Servers view is not visible in your current perspective, from the menu select Window > Show View > Other > Server > Servers.  You should see your Tomcat 8 (MDW) server in this view.  You can 
   double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
    ![alt text](../images/addTomcatServer3.png "addTomcatServer3")
    
@@ -65,13 +65,11 @@ You can perform many cloud development activities using a remote workflow projec
 
 ##### Next Steps:
 -	Check out some of the other MDW developer docs:       
-    - [Microservices Cookbook](../MicroservicesCookbook/)            
-    - [SOAP-based Web Service](../SOAPService/)
+    - [Microservices](../MicroservicesCookbook/)            
+    - [SOAP Web Service](../SOAPService/)   
     
--	Browse through the online help docs, which are the same as those in Eclipse:                             
- 	  [http://centurylinkcloud.github.io/mdw/help](http://centurylinkcloud.github.io/mdw/docs/help)
- 	  
+-	Browse through the online help docs, which are the same as those in Eclipse:    
+     - [MDW Help Topics](http://centurylinkcloud.github.io/mdw/docs/help)                
+ 	 
 -	The MDW JavaDocs:                                                     
-      [http://centurylinkcloud.github.io/mdw/javadoc/index.html](http://centurylinkcloud.github.io/mdw/docs/javadoc/index.html)
-
- 
+    - [JavaDocs](http://centurylinkcloud.github.io/mdw/docs/javadoc/index.html)
