@@ -9,7 +9,7 @@ When deploying in a cloud environment the mechanism for setting your app-specifi
 This enables you to configure custom settings that apply only to your particular workflow application.
 <br/><br/>
 Also, the MDW runtime provides many injection points where you can configure behavior provided by your custom deployable artifact (Jar File).
-Examples of this include <a href="dynamicJavaActivity.html"> Dynamic Java</a>, <a href="MDWCamelIntegration.html">Camel Integration</a>, and <a href="assets.html">Spring Assets</a>.  
+Examples of this include <a href="dynamicJavaActivity.html"> Dynamic Java</a>, <a href="MDWCamelIntegration.html">Camel Integration</a>, and <a href="assets.html">MDW Assets</a>.  
 Frequently you'll want to associate your workflow package with a corresponding deployable artifact so that MDW knows where to locate your custom code.
 This is accomplished using Package Configuration as well.
 
@@ -28,7 +28,7 @@ Prod environments require special permissions and confirmations before performin
 The package configuration settings are exported along with the processes and assets for a package, and so they carry forward when migrated to a new environment.
 <br/><br/>
 You can leverage your package configuration properties using the <i>props</i> <a href="bindingExpressions.html">binding expression</a> syntax in your activity design attributes, 
-and in your programmatically through the <a href="../javadoc/com/centurylink/mdw/config/PropertyManager.html">MDW PropertyManager API</a>.
+and programmatically through the <a href="../javadoc/com/centurylink/mdw/config/PropertyManager.html">MDW PropertyManager API</a>.
 This gives you a mechanism for plugging in environment-specific values.
 </body>
 </html>
