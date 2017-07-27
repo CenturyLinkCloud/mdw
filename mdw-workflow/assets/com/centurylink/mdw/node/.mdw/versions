@@ -1,4 +1,9 @@
+WebpackJsx.java=1
 j2v8-4.7.1.jar=1
-package.json=1
-parser.js=2
-testRunner.js=1
+package.json=2
+parser.js=3
+test.js=1
+testRunner.js=2
+webpackConfig.js=1
+webpackRunner.js=1
+webpackTest.js=1

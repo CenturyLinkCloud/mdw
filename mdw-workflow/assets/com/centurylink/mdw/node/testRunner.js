@@ -1,5 +1,17 @@
 'use strict';
 
+// prevent unhandled errors from crashing the VM
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection', err);
+  if (err.stack)
+    console.error(err.stack);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception', err);
+  if (err.stack)
+    console.error(err.stack);
+});
+
 // Runs multiple test items, each with their own case.
 var testCase = null;
 try {
@@ -75,16 +87,4 @@ catch (err) {
     console.error(err.stack);
   }
 }
-
-//prevent unhandled errors from crashing the VM
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Rejection', err);
-  if (err.stack)
-    console.error(err.stack);
-});
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception', err);
-  if (err.stack)
-    console.error(err.stack);
-});
 
