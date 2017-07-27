@@ -41,7 +41,8 @@ A quick way to get familiar with the layout of an mdw workflow cloud project is 
 
 ##### Perform a `cf push` to deploy mdw-demo:
 Note: The following examples use the MDW demo deployment in CenturyLink's AppFog cloud environment:
--   For the Cloud Foundry Dev Guide, [click here](https://docs.cloudfoundry.org/devguide) or type `cf help` for details about the available commands. 
+-   To see the Cloud Foundry Dev Guide, [click here](https://docs.cloudfoundry.org/devguide) or type `cf help` for details about the available commands.
+
 -	A Cloud Foundry deployment is configured primarily through a manifest.yml file in the project root directory.  Take a look at the `manifest.yml` in mdw-demo, and note that it stipulates the MDW buildpack through its Git repository URL.  The settings you'll likely need to configure in this file are as follows:
     - `MDW_VERSION` - Whichever version of the MDW framework you're using (must be available as a buildpack).
     - `mdw.database.ur` - Only if you're using an external database rather than embedded.
