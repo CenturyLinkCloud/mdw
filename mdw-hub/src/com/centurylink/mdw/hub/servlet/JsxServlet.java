@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -45,7 +43,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 /**
  * TODO: JSX Asset List Caching.
  */
-@WebServlet(urlPatterns={"/jsx.js", "*.jsx"})
+@WebServlet(urlPatterns={"*.jsx"})
 public class JsxServlet extends HttpServlet {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
@@ -75,10 +73,7 @@ public class JsxServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            if (request.getServletPath().equals("/jsx.js")) {
-                response.getWriter().println(getJsxJs());
-            }
-            else if (request.getServletPath().endsWith(".jsx")) {
+            if (request.getServletPath().endsWith(".jsx")) {
                 String path = request.getServletPath();
                 String p = path.substring(0);
                 int lastSlash = p.lastIndexOf('/');
@@ -128,29 +123,6 @@ public class JsxServlet extends HttpServlet {
         catch (NumberFormatException ex) {
             return false;
         }
-    }
-
-    private String getJsxJs() throws ServiceException {
-        // add a route for each jsx asset
-        Map<String,List<AssetInfo>> jsxAssets = assetServices.getAssetsOfType("jsx");
-        StringBuilder sb = new StringBuilder();
-        if (!jsxAssets.isEmpty()) {
-            sb.append("'use strict';\n\n");
-            sb.append("var app = angular.module('adminApp');\n\n");
-            sb.append("app.config(['$routeProvider', function($routeProvider) {\n");
-            for (String pkg : jsxAssets.keySet()) {
-                String pkgPath = pkg.replace('.', '/');
-                for (AssetInfo asset : jsxAssets.get(pkg)) {
-                    String assetPath = pkgPath + '/' + asset.getRootName();
-                    sb.append("  $routeProvider.when('/" + assetPath + "', {\n");
-                    sb.append("    templateUrl: '" + "demo/bugs.html" + "',\n"); // TODO
-                    sb.append("    controller: '" + "BugsController" + "'\n"); // TODO
-                    sb.append("  });\n");
-                }
-            }
-            sb.append("}]);\n");
-        }
-        return sb.toString();
     }
 
 }

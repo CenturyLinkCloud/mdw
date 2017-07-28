@@ -38,6 +38,7 @@ import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 
+// TODO precompilation
 @RegisteredService(CacheService.class)
 public class WebpackCache implements CacheService {
 

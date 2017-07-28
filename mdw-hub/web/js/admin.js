@@ -2,7 +2,7 @@
 
 var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
  'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwShape', 'mdwStep', 'mdwLink', 
- 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'mdwToolbox', 'mdwConfigurator', 
+ 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'mdwToolbox', 'mdwConfigurator', 'mdwJsx',
  'mdwCompatibility', 'mdwTask', 'authUser', 'mdw', 'util', 'mdwUtil', 'constants', 'routes', 'users', 'groups', 'roles', 
  'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system', 'solutions', 
  'message', 'objectTableConverter', 'mdwSwagger', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
