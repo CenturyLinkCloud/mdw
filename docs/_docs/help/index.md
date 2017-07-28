@@ -59,9 +59,9 @@ permalink: /docs/help/
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='listener.html'>Developing Listeners and External Event Handlers</a></li>
   <li><a href='dynamicJava.html'>Dynamic Java</a></li>
+  <li><a href='../javadoc/index.html'>Java Docs</a></li>
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
-  <li><a href='../javadoc/index.html'>MDW Framework JavaDocs</a></li>
   <li><a href='scheduledJobs.html'>Scheduled Jobs</a></li>
 </ul>
 
