@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdw-workflow>
+  <sourceProject name="{{project}}" author="{{user}}"/>
+  <mdwFramework version="{{mdw-version}}"/>
+  <server host="localhost" port="8080" contextRoot="mdw"/>
+  <repository provider="Git" branch="master" localPath="{{asset-loc}}"/>
+</mdw-workflow>
