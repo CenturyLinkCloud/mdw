@@ -56,33 +56,40 @@ public class WebpackCache implements CacheService {
     }
 
     public File getCompiled(AssetInfo asset) throws IOException, ServiceException {
+        return getCompiled(asset, null);
+    }
+
+    /**
+     * Starter file will be compiled, but asset used to compute output path.
+     */
+    public File getCompiled(AssetInfo asset, File starter) throws IOException, ServiceException {
         File file = null;
         synchronized(WebpackCache.class) {
             file = webpackAssets.get(asset);
-            if (file == null || file.lastModified() < asset.getFile().lastModified()) {
-                file = compile(asset);
+            if (file == null || !file.exists() || file.lastModified() < asset.getFile().lastModified()
+                    || (starter != null && file.lastModified() < starter.lastModified())) {
+                file = compile(asset, starter);
             }
         }
         return file;
     }
 
-    private File compile(AssetInfo asset) throws IOException, ServiceException {
-        String path = asset.getFile().getAbsolutePath().substring(ApplicationContext.getAssetRoot().getAbsolutePath().length());
-        File outputFile = new File(ApplicationContext.getTempDirectory() + "/" + asset.getExtension() + path);
-        JSONObject statsJson;
-        if ("jsx".equals(asset.getExtension())) {
-            statsJson = compileJsx(asset, outputFile);
-        }
-        else {
-            throw new IOException("Unsupported asset type: " + asset.getExtension());
-        }
+    private File compile(AssetInfo asset, File source) throws IOException, ServiceException {
+        File outputFile = new File(
+                ApplicationContext.getTempDirectory() + "/" + asset.getExtension()
+                    + asset.getFile().getAbsolutePath().substring(
+                            ApplicationContext.getAssetRoot().getAbsolutePath().length()) + ".out");
+
+        JSONObject statsJson = compile(source, outputFile);
         if (logger.isDebugEnabled()) {
             logger.debug("*** Webpack stats:\n" + statsJson.toString(2));
         }
         if (statsJson.has("errors")) {
             JSONArray errors = statsJson.getJSONArray("errors");
-            if (errors.length() > 0)
-                throw new ServiceException(new Status(Status.OK, "console.error(JSON.stringify({webpackErrors: " + errors + "}, null, 2));"));
+            if (errors.length() > 0) {
+                throw new ServiceException(
+                    new Status(Status.OK, "console.error(JSON.stringify({webpackErrors: " + errors + "}, null, 2));"));
+            }
         }
         webpackAssets.put(asset, outputFile);
         return outputFile;
@@ -91,14 +98,14 @@ public class WebpackCache implements CacheService {
     /**
      * This can take a while.
      */
-    private JSONObject compileJsx(AssetInfo jsxAsset, File output) throws IOException, ServiceException {
+    private JSONObject compile(File source, File target) throws IOException, ServiceException {
         AssetServices assetServices = ServiceLocator.getAssetServices();
         AssetInfo parser = assetServices.getAsset("com.centurylink.mdw.node/parser.js");
         AssetInfo runner = assetServices.getAsset("com.centurylink.mdw.node/webpackRunner.js");
 
         NodeJS nodeJS = NodeJS.createNodeJS();
 
-        logger.info("Compiling " + jsxAsset + " using NODE JS: " + nodeJS.getNodeVersion());
+        logger.info("Compiling " + source + " using NODE JS: " + nodeJS.getNodeVersion());
         V8Object fileObj = new V8Object(nodeJS.getRuntime()).add("file", runner.getFile().getAbsolutePath());
         JavaCallback callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
@@ -132,17 +139,17 @@ public class WebpackCache implements CacheService {
 
         // run
         nodeJS = NodeJS.createNodeJS();
-        V8Object jsxAssetObj = new V8Object(nodeJS.getRuntime());
-        jsxAssetObj.add("file", jsxAsset.getFile().getAbsolutePath());
-        jsxAssetObj.add("root", assetServices.getAssetRoot().getAbsolutePath());
-        jsxAssetObj.add("output", output.getAbsolutePath());
-        jsxAssetObj.add("debug", true); // TODO
+        V8Object inputObj = new V8Object(nodeJS.getRuntime());
+        inputObj.add("source", source.getAbsolutePath());
+        inputObj.add("root", assetServices.getAssetRoot().getAbsolutePath());
+        inputObj.add("output", target.getAbsolutePath());
+        inputObj.add("debug", true); // TODO
         callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
-              return jsxAssetObj;
+              return inputObj;
             }
         };
-        nodeJS.getRuntime().registerJavaMethod(callback, "getJsxAsset");
+        nodeJS.getRuntime().registerJavaMethod(callback, "getInput");
 
         final Result webpackResult = new Result();
         callback = new JavaCallback() {
@@ -160,11 +167,11 @@ public class WebpackCache implements CacheService {
         while (nodeJS.isRunning()) {
             nodeJS.handleMessage();
         }
-        jsxAssetObj.release();
+        inputObj.release();
         nodeJS.release();
 
         if (!webpackResult.status.equals("OK"))
-            throw new ServiceException(jsxAsset + " -> " + webpackResult);
+            throw new ServiceException(source + " -> " + webpackResult);
 
         return new JSONObject(webpackResult.content);
     }

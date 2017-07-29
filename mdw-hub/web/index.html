@@ -78,13 +78,13 @@
   <script src="js/ui/task.js"></script>
   <script src="js/ui/converters/object-table.js"></script>
   <script src="js/ui/swagger.js"></script>
+  <script src="js/ui/jsx.js"></script>
   <script src="js/dashboard/processes.js"></script>
   <script src="js/dashboard/requests.js"></script>
   <script src="js/dashboard/activities.js"></script>
   <script src="js/dashboard/tasks.js"></script>
   <script src="lib/swagger-ui/swagger-ui-bundle.js"></script>
   <script src="lib/swagger-ui/swagger-ui-standalone-preset.js"></script>
-  <script src="js/ui/jsx.js"></script>
 </head>
 <body class="mdw-body" ng-controller="AdminController" pop-container>
   <script>
@@ -103,6 +103,5 @@
   <div id="mdw-tabs" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/tabs.html'"></div>
   <div id="mdw-main" ng-class="{content: true, container: true, 'mdw-content': !isFullView(), 'mdw-mobile-content': isFullView(), 'mdw-full-width': isFullWidth()}" ng-view></div>
   <div id="mdw-footer" ng-if="!isFullView()" ng-include="'layout/footer.html'"></div>
-  <script src="bugs/new.jsx"></script>
 </body>
 </html>
