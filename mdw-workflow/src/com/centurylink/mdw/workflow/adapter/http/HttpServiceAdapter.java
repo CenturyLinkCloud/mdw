@@ -24,6 +24,7 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
@@ -40,6 +41,8 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     public static final String PROP_PASS = "PASS";
     public static final String CONNECT_TIMEOUT = "ConnectTimeout";
     public static final String READ_TIMEOUT = "ReadTimeout";
+    public static final String RETRY_HTTP_CODES = "RetryHttpCodes";
+    public static final int DEFAULT_HTTP_CODE = Status.INTERNAL_ERROR.getCode();
 
     private Map<String,String> requestHeaders = null;
     protected Map<String,String> getRequestHeaders() { return requestHeaders; }
