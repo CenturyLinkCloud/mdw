@@ -87,8 +87,12 @@ public class NodeRunner {
 
         nodeJS = NodeJS.createNodeJS();
 
-        V8Object testObj = new V8Object(nodeJS.getRuntime()).add("file", testCase.getAsset().getFile().getAbsolutePath());
-        testObj.add("env", "localhost.env"); // TODO hardcoded
+        V8Object testObj = new V8Object(nodeJS.getRuntime());
+        testObj.add("file", testCase.getAsset().getFile().getAbsolutePath());
+        V8Array valueFiles = new V8Array(nodeJS.getRuntime());
+        valueFiles.push("localhost.env"); // TODO hardcoded
+        testObj.add("valueFiles", valueFiles);
+        valueFiles.release();
         try {
             testObj.add("resultDir", ServiceLocator.getTestingServices().getTestResultsDir() + "/" + testCase.getPackage());
         }
@@ -110,9 +114,10 @@ public class NodeRunner {
             JSONObject options = item.getOptions() == null ? new JSONObject() : item.getOptions();
             TestExecConfig config = ServiceLocator.getTestingServices().getTestExecConfig();
             if (config.isVerbose() && !options.has("debug"))
-                options.put("debug", "true");
+                options.put("debug", true);
             if (config.isCreateReplace() && !options.has("overwriteExpected"))
-                options.put("overwriteExpected", "true");
+                options.put("overwriteExpected", true);
+            options.put("qualifyLocations", false);
             if (JSONObject.getNames(options) != null) {
                 V8Object json = nodeJS.getRuntime().getObject("JSON");
                 V8Array params = new V8Array(nodeJS.getRuntime()).push(options.toString());
