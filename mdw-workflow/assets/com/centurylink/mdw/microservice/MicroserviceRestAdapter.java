@@ -320,51 +320,59 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 httpHelper.setHeaders(headers);
 
             httpMethod = getHttpMethod();
+            String response = null;
             if (httpMethod.equals("GET"))
-                return httpHelper.get();
+                response =  httpHelper.get();
             else if (httpMethod.equals("POST"))
-                return httpHelper.post(request);
+                response =  httpHelper.post(request);
             else if (httpMethod.equals("PUT"))
-                return httpHelper.put(request);
+                response =  httpHelper.put(request);
             else if (httpMethod.equals("PATCH"))
-                return httpHelper.patch(request);
+                response =  httpHelper.patch(request);
             else if (httpMethod.equals("DELETE"))
-                return httpHelper.delete();
+                response =  httpHelper.delete();
             else
                 throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
+
+            if (response != null) {
+                int codeThreshold = DEFAULT_HTTP_CODE;
+                String retryCodes = getAttributeValueSmart(RETRY_HTTP_CODES);
+                if (retryCodes != null) {
+                    try {
+                        codeThreshold = Integer.parseInt(retryCodes);
+                    }
+                    catch (NumberFormatException ex) {} // Use default in this case
+                }
+
+                Response httpResponse = super.getResponse(conn, response);
+                if (httpResponse.getStatusCode() >= codeThreshold)
+                    throw new IOException("Server returned HTTP response code: " + httpResponse.getStatusCode());
+            }
+
+            return response;
         }
         catch (IOException ex) {
-            int responseCode = httpHelper.getResponseCode();
-            String responseMessage = httpHelper.getResponseMessage();
-            if (httpHelper != null) {
-                if (httpHelper.getResponse() != null) {
-                    logResponse(httpHelper.getResponse());
-                }
-                else {
-                    // Make sure that we log a 500 and a message in the service
-                    // summary
-                    Response response = new Response();
-                    response.setStatusCode(Status.INTERNAL_ERROR.getCode());
-                    response.setStatusMessage(
-                            getAdapterInvocationErrorMessage() + ":" + ex.getMessage());
-                    response.setContent("{}");
-                    logResponse(response);
-                }
+            Response response = null;
+            if (httpHelper != null && httpHelper.getResponse() != null) {
+                response = new Response(httpHelper.getResponse());
+                response.setStatusCode(httpHelper.getResponseCode());
+                response.setStatusMessage(httpHelper.getResponseMessage());
             }
-            // Deal with 500 response
-            if (responseCode >= Status.INTERNAL_ERROR.getCode() || responseCode <= 0) {
-                /**
-                 * Plugs into automatic retrying
-                 */
-                logexception(ex.getMessage(), ex);
-                throw new ConnectionException(-1, ex.getMessage(), ex);
+            else {
+                // Make sure that we log a 500 and a message in the service
+                // summary
+                response = new Response();
+                response.setStatusCode(Status.INTERNAL_ERROR.getCode());
+                response.setStatusMessage(
+                        getAdapterInvocationErrorMessage() + ":" + ex.getMessage());
+                response.setContent("{}");
             }
-            else if (responseCode >= Status.INTERNAL_ERROR.getCode()) {
-                // between 200-> 500, log it and continue
-                logdebug(httpMethod + "-Received code:" + responseCode + " message:"
-                        + responseMessage + "...continuing");
-            }
-            return httpHelper.getResponse();
+            logResponse(response);
+            /**
+             * Plugs into automatic retrying
+             */
+            logexception(ex.getMessage(), ex);
+            throw new ConnectionException(-1, ex.getMessage(), ex);
         }
         catch (Exception ex) {
             int responseCode = -1;

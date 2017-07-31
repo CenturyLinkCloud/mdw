@@ -137,18 +137,35 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 httpHelper.setHeaders(headers);
 
             String httpMethod = getHttpMethod();
+            String response = null;
             if (httpMethod.equals("GET"))
-                return httpHelper.get();
+                response =  httpHelper.get();
             else if (httpMethod.equals("POST"))
-                return httpHelper.post(request);
+                response =  httpHelper.post(request);
             else if (httpMethod.equals("PUT"))
-                return httpHelper.put(request);
+                response =  httpHelper.put(request);
             else if (httpMethod.equals("DELETE"))
-                return httpHelper.delete();
+                response =  httpHelper.delete();
             else if (httpMethod.equals("PATCH"))
-                return httpHelper.patch(request);
+                response =  httpHelper.patch(request);
             else
                 throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
+
+            if (response != null) {
+                int codeThreshold = DEFAULT_HTTP_CODE;
+                String retryCodes = getAttributeValueSmart(RETRY_HTTP_CODES);
+                if (retryCodes != null) {
+                    try {
+                        codeThreshold = Integer.parseInt(retryCodes);
+                    }
+                    catch (NumberFormatException ex) {} // Use default in this case
+                }
+
+                Response httpResponse = super.getResponse(conn, response);
+                if (httpResponse.getStatusCode() >= codeThreshold)
+                    throw new IOException("Server returned HTTP response code: " + httpResponse.getStatusCode());
+            }
+            return response;
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)
