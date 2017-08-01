@@ -657,6 +657,16 @@ public class AssetServicesImpl implements AssetServices {
         return asset;
     }
 
+    public List<String> getExtraPackageNames() throws ServiceException {
+        PackageList packageList = getPackages(true);
+        List<String> extraPackages = new ArrayList<>();
+        for (PackageDir packageDir : packageList.getPackageDirs()) {
+            if (packageDir.getVcsDiffType() == DiffType.EXTRA)
+                extraPackages.add(packageDir.getName());
+        }
+        return extraPackages;
+    }
+
     private class GhostVersionControl implements VersionControl {
 
         private Properties assetRevisions;
