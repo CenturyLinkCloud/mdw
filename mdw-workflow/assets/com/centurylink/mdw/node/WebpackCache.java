@@ -33,6 +33,7 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8Array;
@@ -80,9 +81,12 @@ public class WebpackCache implements CacheService {
                     + asset.getFile().getAbsolutePath().substring(
                             ApplicationContext.getAssetRoot().getAbsolutePath().length()) + ".out");
 
+        long before = System.currentTimeMillis();
         JSONObject statsJson = compile(source, outputFile);
         if (logger.isDebugEnabled()) {
             logger.debug("*** Webpack stats:\n" + statsJson.toString(2));
+            long time = System.currentTimeMillis() - before;
+            logger.debug("*** Webpack build time: " + time + " ms");
         }
         if (statsJson.has("errors")) {
             JSONArray errors = statsJson.getJSONArray("errors");

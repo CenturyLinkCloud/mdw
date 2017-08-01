@@ -30,7 +30,7 @@ import com.centurylink.mdw.model.user.Role;
  * Task Action model object.  Task actions are no longer constrained to a constant
  * set of values declared here.  Non-standard actions are governed by the result codes
  * of the outgoing transitions from the task creation activity.
- * When treated as a Jsonable, this is the DEFINITION for a task action (from mdw-hub-actions.xml);
+ * When treated as a Jsonable, this is the DEFINITION for a task action (from mdw-task-actions.xml);
  *
  */
 public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction> {

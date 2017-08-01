@@ -4,6 +4,6 @@ package.json=2
 parser.js=3
 test.js=1
 testRunner.js=4
-webpackConfig.js=1
+webpackConfig.js=2
 webpackRunner.js=1
 webpackTest.js=1

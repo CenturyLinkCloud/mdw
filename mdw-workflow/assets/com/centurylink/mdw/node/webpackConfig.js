@@ -19,7 +19,7 @@ module.exports = {
         rules: [
           {
             test: /\.(js|jsx)$/,
-            include: [ input.root ],
+            exclude: [/node_modules/],
             use: [
               {
                 loader: 'babel-loader',
@@ -31,12 +31,12 @@ module.exports = {
           },      
           {
             test: /\.css$/,
-            include: [ input.root ],
+            exclude: [/node_modules/],
             use: ['style-loader', 'css-loader']
           },
           {
             test: /\.png$/,
-            include: [ input.root ],
+            exclude: [/node_modules/],
             use: [
               {
                 loader: 'file-loader',

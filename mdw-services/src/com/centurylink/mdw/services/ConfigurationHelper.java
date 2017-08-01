@@ -22,7 +22,6 @@ import java.io.Serializable;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
@@ -43,7 +42,7 @@ public class ConfigurationHelper implements Serializable{
        return false;
      }
 
-     String filepath = PropertyManager.getProperty(PropertyNames.MDW_CONFIG_DIRECOTRY) + "/" + fileName;
+     String filepath = System.getProperty("mdw.config.location") + "/" + fileName;
 
      FileWriter wr = new FileWriter(new File(filepath));
      wr.write(contents);
