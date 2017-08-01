@@ -134,8 +134,9 @@ public class JsxServlet extends HttpServlet {
     }
 
     private String getStarter(String pkgPath, AssetInfo jsxAsset) {
+        String assetRoot = ApplicationContext.getAssetRoot().getAbsolutePath().replace('\\', '/');
         StringBuilder sb = new StringBuilder();
-        String nodeModules = ApplicationContext.getAssetRoot().toString().replace('\\', '/') + "/com/centurylink/mdw/node/node_modules";
+        String nodeModules = assetRoot + "/com/centurylink/mdw/node/node_modules";
         sb.append("import React from '" + nodeModules + "/react';\n");
         sb.append("import ReactDOM from '" + nodeModules + "/react-dom';\n");
         sb.append("import " + jsxAsset.getRootName() + " from '" + jsxAsset.getFile().getAbsolutePath().replace('\\', '/') + "';\n\n");

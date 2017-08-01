@@ -1,3 +1,5 @@
+'use strict';
+
 var jsxMod = angular.module('mdwJsx', ['mdw']);
 
 jsxMod.directive('mdwJsx', ['$document', 'mdw', function($document, mdw) {
@@ -5,27 +7,25 @@ jsxMod.directive('mdwJsx', ['$document', 'mdw', function($document, mdw) {
     restrict: 'A',
     link: function link(scope, elem, attrs, ctrls) {
       
+      var addScript = function(url) {
+        var script = $document[0].createElement('script');
+        return script;
+      };
+      
       var url = mdw.roots.hub + '/' + attrs.mdwJsx;
-      var script = $document[0].querySelector("script[src*='" + url + "']");
-      if (!script) {
-        mdw.hubLoading(true);
-        var heads = document.getElementsByTagName("head");
-        if (heads && heads.length) {
-          var head = heads[0];
-          if (head) {
-            script = document.createElement('script');
-            script.setAttribute('src', url);
-            script.setAttribute('type', 'text/javascript');
-            head.appendChild(script);
-            script.onload = function() {
-              mdw.hubLoading(false);
-            };
-          }
-        }
+      var head = $document[0].getElementsByTagName("head")[0];
+      var script = head.querySelector("script[src*='" + url + "']");
+      if (script) {
+        script.remove();
       }
-      else {
-        $mdwJsxHolder.renderJsx();
-      }
+      script = $document[0].createElement('script');
+      script.setAttribute('src', url);
+      script.setAttribute('type', 'text/javascript');
+      mdw.hubLoading(true);
+      head.insertBefore(script, head.firstChild);
+      script.onload = function() {
+        mdw.hubLoading(false);
+      };
     }
   };
 }]);

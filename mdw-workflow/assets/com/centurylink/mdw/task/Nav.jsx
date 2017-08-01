@@ -12,11 +12,11 @@ class Nav extends Component {
      
     return (
       <ul className="nav mdw-nav">
-        <li><Link to={'/tasks/' + id }>Task</Link></li>
+        <li><Link to={'/mdw/tasks/' + id }>Task</Link></li>
         <li><a href="">Discussion</a></li>
         <li><a href="">Subtasks</a></li>
-        <li><Link to={'/tasks/' + id + '/history'}>History</Link></li>
-        <li><a href="">Task List</a></li>
+        <li><Link to={'/mdw/tasks/' + id + '/history'}>History</Link></li>
+        <li><a href="/mdw/#/tasks" target="_self">Task List</a></li>
       </ul>
     );
   }

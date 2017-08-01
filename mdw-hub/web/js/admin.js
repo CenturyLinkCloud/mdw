@@ -51,7 +51,16 @@ adminApp.config(['$routeProvider', function($routeProvider) {
     }
   }
   $routeProvider.otherwise({
-    redirectTo: '/workflow/processes'
+    redirectTo: function(params, path, search) {
+      var pathname = window.location.pathname;
+      var hubRoot = $mdwHubRoot;
+      if (!hubRoot.endsWith('/'))
+        hubRoot += '/';
+      if (pathname == hubRoot)
+        return '/workflow/processes';
+        
+      throw new Error("Cannot route: " + window.location);
+    }
   });
 }]);
 

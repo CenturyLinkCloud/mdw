@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.hub.context.Mdw;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -40,6 +41,15 @@ public class NotFoundServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = (String)request.getAttribute("javax.servlet.forward.servlet_path");
         if (path != null) {
+            if (path.indexOf('.') == -1 && path.indexOf('#') == -1) {
+                String redirectPath = path;
+                String[] pathSegs = path.substring(1).split("/");
+                if (pathSegs.length > 2)
+                    redirectPath = "/" + pathSegs[0] + "/" + pathSegs[1];
+                response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/#" + redirectPath);
+                return;
+            }
+
             Mdw mdw = WebAppContext.getMdw();
             AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), path);
             if (!asset.exists()) {

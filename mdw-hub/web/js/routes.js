@@ -130,7 +130,7 @@ routesSvc.factory('routes', function() {
         controller: 'OldTaskAttachmentsController'
       },
       {
-        path: '/tasks/:taskInstanceId/history',
+        path: '/oldTasks/:taskInstanceId/history',
         templateUrl: 'tasks/task.html',
         controller: 'TaskController'
       },

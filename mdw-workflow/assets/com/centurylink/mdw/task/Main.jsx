@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import {
-  HashRouter as Router, Switch, Route
+  BrowserRouter as Router, Switch, Route
 } from '../node/node_modules/react-router-dom';
 import Nav from './Nav.jsx';
 import Heading from './Heading.jsx';
@@ -40,9 +40,9 @@ class Main extends Component {
             <div className="panel panel-default mdw-panel">
               <Heading task={this.state.task} />
               <div className="mdw-section">
-                <Route exact path="/tasks/:id" 
+                <Route exact path="/mdw/tasks/:id" 
                   render={() => <Task task={this.state.task} />} />
-                <Route path="/tasks/:id/history" 
+                <Route path="/mdw/tasks/:id/history" 
                   render={() => <History task={this.state.task} />} />
               </div>
             </div>
