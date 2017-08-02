@@ -379,7 +379,10 @@
 }
 .mdw-link {
   font-weight: bold;
-  color: #23527c;
+}
+.mdw-link2 {
+	margin-left: 4px;
+  font-weight: bold;
 }
 .mdw-warn {
   color: #a94442;

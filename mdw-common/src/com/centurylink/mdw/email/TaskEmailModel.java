@@ -16,6 +16,7 @@
 package com.centurylink.mdw.email;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,6 @@ import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskState;
 import com.centurylink.mdw.model.task.TaskStates;
 import com.centurylink.mdw.model.task.TaskStatuses;
-import com.centurylink.mdw.util.StringHelper;
 
 public class TaskEmailModel implements TemplatedEmail.Model {
 
@@ -58,11 +58,11 @@ public class TaskEmailModel implements TemplatedEmail.Model {
         taskInstance.setTaskInstanceUrl(taskInstUrl);
         taskInstance.setMasterRequestId(taskInstanceJson.getString("masterRequestId"));
         if (taskInstanceJson.has("startDate"))
-            taskInstance.setStartDate(taskInstanceJson.getString("startDate"));
+            taskInstance.setStart(Instant.parse(taskInstanceJson.getString("start")));
         if (taskInstanceJson.has("endDate"))
-            taskInstance.setEndDate(taskInstanceJson.getString("endDate"));
+            taskInstance.setEnd(Instant.parse(taskInstanceJson.getString("end")));
         if (taskInstanceJson.has("dueDate"))
-            taskInstance.setDueDate(taskInstanceJson.getString("dueDate"));
+            taskInstance.setDue(Instant.parse(taskInstanceJson.getString("due")));
         if (taskInstanceJson.has("assignee"))
             taskInstance.setAssigneeCuid(taskInstanceJson.getString("assignee"));
         if (taskInstanceJson.has("userId"))
@@ -118,10 +118,10 @@ public class TaskEmailModel implements TemplatedEmail.Model {
     public String getInstanceUrl() { return getTaskInstanceUrl(); }
     public String getMasterRequestId() { return taskInstance.getMasterRequestId(); }
     public String getOrderId() { return taskInstance.getMasterRequestId(); }
-    public Date getStartDate() { return StringHelper.stringToDate(taskInstance.getStartDate()); }
-    public Date getEndDate() { return StringHelper.stringToDate(taskInstance.getEndDate()); }
+    public Date getStartDate() { return Date.from(taskInstance.getStart()); }
+    public Date getEndDate() { return Date.from(taskInstance.getEnd()); }
     public String getAssignee() { return taskInstance.getAssigneeCuid();  }
-    public Date getDueDate() { return taskInstance.getDueDate(); }
+    public Date getDueDate() { return Date.from(taskInstance.getDue()); }
     public String getUserIdentifier() { return taskInstance.getUserIdentifier(); }
     public Integer getStatusCode() { return taskInstance.getStatusCode(); }
     public Integer getStateCode() { return taskInstance.getStateCode(); }

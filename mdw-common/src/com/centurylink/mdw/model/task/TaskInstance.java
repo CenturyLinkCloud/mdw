@@ -18,8 +18,8 @@ package com.centurylink.mdw.model.task;
 import static com.centurylink.mdw.constant.TaskAttributeConstant.TASK_INSTANCE_JSONNAME;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.Instance;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -43,17 +42,12 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Task", description="MDW task instance")
 public class TaskInstance implements Serializable, Jsonable, Instance {
 
-    private static Long db_time_diff = 0l;
-
     private String masterRequestId;
-    private Date dueDate;
     private Long taskInstanceId;
     private Long templateId;
     private String taskName;
     private Integer statusCode;
     private Integer stateCode;
-    private String startDate;
-    private String endDate;
     private String comments;
     private String description;
     private Long assigneeId;
@@ -66,9 +60,17 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     private List<String> groups;
     private Integer priority;
 
-    private Date retrieveDate;
-    public Date getRetrieveDate() { return retrieveDate; }
-    public void setRetrieveDate(Date d) { this.retrieveDate = d; }
+    private Instant due;
+    public Instant getDue() { return due; }
+    public void setDue(Instant due) { this.due = due; }
+
+    private Instant start;
+    public Instant getStart() { return start; }
+    public void setStart(Instant start) { this.start = start; }
+
+    private Instant end;
+    public Instant getEnd() { return end; }
+    public void setEnd(Instant end) { this.end = end; }
 
     private String template;
     public String getTemplate() { return template; }
@@ -81,19 +83,19 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public TaskInstance(Long id, Long templateId, String name, String masterRequestId, Date start,
-            Date end, Date due, Integer statusCode, Integer stateCode, String comments, String assigneeCuid,
+    public TaskInstance(Long id, Long templateId, String name, String masterRequestId, Instant start,
+            Instant end, Instant due, Integer statusCode, Integer stateCode, String comments, String assigneeCuid,
             String message, String activityName, String categoryCode) {
-        this.dueDate = due;
-        this.endDate = StringHelper.dateToString(end);
-        this.startDate = StringHelper.dateToString(start);
-        this.stateCode = stateCode;
-        this.statusCode = statusCode;
-        this.templateId = templateId;
         this.taskInstanceId = id;
-        this.masterRequestId = masterRequestId;
-        this.comments = comments;
+        this.templateId = templateId;
         this.taskName = name;
+        this.masterRequestId = masterRequestId;
+        this.start = start;
+        this.end = end;
+        this.due = due;
+        this.statusCode = statusCode;
+        this.stateCode = stateCode;
+        this.comments = comments;
         this.assigneeCuid = assigneeCuid;
         this.activityMessage = message;
         this.activityName = activityName;
@@ -110,16 +112,18 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             templateId = jsonObj.getLong("taskId");
         if (jsonObj.has("name"))
             taskName = jsonObj.getString("name");
-        if (jsonObj.has("startDate"))
-            startDate = jsonObj.getString("startDate");
+        if (jsonObj.has("start"))
+            start = Instant.parse(jsonObj.getString("start"));
+        if (jsonObj.has("end"))
+            end = Instant.parse(jsonObj.getString("end"));
+        if (jsonObj.has("due"))
+            due = Instant.parse(jsonObj.getString("due"));
         if (jsonObj.has("status"))
             setStatus(jsonObj.getString("status"));
         if (jsonObj.has("advisory"))
             setAdvisory(jsonObj.getString("advisory"));
         if (jsonObj.has("masterRequestId"))
             masterRequestId = jsonObj.getString("masterRequestId");
-        if (jsonObj.has("dueDate"))
-            dueDate = StringHelper.stringToDate(jsonObj.getString("dueDate"));
         if (jsonObj.has("assignee"))
             assigneeCuid = jsonObj.getString("assignee");
         if (jsonObj.has("instanceUrl"))
@@ -128,19 +132,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             category = jsonObj.getString("category");
         if (jsonObj.has("priority"))
             priority = jsonObj.getInt("priority");
-        if (jsonObj.has("endDate"))
-            endDate = jsonObj.getString("endDate");
         if (jsonObj.has("description"))
             description = jsonObj.getString("description");
         if (jsonObj.has("comments"))
             comments = jsonObj.getString("comments");
-        if (jsonObj.has("dueInSeconds")) {
-            int dueInSeconds = jsonObj.getInt("dueInSeconds");
-            if (dueInSeconds == -1)
-                dueDate = null;
-            else
-                dueDate = new Date(System.currentTimeMillis() + db_time_diff + jsonObj.getInt("dueInSeconds") * 1000);
-        }
         if (jsonObj.has("ownerId"))
             ownerId = jsonObj.getLong("ownerId");
         if (jsonObj.has("ownerType"))
@@ -162,8 +157,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             assigneeCuid = jsonObj.getString("assigneeId");
         if (jsonObj.has("assignee"))
             assignee = jsonObj.getString("assignee");
-        if (jsonObj.has("retrieveDate"))
-            retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
         if (jsonObj.has("activityInstanceId"))
             activityInstanceId = jsonObj.getLong("activityInstanceId");
         if (jsonObj.has("template"))
@@ -178,20 +171,19 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         if (templateId != null)
             json.put("taskId", templateId);
         json.put("name", taskName);
-        json.put("startDate", startDate);
+        json.put("start", start.toString());
+        if (due != null)
+            json.put("due", due.toString());
+        if (end != null)
+            json.put("end", end.toString());
         json.put("status", getStatus());
         String advisory = getAdvisory();
         if (advisory != null)
             json.put("advisory", getAdvisory());
         json.put("masterRequestId", masterRequestId);
-        if (dueDate != null) {
-            json.put("dueDate", dueDate);
-            json.put("dueInSeconds", (dueDate.getTime() - (System.currentTimeMillis() + db_time_diff))/1000);
-        }
         json.put("instanceUrl", taskInstanceUrl);
         json.put("category", getCategory());
         json.put("priority", priority);
-        json.put("endDate", endDate);
         json.put("description", description);
         json.put("comments", comments);
         json.put("ownerId", ownerId);
@@ -209,8 +201,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             json.put("assigneeId", assigneeCuid);
         if (assignee != null)
             json.put("assignee", assignee);
-        if (retrieveDate != null)
-            json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         if (activityInstanceId != null)
             json.put("activityInstanceId", activityInstanceId);
         if (template != null)
@@ -246,47 +236,11 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         setTaskInstanceId(Long.parseLong(instanceId));
     }
 
-    public Date getDueDate() {
-        return dueDate;
-    }
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-    @ApiModelProperty(hidden=true)
-    public void setDueDate(String dueDateString) {
-        this.dueDate = StringHelper.stringToDate(dueDateString);
-    }
     public String getMasterRequestId() {
         return masterRequestId;
     }
     public void setMasterRequestId(String id) {
         this.masterRequestId = id;
-    }
-    public String getEndDate() {
-        return endDate;
-    }
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-    @ApiModelProperty(hidden=true)
-    public void setEndDate(Date d) {
-        this.endDate = StringHelper.dateToString(d);
-    }
-    public String getStartDate() {
-        return startDate;
-    }
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-    @ApiModelProperty(hidden=true)
-    public void setStartDate(Date d) {
-        this.startDate = StringHelper.dateToString(d);
-    }
-    @ApiModelProperty(hidden=true)
-    public Date getStartDateAsDate() {
-        if (startDate == null)
-            return null;
-        return StringHelper.stringToDate(startDate);
     }
 
     @ApiModelProperty(hidden=true)
@@ -573,10 +527,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             return null;
         else
             return getSecondaryOwnerId();
-    }
-
-    public static void setDbTimeDiff(long timeDiff) {
-        db_time_diff = timeDiff;
     }
 
     /**

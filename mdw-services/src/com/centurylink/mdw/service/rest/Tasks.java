@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.rest;
 import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -318,7 +319,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 // TODO: title, comments, dueDate
                 String title = null;
                 String comments = null;
-                Date dueDate = null;
+                Instant due = null;
                 if (content.has("masterTaskInstanceId")) {
                     // subtask instance
                     Long masterTaskInstId = content.getLong("masterTaskInstanceId");
@@ -329,7 +330,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     // top-level task instance
                     Long taskInstanceId = taskServices
                             .createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER),
-                                    taskLogicalId, title, comments, dueDate).getTaskInstanceId();
+                                    taskLogicalId, title, comments, due).getTaskInstanceId();
                     JSONObject json = new JsonObject();
                     json.put("taskInstanceId", taskInstanceId);
                     return json;
