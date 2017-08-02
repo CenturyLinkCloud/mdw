@@ -8,7 +8,6 @@ class Action extends Component {
   }
   
   componentDidMount() {
-    console.log('HASH: ' + window.location.hash);
   }
   
   render() {

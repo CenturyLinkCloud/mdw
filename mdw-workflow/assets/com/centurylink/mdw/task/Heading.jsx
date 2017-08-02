@@ -13,6 +13,9 @@ class Heading extends Component {
       <div className="panel-heading mdw-heading">
         <div className="mdw-heading-label">
           {this.props.task.name}
+          <a href={'/mdw/tasks/' + this.props.task.id} className="mdw-id">
+            {this.props.task.id}
+          </a>
           {this.props.task.dirty && <span className="mdw-dirty">*</span>}
         </div>
         <div className="mdw-heading-actions">

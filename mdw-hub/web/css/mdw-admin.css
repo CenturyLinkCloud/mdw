@@ -67,6 +67,7 @@
 }
 .mdw-nav a {
   color: #424246;
+  border-radius: 4px;
 }
 .mdw-nav li {
   border: 1px solid transparent;
@@ -87,9 +88,12 @@
 .mdw-active a {
   color: black;
 }
-.mdw-active a:hover, .mdw-active a:focus {
+.mdw-active a:hover, .mdw-active a:focus, .mdw-active a:active {
   color: black !important;
   background-color: #b0bec5 !important;
+}
+.mdw-active-nav {
+	background-color: #b0bec5;
 }
 .mdw-label {
   display: block;
@@ -1063,6 +1067,11 @@
 	font-size: 13px;
   font-weight: bold;
   padding: 4px 6px;
+}
+.mdw-id {
+	margin-left: 5px;
+	opacity: .75;
+	font-size: 15px;
 }
 .mdw-task-editor {
 	padding: 10px;

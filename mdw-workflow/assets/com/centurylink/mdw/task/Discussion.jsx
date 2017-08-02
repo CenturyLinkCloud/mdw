@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 
-class History extends Component {
+class Discussion extends Component {
     
   constructor(...args) {
     super(...args);
@@ -10,10 +10,10 @@ class History extends Component {
   render() {
     return (
       <div>
-        task history
+        task discussion
       </div>
     );
   }
 }
 
-export default History; 
+export default Discussion;  

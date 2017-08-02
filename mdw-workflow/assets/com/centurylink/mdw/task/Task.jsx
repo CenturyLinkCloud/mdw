@@ -18,7 +18,7 @@ class Task extends Component {
   
   render() {
     return (
-      <div >
+      <div>
         hello task {this.props.task.id}
       </div>
     );
