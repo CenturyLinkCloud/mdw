@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.pool.PoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 
 public abstract class MDWConnectionPool {
 
-    private GenericObjectPool pool;
+    private GenericObjectPool<PooledConnection> pool;
     private String name;
     private List<PooledConnection> connections;
     private int next_id;
@@ -54,18 +55,18 @@ public abstract class MDWConnectionPool {
      */
     public synchronized void start() throws Exception {
         if (pool==null) {
-            pool = new GenericObjectPool(new MDWPoolFactory());
+            pool = new GenericObjectPool<PooledConnection>(new MDWPoolFactory());
         }
-        pool.setMaxActive(pool_size);
+        pool.setMaxTotal(pool_size);
         if (borrow_timeout<0) {
-            pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-            pool.setMaxWait(-1);
+            pool.setBlockWhenExhausted(true);
+            pool.setMaxWaitMillis(-1);
         } else if (borrow_timeout==0) {
-            pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_FAIL);
-            pool.setMaxWait(0);
+            pool.setBlockWhenExhausted(false);
+            pool.setMaxWaitMillis(0);
         } else {
-            pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-            pool.setMaxWait(borrow_timeout*1000);
+            pool.setBlockWhenExhausted(true);
+            pool.setMaxWaitMillis(borrow_timeout*1000);
         }
         setStarted(true);
     }
@@ -156,25 +157,25 @@ public abstract class MDWConnectionPool {
     }
     
     abstract public PooledConnection makeConnection() throws Exception;
-    
-    private class MDWPoolFactory implements PoolableObjectFactory {
-        public void destroyObject(Object arg0) throws Exception {
+
+    private class MDWPoolFactory implements PooledObjectFactory<PooledConnection> {
+        public void destroyObject(PooledObject<PooledConnection> arg0) throws Exception {
             synchronized (connections) {
                 connections.remove(arg0);
             }
             ((PooledConnection)arg0).destroy();
         }
-        public Object makeObject() throws Exception {
+        public PooledObject<PooledConnection> makeObject() throws Exception {
             PooledConnection conn = makeConnection();
             synchronized (connections) {
                 conn.setId(next_id++);
                 connections.add(conn);
             }
-            return conn;
+            return (PooledObject<PooledConnection>) conn;
         }
-        public void activateObject(Object arg0) throws Exception {}
-        public void passivateObject(Object arg0) throws Exception {}
-        public boolean validateObject(Object arg0) { return true; }
+        public void activateObject(PooledObject<PooledConnection> arg0) throws Exception {}
+        public void passivateObject(PooledObject<PooledConnection> arg0) throws Exception {}
+        public boolean validateObject(PooledObject<PooledConnection> arg0) { return true; }
     }
     
 }

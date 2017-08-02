@@ -30,11 +30,11 @@
     factory-bean="myJaxbContext" factory-method="createUnmarshaller" scope="prototype">
   </bean>
   
-  <bean id="myMarshallerPoolTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
+  <bean id="myMarshallerPoolTargetSource" class="org.springframework.aop.target.CommonsPool2TargetSource">
     <property name="targetBeanName" value="myMarshallerTarget" />
     <property name="maxSize" value="5" />
   </bean>
-  <bean id="myUnmarshallerPoolTargetSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
+  <bean id="myUnmarshallerPoolTargetSource" class="org.springframework.aop.target.CommonsPool2TargetSource">
     <property name="targetBeanName" value="myUnmarshallerTarget" />
     <property name="maxSize" value="5" />
   </bean>

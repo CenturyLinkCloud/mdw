@@ -24,4 +24,4 @@ customCategoryTask.task=1
 escalate.xml=2
 jaxb-action-request.xml=2
 jaxb-asset.xml=2
-testContext.spring=7
+testContext.spring=8
