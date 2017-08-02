@@ -85,17 +85,8 @@ public class Packages extends JsonRestService implements JsonExportable {
             // designer request for unversioned and (optionally) archived packages in a remote project
             boolean archive = query.getBooleanFilter("archive");
             try {
-                File tempDir = new File(ApplicationContext.getTempDirectory());
-                if (!tempDir.exists()) {
-                  if (!tempDir.mkdirs())
-                      throw new IOException("Unable to create temporary directory: " + tempDir);
-                }
-                if (!tempDir.isDirectory())
-                    throw new IOException("Temp location is not a directory: " + tempDir);
                 File pkgDir = new File(
                         PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
-                File zipFile = new File(
-                        tempDir + "/pkgs" + StringHelper.filenameDateToString(new Date()) + ".zip");
                 AssetServices assetServices = new AssetServicesImpl();
                 List<String> extraPackages = assetServices.getExtraPackageNames();
                 if (archive) {
@@ -110,11 +101,10 @@ public class Packages extends JsonRestService implements JsonExportable {
                     String url = ApplicationContext.getServicesUrl() + "/asset/packages?packages="
                             + String.join(",", extraPackages);
                     Download download = new Download(url);
-                    download.setFile(zipFile.getName());
                     return download.getJson();
                 }
             }
-            catch (IOException ex) {
+            catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
             }
