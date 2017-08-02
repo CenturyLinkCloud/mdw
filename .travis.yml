@@ -17,7 +17,7 @@ install:
 notifications:
   slack:
     rooms:
-      - mdwcore:9WSiZQJitrLtiiU5BO29Or4R#general
+      - mdwcore:9WSiZQJitrLtiiU5BO29Or4R#notices
     on_success: change # default: change
     on_failure: always # default: always
   email:
