@@ -215,10 +215,11 @@ public class TestRunner implements Runnable, MasterRequestListener {
             if (statusChanged) {
                 fullTestCaseList = writeTestResults(testCase);
                 if (fullTestCaseList != null)
-                    updateWebSocket(fullTestCaseList);
+                    updateWebSocket(fullTestCaseList, false);
             }
         }
-
+        if (allDone)
+            updateWebSocket(fullTestCaseList, allDone);
         return allDone;
     }
 
@@ -229,8 +230,9 @@ public class TestRunner implements Runnable, MasterRequestListener {
 
     /**
      * force immediate update through WebSocket
+     * @param allDone
      */
-    private void updateWebSocket(TestCaseList testCaseList) {
+    private void updateWebSocket(TestCaseList testCaseList, boolean allDone) {
         MdwWebSocketServer webSocketServer = MdwWebSocketServer.getInstance();
 
         if (webSocketServer.hasInterestedConnections("AutomatedTests")) {
@@ -239,6 +241,23 @@ public class TestRunner implements Runnable, MasterRequestListener {
             }
             catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
+            }
+        }
+        if (allDone)
+        {
+            if (webSocketServer.hasInterestedConnections("SlackNotice")) {
+                try {
+                    int count = 0;
+                    for (TestCase testCase : testCaseList.getTestCases()) {
+                        if (testCase.getStatus() == TestCase.Status.Failed || testCase.getStatus() == TestCase.Status.Errored){
+                            count++;
+                        }
+                    }
+                    webSocketServer.send(count + " test case(s) failed", "SlackNotice");
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
             }
         }
     }
