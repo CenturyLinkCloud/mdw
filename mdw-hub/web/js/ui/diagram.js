@@ -27,25 +27,32 @@ diagramMod.factory('Diagram',
 
   Diagram.BOUNDARY_DIM = 25;
 
-  Diagram.prototype.draw = function() {
+  Diagram.prototype.draw = function(reveal) {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.prepareDisplay();
-
-    this.label.draw();
-    this.steps.forEach(function(step) {
-      step.draw();
-    });
-    this.links.forEach(function(link) {
-      link.draw();
-    });
-    this.subflows.forEach(function(subflow) {
-      subflow.draw();
-    });
-    this.notes.forEach(function(note) {
-      note.draw();
-    });
+    
+    if (reveal) {
+      this.label.draw();
+      var st = this.getStart();
+      st.draw();
+    }
+    else {
+      this.label.draw();
+      this.steps.forEach(function(step) {
+        step.draw();
+      });
+      this.links.forEach(function(link) {
+        link.draw();
+      });
+      this.subflows.forEach(function(subflow) {
+        subflow.draw();
+      });
+      this.notes.forEach(function(note) {
+        note.draw();
+      });
+    }
     
     if (this.marquee) {
       this.marquee.draw();
@@ -148,6 +155,13 @@ diagramMod.factory('Diagram',
   Diagram.prototype.getStep = function(activityId) {
     for (var i = 0; i < this.steps.length; i++) {
       if (this.steps[i].activity.id == activityId)
+        return this.steps[i];
+    }
+  };
+  
+  Diagram.prototype.getStart = function() {
+    for (var i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].activity.implementor == Step.START_IMPL)
         return this.steps[i];
     }
   };

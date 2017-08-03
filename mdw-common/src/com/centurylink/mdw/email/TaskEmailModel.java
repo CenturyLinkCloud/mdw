@@ -71,10 +71,6 @@ public class TaskEmailModel implements TemplatedEmail.Model {
         taskInstance.setStateCode(taskInstanceJson.getInt("stateCode"));
         if (taskInstanceJson.has("comments"))
             taskInstance.setComments(taskInstanceJson.getString("comments"));
-        if (taskInstanceJson.has("message"))
-            taskInstance.setActivityMessage(taskInstanceJson.getString("message"));
-        if (taskInstanceJson.has("activityName"))
-            taskInstance.setActivityName(taskInstanceJson.getString("activityName"));
         taskInstance.setOwnerType(OwnerType.PROCESS_INSTANCE);
         taskInstance.setOwnerId(taskInstanceJson.getLong("processInstanceId"));
         if (taskInstanceJson.has("taskId"))
@@ -95,8 +91,6 @@ public class TaskEmailModel implements TemplatedEmail.Model {
         jsonObject.put("statusCode", getStatusCode());
         jsonObject.put("stateCode", getStateCode());
         jsonObject.put("comments", getComments());
-        jsonObject.put("message", getMessage());
-        jsonObject.put("activityName", getActivityName());
         jsonObject.put("processInstanceId", getProcessInstanceId());
         jsonObject.put("taskId", getTaskId());
         return jsonObject;
@@ -127,8 +121,6 @@ public class TaskEmailModel implements TemplatedEmail.Model {
     public Integer getStateCode() { return taskInstance.getStateCode(); }
     public String getStatus() { return TaskStatuses.getTaskStatuses().get(getStatusCode()); }
     public String getComments() { return taskInstance.getComments(); }
-    public String getMessage() { return taskInstance.getActivityMessage(); }
-    public String getActivityName() { return taskInstance.getActivityName(); }
     public Long getTaskId() { return taskInstance.getTaskId(); }
 
     public String getFormattedDueDate() {

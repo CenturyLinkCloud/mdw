@@ -97,8 +97,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         this.stateCode = stateCode;
         this.comments = comments;
         this.assigneeCuid = assigneeCuid;
-        this.activityMessage = message;
-        this.activityName = activityName;
         this.categoryCode = categoryCode;
     }
 
@@ -345,23 +343,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public Long activityInstanceId;
     public Long getActivityInstanceId() { return this.activityInstanceId; }
     public void setActivityInstanceId(Long id) { this.activityInstanceId = id; }
-
-    private String activityName;
-    /**
-     * Not populated.  Use workflow services for activityInstanceId.
-     */
-    @ApiModelProperty(hidden=true)
-    public String getActivityName() { return activityName; }
-    public void setActivityName(String activityName) { this.activityName = activityName; }
-
-    private String activityMessage;
-    /**
-     * Not populated.  Use workflow services for activityInstanceId.
-     */
-    @ApiModelProperty(hidden=true)
-    public String getActivityMessage() { return activityMessage; }
-    public void setActivityMessage(String message) { this.activityMessage = message; }
-
 
     @ApiModelProperty(hidden=true)
     public String getCategoryCode(){
