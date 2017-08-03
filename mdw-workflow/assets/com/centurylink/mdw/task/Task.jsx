@@ -94,10 +94,10 @@ class Task extends Component {
             }
           </div>
         </div>
-        <div>
+        <div className="mdw-task-workflow">
           {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
-            <Workflow assetPath="com.centurylink.mdw.tests.workflow/MDWTestMainProcess"
-              instanceId="11035" hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
+            <Workflow instanceId={task.ownerId}
+              hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
           }
         </div>
       </div>
