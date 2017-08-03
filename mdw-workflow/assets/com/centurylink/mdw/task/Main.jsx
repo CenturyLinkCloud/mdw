@@ -64,12 +64,16 @@ class Main extends Component {
   }
   
   getChildContext() {
-    return {hubRoot: $mdwHubRoot};
+    return {
+      hubRoot: $mdwHubRoot,
+      serviceRoot: $mdwServicesRoot + '/services'
+    };
   }  
 }
 
 Main.childContextTypes = {
-  hubRoot: PropTypes.string
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string
 };
 
 export default Main; 

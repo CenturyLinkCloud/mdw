@@ -86,34 +86,6 @@ workflowMod.controller('MdwWorkflowController',
           $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
           .then(function success(response) {
             $scope.implementors = response.data;
-            // add pseudo-implementors
-            $scope.implementors.push({
-              category: 'subflow',
-              label: 'Exception Handler Subflow',
-              icon: 'com.centurylink.mdw.base/subflow.png',
-              implementorClass: 'Exception Handler'
-            });
-            $scope.implementors.push({
-              category: 'subflow',
-              label: 'Cancelation Handler Subflow',
-              icon: 'com.centurylink.mdw.base/subflow.png',
-              implementorClass: 'Cancelation Handler'
-            });
-            $scope.implementors.push({
-              category: 'subflow',
-              label: 'Delay Handler Subflow',
-              icon: 'com.centurylink.mdw.base/subflow.png',
-              implementorClass: 'Delay Handler'
-            });    
-            $scope.implementors.push({
-              category: 'note',
-              label: 'Text Note',
-              icon: 'com.centurylink.mdw.base/note.png',
-              implementorClass: 'TextNote'
-            });
-            $scope.implementors.sort(function(impl1, impl2) {
-              return impl1.label.localeCompare(impl2.label);
-            });
             mdwImplementors.set($scope.implementors);
             $scope.doRender();
           }, function error(response) {
@@ -130,21 +102,17 @@ workflowMod.controller('MdwWorkflowController',
           $scope.instance = response.data;
             $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
             $scope.diagram.draw();
-            if ($scope.editable) {
-              $scope.toolbox = Toolbox.getToolbox();
-              $scope.toolbox.init($scope.implementors, $scope.hubBase);
-            }
         }, function error(response) {
           mdw.messages = response.statusText;
       });
     }
     else {
-        $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
-        $scope.diagram.draw();
-        if ($scope.editable) {
-          $scope.toolbox = Toolbox.getToolbox();
-          $scope.toolbox.init($scope.implementors, $scope.hubBase);
-        }
+      $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
+      $scope.diagram.draw();
+      if ($scope.editable) {
+        $scope.toolbox = Toolbox.getToolbox();
+        $scope.toolbox.init($scope.implementors, $scope.hubBase);
+      }
     }
   };
   
@@ -239,6 +207,10 @@ workflowMod.controller('MdwWorkflowController',
 workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
   return {
     set: function(implementors) {
+      implementors = implementors.concat(mdwUi.pseudoImplementors);
+      implementors.sort(function(impl1, impl2) {
+        return impl1.label.localeCompare(impl2.label);
+      });
       this.implementors = implementors;
     },
     get: function() {

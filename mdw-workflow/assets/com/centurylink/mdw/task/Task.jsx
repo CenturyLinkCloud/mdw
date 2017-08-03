@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import Workflow from '../react/Workflow.jsx';
 import UserDate from './UserDate.jsx';
 
 class Task extends Component {
@@ -93,12 +94,19 @@ class Task extends Component {
             }
           </div>
         </div>
+        <div>
+          {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
+            <Workflow assetPath="com.centurylink.mdw.tests.workflow/MDWTestMainProcess"
+              instanceId="11035" hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
+          }
+        </div>
       </div>
     );
   }
 }
 
 Task.contextTypes = {
-  hubRoot: PropTypes.string
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string
 };
 export default Task; 

@@ -17,6 +17,32 @@ var mdwUi = {
      mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
      mdwUi.Configurator = ngInjector.get('Configurator');
    },
+   pseudoImplementors: [
+     {
+       category: 'subflow',
+       label: 'Exception Handler Subflow',
+       icon: 'com.centurylink.mdw.base/subflow.png',
+       implementorClass: 'Exception Handler'
+     },
+     {
+       category: 'subflow',
+       label: 'Cancelation Handler Subflow',
+       icon: 'com.centurylink.mdw.base/subflow.png',
+       implementorClass: 'Cancelation Handler'
+     },
+     {
+       category: 'subflow',
+       label: 'Delay Handler Subflow',
+       icon: 'com.centurylink.mdw.base/subflow.png',
+       implementorClass: 'Delay Handler'
+     },    
+     {
+       category: 'note',
+       label: 'Text Note',
+       icon: 'com.centurylink.mdw.base/note.png',
+       implementorClass: 'TextNote'
+     }
+   ],
    DC: {
      DEFAULT_FONT: {
        FONT: '12px sans-serif',
