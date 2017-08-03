@@ -374,6 +374,11 @@
   position: relative;
   top: -2px;
 }
+.mdw-item-alert2 {
+  position: relative;
+  top: -2px;
+	margin-left: 4px;
+}
 .mdw-item-highlight {
   font-weight: bold;
 }
@@ -490,6 +495,13 @@
 }
 .mdw-item-action a:visited {
   text-decoration: none;
+}
+.mdw-item-label {
+  color: #424242;
+  margin-right: 3px;
+}
+.mdw-item-value {
+  color: #424242;
 }
 .mdw-resource-info {
   font-size: 13px;

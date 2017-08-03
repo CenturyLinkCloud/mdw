@@ -1,5 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Link} from '../node/node_modules/react-router-dom';
 import Action from './Action.jsx';
 
 class Heading extends Component {
@@ -13,9 +15,9 @@ class Heading extends Component {
       <div className="panel-heading mdw-heading">
         <div className="mdw-heading-label">
           {this.props.task.name}
-          <a href={'/mdw/tasks/' + this.props.task.id} className="mdw-id">
+          <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id} className="mdw-id">
             {this.props.task.id}
-          </a>
+          </Link>
           {this.props.task.dirty && <span className="mdw-dirty">*</span>}
         </div>
         <div className="mdw-heading-actions">
@@ -25,5 +27,9 @@ class Heading extends Component {
     );
   }
 }
+
+Heading.contextTypes = {
+  hubRoot: PropTypes.string
+};
 
 export default Heading; 

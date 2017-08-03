@@ -1,4 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
 
 class Nav extends Component {
@@ -18,20 +19,22 @@ class Nav extends Component {
           <NavLink to="/history" id={id}>History</NavLink>
         </ul>
         <ul className="nav mdw-nav">
-          <li><a href="/mdw/#/tasks" target="_self">Task List</a></li>
+          <li><a href={this.context.hubRoot + '/#/tasks'} target="_self">Task List</a></li>
         </ul>
       </div>
     );
   }
 }
 
-function NavLink(props) {
+function NavLink(props, context) {
   const path = window.location.pathname;
-  var dest = '/mdw/tasks/' + props.id;
+  if (!path.startsWith('/'))
+      path = '/' + path; // ie 11
+  var dest = context.hubRoot + '/tasks/' + props.id;
   if (props.to != '/')
       dest += props.to;
   var cl = '';
-  if (path == dest || (path == '/mdw/' && props.to == '/'))
+  if (path == dest || (path == context.hubRoot + '/' && props.to == '/'))
     cl = 'mdw-active';
   return (
     <li className={cl}>
@@ -39,7 +42,11 @@ function NavLink(props) {
         {props.children}
       </Link>
     </li>
-  );    
+  );  
 }
+
+Nav.contextTypes = NavLink.contextTypes = {
+  hubRoot: PropTypes.string
+} 
 
 export default Nav;  

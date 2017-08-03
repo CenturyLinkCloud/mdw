@@ -1,4 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {
   BrowserRouter as Router, Switch, Route, IndexRoute
 } from '../node/node_modules/react-router-dom';
@@ -33,6 +34,7 @@ class Main extends Component {
   }
   
   render() {
+    var hub = this.getChildContext().hubRoot + '/';
     return (
       <Router>
         <div>
@@ -43,15 +45,15 @@ class Main extends Component {
             <div className="panel panel-default mdw-panel">
               <Heading task={this.state.task} />
               <div className="mdw-section">
-                <Route exact path="/mdw/" 
+                <Route exact path={hub} 
                   render={(props) => <Task {...props} task={this.state.task} />} />
-                <Route exact path="/mdw/tasks/:id" 
+                <Route exact path={hub + 'tasks/:id'} 
                   render={(props) => <Task {...props} task={this.state.task} />} />
-                <Route path="/mdw/tasks/:id/discussion" 
+                <Route path={hub + 'tasks/:id/discussion'} 
                   render={() => <Discussion task={this.state.task} />} />
-                <Route path="/mdw/tasks/:id/subtasks" 
+                <Route path={hub + 'tasks/:id/subtasks'}
                   render={() => <Subtasks task={this.state.task} />} />
-                <Route path="/mdw/tasks/:id/history" 
+                <Route path={hub + 'tasks/:id/history'} 
                   render={() => <History task={this.state.task} />} />
               </div>
             </div>
@@ -60,6 +62,14 @@ class Main extends Component {
       </Router>
     );
   }
+  
+  getChildContext() {
+    return {hubRoot: $mdwHubRoot};
+  }  
 }
+
+Main.childContextTypes = {
+  hubRoot: PropTypes.string
+};
 
 export default Main; 

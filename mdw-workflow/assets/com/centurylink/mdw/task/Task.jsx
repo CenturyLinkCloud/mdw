@@ -1,5 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import UserDate from './UserDate.jsx';
 
 class Task extends Component {
     
@@ -34,12 +36,10 @@ class Task extends Component {
                     </span>
                   }
                 </div>
-                <div className="mdw-item">Created {task.created},
+                <div className="mdw-item">
+                  <UserDate label="Created" date={task.start} />,&nbsp;&nbsp;
                   {task.due &&
-                    <span> Due <i className="mdw-item-highlight">{task.due}</i></span>
-                  }
-                  {task.alert &&
-                    <img className="mdw-item-alert" src="images/alert.png" alt="alert" />
+                    <UserDate label="Due" date={task.due} alert={true} />
                   }
                   {!task.due && task.editable &&
                     <span><i>No Due Date</i></span>
@@ -50,10 +50,10 @@ class Task extends Component {
                       <i className="glyphicon glyphicon-calendar"></i>
                     </button>
                   }
+                  {task.end &&
+                    <UserDate label={task.status} date={task.end} />
+                  }
                 </div>
-                {task.endDate &&
-                  <div className="mdw-item-sub">{task.status} {task.endDate}</div>
-                }
                 {task.workgroups &&
                   <div className="mdw-item">
                     Workgroups:
@@ -83,7 +83,7 @@ class Task extends Component {
             </div>
             {task.assignee &&
               <div>
-                <img src="images/user.png" alt="user"/> {task.assignee}
+                <img src={this.context.hubRoot + '/images/user.png'} alt="user"/> {task.assignee}
               </div>
             }
             {task.template &&
@@ -98,4 +98,7 @@ class Task extends Component {
   }
 }
 
+Task.contextTypes = {
+  hubRoot: PropTypes.string
+};
 export default Task; 
