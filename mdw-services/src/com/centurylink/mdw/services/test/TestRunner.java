@@ -218,7 +218,8 @@ public class TestRunner implements Runnable, MasterRequestListener {
                     updateWebSocket(fullTestCaseList, false);
             }
         }
-        updateWebSocket(fullTestCaseList, allDone);
+        if (allDone)
+            updateWebSocket(fullTestCaseList, allDone);
         return allDone;
     }
 

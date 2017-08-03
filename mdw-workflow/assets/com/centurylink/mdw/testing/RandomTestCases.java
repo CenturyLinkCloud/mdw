@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.timer.testing;
+package com.centurylink.mdw.testing;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
@@ -35,6 +37,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 /**
  * Run random test cases to generate data for reports
  */
+@RegisteredService(ScheduledJob.class)
 public class RandomTestCases extends RoundRobinScheduledJob {
 
     private StandardLogger logger;
