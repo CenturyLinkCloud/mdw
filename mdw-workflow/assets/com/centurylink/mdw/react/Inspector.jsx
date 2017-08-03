@@ -10,7 +10,6 @@ class Inspector extends Component {
   render() {
     return (
       <div>
-        inspector
       </div>
     );
   }

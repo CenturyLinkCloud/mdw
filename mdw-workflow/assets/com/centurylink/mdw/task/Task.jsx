@@ -32,24 +32,18 @@ class Task extends Component {
                     <span>
                       Master request:
                       <a href={'#/workflow/masterRequests/' + task.masterRequestId} 
-                          className="mdw-link2">{task.masterRequestId}
+                          className="mdw-link">{task.masterRequestId}
                       </a>
                     </span>
                   }
                 </div>
                 <div className="mdw-item">
-                  <UserDate label="Created" date={task.start} />,&nbsp;&nbsp;
+                  <UserDate label="Created" date={task.start} />
                   {task.due &&
-                    <UserDate label="Due" date={task.due} alert={true} />
-                  }
-                  {!task.due && task.editable &&
-                    <span><i>No Due Date</i></span>
-                  }
-                  {task.editable &&
-                    <button type="button" className="btn mdw-btn btn-default" onClick="{this.handleClick}"
-                      style={{marginLeft: '5px'}}>
-                      <i className="glyphicon glyphicon-calendar"></i>
-                    </button>
+                    <span>{',  '}
+                      <UserDate label="Due" date={task.due} alert={true} 
+                        editable={task.editable} notLabel="No Due Date" />
+                    </span>
                   }
                   {task.end &&
                     <UserDate label={task.status} date={task.end} />
@@ -57,11 +51,16 @@ class Task extends Component {
                 </div>
                 {task.workgroups &&
                   <div className="mdw-item">
-                    Workgroups:
+                    Workgroups:{' '}
                     {
-                      task.workgroups.map(workgroup => {
+                      task.workgroups.map((workgroup, i) => {
                         return (
-                          <a className="mdw-adjoin" href={'/#/groups/' + workgroup}>{workgroup}</a>
+                          <span>
+                          <a className="mdw-adjoin" href={'/#/groups/' + workgroup}>
+                            {workgroup}
+                          </a>
+                          {i < task.workgroups.length - 1 && ', '}
+                          </span>
                         );
                       })
                     }

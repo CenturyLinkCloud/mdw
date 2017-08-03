@@ -26,9 +26,11 @@ class Main extends Component {
     .then(response => {
       return response.json();
     })
-    .then(json => {
+    .then(task => {
+      task.actionable = true; // TODO assigned to user and not in final state
+      task.editable = true; // TODO assigned to user and not in final state
       this.setState({
-        task: json
+        task: task
       });
     });
   }

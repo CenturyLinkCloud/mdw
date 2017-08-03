@@ -374,19 +374,22 @@
   position: relative;
   top: -2px;
 }
-.mdw-item-alert2 {
-  position: relative;
-  top: -2px;
+.mdw-space {
 	margin-left: 4px;
+}
+.mdw-space2 {
+  margin-left: 8px;
+}
+.mdw-space-right {
+  margin-right: 4px;
+}
+.mdw-space-right2 {
+  margin-right: 8px;
 }
 .mdw-item-highlight {
   font-weight: bold;
 }
 .mdw-link {
-  font-weight: bold;
-}
-.mdw-link2 {
-	margin-left: 4px;
   font-weight: bold;
 }
 .mdw-warn {
@@ -785,10 +788,12 @@
 	
 }
 .mdw-task-workflow {
+	max-width: 85%;
   overflow: auto;
   max-height: 250px;
-  border: 2px solid gray;
-  max-width: 80%;
+  border: 1px solid #757575;
+  border-radius: 4px;
+  box-shadow: 4px 4px 16px #757575;
   margin-left: auto;
   margin-right: auto;
   margin-top: 20px;

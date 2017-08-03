@@ -1,5 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -105,12 +106,24 @@ class UserDate extends Component {
     }
     return (
       <span>
-        <label title={title} className="mdw-item-label">
-          {this.props.label}:
-        </label>
-        <span className="mdw-item-value">{text}</span>
+        {(date || !this.props.notLabel) &&
+          <label title={title} className="mdw-item-label">
+            {this.props.label}:
+          </label>
+        }
+        {date &&
+          <span className="mdw-item-value">{text}</span>
+        }
         {this.props.alert && past &&
-          <img className="mdw-item-alert2" src={this.context.hubRoot + '/images/alert.png'} alt="alert" />
+          <img className="mdw-item-alert mdw-space" src={this.context.hubRoot + '/images/alert.png'} alt="alert" />
+        }
+        {!date && this.props.notLabel &&
+          <span><i>{this.props.notLabel}</i></span>
+        }
+        {this.props.editable &&
+          <Button type="button" className="mdw-btn mdw-space2">
+            <Glyphicon glyph='calendar' />
+          </Button>
         }
       </span>
     );
