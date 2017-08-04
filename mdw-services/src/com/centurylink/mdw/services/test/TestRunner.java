@@ -252,11 +252,10 @@ public class TestRunner implements Runnable, MasterRequestListener {
             try {
                 int count = 0;
                 for (TestCase testCase : testCaseList.getTestCases()) {
-                    if (testCase.getStatus() == TestCase.Status.Failed || testCase.getStatus() == TestCase.Status.Errored){
+                    if (testCase.getStatus() == TestCase.Status.Failed || testCase.getStatus() == TestCase.Status.Errored)
                         count++;
-                    }
                 }
-                if (count <= 0)
+                if (count > 0)
                     webSocketServer.send(count + " test case(s) failed", "SlackNotice");
                 else
                     webSocketServer.send("All test cases passed!!!", "SlackNotice");
