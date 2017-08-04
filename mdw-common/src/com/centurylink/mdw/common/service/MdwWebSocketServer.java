@@ -17,15 +17,19 @@ package com.centurylink.mdw.common.service;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
@@ -157,7 +161,7 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
     public void onStartup() throws StartupException {
         WebSocketImpl.DEBUG = logger.isMdwDebugEnabled();
         try {
-            getInstance().start();
+            getInstance().setFactoryObject().start();
             logger.info("MdwWebSocketServer started on port: " + getPort());
         }
         catch (Exception ex) {
@@ -198,5 +202,21 @@ public class MdwWebSocketServer extends org.java_websocket.server.WebSocketServe
                     jsonNameToConnections.remove(key);
             }
         }
+    }
+
+    public static boolean isSSL() {
+        return (PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL) != null && PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL).startsWith("wss"));
+    }
+
+    public MdwWebSocketServer setFactoryObject () throws StartupException {
+        if (isSSL())
+            try {
+                setWebSocketFactory(new DefaultSSLWebSocketServerFactory(SSLContext.getDefault()));
+            }
+        catch (NoSuchAlgorithmException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            throw new StartupException(ex.getMessage(), ex);
+        }
+        return instance;
     }
 }
