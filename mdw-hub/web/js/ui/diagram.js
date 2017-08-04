@@ -32,27 +32,22 @@ diagramMod.factory('Diagram',
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.prepareDisplay();
-    
-    if (reveal) {
-      this.label.draw();
-      var st = this.getStart();
-      st.draw();
-    }
-    else {
-      this.label.draw();
-      this.steps.forEach(function(step) {
-        step.draw();
-      });
-      this.links.forEach(function(link) {
-        link.draw();
-      });
-      this.subflows.forEach(function(subflow) {
-        subflow.draw();
-      });
-      this.notes.forEach(function(note) {
-        note.draw();
-      });
-    }
+
+    this.label.draw();
+    this.steps.forEach(function(step) {
+      step.draw();
+    });
+    this.links.forEach(function(link) {
+      link.draw();
+    });
+    this.subflows.forEach(function(subflow) {
+      subflow.draw();
+    });
+    this.notes.forEach(function(note) {
+      note.draw();
+    });
+
+    this.applyState(reveal);
     
     if (this.marquee) {
       this.marquee.draw();
@@ -77,8 +72,6 @@ diagramMod.factory('Diagram',
         var step = new Step(diagram, activity);
         step.implementor = diagram.getImplementor(activity.implementor);
         diagram.makeRoom(canvasDisplay, step.prepareDisplay());
-        if (diagram.instance)
-          step.applyState(diagram.getActivityInstances(activity.id));
         diagram.steps.push(step);
       });
     }
@@ -90,8 +83,6 @@ diagramMod.factory('Diagram',
         step.activity.transitions.forEach(function(transition) {
           var link = new Link(diagram, transition, step, diagram.getStep(transition.to));
           diagram.makeRoom(canvasDisplay, link.prepareDisplay());
-          if (diagram.instance)
-            link.applyState(diagram.getTransitionInstances(link.transition.id));
           diagram.links.push(link);
         });
       }
@@ -103,10 +94,6 @@ diagramMod.factory('Diagram',
       this.process.subprocesses.forEach(function(subproc) {
         var subflow = new Subflow(diagram, subproc);
         diagram.makeRoom(canvasDisplay, subflow.prepareDisplay());
-        if (diagram.instance) {
-          subflow.mainProcessInstanceId = diagram.instance.processInstanceId; // needed for subprocess & task instance retrieval          
-          subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
-        }
         diagram.subflows.push(subflow);
       });
     }
@@ -145,6 +132,37 @@ diagramMod.factory('Diagram',
     this.canvas.height = canvasDisplay.h;
   };
 
+  Diagram.prototype.applyState = function(reveal) {
+    var diagram = this; // forEach inner access
+    
+    // activities
+    if (this.process.activities) {
+      this.process.activities.forEach(function(activity) {
+        var step = diagram.getStep(activity.id);
+        step.applyState(diagram.getActivityInstances(activity.id));
+      });
+    }
+    
+    // transitions
+    diagram.steps.forEach(function(step) {
+      if (step.activity.transitions) {
+        step.activity.transitions.forEach(function(transition) {
+          var link = diagram.getLink(transition.id);
+          link.applyState(diagram.getTransitionInstances(link.transition.id));
+        });
+      }
+    });
+    
+    // embedded subprocesses
+    if (this.process.subprocesses) {
+      this.process.subprocesses.forEach(function(subproc) {
+        var subflow = diagram.getSubflow(subproc.id);
+        subflow.mainProcessInstanceId = diagram.instance.processInstanceId; // needed for subprocess & task instance retrieval          
+        subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
+      });
+    }
+  };
+  
   Diagram.prototype.makeRoom = function(canvasDisplay, display) {
     if (display.w > canvasDisplay.w)
       canvasDisplay.w = display.w;

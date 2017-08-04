@@ -162,6 +162,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   
   Step.prototype.applyState = function(activityInstances) {
     this.instances = activityInstances;
+    this.draw();
   };
 
   Step.prototype.move = function(deltaX, deltaY, limDisplay) {

@@ -168,6 +168,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   
   Link.prototype.applyState = function(transitionInstances) {
     this.instances = transitionInstances;
+    this.draw();
   };
   
   Link.prototype.getColor = function() {

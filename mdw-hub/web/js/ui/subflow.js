@@ -185,6 +185,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
         });
       });
     }
+    this.draw();
   };
   
   Subflow.prototype.getStep = function(activityId) {
