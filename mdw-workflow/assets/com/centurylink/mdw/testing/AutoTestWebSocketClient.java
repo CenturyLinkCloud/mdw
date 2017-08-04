@@ -53,7 +53,7 @@ public class AutoTestWebSocketClient extends WebSocketClient  implements Startup
     }
 
     public AutoTestWebSocketClient() throws URISyntaxException {
-        super(new URI(PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL)));
+        super(new URI("ws://localhost:" + ApplicationContext.getWebSocketPort()));
     }
 
     public AutoTestWebSocketClient(URI serverURI) {
