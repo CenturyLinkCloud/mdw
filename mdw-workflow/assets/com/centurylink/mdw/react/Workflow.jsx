@@ -15,7 +15,7 @@ class Workflow extends Component {
     process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, proc => {
       implementors.get(this.props.serviceBase, impls => {
         var canvas = document.getElementById('mdw-canvas');
-        var diagram = new (mdwUi.Diagram)(canvas, null, proc, impls, this.props.hubBase, this.props.editable, proc.instance);
+        var diagram = new ($mdwUi.Diagram)(canvas, null, proc, impls, this.props.hubBase, this.props.editable, proc.instance);
         this.setState({
           process: process,
           implementors: this.implementors,

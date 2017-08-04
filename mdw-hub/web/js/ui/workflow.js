@@ -7,7 +7,6 @@ workflowMod.controller('MdwWorkflowController',
     function($scope, $http, $document, mdw, util, uiUtil, mdwImplementors, Diagram, Inspector, Toolbox) {
   
   $scope.init = function(canvas) {
-    
     if ($scope.serviceBase.endsWith('/'))
       $scope.serviceBase = $scope.serviceBase.substring(0, $scope.serviceBase.length - 1);
     if ($scope.hubBase) {
@@ -96,19 +95,24 @@ workflowMod.controller('MdwWorkflowController',
   };
   
   $scope.doRender = function() {
+    if (typeof $scope.renderState === 'string')
+      $scope.renderState = 'true' == $scope.renderState.toLowerCase();
+    if (typeof $scope.animate === 'string')
+      $scope.animate = 'true' == $scope.animate.toLowerCase();
+    
     if ($scope.renderState && $scope.process.id) {
       $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
         .then(function success(response) {
           $scope.instance = response.data;
             $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
-            $scope.diagram.draw();
+            $scope.diagram.draw($scope.animate);
         }, function error(response) {
           mdw.messages = response.statusText;
       });
     }
     else {
       $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
-      $scope.diagram.draw();
+      $scope.diagram.draw($scope.animate);
       if ($scope.editable) {
         $scope.toolbox = Toolbox.getToolbox();
         $scope.toolbox.init($scope.implementors, $scope.hubBase);
@@ -207,7 +211,7 @@ workflowMod.controller('MdwWorkflowController',
 workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
   return {
     set: function(implementors) {
-      implementors = implementors.concat(mdwUi.pseudoImplementors);
+      implementors = implementors.concat($mdwUi.pseudoImplementors);
       implementors.sort(function(impl1, impl2) {
         return impl1.label.localeCompare(impl2.label);
       });
@@ -238,7 +242,8 @@ workflowMod.directive('mdwWorkflow', [function() {
       renderState: '@renderState',
       editable: '@editable',
       serviceBase: '@serviceBase',
-      hubBase: '@hubBase'
+      hubBase: '@hubBase',
+      animate: '@animate'
     },
     controller: 'MdwWorkflowController',
     controllerAs: 'mdwWorkflow',

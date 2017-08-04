@@ -1,21 +1,23 @@
+'use strict';
+
 // Global access to ui objects (for react components).
 // Drawing objects are pre-injected in admin.js.
-var mdwUi = {
+var $mdwUi = {
     
    init: function(ngInjector) {
-     mdwUi.Shape = ngInjector.get('Shape');
-     mdwUi.Label = ngInjector.get('Label');
-     mdwUi.Diagram = ngInjector.get('Diagram');
-     mdwUi.Link = ngInjector.get('Link');
-     mdwUi.Step = ngInjector.get('Step');
-     mdwUi.Marquee = ngInjector.get('Marquee');
-     mdwUi.Note = ngInjector.get('Note');
-     mdwUi.Selection = ngInjector.get('Selection');
-     mdwUi.Subflow = ngInjector.get('Subflow');
-     mdwUi.Toolbox = ngInjector.get('Toolbox');
-     mdwUi.Inspector = ngInjector.get('Inspector');
-     mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
-     mdwUi.Configurator = ngInjector.get('Configurator');
+     $mdwUi.Shape = ngInjector.get('Shape');
+     $mdwUi.Label = ngInjector.get('Label');
+     $mdwUi.Diagram = ngInjector.get('Diagram');
+     $mdwUi.Link = ngInjector.get('Link');
+     $mdwUi.Step = ngInjector.get('Step');
+     $mdwUi.Marquee = ngInjector.get('Marquee');
+     $mdwUi.Note = ngInjector.get('Note');
+     $mdwUi.Selection = ngInjector.get('Selection');
+     $mdwUi.Subflow = ngInjector.get('Subflow');
+     $mdwUi.Toolbox = ngInjector.get('Toolbox');
+     $mdwUi.Inspector = ngInjector.get('Inspector');
+     $mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
+     $mdwUi.Configurator = ngInjector.get('Configurator');
    },
    pseudoImplementors: [
      {

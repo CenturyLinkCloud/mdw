@@ -2,4 +2,4 @@
 
 var dcMod = angular.module('drawingConstants', []);
 
-dcMod.constant('DC', mdwUi.DC);
+dcMod.constant('DC', $mdwUi.DC);

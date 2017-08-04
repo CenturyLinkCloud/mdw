@@ -27,7 +27,7 @@ diagramMod.factory('Diagram',
 
   Diagram.BOUNDARY_DIM = 25;
 
-  Diagram.prototype.draw = function(reveal) {
+  Diagram.prototype.draw = function(animate) {
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -47,7 +47,7 @@ diagramMod.factory('Diagram',
       note.draw();
     });
 
-    this.applyState(reveal);
+    this.applyState(animate);
     
     if (this.marquee) {
       this.marquee.draw();
@@ -132,36 +132,101 @@ diagramMod.factory('Diagram',
     this.canvas.height = canvasDisplay.h;
   };
 
-  Diagram.prototype.applyState = function(reveal) {
+  Diagram.prototype.applyState = function(animate) {
     var diagram = this; // forEach inner access
     
-    // activities
-    if (this.process.activities) {
-      this.process.activities.forEach(function(activity) {
-        var step = diagram.getStep(activity.id);
-        step.applyState(diagram.getActivityInstances(activity.id));
-      });
-    }
-    
-    // transitions
-    diagram.steps.forEach(function(step) {
-      if (step.activity.transitions) {
-        step.activity.transitions.forEach(function(transition) {
-          var link = diagram.getLink(transition.id);
-          link.applyState(diagram.getTransitionInstances(link.transition.id));
-        });
+    var sequence = this.getRuntimeSequence();
+    if (sequence) {
+      var update = function(it) {
+        it.applyState(it.instances);
+      };
+  
+      if (animate) {
+        let i = 0;
+        
+        var int = setInterval(function() {
+          if (i >= sequence.length) {
+            clearInterval(int);
+          }
+          else {
+            update(sequence[i]);
+            i++;
+          }
+        }, 150);
       }
-    });
-    
-    // embedded subprocesses
-    if (this.process.subprocesses) {
-      this.process.subprocesses.forEach(function(subproc) {
-        var subflow = diagram.getSubflow(subproc.id);
-        subflow.mainProcessInstanceId = diagram.instance.processInstanceId; // needed for subprocess & task instance retrieval          
-        subflow.applyState(diagram.getSubflowInstances(subflow.subprocess.id));
-      });
+      else {
+        sequence.forEach(update);
+      }
     }
   };
+  
+  Diagram.prototype.getStart = function() {
+    for (var i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].activity.implementor == Step.START_IMPL)
+        return this.steps[i];
+    }
+  };
+  
+  Diagram.prototype.getRuntimeSequence = function() {
+    var seq = [];
+    var diagram = this;
+    if (this.instance) {
+      if (this.instance.activities) {
+        seq = seq.concat(diagram.instance.activities.map(function(act) {
+          var step = diagram.getStep('A' + act.activityId);
+          if (!step.instances)
+            step.instances = [];
+          step.instances.push(act);
+          return step;
+        }));
+      }
+      if (this.instance.transitions) {
+        seq = seq.concat(diagram.instance.transitions.map(function(trans) {
+          var link = diagram.getLink('T' + trans.transitionId);
+          if (!link.instances)
+            link.instances = [];
+          link.instances.push(trans);
+          return link;
+        }));
+      }
+      if (this.instance.subprocesses) {
+        this.instance.subprocesses.forEach(function(subproc) {
+          seq.push(diagram.getSubflow(subproc.id));
+          if (subproc.activities) {
+            seq = seq.concat(subproc.activities.map(function(act) {
+              var step = diagram.getStep('A' + act.activityId);
+              if (!step.instances)
+                step.instances = [];
+              step.instances.push(act);
+              return step;
+            }));
+          }
+          if (subproc.transitions) {
+            seq = seq.concat(subproc.transitions.map(function(trans) {
+              var link = diagram.getLink('T' + trans.transitionId);
+              if (!link.instances)
+                link.instances = [];
+              link.instances.push(trans);
+              return link;
+            }));
+          }
+        });
+      }
+    }
+    seq.sort(function(a, b) {
+      
+//      if (a.startDate == b.startDate) {
+//        // use process definition to break a tie
+//        
+//      }
+//      else {
+        // ordered base on first instance occurrence 
+        return a.instances[0].startDate.localeCompare(b.instances[0].startDate);
+//      }
+    });
+    return seq;
+  };
+  
   
   Diagram.prototype.makeRoom = function(canvasDisplay, display) {
     if (display.w > canvasDisplay.w)
@@ -177,13 +242,6 @@ diagramMod.factory('Diagram',
     }
   };
   
-  Diagram.prototype.getStart = function() {
-    for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].activity.implementor == Step.START_IMPL)
-        return this.steps[i];
-    }
-  };
-
   Diagram.prototype.getLink = function(transitionId) {
     for (var i = 0; i < this.links.length; i++) {
       if (this.links[i].transition.id == transitionId)
@@ -389,7 +447,7 @@ diagramMod.factory('Diagram',
     }
   };
 
-  Diagram.prototype.getSubflowInstances = function(id) {
+  Diagram.prototype.getSubprocessInstances = function(id) {
     if (this.instance) {
       var insts = [];  // should always return something, even if empty
       if (this.instance.subprocesses) {

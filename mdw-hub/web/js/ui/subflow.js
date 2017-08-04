@@ -177,14 +177,6 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   
   Subflow.prototype.applyState = function(subprocessInstances) {
     this.instances = subprocessInstances;
-    if (this.instances) {
-      var subflow = this;
-      this.instances.forEach(function(instance) {
-        subflow.steps.forEach(function(step) {
-          step.applyState(subflow.getActivityInstances(step.activity.id));
-        });
-      });
-    }
     this.draw();
   };
   

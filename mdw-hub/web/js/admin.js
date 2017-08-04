@@ -426,5 +426,5 @@ angular.element(document).ready(function() {
     }
   });
 
-  mdwUi.init(ng);
+  $mdwUi.init(ng);
 });

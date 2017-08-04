@@ -12,7 +12,7 @@ const implementors = {
         return response.json();
       })
       .then(implementors => {
-        this.implementors = implementors.concat(mdwUi.pseudoImplementors);
+        this.implementors = implementors.concat($mdwUi.pseudoImplementors);
         this.implementors.sort(function(impl1, impl2) {
           return impl1.label.localeCompare(impl2.label);
         });
