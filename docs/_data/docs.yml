@@ -18,7 +18,7 @@
   
 - title: Documentation
   docs:
-  - javadoc
+  - link-to-javadoc
   - help
   
 - title: Designer
@@ -29,6 +29,7 @@
   docs:
   - development/built-in-activities
   - development/built-in-variable-types
+  - link-to-javadoc
 
 - title: Miscellaneous
   docs:
