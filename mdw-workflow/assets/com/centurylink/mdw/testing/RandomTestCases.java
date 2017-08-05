@@ -97,7 +97,7 @@ public class RandomTestCases extends RoundRobinScheduledJob {
             List<TestCase> shuffledList = testList.getTestCases();
             // grab some random tests
             Collections.shuffle(shuffledList);
-            int randomHourTestCount = 10;
+            int randomHourTestCount = 50;
             if (randomHourTestCount < shuffledList.size())
                 shuffledList = shuffledList.subList(0, randomHourTestCount);
 
