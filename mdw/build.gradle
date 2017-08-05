@@ -249,10 +249,12 @@ task buildAll(type: GradleBuild) {
 }
 
 task cleanAll(type: GradleBuild) {
-    delete "../${mdwOutputDir}" 
-    print "deleted " + "../${mdwOutputDir}" 
     buildFile = "build.gradle" 
     tasks = ["clean"]
+}
+
+task deleteBuildDir {
+    delete "../${mdwOutputDir}"
 }
 
 /**
