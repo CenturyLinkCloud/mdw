@@ -26,8 +26,6 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.provider.StartupException;
 import com.centurylink.mdw.provider.StartupService;
 import com.centurylink.mdw.util.HttpHelper;
