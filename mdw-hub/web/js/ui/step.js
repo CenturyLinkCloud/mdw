@@ -160,11 +160,6 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     return maxDisplay;
   };
   
-  Step.prototype.applyState = function(activityInstances) {
-    this.instances = activityInstances;
-    this.draw();
-  };
-
   Step.prototype.move = function(deltaX, deltaY, limDisplay) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;

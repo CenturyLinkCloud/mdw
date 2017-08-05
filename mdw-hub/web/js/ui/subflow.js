@@ -77,23 +77,26 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     return subprocess;
   };
   
-  Subflow.prototype.draw = function() {
+  Subflow.prototype.draw = function(animate) {
 
     // runtime state first
-    if (this.instances) {
+    if (this.instances && !animate) {
       this.diagram.drawState(this.display, this.instances, true);
     }
     
     this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
     this.diagram.context.clearRect(this.title.x - 1, this.title.y, this.title.w + 2, this.title.h);
-
     this.diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT.SIZE);
-    this.steps.forEach(function(step) {
-      step.draw();
-    });
-    this.links.forEach(function(link) {
-      link.draw();
-    });
+
+    // animation sequence controlled by diagram 
+    if (!animate) {
+      this.steps.forEach(function(step) {
+        step.draw();
+      });
+      this.links.forEach(function(link) {
+        link.draw();
+      });
+    }
     
     // logical id
     this.diagram.context.fillStyle = DC.META_COLOR;
@@ -175,9 +178,11 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     return maxDisplay;
   };
   
-  Subflow.prototype.applyState = function(subprocessInstances) {
-    this.instances = subprocessInstances;
-    this.draw();
+  Subflow.prototype.getStart = function() {
+    for (var i = 0; i < this.steps.length; i++) {
+      if (this.steps[i].activity.implementor == Step.START_IMPL)
+        return this.steps[i];
+    }
   };
   
   Subflow.prototype.getStep = function(activityId) {
@@ -192,6 +197,15 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
       if (this.links[i].transition.id == transitionId)
         return this.links[i];
     }
+  };
+  
+  Subflow.prototype.getOutLinks = function(step) {
+    var links = [];
+    for (let i = 0; i < this.links.length; i++) {
+      if (step.activity.id == this.links[i].from.activity.id)
+        links.push(this.links[i]);
+    }
+    return links;
   };
   
   Subflow.prototype.getLinks = function(step) {
@@ -220,7 +234,8 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
           inst.activities.forEach(function(actInst) {
             if ('A' + actInst.activityId == id) {
               actInsts.push(actInst);
-              actInst.processInstanceId = procInstId; // needed for subprocess & task instance retrieval
+              // needed for subprocess & task instance retrieval
+              actInst.processInstanceId = procInstId;
             }
           });
         }
@@ -229,6 +244,24 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
         return a2.id - a1.id;
       });
       return actInsts;
+    }
+  };
+  
+  Subflow.prototype.getTransitionInstances = function(id) {
+    if (this.instances) {
+      var transInsts = [];
+      this.instances.forEach(function(inst) {
+        if (inst.transitions) {
+          inst.transitions.forEach(function(transInst) {
+            if ('T' + transInst.transitionId == id)
+              transInsts.push(transInst);
+          });
+        }
+      });
+      transInsts.sort(function(t1, t2) {
+        return t2.id - t1.id;
+      });
+      return transInsts;
     }
   };
   

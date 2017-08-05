@@ -166,11 +166,6 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.setDisplay({ lx: x, ly: y, type: this.display.type, xs: this.display.xs, ys: this.display.ys });
   };
   
-  Link.prototype.applyState = function(transitionInstances) {
-    this.instances = transitionInstances;
-    this.draw();
-  };
-  
   Link.prototype.getColor = function() {
     var color = Link.EVENTS[this.transition.event].color;
     if (this.diagram.instance) {
