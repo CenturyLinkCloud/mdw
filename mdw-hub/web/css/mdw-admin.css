@@ -35,7 +35,7 @@
   padding: 20px;
 }
 .mdw-mobile-content {
-	width: 100%;
+  width: 100%;
   padding-top: 15px;
   min-width: 460px;
 }
@@ -93,7 +93,7 @@
   background-color: #b0bec5 !important;
 }
 .mdw-active-nav {
-	background-color: #b0bec5;
+  background-color: #b0bec5;
 }
 .mdw-label {
   display: block;
@@ -101,17 +101,17 @@
   margin-bottom: 0;
 }
 .mdw-config {
-	color: #6b6b6b;
-	display: block;
+  color: #6b6b6b;
+  display: block;
 }
 .mdw-config input[type="checkbox"] {
-	position: relative;
-	top: 2px;
-	margin-right: 1px;
+  position: relative;
+  top: 2px;
+  margin-right: 1px;
 }
 .mdw-config input[type="number"] {
-	margin-left: 5px;
-	width: 40px;
+  margin-left: 5px;
+  width: 40px;
 }
 .mdw-heading {
   font-weight: bold;
@@ -156,7 +156,7 @@
 .mdw-heading-icon {
   margin-right: 5px;
   opacity: 0.9;
-  cursor: pointer;	
+  cursor: pointer;  
 }
 .mdw-heading-sub {
   font-size: 13px;
@@ -230,7 +230,7 @@
   padding: 4px 6px;
 }
 .mdw-heading-actions > a:link:hover {
-	text-decoration: none;
+  text-decoration: none;
 }
 .mdw-heading-actions .mdw-panel-collapse {
   padding: 0 0 0 6px;
@@ -255,13 +255,13 @@
   margin-left: -16px;
 }
 .mdw-commit {
-	color: #333;
-	margin-left: 5px;
+  color: #333;
+  margin-left: 5px;
   font-weight: normal;
 }
 .mdw-commit-date {
   margin-left: 2px; 
-	font-size: 12px;
+  font-size: 12px;
 }
 .mdw-panel {
   clear: both;
@@ -272,7 +272,7 @@
   padding-right: 15px;
 }
 .mdw-panel-embedded {
-	margin: 15px;
+  margin: 15px;
 }
 .mdw-hr {
   border-top: 1px solid #e0e0e0;
@@ -286,8 +286,8 @@
   border-bottom: 1px solid #ddd;
 }
 .mdw-plainlist {
-	list-style: none;
-	padding-left: 20px;
+  list-style: none;
+  padding-left: 20px;
 }
 .mdw-checklist {
   padding: 0;
@@ -344,7 +344,7 @@
   color: #23527c;
 }
 .mdw-item-in {
-	margin-left: 10px;
+  margin-left: 10px;
 }
 .mdw-item-nowrap {
   white-space: nowrap;
@@ -354,7 +354,8 @@
 }
 .mdw-flex-item-left {
   float: left;
-  width: 100%;  
+  width: 100%;
+  margin-left: 15px;
 }
 .mdw-flex-item-left > div {
   display: inline-flex;
@@ -375,7 +376,7 @@
   top: -2px;
 }
 .mdw-space {
-	margin-left: 4px;
+  margin-left: 4px;
 }
 .mdw-space2 {
   margin-left: 8px;
@@ -433,7 +434,7 @@
   overflow-x: hidden;
 }
 .mdw-sys-info-value {
-	margin-left: 10px;
+  margin-left: 10px;
 }
 .mdw-item-sub {
   margin-top: 1px;
@@ -452,7 +453,7 @@
   font-weight: bold;
 }
 .mdw-item-substat {
-	margin-left: 8px;
+  margin-left: 8px;
   margin-top: 1px;
   margin-bottom: 0;
   font-size: 12px;
@@ -511,7 +512,7 @@
   margin-bottom: 5px;
 }
 .mdw-resource-value {
-	font-weight: bold;
+  font-weight: bold;
 }
 .mdw-resource-content {
   background-color: #f3f3f3;
@@ -521,10 +522,10 @@
   border-bottom-left-radius: 0;   
 }
 .mdw-markdown-content {
-	padding-left: 5px;
+  padding-left: 5px;
   overflow: auto;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 14px;	
+  font-size: 14px;  
 }
 .mdw-value-name {
   font-style: italic;
@@ -535,7 +536,7 @@
 .mdw-todo-code {
   word-wrap: break-word;
   white-space: pre-wrap;
-  word-break: normal;	
+  word-break: normal;  
 }
 .mdw-line-nums {
   background-color: #eeeeee;
@@ -720,9 +721,9 @@
   margin-bottom: 10px;
 }
 .mdw-asset-icon {
-	margin-left: 5px;
-	margin-right: 5px;
-	padding: 1px 5px 0px 4px;
+  margin-left: 5px;
+  margin-right: 5px;
+  padding: 1px 5px 0px 4px;
 }
 .mdw-split-left {
   padding-left: 0;
@@ -785,23 +786,19 @@
   text-decoration: underline;
 }
 .mdw-workflow {
-	
+  
 }
 .mdw-task-workflow {
-	max-width: 85%;
+  height: calc(100vh - 250px);
   overflow: auto;
-  max-height: 250px;
   border: 1px solid #757575;
   border-radius: 4px;
   box-shadow: 4px 4px 16px #757575;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 20px;
 }
 .mdw-canvas {
-	/* prevent highlighting on double-click */
-	user-select: none;
+  /* prevent highlighting on double-click */
+  user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -810,20 +807,20 @@
   list-style-type: none;
   position: relative;
   left: -50px;
-  font-weight: bold;	
+  font-weight: bold;  
 }
 .mdw-legend > li {
-	display: flex;
+  display: flex;
 }
 .mdw-legend-item {
-	height: 20px;
-	width: 30px;
-	border: 1px solid lightgray;
-	border-radius: 5px;
-	margin: 10px;
+  height: 20px;
+  width: 30px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  margin: 10px;
 }
 .mdw-toolbox {
-	width: 250px;
+  width: 250px;
   position: fixed;
   right: 15px;
   top: 38px;
@@ -842,7 +839,7 @@
 }
 .mdw-toolbox > ul {
   width: 247px;
-	position: fixed;
+  position: fixed;
   top: 78px;
   bottom: 10px;
   margin-bottom: 5px;
@@ -856,26 +853,26 @@
   padding: 7px 0 7px 10px;
 }
 .mdw-toolbox > ul > li:active {
-	cursor: copy;
+  cursor: copy;
 }
 .mdw-toolbox-icon {
-	width: 30px;
+  width: 30px;
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;    
 }
 .mdw-toolbox-icon img {
-	margin: auto;
+  margin: auto;
 }
 .mdw-toolbox-label {
-	padding-left: 5px;
-	padding-top: 5px;
-	white-space: nowrap;
+  padding-left: 5px;
+  padding-top: 5px;
+  white-space: nowrap;
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;  	
+  -ms-user-select: none;    
 }
 .mdw-inspector {
   /* display: none is set in style */
@@ -893,9 +890,9 @@
   bottom: 10px;
 }
 .mdw-inspector-panel {
-	margin-top: 1px;
+  margin-top: 1px;
   border-top: 1px solid #757575;  
-	clear: both;
+  clear: both;
   border-bottom: none;
   margin-bottom: 0;
 }
@@ -958,22 +955,22 @@
   height: 18px;
 }
 .mdw-inspector-btn {
-	padding-left: 0 !important;
+  padding-left: 0 !important;
 }
 .mdw-help-icon {
-	float: left;
-	margin-left: 8px;
-	position: relative;
-	top: 3px;
+  float: left;
+  margin-left: 8px;
+  position: relative;
+  top: 3px;
 }
 .mdw-help-icon .glyphicon {
-	font-size: 18px;
+  font-size: 18px;
 }
 .mdw-widget {
-	display: flex;
+  display: flex;
 }
 .mdw-widget select:disabled {
-	background-color: #eBeBe4;
+  background-color: #eBeBe4;
 }
 .mdw-widget select[multiple] {
   overflow-y: auto;
@@ -994,12 +991,12 @@
   background-color: #eBeBe4;
 }
 .mdw-widget label {
-	margin-right: 15px;
-	font-weight: 600;
+  margin-right: 15px;
+  font-weight: 600;
 }
 .mdw-widget a {
-	position: relative;
-	top: 3px;
+  position: relative;
+  top: 3px;
 }
 .mdw-widget-label {
   font-weight: bold;
@@ -1008,12 +1005,12 @@
   padding-top: 5px;
 }
 .mdw-widget-value {
-	font-family: sans-serif;
+  font-family: sans-serif;
   width: 100%;
 }
 .mdw-widget-value {
-	position: relative;
-	top: 3px;
+  position: relative;
+  top: 3px;
 }
 .mdw-widget-edit {
   position: absolute !important;
@@ -1024,14 +1021,14 @@
   font-size: 13px !important; 
 }
 .mdw-widget-container {
-	margin-top: 2px;
+  margin-top: 2px;
 }
 .mdw-widget-dropdown {
   height: 23px;
   margin-right: 5px;
 }
 .mdw-widget-picklist {
-	display: inline-block;
+  display: inline-block;
 }
 .mdw-widget-picklist-btns {
   display: inline-block;
@@ -1041,27 +1038,27 @@
 }
 .mdw-widget-picklist-lbl {
   font-family: monospace;
-  margin-bottom: 2px;	
+  margin-bottom: 2px;  
 }
 .mdw-widget-tbl {
-	display: table;
-	border-spacing: 2px;
-	margin-left: -7px;
+  display: table;
+  border-spacing: 2px;
+  margin-left: -7px;
 }
 .mdw-widget-tbl > div {
-	display: table-row;
+  display: table-row;
 }
 .mdw-widget-tbl > div > div {
-	 display: table-cell;
-	 padding-right: 15px;
-	 padding-bottom: 5px;
-	 padding-left: 5px;
+   display: table-cell;
+   padding-right: 15px;
+   padding-bottom: 5px;
+   padding-left: 5px;
 }
 .mdw-widget-tbl button {
   position: relative;
   top: 2px;
-	padding: 0 2px;
-	font-size: 10px;
+  padding: 0 2px;
+  font-size: 10px;
 }
 .mdw-widget-tbl-head {
   font-family: monospace;
@@ -1076,14 +1073,14 @@
   padding-bottom: 5px;
 }
 .mdw-edit-actions {
-	float: left;
-	margin-left: 25px;
+  float: left;
+  margin-left: 25px;
   padding-top: 8px;
 }
 .mdw-raw-link {
-	margin-left: 3px;
-	font-weight: normal !important;
-	text-decoration: underline !important;
+  margin-left: 3px;
+  font-weight: normal !important;
+  text-decoration: underline !important;
 }
 .mdw-editor {
   position: absolute !important;
@@ -1091,24 +1088,24 @@
   left: 16px;
   bottom: 0;
   right: 0;
-  font-size: 13px !important;	
+  font-size: 13px !important;  
 }
 .mdw-edit-btn {
-	font-size: 13px;
+  font-size: 13px;
   font-weight: bold;
   padding: 4px 6px;
 }
 .mdw-id {
-	margin-left: 5px;
-	opacity: .75;
-	font-size: 15px;
+  margin-left: 5px;
+  opacity: .75;
+  font-size: 15px;
 }
 .mdw-task-editor {
-	padding: 10px;
+  padding: 10px;
 }
 .mdw-dirty {
-	font-weight: bold;
-	font-size: 22px;
+  font-weight: bold;
+  font-size: 22px;
 }
 .mdw-not-dirty {
   font-weight: bold;
@@ -1116,14 +1113,14 @@
   color: transparent;
 }
 .mdw-highlight {
-	color: #880000;
+  color: #880000;
 }
 .mdw-task-configurator {
-	font-family: monospace;	
-	padding: 15px;
+  font-family: monospace;  
+  padding: 15px;
 }
 .mdw-task-configurator .mdw-widget {
-	margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 .mdw-test-item-method {
   font-size: 14px;

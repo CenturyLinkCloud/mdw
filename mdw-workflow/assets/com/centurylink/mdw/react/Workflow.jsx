@@ -29,15 +29,14 @@ class Workflow extends Component {
       });
     });
   }
-  
+
+  // TODO: insert Inspector and Toolbox components
   render() {
     return (
       <div className="mdw-workflow">
         <div>
           <canvas id="mdw-canvas" className="mdw-canvas"></canvas> 
         </div>
-        <Toolbox />
-        <Inspector />
       </div>  
      );
   }

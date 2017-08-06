@@ -58,6 +58,7 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
@@ -233,6 +234,11 @@ public class Tasks extends JsonRestService implements JsonExportable {
                             TaskInstance taskInstance = taskServices.getInstance(instanceId);
                             if (taskInstance == null)
                                 throw new ServiceException(HTTP_404_NOT_FOUND, "Task instance not found: " + instanceId);
+                            if (taskInstance.isProcessOwned()) {
+                                ProcessInstance procInst = ServiceLocator.getWorkflowServices().getProcess(taskInstance.getOwnerId());
+                                taskInstance.setProcessName(procInst.getProcessName());
+                                taskInstance.setPackageName(procInst.getPackageName());
+                            }
                             return taskInstance.getJson();
                         }
                         else if (extra.equals("values")) {

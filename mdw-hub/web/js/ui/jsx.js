@@ -13,8 +13,8 @@ jsxMod.directive('mdwJsx', ['$document', 'mdw', function($document, mdw) {
       };
       
       var url = mdw.roots.hub + '/' + attrs.mdwJsx;
-      var head = $document[0].getElementsByTagName("head")[0];
-      var script = head.querySelector("script[src*='" + url + "']");
+      var head = $document[0].getElementsByTagName('head')[0];
+      var script = head.querySelector('script[src*="' + url + '"]');
       if (script) {
         script.remove();
       }

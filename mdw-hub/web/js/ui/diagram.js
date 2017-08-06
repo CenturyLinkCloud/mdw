@@ -39,12 +39,15 @@ diagramMod.factory('Diagram',
     if (animate && !this.instance) {
       var sequence = this.getSequence();
       let i = 0;
+      var diagram = this;
       var int = setInterval(function() {
         if (i >= sequence.length) {
           clearInterval(int);
         }
         else {
           sequence[i].draw(animate);
+          if (sequence[i] instanceof Shape)
+            diagram.scrollIntoView(sequence[i]);
           i++;
         }
       }, Diagram.ANIMATION_FACTOR / sequence.length + Diagram.ANIMATION_DAMPING * sequence.length);
@@ -194,6 +197,8 @@ diagramMod.factory('Diagram',
     if (sequence) {
       var update = function(it) {
         it.draw(animate);
+        if (it instanceof Shape)
+          diagram.scrollIntoView(it);        
       };
   
       if (animate) {
@@ -211,6 +216,27 @@ diagramMod.factory('Diagram',
       else {
         sequence.forEach(update);
       }
+    }
+  };
+  
+  Diagram.prototype.scrollIntoView = function(shape) {
+    var centerX = shape.display.x + shape.display.w/2;
+    var centerY = shape.display.y + shape.display.h/2;
+    
+    if (this.containerId) {
+      var container = document.getElementById(this.containerId);
+    }
+    else {
+      var clientRect = this.canvas.getBoundingClientRect();
+      var canvasLeftX = clientRect.left;
+      var canvasTopY = clientRect.top;
+      var canvasRightX = clientRect.right;
+      var canvasBottomY = clientRect.bottom;
+
+      console.log("left: " + canvasLeftX);
+      console.log("top: " + canvasTopY);
+      console.log("right: " + clientRect.right);
+      console.log("bottom: " + clientRect.bottom);
     }
   };
   
@@ -274,6 +300,7 @@ diagramMod.factory('Diagram',
     });
     
     var diagram = this;
+    var proceedSteps = [];  // those not already covered
     outSteps.forEach(function(step) {
       var links = activityIdToInLinks[step.activity.id];
       if (links) {
@@ -288,10 +315,12 @@ diagramMod.factory('Diagram',
       var s = sequence.find(function(it) {
         return it.workflowItem.id == step.activity.id;
       });
-      if (!s)
+      if (!s) {
         sequence.push(step);
+        proceedSteps.push(step);
+      }
     });
-    outSteps.forEach(function(step) {
+    proceedSteps.forEach(function(step) {
       diagram.addSequence(step, sequence, runtime);
     });
   };

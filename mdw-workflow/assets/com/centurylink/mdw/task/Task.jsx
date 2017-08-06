@@ -30,7 +30,7 @@ class Task extends Component {
                 <div className="mdw-item">
                   {task.masterRequestId && 
                     <span>
-                      Master request:
+                      Master request:{' '}
                       <a href={'#/workflow/masterRequests/' + task.masterRequestId} 
                           className="mdw-link">{task.masterRequestId}
                       </a>
@@ -55,11 +55,11 @@ class Task extends Component {
                     {
                       task.workgroups.map((workgroup, i) => {
                         return (
-                          <span>
-                          <a className="mdw-adjoin" href={'/#/groups/' + workgroup}>
-                            {workgroup}
-                          </a>
-                          {i < task.workgroups.length - 1 && ', '}
+                          <span key={workgroup}>
+                            <a className="mdw-adjoin" href={'/#/groups/' + workgroup}>
+                              {workgroup}
+                            </a>
+                            {i < task.workgroups.length - 1 && ', '}
                           </span>
                         );
                       })
@@ -70,6 +70,14 @@ class Task extends Component {
                   <div className="mdw-item">
                     Master Task: 
                     <a href={'#/tasks/' + task.secondaryOwnerId}>{task.secondaryOwnerId}</a>
+                  </div>
+                }
+                {task.ownerType == 'PROCESS_INSTANCE' &&
+                  <div className="mdw-item">
+                    Process:{' '}
+                    <span style={{fontWeight:'normal'}}>{task.packageName}/</span>
+                    <a href={'#/workflow/processes/' + task.ownerId}>{task.processName}</a>
+                    {' '}<a href={'#/workflow/processes/' + task.ownerId}>{task.ownerId}</a>
                   </div>
                 }
               </div>
@@ -93,7 +101,7 @@ class Task extends Component {
             }
           </div>
         </div>
-        <div className="mdw-task-workflow">
+        <div id="mdw-task-workflow" className="mdw-task-workflow">
           {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
             <Workflow instanceId={task.ownerId}
               hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />

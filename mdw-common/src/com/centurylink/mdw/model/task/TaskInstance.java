@@ -76,6 +76,14 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public String getTemplate() { return template; }
     public void setTemplate(String template) { this.template = template; }
 
+    private String processName;
+    public String getProcessName() { return processName; }
+    public void setProcessName(String processName) { this.processName = processName; }
+
+    private String packageName;
+    public String getPackageName() { return packageName; }
+    public void setPackageName(String pkg) { this.packageName = pkg; }
+
     private String title;
     /**
      * Title allows dynamic override of display label.
@@ -161,6 +169,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             template = jsonObj.getString("template");
         if (jsonObj.has("title"))
             title = jsonObj.getString("title");
+        if (jsonObj.has("processName"))
+            processName = jsonObj.getString("processName");
+        if (jsonObj.has("packageName"))
+            packageName = jsonObj.getString("packageName");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -205,6 +217,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
             json.put("template", template);
         if (title != null)
             json.put("title", title);
+        if (processName != null)
+            json.put("processName", processName);
+        if (packageName != null)
+            json.put("packageName", packageName);
         return json;
     }
 
