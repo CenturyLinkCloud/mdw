@@ -221,7 +221,7 @@ public class ZipHelper {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(zipFile);
-            ZipHelper.writeZipWith(directory, fos, includes);
+            ZipHelper.writeZipWith(directory, fos, includes, false);
         }
         finally {
             if (fos != null)
