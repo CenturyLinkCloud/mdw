@@ -129,8 +129,6 @@ task jsHint(type: Exec) {
 war {
     dependsOn(buildDist)
     
-    outputs.upToDateWhen { false }
-    
     archiveName = "mdw-${version}.war"
     
     classpath = war.classpath.plus(configurations.runtimeExtra)
