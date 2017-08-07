@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.util.StringHelper;
@@ -135,9 +136,48 @@ public class VcsArchiver {
             else if (!archiveDir.mkdirs())
                 throw new IOException("Unable to create archive directory: " + archiveDir.getAbsolutePath());
         }
+        // Check for user errors - i.e. older version asset present in newer pkg
+        progressMonitor.subTask("Checking for asset version inconsistencies");
+        File flaggedAsset = null;
+        PackageDir newPkg = null;
+        List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
+        for (File prevPkg : tempPkgDirs) {
+            String simplePkgName = prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v"));
+            newPkg = null;
+            for (PackageDir item : newPkgDirs) {
+                if (simplePkgName.equals(item.getPackageName())) {
+                    newPkg = item;
+                    break;
+                }
+            }
+            if (newPkg != null) {
+                for (File prevFile : prevPkg.listFiles()) {
+                    if (prevFile.isFile()) {
+                        AssetFile newFile = newPkg.getAssetFile(new File(newPkg + "/" + prevFile.getName()));
+                        if (newFile != null && newFile.getRevision().getVersion() > 0) {
+                            AssetRevision prevRev = versionControl.getRevision(prevFile);
+                            if (prevRev != null && prevRev.getVersion() > newFile.getRevision().getVersion()) {
+                                flaggedAsset = newFile;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (flaggedAsset != null)
+                break;
+        }
+        if (flaggedAsset != null) {  // Need to restore previous pkgs and error out on asset import
+            for (File prevPkg : tempPkgDirs) {
+                File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
+                if (restoreDest.exists())
+                    newLoader.deletePkg(restoreDest);
+                newLoader.copyPkg(prevPkg, restoreDest);
+            }
+            throw new IOException("Cannot perform asset import, package " + newPkg + " contains older version asset " + flaggedAsset);
+        }
         progressMonitor.progress(10);
         progressMonitor.subTask("Adding packages to archive: " + archiveDir.getAbsolutePath());
-        List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
         for (File tempPkgDir : tempPkgDirs) {
             boolean found = false;
             for (PackageDir newPkgDir : newPkgDirs) {
