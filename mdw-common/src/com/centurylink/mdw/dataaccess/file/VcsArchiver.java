@@ -168,11 +168,21 @@ public class VcsArchiver {
                 break;
         }
         if (flaggedAsset != null) {  // Need to restore previous pkgs and error out on asset import
+            progressMonitor.subTask("Found asset version inconsistencies....restoring from backup");
             for (File prevPkg : tempPkgDirs) {
                 File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
                 if (restoreDest.exists())
                     newLoader.deletePkg(restoreDest);
                 newLoader.copyPkg(prevPkg, restoreDest);
+            }
+            if (deleteBackups) {
+                progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);
+                try {
+                    newLoader.delete(tempDir);
+                }
+                catch (Throwable ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
             }
             throw new IOException("Cannot perform asset import, package " + newPkg + " contains older version asset " + flaggedAsset);
         }

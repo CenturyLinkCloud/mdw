@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -188,6 +190,16 @@ public class Archive {
                 pkgs.add(new Pkg(pkgName, dir, ver, assetsVer));
             }
         }
+        Collections.sort(pkgs, new Comparator<Pkg>() {
+            public int compare(Pkg pkg1, Pkg pkg2) {
+                if (pkg1.name.split(".").length < pkg2.name.split(".").length)
+                    return -1;
+                else if (pkg1.name.split(".").length > pkg2.name.split(".").length)
+                    return 1;
+                else
+                    return pkg1.name.compareTo(pkg2.name);
+            }
+        });
         return pkgs;
     }
 
