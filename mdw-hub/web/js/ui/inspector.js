@@ -486,7 +486,10 @@ inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
       var contentHeight;
 
       scope.openInspector = function() {
-        elem[0].style.left = workflowElem[0].getBoundingClientRect().left + 'px';
+        var boundingClientLeft = workflowElem[0].getBoundingClientRect().left;
+        if (boundingClientLeft < 0)
+          boundingClientLeft = 10;
+        elem[0].style.left =  + boundingClientLeft + 'px';
         scope.initInspector();
         elem[0].style.display = 'block';
       };
