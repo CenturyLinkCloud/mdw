@@ -157,17 +157,9 @@ war {
     rootSpec.exclude "**/.*ignore"
 }
 
-war {
-    exclude "**/.*ignore";
-    rootSpec.exclude "**/.*ignore"
-
-    manifest {
-        attributes("MDW-Version": mdwVersion)
-        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
-    }
-}
-
 task springBootJar(type: Jar) {
+    dependsOn compileJava
+    
     archiveName = "mdw-boot-${version}.jar"
     manifest {
         attributes(
@@ -207,6 +199,18 @@ task springBootJar(type: Jar) {
 
     from configurations.springBootLoader.asFileTree.files.collect {
         zipTree(it)
+    }
+}
+
+war {
+    dependsOn springBootJar
+    
+    exclude "**/.*ignore";
+    rootSpec.exclude "**/.*ignore"
+
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
 }
 
