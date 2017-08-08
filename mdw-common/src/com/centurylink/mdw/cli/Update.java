@@ -99,7 +99,7 @@ public class Update extends Setup {
                 pkgsParam += ",";
         }
         pkgsParam += "]";
-        new Download(new URL(discoveryUrl + "/asset/packages?packages=" + pkgsParam), tempZip).run(monitors);
+        new Download(new URL(discoveryUrl + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip).run(monitors);
 
         // import packages
         Archive archive = new Archive(assetDir, packages);

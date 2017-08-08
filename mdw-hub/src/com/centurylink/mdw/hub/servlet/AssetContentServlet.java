@@ -104,13 +104,15 @@ public class AssetContentServlet extends HttpServlet {
                 response.getWriter().println(sr.getJson().toString(2));
             }
             else {
+                String recursive = request.getParameter("recursive");
+                boolean includeSubPkgs = recursive == null ? false : recursive.equalsIgnoreCase("true") ? true : false;
                 response.setHeader("Content-Disposition", "attachment;filename=\"packages.zip\"");
                 response.setContentType("application/octet-stream");
                 try {
                     List<File> includes = new ArrayList<File>();
                     for (String pkgName : getPackageNames(packages))
                         includes.add(new File(assetRoot + "/" + pkgName.replace('.', '/')));
-                    ZipHelper.writeZipWith(assetRoot, response.getOutputStream(), includes);
+                    ZipHelper.writeZipWith(assetRoot, response.getOutputStream(), includes, includeSubPkgs);
                 }
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
