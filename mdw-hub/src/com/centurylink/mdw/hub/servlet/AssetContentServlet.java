@@ -105,7 +105,7 @@ public class AssetContentServlet extends HttpServlet {
             }
             else {
                 String recursive = request.getParameter("recursive");
-                boolean includeSubPkgs = recursive == null ? true : recursive.equalsIgnoreCase("false") ? false : true;
+                boolean includeSubPkgs = recursive == null ? false : recursive.equalsIgnoreCase("true") ? true : false;
                 response.setHeader("Content-Disposition", "attachment;filename=\"packages.zip\"");
                 response.setContentType("application/octet-stream");
                 try {

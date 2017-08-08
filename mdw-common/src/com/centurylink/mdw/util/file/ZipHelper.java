@@ -80,7 +80,7 @@ public class ZipHelper {
     }
 
     public static void writeZipWith(File directory, OutputStream outputStream, List<File> includes) throws IOException {
-        writeZipWith(directory, outputStream, includes, true);
+        writeZipWith(directory, outputStream, includes, false);
     }
 
     public static void writeZipWith(File directory, OutputStream outputStream, List<File> includes, boolean includeSubs) throws IOException {
@@ -221,7 +221,7 @@ public class ZipHelper {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(zipFile);
-            ZipHelper.writeZipWith(directory, fos, includes, false);
+            ZipHelper.writeZipWith(directory, fos, includes);
         }
         finally {
             if (fos != null)
