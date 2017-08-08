@@ -12,30 +12,22 @@ dfn { color: brown; }
 </head>
 <body>
 <h1>Using Adapter Activities</h1>
+
+<p>TODO: Need to remove all references to connection pools and add correct information about using the PoolableAdapterBase API.</p>
+
+
 <p>The class <code>AdapterActivityBase</code> is an abstract
 class that provides common base for all adapter activities,
 and most activities extend this base class directly.</p>
 
-<p>The adapters can be directly used in connection pools, and support automatic
-retries through adapter configuration, rather than a retry loop (a link from
+<p>The adapters can be directly used and support automatic retries through adapter configuration rather than a retry loop (a link from
 it to itself) as typically used with old implementors.
 In order to keep backward compatibility, we introduced a new
-base class, <code>PoolableAdapterBase</code>, to support the new functionalities.
-Adapters defined on top of the new base class are called <dfn>poolable adapters</dfn>.
-A poolable adapter can therefore be used in two ways:</p>
-<ul>
-   <li>Used directly as an activity. Activities that
-       use these adapters directly are called <dfn>direct connection
-   		adapter activities</dfn>.
-   <li>Used via a connection pool. The connection pool should be configured
-   		to use the adapter, and the process should use the activity implementor
-   		<a href='ConnectionPoolAdapter.html'>ConnectionPoolAdapter</a> or its
-   		subclasses which interface with connection pools.
-   		Such activity implementors are called <dfn>pooled connection 
-   		adapter activities</dfn>.</li>
-</ul>
+base class, <code>PoolableAdapterBase</code>, to support the new functionalities. This is a new implementation of JMS Adapter which can be 
+configured through Designer and does not implement ControlledAdapterActivity interface.
+
 <p>MDW provides a set of common adapters for common protocols such
-as SOAP based MDW web services, JMS, as well as the adapter activity using connection pools, mentioned above.
+as SOAP based MDW web services, JMS, as well as the adapter activity, mentioned above.
 These adapters are highly configurable and hence
 can meet common needs in many cases. You may however
 encounter situations where further customization beyond configuration is needed.
@@ -74,172 +66,6 @@ Here is a list of common reasons:</p>
 <h2>Implementing Poolable Adapters</h2>
 <p>A new poolable adapter should extend the abstract base class
 <code>com.centurylink.mdw.workflow.adapter.PoolableAdapterBase</code>.
-The following describes the methods you must implement or may extend.</p>
-<li><code>void init()</code>.
-This method is invoked by adapter activities only.
-Typically the method should set configuration parameters from attributes
-and their default values. Note that the invoke method should
-not call <code>getAttributeValue</code> to get configuration
-parameters as the method is not available when used in a connection pool.
-All activity attributes must be set as Java instance variables in this method.
-The following is the implementation of the connection pool adapter:
-<pre>
-    @Override
-    public void init() throws ConnectionException, AdapterException {
-        String pool_name = this.getAttributeValue(POOL_NAME);
-        if (pool_name==null) throw new AdapterException("Pool name not specified");
-        pool = ConnectionPoolRegistration.getPool(pool_name);
-        if (pool==null) throw new AdapterException("Connection pool not defined: " + pool_name);
-    }
-</pre>
-</li>
-
-<li><code>Object openConnection()</code>. 
-This method is to be implemented to open a communication channel
-with the external system. It is invoked by an adapter activity
-when it opens a connection, right after the call to <code>init()</code>.
-When it is used with connection pools,
-with one-connection-for-all style,
-the method is invoked by the pool manager immediately after
-the <code>init()</code> call when a new connection instance is created.
-With one-connection-per-call style, the method is invoked
-right before a message is to be sent.
-Its implementation typically remembers the object representing
-the open connection in a Java instance variable.
-The method can throw <code>ConnectionException</code> or <code>AdapterException</code>.
-See the description for <code>invoke</code> method for their differences.
-The method should return an object identifying the open connection, and the
-object will passed to <code>invoke</code> and <code>closeConnection</code> methods.
-It is typical to return the adapter class instance itself.
-The following is the implementation of the connection pool adapter:
-<pre>
-   @Override
-    public Object openConnection() throws ConnectionException,AdapterException {
-        exceptionCode = 0;
-        if (fromResume) {
-            return pool.getReservedConnection(logtag(), this.getActivityInstanceId());
-        } else {
-            return pool.getConnection(logtag(), this.getActivityInstanceId());
-        }
-    }
-</pre>
-</li>
-
-<li><code>void closeConnection(Object connection)</code>. 
-The method should close the connection with the external system opened by <code>openConnection</code>.
-The method is invoked by an adapter activity when it is closing a connection
-after the message is sent.
-When it is used with a connection pool,
-with one-connection-for-all style,
-the method is invoked by the pool manager when the connection is removed from the connection
-pool.
-With one-connection-per-call style, the method is invoked
-right after a message is sent.
-The only argument is passed in with object returned by <code>openConnection</code>.
-</li>
-<li><code>String invoke(Object connection, String message, int timeout, Map&lt;String,String> meta_data)</code>. 
-You will need to implement this method to actually send a message.
-It should also wait for responses for synchronous.
-The timeout value is in seconds. The implementation should allow a value less than 0
-to use the global value specified in the configuration parameter <code>timeout</code>,
-or a hard-coded default value when the configuration parameter is absent.
-<p>
-In case of error detected, the method should:
-	<ul>
- 		<li>Throw ConnectionException when it is expecting the connection pool adapter to retry automatically. The type of error must
- 			be retriable (typically for connectivity issues). If you use a constructor
- 			for ConnectionException that takes an error code, you should set
- 			it to <code>ConnectionException.CONNECTION_DOWN</code> (41290) if the exception
- 			is used to count for automatic shutdown after consecutively receiving such exceptions.
- 			The single argument constructor sets this code by default.
- 			</li>
- 		<li>Throw AdapterException when the error is not retriable, such as data error
- 			that can only be fixed by manual intervention elsewhere. If the message is synchronous,
- 			the method is typically invoked by a connection pool adapter, which will lead to
- 			an error transition, typically end up in exception handler.</li>
-	</ul>
-
-The following is the implementation of the connection pool adapter:
-<pre>
-    @Override
-    public String invoke(Object conn, String requestData, int timeout, Map<String,String> meta_data)
-        throws AdapterException, ConnectionException
-    {
-        String result;
-
-        if (this.isSynchronous()) {
-            PooledAdapterConnection connection = (PooledAdapterConnection)conn;
-            result = connection.invoke((String)requestData, timeout, meta_data);
-        } else {
-            PooledAdapterConnection connection = (PooledAdapterConnection)conn;
-            connection.invoke(requestData, -1, meta_data);
-            result = null;
-        }
-        return result;
-    }
-</pre>
-</li>
-<li><code>boolean ping()</code>.
-This method is only used by connection pools.
- The method is for pinging the external system after the pool
- is automatically shut down due to consecutive connection failures.
- The method should return true when the connection with the 
- external system is up, and false otherwise.
-The following example method returns true if the connection is up and false if it is still down:
-<pre>
-    protected boolean ping() {
-        if (one_connection_for_all) {
-            return adapter.ping(pool.getPingTimeout());
-        } else {
-            Object connection = null;
-            try {
-                connection = adapter.openConnection();
-                return adapter.ping(pool.getPingTimeout());
-            } catch (Exception e) {
-                return false;
-            } finally {
-                if (connection!=null) adapter.closeConnection(connection);
-            }
-        }
-    }
-</pre>
-</li>
-<li><code>String getLabel()</code>: The method is used
-by the designer to obtain the label for the activity implementor.
-You typically should override this method to return a unique and descriptive
-name for the adapter. Here is an example:
-<pre>
-    public String getLabel() {
-        return getProcessName() + (getVersion() == 0 ? "" : " v" + getVersionString());
-    }
-</pre>
-</li>
-<li><code>boolean canBeSynchronous()</code>: you must implement this method. It should
-return true if the adapter can be used synchronously (receiving a response), and false otherwise.
-The following is an example:
-<pre>
-protected boolean canBeSynchronous() {
-    return true;
-}
-</pre>
-If the adapter can be used both synchronously and asynchronously, an option will be shown
-in the activity configuration to choose between the two.
-. And the method <code>isSynchronous</code>
-is the API to determine whether the adapter is used synchronously (an adapter can support
-both mode but can only be configured to use one.
-</li>
-<li><code>boolean canBeAsynchronous()</code>: you must implement this method. It should
-return true if the adapter can be used asynchronously (sending a one way message without
-expecting a reply), and false otherwise.
-The following is an example:
-<pre>
-protected boolean canBeAsynchronous() {
-    return true;
-}
-</pre>
-</li>
-</ul>
-<p>The above are all the methods that you typically implement or override, which are shown as example above.
 The following methods may be overridden less commonly:</p>
 <ul>
 <li><code>getRequestData()</code>: this method returns the request message. The default
@@ -293,18 +119,11 @@ have knowledge as to what response messages indicate errors, you should throw
 exceptions as described above appropriately, so that the auto-retry mechanism can
 function properly. </p>
 
-<h2>Implementing Pooled Connection Adapter Activities</h2>
-<p>The built-in implementor <a href='ConnectionPoolAdapter.html'>ConnectionPoolAdapter</a>
-is implemented as a subclass of <code>PoolableAdapterBase</code> as well,
-even though itself is not really a poolable adapter
-and should be never be used by a connection pool.
-This is because it shares many common functionalities as direct connection
-adapter activities. As a good consequence, you can customize the connection pool
-adapter just like other adapters, as described above. Some methods only
-used by connection pools are not meant to be overridden, such as <code>init(Properties)</code>,
-and <code>ping</code>.  The methods that may need to be overridden include:</
+<h2>Implementing Poolable Adapter Activities</h2>
+<p>The built-in implementor <a href='../javadoc/com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html'>PoolableAdapterBase</a>
+is implemented as a subclass of <code>DefaultActivityImpl</code> as well. The methods that may need to be overridden include:</
 <ul>
-  <li><code>invoke</code></li>
+  <li><code>doInvoke</code></li>
   <li><code>onSuccess</code></li>
   <li><code>onFailure</code></li>
   <li><code>getRequestData</code></li>

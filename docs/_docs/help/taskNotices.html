@@ -14,10 +14,10 @@ It is recommended that rather than implementing TemplatedNotifier directly you e
 <br/>
 <h3>E-Mail Templates</h3>
 Templates for task lifecycle e-mails are the same as described in the general <a href="notification.html">Notification Activity</a> documentation.
-Pre-built sample templates provided with the MDW baseline package include taskOpenEmail.html, taskOpenOneClick.html and taskOpenEmail.xhtml.
+Pre-built sample templates provided with the MDW baseline package include taskOpenEmail.html and taskOpenOneClick.html.
 
 <br/><br/>
-For simple HTML templates the implicit model value represents the TaskRuntimeContext object, whose getters can be accessed as in the following examples:
+For simple HTML templates, the implicit model value represents the TaskRuntimeContext object, whose getters can be accessed as in the following examples:
 <ul>
 	<li><b> #{context.variables['xmlBeanVar']['/ser:ActionRequest/Action/Parameter[1]']}</b></li>
 	<li><b>#{variables['xmlBeanVar']['/ser:ActionRequest/Action/Parameter[2]']}</b></li>
@@ -30,7 +30,7 @@ For simple HTML templates the implicit model value represents the TaskRuntimeCon
 	<li><b>#{taskName}</b></li><li><b>#{dueDate}</b></li><li><b>#{orderId}</b></li>
 	<li><b>#{taskInstanceUrl}</b></li><li><b>#{taskClaimUserCuid}</b><br></li>
 </ul>
-For Facelet templates the implicit managed bean is a named TaskRuntimeContext object, which can be accessed as in the following examples:
+For Facelet templates, the implicit managed bean is a named TaskRuntimeContext object, which can be accessed as in the following examples:
 <ul>
   	<li><b>#{context.masterRequestId} </b> -- the value of masterRequestId</li>
 	<li><b> #{context.variables.activityName}</b> -- the value of Notification activity name</li>

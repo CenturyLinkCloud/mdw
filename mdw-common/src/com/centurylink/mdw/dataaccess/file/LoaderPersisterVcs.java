@@ -305,7 +305,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * ignores subdirectories except for .mdw
      */
     public void copyPkg(File fromPkgDir, File toPkgDir) throws IOException {
-            if (!toPkgDir.mkdirs())
+            if (!toPkgDir.exists() && !toPkgDir.mkdirs())
                 throw new IOException("Unable to create directory: " + toPkgDir);
             for (File oldSub : fromPkgDir.listFiles()) {
                 if (oldSub.isDirectory() && oldSub.getName().equals(".mdw"))

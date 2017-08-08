@@ -35,7 +35,6 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
-import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.Download;
@@ -44,14 +43,12 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Mdw;
 import com.centurylink.mdw.model.RawJson;
-import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -87,43 +84,27 @@ public class Packages extends JsonRestService implements JsonExportable {
         if (nonVersioned) {
             // designer request for unversioned and (optionally) archived packages in a remote project
             boolean archive = query.getBooleanFilter("archive");
-            String webToolsUrl = PropertyManager.getProperty(PropertyNames.WEBTOOLS_URL);
-            if (webToolsUrl == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, PropertyNames.WEBTOOLS_URL + " not defined");
             try {
-                File tempDir = new File(ApplicationContext.getTempDirectory());
-                if (!tempDir.exists()) {
-                  if (!tempDir.mkdirs())
-                      throw new IOException("Unable to create temporary directory: " + tempDir);
-                }
-                if (!tempDir.isDirectory())
-                    throw new IOException("Temp location is not a directory: " + tempDir);
-                File pkgDir = new File(PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
-                File zipFile = new File(tempDir + "/pkgs" + StringHelper.filenameDateToString(new Date()) + ".zip");
+                File pkgDir = new File(
+                        PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
                 AssetServices assetServices = new AssetServicesImpl();
-                PackageList packageList = assetServices.getPackages(true);
-                List<File> extraPackages = new ArrayList<File>();
-                for (PackageDir packageDir : packageList.getPackageDirs()) {
-                    if (packageDir.getVcsDiffType() == DiffType.EXTRA)
-                        extraPackages.add(packageDir);
-                }
+                List<String> extraPackages = assetServices.getExtraPackageNames();
                 if (archive) {
                     File archiveDir = new File(pkgDir + "/" + PackageDir.ARCHIVE_SUBDIR);
                     if (archiveDir.isDirectory())
-                      extraPackages.add(archiveDir);
+                        extraPackages.add(archiveDir.getName());
                 }
                 if (extraPackages.isEmpty()) {
                     return new JsonObject();
                 }
                 else {
-                    ZipHelper.zipWith(pkgDir, zipFile, extraPackages);
-                    String url = webToolsUrl + "/system/download?deleteAfterDownload=true&filepath=" + zipFile.getPath().replace('\\', '/');
+                    String url = ApplicationContext.getServicesUrl() + "/asset/packages?packages="
+                            + String.join(",", extraPackages);
                     Download download = new Download(url);
-                    download.setFile(zipFile.getName());
                     return download.getJson();
                 }
             }
-            catch (IOException ex) {
+            catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
             }

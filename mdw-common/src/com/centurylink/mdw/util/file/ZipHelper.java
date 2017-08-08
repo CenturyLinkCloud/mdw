@@ -80,6 +80,10 @@ public class ZipHelper {
     }
 
     public static void writeZipWith(File directory, OutputStream outputStream, List<File> includes) throws IOException {
+        writeZipWith(directory, outputStream, includes, false);
+    }
+
+    public static void writeZipWith(File directory, OutputStream outputStream, List<File> includes, boolean includeSubs) throws IOException {
 
         byte[] buffer = new byte[ZIP_BUFFER_KB * 1024];
         ZipOutputStream zos = null;
@@ -91,9 +95,21 @@ public class ZipHelper {
                 boolean include = false;
                 if (includes != null) {
                     for (File in : includes) {
-                        if (file.getPath().startsWith(in.getPath() + System.getProperty("file.separator")) || file.getPath().equals(in.getPath())) {
-                            include = true;
-                            break;
+                        if (includeSubs) {
+                            if (file.getPath().startsWith(in.getPath() + System.getProperty("file.separator")) || file.getPath().equals(in.getPath())) {
+                                include = true;
+                                break;
+                            }
+                        }
+                        else {
+                            if (file.isDirectory() && (file.getPath().startsWith(in.getPath() + System.getProperty("file.separator") + ".mdw") || file.getPath().equals(in.getPath()))) {
+                                    include = true;
+                                    break;
+                            }
+                            else if (file.isFile() && (file.getPath().equals(in.getPath() + System.getProperty("file.separator") + file.getName()) || file.getPath().equals(in.getPath() + System.getProperty("file.separator") + ".mdw" + System.getProperty("file.separator") + file.getName()))) {
+                                include = true;
+                                break;
+                            }
                         }
                     }
                 }

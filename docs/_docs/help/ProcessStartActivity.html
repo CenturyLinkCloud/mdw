@@ -26,7 +26,7 @@ The first two forms are the most common ways to start a process.
 <h2>How to Initialize Variables in a Process</h2>
 For processes started by another process or by a remote process,
 the variables are initialized through the variable binding mechanism described
-in <a href="InvokeSubProcessActivity.html">the process invocation activity</a>.
+in the <a href="InvokeSubProcessActivity.html#subprocessVariableBindings">Subprocess Variable Bindings</a>.
 <p>
 For processes started by pre-flow tasks and external event handlers,
 the owner ID of the process instance is the document ID containing
@@ -41,7 +41,7 @@ An older approach, not recommended any more, is to extract the data in a custom
 external event handler and pass them to the process. Only variables in input mode
 or input/output mode can be passed.
 <p>
-For general topics on listeners and external event handling,
+For general topics on <em>listeners and external event handling</em>,
 please follow <a href="listener.html">this link</a>.
 
 <h2>Configure This Activity</h2>
@@ -67,7 +67,7 @@ are not specifically initialized will have null values.
 The XPath expression is applied to the external message that
 triggered the process instance.
 
-In mdw6, xpath expressions are replaced with java value expressions.
+<em>In mdw6, xpath expressions are replaced with java value expressions.</em>
 <p>
 Here are examples of variable initialization through java expression:
 <table>
@@ -76,7 +76,7 @@ Here are examples of variable initialization through java expression:
 <tr><td>my_var_3</td><td>a Static Value</td></tr>
 </table>
 <p>
-The Java value expression is applied to the request variable which is created with input mode under the process.
+The Java value expression is applied to the request variable which is created with <em>input mode</em> under the process.
 
 <h2>Subclassing This Implementor</h2>
 You can subclass this implementor to perform

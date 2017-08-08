@@ -42,7 +42,8 @@ dependencies {
     compile group: "org.springframework", name: "spring-aop", version: springVersion
     compile group: "aopalliance", name: "aopalliance", version: "1.0"
     compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.4.10"
-    compile group: "org.apache.activemq", name: "activemq-all", version: "5.10.0"
+	compile group: "org.apache.activemq", name: "activemq-spring", version: "5.15.0"
+	compile group: "org.apache.activemq", name: "activemq-kahadb-store", version: "5.15.0"
     compile group: "org.apache.poi", name: "poi", version: "3.15"
     compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
     compile group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.3"
@@ -58,7 +59,7 @@ dependencies {
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
     compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
     compile group: "el-impl", name: "el-impl", version: "1.0"
-    compile group: "commons-dbcp", name: "commons-dbcp", version: "1.4"
+    compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
     compile group: "org.yaml", name: "snakeyaml", version: "1.18"
     compile group: "io.limberest", name: "limberest", version: "1.0.06"
     
@@ -105,22 +106,8 @@ clean {
     dependsOn cleanJar
 }
 
-jar {
-    // avoid confusingly including tomcat spring config(s)
-    exclude "META-INF/mdw/spring/**"
-    
-    // include needed schmemas within mdw-common
-    from configurations.schemas.asFileTree.files.collect {
-        zipTree(it)
-    }
-    
-    manifest {
-        attributes("MDW-Version": mdwVersion)
-        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
-    }
-}
-
 task cliJar(type: Jar) {
+    dependsOn compileJava
     destinationDir = file("../mdw/cli")
     archiveName = "mdw-cli.jar"
     manifest {
@@ -146,7 +133,24 @@ task cliZip(type: Zip) {
         exclude ".gitignore"
     }
 }
+
+jar {
+    dependsOn cliZip
     
+    // avoid confusingly including tomcat spring config(s)
+    exclude "META-INF/mdw/spring/**"
+    
+    // include needed schmemas within mdw-common
+    from configurations.schemas.asFileTree.files.collect {
+        zipTree(it)
+    }
+    
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+}
+
 archivesBaseName = "mdw-common"
 artifacts {
     archives jar, javadocJar, sourcesJar

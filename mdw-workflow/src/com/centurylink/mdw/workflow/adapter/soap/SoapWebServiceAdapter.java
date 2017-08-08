@@ -155,7 +155,23 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 httpHelper.setReadTimeout(readTimeout);
 
             httpHelper.setHeaders(headers);
-            return httpHelper.post(request);
+            String response =  httpHelper.post(request);
+
+            if (response != null) {
+                int codeThreshold = DEFAULT_HTTP_CODE;
+                String retryCodes = getAttributeValueSmart(RETRY_HTTP_CODES);
+                if (retryCodes != null) {
+                    try {
+                        codeThreshold = Integer.parseInt(retryCodes);
+                    }
+                    catch (NumberFormatException ex) {} // Use default in this case
+                }
+
+                Response httpResponse = super.getResponse(connection, response);
+                if (httpResponse.getStatusCode() >= codeThreshold)
+                    throw new IOException("Server returned HTTP response code: " + httpResponse.getStatusCode());
+            }
+            return response;
         }
         catch (IOException ex) {
             if (httpHelper != null && httpHelper.getResponse() != null)

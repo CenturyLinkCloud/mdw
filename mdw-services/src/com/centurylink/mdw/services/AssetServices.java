@@ -95,4 +95,6 @@ public interface AssetServices {
     public void deleteAsset(String assetPath) throws ServiceException;
 
     public List<ArchiveDir> getArchiveDirs() throws ServiceException;
+
+    public List<String> getExtraPackageNames() throws ServiceException;
 }

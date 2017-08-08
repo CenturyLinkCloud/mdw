@@ -80,7 +80,7 @@
 18 - mdw-buildpack
    - clone https://github.com/mdw-dev/mdw-buildpack.git
    - replace mdw*.war (mdw-buildpack/resources/mdw) with one from latest published war from http://repo.maven.apache.org/maven2/com/centurylink/mdw/mdw/
-   - commit and push  
+   - commit and push  (file size > 50 mb cannot be uploaded from browser)
     
 19 - Publishing to AppFog  
    -  go to root of mdw-demo

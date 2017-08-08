@@ -55,5 +55,5 @@ task-values-json-1.json=6
 task-values-json-2.json=7
 task-values-json-3.json=5
 task-values-json-4.json=1
-taskContext.spring=1
+taskContext.spring=2
 taskJaxb.xsd=1

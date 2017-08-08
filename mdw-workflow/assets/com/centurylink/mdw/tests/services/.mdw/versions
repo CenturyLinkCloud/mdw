@@ -78,4 +78,4 @@ localhost.env=1
 process-values.json=4
 processContext.spring=1
 processJaxb.xsd=1
-serviceContext.spring=2
+serviceContext.spring=3

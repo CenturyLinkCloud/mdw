@@ -17,32 +17,27 @@
 package com.centurylink.mdw.testing;
 
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONObject;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.provider.StartupException;
 import com.centurylink.mdw.provider.StartupService;
-import com.centurylink.mdw.test.TestCase;
-import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Startup service for sending slack notification on test build.
  */
 @RegisteredService(StartupService.class)
 public class AutoTestWebSocketClient extends WebSocketClient  implements StartupService  {
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public boolean isEnabled() {
         return true;
@@ -56,64 +51,56 @@ public class AutoTestWebSocketClient extends WebSocketClient  implements Startup
     }
 
     public AutoTestWebSocketClient() throws URISyntaxException {
-        super(new URI(PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL)));
+        super(new URI("ws://localhost:" + ApplicationContext.getWebSocketPort()));
     }
 
-    public AutoTestWebSocketClient( URI serverURI ) {
-        super( serverURI );
+    public AutoTestWebSocketClient(URI serverURI) {
+        super(serverURI);
     }
 
     @Override
-    public void onOpen( ServerHandshake handshakedata ) {
-        send("AutomatedTests");
-        System.out.println( "opened connection" );
+    public void onOpen(ServerHandshake handshakedata) {
+        send("SlackNotice");
+        logger.debug( "opened connection to : " + this.getURI() + " @SlackNotice");
         // if you plan to refuse connection based on ip or httpfields overload: onWebsocketHandshakeReceivedAsClient
     }
 
     @Override
-    public void onMessage( String message ) {
-        TestCaseList testList = new TestCaseList(ApplicationContext.getAssetRoot(), new JSONObject(message));
-        List<TestCase> testCaseList = testList.getTestCases();
-        for (TestCase testCase : testCaseList) {
-            if (testCase.getStatus() == TestCase.Status.Failed || testCase.getStatus() == TestCase.Status.Errored) {
-                //Send a message on Slack
-                HttpHelper helper;
-                try {
-                    String testCaseUrl = ApplicationContext.getMdwHubUrl() + "/#/tests/" + testCase.getPackage() + "/" + testCase.getName();
-                    String slackWebhook = System.getenv("MDW_TESTING_SLACK_CHANNEL");
-                    if (slackWebhook != null) {
-                        helper = HttpHelper.getHttpHelper("POST", new URL(slackWebhook));
-                        helper.getConnection().setHeader("Content-Type", "application/json");
-                        String payload = "\"test case failed: <" +testCaseUrl + "|" + testCase.getName() + ">\"}";
-                        helper.post("{\"text\": "+ payload);
-                    }
-                    else {
-                        System.out.println("testCase failed: " + testCaseUrl);
-                    }
-                }
-                catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
+    public void onMessage(String message) {
+        String testCaseUrl = ApplicationContext.getMdwHubUrl() + "/#/tests";
+        String payload = "\"" + message + " <"  + testCaseUrl + "|Link >\"}";
+        //Send a message on Slack
+        HttpHelper helper;
+        String slackWebhook = System.getenv("MDW_TESTING_SLACK_CHANNEL");
+        try {
+            if (slackWebhook != null) {
+                helper = HttpHelper.getHttpHelper("POST", new URL(slackWebhook));
+                helper.getConnection().setHeader("Content-Type", "application/json");
+                helper.post("{\"text\": "+ payload);
             }
+            else {
+                if (logger.isMdwDebugEnabled())
+                    logger.debug("No Slack channel found: " + payload);
+            }
+        }
+        catch (Exception e) {
+            logger.mdwDebug("testCase failed: " + payload + ":" + e.getMessage());
         }
     }
 
     @Override
-    public void onClose( int code, String reason, boolean remote ) {
-        // The codecodes are documented in class org.java_websocket.framing.CloseFrame
-        System.out.println( "Connection closed by " + ( remote ? "remote peer" : "us" ) );
+    public void onClose(int code, String reason, boolean remote) {
+        // The codes are documented in class org.java_websocket.framing.CloseFrame
+        logger.debug( "Connection closed by " + ( remote ? "remote peer" : "us" ) );
     }
 
     @Override
-    public void onError( Exception ex ) {
-        ex.printStackTrace();
-        // if the error is fatal then onClose will be called additionally
+    public void onError(Exception ex) {
+        logger.debug( "Web Socket Error: " + ex.getMessage() + this.toString());
+
     }
 
-    public static void main( String[] args ) throws URISyntaxException {
+    public static void main(String[] args) throws URISyntaxException {
         AutoTestWebSocketClient c = new AutoTestWebSocketClient( new URI( "ws://localhost:8282" )); // more about drafts here: http://github.com/TooTallNate/Java-WebSocket/wiki/Drafts
         c.connect();
     }
