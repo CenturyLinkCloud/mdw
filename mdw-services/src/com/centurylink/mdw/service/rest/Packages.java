@@ -72,7 +72,7 @@ public class Packages extends JsonRestService implements JsonExportable {
     }
 
     /**
-     * Retrieve package(s) export JSON.  Only for VCS Assets.
+     * Only for VCS Assets.
      */
     @Override
     @Path("/{package}")
