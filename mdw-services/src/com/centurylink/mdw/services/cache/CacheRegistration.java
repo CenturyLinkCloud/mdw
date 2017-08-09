@@ -16,7 +16,6 @@
 package com.centurylink.mdw.services.cache;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +26,8 @@ import java.util.Properties;
 
 import org.json.JSONObject;
 
+import com.centurylink.mdw.annotations.Parameter;
+import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
@@ -126,7 +127,15 @@ public class CacheRegistration implements StartupClass {
         List<CacheService> dynamicCacheServices = CacheRegistry.getInstance().getDynamicCacheServices();
         for (CacheService dynamicCacheService : dynamicCacheServices) {
             if (dynamicCacheService instanceof PreloadableCache) {
-                ((PreloadableCache) dynamicCacheService).loadCache();
+                PreloadableCache preloadableCache = (PreloadableCache)dynamicCacheService;
+                RegisteredService regServ = PreloadableCache.class.getAnnotation(RegisteredService.class);
+                Map<String,String> params = new HashMap<>();
+                for (Parameter parameter : regServ.parameters()) {
+                    if (parameter.name().length() > 0)
+                        params.put(parameter.name(), parameter.value());
+                }
+                preloadableCache.initialize(params);
+                preloadableCache.loadCache();
             }
             synchronized(allCaches) {
                 allCaches.put(dynamicCacheService.getClass().getName(), dynamicCacheService);
@@ -136,17 +145,12 @@ public class CacheRegistration implements StartupClass {
 
     private CacheService getCacheInstance(String className, Properties cacheProps) {
         try {
-            Class<?> cl = Class.forName(className);
-            if (cacheProps == null)
-                return (CacheService) cl.newInstance();
-            Class<?>[] argTypes = new Class<?>[] { Map.class };
-            try {
-                Constructor<?> constructor = cl.getConstructor(argTypes);
-                return (CacheService) constructor.newInstance(getMap(cacheProps));
+            Class<? extends CacheService> cl = Class.forName(className).asSubclass(CacheService.class);
+            CacheService cache = cl.newInstance();
+            if (cache instanceof PreloadableCache) {
+                ((PreloadableCache)cache).initialize(getMap(cacheProps));
             }
-            catch (NoSuchMethodException notFound) {
-                return (CacheService) cl.newInstance();
-            }
+            return cache;
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -276,9 +280,11 @@ public class CacheRegistration implements StartupClass {
                         retProps.put(name, retPropsTemp.get(name));
                 }
             }
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             logger.severeException("Failed to load cache configuration", e);
-        } finally {
+        }
+        finally {
             if (stream!=null) stream.close();
         }
         return retProps;

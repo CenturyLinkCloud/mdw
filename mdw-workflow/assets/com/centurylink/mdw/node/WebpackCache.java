@@ -17,34 +17,76 @@ package com.centurylink.mdw.node;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.timer.CodeTimer;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 
-// TODO precompilation
-@RegisteredService(CacheService.class)
-public class WebpackCache implements CacheService {
 
+/**
+ * Customize these annotations for preload options by extending WebpackCache in a custom
+ * package and set property mdw.webpack.cache.class.name (see JsxServlet.java).
+ */
+@RegisteredService(value=CacheService.class,
+    parameters={@Parameter(name="PreloadedJsx", value="com.centurylink.mdw.task/Main.jsx")})
+public class WebpackCache implements PreloadableCache {
+
+    private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<AssetInfo,File> webpackAssets = new HashMap<>();
+
+    /**
+     * TODO: Can we do this in a separate thread to avoid delaying startup?
+     */
+    @Override
+    public void initialize(Map<String,String> params) {
+        File nodeDir = new File(ApplicationContext.getAssetRoot() + NODE_PACKAGE.replace('.', '/'));
+        try {
+            // unzip node_modules
+            File modulesZip = new File(nodeDir + "/node_modules.zip");
+            ZipHelper.unzip(modulesZip, nodeDir, null, null, true);
+
+            // initialize specified JSX assets
+            String preloadedJsx = params.get("PreloadedJsx");
+            if (preloadedJsx != null && preloadedJsx.length() > 0) {
+                for (String jsxAssetPath : preloadedJsx.split(",")) {
+                    getCompiled(ServiceLocator.getAssetServices().getAsset(jsxAssetPath));
+                }
+            }
+        }
+        catch (Exception ex) {
+            throw new CachingException(ex.getMessage(), ex);
+        }
+
+    }
+
+    @Override
+    public void loadCache() throws CachingException {
+        // only specified assets are preloaded
+    }
+
 
     @Override
     public void refreshCache() throws Exception {
@@ -57,7 +99,7 @@ public class WebpackCache implements CacheService {
     }
 
     public File getCompiled(AssetInfo asset) throws IOException, ServiceException {
-        return getCompiled(asset, null);
+        return getCompiled(asset, getStarter(asset));
     }
 
     /**
@@ -73,6 +115,42 @@ public class WebpackCache implements CacheService {
             }
         }
         return file;
+    }
+
+    private File getStarter(AssetInfo asset) throws IOException {
+        File starter = null;
+
+        if ("jsx".equals(asset.getExtension())) {
+            String filePath = asset.getFile().getAbsolutePath();
+            String pkgPath = filePath.substring(ApplicationContext.getAssetRoot().getAbsolutePath().length(), filePath.length() - asset.getFile().getName().length());
+            // generate the specialized starter script for this jsx
+            starter = new File(ApplicationContext.getTempDirectory() + "/mdw.start/" + pkgPath + "/" + asset.getRootName() + ".js");
+            if (!starter.exists()) {
+                if (!starter.getParentFile().isDirectory() && !starter.getParentFile().mkdirs())
+                    throw new IOException("Cannot create starter directory: " + starter.getParentFile().getAbsolutePath());
+                Files.write(Paths.get(starter.getPath()), getStarterContent(pkgPath, asset).getBytes());
+            }
+        }
+
+        return starter;
+    }
+
+    private String getStarterContent(String pkgPath, AssetInfo jsxAsset) {
+        String assetRoot = ApplicationContext.getAssetRoot().getAbsolutePath().replace('\\', '/');
+        StringBuilder sb = new StringBuilder();
+        String nodeModules = assetRoot + "/com/centurylink/mdw/node/node_modules";
+        sb.append("import React from '" + nodeModules + "/react';\n");
+        sb.append("import ReactDOM from '" + nodeModules + "/react-dom';\n");
+        sb.append("import " + jsxAsset.getRootName() + " from '" + jsxAsset.getFile().getAbsolutePath().replace('\\', '/') + "';\n\n");
+
+        if (logger.isDebugEnabled())
+            sb.append("console.log('Starting: " + pkgPath + "/" + jsxAsset.getName() + "');\n\n");
+
+        sb.append("ReactDOM.render(\n");
+        sb.append("  React.createElement(" + jsxAsset.getRootName() + ", {}, null),\n");
+        sb.append("  document.querySelector('[mdw-jsx=\"" + pkgPath + "/" + jsxAsset.getName() + "\"]')\n");
+        sb.append(");");
+        return sb.toString();
     }
 
     private File compile(AssetInfo asset, File source) throws IOException, ServiceException {
@@ -104,8 +182,8 @@ public class WebpackCache implements CacheService {
      */
     private JSONObject compile(File source, File target) throws IOException, ServiceException {
         AssetServices assetServices = ServiceLocator.getAssetServices();
-        AssetInfo parser = assetServices.getAsset("com.centurylink.mdw.node/parser.js");
-        AssetInfo runner = assetServices.getAsset("com.centurylink.mdw.node/webpackRunner.js");
+        AssetInfo parser = assetServices.getAsset(NODE_PACKAGE + "/parser.js");
+        AssetInfo runner = assetServices.getAsset(NODE_PACKAGE + "/webpackRunner.js");
 
         NodeJS nodeJS = NodeJS.createNodeJS();
 

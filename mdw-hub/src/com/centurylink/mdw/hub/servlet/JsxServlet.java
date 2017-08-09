@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -32,10 +30,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
@@ -44,9 +42,6 @@ import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-/**
- * TODO: JSX Asset List Caching.
- */
 @WebServlet(urlPatterns={"*.jsx"})
 public class JsxServlet extends HttpServlet {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -62,10 +57,13 @@ public class JsxServlet extends HttpServlet {
         this.assetServices = ServiceLocator.getAssetServices();
 
         try {
-            Class<?> webpackCacheClass = CompiledJavaCache.getResourceClass(WEBPACK_CACHE_CLASS,
+            String webpackCacheClassName = PropertyManager.getProperty("mdw.webpack.cache.class.name");
+            if (webpackCacheClassName == null)
+                webpackCacheClassName = WEBPACK_CACHE_CLASS;
+            Class<?> webpackCacheClass = CompiledJavaCache.getResourceClass(webpackCacheClassName,
                     getClass().getClassLoader(), PackageCache.getPackage(NODE_PACKAGE));
-            webpackCacheInstance = CacheRegistration.getInstance().getCache(WEBPACK_CACHE_CLASS);
-            compiledAssetGetter = webpackCacheClass.getMethod("getCompiled", AssetInfo.class, File.class);
+            webpackCacheInstance = CacheRegistration.getInstance().getCache(webpackCacheClassName);
+            compiledAssetGetter = webpackCacheClass.getMethod("getCompiled", AssetInfo.class);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -89,17 +87,9 @@ public class JsxServlet extends HttpServlet {
                 String assetPath = pkgName + p.substring(lastSlash);
                 AssetInfo jsxAsset = assetServices.getAsset(assetPath);
 
-                // generate the specialized starter script for this jsx
-                File starter = new File(ApplicationContext.getTempDirectory() + "/mdw.start/" + pkgPath + "/" + jsxAsset.getRootName() + ".js");
-                if (!starter.exists()) {
-                    if (!starter.getParentFile().isDirectory() && !starter.getParentFile().mkdirs())
-                        throw new IOException("Cannot create starter directory: " + starter.getParentFile().getAbsolutePath());
-                    Files.write(Paths.get(starter.getPath()), getStarter(pkgPath, jsxAsset).getBytes());
-                }
-
                 try {
 
-                    File file = (File) compiledAssetGetter.invoke(webpackCacheInstance, jsxAsset, starter);
+                    File file = (File) compiledAssetGetter.invoke(webpackCacheInstance, jsxAsset);
 
                     if (shouldCache(file, request.getHeader("If-None-Match"))) {
                         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
@@ -131,24 +121,6 @@ public class JsxServlet extends HttpServlet {
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
         }
-    }
-
-    private String getStarter(String pkgPath, AssetInfo jsxAsset) {
-        String assetRoot = ApplicationContext.getAssetRoot().getAbsolutePath().replace('\\', '/');
-        StringBuilder sb = new StringBuilder();
-        String nodeModules = assetRoot + "/com/centurylink/mdw/node/node_modules";
-        sb.append("import React from '" + nodeModules + "/react';\n");
-        sb.append("import ReactDOM from '" + nodeModules + "/react-dom';\n");
-        sb.append("import " + jsxAsset.getRootName() + " from '" + jsxAsset.getFile().getAbsolutePath().replace('\\', '/') + "';\n\n");
-
-        if (logger.isDebugEnabled())
-            sb.append("console.log('Starting: " + pkgPath + "/" + jsxAsset.getName() + "');\n\n");
-
-        sb.append("ReactDOM.render(\n");
-        sb.append("  React.createElement(" + jsxAsset.getRootName() + ", {}, null),\n");
-        sb.append("  document.querySelector('[mdw-jsx=\"" + pkgPath + "/" + jsxAsset.getName() + "\"]')\n");
-        sb.append(");");
-        return sb.toString();
     }
 
     private boolean shouldCache(File file, String ifNoneMatchHeader) {

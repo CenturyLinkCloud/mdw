@@ -42,15 +42,7 @@ public class AssetCache implements PreloadableCache {
     private static List<Asset> latestAssets;
     private static List<Asset> jarAssets;
 
-    public AssetCache() {
-
-    }
-
     private List<String> preLoaded;
-
-    public AssetCache(Map<String,String> params) {
-        initialize(params);
-    }
 
     public void initialize(Map<String,String> params) {
         if (params != null) {
