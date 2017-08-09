@@ -39,8 +39,8 @@
           <div class="mdw-form-footer">
             <div class="mdw-message mdw-form-message">{{discoveryMessage}}</div>
             <div class="mdw-buttons">
-              <button class="btn btn-success mdw-btn" ng-click="importDiscovered()" 
-                ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot || !discoveredPkgList || !discoveredPkgList.packages || discoveredPkgList.packages.length == 0 || discoveredPkgList.getSelected().length == 0">
+              <button class="btn btn-success mdw-btn" ng-click="discoveredPkgList.gitBranch ? importDiscovered() : importFromDiscovery()" 
+                ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot || !discoveredPkgList || !discoveredPkgList.packages || discoveredPkgList.packages.length == 0">
                 <span class="glyphicon glyphicon-import"></span> Import
               </button>
               <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>                 

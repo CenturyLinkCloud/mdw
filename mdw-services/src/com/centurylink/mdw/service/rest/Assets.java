@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,24 +81,40 @@ public class Assets extends JsonRestService {
         response=PackageList.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
-        @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
+        @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="pkgDiscoveryUrl", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-
         try {
             Query query = getQuery(path, headers);
+            HttpHelper helper;
+            String url = null;
+            String pkgDiscoveryUrl = query.getFilter("pkgDiscoveryUrl");
+            if (pkgDiscoveryUrl!=null)
+                url = pkgDiscoveryUrl;
             String discoveryUrl = query.getFilter("discoveryUrl");
+            AssetServices assetServices = ServiceLocator.getAssetServices();
             if (discoveryUrl != null) {
-                String url = discoveryUrl + "/services/" + path;
-                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
+                if (discoveryUrl.indexOf("Discovery") > -1) {
+                    url = discoveryUrl.replace("Discovery", "maven/repository/com/centurylink/mdw");
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("assetRoot", "assets");
+                    jsonObject.put("packages", new JSONArray());
+                    return assetServices.getDiscoveryPackages(url, jsonObject);
+                }
+                else
+                    url = discoveryUrl + "/services/" + path;
+            }
+
+            if (url != null) {
+                helper = HttpHelper.getHttpHelper("GET", new URL(url));
                 try {
                     return new JsonObject(helper.get());
                 }
                 catch (JSONException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid response from: " + discoveryUrl, ex);
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                            "Invalid response from: " + url, ex);
                 }
             }
-
-            AssetServices assetServices = ServiceLocator.getAssetServices();
 
             if (query.getBooleanFilter("archiveDirs")) {
                 List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
