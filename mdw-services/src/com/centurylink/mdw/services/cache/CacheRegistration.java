@@ -84,7 +84,8 @@ public class CacheRegistration implements StartupClass {
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             preloadDynamicCache();
             performInitialRequest();
-        } catch(Exception ex){
+        }
+        catch(Exception ex){
             String message = "Failed to load caches";
             logger.severeException(message, ex);
             throw new StartupException(message, ex);
@@ -120,19 +121,21 @@ public class CacheRegistration implements StartupClass {
     }
 
     /**
-     * To load the cache that registered through dynamic java services
-     *
+     * Load caches registered as dynamic java services.
      */
     private void preloadDynamicCache() throws Exception {
         List<CacheService> dynamicCacheServices = CacheRegistry.getInstance().getDynamicCacheServices();
         for (CacheService dynamicCacheService : dynamicCacheServices) {
             if (dynamicCacheService instanceof PreloadableCache) {
                 PreloadableCache preloadableCache = (PreloadableCache)dynamicCacheService;
-                RegisteredService regServ = PreloadableCache.class.getAnnotation(RegisteredService.class);
+                RegisteredService regServ = preloadableCache.getClass().getAnnotation(RegisteredService.class);
                 Map<String,String> params = new HashMap<>();
-                for (Parameter parameter : regServ.parameters()) {
-                    if (parameter.name().length() > 0)
-                        params.put(parameter.name(), parameter.value());
+                Parameter[] parameters = regServ.parameters();
+                if (parameters != null) {
+                    for (Parameter parameter : parameters) {
+                        if (parameter.name().length() > 0)
+                            params.put(parameter.name(), parameter.value());
+                    }
                 }
                 preloadableCache.initialize(params);
                 preloadableCache.loadCache();

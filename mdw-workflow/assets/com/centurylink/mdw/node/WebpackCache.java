@@ -37,6 +37,7 @@ import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.file.ZipHelper;
+import com.centurylink.mdw.util.file.ZipHelper.Exist;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.eclipsesource.v8.JavaCallback;
@@ -62,11 +63,15 @@ public class WebpackCache implements PreloadableCache {
      */
     @Override
     public void initialize(Map<String,String> params) {
-        File nodeDir = new File(ApplicationContext.getAssetRoot() + NODE_PACKAGE.replace('.', '/'));
+        File nodeDir = new File(ApplicationContext.getAssetRoot() + "/" + NODE_PACKAGE.replace('.', '/'));
         try {
             // unzip node_modules
             File modulesZip = new File(nodeDir + "/node_modules.zip");
-            ZipHelper.unzip(modulesZip, nodeDir, null, null, true);
+            long before = System.currentTimeMillis();
+            logger.info("Unzipping node_modules...");
+            ZipHelper.unzip(modulesZip, nodeDir, null, null, Exist.Ignore);
+            if (logger.isDebugEnabled())
+                logger.debug("  - node_modules unzipped in " + (System.currentTimeMillis() - before) + " ms");
 
             // initialize specified JSX assets
             String preloadedJsx = params.get("PreloadedJsx");
@@ -122,7 +127,9 @@ public class WebpackCache implements PreloadableCache {
 
         if ("jsx".equals(asset.getExtension())) {
             String filePath = asset.getFile().getAbsolutePath();
-            String pkgPath = filePath.substring(ApplicationContext.getAssetRoot().getAbsolutePath().length(), filePath.length() - asset.getFile().getName().length());
+            String pkgPath = filePath
+                    .substring(ApplicationContext.getAssetRoot().getAbsolutePath().length() + 1,
+                            filePath.length() - asset.getFile().getName().length() - 1).replace('/', '.').replace('\\', '.');
             // generate the specialized starter script for this jsx
             starter = new File(ApplicationContext.getTempDirectory() + "/mdw.start/" + pkgPath + "/" + asset.getRootName() + ".js");
             if (!starter.exists()) {
