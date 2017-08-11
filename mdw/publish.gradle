@@ -1,10 +1,12 @@
 // publishes build output to a maven repository
 // eg: mdw repo or maven central
-
 plugins {
-    id "org.ajoberstar.grgit" version "1.7.1"
-  }
+    id 'io.codearte.nexus-staging' version '0.9.0'
+}
 
+nexusStaging {
+    packageGroup = "com.centurylink.mdw" //optional if packageGroup == project.getGroup()
+}
 
 repositories {
     mavenCentral()
@@ -168,29 +170,74 @@ task publishBuild(dependsOn: [publishBase, publishTemplate, publishJars, publish
     }
 }
 
-task publishToMavenCentral(type: GradleBuild) {
-      buildFile = "build.gradle"
-      tasks = ["uploadArchives"]
-  }
-
-
-import org.ajoberstar.grgit.*
-
-task tagRelease {
-  description = 'Tags the current head with the project\'s version.'
-  doLast {      
-    grgit.tag.add {
-      name = version
-      message = "Release of v${mdwVersion}"
-      //pointsTo = "b7ec814aa58db0bb61ab19e580ff9259b2a4db1d"
-    }
-  }
+task uploadToMavenCentral(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["uploadArchives"]
+}
+  
+task closeAndRelease(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["closeAndReleaseRepository"]
 }
 
-task pushToOrigin {
-  dependsOn tagRelease
-  description = 'Pushes current branch committed changes to origin repo.'
-  doLast {
-    grgit.push(tags: true)
-  }
+task publishToMavenCentral(type: GradleBuild) {
+    dependsOn uploadToMavenCentral
+    dependsOn closeAndRelease
+}
+
+closeAndRelease.mustRunAfter uploadToMavenCentral
+
+task updatePlugInFile {
+      description = "Update plugin file with Version number"
+  
+      fileTree(dir: "../mdw-workflow/.settings", include:'com.centurylink.mdw.plugin.xml').each { pkgFile ->
+          println "Updating file  " + pkgFile.name + " with version= " + mdwVersion
+          
+          doLast {
+              pkgFile.setWritable(true)
+              def pkgJson = pkgFile.text
+              pkgFile.withWriter { w ->
+                  w << pkgJson.replaceAll("mdwFramework version=\\\".*?\\\"", "mdwFramework version=\"${mdwVersion}\"");
+              }
+          }
+      }
+}
+  
+task updateJson {
+      description = "Update bower.json and packag.json with version number"
+      
+      def mdwPkgVer = mdwVersion;
+      if (mdwVersion.endsWith("-SNAPSHOT"))
+          mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+      fileTree(dir: "../mdw-hub", include:"*.json").each { pkgFile ->
+          println "Updating file  " + pkgFile.name + " with version= " + mdwPkgVer
+          
+          doLast {
+              pkgFile.setWritable(true)
+              def pkgJson = pkgFile.text
+              pkgFile.withWriter { w ->
+                  w << pkgJson.replaceAll("\\\"version\\\": \\\".*?\\\"", "\\\"version\\\": \"${mdwPkgVer}\"");
+              }
+          }
+      }
+}
+  
+task updateManifestFile {
+      description = "Update MDW Version in manifest.yml"
+      FileCollection collection = files('../mdw-hub/manifest.yml')
+      
+      collection.each { File file ->
+          println "Updating file  " + file.name + " with version= " + mdwVersion
+              doLast {
+                  file.setWritable(true)
+                  def pkgJson = file.text
+                  file.withWriter { w ->
+                      w << pkgJson.replaceAll("/mdw/deploy/app/mdw-.*?.war", "/mdw/deploy/app/mdw-${mdwVersion}.war");
+                  }
+              }
+       }
+}
+
+task updateMdwVerInFiles {
+      dependsOn(updateManifestFile, updateJson, updatePlugInFile, updateRestApiDefinition)
 }
