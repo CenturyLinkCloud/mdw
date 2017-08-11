@@ -104,14 +104,14 @@ workflowMod.controller('MdwWorkflowController',
       $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
         .then(function success(response) {
           $scope.instance = response.data;
-            $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
+            $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity);
             $scope.diagram.draw($scope.animate);
         }, function error(response) {
           mdw.messages = response.statusText;
       });
     }
     else {
-      $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance);
+      $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity);
       $scope.diagram.draw($scope.animate);
       if ($scope.editable) {
         $scope.toolbox = Toolbox.getToolbox();
@@ -232,6 +232,9 @@ workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
 //   - on-process-change: handler for process change event
 //   - service-base: endpoint url root
 //   - hub-base: MDWHub url root
+//   - animate: animated rendering
+//   - activity: to highlight a particular activity/instance
+//     (activityId for defs, activityInstanceId for insts)
 workflowMod.directive('mdwWorkflow', [function() {
   return {
     restrict: 'E',
@@ -243,7 +246,8 @@ workflowMod.directive('mdwWorkflow', [function() {
       editable: '@editable',
       serviceBase: '@serviceBase',
       hubBase: '@hubBase',
-      animate: '@animate'
+      animate: '@animate',
+      activity: '@activity'
     },
     controller: 'MdwWorkflowController',
     controllerAs: 'mdwWorkflow',

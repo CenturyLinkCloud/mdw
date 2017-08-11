@@ -58,12 +58,12 @@ public class WebpackCache implements PreloadableCache {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<AssetInfo,File> webpackAssets = new HashMap<>();
 
-    /**
-     * TODO: Can we do this in a separate thread to avoid delaying startup?
-     */
     @Override
     public void initialize(Map<String,String> params) {
         File nodeDir = new File(ApplicationContext.getAssetRoot() + "/" + NODE_PACKAGE.replace('.', '/'));
+        if (!nodeDir.exists())
+            throw new CachingException("Node dir not found: " + nodeDir);
+
         try {
             // unzip node_modules
             File modulesZip = new File(nodeDir + "/node_modules.zip");
@@ -82,9 +82,8 @@ public class WebpackCache implements PreloadableCache {
             }
         }
         catch (Exception ex) {
-            throw new CachingException(ex.getMessage(), ex);
+            logger.severeException(ex.getMessage(), ex);
         }
-
     }
 
     @Override

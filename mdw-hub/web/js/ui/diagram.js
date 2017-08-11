@@ -6,7 +6,7 @@ diagramMod.factory('Diagram',
     ['$document', 'mdw', 'util', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox', 'DC',
      function($document, mdw, util, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection, Toolbox, DC) {
 
-    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance) {
+    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity) {
     Shape.call(this, this, process);
     this.canvas = canvas;
     this.dialog = dialog;
@@ -21,6 +21,12 @@ diagramMod.factory('Diagram',
     this.anchor = -1;
     this.drawBoxes = process.attributes.NodeStyle == 'BoxIcon';
     this.selection = new Selection(this);
+    if (activity) {
+      if (instance)
+        this.activityInstanceId = activity;
+      else
+        this.activityId = activity;
+    }
   };
 
   Diagram.prototype = new Shape();
@@ -46,7 +52,7 @@ diagramMod.factory('Diagram',
         }
         else {
           sequence[i].draw(animate);
-          if (sequence[i] instanceof Shape)
+          if (sequence[i] instanceof Step && sequence[i].workflowItem.id === diagram.activityId)
             diagram.scrollIntoView(sequence[i]);
           i++;
         }
@@ -197,8 +203,12 @@ diagramMod.factory('Diagram',
     if (sequence) {
       var update = function(it) {
         it.draw(animate);
-        if (it instanceof Shape)
-          diagram.scrollIntoView(it);        
+        if (it instanceof Step && diagram.activityInstanceId) {
+          it.instances.forEach(function(inst) {
+            if (inst.id === diagram.activityInstanceId)
+              diagram.scrollIntoView(it);
+          });
+        }
       };
   
       if (animate) {
@@ -223,21 +233,26 @@ diagramMod.factory('Diagram',
     var centerX = shape.display.x + shape.display.w/2;
     var centerY = shape.display.y + shape.display.h/2;
     
+    var container = document.body;
     if (this.containerId) {
-      var container = document.getElementById(this.containerId);
+      container = document.getElementById(this.containerId);
     }
-    else {
-      var clientRect = this.canvas.getBoundingClientRect();
-      var canvasLeftX = clientRect.left;
-      var canvasTopY = clientRect.top;
-      var canvasRightX = clientRect.right;
-      var canvasBottomY = clientRect.bottom;
+    
+    var clientRect = this.canvas.getBoundingClientRect();
+    var canvasLeftX = clientRect.left;
+    var canvasTopY = clientRect.top;
+    var canvasRightX = clientRect.right;
+    var canvasBottomY = clientRect.bottom;
+    
+    // TODO: account for margin
+    console.log("SCROLLW: " + container.scrollWidth);
+    console.log("CLIENTW: " + container.clientWidth);
+    
 
-      console.log("left: " + canvasLeftX);
-      console.log("top: " + canvasTopY);
-      console.log("right: " + clientRect.right);
-      console.log("bottom: " + clientRect.bottom);
-    }
+    console.log("left: " + canvasLeftX);
+    console.log("top: " + canvasTopY);
+    console.log("right: " + clientRect.right);
+    console.log("bottom: " + clientRect.bottom);
   };
   
   Diagram.prototype.getSequence = function(runtime) {

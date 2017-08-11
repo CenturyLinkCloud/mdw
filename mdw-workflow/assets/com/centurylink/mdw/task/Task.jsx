@@ -103,8 +103,8 @@ class Task extends Component {
         </div>
         <div id="mdw-task-workflow" className="mdw-task-workflow">
           {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
-            <Workflow instanceId={task.ownerId}
-              hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
+            <Workflow instanceId={task.ownerId} animate={true} activity={task.activityInstanceId}
+              containerId='mdw-task-workflow' hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
           }
         </div>
       </div>

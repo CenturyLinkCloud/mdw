@@ -31,10 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -48,27 +46,16 @@ public class JsxServlet extends HttpServlet {
     private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
     private static final String WEBPACK_CACHE_CLASS = NODE_PACKAGE + ".WebpackCache";
     private AssetServices assetServices;
-    private CacheService webpackCacheInstance;
-    private Method compiledAssetGetter;
+    private String webpackCacheClassName;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.assetServices = ServiceLocator.getAssetServices();
+        assetServices = ServiceLocator.getAssetServices();
 
-        try {
-            String webpackCacheClassName = PropertyManager.getProperty("mdw.webpack.cache.class.name");
-            if (webpackCacheClassName == null)
-                webpackCacheClassName = WEBPACK_CACHE_CLASS;
-            Class<?> webpackCacheClass = CompiledJavaCache.getResourceClass(webpackCacheClassName,
-                    getClass().getClassLoader(), PackageCache.getPackage(NODE_PACKAGE));
-            webpackCacheInstance = CacheRegistration.getInstance().getCache(webpackCacheClassName);
-            compiledAssetGetter = webpackCacheClass.getMethod("getCompiled", AssetInfo.class);
-        }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ServletException(ex.getMessage(), ex);
-        }
+        webpackCacheClassName = PropertyManager.getProperty("mdw.webpack.cache.class.name");
+        if (webpackCacheClassName == null)
+            webpackCacheClassName = WEBPACK_CACHE_CLASS;
     }
 
     @Override
@@ -88,9 +75,9 @@ public class JsxServlet extends HttpServlet {
                 AssetInfo jsxAsset = assetServices.getAsset(assetPath);
 
                 try {
-
+                    CacheService webpackCacheInstance = CacheRegistration.getInstance().getCache(webpackCacheClassName);
+                    Method compiledAssetGetter = webpackCacheInstance.getClass().getMethod("getCompiled", AssetInfo.class);
                     File file = (File) compiledAssetGetter.invoke(webpackCacheInstance, jsxAsset);
-
                     if (shouldCache(file, request.getHeader("If-None-Match"))) {
                         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                     }
