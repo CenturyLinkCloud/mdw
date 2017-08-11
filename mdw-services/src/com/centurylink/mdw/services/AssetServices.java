@@ -100,5 +100,5 @@ public interface AssetServices {
 
     public List<String> getExtraPackageNames() throws ServiceException;
 
-    public JSONObject getDiscoveryPackages(String url, JSONObject jsonObj) throws ServiceException;
+    public JSONObject getRepositoryPackages(String url, JSONObject jsonObj) throws ServiceException;
 }

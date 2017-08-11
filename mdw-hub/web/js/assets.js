@@ -178,7 +178,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
     );
   };
   
-  $scope.importFromDiscovery = function() { 
+  $scope.importFromMavenRepository = function() { 
 	   var pkgLength = $scope.discoveredPkgList.getSelected().length;
 	   var count = 0;
 	    $scope.discoveredPkgList.getSelected().forEach(function(pkg) {

@@ -89,24 +89,32 @@ public class Assets extends JsonRestService {
             HttpHelper helper;
             String url = null;
             String pkgDiscoveryUrl = query.getFilter("pkgDiscoveryUrl");
-            if (pkgDiscoveryUrl!=null)
-                url = pkgDiscoveryUrl;
             String discoveryUrl = query.getFilter("discoveryUrl");
             AssetServices assetServices = ServiceLocator.getAssetServices();
             if (discoveryUrl != null) {
-                if (discoveryUrl.indexOf("Discovery") > -1) {
-                    url = discoveryUrl.replace("Discovery", "maven/repository/com/centurylink/mdw");
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("assetRoot", "assets");
-                    jsonObject.put("packages", new JSONArray());
-                    return assetServices.getDiscoveryPackages(url, jsonObject);
+                url = discoveryUrl + "/services/" + path;
+                try {
+                    helper = HttpHelper.getHttpHelper("GET", new URL(url));
+                    return new JsonObject(helper.get());
                 }
-                else
-                    url = discoveryUrl + "/services/" + path;
+                catch (JSONException ex) {
+                    url = discoveryUrl;
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("mavenRepository", "true");
+                        jsonObject.put("assetRoot", "assets");
+                        jsonObject.put("packages", new JSONArray());
+                        return assetServices.getRepositoryPackages(url.replace("Discovery", "maven/repository/com/centurylink/mdw"), jsonObject);
+                    }
+                    catch (JSONException e) {
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                "Invalid response from: " + url, ex);
+                    }
+                }
             }
 
-            if (url != null) {
-                helper = HttpHelper.getHttpHelper("GET", new URL(url));
+            if (pkgDiscoveryUrl != null) {
+                helper = HttpHelper.getHttpHelper("GET", new URL(pkgDiscoveryUrl));
                 try {
                     return new JsonObject(helper.get());
                 }

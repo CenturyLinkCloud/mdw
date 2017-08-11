@@ -757,7 +757,7 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    public JSONObject getDiscoveryPackages(String url, JSONObject jsonObj) throws ServiceException {
+    public JSONObject getRepositoryPackages(String url, JSONObject jsonObj) throws ServiceException {
         try {
             HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
             List<String> links = parseDirectoryResponse(helper.get());
@@ -776,7 +776,7 @@ public class AssetServicesImpl implements AssetServices {
             for (String link : links) {
                 if (link.endsWith("/")) {
                     String child = link.substring(0, link.length() - 1);
-                    getDiscoveryPackages(url + "/" + child, jsonObj);
+                    getRepositoryPackages(url + "/" + child, jsonObj);
                 }
                 else if (link.endsWith(".json")) {
                     int index = link.indexOf('-');
