@@ -5,7 +5,10 @@ plugins {
 }
 
 nexusStaging {
-    packageGroup = "com.centurylink.mdw" //optional if packageGroup == project.getGroup()
+    packageGroup = "com.centurylink"
+    serverUrl = "https://oss.sonatype.org/service/local"
+    username = "magrawa"
+    password = "need to read from env variables"
 }
 
 repositories {
@@ -175,17 +178,12 @@ task uploadToMavenCentral(type: GradleBuild) {
     tasks = ["uploadArchives"]
 }
   
-task closeAndRelease(type: GradleBuild) {
-    buildFile = "build.gradle"
-    tasks = ["closeAndReleaseRepository"]
-}
-
 task publishToMavenCentral(type: GradleBuild) {
     dependsOn uploadToMavenCentral
-    dependsOn closeAndRelease
+    dependsOn closeAndReleaseRepository
 }
 
-closeAndRelease.mustRunAfter uploadToMavenCentral
+closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
 
 task updatePlugInFile {
       description = "Update plugin file with Version number"

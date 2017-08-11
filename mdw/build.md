@@ -28,8 +28,8 @@
   
 6 - Update mdw-demo
   -  Update mdwVersion in gradle.properties  
-  -  Run upgradeMDWVer task to update assets
-  -  Commit and push to git 
+  -  Run upgradeMDWVer task to update assets and refresh the project
+  -  Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
 7  Deploy and Test
   - MDW6-Deploy  (You might have to start the server manually if this task does not do automatically)
@@ -69,9 +69,8 @@
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
   - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release 'v6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
-  - commit and push generated CHANGELOG.md to GitHub 
-  - git commit CHANGELOG.md -m "Release notes"
-  - Create new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases/new), copy the notes from CHANGELOG.md
+  - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
+  - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copy the notes from CHANGELOG.md
   - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should do that.
   - Change release status from pre-release to release
 
@@ -79,7 +78,8 @@
     
 14 - mdw-buildpack
    - clone https://github.com/mdw-dev/mdw-buildpack.git
-   - replace mdw*.war (mdw-buildpack/resources/mdw) with one from latest published war from http://repo.maven.apache.org/maven2/com/centurylink/mdw/mdw/
+   - replace mdw*.war (mdw-buildpack/resources/mdw) with one from latest published war from   http://lxdenvmtc143.dev.qintra.com:7021/maven/repository/com/centurylink/mdw/mdw/6.0.xx/mdw-6.0.xx.war 
+      or copy from local mdw folder
    - commit and push  (file size > 50 mb cannot be uploaded from browser)
     
 15 - Publishing to AppFog  
