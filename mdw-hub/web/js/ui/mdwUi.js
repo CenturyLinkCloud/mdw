@@ -65,6 +65,9 @@ var $mdwUi = {
      ANCHOR_W: 3,
      ANCHOR_COLOR: '#ec407a',
      ANCHOR_HIT_W: 8,
-     MIN_DRAG: 3
+     MIN_DRAG: 3,
+     OVAL_LINE_WIDTH: 3,
+     HIGHLIGHT_MARGIN: 10,
+     HIGHLIGHT_COLOR: '#03a9f4'
    }
 };

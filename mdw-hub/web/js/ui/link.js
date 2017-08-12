@@ -73,13 +73,13 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     };
   }; 
   
-  Link.prototype.draw = function() {
+  Link.prototype.draw = function(animationTimeSeg) {
     var color = this.getColor();
         
     this.diagram.context.strokeStyle = color;
     this.diagram.context.fillStyle = color;
     
-    this.drawConnector();
+    this.drawConnector(null, null, animationTimeSeg);
 
     if (this.label) {
       if (this.diagram.instance && (!this.instances || this.instances.length === 0))
@@ -184,7 +184,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   // if hitX and hitY are passed, checks for hover instead of stroking
-  Link.prototype.drawConnector = function(hitX, hitY) {
+  Link.prototype.drawConnector = function(hitX, hitY, animationTimeSeg) {
     var context = this.diagram.context;
     var type = this.display.type;
     var xs = this.display.xs;
@@ -206,7 +206,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     
     if (!type || type.startsWith('Elbow')) {
       if (xs.length == 2) {
-        hit = this.drawAutoElbowConnector(context, hitX, hitY);
+        hit = this.drawAutoElbowConnector(context, hitX, hitY, animationTimeSeg);
       }
       else {
         // TODO: make use of Link.CORR
@@ -233,7 +233,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
     }
     
-    if (!hit)
+    if (!hit && !animationTimeSeg)
       hit = this.drawConnectorArrow(context, hitX, hitY);
 
     context.lineWidth = DC.DEFAULT_LINE_WIDTH;
@@ -243,51 +243,132 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     return hit;
   };
   
-  Link.prototype.drawAutoElbowConnector = function(context, hitX, hitY) {
+  Link.prototype.drawAutoElbowConnector = function(context, hitX, hitY, animationTimeSeg) {
     var xs = this.display.xs;
     var ys = this.display.ys;
     var t;
     var xcorr = xs[0] < xs[1] ? Link.CORR : -Link.CORR;
     var ycorr = ys[0] < ys[1] ? Link.CORR : -Link.CORR;
+    var drawArrow = null;
+    if (animationTimeSeg) {
+      var linkThis = this;
+      drawArrow = function(context) {
+        linkThis.drawConnectorArrow.call(linkThis, context);
+      };
+    }
     context.beginPath();
     switch (this.getAutoElbowLinkType()) {
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
-        context.moveTo(xs[0] - xcorr, ys[0]);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSeg) {
+          this.diagram.animateLine({x: xs[0] - xcorr, y: ys[0]}, {x: xs[1], y: ys[1]}, Link.LINK_WIDTH, animationTimeSeg, drawArrow);
+        }
+        else {
+          context.moveTo(xs[0] - xcorr, ys[0]);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
-        context.moveTo(xs[0], ys[0] - ycorr);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSeg) {
+          this.diagram.animateLine({x: xs[0], y: ys[0] - ycorr}, {x: xs[1], y: ys[1]}, Link.LINK_WIDTH, animationTimeSeg, drawArrow);
+        }
+        else {
+          context.moveTo(xs[0], ys[0] - ycorr);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH:
         t = (xs[0] + xs[1]) / 2;
-        context.moveTo(xs[0] - xcorr, ys[0]);
-        context.lineTo(t > xs[0] ? t - Link.CR : t + Link.CR, ys[0]);
-        context.quadraticCurveTo(t, ys[0], t, ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
-        context.lineTo(t, ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
-        context.quadraticCurveTo(t, ys[1], xs[1] > t ? t + Link.CR : t - Link.CR, ys[1]);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSeg) {
+          // console.log("AUTOLINK_HVH");
+          let tSeg = animationTimeSeg / 3;
+          let from = {x: xs[0] - xcorr, y: ys[0]};
+          let to = {x: t > xs[0] ? t - Link.CR : t + Link.CR, y: ys[0]};
+          let curveTo = {x: t, y: ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR};
+          let curve = {cpx: t, cpy: ys[0], x: curveTo.x, y: curveTo.y};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, curve);
+          from = curveTo;
+          to = {x: t, y: ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR};
+          curveTo = {x: xs[1] > t ? t + Link.CR : t - Link.CR, y: ys[1]};
+          curve = {cpx: t, cpy: ys[1], x: curveTo.x, y: curveTo.y};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, curve);
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, drawArrow);
+        }
+        else {
+          context.moveTo(xs[0] - xcorr, ys[0]);
+          context.lineTo(t > xs[0] ? t - Link.CR : t + Link.CR, ys[0]);
+          context.quadraticCurveTo(t, ys[0], t, ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
+          context.lineTo(t, ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
+          context.quadraticCurveTo(t, ys[1], xs[1] > t ? t + Link.CR : t - Link.CR, ys[1]);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:
+        // console.log("AUTOLINK_VHV");
         t = (ys[0] + ys[1]) / 2;
-        context.moveTo(xs[0], ys[0] - ycorr);
-        context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
-        context.quadraticCurveTo(xs[0], t, xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, t);
-        context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
-        context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSeg) {
+          let tSeg = animationTimeSeg / 3;
+          let from = {x: xs[0], y: ys[0] - ycorr};
+          let to = {x: xs[0], y: t > ys[0] ? t - Link.CR : t + Link.CR};
+          let curveTo = {x: xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, y: t};
+          let curve = {cpx: xs[0], cpy: t, x: curveTo.x, y: curveTo.y};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, curve);
+          from = curveTo;
+          to = {x: xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, y: t};
+          curveTo = {x: xs[1], y: ys[1] > t ? t + Link.CR : t-Link.CR};
+          curve = {cpx: xs[1], cpy: t, x: curve.x, y: curve.y};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, curve);
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, drawArrow);
+        }
+        else {
+          context.moveTo(xs[0], ys[0] - ycorr);
+          context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
+          context.quadraticCurveTo(xs[0], t, xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, t);
+          context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
+          context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV:
-        context.moveTo(xs[0] - xcorr, ys[0]);
-        context.lineTo(xs[1] > xs[0] ? xs[1] -Link.CR : xs[1] + Link.CR, ys[0]);
-        context.quadraticCurveTo(xs[1], ys[0], xs[1], ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSeg) {
+          let tSeg = animationTimeSeg / 2;
+          let from = {x: xs[0] - xcorr, y: ys[0]};
+          let to = {x: xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, y: ys[0]};
+          let curveTo = {x: xs[1], y: ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR};
+          let curve = {cpx: xs[1], cpy: ys[0], x: curveTo.x, y: curveTo.y};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, curve);
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, drawArrow);
+        }
+        else {
+          context.moveTo(xs[0] - xcorr, ys[0]);
+          context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, ys[0]);
+          context.quadraticCurveTo(xs[1], ys[0], xs[1], ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH:
-        context.moveTo(xs[0], ys[0] - ycorr);
-        context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
-        context.quadraticCurveTo(xs[0], ys[1], xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, ys[1]);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSeg) {
+          let tSeg = animationTimeSeg / 2;
+          let from = {x: xs[0], y: ys[0] - ycorr};
+          let to = {x: xs[0], y: ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR};
+          let curveTo = {x: xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, y: ys[1]};
+          let curve = {cpx: xs[0], cpy: ys[1], x: curveTo.x, y: curveTo.y};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, curve);
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          this.diagram.animateLine(from, to, Link.LINK_WIDTH, tSeg, drawArrow);
+        }
+        else {
+          context.moveTo(xs[0], ys[0] - ycorr);
+          context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
+          context.quadraticCurveTo(xs[0], ys[1], xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, ys[1]);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
     }
     
@@ -301,7 +382,6 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   Link.prototype.drawConnectorArrow = function(context, hitX, hitY) {
-    
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;

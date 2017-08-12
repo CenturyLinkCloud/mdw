@@ -84,10 +84,10 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var yAdjust = -2;
       if (shape) {
         if ('start' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'green', 'white');
         }
         else if ('stop' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'red', 'white');
         }
         else if ('decision' == shape) {
           this.diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
@@ -122,6 +122,11 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     this.diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
     this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
     
+  };
+  
+  Step.prototype.highlight = function() {
+    this.diagram.drawOval(this.display.x - DC.HIGHLIGHT_MARGIN, this.display.y - DC.HIGHLIGHT_MARGIN, 
+        this.display.w + (2*DC.HIGHLIGHT_MARGIN), this.display.h + (2*DC.HIGHLIGHT_MARGIN), DC.HIGHLIGHT_COLOR);
   };
   
   // sets display/title and returns an object with w and h for required size

@@ -32,8 +32,7 @@ diagramMod.factory('Diagram',
   Diagram.prototype = new Shape();
 
   Diagram.BOUNDARY_DIM = 25;
-  Diagram.ANIMATION_FACTOR = 1200;
-  Diagram.ANIMATION_DAMPING = 0.7;
+  Diagram.ANIMATION_SPEED = 1; // segments/sec;
 
   Diagram.prototype.draw = function(animate) {
 
@@ -46,17 +45,20 @@ diagramMod.factory('Diagram',
       var sequence = this.getSequence();
       let i = 0;
       var diagram = this;
+      var timeSeg = 1000 / Diagram.ANIMATION_SPEED; 
       var int = setInterval(function() {
         if (i >= sequence.length) {
           clearInterval(int);
         }
         else {
           sequence[i].draw(animate);
-          if (sequence[i] instanceof Step && sequence[i].workflowItem.id === diagram.activityId)
+          if (sequence[i] instanceof Step && sequence[i].workflowItem.id == diagram.activityId) {
+            sequence[i].highlight();
             diagram.scrollIntoView(sequence[i]);
+          }
           i++;
         }
-      }, Diagram.ANIMATION_FACTOR / sequence.length + Diagram.ANIMATION_DAMPING * sequence.length);
+      }, timeSeg);
     }
     else {
       // draw quickly
@@ -202,26 +204,36 @@ diagramMod.factory('Diagram',
     var sequence = this.getSequence(true);
     if (sequence) {
       var update = function(it) {
-        it.draw(animate);
-        if (it instanceof Step && diagram.activityInstanceId) {
-          it.instances.forEach(function(inst) {
-            if (inst.id === diagram.activityInstanceId)
-              diagram.scrollIntoView(it);
-          });
+        var highlight = false;
+        if (it instanceof Step) {
+//          if (animate)
+//            diagram.scrollIntoView(it, timeSeg);
+          
+          if (diagram.activityInstanceId) {
+            it.instances.forEach(function(inst) {
+              if (inst.id == diagram.activityInstanceId) {
+                highlight = true;
+              }
+            });
+          }
         }
+        it.draw(timeSeg);
+        if (highlight)
+          it.highlight();
       };
   
       if (animate) {
+        var timeSeg = 1000 / Diagram.ANIMATION_SPEED;    
         let i = 0;
         var int = setInterval(function() {
           if (i >= sequence.length) {
             clearInterval(int);
           }
           else {
-            update(sequence[i]);
+            update(sequence[i], timeSeg);
             i++;
           }
-        }, Diagram.ANIMATION_FACTOR / sequence.length + Diagram.ANIMATION_DAMPING * sequence.length);
+        }, timeSeg);
       }
       else {
         sequence.forEach(update);
@@ -229,7 +241,7 @@ diagramMod.factory('Diagram',
     }
   };
   
-  Diagram.prototype.scrollIntoView = function(shape) {
+  Diagram.prototype.scrollIntoView = function(shape, timeSeg) {
     var centerX = shape.display.x + shape.display.w/2;
     var centerY = shape.display.y + shape.display.h/2;
     
@@ -245,14 +257,49 @@ diagramMod.factory('Diagram',
     var canvasBottomY = clientRect.bottom;
     
     // TODO: account for margin
-    console.log("SCROLLW: " + container.scrollWidth);
-    console.log("CLIENTW: " + container.clientWidth);
+//    console.log("SCROLLW: " + container.scrollWidth);
+//    console.log("CLIENTW: " + container.clientWidth);
+//    console.log("SCROLLH: " + container.scrollHeight);
+//    console.log("CLIENTH: " + container.clientHeight);
+
+//    console.log("H: " + document.documentElement.clientHeight);
+//    console.log("SH: " + document.documentElement.scrollHeight);
+    
+    if (container.scrollHeight > container.clientHeight) {
+      var maxVScroll = container.scrollHeight - container.clientHeight;
+      var centeringVScroll = centerY - container.clientHeight/2;
+      if (centeringVScroll > 0) {
+        var vScroll = centeringVScroll > maxVScroll ? maxVScroll : centeringVScroll;
+        var vDelta = vScroll - container.scrollTop;
+        var winDelta = 0;
+        var bottomY = canvasTopY + shape.display.y + shape.display.h - vDelta + DC.HIGHLIGHT_MARGIN*2;
+        //console.log("BOTTOMY: " + bottomY + "  CLIENTH: " + document.documentElement.clientHeight);
+        if (document.documentElement.clientHeight < bottomY) {
+          winDelta = bottomY - document.documentElement.clientHeight;
+        }
+        var segs = timeSeg / 60;
+        var i = 0;
+        var winScrollY = 0;
+        var scroll = function() {
+          container.scrollTop += vDelta/segs;
+          if (winDelta > 0) {
+            winScrollY += winDelta/segs;
+            window.scroll(0, winScrollY);
+          }
+          i++;
+          if (i < segs) {
+            window.requestAnimationFrame(scroll);
+          }
+        };
+        scroll();
+      }
+    }
     
 
-    console.log("left: " + canvasLeftX);
-    console.log("top: " + canvasTopY);
-    console.log("right: " + clientRect.right);
-    console.log("bottom: " + clientRect.bottom);
+//    console.log("left: " + canvasLeftX);
+//    console.log("top: " + canvasTopY);
+//    console.log("right: " + clientRect.right);
+//    console.log("bottom: " + clientRect.bottom);
   };
   
   Diagram.prototype.getSequence = function(runtime) {
@@ -701,7 +748,7 @@ diagramMod.factory('Diagram',
     this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
 
-  Diagram.prototype.drawOval = function(x, y, w, h, fill, fadeTo) {
+  Diagram.prototype.drawOval = function(x, y, w, h, color, fill, fadeTo) {
     var kappa = 0.5522848;
     var ox = (w / 2) * kappa; // control point offset horizontal
     var oy = (h / 2) * kappa; // control point offset vertical
@@ -710,6 +757,10 @@ diagramMod.factory('Diagram',
     var xm = x + w / 2; // x-middle
     var ym = y + h / 2; // y-middle
 
+    if (color) {
+      this.context.strokeStyle = color;
+      this.context.lineWidth = DC.OVAL_LINE_WIDTH;
+    }
     this.context.beginPath();
     this.context.moveTo(x, ym);
     this.context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
@@ -717,23 +768,27 @@ diagramMod.factory('Diagram',
     this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
     this.context.closePath(); // not used correctly? (use to close off open path)
-    if (typeof fill === 'undefined') {
-      this.context.stroke();
-    }
-    else {
-      if (typeof fadeTo === 'undefined') {
-        this.context.fillStyle = fill;
-      }
-      else {
+    if (fill) {
+      if (fadeTo) {
         var gradient = this.context.createLinearGradient(x, y, x + w, y + h);
         gradient.addColorStop(0, fill);
         gradient.addColorStop(1, 'white');
         this.context.fillStyle = gradient;
       }
+      else {
+        this.context.fillStyle = fill;
+      }
       this.context.fill();
       this.context.stroke();
     }
+    else {
+      this.context.stroke();
+    }
     this.context.fillStyle = DC.DEFAULT_COLOR;
+    if (color) {
+      this.context.strokeStyle = DC.DEFAULT_COLOR;
+      this.context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+    }
   };
 
   Diagram.prototype.drawLine = function(x1, y1, x2, y2, color) {
@@ -746,6 +801,47 @@ diagramMod.factory('Diagram',
     this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
 
+  Diagram.prototype.animateLine = function(from, to, width, time, lineEnd) {
+    var segs = time / 60;
+    var x1 = from.x;
+    var y1 = from.y;
+    let i = 0;
+    var context = this.context;
+    var d = function() {
+      var x2 = x1 + (to.x - from.x)/segs;
+      var y2 = y1 + (to.y - from.y)/segs;
+      context.lineWidth = width;
+      context.beginPath();
+      context.moveTo(x1, y1);
+      if (i < segs - 1) {
+        context.lineTo(x2, y2);
+      }
+      else {
+        if (typeof lineEnd === 'function') {
+          context.lineTo(to.x, to.y);
+        }
+        if (typeof lineEnd === 'object') {
+          context.lineTo(to.x, to.y);
+          context.moveTo(to.x, to.y);
+          context.quadraticCurveTo(lineEnd.cpx, lineEnd.cpy, lineEnd.x, lineEnd.y);
+        }
+      }
+      context.stroke();
+      context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+      i++;
+      
+      if (i < segs) {
+        x1 = x2;
+        y1 = y2;
+        window.requestAnimationFrame(d);
+      }
+      else if (typeof lineEnd === 'function') {
+        lineEnd(context);
+      }
+    };
+    d();
+  };
+  
   Diagram.prototype.drawDiamond = function(x, y, w, h) {
     var xh = x + w / 2;
     var yh = y + h / 2;
