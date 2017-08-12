@@ -53,12 +53,17 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
     public List<ProcessCount> getTopThroughputProcessInstances(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("select count(pi.process_id) as ct, pi.process_id\n");
-            sql.append("from (select process_id from process_instance ");
+            sql.append("select count(pi.process_id) as ct,ROUND(pi.comTime  * 600) as coTi, pi.process_id\n");
+            sql.append("from (select process_id ,TIMEDIFF(end_dt,start_dt) as comTime from process_instance ");
             sql.append(getProcessWhereClause(query));
             sql.append(") pi\n");
             sql.append("group by process_id\n");
-            sql.append("order by ct desc\n");
+            if (query.getBooleanFilter("completionTime")){
+                sql.append("order by pi.comTime desc\n");
+            }else{
+                sql.append("order by ct desc\n");
+            }
+
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
@@ -68,6 +73,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             while (rs.next() && (limit == -1 || idx < limit)) {
                 ProcessCount procCount = new ProcessCount(rs.getLong("ct"));
                 procCount.setId(rs.getLong("process_id"));
+                procCount.setMeanCompletionTime(rs.getLong("coTi"));
                 list.add(procCount);
                 idx++;
             }
@@ -103,10 +109,10 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             StringBuilder sql = new StringBuilder();
             if (statusCodes != null)
                 sql.append("select count(pi.status_cd) as ct, pi.st, pi.status_cd\n");
-            else if (processIds != null)
-                sql.append("select count(pi.process_id) as ct, pi.st, pi.process_id\n");
-            else
-                sql.append("select count(pi.st) as ct, pi.st\n");
+            else if (processIds != null){
+                  sql.append("select count(pi.process_id) as ct,ROUND(pi.comTime  * 600) as coTi, pi.st, pi.process_id\n");
+            }else
+                  sql.append("select count(pi.st) as ct, pi.st\n");
 
             if (db.isMySQL())
                 sql.append("from (select DATE_FORMAT(start_dt,'%d-%M-%Y') as st");
@@ -116,6 +122,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append(", status_cd ");
             else if (processIds != null)
                 sql.append(", process_id ");
+            sql.append(",TIMEDIFF(end_dt,start_dt) as comTime ");
             sql.append("  from process_instance\n   ");
             sql.append(getProcessWhereClause(query));
             if (statusCodes != null)
@@ -129,9 +136,13 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append(", status_cd");
             else if (processIds != null)
                 sql.append(", process_id");
-            if (db.isMySQL())
-                sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
-            else
+            if (db.isMySQL()){
+                if (query.getBooleanFilter("completionTime")){
+                  sql.append("\norder by pi.comTime desc\n");
+                }else{
+                  sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
+                }
+            } else
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
 
             db.openConnection();
@@ -146,6 +157,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     map.put(startDate, processCounts);
                 }
                 ProcessCount processCount = new ProcessCount(rs.getLong("ct"));
+                processCount.setMeanCompletionTime(rs.getLong("coTi"));
                 if (statusCodes != null)
                     processCount.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
                 else if (processIds != null)
