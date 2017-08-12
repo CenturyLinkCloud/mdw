@@ -180,7 +180,8 @@ task uploadToMavenCentral(type: GradleBuild) {
   
 task publishToMavenCentral(type: GradleBuild) {
     dependsOn uploadToMavenCentral
-    dependsOn closeAndReleaseRepository
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
 }
 
 closeAndReleaseRepository.mustRunAfter uploadToMavenCentral

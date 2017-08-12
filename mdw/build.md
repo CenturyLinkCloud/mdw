@@ -1,4 +1,4 @@
-## building mdw6
+## Building MDW 6
 
 1 - Edit gradle.properties to set the new build numbers.
     - mdwVersion
@@ -11,7 +11,7 @@
     mdw-hub/manifest.yaml
     RestApiDefinition.java
     
-3 - Run clean and buildAll task 
+3 - Run mdw/clean and mdw/buildAll task 
 
 4 - Run exportAssetPackages task to update **/.mdw/package.json files
     
@@ -51,16 +51,9 @@
   - Publish to Maven Central staging repository by using mdw6-publish-maven-central (for formal build only) 
   - Review console output for errors.
 
-10 - Publish to Mavan Central
-  - login to https://oss.sonatype.org/ (Let Manoj create a ticket to allow you to publish to mdw domain)
-  - Select the staging repositories
-  - Search for comcenturylink
-  - After you deployment the repository will be in an Open status,  press the Close button located above the list
-  - Wait for 2 min to close, verify by refreshing the screen
-  - Once you have successfully closed, you can release it by pressing the Release button
-  - Once done check below URL https://oss.sonatype.org/service/local/repositories/releases/content/com/centurylink/mdw/mdw-common/6.0.xx/
-  - For detailed explanation on the steps of closing and releasing the build go here  [Steps] (http://central.sonatype.org/pages/releasing-the-deployment.html)
-  - After completing the above step you should see new build here http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
+10 - Verify release artifact are published to Mavan Central
+  - Check URL https://oss.sonatype.org/service/local/repositories/releases/content/com/centurylink/mdw/mdw-common/6.0.xx/
+  - you should see new build here http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
 
 11 - Upgrade mdw-demo to new version of mdw by clicking on project properties and selecting new version
   -  Commit and push new version of com.centurylink.mdw.plugin.xml to git
@@ -71,14 +64,14 @@
   - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release 'v6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copy the notes from CHANGELOG.md
-  - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should do that.
   - Change release status from pre-release to release
-
+  - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should do that.
+  
 13 - Update support items delivered with this build to Resolved status.
     
 14 - mdw-buildpack
    - clone https://github.com/mdw-dev/mdw-buildpack.git
-   - replace mdw*.war (mdw-buildpack/resources/mdw) with one from latest published war from   http://lxdenvmtc143.dev.qintra.com:7021/maven/repository/com/centurylink/mdw/mdw/6.0.xx/mdw-6.0.xx.war 
+   - add mdw*.war (mdw-buildpack/resources/mdw) from latest published war from   http://lxdenvmtc143.dev.qintra.com:7021/maven/repository/com/centurylink/mdw/mdw/6.0.xx/mdw-6.0.xx.war 
       or copy from local mdw folder
    - commit and push  (file size > 50 mb cannot be uploaded from browser)
     
