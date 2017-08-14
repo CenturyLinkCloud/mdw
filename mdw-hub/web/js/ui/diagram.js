@@ -827,7 +827,7 @@ diagramMod.factory('Diagram',
     this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
 
-  Diagram.prototype.animateLine = function(segments, width, slice) {
+  Diagram.prototype.animateLine = function(segments, color, width, slice) {
     var x1 = segments[0].from.x;
     var y1 = segments[0].from.y;
     var x2, y2;
@@ -845,6 +845,7 @@ diagramMod.factory('Diagram',
         var lastSeg = j == perSeg - 1;
         x2 = lastSeg ? segment.to.x : x1 + (segment.to.x - segment.from.x) / perSeg;
         y2 = lastSeg ? segment.to.y : y1 + (segment.to.y - segment.from.y) / perSeg;
+        context.strokeStyle = color;
         context.lineWidth = width;
         context.beginPath();
         context.moveTo(x1, y1);
@@ -857,12 +858,16 @@ diagramMod.factory('Diagram',
           }
           else if (typeof segment.lineEnd === 'function') {
             context.stroke();
-            context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+            context.fillStyle = color;
             segment.lineEnd(context);
+            context.lineWidth = width;
+            context.strokeStyle = color;
+            context.fillStyle = DC.DEFAULT_COLOR;
           }
         }
         context.stroke();
         context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+        context.strokeStyle = DC.DEFAULT_COLOR;
         j++;
       }
       if (i < segments.length) {

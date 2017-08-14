@@ -254,7 +254,9 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       var segments = [];
       var linkThis = this;
       drawArrow = function(context) {
+        context.strokeStyle = linkThis.getColor();
         linkThis.drawConnectorArrow.call(linkThis, context);
+        context.strokeStyle = DC.DEFAULT_COLOR;
       };
     }
     context.beginPath();
@@ -266,7 +268,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
             to: {x: xs[1], y: ys[1]},
             lineEnd: drawArrow
           });
-          this.diagram.animateLine(segments, Link.LINK_WIDTH, animationTimeSlice);
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
         }
         else {
           context.moveTo(xs[0] - xcorr, ys[0]);
@@ -280,7 +282,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
             to: {x: xs[1], y: ys[1]},
             lineEnd: drawArrow
           });
-          this.diagram.animateLine(segments, Link.LINK_WIDTH, animationTimeSlice);
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
         }
         else {
           context.moveTo(xs[0], ys[0] - ycorr);
@@ -303,7 +305,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           from = curveTo;
           to = {x: xs[1], y: ys[1]};
           segments.push({from: from, to: to, lineEnd: drawArrow});
-          this.diagram.animateLine(segments, Link.LINK_WIDTH, animationTimeSlice);
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
         }
         else {
           context.moveTo(xs[0] - xcorr, ys[0]);
@@ -330,7 +332,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           from = curveTo;
           to = {x: xs[1], y: ys[1]};
           segments.push({from: from, to: to, lineEnd: drawArrow});
-          this.diagram.animateLine(segments, Link.LINK_WIDTH, animationTimeSlice);
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
         }
         else {
           context.moveTo(xs[0], ys[0] - ycorr);
@@ -351,7 +353,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           from = curveTo;
           to = {x: xs[1], y: ys[1]};
           segments.push({from: from, to: to, lineEnd: drawArrow});
-          this.diagram.animateLine(segments, Link.LINK_WIDTH, animationTimeSlice);
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
         }
         else {
           context.moveTo(xs[0] - xcorr, ys[0]);
@@ -370,7 +372,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           from = curveTo;
           to = {x: xs[1], y: ys[1]};
           segments.push({from: from, to: to, lineEnd: drawArrow});
-          this.diagram.animateLine(segments, Link.LINK_WIDTH, animationTimeSlice);
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
         }
         else {
           context.moveTo(xs[0], ys[0] - ycorr);

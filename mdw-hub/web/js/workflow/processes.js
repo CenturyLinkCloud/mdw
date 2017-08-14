@@ -307,6 +307,8 @@ processMod.controller('ProcessDefController',
       var procSpec = $scope.process.name;
       if ($scope.process.version)
         procSpec += ' v' + $scope.process.version;
+      else if ($routeParams.version)
+        procSpec += ' v' + $routeParams.version;
       procFilter.master = false;
       procFilter.status = null;
       $cookieStore.put('processFilter', procFilter);
