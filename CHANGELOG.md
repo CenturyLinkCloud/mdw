@@ -1,5 +1,42 @@
 # Change Log
 
+## [v6.0.05](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05) (2017-08-11)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05-SNAPSHOT...v6.0.05)
+
+**Implemented enhancements:**
+
+- Include mdw-cli and mdw-boot jars in main build. [\#175](https://github.com/CenturyLinkCloud/mdw/issues/175)
+- Upgrade to version 2.x from 1.4 for commons-dbcp and commons-pool  [\#172](https://github.com/CenturyLinkCloud/mdw/issues/172)
+- Add Schedule Task to run random test cases [\#164](https://github.com/CenturyLinkCloud/mdw/issues/164)
+- Configurable Retries for HTTP-based adapters based on return code [\#162](https://github.com/CenturyLinkCloud/mdw/issues/162)
+- Allow creation of custom database sources in asset packages [\#157](https://github.com/CenturyLinkCloud/mdw/issues/157)
+- Validate against malformed JSON content in JsonRestService [\#155](https://github.com/CenturyLinkCloud/mdw/issues/155)
+- Add GitHub Authentication [\#149](https://github.com/CenturyLinkCloud/mdw/issues/149)
+- Client project as Spring Boot application [\#145](https://github.com/CenturyLinkCloud/mdw/issues/145)
+- Allow REST services to accept both Json and Xml type requests [\#141](https://github.com/CenturyLinkCloud/mdw/issues/141)
+- Caching for Swagger annotations scan results [\#131](https://github.com/CenturyLinkCloud/mdw/issues/131)
+- Redesign event waits/publishing paradigm [\#129](https://github.com/CenturyLinkCloud/mdw/issues/129)
+- MDW CLI for quickstart setup [\#124](https://github.com/CenturyLinkCloud/mdw/issues/124)
+- MDW deployable as a Spring Boot application [\#100](https://github.com/CenturyLinkCloud/mdw/issues/100)
+- Task Event Wait registration service [\#34](https://github.com/CenturyLinkCloud/mdw/issues/34)
+
+**Closed issues:**
+
+- Defensive version sanity check during asset import [\#167](https://github.com/CenturyLinkCloud/mdw/issues/167)
+- ConcurrentModificationException in CloudClassLoader [\#151](https://github.com/CenturyLinkCloud/mdw/issues/151)
+- Asset discovery service auto-includes asset subpackages [\#138](https://github.com/CenturyLinkCloud/mdw/issues/138)
+- Intra-MDW dependencies incorrectly reflected in published .pom artifacts [\#132](https://github.com/CenturyLinkCloud/mdw/issues/132)
+- Cross-VM fix for event processing deadlocks [\#122](https://github.com/CenturyLinkCloud/mdw/issues/122)
+- Tomcat 8.5 status messages always "OK" for REST services [\#113](https://github.com/CenturyLinkCloud/mdw/issues/113)
+
+## [v6.0.05-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05-SNAPSHOT) (2017-06-22)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.04...v6.0.05-SNAPSHOT)
+
+**Implemented enhancements:**
+
+- Package-based routing and scalability [\#108](https://github.com/CenturyLinkCloud/mdw/issues/108)
+- Add sonarqube analysis to our CI builds [\#79](https://github.com/CenturyLinkCloud/mdw/issues/79)
+
 ## [v6.0.04](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.04) (2017-06-19)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.03...v6.0.04)
 

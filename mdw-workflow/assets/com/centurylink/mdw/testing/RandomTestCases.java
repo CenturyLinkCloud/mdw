@@ -94,6 +94,8 @@ public class RandomTestCases extends RoundRobinScheduledJob {
         TestingServices testingServices = ServiceLocator.getTestingServices();
         try {
             TestCaseList testList  = testingServices.getTestCases();
+            if (testList == null)
+                return;
             List<TestCase> shuffledList = testList.getTestCases();
             // grab some random tests
             Collections.shuffle(shuffledList);
