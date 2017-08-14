@@ -32,7 +32,7 @@ diagramMod.factory('Diagram',
   Diagram.prototype = new Shape();
 
   Diagram.BOUNDARY_DIM = 25;
-  Diagram.ANIMATION_SPEED = 1; // segments/sec;
+  Diagram.ANIMATION_SPEED = 2; // segments / s;
 
   Diagram.prototype.draw = function(animate) {
 
@@ -45,7 +45,8 @@ diagramMod.factory('Diagram',
       var sequence = this.getSequence();
       let i = 0;
       var diagram = this;
-      var timeSeg = 1000 / Diagram.ANIMATION_SPEED; 
+      var timeSlice = sequence.length * 1000 / Diagram.ANIMATION_SPEED;
+      var delay = 0; // ms between segs
       var int = setInterval(function() {
         if (i >= sequence.length) {
           clearInterval(int);
@@ -58,7 +59,7 @@ diagramMod.factory('Diagram',
           }
           i++;
         }
-      }, timeSeg);
+      }, timeSlice - delay);
     }
     else {
       // draw quickly
@@ -207,7 +208,7 @@ diagramMod.factory('Diagram',
         var highlight = false;
         if (it instanceof Step) {
 //          if (animate)
-//            diagram.scrollIntoView(it, timeSeg);
+//            diagram.scrollIntoView(it, timeSlice);
           
           if (diagram.activityInstanceId) {
             it.instances.forEach(function(inst) {
@@ -217,23 +218,24 @@ diagramMod.factory('Diagram',
             });
           }
         }
-        it.draw(timeSeg);
+        it.draw(timeSlice);
         if (highlight)
           it.highlight();
       };
   
       if (animate) {
-        var timeSeg = 1000 / Diagram.ANIMATION_SPEED;    
+        var timeSlice = 1000 / Diagram.ANIMATION_SPEED;
+        var delay = 0; // ms between segs
         let i = 0;
         var int = setInterval(function() {
           if (i >= sequence.length) {
             clearInterval(int);
           }
           else {
-            update(sequence[i], timeSeg);
+            update(sequence[i], timeSlice);
             i++;
           }
-        }, timeSeg);
+        }, timeSlice);
       }
       else {
         sequence.forEach(update);
@@ -241,7 +243,7 @@ diagramMod.factory('Diagram',
     }
   };
   
-  Diagram.prototype.scrollIntoView = function(shape, timeSeg) {
+  Diagram.prototype.scrollIntoView = function(shape, timeSlice) {
     var centerX = shape.display.x + shape.display.w/2;
     var centerY = shape.display.y + shape.display.h/2;
     
@@ -277,17 +279,17 @@ diagramMod.factory('Diagram',
         if (document.documentElement.clientHeight < bottomY) {
           winDelta = bottomY - document.documentElement.clientHeight;
         }
-        var segs = timeSeg / 60;
+        var slices = timeSlice / 60;
         var i = 0;
         var winScrollY = 0;
         var scroll = function() {
-          container.scrollTop += vDelta/segs;
+          container.scrollTop += vDelta/slices;
           if (winDelta > 0) {
-            winScrollY += winDelta/segs;
+            winScrollY += winDelta/slices;
             window.scroll(0, winScrollY);
           }
           i++;
-          if (i < segs) {
+          if (i < slices) {
             window.requestAnimationFrame(scroll);
           }
         };
@@ -801,45 +803,88 @@ diagramMod.factory('Diagram',
     this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
 
-  Diagram.prototype.animateLine = function(from, to, width, time, lineEnd) {
-    var segs = time / 60;
-    var x1 = from.x;
-    var y1 = from.y;
-    let i = 0;
+  Diagram.prototype.animateLine = function(segments, width, slice) {
+    var x1 = segments[0].from.x;
+    var y1 = segments[0].from.y;
+    var x2, y2;
+    var i = 0; // segment index
+    var j = 0; // subsegment
     var context = this.context;
+    var perSeg = Math.ceil(slice / segments.length / Diagram.ANIMATION_SPEED / 60);
     var d = function() {
-      var x2 = x1 + (to.x - from.x)/segs;
-      var y2 = y1 + (to.y - from.y)/segs;
-      context.lineWidth = width;
-      context.beginPath();
-      context.moveTo(x1, y1);
-      if (i < segs - 1) {
-        context.lineTo(x2, y2);
+      var segment = segments[i];
+      if (j >= perSeg) {
+        i++;
+        j = 0;
       }
       else {
-        if (typeof lineEnd === 'function') {
-          context.lineTo(to.x, to.y);
+        var lastSeg = j == perSeg - 1;
+        x2 = lastSeg ? segment.to.x : x1 + (segment.to.x - segment.from.x) / perSeg;
+        y2 = lastSeg ? segment.to.y : y1 + (segment.to.y - segment.from.y) / perSeg;
+        context.lineWidth = width;
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        if (lastSeg) {
+          if (typeof segment.lineEnd === 'object' && segment.lineEnd.cpx) {
+            x2 = segment.lineEnd.x;
+            y2 = segment.lineEnd.y;
+            context.quadraticCurveTo(segment.lineEnd.cpx, segment.lineEnd.cpy, x2, y2);
+          }
+          else if (typeof segment.lineEnd === 'function') {
+            context.stroke();
+            context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+            segment.lineEnd(context);
+          }
         }
-        if (typeof lineEnd === 'object') {
-          context.lineTo(to.x, to.y);
-          context.moveTo(to.x, to.y);
-          context.quadraticCurveTo(lineEnd.cpx, lineEnd.cpy, lineEnd.x, lineEnd.y);
-        }
+        context.stroke();
+        context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+        j++;
       }
-      context.stroke();
-      context.lineWidth = DC.DEFAULT_LINE_WIDTH;
-      i++;
-      
-      if (i < segs) {
+      if (i < segments.length) {
         x1 = x2;
         y1 = y2;
         window.requestAnimationFrame(d);
       }
-      else if (typeof lineEnd === 'function') {
-        lineEnd(context);
-      }
     };
     d();
+    
+//    var x1 = from.x;
+//    var y1 = from.y;
+//    let i = 0;
+//    var d = function() {
+//      var x2 = x1 + (to.x - from.x)/slices;
+//      var y2 = y1 + (to.y - from.y)/slices;
+//      context.lineWidth = width;
+//      context.beginPath();
+//      context.moveTo(x1, y1);
+//      if (i < slices - 1) {
+//        context.lineTo(x2, y2);
+//      }
+//      else {
+//        if (typeof lineEnd === 'function') {
+//          context.lineTo(to.x, to.y);
+//        }
+//        if (typeof lineEnd === 'object') {
+//          context.lineTo(to.x, to.y);
+//          context.moveTo(to.x, to.y);
+//          context.quadraticCurveTo(lineEnd.cpx, lineEnd.cpy, lineEnd.x, lineEnd.y);
+//        }
+//      }
+//      context.stroke();
+//      context.lineWidth = DC.DEFAULT_LINE_WIDTH;
+//      i++;
+//      
+//      if (i < slices) {
+//        x1 = x2;
+//        y1 = y2;
+//        window.requestAnimationFrame(d);
+//      }
+//      else if (typeof lineEnd === 'function') {
+//        lineEnd(context);
+//      }
+//    };
+//    d();
   };
   
   Diagram.prototype.drawDiamond = function(x, y, w, h) {
