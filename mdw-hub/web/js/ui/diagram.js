@@ -32,7 +32,8 @@ diagramMod.factory('Diagram',
   Diagram.prototype = new Shape();
 
   Diagram.BOUNDARY_DIM = 25;
-  Diagram.ANIMATION_SPEED = 2; // segments / s;
+  Diagram.ANIMATION_SPEED = 5; // segments / s;
+  Diagram.ANIMATION_LINK_FACTOR = 3; // relative link slice
 
   Diagram.prototype.draw = function(animate) {
 
@@ -45,21 +46,33 @@ diagramMod.factory('Diagram',
       var sequence = this.getSequence();
       let i = 0;
       var diagram = this;
-      var timeSlice = sequence.length * 1000 / Diagram.ANIMATION_SPEED;
-      var delay = 0; // ms between segs
-      var int = setInterval(function() {
-        if (i >= sequence.length) {
-          clearInterval(int);
+      var totalTime = sequence.length * 1000 / Diagram.ANIMATION_SPEED;
+      var linkCt = 0;
+      var nonLinkCt = 0;
+      sequence.forEach(function(it) {
+        if (it instanceof Link)
+          linkCt++;
+        else
+          nonLinkCt++;
+      });
+      var nonLinkSlice = totalTime / (nonLinkCt + 2 * linkCt);
+      var linkSlice = Diagram.ANIMATION_LINK_FACTOR * nonLinkSlice;
+      var timeSlice = nonLinkSlice;
+      var s = function() {
+        var it = sequence[i];
+        it.draw(timeSlice);
+        if (it instanceof Step && it.workflowItem.id == diagram.activityId) {
+          it.highlight();
+          diagram.scrollIntoView(it, timeSlice);
         }
-        else {
-          sequence[i].draw(animate);
-          if (sequence[i] instanceof Step && sequence[i].workflowItem.id == diagram.activityId) {
-            sequence[i].highlight();
-            diagram.scrollIntoView(sequence[i]);
-          }
-          i++;
+        i++;
+        if (i < sequence.length) {
+          var nextSlice = sequence[i] instanceof Link ? linkSlice : nonLinkSlice;
+          setTimeout(s, timeSlice);
+          timeSlice = nextSlice;
         }
-      }, timeSlice - delay);
+      };
+      s();      
     }
     else {
       // draw quickly
@@ -204,11 +217,11 @@ diagramMod.factory('Diagram',
     
     var sequence = this.getSequence(true);
     if (sequence) {
-      var update = function(it) {
+      var update = function(it, slice) {
         var highlight = false;
         if (it instanceof Step) {
-//          if (animate)
-//            diagram.scrollIntoView(it, timeSlice);
+          if (animate)
+            diagram.scrollIntoView(it, slice);
           
           if (diagram.activityInstanceId) {
             it.instances.forEach(function(inst) {
@@ -218,24 +231,35 @@ diagramMod.factory('Diagram',
             });
           }
         }
-        it.draw(timeSlice);
+        it.draw(slice);
         if (highlight)
           it.highlight();
       };
   
       if (animate) {
-        var timeSlice = 1000 / Diagram.ANIMATION_SPEED;
-        var delay = 0; // ms between segs
+        var linkCt = 0;
+        var nonLinkCt = 0;
+        sequence.forEach(function(it) {
+          if (it instanceof Link)
+            linkCt++;
+          else
+            nonLinkCt++;
+        });
+        var totalTime = sequence.length * 1000 / Diagram.ANIMATION_SPEED;
+        var nonLinkSlice = totalTime / (nonLinkCt + 2 * linkCt);
+        var linkSlice = Diagram.ANIMATION_LINK_FACTOR * nonLinkSlice;
+        var timeSlice = nonLinkSlice;
         let i = 0;
-        var int = setInterval(function() {
-          if (i >= sequence.length) {
-            clearInterval(int);
+        var s = function() {
+          update(sequence[i], timeSlice);
+          i++;
+          if (i < sequence.length) {
+            var nextSlice = sequence[i] instanceof Link ? linkSlice : nonLinkSlice;
+            setTimeout(s, timeSlice);
+            timeSlice = nextSlice;
           }
-          else {
-            update(sequence[i], timeSlice);
-            i++;
-          }
-        }, timeSlice);
+        };
+        s();
       }
       else {
         sequence.forEach(update);
@@ -279,7 +303,7 @@ diagramMod.factory('Diagram',
         if (document.documentElement.clientHeight < bottomY) {
           winDelta = bottomY - document.documentElement.clientHeight;
         }
-        var slices = timeSlice / 60;
+        var slices = Math.ceil(timeSlice / (1000 / 60));
         var i = 0;
         var winScrollY = 0;
         var scroll = function() {
@@ -643,7 +667,7 @@ diagramMod.factory('Diagram',
     }
   };
 
-  Diagram.prototype.drawState = function(display, instances, ext, adj) {
+  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */) {
     if (instances) {
       var count = instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : instances.length;
       for (var i = 0; i < count; i++) {
@@ -810,7 +834,7 @@ diagramMod.factory('Diagram',
     var i = 0; // segment index
     var j = 0; // subsegment
     var context = this.context;
-    var perSeg = Math.ceil(slice / segments.length / Diagram.ANIMATION_SPEED / 60);
+    var perSeg = Math.ceil(slice / (1000 / 60) / segments.length);
     var d = function() {
       var segment = segments[i];
       if (j >= perSeg) {

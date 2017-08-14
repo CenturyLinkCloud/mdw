@@ -66,7 +66,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     return activity;
   };
   
-  Step.prototype.draw = function() {
+  Step.prototype.draw = function(animationTimeSlice) {
     var activity = this.workflowObj = this.activity;
     var shape;
     if (this.implementor.icon && this.implementor.icon.startsWith('shape:'))
@@ -77,7 +77,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var adj = 0;
       if (shape == 'start' || shape == 'stop')
         adj = 2;
-      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj);
+      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice);
     }
     
     if (this.implementor.icon) {
