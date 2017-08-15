@@ -47,13 +47,13 @@
   - log into GitHub to delete uploaded artifacts (mdw-cli and mdw-boot) for the release
   
 9 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
-  - MDW6-Publish-Formal (or -Snapshot)
-  - Publish to Maven Central staging repository by using mdw6-publish-maven-central (for formal build only) 
+  - To publish on internal repo (lxdenvmtc143)- MDW6-Publish-Formal (or -Snapshot)
+  - To publish on Maven Central repository by using mdw6-publish-maven-central (for formal and SNAPSHOT builds) 
   - Review console output for errors.
 
-10 - Verify release artifact are published to Mavan Central
-  - Check URL https://oss.sonatype.org/service/local/repositories/releases/content/com/centurylink/mdw/mdw-common/6.0.xx/
-  - you should see new build here http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
+10 - Verify release artifact are published to Maven Central
+  - for formal build:  http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
+  - for SNAPHOT:       https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
 
 11 - Upgrade mdw-demo to new version of mdw by clicking on project properties and selecting new version
   -  Commit and push new version of com.centurylink.mdw.plugin.xml to git
@@ -70,10 +70,7 @@
 13 - Update support items delivered with this build to Resolved status.
     
 14 - mdw-buildpack
-   - clone https://github.com/mdw-dev/mdw-buildpack.git
-   - add mdw*.war (mdw-buildpack/resources/mdw) from latest published war from   http://lxdenvmtc143.dev.qintra.com:7021/maven/repository/com/centurylink/mdw/mdw/6.0.xx/mdw-6.0.xx.war 
-      or copy from local mdw folder
-   - commit and push  (file size > 50 mb cannot be uploaded from browser)
+   - Check if the build uploaded new mdw.war at https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
     
 15 - Publishing to AppFog  
    -  go to root of mdw-demo project
