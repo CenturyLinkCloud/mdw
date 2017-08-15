@@ -32,7 +32,7 @@ diagramMod.factory('Diagram',
   Diagram.prototype = new Shape();
 
   Diagram.BOUNDARY_DIM = 25;
-  Diagram.ANIMATION_SPEED = 5; // segments / s;
+  Diagram.ANIMATION_SPEED = 8; // segments / s;
   Diagram.ANIMATION_LINK_FACTOR = 3; // relative link slice
 
   Diagram.prototype.draw = function(animate) {
@@ -40,12 +40,13 @@ diagramMod.factory('Diagram',
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.prepareDisplay();
+    var diagram = this;
 
     this.label.draw();
+    var highlighted = null;
     if (animate && !this.instance) {
       var sequence = this.getSequence();
       let i = 0;
-      var diagram = this;
       var totalTime = sequence.length * 1000 / Diagram.ANIMATION_SPEED;
       var linkCt = 0;
       var nonLinkCt = 0;
@@ -61,15 +62,19 @@ diagramMod.factory('Diagram',
       var s = function() {
         var it = sequence[i];
         it.draw(timeSlice);
-        if (it instanceof Step && it.workflowItem.id == diagram.activityId) {
+        if (it instanceof Step && it.workflowItem.id === diagram.activityId) {
           it.highlight();
-          diagram.scrollIntoView(it, timeSlice);
+          highlighted = it;
         }
+        diagram.scrollIntoView(it, timeSlice);
         i++;
         if (i < sequence.length) {
           var nextSlice = sequence[i] instanceof Link ? linkSlice : nonLinkSlice;
           setTimeout(s, timeSlice);
           timeSlice = nextSlice;
+        }
+        else if (highlighted) {
+          diagram.scrollIntoView(highlighted, nonLinkSlice);          
         }
       };
       s();      
@@ -78,6 +83,10 @@ diagramMod.factory('Diagram',
       // draw quickly
       this.steps.forEach(function(step) {
         step.draw();
+        if (step.workflowItem.id === diagram.activityId) {
+          step.highlight();
+          highlighted = step;
+        }
       });
       this.links.forEach(function(link) {
         link.draw();
@@ -85,6 +94,9 @@ diagramMod.factory('Diagram',
       this.subflows.forEach(function(subflow) {
         subflow.draw();
       });
+      if (highlighted) {
+        this.scrollIntoView(highlighted, 500);
+      }
     }
 
     this.notes.forEach(function(note) {
@@ -97,6 +109,7 @@ diagramMod.factory('Diagram',
     if (this.marquee) {
       this.marquee.draw();
     }
+    
   };
 
   // sets display fields and returns a display with w and h for canvas size
@@ -215,14 +228,16 @@ diagramMod.factory('Diagram',
       });
     }
     
+    var highlighted = null;
     var sequence = this.getSequence(true);
     if (sequence) {
       var update = function(it, slice) {
         var highlight = false;
         if (it instanceof Step) {
-          if (animate)
+          if (animate) {
+            // TODO: more sensible live scrolling based on ultimate endpoint (esp highlight)
             diagram.scrollIntoView(it, slice);
-          
+          }
           if (diagram.activityInstanceId) {
             it.instances.forEach(function(inst) {
               if (inst.id == diagram.activityInstanceId) {
@@ -232,8 +247,10 @@ diagramMod.factory('Diagram',
           }
         }
         it.draw(slice);
-        if (highlight)
+        if (highlight) {
           it.highlight();
+          highlighted = it;
+        }
       };
   
       if (animate) {
@@ -263,69 +280,11 @@ diagramMod.factory('Diagram',
       }
       else {
         sequence.forEach(update);
-      }
-    }
-  };
-  
-  Diagram.prototype.scrollIntoView = function(shape, timeSlice) {
-    var centerX = shape.display.x + shape.display.w/2;
-    var centerY = shape.display.y + shape.display.h/2;
-    
-    var container = document.body;
-    if (this.containerId) {
-      container = document.getElementById(this.containerId);
-    }
-    
-    var clientRect = this.canvas.getBoundingClientRect();
-    var canvasLeftX = clientRect.left;
-    var canvasTopY = clientRect.top;
-    var canvasRightX = clientRect.right;
-    var canvasBottomY = clientRect.bottom;
-    
-    // TODO: account for margin
-//    console.log("SCROLLW: " + container.scrollWidth);
-//    console.log("CLIENTW: " + container.clientWidth);
-//    console.log("SCROLLH: " + container.scrollHeight);
-//    console.log("CLIENTH: " + container.clientHeight);
-
-//    console.log("H: " + document.documentElement.clientHeight);
-//    console.log("SH: " + document.documentElement.scrollHeight);
-    
-    if (container.scrollHeight > container.clientHeight) {
-      var maxVScroll = container.scrollHeight - container.clientHeight;
-      var centeringVScroll = centerY - container.clientHeight/2;
-      if (centeringVScroll > 0) {
-        var vScroll = centeringVScroll > maxVScroll ? maxVScroll : centeringVScroll;
-        var vDelta = vScroll - container.scrollTop;
-        var winDelta = 0;
-        var bottomY = canvasTopY + shape.display.y + shape.display.h - vDelta + DC.HIGHLIGHT_MARGIN*2;
-        //console.log("BOTTOMY: " + bottomY + "  CLIENTH: " + document.documentElement.clientHeight);
-        if (document.documentElement.clientHeight < bottomY) {
-          winDelta = bottomY - document.documentElement.clientHeight;
+        if (highlighted) {
+          this.scrollIntoView(highlighted, 500);
         }
-        var slices = Math.ceil(timeSlice / (1000 / 60));
-        var i = 0;
-        var winScrollY = 0;
-        var scroll = function() {
-          container.scrollTop += vDelta/slices;
-          if (winDelta > 0) {
-            winScrollY += winDelta/slices;
-            window.scroll(0, winScrollY);
-          }
-          i++;
-          if (i < slices) {
-            window.requestAnimationFrame(scroll);
-          }
-        };
-        scroll();
       }
     }
-    
-
-//    console.log("left: " + canvasLeftX);
-//    console.log("top: " + canvasTopY);
-//    console.log("right: " + clientRect.right);
-//    console.log("bottom: " + clientRect.bottom);
   };
   
   Diagram.prototype.getSequence = function(runtime) {
@@ -877,43 +836,6 @@ diagramMod.factory('Diagram',
       }
     };
     d();
-    
-//    var x1 = from.x;
-//    var y1 = from.y;
-//    let i = 0;
-//    var d = function() {
-//      var x2 = x1 + (to.x - from.x)/slices;
-//      var y2 = y1 + (to.y - from.y)/slices;
-//      context.lineWidth = width;
-//      context.beginPath();
-//      context.moveTo(x1, y1);
-//      if (i < slices - 1) {
-//        context.lineTo(x2, y2);
-//      }
-//      else {
-//        if (typeof lineEnd === 'function') {
-//          context.lineTo(to.x, to.y);
-//        }
-//        if (typeof lineEnd === 'object') {
-//          context.lineTo(to.x, to.y);
-//          context.moveTo(to.x, to.y);
-//          context.quadraticCurveTo(lineEnd.cpx, lineEnd.cpy, lineEnd.x, lineEnd.y);
-//        }
-//      }
-//      context.stroke();
-//      context.lineWidth = DC.DEFAULT_LINE_WIDTH;
-//      i++;
-//      
-//      if (i < slices) {
-//        x1 = x2;
-//        y1 = y2;
-//        window.requestAnimationFrame(d);
-//      }
-//      else if (typeof lineEnd === 'function') {
-//        lineEnd(context);
-//      }
-//    };
-//    d();
   };
   
   Diagram.prototype.drawDiamond = function(x, y, w, h) {
@@ -949,6 +871,50 @@ diagramMod.factory('Diagram',
     }
   };
 
+  // TODO: horizontal scroll
+  Diagram.prototype.scrollIntoView = function(shape, timeSlice) {
+    var centerX = shape.display.x + shape.display.w/2;
+    var centerY = shape.display.y + shape.display.h/2;
+    
+    var container = document.body;
+    if (this.containerId) {
+      container = document.getElementById(this.containerId);
+    }
+    
+    var clientRect = this.canvas.getBoundingClientRect();
+    var canvasLeftX = clientRect.left;
+    var canvasTopY = clientRect.top;
+    
+    if (container.scrollHeight > container.clientHeight) {
+      var maxVScroll = container.scrollHeight - container.clientHeight;
+      var centeringVScroll = centerY - container.clientHeight/2;
+      if (centeringVScroll > 0) {
+        var vScroll = centeringVScroll > maxVScroll ? maxVScroll : centeringVScroll;
+        var vDelta = vScroll - container.scrollTop;
+        var winDelta = 0;
+        var bottomY = canvasTopY + shape.display.y + shape.display.h - vDelta + DC.HIGHLIGHT_MARGIN*2;
+        if (document.documentElement.clientHeight < bottomY) {
+          winDelta = bottomY - document.documentElement.clientHeight;
+        }
+        var slices = !timeSlice ? 1 : Math.ceil(timeSlice / (1000 / 60));
+        var i = 0;
+        var winScrollY = 0;
+        var scroll = function() {
+          container.scrollTop += vDelta/slices;
+          if (winDelta > 0) {
+            winScrollY += winDelta/slices;
+            window.scroll(0, winScrollY);
+          }
+          i++;
+          if (i < slices) {
+            window.requestAnimationFrame(scroll);
+          }
+        };
+        scroll();
+      }
+    }
+  };
+  
   Diagram.prototype.onMouseDown = function(e) {
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
