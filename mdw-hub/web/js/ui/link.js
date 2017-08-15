@@ -250,8 +250,8 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     var xcorr = xs[0] < xs[1] ? Link.CORR : -Link.CORR;
     var ycorr = ys[0] < ys[1] ? Link.CORR : -Link.CORR;
     var drawArrow = null;
+    var segments = [];
     if (animationTimeSlice) {
-      var segments = [];
       var linkThis = this;
       drawArrow = function(context) {
         context.strokeStyle = linkThis.getColor();

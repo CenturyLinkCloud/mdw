@@ -14,6 +14,7 @@ class Main extends Component {
   constructor(...args) {
     super(...args);
     this.state = { task: {} };
+    this.updateTask = this.updateTask.bind(this);
   }
   
   componentDidMount() {
@@ -35,6 +36,14 @@ class Main extends Component {
     });
   }
   
+  // supports updating dueDate and workgroups
+  updateTask(updates) {
+    // TODO: save state back to server
+    this.setState({
+      task: Object.assign(this.state.task, updates)
+    });
+  }
+  
   render() {
     var hub = this.getChildContext().hubRoot + '/';
     return (
@@ -48,7 +57,7 @@ class Main extends Component {
               <Heading task={this.state.task} />
               <div className="mdw-section">
                 <Route exact path={hub} 
-                  render={(props) => <Task {...props} task={this.state.task} />} />
+                  render={(props) => <Task {...props} task={this.state.task} updateTask={this.updateTask} />} />
                 <Route exact path={hub + 'tasks/:id'} 
                   render={(props) => <Task {...props} task={this.state.task} />} />
                 <Route path={hub + 'tasks/:id/discussion'} 
@@ -78,4 +87,4 @@ Main.childContextTypes = {
   serviceRoot: PropTypes.string
 };
 
-export default Main; 
+export default Main;

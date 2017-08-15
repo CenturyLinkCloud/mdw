@@ -500,12 +500,30 @@
 .mdw-item-action a:visited {
   text-decoration: none;
 }
-.mdw-item-label {
-  color: #424242;
-  margin-right: 3px;
+.mdw-item-group {
+	font-size: 16px;
+	color: #424242;
+	line-height: 2.2;
 }
-.mdw-item-value {
-  color: #424242;
+.mdw-item-group label {
+  margin-right: 3px;
+  font-size: 14px;
+  font-weight: bold;
+}
+.mdw-item group label:after {
+  display: table;
+  content: " ";
+}
+.mdw-item-select {
+  display: inline-flex;
+  font-size: 14px;
+  line-height: 1.2
+}
+.mdw-item-select .Select-control {
+  height: 34px;
+}
+.mdw-item-select .Select-multi-value-wrapper {
+	height: 31px;
 }
 .mdw-resource-info {
   font-size: 13px;
@@ -1114,7 +1132,7 @@
 .mdw-id {
   margin-left: 5px;
   opacity: .75;
-  font-size: 15px;
+  font-size: 16px;
 }
 .mdw-task-editor {
   padding: 10px;

@@ -31,18 +31,22 @@ module.exports = {
           },      
           {
             test: /\.css$/,
-            // this include allows custom css through style-loader
-            include: [
-              path.resolve(__dirname, '..')
-            ],
+            // allows custom css files in assets (but excluding node/node_modules)
+            include: function(modulePath) {
+              var assetRoot = path.resolve(__dirname, '..');
+              return modulePath.startsWith(assetRoot) && 
+                !modulePath.startsWith(assetRoot + path.sep + 'node' + path.sep + 'node_modules');
+            },
             use: [nodeLoc + '/node_modules/style-loader', nodeLoc + '/node_modules/css-loader']
           },
           {
             test: /\.png$/,
-            // this include allows custom pngs through file-loader
-            include: [
-              path.resolve(__dirname, '..')
-            ],
+            // allows custom png files in assets (but excluding node/node_modules)
+            include: function(modulePath) {
+              var assetRoot = path.resolve(__dirname, '..');
+              return modulePath.startsWith(assetRoot) && 
+                !modulePath.startsWith(assetRoot + path.sep + 'node' + path.sep + 'node_modules');
+            },
             use: [
               {
                 loader: nodeLoc + '/node_modules/file-loader',
