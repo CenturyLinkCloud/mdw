@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import Select from '../node/node_modules/react-select';
-//import 'style-loader!../node/node_modules/react-select/dist/react-select.css';
+import '../node/node_modules/style-loader!../node/node_modules/react-select/dist/react-select.css';
 import Workflow from '../react/Workflow.jsx';
 import UserDate from './UserDate.jsx';
 

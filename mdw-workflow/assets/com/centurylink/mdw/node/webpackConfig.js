@@ -31,15 +31,21 @@ module.exports = {
           },      
           {
             test: /\.css$/,
-            exclude: [/node_modules/],
-            use: ['style-loader', 'css-loader']
+            // this include allows custom css through style-loader
+            include: [
+              path.resolve(__dirname, '..')
+            ],
+            use: [nodeLoc + '/node_modules/style-loader', nodeLoc + '/node_modules/css-loader']
           },
           {
             test: /\.png$/,
-            exclude: [/node_modules/],
+            // this include allows custom pngs through file-loader
+            include: [
+              path.resolve(__dirname, '..')
+            ],
             use: [
               {
-                loader: 'file-loader',
+                loader: nodeLoc + '/node_modules/file-loader',
                 options: {
                   name: 'img/[name].[ext]'
                 }
