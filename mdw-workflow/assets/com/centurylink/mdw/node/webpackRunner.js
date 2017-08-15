@@ -12,7 +12,7 @@ if (err.stack)
   console.error(err.stack);
 });
 
-// Transpiles JSX content.
+// Compile using webpack.
 try {
   
   var fs = require('fs');
@@ -20,12 +20,12 @@ try {
   var webpack = require('webpack');
   var webpackConfig = require('./webpackConfig');
 
-  var jsxAsset = getJsxAsset();
-  if (jsxAsset.debug)
-    console.log('jsxAsset: ' + JSON.stringify(jsxAsset, null, 2));
+  var input = getInput();
+  if (input.debug)
+    console.log('input: ' + JSON.stringify(input, null, 2));
   
-  var config = webpackConfig.getConfig(jsxAsset);
-  if (jsxAsset.debug)
+  var config = webpackConfig.getConfig(input);
+  if (input.debug)
     console.log('webpack config: ' + JSON.stringify(config, null, 2));
 
   var compiler = webpack(config);
@@ -35,7 +35,8 @@ try {
       setWebpackResult({status: 'Failed', content: err.toString()});
     }
     else {
-      var stats = JSON.stringify(stats.toJson(jsxAsset.debug ? 'normal' : 'minimal'));
+      var debug = stats.errors && stats.errors.length && input.debug;
+      var stats = JSON.stringify(stats.toJson(debug ? 'normal' : 'minimal'));
       setWebpackResult({status: 'OK', content: stats});
     }
   });  
@@ -47,16 +48,12 @@ catch (err) {
   else
     console.error(err);
   try {
-    // try to log to file and set status
-    if (testCase && testCase.logger) {
-      testCase.logger.error(err);
-      testCase.logger.error(err.stack);
-    }
-    setTestResult(null, {status: 'Errored', message: err.toString()});  
+    setWebpackResult(null, {status: 'Errored', content: err.toString()});  
   }
   catch (e) {
-    console.error(err);
-    console.error(err.stack);
+    console.error(e);
+    if (e.stack)
+      console.error(e.stack);
   }
 }
 

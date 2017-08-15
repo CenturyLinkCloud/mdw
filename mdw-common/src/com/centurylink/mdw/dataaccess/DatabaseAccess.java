@@ -36,7 +36,6 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.mongodb.MongoClient;
@@ -524,11 +523,9 @@ public class DatabaseAccess {
             long raw_diff = ts.getTime()-System.currentTimeMillis();
             long r = (raw_diff + 30000) % 1800000; // Remaining millisecs after dividing by 1/2 hour
             long q = (raw_diff + 30000) / 1800000; // quotient after dividing by 1/2 hour
-             // ignore reminder if the difference millisec is less than a minute and return nearest half-hour
+             // ignore remainder if the difference millisec is less than a minute and return nearest half-hour
             db_time_diff = new Long(Math.abs(r) < 60000 ? q*1800000 : raw_diff);
-
             System.out.println("Database time difference: " + db_time_diff/1000.0 + " seconds (raw diff=" + raw_diff + ")");
-            TaskInstance.setDbTimeDiff(db_time_diff);
         }
         return System.currentTimeMillis()+db_time_diff.longValue();
     }

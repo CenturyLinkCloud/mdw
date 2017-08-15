@@ -304,6 +304,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           Start: 'startDate',
           End: 'endDate'
         }]
+      },
+      transition: {
+        Instances: [{
+          ID: 'id',
+          Start: 'startDate',
+          End: 'endDate'
+        }]
       }
     },
     // TODO: refactor this into Attributes tab itself

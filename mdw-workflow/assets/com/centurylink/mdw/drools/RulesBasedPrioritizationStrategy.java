@@ -50,7 +50,7 @@ public class RulesBasedPrioritizationStrategy extends RulesBasedStrategy impleme
 
         knowledgeSession.execute(CommandFactory.newInsertElements(facts));
 
-        return taskInstanceVO.getDueDate();
+        return Date.from(taskInstanceVO.getDue());
     }
 
     public int determinePriority(TaskTemplate taskTemplate, Date dueDate) throws StrategyException {

@@ -165,8 +165,10 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[1] = act.getActivityId();
         args[2] = act.getProcessInstanceId();
         args[3] = act.getStatusCode();
-        if (db.isMySQL()) actInstId = db.runInsertReturnId(query, args);
-        else db.runUpdate(query, args);
+        if (db.isMySQL())
+            actInstId = db.runInsertReturnId(query, args);
+        else
+            db.runUpdate(query, args);
         act.setId(actInstId);
         return actInstId;
     }

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.services.task;
 
 import java.net.URL;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -160,7 +161,7 @@ public class TaskWorkflowHelper {
         Package taskPkg = PackageCache.getTaskTemplatePackage(taskId);
         if (taskPkg != null && !taskPkg.isDefaultPackage())
             label = taskPkg.getLabel() + "/" + label;
-        Date dueDate = findDueDate(dueInSeconds, task);
+        Instant due = Instant.now().plusSeconds(dueInSeconds);
         int pri = 0;
         // use the prioritization strategy if one is defined for the task
         try {
@@ -168,8 +169,8 @@ public class TaskWorkflowHelper {
             if (prioritizationStrategy != null) {
                 Date calcDueDate = prioritizationStrategy.determineDueDate(task);
                 if (calcDueDate != null)
-                    dueDate = calcDueDate;
-                pri = prioritizationStrategy.determinePriority(task, dueDate);
+                    due = calcDueDate.toInstant();
+                pri = prioritizationStrategy.determinePriority(task, Date.from(due));
             }
         }
         catch (Exception ex) {
@@ -177,16 +178,16 @@ public class TaskWorkflowHelper {
         }
 
         TaskInstance ti = createTaskInstance(taskId, masterRequestId, OwnerType.PROCESS_INSTANCE,
-                processInstanceId, secondaryOwner, secondaryOwnerId, label, title, comments, dueDate, pri);
+                processInstanceId, secondaryOwner, secondaryOwnerId, label, title, comments, due, pri);
         ti.setTaskName(task.getTaskName()); // Reset task name back (without package name pre-pended)
         TaskWorkflowHelper helper = new TaskWorkflowHelper(ti);
-        if (dueDate != null) {
+        if (due != null) {
             int alertInterval = 0; //initialize
             String alertIntervalString = ""; //initialize
 
             alertIntervalString = task.getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
             alertInterval = StringHelper.isEmpty(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
-            helper.scheduleTaskSlaEvent(dueDate, alertInterval, false);
+            helper.scheduleTaskSlaEvent(Date.from(due), alertInterval, false);
         }
 
         // create instance indices for template based general tasks (MDW 5.1) and all template based tasks (MDW 5.2)
@@ -239,24 +240,24 @@ public class TaskWorkflowHelper {
      * @return TaskInstance
      */
     static TaskInstance createTaskInstance(Long taskId, String masterOwnerId,
-            String title, String comment, Date dueDate, Long userId, Long secondaryOwner)
+            String title, String comment, Instant due, Long userId, Long secondaryOwner)
     throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("createTaskInstance()", true);
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
         TaskInstance ti = createTaskInstance(taskId,  masterOwnerId, OwnerType.USER, userId,
                 (secondaryOwner != null ? OwnerType.DOCUMENT : null), secondaryOwner,
-                task.getTaskName(), title, comment, dueDate, 0);
+                task.getTaskName(), title, comment, due, 0);
 
         TaskWorkflowHelper helper = new TaskWorkflowHelper(ti);
 
-        if (dueDate!=null) {
+        if (due!=null) {
             String alertIntervalString = task.getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
-            int alertInterval = StringHelper.isEmpty(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
-            helper.scheduleTaskSlaEvent(dueDate, alertInterval, false);
+            int alertInterval = StringHelper.isEmpty(alertIntervalString) ? 0 : Integer.parseInt(alertIntervalString);
+            helper.scheduleTaskSlaEvent(Date.from(due), alertInterval, false);
         }
         // create instance groups for template based tasks
         List<String> groups = helper.determineWorkgroups(null);
-        if (groups != null && groups.size() >0)
+        if (groups != null && groups.size() > 0)
             new TaskDataAccess().setTaskInstanceGroups(ti.getTaskInstanceId(), StringHelper.toStringArray(groups));
         helper.notifyTaskAction(TaskAction.CREATE, null, null);   // notification/observer/auto-assign
         helper.auditLog("Create", "MDW");
@@ -265,7 +266,7 @@ public class TaskWorkflowHelper {
     }
 
     static TaskInstance createTaskInstance(Long taskId, String masterRequestId, String owner, Long ownerId,
-            String secondaryOwner, Long secondaryOwnerId, String label, String title, String message, Date dueDate, int priority)
+            String secondaryOwner, Long secondaryOwnerId, String label, String title, String message, Instant due, int priority)
     throws ServiceException, DataAccessException {
 
         TaskInstance ti = new TaskInstance();
@@ -281,25 +282,10 @@ public class TaskWorkflowHelper {
         ti.setTitle(title);
         ti.setMasterRequestId(masterRequestId);
         ti.setPriority(priority);
-        ti.setDueDate(dueDate);
-        Long id = new TaskDataAccess().createTaskInstance(ti, dueDate);
+        ti.setDue(due);
+        Long id = new TaskDataAccess().createTaskInstance(ti, Date.from(due));
         ti.setTaskInstanceId(id);
         return ti;
-    }
-
-    private static Date findDueDate(int dueInSeconds, TaskTemplate task)
-    throws DataAccessException {
-        Date dueDate = null;
-        if (dueInSeconds <= 0)
-            dueInSeconds = task.getSlaSeconds();
-        if (dueInSeconds > 0) {
-            long now = DatabaseAccess.getCurrentTime();
-            // Need to create a long value since adding a long to an int
-            // caused wrong dates to be created
-            long dueInSecondsLong = new Long(dueInSeconds).longValue();
-            dueDate = new Date(now + dueInSecondsLong * 1000);
-        }
-        return dueDate;
     }
 
     static PrioritizationStrategy getPrioritizationStrategy(TaskTemplate taskTemplate, Long processInstanceId, Map<String,String> indexes)
@@ -341,7 +327,6 @@ public class TaskWorkflowHelper {
         TaskTemplate template = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
         if (template != null)
             taskInstance.setTemplate(template.getPackageName() + "/" + template.getName());
-        taskInstance.setRetrieveDate(DatabaseAccess.getDbDate());
         return taskInstance;
     }
 
@@ -358,7 +343,7 @@ public class TaskWorkflowHelper {
      * Updates the due date for a task instance.
      * The method should only be called in summary (or summary-and-detail) task manager.
      */
-    void updateDueDate(Date dueDate, String cuid, String comment)
+    void updateDue(Instant due, String cuid, String comment)
     throws ServiceException, DataAccessException {
         boolean hasOldSlaInstance;
         EventManager eventManager = ServiceLocator.getEventManager();
@@ -366,17 +351,17 @@ public class TaskWorkflowHelper {
         boolean isEventExist = event == null ? false : true;
         hasOldSlaInstance = !isEventExist;
         Map<String,Object> changes = new HashMap<String,Object>();
-        changes.put("DUE_DATE", dueDate);
+        changes.put("DUE_DATE", Date.from(due));
         changes.put("COMMENTS", comment);
         TaskDataAccess dataAccess = new TaskDataAccess();
         dataAccess.updateTaskInstance(taskInstance.getTaskInstanceId(), changes, false);
-        if (dueDate == null) {
+        if (due == null) {
             unscheduleTaskSlaEvent();
         }
         else {
             String alertIntervalString = getTemplate().getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
             int alertInterval = StringHelper.isEmpty(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
-            scheduleTaskSlaEvent(dueDate, alertInterval, !hasOldSlaInstance);
+            scheduleTaskSlaEvent(Date.from(due), alertInterval, !hasOldSlaInstance);
         }
         auditLog(UserAction.Action.Change.toString(), cuid, null, "change due date / comments");
     }

@@ -136,7 +136,5 @@ shapeMod.factory('Shape', ['mdw', 'util', 'DC',
     return display;
   };
   
-  
   return Shape;
-  
 }]);

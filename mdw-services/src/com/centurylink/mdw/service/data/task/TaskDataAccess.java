@@ -128,11 +128,17 @@ public class TaskDataAccess extends CommonDataAccess {
         task.setSecondaryOwnerType(rs.getString("TASK_INST_SECONDARY_OWNER"));
         task.setSecondaryOwnerId(rs.getLong("TASK_INST_SECONDARY_OWNER_ID"));
         task.setAssigneeId(rs.getLong("TASK_CLAIM_USER_ID"));
-        task.setStartDate(StringHelper.dateToString(rs.getTimestamp("TASK_START_DT")));
-        task.setEndDate(StringHelper.dateToString(rs.getTimestamp("TASK_END_DT")));
+        Date startDate = rs.getTimestamp("TASK_START_DT");
+        if (startDate != null)
+            task.setStart(startDate.toInstant());
+        Date endDate = rs.getTimestamp("TASK_END_DT");
+        if (endDate != null)
+            task.setEnd(endDate.toInstant());
         task.setComments(rs.getString("COMMENTS"));
         task.setStateCode(rs.getInt("TASK_INSTANCE_STATE"));
-        task.setDueDate(rs.getTimestamp("DUE_DATE"));
+        Date dueDate = rs.getTimestamp("DUE_DATE");
+        if (dueDate != null)
+            task.setDue(dueDate.toInstant());
         task.setPriority(rs.getInt("PRIORITY"));
         task.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
 
@@ -302,7 +308,8 @@ public class TaskDataAccess extends CommonDataAccess {
                 args[i] = changes.get(key);
                 i++;
             }
-            if (setEndDate) sb.append(", TASK_END_DT="+now()+"");
+            if (setEndDate)
+                sb.append(", TASK_END_DT=" + now() + "");
             sb.append(" where TASK_INSTANCE_ID=?");
             args[n] = taskInstId;
             String query = sb.toString();
@@ -310,7 +317,7 @@ public class TaskDataAccess extends CommonDataAccess {
             db.commit();
         } catch (Exception e) {
             db.rollback();
-            throw new DataAccessException(0,"failed to update task instance: " + taskInstId, e);
+            throw new DataAccessException(0, "failed to update task instance: " + taskInstId, e);
         } finally {
             db.closeConnection();
         }
@@ -715,7 +722,6 @@ public class TaskDataAccess extends CommonDataAccess {
             }
             TaskList taskList = new TaskList(TaskList.TASKS, taskInstances);
             taskList.setTotal(total);
-            taskList.setRetrieveDate(DatabaseAccess.getDbDate());
             return taskList;
         }
         catch (SQLException e) {

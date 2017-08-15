@@ -15,8 +15,7 @@
  */
 package com.centurylink.mdw.model.task;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +26,6 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-import com.centurylink.mdw.util.StringHelper;
 import com.sun.el.ValueExpressionLiteral;
 
 /**
@@ -71,7 +69,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
             valueExpressionMap.put("task", new ValueExpressionLiteral(this, Object.class));  //for backward compatibility
             valueExpressionMap.put("taskInstanceId", new ValueExpressionLiteral(this.getTaskInstance().getTaskInstanceId(), String.class));
             valueExpressionMap.put("taskName", new ValueExpressionLiteral(this.getTaskTemplate().getTaskName(), String.class));
-            valueExpressionMap.put("dueDate", new ValueExpressionLiteral(this.getTaskInstance().getDueDate(), String.class));
+            valueExpressionMap.put("due", new ValueExpressionLiteral(this.getTaskInstance().getDue(), Instant.class));
             valueExpressionMap.put("taskInstanceUrl", new ValueExpressionLiteral(this.getTaskInstance().getTaskInstanceUrl(), String.class));
             valueExpressionMap.put("assignee", new ValueExpressionLiteral(this.getTaskInstance().getAssignee(), String.class));
         }
@@ -83,8 +81,8 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public String getTaskName() {
         return this.taskTemplate.getTaskName();
     }
-    public Date getDueDate() {
-        return this.taskInstance.getDueDate();
+    public Instant getDue() {
+        return this.taskInstance.getDue();
     }
     public String getTaskInstanceUrl() {
             return this.taskInstance.getTaskInstanceUrl();
@@ -105,25 +103,15 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public Long getInstanceId() { return getTaskInstanceId(); }
     public String getInstanceUrl() { return getTaskInstanceUrl(); }
     public String getMasterRequestId() { return taskInstance.getMasterRequestId(); }
-    public Date getStartDate() { return StringHelper.stringToDate(taskInstance.getStartDate()); }
-    public Date getEndDate() { return StringHelper.stringToDate(taskInstance.getEndDate()); }
+    public Instant getStart() { return taskInstance.getStart(); }
+    public Instant getEnd() { return taskInstance.getEnd(); }
     public String getUserIdentifier() { return taskInstance.getUserIdentifier(); }
     public Integer getStatusCode() { return taskInstance.getStatusCode(); }
     public Integer getStateCode() { return taskInstance.getStateCode(); }
     public String getStatus() { return TaskStatuses.getTaskStatuses().get(getStatusCode()); }
     public String getComments() { return taskInstance.getComments(); }
-    public String getMessage() { return taskInstance.getActivityMessage(); }
-    public String getActivityName() { return taskInstance.getActivityName(); }
     public Long getTaskId() { return taskInstance.getTaskId(); }
     public String getLogicalId() { return getTaskLogicalId(); }
-
-
-    public String getFormattedDueDate() {
-        Date dd = getDueDate();
-        if (dd == null)
-            return null;
-        return new SimpleDateFormat("MM/dd/yyyy").format(dd);
-    }
 
     public String getAdvisory()
     {

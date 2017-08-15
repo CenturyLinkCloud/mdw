@@ -15,15 +15,12 @@
  */
 package com.centurylink.mdw.model;
 
-import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
 public interface InstanceList<E> {
 
-    @ApiModelProperty(value="Retrieve date (UTC)")
-    public Date getRetrieveDate();
     @ApiModelProperty(value="List count")
     public int getCount();
     @ApiModelProperty(value="Total count for paginated results")
