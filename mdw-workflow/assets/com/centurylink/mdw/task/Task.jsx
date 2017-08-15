@@ -1,6 +1,8 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import Select from '../node/node_modules/react-select';
+//import 'style-loader!../node/node_modules/react-select/dist/react-select.css';
 import Workflow from '../react/Workflow.jsx';
 import UserDate from './UserDate.jsx';
 
@@ -8,9 +10,17 @@ class Task extends Component {
     
   constructor(...args) {
     super(...args);
+    this.state = {workgroupOptions: []};
     this.handleClick = this.handleClick.bind(this);
   }  
 
+  componentDidMount() {
+    // TODO: retrieve workgroup options for tasks
+    this.setState({
+      workgroupOptions: ['MDW Support','Developers']
+    });
+  }
+  
   handleClick(event) {
     if (event.currentTarget.type === 'button') {
       if (event.currentTarget.value === 'save') {
@@ -20,7 +30,10 @@ class Task extends Component {
   }
   
   render() {
+    // TODO: task should be in state (modifiable)
     var task = this.props.task;
+    
+    
     return (
       <div>
         <div className="mdw-flex-item">
@@ -52,32 +65,15 @@ class Task extends Component {
                 {task.workgroups &&
                   <div className="mdw-item">
                     Workgroups:{' '}
-                    {
-                      task.workgroups.map((workgroup, i) => {
-                        return (
-                          <span key={workgroup}>
-                            <a className="mdw-adjoin" href={'/#/groups/' + workgroup}>
-                              {workgroup}
-                            </a>
-                            {i < task.workgroups.length - 1 && ', '}
-                          </span>
-                        );
-                      })
-                    }
+                    <Select multi simpleValue value={'Developers'} 
+                      placeholder="Workgroups for this task routing" 
+                      options={this.state.workgroupOptions} />
                   </div>
                 }
                 {task.secondaryOwnerType == 'TASK_INSTANCE' &&
                   <div className="mdw-item">
                     Master Task: 
                     <a href={'#/tasks/' + task.secondaryOwnerId}>{task.secondaryOwnerId}</a>
-                  </div>
-                }
-                {task.ownerType == 'PROCESS_INSTANCE' &&
-                  <div className="mdw-item">
-                    Process:{' '}
-                    <span style={{fontWeight:'normal'}}>{task.packageName}/</span>
-                    <a href={'#/workflow/processes/' + task.ownerId}>{task.processName}</a>
-                    {' '}<a href={'#/workflow/processes/' + task.ownerId}>{task.ownerId}</a>
                   </div>
                 }
               </div>
@@ -100,6 +96,11 @@ class Task extends Component {
               </div>
             }
           </div>
+        </div>
+        <div className="mdw-task-process">
+          <span className="mdw-task-package">{task.packageName}/</span>
+          <a href={'#/workflow/processes/' + task.ownerId}>{task.processName}</a>
+          {' '}<a href={'#/workflow/processes/' + task.ownerId}>{task.ownerId}</a>
         </div>
         <div id="mdw-task-workflow" className="mdw-task-workflow">
           {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&

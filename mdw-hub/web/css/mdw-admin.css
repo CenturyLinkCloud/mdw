@@ -788,6 +788,16 @@
 .mdw-workflow {
   
 }
+.mdw-task-package {
+	font-weight: normal;
+}
+.mdw-task-process {
+	margin-left: 20px;
+	position: relative;
+  top: 12px;
+  font-size: 16px;
+  font-weight: bold;
+}
 .mdw-task-workflow {
   height: calc(100vh - 250px);
   overflow: auto;
@@ -795,6 +805,12 @@
   border-radius: 4px;
   box-shadow: 4px 4px 16px #757575;
   margin: 20px;
+}
+.mdw-date-glyph {
+	color: #337ab7;
+  font-size: 16px;
+  position: relative;
+  top: 3px;	
 }
 .mdw-canvas {
   /* prevent highlighting on double-click */

@@ -122,7 +122,7 @@ class UserDate extends Component {
         }
         {this.props.editable &&
           <Button type="button" className="mdw-btn mdw-space2">
-            <Glyphicon glyph='calendar' />
+            <Glyphicon glyph="calendar" className="mdw-date-glyph" />
           </Button>
         }
       </span>
