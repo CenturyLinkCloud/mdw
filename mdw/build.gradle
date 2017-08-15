@@ -124,6 +124,12 @@ task updateRestApiDefinition(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+task updateMdwVerInFiles(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["updateMdwVerInFiles"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
 task versions {
     doLast {
         println "Java Version: " + System.getProperty("java.version")
@@ -144,18 +150,6 @@ task deployTomcatMdwDev(type: GradleBuild) {
 task publishToMavenCentral(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
-}
-
-task tagRelease(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["tagRelease"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
-}
-
-task pushToOrigin(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["pushToOrigin"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
