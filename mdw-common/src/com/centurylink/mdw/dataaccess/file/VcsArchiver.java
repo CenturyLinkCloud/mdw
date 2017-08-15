@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
@@ -136,57 +137,60 @@ public class VcsArchiver {
             else if (!archiveDir.mkdirs())
                 throw new IOException("Unable to create archive directory: " + archiveDir.getAbsolutePath());
         }
-        // Check for user errors - i.e. older version asset present in newer pkg
-        progressMonitor.subTask("Checking for asset version inconsistencies");
-        File flaggedAsset = null;
-        PackageDir newPkg = null;
         List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
-        for (File prevPkg : tempPkgDirs) {
-            String simplePkgName = prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v"));
-            newPkg = null;
-            for (PackageDir item : newPkgDirs) {
-                if (simplePkgName.equals(item.getPackageName())) {
-                    newPkg = item;
-                    break;
+        if (!"true".equals(PropertyManager.getProperty("mdw.suppress.asset.version.check"))) {
+            AssetFile flaggedAsset = null;
+            PackageDir newPkg = null;
+            // Check for user errors - i.e. older version asset present in newer pkg
+            progressMonitor.subTask("Checking for asset version inconsistencies");
+            versionControl.clear();
+            for (File prevPkg : tempPkgDirs) {
+                String simplePkgName = prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v"));
+                newPkg = null;
+                for (PackageDir item : newPkgDirs) {
+                    if (simplePkgName.equals(item.getPackageName())) {
+                        newPkg = item;
+                        break;
+                    }
                 }
-            }
-            if (newPkg != null) {
-                for (File prevFile : prevPkg.listFiles()) {
-                    if (prevFile.isFile()) {
-                        AssetFile newFile = newPkg.getAssetFile(new File(newPkg + "/" + prevFile.getName()));
-                        if (newFile != null && newFile.getRevision().getVersion() > 0) {
-                            AssetRevision prevRev = versionControl.getRevision(prevFile);
-                            if (prevRev != null && prevRev.getVersion() > newFile.getRevision().getVersion()) {
-                                flaggedAsset = newFile;
-                                break;
+                if (newPkg != null) {
+                    for (File prevFile : prevPkg.listFiles()) {
+                        if (prevFile.isFile()) {
+                            AssetFile newFile = newPkg.getAssetFile(new File(newPkg + "/" + prevFile.getName()));
+                            if (newFile != null && newFile.getRevision().getVersion() > 0) {
+                                AssetRevision prevRev = versionControl.getRevision(prevFile);
+                                if (prevRev != null && prevRev.getVersion() > newFile.getRevision().getVersion()) {
+                                    flaggedAsset = newFile;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
+                if (flaggedAsset != null)
+                    break;
             }
-            if (flaggedAsset != null)
-                break;
-        }
-        if (flaggedAsset != null) {  // Need to restore previous pkgs and error out on asset import
-            progressMonitor.subTask("Found asset version inconsistencies....restoring from backup");
-            for (File prevPkg : tempPkgDirs) {
-                File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
-                if (restoreDest.exists())
-                    newLoader.deletePkg(restoreDest);
-                newLoader.copyPkg(prevPkg, restoreDest);
-            }
-            if (deleteBackups) {
-                progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);
-                try {
-                    newLoader.delete(tempDir);
+            if (flaggedAsset != null) {  // Need to restore previous pkgs and error out on asset import
+                progressMonitor.subTask("Found asset version inconsistencies....restoring from backup");
+                for (File prevPkg : tempPkgDirs) {
+                    File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
+                    if (restoreDest.exists())
+                        newLoader.deletePkg(restoreDest);
+                    newLoader.copyPkg(prevPkg, restoreDest);
                 }
-                catch (Throwable ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                if (deleteBackups) {
+                    progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);
+                    try {
+                        newLoader.delete(tempDir);
+                    }
+                    catch (Throwable ex) {
+                        logger.severeException(ex.getMessage(), ex);
+                    }
                 }
+                throw new IOException("Failed -- Import would overide asset with older version: " + flaggedAsset.getLogicalFile());
             }
-            throw new IOException("Cannot perform asset import, package " + newPkg + " contains older version asset " + flaggedAsset);
+            progressMonitor.progress(10);
         }
-        progressMonitor.progress(10);
         progressMonitor.subTask("Adding packages to archive: " + archiveDir.getAbsolutePath());
         for (File tempPkgDir : tempPkgDirs) {
             boolean found = false;

@@ -55,10 +55,10 @@ public class AutomatedTests extends JsonRestService {
 
     @Path("/{testCase}/{item}")
     @ApiOperation(value="If {testCase} asset path not specified, returns all cases",
-        notes="{item} can be a test case item like from a postman collection",
-        response=TestCase.class, responseContainer="List")
+    notes="{item} can be a test case item like from a postman collection",
+    response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
-    throws ServiceException, JSONException {
+            throws ServiceException, JSONException {
         // results file resides on master instance (but avoid loop)
         if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
             String[] segments = getSegments(path);
@@ -92,7 +92,7 @@ public class AutomatedTests extends JsonRestService {
     @ApiImplicitParams({
         @ApiImplicitParam(name="TestCaseList", paramType="body", dataType="com.centurylink.mdw.test.TestCaseList")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
+            throws ServiceException, JSONException {
         // results file resides on master instance
         if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
             TestingServices testingServices = ServiceLocator.getTestingServices();
@@ -105,8 +105,9 @@ public class AutomatedTests extends JsonRestService {
             else {
                 try {
                     if (segments.length > 6 && segments[6].equals("allTests")) {
-                            testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
-                            return null;
+                        config.setStubbing(true);
+                        testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
+                        return null;
                     }
                     else {
                         TestCase singleCase = getTestCase(segments);
@@ -159,7 +160,7 @@ public class AutomatedTests extends JsonRestService {
     @ApiImplicitParams({
         @ApiImplicitParam(name="TestExecConfig", paramType="body", dataType="com.centurylink.mdw.test.TestExecConfig")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
+            throws ServiceException, JSONException {
         if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
             TestingServices testingServices = ServiceLocator.getTestingServices();
             testingServices.setTestExecConfig(new TestExecConfig(content));

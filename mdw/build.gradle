@@ -253,10 +253,6 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-task deleteBuildDir {
-    delete "../${mdwOutputDir}"
-}
-
 /**
  * Eclipse setup, sourceSets and dependencies are convenience configs to enable gradle plugin
  * debugging from Eclipse.  The actual gradle plugin build is controlled by buildSrc/build.gradle.

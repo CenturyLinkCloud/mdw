@@ -80,7 +80,7 @@ public class Init extends Setup {
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
         System.out.println("Initializing " + project + "...");
         projectDir = new File(project);
-        int slashIndex = project.lastIndexOf("/");
+        int slashIndex = project.lastIndexOf('/');
         if (slashIndex > 0)
             project = project.substring(slashIndex + 1);
 
