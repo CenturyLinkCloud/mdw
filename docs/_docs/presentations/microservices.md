@@ -48,43 +48,12 @@ title: Microservices in MDW
   - [Swagger Annotations](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
 
 ### Deployment and Testing
-  - [Tomcat Setup](../guides/SetupGuideForTomcat/)
+  - [Tomcat setup](../guides/SetupGuideForTomcat/)
   - [Spring Boot](http://127.0.0.1:4000/docs/gettingStarted/quick-start/)
-  - [Hyperion Platform](https://hyperion-ui-test1.pcfomactl.dev.intranet/home.html)
-  - [Cloud Foundry Setup](../guides/SetupGuideForCloudFoundry/)
-  - [Postman](../help/groovyTestScriptSyntax.html#serviceApiTesting) automated tests
+  - [Hyperion platform](https://hyperion-ui-test1.pcfomactl.dev.intranet/home.html)
+  - [Cloud Foundry setup](../guides/SetupGuideForCloudFoundry/)
+  - [Postman automated tests](../help/groovyTestScriptSyntax.html#serviceApiTesting)
   
 ## Resources
   - [Microservices Cookbook](../guides/MicroservicesCookbook/)
   - Built-In Service APIs
-
-MDW provides the tools to make microservice orchestration comprehensible.
-The MDWHub runtime UI helps you visualize relationships and dependencies among microservices.
-
-### Microservice Aspects
-  - Trend toward Modularity
-  - Specialized "Do one thing and do it right"
-  - Fine-grained
-  - Self-contained
-  - Loosely-coupled
-  
-### The Value of Orchestrating
-  - Make sense of disparate services
-  - Handle dependencies
-  - Dynamicism
-  - Reusing services and flow elements
-  - Producing useful business outcomes 
-  
-### MDW Capabilities
-  - Orchestration design
-  - Runtime visualization
-  - Automatic retry
-  - Error management
-  - Notifications
-  - Request tracking
-  - API spec generation (Swagger)
-  - Expressive payload mapping
-  - Services packaged as dynamic Git assets
-  - Easily expose an entry point
-  - Automated testing
-
