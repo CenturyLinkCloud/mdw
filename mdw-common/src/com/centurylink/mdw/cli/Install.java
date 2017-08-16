@@ -115,7 +115,8 @@ public class Install implements Operation {
             download = new Download(new URL(binariesUrl + "download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile);
         }
         System.out.println("Downloading " + jarFile + "...");
-        download.run(progressMonitors);
+        if(download!=null)
+            download.run(progressMonitors);
 
         return this;
     }

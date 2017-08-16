@@ -477,14 +477,14 @@ class AssetKey implements Comparable<AssetKey> {
     }
 
     public int compareTo(AssetKey otherKey) {
-        if (id != null)
+        if (id != null && otherKey!=null)
             return -id.compareTo(otherKey.getId());  // id is specified so compare based on that (reverse order)
 
         if (name == null && otherKey.getName() != null)
             return -1;
         if (otherKey.getName() == null && name != null)
             return 1;
-        if (!name.equals(otherKey.getName()))
+        if ((name!=null) && (!name.equals(otherKey.getName())))
             return name.compareTo(otherKey.getName());
 
         if (otherKey.getLanguage() == null)
@@ -494,7 +494,7 @@ class AssetKey implements Comparable<AssetKey> {
             return -1;
         if (otherKey.getLanguage() == null && language != null)
             return 1;
-        if (!language.equals(otherKey.getLanguage()))
+        if ((language != null) &&(!language.equals(otherKey.getLanguage())))
             return language.compareTo(otherKey.getLanguage());
 
         if (version == 0 && (id == null || name == null))

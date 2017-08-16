@@ -107,12 +107,13 @@ public abstract class FileListener {
 
             DataSource ds = ApplicationContext.getMdwDataSource();
             Connection conn = ds.getConnection();
-
+            Statement stmt=null;
+            ResultSet rs=null;
             try {
                 conn.setAutoCommit(false);
-                Statement stmt = conn.createStatement();
+                stmt = conn.createStatement();
                 stmt.executeQuery(getSelectSql(file, true));
-                ResultSet rs = stmt.executeQuery(getSelectSql(file, false));
+                rs = stmt.executeQuery(getSelectSql(file, false));
                 if (!rs.next()) {
                   stmt.executeUpdate(getInsertSql(file, IN_PROGRESS));
                   conn.commit();
@@ -126,7 +127,12 @@ public abstract class FileListener {
                 }
             }
             finally {
-                conn.close();
+                if(rs!=null)
+                    rs.close();
+                if(stmt!=null)
+                    stmt.close();
+                if(conn!=null)
+                   conn.close();
             }
         }
 

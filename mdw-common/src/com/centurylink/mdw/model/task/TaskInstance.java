@@ -232,7 +232,10 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         if (this == pTaskInstanceVO)
             return true;
         TaskInstance myTIVO = (TaskInstance) pTaskInstanceVO;
-        return this.taskInstanceId.longValue() == myTIVO.taskInstanceId.longValue();
+        if( myTIVO!=null)
+            return this.taskInstanceId.longValue() == myTIVO.taskInstanceId.longValue();
+           else
+            return false;
     }
 
     @ApiModelProperty(hidden=true)

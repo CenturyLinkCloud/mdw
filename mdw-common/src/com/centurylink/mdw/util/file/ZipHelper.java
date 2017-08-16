@@ -267,7 +267,9 @@ public class ZipHelper {
             }
         }
         finally {
-            urlIn.close();
+            if(urlIn!=null){
+                urlIn.close();
+              }
             tempOut.close();
         }
 
