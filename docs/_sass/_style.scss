@@ -424,6 +424,16 @@ article a:visited {
   color: #00853f;
 }
 
+.section-nav a {
+  color: #34d058;
+}
+.section-nav a:hover {
+  color: #76FF03;
+}
+.section-nav a:visited {
+  color: #34d058;
+}
+
 @media (max-width: 480px) {
   article ul { padding-left: 20px; }
 }
