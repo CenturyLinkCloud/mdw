@@ -14,6 +14,7 @@ class Nav extends Component {
       <div>
         <ul className="nav mdw-nav">
           <NavLink to="/" id={id}>Task</NavLink>
+          <NavLink to="/values" id={id}>Values</NavLink>
           <NavLink to="/discussion" id={id}>Discussion</NavLink>
           <NavLink to="/subtasks" id={id}>Subtasks</NavLink>
           <NavLink to="/history" id={id}>History</NavLink>
