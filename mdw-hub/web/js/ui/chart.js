@@ -3,14 +3,16 @@
 var chartMod = angular.module('mdwChart', ['mdw']);
 
 
-chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
-                                             function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
+chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
+                                             function($scope, $cookieStore, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
 	
 
 	$scope.init = function() {
 	$scope.spans = ['Week', 'Month'];	
 	$scope.span = 'Week';
     $scope.days = 7;
+    
+    $scope.selectedChart= $cookieStore.get('selectedChart');
       
     // TODO hardcoded
     $scope.initialSelect = 5;
@@ -449,6 +451,16 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       $location.path($scope.listRoute.substring(1));
     }
   };
+  
+  $scope.setSelectedChart=function(selChart){
+	   $scope.selectedChart= selChart;
+	   $cookieStore.put('selectedChart',selChart);
+	   if(selChart =='List'){
+		   window.location.href='#/workflow/processes';
+	   }else{	   
+	       window.location.href='#/dashboard/processes?chart='+selChart;
+	   }    
+}; 
   
   $scope.downloadExcel = function() {
       window.location = $scope.dataUrl + '&' + EXCEL_DOWNLOAD;      
