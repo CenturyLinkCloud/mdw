@@ -1,5 +1,4 @@
 ---
-layout: help
 title: MDW Help Topics
 permalink: /docs/help/
 ---

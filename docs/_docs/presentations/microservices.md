@@ -59,4 +59,5 @@ title: Microservices in MDW
   
 ## Resources
   - [Microservices Cookbook](../../guides/MicroservicesCookbook/)
-  - Built-In Service APIs
+  - Built-In [Service APIs]()
+  - [mdw-demo]()
