@@ -41,10 +41,10 @@
 		ng-click="downloadExcel()">
 		<span class="glyphicon glyphicon-download-alt"></span> Export
 	</button>
-	<button type="button" class="btn btn-primary mdw-btn"
-		ng-click="goList()">
-		<span class="glyphicon glyphicon-menu-hamburger"></span> List
-	</button>
+	<button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button
+            mdw-action-pop-button uib-popover-template="'workflow/chartTypes.html'">   
+            <span class="glyphicon glyphicon-stats"></span> List
+          </button>   
 	</mdw-actions>
 
 </div>
