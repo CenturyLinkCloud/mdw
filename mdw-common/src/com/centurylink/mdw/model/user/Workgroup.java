@@ -59,23 +59,6 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
         this.description = comment;
     }
 
-    /**
-     * This constructor parses name and roles from a string, in the form "group_name(role1;role2)"
-     * @param nameAndRoles
-     */
-    public Workgroup(String nameAndRoles) {
-        id = null;
-        description = null;
-        int k = nameAndRoles.indexOf(':');
-        if (k>0) {
-            name = nameAndRoles.substring(0,k);
-            roles = Arrays.asList(nameAndRoles.substring(k+1).split("/"));
-        } else {
-            name = nameAndRoles;
-            roles = null;
-        }
-    }
-
     public Workgroup(JSONObject json) throws JSONException {
         name = json.getString("name");
         if (json.has("description"))

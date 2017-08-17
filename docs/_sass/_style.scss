@@ -405,12 +405,33 @@ footer {
 
 
 article {
-  background-color: #444;
+  /* background-color: #444; */
+  background-color: #f5f5f5;  
   @include border-radius(10px);
   padding: 20px;
-  margin: 0 10px;
+  margin: 0 10px 10px 20px;
   @include box-shadow(0 3px 10px rgba(0,0,0,.1));
   font-size: 16px;
+}
+
+article a {
+  color: #00853f;
+}
+article a:hover {
+  color: #34d058 !important;
+}
+article a:visited {
+  color: #00853f;
+}
+
+.section-nav a {
+  color: #34d058;
+}
+.section-nav a:hover {
+  color: #76FF03;
+}
+.section-nav a:visited {
+  color: #34d058;
 }
 
 @media (max-width: 480px) {
@@ -426,6 +447,10 @@ article {
     padding: 40px 40px 30px;
     font-size: 21px;
   }
+}
+
+.grid .unit:first-child {
+  padding-left: 30px;
 }
 
 /* Right-side nav - used by both docs and news */
@@ -459,7 +484,7 @@ aside {
 
     &.current a:before {
       content: "";
-      border-color: transparent transparent transparent #444;
+      border-color: transparent transparent transparent #f5f5f5;
       border-style: solid;
       border-width: 10px;
       width: 0;
@@ -511,7 +536,7 @@ aside {
   }
 
   .next,
-  .prev { position: relative; }
+  .prev { position: relative; padding-top: 10px; padding-bottom: 8px; }
 
   .next:after,
   .prev:before {
@@ -520,7 +545,7 @@ aside {
     font-weight: 900;
     text-shadow: 0 1px 0 rgba(255,255,255,.4);
     position: absolute;
-    top: -7px;
+    top: -13px;
   }
 
   .next:after {

@@ -5,10 +5,13 @@ plugins {
 }
 
 nexusStaging {
+    ext.ossrhUsername = System.getProperty("ossrhUsername")
+    ext.ossrhPassword = System.getProperty("ossrhPassword")
+    
     packageGroup = "com.centurylink"
     serverUrl = "https://oss.sonatype.org/service/local"
-    username = "magrawa"
-    password = "need to read from env variables"
+    username = ossrhUsername
+    password = ossrhPassword
 }
 
 repositories {

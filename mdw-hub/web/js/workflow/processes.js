@@ -134,6 +134,8 @@ processMod.controller('ProcessController',
     ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
      function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
   
+  $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
+  
   $scope.retrieveProcess = function() {
     if ($routeParams.triggerId) {
       $scope.process = Process.retrieve({triggerId: $routeParams.triggerId}, function() {
@@ -287,6 +289,8 @@ processMod.controller('ProcessDefController',
     ['$scope', '$routeParams', '$route', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
     function($scope, $routeParams, $route, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
       
+  $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
+      
   $scope.process = { 
     packageName: $routeParams.packageName,
     name: $routeParams.processName,
@@ -303,6 +307,8 @@ processMod.controller('ProcessDefController',
       var procSpec = $scope.process.name;
       if ($scope.process.version)
         procSpec += ' v' + $scope.process.version;
+      else if ($routeParams.version)
+        procSpec += ' v' + $routeParams.version;
       procFilter.master = false;
       procFilter.status = null;
       $cookieStore.put('processFilter', procFilter);

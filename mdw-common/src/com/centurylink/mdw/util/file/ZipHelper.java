@@ -32,6 +32,15 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipHelper {
 
+    /**
+     * Governs behavior when zip entry already exists.
+     */
+    public enum Exist {
+      Error,
+      Overwrite,
+      Ignore
+    };
+
     private static final int ZIP_BUFFER_KB = 16;
 
     public static void writeZip(File directory, OutputStream outputStream, List<File> excludes) throws IOException {
@@ -141,10 +150,14 @@ public class ZipHelper {
     }
 
     public static void unzip(File zipFile, File destDir) throws IOException {
-        unzip(zipFile, destDir, null, null, false);
+        unzip(zipFile, destDir, null, null, Exist.Error);
     }
 
     public static void unzip(File zipFile, File destDir, String baseLoc, List<String> excludes, boolean overwrite) throws IOException {
+        unzip(zipFile, destDir, baseLoc, excludes, overwrite ? Exist.Overwrite : Exist.Error);
+    }
+
+    public static void unzip(File zipFile, File destDir, String baseLoc, List<String> excludes, Exist exist) throws IOException {
         if (!destDir.exists() || !destDir.isDirectory())
             throw new IOException("Destination directory does not exist: " + destDir);
 
@@ -167,11 +180,20 @@ public class ZipHelper {
                     else
                         outpath += entry.getName().substring(baseLoc.length());
                     File outfile = new File(outpath);
-                    if (outfile.exists() && !overwrite)
-                        throw new IOException("Output file already exists: " + outfile);
+                    if (outfile.exists()) {
+                        if (exist == Exist.Error) {
+                            throw new IOException("Output file already exists: " + outfile);
+                        }
+                        else if (exist == Exist.Overwrite) {
+                            if (entry.isDirectory()) {
+                                FileHelper.deleteRecursive(outfile);
+                            }
+                        }
+                        else if (exist == Exist.Ignore) {
+                            continue;
+                        }
+                    }
                     if (entry.isDirectory()) {
-                        if (outfile.exists())
-                            FileHelper.deleteRecursive(outfile);
                         if (!outfile.mkdirs())
                             throw new IOException("Unable to create directory: " + outfile);
                     }
@@ -245,7 +267,9 @@ public class ZipHelper {
             }
         }
         finally {
-            urlIn.close();
+            if(urlIn!=null){
+                urlIn.close();
+              }
             tempOut.close();
         }
 

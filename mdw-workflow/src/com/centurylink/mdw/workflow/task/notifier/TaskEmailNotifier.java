@@ -78,7 +78,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     }
 
     protected String getFromAddress() {
-        String fromAddress = getProperty(PropertyNames.NOTIFICATION_EMAIL_FROM_ADDRESS);
+        String fromAddress = getProperty(PropertyNames.TASK_NOTICE_EMAIL_FROM);
         if (fromAddress == null) fromAddress = "mdw@centurylink.com";
         return fromAddress;
     }

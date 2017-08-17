@@ -1,11 +1,12 @@
 'use strict';
 
 var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
- 'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwShape', 'mdwStep', 'mdwLink', 
- 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwInspector', 'mdwInspectorTabs', 'mdwToolbox', 'mdwConfigurator', 
- 'mdwCompatibility', 'mdwTask', 'authUser', 'mdw', 'util', 'mdwUtil', 'constants', 'routes', 'users', 'groups', 'roles', 
- 'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 'requests', 'services', 'system', 'solutions', 
- 'message', 'objectTableConverter', 'mdwSwagger', 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
+ 'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwDiagram', 'mdwShape', 
+ 'mdwStep', 'mdwLink', 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwSelection', 'mdwInspector', 'mdwInspectorTabs', 
+ 'mdwToolbox', 'mdwConfigurator', 'mdwCompatibility', 'mdwTask', 'authUser', 'mdw', 'util', 'mdwUtil', 'mdwJsx', 
+ 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 
+ 'requests', 'services', 'system', 'solutions', 'message', 'objectTableConverter', 'mdwSwagger', 
+ 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
 adminApp.config(function($httpProvider) {
@@ -51,7 +52,16 @@ adminApp.config(['$routeProvider', function($routeProvider) {
     }
   }
   $routeProvider.otherwise({
-    redirectTo: '/workflow/processes'
+    redirectTo: function(params, path, search) {
+      var pathname = window.location.pathname;
+      var hubRoot = $mdwHubRoot;
+      if (!hubRoot.endsWith('/'))
+        hubRoot += '/';
+      if (pathname == hubRoot)
+        return '/workflow/processes';
+        
+      throw new Error("Cannot route: " + window.location);
+    }
   });
 }]);
 
@@ -415,4 +425,6 @@ angular.element(document).ready(function() {
       window.location.href = $mdwHubRoot + "/login";
     }
   });
+
+  $mdwUi.init(ng);
 });

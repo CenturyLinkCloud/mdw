@@ -66,7 +66,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     return activity;
   };
   
-  Step.prototype.draw = function() {
+  Step.prototype.draw = function(animationTimeSlice) {
     var activity = this.workflowObj = this.activity;
     var shape;
     if (this.implementor.icon && this.implementor.icon.startsWith('shape:'))
@@ -77,17 +77,17 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var adj = 0;
       if (shape == 'start' || shape == 'stop')
         adj = 2;
-      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj);
+      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice);
     }
     
     if (this.implementor.icon) {
       var yAdjust = -2;
       if (shape) {
         if ('start' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'green', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'green', 'white');
         }
         else if ('stop' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, 'red', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'red', 'white');
         }
         else if ('decision' == shape) {
           this.diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
@@ -122,6 +122,11 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     this.diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
     this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
     
+  };
+  
+  Step.prototype.highlight = function() {
+    this.diagram.drawOval(this.display.x - DC.HIGHLIGHT_MARGIN, this.display.y - DC.HIGHLIGHT_MARGIN, 
+        this.display.w + (2*DC.HIGHLIGHT_MARGIN), this.display.h + (2*DC.HIGHLIGHT_MARGIN), DC.HIGHLIGHT_COLOR);
   };
   
   // sets display/title and returns an object with w and h for required size
@@ -160,10 +165,6 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     return maxDisplay;
   };
   
-  Step.prototype.applyState = function(activityInstances) {
-    this.instances = activityInstances;
-  };
-
   Step.prototype.move = function(deltaX, deltaY, limDisplay) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
