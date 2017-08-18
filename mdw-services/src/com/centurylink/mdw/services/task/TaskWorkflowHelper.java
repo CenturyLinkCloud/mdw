@@ -283,7 +283,7 @@ public class TaskWorkflowHelper {
         ti.setMasterRequestId(masterRequestId);
         ti.setPriority(priority);
         ti.setDue(due);
-        Long id = new TaskDataAccess().createTaskInstance(ti, Date.from(due));
+        Long id = new TaskDataAccess().createTaskInstance(ti, due == null ? null : Date.from(due));
         ti.setTaskInstanceId(id);
         return ti;
     }
