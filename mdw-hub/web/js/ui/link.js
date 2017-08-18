@@ -232,6 +232,41 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           context.stroke();
       }
     }
+    else if (type === Link.LINK_TYPES.STRAIGHT) {
+      var segments = [];
+      xs.forEach(function(x, i) {
+        if (i < xs.length - 1) {
+          segments.push({
+            from: {x: xs[i], y: ys[i]},
+            to: {x: xs[i + 1], y: ys[i + 1]}
+          });
+        }
+      });
+      if (animationTimeSlice) {
+        var linkThis = this;
+        segments[xs.length - 2].lineEnd = function(context) {
+          context.strokeStyle = linkThis.getColor();
+          linkThis.drawConnectorArrow.call(linkThis, context);
+          context.strokeStyle = DC.DEFAULT_COLOR;
+        };
+        this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+      }
+      else {
+        if (hitX) {
+          segments.forEach(function(seg) {
+            context.beginPath();
+            context.moveTo(seg.from.x, seg.from.y);
+            context.lineTo(seg.to.x, seg.to.y);
+            if (context.isPointInStroke && context.isPointInStroke(hitX, hitY)) {
+              hit = true;
+            }
+          });
+        }
+        else {
+          this.diagram.drawLine(segments, this.getColor(), Link.LINK_WIDTH);
+        }
+      }
+    }
     
     if (!hit && !animationTimeSlice)
       hit = this.drawConnectorArrow(context, hitX, hitY);
@@ -888,7 +923,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     if (x1 == x2) 
       slope = (y1 < y2) ? Math.PI / 2 : -Math.PI / 2;
     else
-      slope = Math.atan(y2 - y1)/(x2 - x1);
+      slope = Math.atan((y2 - y1)/(x2 - x1));
     if (x1 > x2) {
         if (slope > 0)
           slope -= Math.PI;
