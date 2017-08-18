@@ -71,6 +71,7 @@
     
 14 - mdw-buildpack
    - Check if the build uploaded new mdw.war at https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
+   - Check if the build uploaded new mdw.war at https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack
     
 15 - Publishing to AppFog  
    -  go to root of mdw-demo project
