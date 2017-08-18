@@ -6,6 +6,7 @@ import {
 import Nav from './Nav.jsx';
 import Heading from './Heading.jsx';
 import Task from './Task.jsx';
+import Values from './Values.jsx';
 import Discussion from './Discussion.jsx';
 import Subtasks from './Subtasks.jsx';
 import History from './History.jsx';
@@ -38,6 +39,7 @@ class Main extends Component {
   
   // supports updating dueDate and workgroups
   updateTask(updates) {
+    debugger;
     // TODO: save state back to server
     this.setState({
       task: Object.assign(this.state.task, updates)
@@ -60,6 +62,8 @@ class Main extends Component {
                   render={(props) => <Task {...props} task={this.state.task} updateTask={this.updateTask} />} />
                 <Route exact path={hub + 'tasks/:id'} 
                   render={(props) => <Task {...props} task={this.state.task} />} />
+                <Route path={hub + 'tasks/:id/values'} 
+                  render={() => <Values task={this.state.task} />} />
                 <Route path={hub + 'tasks/:id/discussion'} 
                   render={() => <Discussion task={this.state.task} />} />
                 <Route path={hub + 'tasks/:id/subtasks'}

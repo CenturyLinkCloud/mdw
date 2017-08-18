@@ -34,6 +34,7 @@ title: Microservices in MDW
   - Lookup patterns
   - Parallelism
   - Value binding
+  - Error Handling
   
 ### [Service Summary](http://git.lab.af.qwest.net:7990/projects/SD/repos/sd-workflow/browse/assets/io/ctl/sd/dev/service-summary.md)
   - Automatically populated
@@ -46,6 +47,8 @@ title: Microservices in MDW
 ### Exposing REST Services
   - [JAX-RS](http://docs.oracle.com/javaee/6/tutorial/doc/giepu.html) [@Path Annotations](http://docs.oracle.com/javaee/6/api/javax/ws/rs/Path.html)
   - [Swagger Annotations](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X)
+  - [Autobinding](https://limberest.io/limberest/topics/binding)
+  - [Validation](https://limberest.io/limberest/topics/validation)
 
 ### Deployment and Testing
   - [Tomcat setup](../../guides/SetupGuideForTomcat/)
@@ -56,4 +59,5 @@ title: Microservices in MDW
   
 ## Resources
   - [Microservices Cookbook](../../guides/MicroservicesCookbook/)
-  - Built-In Service APIs
+  - Built-In [Service APIs]()
+  - [mdw-demo]()
