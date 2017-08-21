@@ -49,16 +49,6 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         this.cuid = cuid;
     }
 
-    public User(String cuid, String priv_string) {
-        this.id = null;
-        this.cuid = cuid;
-        String[] privs = priv_string.split(",");
-        workgroups = new Workgroup[privs.length];
-        for (int i=0; i<privs.length; i++) {
-            workgroups[i] = new Workgroup(privs[i]);
-        }
-    }
-
     public User(JSONObject json) throws JSONException {
         if (json.has("cuid"))
             cuid = json.getString("cuid");

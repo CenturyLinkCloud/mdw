@@ -27,4 +27,5 @@ import java.lang.annotation.Target;
 public @interface RegisteredService {
     // to implement multiple service interfaces
     public Class<? extends com.centurylink.mdw.common.service.RegisteredService>[] value();
+    public Parameter[] parameters() default @Parameter(name="", value="");
 }

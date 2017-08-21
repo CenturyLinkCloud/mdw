@@ -71,10 +71,6 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     }
 
-    public CompiledJavaCache(Map<String,String> params) {
-        initialize(params);
-    }
-
     private static String[] preCompiled;
 
     public void initialize(Map<String,String> params) {

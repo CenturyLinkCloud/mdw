@@ -10,7 +10,7 @@
     </a>
   </li>
   <li nav-link="workflow/definition" full-width="process-nav">
-    <a href="#/workflow/definitions/{{process.packageName}}/{{process.name}}/v{{process.version}}">
+    <a href="#/workflow/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}">
       Definition
     </a>
   </li>
@@ -28,7 +28,7 @@
   </li>
   <li nav-link="workflow/definitions">
     <a href="#/workflow/definitions">
-      Definitions List
+      Definitions
     </a>
   </li>
 </ul>

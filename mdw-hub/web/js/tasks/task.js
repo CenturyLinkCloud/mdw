@@ -1,9 +1,14 @@
 'use strict';
 
-var taskMod = angular.module('task', ['ngResource', 'mdw']);
+var taskMod = angular.module('task', ['mdw']);
+
+taskMod.controller('TaskController', ['$scope', 'mdw', function($scope, mdw) {
+  // not much to control since this delegates to our react component
+}]);
+
 
 // task summary
-taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'Task', 'TaskAction',
+taskMod.controller('OldTaskController', ['$scope', '$route', '$routeParams', '$http', 'mdw', 'util', 'TaskUtil', 'Tasks', 'Task', 'TaskAction',
                                       function($scope, $route, $routeParams, $http, mdw, util, TaskUtil, Tasks, Task, TaskAction) {
 
   $scope.taskInstanceId = $routeParams.taskInstanceId;
@@ -45,7 +50,7 @@ taskMod.controller('TaskController', ['$scope', '$route', '$routeParams', '$http
 }]);
 
 // task values
-taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Tasks', 'Task',
+taskMod.controller('OldTaskValuesController', ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Tasks', 'Task',
                                           function($scope, $route, $routeParams, $filter, mdw, util, Tasks, Task) {
   mdw.message = null;
   $scope.task = Task.getTask($scope);
@@ -90,7 +95,7 @@ taskMod.controller('TaskValuesController', ['$scope', '$route', '$routeParams', 
 }]);
 
 // subtasks
-taskMod.controller('SubtasksController', ['$scope', '$http', '$routeParams', '$location', 'mdw', 'Tasks', 'Task', 'TaskUtil',
+taskMod.controller('OldSubtasksController', ['$scope', '$http', '$routeParams', '$location', 'mdw', 'Tasks', 'Task', 'TaskUtil',
                                            function($scope, $http, $routeParams, $location, mdw, Tasks, Task, TaskUtil) {
   mdw.message = null;
   $scope.task = Task.getTask($scope);
@@ -163,7 +168,7 @@ taskMod.controller('SubtasksController', ['$scope', '$http', '$routeParams', '$l
   
 }]);
 
-taskMod.controller('TaskNotesController', ['$scope', '$routeParams', '$location', '$timeout', '$interval', 'Notes', 'Tasks',
+taskMod.controller('OldTaskNotesController', ['$scope', '$routeParams', '$location', '$timeout', '$interval', 'Notes', 'Tasks',
                                       function($scope, $routeParams, $location, $timeout, $interval, Notes, Tasks) {
    
   $scope.hovering = false;
@@ -325,7 +330,7 @@ taskMod.controller('TaskNotesController', ['$scope', '$routeParams', '$location'
   }]
 }
  */
-taskMod.controller('TaskAttachmentsController', ['$scope', '$routeParams', '$location', '$timeout', '$interval', 'Tasks', 'Upload','Attachments','mdw',
+taskMod.controller('OldTaskAttachmentsController', ['$scope', '$routeParams', '$location', '$timeout', '$interval', 'Tasks', 'Upload','Attachments','mdw',
                                                  function($scope, $routeParams, $location, $timeout, $interval, Tasks, Upload, Attachments, mdw) {
                
        // File Upload stuff
@@ -442,7 +447,7 @@ taskMod.controller('TaskAttachmentsController', ['$scope', '$routeParams', '$loc
                 
                
            }]);
-taskMod.controller('TaskHistoryController', ['$scope', '$routeParams', '$location', '$timeout', '$interval', 'Tasks', 'Upload','mdw',
+taskMod.controller('OldTaskHistoryController', ['$scope', '$routeParams', '$location', '$timeout', '$interval', 'Tasks', 'Upload','mdw',
                                                  function($scope, $routeParams, $location, $timeout, $interval, Tasks, Upload, mdw) {
                
              // Table stuff

@@ -3,13 +3,13 @@
 var webpack = require('webpack');
 var webpackConfig = require('./webpackConfig');
 
-var jsxAsset = {
-    "file": "e:\\workspaces\\dons\\mdw-demo\\assets\\bugs\\new.jsx",
-    "root": "e:\\workspaces\\dons\\mdw-demo\\assets",
-    "output": "e:\\eclipse_4.6.3\\..\\mdw\\.temp\\jsx\\bugs\\new.jsx"
+var input = {
+  "source": "c:\\eclipse_4.6.3\\..\\mdw\\.temp\\start\\bugs\\Bug.js",
+  "root": "c:\\mdw\\workspaces\\dons\\mdw-demo\\assets",
+  "output": "c:\\eclipse_4.6.3\\..\\mdw\\.temp\\jsx\\bugs\\Bug.jsx",
 };
 
-var config = webpackConfig.getConfig(jsxAsset);  
+var config = webpackConfig.getConfig(input);  
 console.log('webpack config: ' + JSON.stringify(config, null, 2));
 
 var compiler = webpack(config);
@@ -19,6 +19,6 @@ compiler.run((err, stats) => {
     console.error(err);
   }
   else {
-    console.log('stats:\n' + JSON.stringify(stats.toJson(), null, 2));
+    console.log('stats:\n' + JSON.stringify(stats.toJson('minimal'), null, 2));
   }
 });  

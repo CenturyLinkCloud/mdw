@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.rest;
 import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +58,7 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
@@ -232,6 +234,11 @@ public class Tasks extends JsonRestService implements JsonExportable {
                             TaskInstance taskInstance = taskServices.getInstance(instanceId);
                             if (taskInstance == null)
                                 throw new ServiceException(HTTP_404_NOT_FOUND, "Task instance not found: " + instanceId);
+                            if (taskInstance.isProcessOwned()) {
+                                ProcessInstance procInst = ServiceLocator.getWorkflowServices().getProcess(taskInstance.getOwnerId());
+                                taskInstance.setProcessName(procInst.getProcessName());
+                                taskInstance.setPackageName(procInst.getPackageName());
+                            }
                             return taskInstance.getJson();
                         }
                         else if (extra.equals("values")) {
@@ -318,7 +325,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 // TODO: title, comments, dueDate
                 String title = null;
                 String comments = null;
-                Date dueDate = null;
+                Instant due = null;
                 if (content.has("masterTaskInstanceId")) {
                     // subtask instance
                     Long masterTaskInstId = content.getLong("masterTaskInstanceId");
@@ -328,8 +335,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 else {
                     // top-level task instance
                     Long taskInstanceId = taskServices
-                            .createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER),
-                                    taskLogicalId, title, comments, dueDate).getTaskInstanceId();
+                            .createTask(taskLogicalId, headers.get(Listener.AUTHENTICATED_USER_HEADER),
+                                     title, comments, due).getTaskInstanceId();
                     JSONObject json = new JsonObject();
                     json.put("taskInstanceId", taskInstanceId);
                     return json;

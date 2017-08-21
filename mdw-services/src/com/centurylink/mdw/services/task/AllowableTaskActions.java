@@ -45,9 +45,8 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
- * Keeps track of the task actions permitted according to mdw-hub-actions.xml.
- * See the XSD at: http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Task/TaskActions_v01.xsd.
- * If mdw-hub-actions.xml cannot be found in the framework hub package or in a custom override package (bootstrap condition),
+ * Keeps track of the task actions permitted according to mdw-task-actions.xml.
+ * If mdw-task-actions.xml cannot be found in the framework hub package or in a custom override package (bootstrap condition),
  * then no actions are allowed.
  */
 public class AllowableTaskActions implements PreloadableCache {
@@ -89,9 +88,9 @@ public class AllowableTaskActions implements PreloadableCache {
             }
             else {
                 String hubOverridePackage = ApplicationContext.getHubOverridePackage();
-                String actionsAssetName = PropertyManager.getProperty(PropertyNames.MDW_HUB_ACTION_DEF);
+                String actionsAssetName = PropertyManager.getProperty(PropertyNames.MDW_TASK_ACTION_DEF);
                 if (actionsAssetName == null)
-                    actionsAssetName = "mdw-hub-actions.xml";
+                    actionsAssetName = "mdw-task-actions.xml";
                 File overrideTaskActions = new File(assetLoc + "/" + hubOverridePackage + "/" + actionsAssetName);
                 // allow empty namespace
                 Map<String,String> nsMap = new HashMap<String,String>();
@@ -102,7 +101,7 @@ public class AllowableTaskActions implements PreloadableCache {
                     logger.info("Hub override task actions loaded from: " + overrideTaskActions);
                 }
                 else {
-                    File standardTaskActions = new File(assetLoc + "/com/centurylink/mdw/hub/mdw-hub-actions.xml");
+                    File standardTaskActions = new File(assetLoc + "/com/centurylink/mdw/task/mdw-task-actions.xml");
                     if (!standardTaskActions.isFile()) {
                         logger.severe("*** Standard task actions file does not exist: " + standardTaskActions + " ***");
                         taskActions = createEmptyTaskActions();

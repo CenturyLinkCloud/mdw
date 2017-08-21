@@ -95,15 +95,6 @@ routesSvc.factory('routes', function() {
         controller: 'TestController'
       },      
       {
-        path: '/history',
-        templateUrl: 'history/history.html',
-        controller: 'HistoryController'
-      },
-      {
-        path: '/task-nav', 
-        templateUrl: 'layout/task-nav.html'
-      },
-      {
         path: '/tasks',
         templateUrl: 'tasks/tasks.html',
         controller: 'TasksController'
@@ -114,29 +105,34 @@ routesSvc.factory('routes', function() {
         controller: 'TaskController'
       },
       {
-        path: '/tasks/:taskInstanceId/values',
+        path: '/oldTasks/:taskInstanceId',
+        templateUrl: 'tasks/oldTask.html',
+        controller: 'OldTaskController'
+      },
+      {
+        path: '/oldTasks/:taskInstanceId/values',
         templateUrl: 'tasks/taskValues.html',
-        controller: 'TaskValuesController'
+        controller: 'OldTaskValuesController'
       },
       {
-        path: '/tasks/:taskInstanceId/subtasks',
+        path: '/oldTasks/:taskInstanceId/subtasks',
         templateUrl: 'tasks/subtasks.html',
-        controller: 'SubtasksController'
+        controller: 'OldSubtasksController'
       },
       {
-        path: '/tasks/:taskInstanceId/notes',
+        path: '/oldTasks/:taskInstanceId/notes',
         templateUrl: 'tasks/notes.html',
-        controller: 'TaskNotesController'
+        controller: 'OldTaskNotesController'
       },
       {
-        path: '/tasks/:taskInstanceId/attachments',
+        path: '/oldTasks/:taskInstanceId/attachments',
         templateUrl: 'tasks/attachments.html',
-        controller: 'TaskAttachmentsController'
+        controller: 'OldTaskAttachmentsController'
       },
       {
-        path: '/tasks/:taskInstanceId/history',
-        templateUrl: 'tasks/history.html',
-        controller: 'TaskHistoryController'
+        path: '/oldTasks/:taskInstanceId/history',
+        templateUrl: 'tasks/task.html',
+        controller: 'TaskController'
       },
       {
         path: '/workflow-nav', 

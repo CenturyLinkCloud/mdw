@@ -1,7 +1,6 @@
 ---
 title: Built-In Variable Types
 permalink: /docs/development/built-in-variable-types/
-layout: help
 ---
 
  - java.lang.Boolean
