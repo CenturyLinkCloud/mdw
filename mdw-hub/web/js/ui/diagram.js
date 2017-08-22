@@ -246,7 +246,7 @@ diagramMod.factory('Diagram',
             });
           }
         }
-        it.draw(slice);
+        it.draw(animate ? slice : null);
         if (highlight) {
           it.highlight();
           highlighted = it;
@@ -335,9 +335,16 @@ diagramMod.factory('Diagram',
     
     outSteps.sort(function(s1, s2) {
       if (runtime) {
-        if (s1.instances[0].startDate != s2.instances[0].startDate)
-        // ordered based on first instance occurrence 
-        return s1.instances[0].startDate.localeCompare(s2.instances[0].startDate);
+        if (!s1.instances[0]) {
+          return s2.instances[0] ? 1 : 0;
+        }
+        else if (!s2.instances[0]) {
+          return -1;
+        }
+        else if (s1.instances[0].startDate !== s2.instances[0].startDate) {
+          // ordered based on first instance occurrence 
+          return s1.instances[0].startDate.localeCompare(s2.instances[0].startDate);
+        }
       }
       if (Math.abs(s1.display.y - s2.display.y) > 100)
         return s1.y - s2.y;
@@ -776,14 +783,20 @@ diagramMod.factory('Diagram',
     }
   };
 
-  Diagram.prototype.drawLine = function(x1, y1, x2, y2, color) {
+  Diagram.prototype.drawLine = function(segments, color, width) {
     if (color)
       this.context.strokeStyle = color;
+    if (width)
+      this.context.lineWidth = width;
     this.context.beginPath();
-    this.context.moveTo(x1, y1);
-    this.context.lineTo(x2, y2);
+    var diagram = this;
+    segments.forEach(function(seg) {
+      diagram.context.moveTo(seg.from.x, seg.from.y);
+      diagram.context.lineTo(seg.to.x, seg.to.y);
+    });
     this.context.stroke();
     this.context.strokeStyle = DC.DEFAULT_COLOR;
+    this.context.lineWidth = DC.DEFAULT_LINE_WIDTH;
   };
 
   Diagram.prototype.animateLine = function(segments, color, width, slice) {
@@ -1034,7 +1047,10 @@ diagramMod.factory('Diagram',
           if (this.shiftDrag) {
             if (this.selection.getSelectObj().isStep) {
               this.draw();
-              this.drawLine(this.dragX, this.dragY, x, y, DC.LINE_COLOR);
+              this.drawLine([{
+                from: {x: this.dragX, y: this.dragY},
+                to: {x: x, y: y}
+              }], DC.LINE_COLOR);
               return true;
             }
           }

@@ -335,8 +335,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 else {
                     // top-level task instance
                     Long taskInstanceId = taskServices
-                            .createTask(headers.get(Listener.AUTHENTICATED_USER_HEADER),
-                                    taskLogicalId, title, comments, due).getTaskInstanceId();
+                            .createTask(taskLogicalId, headers.get(Listener.AUTHENTICATED_USER_HEADER),
+                                     title, comments, due).getTaskInstanceId();
                     JSONObject json = new JsonObject();
                     json.put("taskInstanceId", taskInstanceId);
                     return json;
