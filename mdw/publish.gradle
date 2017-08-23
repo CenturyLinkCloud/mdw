@@ -95,7 +95,7 @@ task exportAssetPackages {
             javaexec {
                 classpath configurations.publish
                 main = "com.centurylink.mdw.dataaccess.file.ImporterExporterJson"
-                args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgCat}.zip"
+                args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgCat}-${mdwVersion}.zip"
             }
        
         }
