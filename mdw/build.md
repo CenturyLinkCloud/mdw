@@ -63,7 +63,7 @@
     `gem install github_changelog_generator`
   - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release 'v6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
-  - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copy the notes from CHANGELOG.md
+  - Create a new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), release name should be 6.0.xx, copy the notes from CHANGELOG.md
   - Change release status from pre-release to release
   - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should do that.
   
