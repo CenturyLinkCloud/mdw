@@ -286,8 +286,10 @@ BEGIN
    -- delete DOCUMENT 
    DELETE      document doc
    		 -- 1. all documents with process instance ID populated
-         WHERE (    doc.process_inst_id != 0
-                AND EXISTS (
+         WHERE (  
+         -- commented the doc.process_inst_id as process_inst_id is not a part of document table in mdw6
+        -- doc.process_inst_id != 0 AND
+                EXISTS (
                        SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
                               process_instance_id
                          FROM process_instance pi
@@ -300,7 +302,8 @@ BEGIN
                                   'MM/DD/YYYY'
                                  )
                        - daydiff
-                AND doc.process_inst_id = 0
+             -- commented the doc.process_inst_id as process_inst_id is not a part of document table in mdw6
+            --    AND doc.process_inst_id = 0
                 AND doc.owner_type IN ('LISTENER_REQUEST', 'USER')
                )
    		 -- 3. all documents with TASK_INSTANCE as owner
@@ -309,7 +312,8 @@ BEGIN
                                   'MM/DD/YYYY'
                                  )
                        - daydiff
-                AND doc.process_inst_id = 0
+              -- commented the doc.process_inst_id as process_inst_id is not a part of document table in mdw6
+            --    AND doc.process_inst_id = 0
                 AND doc.owner_type = 'TASK_INSTANCE'
                )
    		 -- 4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted

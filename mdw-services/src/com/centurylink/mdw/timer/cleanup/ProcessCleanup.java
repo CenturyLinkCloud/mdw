@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyGroups;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
@@ -74,8 +75,6 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                 .getIntegerProperty(PropertyGroups.PROCESS_CLEANUP + "/CommitInterval", 10000);
         String cleanupScript = PropertyManager
                 .getProperty(PropertyGroups.PROCESS_CLEANUP + "/RuntimeCleanupScript");
-
-
 
         if (cleanupScript != null) {
             DatabaseAccess db = new DatabaseAccess(null);
@@ -420,32 +419,45 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             // for mysql
             if (db.isMySQL()) {
 
-                //this creates the procedure in the mysql DB and makes it available for running
+                // this creates the procedure in the mysql DB and makes it
+                // available for running
 
-                //lets read the below  from the property file
-                String mysql="C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysql";
-                String username= "mdw";
-                String password ="mdw";
-                String port= "3308";
-                String database = "mdw";
-                String command =  mysql + " -u" + username + " -p" + password +  " --port="+port+ " " +database+ " -e \"" + "source " + filename + "\"";
+                // lets read the below from the property file
+                // path of mysql, if not added to environment path , full path
+                // should be provided here
+                String mysql = "mysql";
+                // mysql username , read from property
+                String username = PropertyManager.getProperty(PropertyNames.MDW_DB_USERNAME);
+                // mysql password , read from property
+                String password = PropertyManager.getProperty(PropertyNames.MDW_DB_PASSWORD);
+                // mysql port number
+                String port = PropertyManager.getProperty(PropertyNames.MDW_DB_URL);
+                //setting to the default port
+                String mysqlport = "3306";
+                if (port != null) {
+                    String[] parts = port.split("[//:]");
+                    mysqlport = parts[5];
+                }
+
+                String command = mysql + " -u" + username + " -p" + password + " --port="
+                        + mysqlport + "  -e \"" + "source " + filename + "\"";
 
                 Runtime runTime = Runtime.getRuntime();
                 Process p = runTime.exec(command);
 
-          /*      Process p = runTime
-                        .exec("C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysql -umdw -pmdw --port=3308 mdw -e \"source "
-                                + filename + "\"");
-*/
-                logger.info("mysql import command :: "+command);
+                /*
+                 * Process p = runTime
+                 * .exec("C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysql -umdw -pmdw --port=3308 mdw -e \"source "
+                 * + filename + "\"");
+                 */
+                logger.info("mysql import command :: " + command);
 
-              if( p.waitFor()== 0)
-              {
-                  logger.info("mysql procedure created successfully in the mysql database " );
-              }else
-              {
-                  logger.info("mysql procedure creation failed in the mysql database " );
-              }
+                if (p.waitFor() == 0) {
+                    logger.info("mysql procedure created successfully in the mysql database ");
+                }
+                else {
+                    logger.info("mysql procedure creation failed in the mysql database ");
+                }
             }
 
             CallableStatement callStmt = null;
@@ -469,7 +481,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                             + WorkStatus.STATUS_COMPLETED.toString() + ","
                             + WorkStatus.STATUS_CANCELLED.toString()); // process
                                                                        // instance
-                                                                        // statuses
+                                                                       // statuses
             callStmt.setInt(6, commitInterval);
 
             callStmt.execute();
@@ -494,7 +506,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
         String file = "C://biswa//MDW//mysql_cleanup_input.sql";
 
         if (db.isMySQL()) {
-            // db , cleanupfile , maxprocessinstid, maxexpirationday , eventexpiration , commitinterval
+            // db , cleanupfile , maxprocessinstid, maxexpirationday ,
+            // eventexpiration , commitinterval
             me.cleanup(db, file, 5, 180, 175, 2);
         }
         else {
