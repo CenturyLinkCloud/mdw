@@ -401,7 +401,7 @@ public class TestCaseRun implements Runnable {
                 yaml.append("  instance: ").append((i + 1)).newLine();
                 LinkedList<ActivityInstance> orderedList = new LinkedList<ActivityInstance>();
                 for (ActivityInstance act : procInst.getActivities())
-                    orderedList.add(0, act);
+                    orderedList.add(act);
                 if (orderById) {
                     Collections.sort(orderedList, new Comparator<ActivityInstance>() {
                         public int compare(ActivityInstance ai1, ActivityInstance ai2) {
