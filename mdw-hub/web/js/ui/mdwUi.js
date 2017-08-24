@@ -18,6 +18,7 @@ var $mdwUi = {
      $mdwUi.Inspector = ngInjector.get('Inspector');
      $mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
      $mdwUi.Configurator = ngInjector.get('Configurator');
+     $mdwUi.util = ngInjector.get('util');
    },
    pseudoImplementors: [
      {
