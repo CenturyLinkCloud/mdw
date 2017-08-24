@@ -224,7 +224,6 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uib
          });
          $scope.$close();
          request.error(errorHandler).success(successHandler);
-         $scope.refreshWorkflowImage();
    };
    
    $scope.cancelAction = function(){ 
