@@ -85,7 +85,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT," +
                 "    STATUS_MESSAGE,ACTIVITY_ID,COMPCODE" +
                 " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?" +
-                " order by ACTIVITY_INSTANCE_ID";
+                " order by ACTIVITY_INSTANCE_ID desc";
             ResultSet rs = db.runSelect(query, procInstId);
             ActivityInstance actInst;
             while (rs.next()) {
@@ -104,7 +104,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 = new ArrayList<TransitionInstance>();
             query = "select WORK_TRANS_INST_ID,STATUS_CD,START_DT,END_DT,WORK_TRANS_ID" +
                 " from WORK_TRANSITION_INSTANCE" +
-                " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID";
+                " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID desc";
             rs = db.runSelect(query, procInstId);
             TransitionInstance workTransInstance;
             while (rs.next()) {
