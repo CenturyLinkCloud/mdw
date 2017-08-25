@@ -16,9 +16,7 @@ class Value extends Component {
   
   showCalendar() {
     var elem = document.getElementById(this.props.value.name);
-    elem.click();
-    console.log('showing...' + elem);
-    
+    elem.previousElementSibling.previousElementSibling.focus();    
   }
   
   render() {    
