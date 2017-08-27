@@ -19,6 +19,7 @@ var $mdwUi = {
      $mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
      $mdwUi.Configurator = ngInjector.get('Configurator');
      $mdwUi.util = ngInjector.get('util');
+     $mdwUi.DOCUMENT_TYPES = ngInjector.get('DOCUMENT_TYPES');
    },
    pseudoImplementors: [
      {
