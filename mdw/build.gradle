@@ -9,6 +9,16 @@ task publishMdw(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
 }
 
+task publishMdwSnapshot(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishBuild"]
+    startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
+}
+
+task publishSnapshot {
+    dependsOn(publishMdwSnapshot)
+}
+
 task publishFormal {
     dependsOn(publishMdw)
 }
