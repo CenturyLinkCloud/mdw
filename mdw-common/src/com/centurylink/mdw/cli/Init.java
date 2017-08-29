@@ -43,7 +43,7 @@ public class Init extends Setup {
     public void setAssetLoc(String assetLoc) { this.assetLoc = assetLoc; }
 
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
-    private String releasesUrl = !isSnapshots() ? "http://repo.maven.apache.org/maven2" : "https://oss.sonatype.org/content/repositories/snapshots";
+    private String releasesUrl = "http://repo.maven.apache.org/maven2";
     public String getReleasesUrl() { return releasesUrl; }
     public void setReleasesUrl(String url) { this.releasesUrl = url; }
 

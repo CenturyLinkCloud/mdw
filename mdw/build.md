@@ -20,12 +20,6 @@
   - Assign any un-delivered issues and pull request for this build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
     
-5b - if doing formal build then delete SNAPSHOT release and tags
-  - Delete thr pre-release of SNAPSHOT from GitHub
-  - git pull
-  - git tag -d v6.0.xx-SNAPSHOT 
-  - git push origin :refs/tags/v6.0.xx
-     
 6 - Commit and push these changes to Git.
 
 5 - Perform the Jenkins build (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
@@ -45,7 +39,13 @@
 8a - Tag release (First time)
   - git tag -a v6.0.xx -m 'v6.0.xx'
   - git push origin --tags
-   
+  
+8b - if doing subsequent SNAPSHOT builds then you need to delete the previous git tag and uploaded binaries and create tag again
+  - git pull
+  - git tag -d v6.0.xx 
+  - git push origin :refs/tags/v6.0.xx
+  - log into GitHub to delete uploaded artifacts (mdw-cli and mdw-boot) for the release
+  
 9 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
   - To publish on internal repo (lxdenvmtc143)- MDW6-Publish-Formal (or -Snapshot)
   - To publish on Maven Central repository by using mdw6-publish-maven-central (for formal and SNAPSHOT builds) 
@@ -63,9 +63,9 @@
     `gem install github_changelog_generator`
   - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release 'v6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
-  - Update the new release on GitHub, release name should be 6.0.xx, copy the notes from updated CHANGELOG.md
+  - Create a new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), release name should be 6.0.xx, copy the notes from CHANGELOG.md
   - Change release status from pre-release to release
-  - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
+  - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should do that.
   
 13 - Update support items delivered with this build to Resolved status.
     
