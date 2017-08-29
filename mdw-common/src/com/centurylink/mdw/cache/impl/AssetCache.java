@@ -470,7 +470,7 @@ class AssetKey implements Comparable<AssetKey> {
 
     public boolean equals(Object other) {
         AssetKey otherKey = (AssetKey) other;
-        if (id != null)
+        if (id != null && otherKey!=null)
           return id.equals(otherKey.getId());  // if id is specified, base equality only on that
 
         return compareTo(otherKey) == 0;
