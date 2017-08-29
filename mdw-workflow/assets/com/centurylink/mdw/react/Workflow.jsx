@@ -15,18 +15,20 @@ class Workflow extends Component {
     process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, proc => {
       implementors.get(this.props.serviceBase, impls => {
         var canvas = document.getElementById('mdw-canvas');
-        var diagram = new ($mdwUi.Diagram)(canvas, null, proc, impls, this.props.hubBase, this.props.editable, proc.instance, this.props.activity);
-        if (this.props.containerId)
-          diagram.containerId = this.props.containerId;
-        this.setState({
-          process: process,
-          implementors: this.implementors,
-          diagram: diagram
-        })
-        diagram.draw(this.props.animate);
-        if (this.props.editable) {
-          var toolbox = Toolbox.getToolbox();
-          toolbox.init(this.implementors, this.props.hubBase);
+        if (canvas) {
+          var diagram = new ($mdwUi.Diagram)(canvas, null, proc, impls, this.props.hubBase, this.props.editable, proc.instance, this.props.activity);
+          if (this.props.containerId)
+            diagram.containerId = this.props.containerId;
+          this.setState({
+            process: process,
+            implementors: this.implementors,
+            diagram: diagram
+          })
+          diagram.draw(this.props.animate);
+          if (this.props.editable) {
+            var toolbox = Toolbox.getToolbox();
+            toolbox.init(this.implementors, this.props.hubBase);
+          }
         }
       });
     });

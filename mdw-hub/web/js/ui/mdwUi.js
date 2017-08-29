@@ -71,5 +71,11 @@ var $mdwUi = {
      OVAL_LINE_WIDTH: 3,
      HIGHLIGHT_MARGIN: 10,
      HIGHLIGHT_COLOR: '#03a9f4'
+   },
+   showMessage: function(msg) {
+     document.getElementById('mdwMainMessages').innerHTML = msg;
+   },
+   clearMessage: function() {
+     document.getElementById('mdwMainMessages').innerHTML = '';
    }
 };

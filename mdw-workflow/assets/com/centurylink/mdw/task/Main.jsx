@@ -16,12 +16,25 @@ class Main extends Component {
     super(...args);
     this.state = { task: {} };
     this.updateTask = this.updateTask.bind(this);
+    this.refreshTask = this.refreshTask.bind(this);
   }
   
   componentDidMount() {
-    var path = window.location.hash.substring(8);
-    console.log('retrieving task: ' + path);
-    fetch(new Request('/mdw/services/Tasks/' + path, {
+    $mdwUi.clearMessage();
+    this.refreshTask(window.location.hash.substring(8));
+  }
+  
+  // supports updating dueDate and workgroups
+  updateTask(updates) {
+    // TODO: save state back to server
+    this.setState({
+      task: Object.assign(this.state.task, updates)
+    });
+  }
+  
+  refreshTask(id) {
+    console.log('retrieving task: ' + id);
+    fetch(new Request('/mdw/services/Tasks/' + id, {
       method: 'GET',
       headers: { Accept: 'application/json'}
     }))
@@ -37,15 +50,6 @@ class Main extends Component {
     });
   }
   
-  // supports updating dueDate and workgroups
-  updateTask(updates) {
-    debugger;
-    // TODO: save state back to server
-    this.setState({
-      task: Object.assign(this.state.task, updates)
-    });
-  }
-  
   render() {
     var hub = this.getChildContext().hubRoot + '/';
     return (
@@ -56,7 +60,7 @@ class Main extends Component {
           </div>
           <div className="col-md-10">
             <div className="panel panel-default mdw-panel">
-              <Heading task={this.state.task} />
+              <Heading task={this.state.task} refreshTask={this.refreshTask} />
               <div className="mdw-section">
                 <Route exact path={hub} 
                   render={(props) => <Task {...props} task={this.state.task} updateTask={this.updateTask} />} />

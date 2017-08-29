@@ -35,7 +35,7 @@ class Task extends Component {
   handleClick(event) {
     if (event.currentTarget.type === 'button') {
       if (event.currentTarget.value === 'save') {
-        console.log('save task');
+        console.log('save task...');
       }
     }
   }
