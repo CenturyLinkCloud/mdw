@@ -10,12 +10,12 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
 	$scope.init = function() {
 	$scope.spans = ['Week', 'Month'];	
 	$scope.span = 'Week';
-    $scope.days = 7;
+  $scope.days = 7;
     
-    $scope.selectedChart= $cookieStore.get('selectedChart');
+  $scope.selectedChart= $cookieStore.get('selectedChart');
       
     // TODO hardcoded
-    $scope.initialSelect = 5;
+  $scope.initialSelect = 5;
     
     // TODO: hardcoded
     $scope.max = 50;
@@ -50,7 +50,8 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
   $scope.resetFilter();
   
   $scope.setStatus = function(status) {
-    $scope.filter.status = status;
+	  $scope.chartLegend ='';
+	  $scope.filter.status = status;
     $scope.updateRange();
   };
   
@@ -200,7 +201,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       url += 'app=mdw-admin&max=' + $scope.max + '&startDate=' + $scope.start;
       if ($scope.filter.status)
         url += '&status=' + $scope.filter.status;
-    
+      $scope.selected = [];
       $http.get(url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + url);
       }).success(function(data, status, headers, config) {
@@ -511,5 +512,4 @@ chartMod.directive('selectPop', [function() {
       });
     }
   };
-}]);
-
+} ]);
