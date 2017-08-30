@@ -292,7 +292,8 @@ public class DatabaseAccess {
     }
 
     public void commit() throws SQLException {
-        connection.commit();
+        if (connectionIsOpen())
+            connection.commit();
     }
 
     public void rollback() {
