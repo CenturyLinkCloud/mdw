@@ -107,7 +107,11 @@ public class Init extends Setup {
         }
 
         String templates = "mdw-templates-" + getMdwVersion() + ".zip";
-        String templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
+        String templatesUrl;
+        if (isSnapshots())
+            templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
+        else 
+            templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run(progressMonitors);

@@ -270,7 +270,10 @@ public class ZipHelper {
             if(urlIn!=null){
                 urlIn.close();
               }
-            tempOut.close();
+            if(tempOut!=null){
+                tempOut.close();
+            }
+
         }
 
         unzip(tempZip, destDir);

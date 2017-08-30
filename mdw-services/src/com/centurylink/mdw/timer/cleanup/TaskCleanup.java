@@ -138,7 +138,8 @@ public class TaskCleanup extends RoundRobinScheduledJob {
             logger.severeException(ex.getMessage(), ex);
         }
         finally {
-            db.closeConnection();
+            if(db!=null)
+              db.closeConnection();
         }
 
     }
