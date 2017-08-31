@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "cool.png",
+  "implementorClass": "com.centurylink.mdw.demo.cool.CoolActivity",
+  "label": "Cool Activity",
+  "pagelet": "<PAGELET>\n<DROPDOWN NAME=\"coolLevel\" LABEL=\"How Cool\" VX=\"180\" VW=\"160\">\n    <OPTION>Somewhat Cool<\/OPTION>\n    <OPTION>Very Cool<\/OPTION>\n    <OPTION>Extremely Cool<\/OPTION>\n  <\/DROPDOWN>\n  <BOOLEAN NAME=\"important\" LABEL=\"Important\" DEFAULT=\"true\" />\n<\/PAGELET>"
+}

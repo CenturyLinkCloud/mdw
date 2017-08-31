@@ -1,0 +1,52 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=52,y=130,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Create",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=228,ly=207,type=Elbow,xs=116&299,ys=150&150"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=565,y=132,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Close"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.demo.bugs/ResolveBug.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=303,y=120,w=108,h=70"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Create and\r\nAssign",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=498,ly=152,type=Elbow,xs=415&561,ys=152&152"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_START_PAGE": "demo/bug.jsx",
+    "PROCESS_START_PAGE_assetVersion": "[0.1,1)",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=40,y=39,w=124,h=27"
+  },
+  "variables": {"bug": {
+    "category": "INPUT",
+    "type": "com.centurylink.mdw.model.Jsonable"
+  }}
+}

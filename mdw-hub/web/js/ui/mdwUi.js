@@ -4,7 +4,7 @@
 // Drawing objects are pre-injected in admin.js.
 var $mdwUi = {
     
-   init: function(ngInjector) {
+   init: function(ngInjector, authUser) {
      $mdwUi.Shape = ngInjector.get('Shape');
      $mdwUi.Label = ngInjector.get('Label');
      $mdwUi.Diagram = ngInjector.get('Diagram');
@@ -20,6 +20,7 @@ var $mdwUi = {
      $mdwUi.Configurator = ngInjector.get('Configurator');
      $mdwUi.util = ngInjector.get('util');
      $mdwUi.DOCUMENT_TYPES = ngInjector.get('DOCUMENT_TYPES');
+     $mdwUi.authUser = authUser;
    },
    pseudoImplementors: [
      {

@@ -44,7 +44,7 @@ class Action extends Component {
     var ok = false;
     var userAction = {
       action: action,
-      user: 'dxoakes',
+      user: $mdwUi.authUser.cuid,
       taskInstanceId: this.props.task.id
     };
     if (assignee)
@@ -68,7 +68,7 @@ class Action extends Component {
       else {
         $mdwUi.showMessage(json.status.message);
       }
-    });    
+    });
   }
   
   handleActionClick(event) {

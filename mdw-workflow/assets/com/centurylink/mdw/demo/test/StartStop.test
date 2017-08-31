@@ -1,0 +1,13 @@
+// start-stop process test
+package com.centurylink.mdw.demo.test
+
+def one = 1
+def another = 'another'
+
+println 'respect ' + one + ' ' + another
+
+start process("com.centurylink.mdw.demo.test/StartStop")
+wait process {
+    timeout = 30
+}
+verify process

@@ -1,0 +1,7 @@
+{
+  "attributes": {"Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"},
+  "category": "BUG",
+  "logicalId": "ResolveBug",
+  "name": "${bug.title}",
+  "version": "0.1"
+}
