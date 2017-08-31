@@ -658,6 +658,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         db.runUpdate(query, activityInstanceId);
         this.recordEventHistory("All Events", EventLog.SUBCAT_DEREGISTER,
                 OwnerType.ACTIVITY_INSTANCE, activityInstanceId, reason);
+        if (db.isMySQL())  //Commit since JMS message to resume activity was already sent, in case next activity to notify causes deadlock
+            db.commit();
     }
 
     /**
@@ -673,7 +675,14 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public void removeEventWaitForProcessInstance(Long processInstanceId) throws SQLException {
-        String query = "delete from EVENT_WAIT_INSTANCE " +
+        String query;
+        if (db.isMySQL()) // This is to separate the row locking from delete statement of impacted rows, to avoid deadlock in MySQL
+            query = "delete E1 from EVENT_WAIT_INSTANCE E1 " +
+                "join EVENT_WAIT_INSTANCE E2 using (EVENT_WAIT_INSTANCE_ID) " +
+                "where E2.EVENT_WAIT_INSTANCE_OWNER_ID in " +
+                "(select ACTIVITY_INSTANCE_ID from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?)";
+        else
+            query = "delete from EVENT_WAIT_INSTANCE " +
                 "where EVENT_WAIT_INSTANCE_OWNER_ID in " +
                 "  (select ACTIVITY_INSTANCE_ID from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?)";
         db.runUpdate(query, processInstanceId);
