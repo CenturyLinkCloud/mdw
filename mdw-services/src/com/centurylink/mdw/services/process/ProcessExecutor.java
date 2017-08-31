@@ -25,8 +25,11 @@ import javax.transaction.SystemException;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.RetryableTransaction;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.Document;
@@ -50,9 +53,13 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class ProcessExecutor {
+public class ProcessExecutor implements RetryableTransaction {
 
     private ProcessExecutorImpl engineImpl;
+
+    private int transactionRetryCount = 0;
+    private int transactionRetryMax = -1;
+    private int transactionRetryInterval = -1;
 
     public ProcessExecutor(EngineDataAccess edao,
             InternalMessenger internalMessenger, boolean forServiceProcess) {
@@ -85,6 +92,14 @@ public class ProcessExecutor {
             return engineImpl.createProcessInstance(processId, ownerType,
                     ownerId, secondaryOwnerType, secondaryOwnerId,
                     masterRequestId, parameters, label);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createProcessInstance(processId, ownerType,
+                        ownerId, secondaryOwnerType, secondaryOwnerId, masterRequestId, parameters);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -96,8 +111,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.getDataAccess().getProcessInstance(procInstId);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getProcessInstance(procInstId);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to load process instance:" + procInstId, e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getProcessInstance(procInstId);
+            }
+            else
+                throw new ProcessException(0, "Failed to load process instance:" + procInstId, e);
         } finally {
             stopTransaction(transaction);
         }
@@ -109,6 +136,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.startProcessInstance(processInst, delay);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).startProcessInstance(processInst, delay);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -120,6 +154,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.handleProcessFinish(event);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).handleProcessFinish(event);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -131,6 +172,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.updateProcessInstanceStatus(pProcInstId, status);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).updateProcessInstanceStatus(pProcInstId, status);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -142,6 +190,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.abortProcessInstance(event);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).abortProcessInstance(event);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -153,8 +208,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.getDataAccess().setProcessInstanceCompletionCode(procInstId, completionCode);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setProcessInstanceCompletionCode(procInstId, completionCode);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to set process instance completion code", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setProcessInstanceCompletionCode(procInstId, completionCode);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set process instance completion code", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -170,8 +237,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.getDataAccess().getActivityInstance(pActivityInstId);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getActivityInstance(pActivityInstId);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to get activity instance", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getActivityInstance(pActivityInstId);
+            }
+            else
+                throw new ProcessException(0, "Failed to get activity instance", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -207,9 +286,20 @@ public class ProcessExecutor {
             engineImpl.failActivityInstance(event,
                     processInst, activityId, activityInstId,
                     activity, cause);
-        } catch (DataAccessException e) {
-            StandardLogger logger = LoggerUtil.getStandardLogger();
-            logger.severeException("Exception thrown during failActivityInstance", e);
+        } catch (MdwException | SQLException e) {
+            if (canRetryTransaction(e)) {
+                try {
+                    transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                    ((ProcessExecutor)getTransactionRetrier()).failActivityInstance(event, processInst, activityId, activityInstId, activity, cause);
+                } catch (DataAccessException ex) {
+                    StandardLogger logger = LoggerUtil.getStandardLogger();
+                    logger.severeException("Exception thrown during failActivityInstance", ex);
+                }
+            }
+            else {
+                StandardLogger logger = LoggerUtil.getStandardLogger();
+                logger.severeException("Exception thrown during failActivityInstance", e);
+            }
         } finally {
             try {
                 stopTransaction(transaction);
@@ -239,6 +329,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.cancelActivityInstance(actInst, procinst, pStatusMsg);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).cancelActivityInstance(actInst, procinst, pStatusMsg);
+            }
+            else
+                throw e;
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).cancelActivityInstance(actInst, procinst, pStatusMsg);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set activity instance status to cancel", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -250,6 +354,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.holdActivityInstance(actInst, procId);
+        } catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).holdActivityInstance(actInst, procId);
+            }
+            else
+                throw e;
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).holdActivityInstance(actInst, procId);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set activity instance status to hold", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -262,6 +380,14 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.finishActivityInstance(activity, pi, ai, event, bypassWait);
+        }
+        catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).finishActivityInstance(activity, pi, ai, event, bypassWait);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -273,6 +399,14 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.resumeActivityPrepare(procInst, event, resumeOnHold);
+        }
+        catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).resumeActivityPrepare(procInst, event, resumeOnHold);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -322,14 +456,25 @@ public class ProcessExecutor {
     }
 
     public void setActivityInstanceStatus(ActivityInstance actInst,
-            Integer status, String status_message)
-     throws DataAccessException {
+            Integer status, String status_message) throws DataAccessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
             engineImpl.getDataAccess().setActivityInstanceStatus(actInst, status, status_message);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setActivityInstanceStatus(actInst, status, status_message);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to set activity instance status", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setActivityInstanceStatus(actInst, status, status_message);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set activity instance status", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -341,8 +486,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.getDataAccess().updateActivityInstanceEndTime(actInstId, endtime);
+        } catch (DataAccessException e) {
+                if (canRetryTransaction(e)) {
+                    transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                    ((ProcessExecutor)getTransactionRetrier()).updateActivityInstanceEndTime(actInstId, endtime);
+                }
+                else
+                    throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to update activity end time", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).updateActivityInstanceEndTime(actInstId, endtime);
+            }
+            else
+                throw new DataAccessException(0, "Failed to update activity end time", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -354,8 +511,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.getDataAccess().countActivityInstances(procInstId, activityId, statuses);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId, statuses);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to count activity instances", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId, statuses);
+            }
+            else
+                throw new DataAccessException(0, "Failed to count activity instances", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -379,6 +548,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.createTransitionInstance(transition, pProcessInstId);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createTransitionInstance(transition, pProcessInstId);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -402,8 +578,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.getDataAccess().determineCompletedTransitions(pProcInstId, transitions);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).determineCompletedTransitions(pProcInstId, transitions);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to determine completed transitions", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).determineCompletedTransitions(pProcInstId, transitions);
+            }
+            else
+                throw new DataAccessException(0, "Failed to determine completed transitions", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -419,6 +607,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.updateDocumentInfo(docref, documentType, ownerType, ownerId, statusCode, statusMessage);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).updateDocumentInfo(docref, documentType, ownerType, ownerId, statusCode, statusMessage);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -431,8 +626,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.createVariableInstance(pi, varname, value);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createVariableInstance(pi, varname, value);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to create variable instance", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createVariableInstance(pi, varname, value);
+            }
+            else
+                throw new DataAccessException(0, "Failed to create variable instance", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -444,8 +651,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.getDataAccess().updateVariableInstance(var);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).updateVariableInstance(var);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to update variable instance", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).updateVariableInstance(var);
+            }
+            else
+                throw new DataAccessException(0, "Failed to update variable instance", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -457,8 +676,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.getDataAccess().getVariableInstance(procInstId, varname);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getVariableInstance(procInstId, varname);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to get variable instance", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getVariableInstance(procInstId, varname);
+            }
+            else
+                throw new DataAccessException(0, "Failed to get variable instance", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -470,6 +701,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.getDocument(docref, forUpdate);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getDocument(docref, forUpdate);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -484,6 +722,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.loadDocument(docref, forUpdate);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).loadDocument(docref, forUpdate);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -500,6 +745,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -511,6 +763,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.updateDocumentContent(docref, doc, type, pkg);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).updateDocumentContent(docref, doc, type, pkg);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -532,6 +791,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.cancelEventWaitInstances(activityInstanceId);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).cancelEventWaitInstances(activityInstanceId);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -542,8 +808,13 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.deleteInternalEvent(eventName);
-        } catch (Exception e) {
-            throw new DataAccessException(0, "Failed to delete internal event" + eventName, e);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).deleteInternalEvent(eventName);
+            }
+            else
+                throw new DataAccessException(0, "Failed to delete internal event" + eventName, e);
         } finally {
             stopTransaction(transaction);
         }
@@ -558,6 +829,14 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstance(actInstId,
                     pEventName, compCode, pRecurring, notifyIfArrived, reregister);
+        }
+        catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived, reregister);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -572,6 +851,14 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstance(actInstId,
                     pEventName, compCode, pRecurring, notifyIfArrived);
+        }
+        catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -586,7 +873,14 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstances(actInstId,
                     pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
-
+        }
+        catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -601,7 +895,14 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.createEventWaitInstances(actInstId,
                     pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
-
+        }
+        catch (MdwException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -613,8 +914,20 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             engineImpl.getDataAccess().removeEventWaitForActivityInstance(activityInstanceId, reason);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).removeEventWaitForActivityInstance(activityInstanceId, reason);
+            }
+            else
+                throw e;
         } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to remove event wait for activity instance", e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).removeEventWaitForActivityInstance(activityInstanceId, reason);
+            }
+            else
+                throw new DataAccessException(0, "Failed to remove event wait for activity instance", e);
         } finally {
             stopTransaction(transaction);
         }
@@ -627,15 +940,27 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             return engineImpl.notifyProcess(pEventName, pEventInstId, message, delay);
-        } catch (SQLException e) {
-            throw new DataAccessException(0, "Failed to notify process of event arrival", e);
+        } catch (DataAccessException | EventException e){
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).notifyProcess(pEventName, pEventInstId, message, delay);
+            }
+            else
+                throw e;
+        } catch (SQLException e){
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).notifyProcess(pEventName, pEventInstId, message, delay);
+            }
+            else
+                throw new DataAccessException(0, "Failed to notify process of event arrival", e);
         } finally {
             stopTransaction(transaction);
         }
     }
 
     public void sendInternalEvent(InternalEvent event)
-        throws MdwException {
+            throws MdwException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
@@ -667,7 +992,12 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.getServiceProcessResponse(procInstId, varname);
         } catch (Exception e) {
-            throw new DataAccessException(0, "Failed to get value for variable " + varname, e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getSynchronousProcessResponse(procInstId, varname);
+            }
+            else
+                throw new DataAccessException(0, "Failed to get value for variable " + varname, e);
         } finally {
             stopTransaction(transaction);
         }
@@ -680,7 +1010,12 @@ public class ProcessExecutor {
             transaction = startTransaction();
             return engineImpl.getOutputParameters(procInstId, procId);
         } catch (Exception e) {
-            throw new DataAccessException(0, "Failed to get output parameters:" + procInstId, e);
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getOutPutParameters(procInstId, procId);
+            }
+            else
+                throw new DataAccessException(0, "Failed to get output parameters:" + procInstId, e);
         } finally {
             stopTransaction(transaction);
         }
@@ -699,6 +1034,31 @@ public class ProcessExecutor {
         try {
             transaction = startTransaction();
             runnable.run();
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    /**
+     * For running your own code inside a retryable transaction.
+     * To be used in execute() method when transactions are not turned on globally.
+     * @param runnable
+     * @throws ProcessException
+     * @throws DataAccessException
+     */
+    public void runInRetryableTransaction(Runnable runnable)
+    throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            runnable.run();
+        } catch (Throwable e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).runInTransaction(runnable);
+            }
+            else
+                throw e;
         } finally {
             stopTransaction(transaction);
         }
@@ -770,6 +1130,10 @@ public class ProcessExecutor {
         engineImpl.getDataAccess().stopTransaction(transaction);
     }
 
+    public void rollbackTransaction() throws DataAccessException {
+        engineImpl.getDatabaseAccess().rollback();
+    }
+
     private boolean isInTransaction() {
         try {
             return TransactionUtil.getInstance().isInTransaction();
@@ -803,4 +1167,58 @@ public class ProcessExecutor {
         }
     }
 
+    public boolean canRetryTransaction(Throwable e) {
+        if (transactionRetryMax < 0)
+            transactionRetryMax = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_MAX, 3);
+
+        if (transactionRetryCount < transactionRetryMax) {
+            if (engineImpl.getDatabaseAccess().isMySQL()) {
+                if (e.getMessage() != null && e.getMessage().contains("try restarting transaction")) {
+                    ProcessExecutorImpl.logger.warn("Encountered the following MySQL issue - will retry transaction (Attempt " + (transactionRetryCount+1) + " of " + transactionRetryMax + "): " + e.getMessage());
+                    return true;
+                }
+                while (e.getCause() != null)
+                    return canRetryTransaction(e.getCause());
+            }
+        }
+        else {
+            ProcessExecutorImpl.logger.severe("Encountered the following issue - will NOT retry transaction (Max attempts reached): " + e.getMessage());
+        }
+        return false;
+    }
+
+    public Object getTransactionRetrier() throws DataAccessException {
+        ProcessExecutor retrier = this;
+        if (transactionRetryCount == 0) {
+            retrier = new ProcessExecutor(engineImpl);
+            retrier.setTransactionRetryCount(1);
+        }
+        else
+            retrier.setTransactionRetryCount(transactionRetryCount + 1);
+
+        return retrier;
+    }
+
+    public Object initTransactionRetry(TransactionWrapper transaction) throws DataAccessException {
+        this.rollbackTransaction();
+        stopTransaction(transaction);
+
+        if (transactionRetryInterval < 0)
+            transactionRetryInterval = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_INTERVAL, 1000);
+
+        try {
+            Thread.sleep(transactionRetryInterval);
+        }
+        catch (InterruptedException e) {  // If interrupted, continue with transaction retry
+        }
+        return null;
+    }
+
+    public int getTransactionRetryCount() {
+        return transactionRetryCount;
+    }
+
+    public void setTransactionRetryCount(int count) {
+        transactionRetryCount = count;
+    }
 }

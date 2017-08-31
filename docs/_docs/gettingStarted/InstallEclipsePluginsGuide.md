@@ -1,5 +1,5 @@
 ---
-permalink: /docs/guides/InstallEclipsePluginsGuide/
+permalink: /docs/gettingStarted/InstallEclipsePluginsGuide/
 title: Eclipse Plug-Ins for MDW Framework
 ---
 

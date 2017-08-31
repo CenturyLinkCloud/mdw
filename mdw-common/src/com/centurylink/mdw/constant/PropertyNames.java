@@ -196,4 +196,9 @@ public class PropertyNames {
     public static final String MDW_OAUTH_REST_APP_DOMAIN = "mdw.oauth.rest.app.domain";
     public static final String MDW_OAUTH_REST_USER_DOMAIN = "mdw.oauth.rest.user.domain";
     public static final String MDW_OAUTH_REST_HEADERS = "mdw.oauth.rest.headers";
+
+    // Transaction Retry
+    public static final String MDW_TRANSACTION_RETRY_INTERVAL = "mdw.transaction.retry.interval";
+    public static final String MDW_TRANSACTION_RETRY_MAX = "mdw.transaction.retry.max";
+
 }

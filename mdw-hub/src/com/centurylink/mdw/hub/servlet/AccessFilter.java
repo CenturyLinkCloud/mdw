@@ -56,6 +56,7 @@ public class AccessFilter implements Filter {
     private static List<InetAddress> upstreamHosts; // null means not restricted
     private static String authMethod = "oauth";
     private static String authUserHeader;
+    private static String forwardingHeader;  // x-forwarded-for
     private static String authTokenLoc;
     private static List<AuthExcludePattern> authExclusions = new ArrayList<AuthExcludePattern>();
     private static Map<String,String> responseHeaders;
@@ -101,6 +102,9 @@ public class AccessFilter implements Filter {
 
             // authUserHeader
             authUserHeader = yamlLoader.get("authUserHeader", topMap);
+
+            // forwardingHeader
+            forwardingHeader = yamlLoader.get("forwardingHeader", topMap);
 
             // authTokenLoc
             authTokenLoc = yamlLoader.get("authTokenLoc", topMap);
@@ -167,9 +171,25 @@ public class AccessFilter implements Filter {
         String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
 
         try {
+            String allowedHost = null;
             if (upstreamHosts != null && !devMode) {
-                InetAddress remoteHost = InetAddress.getByName(request.getRemoteHost());
-                if (!upstreamHosts.contains(remoteHost) && !isAuthExclude(path)) {
+                if (forwardingHeader != null) {
+                    String forwardIps = request.getHeader(forwardingHeader);
+                    if (forwardIps != null) {
+                        for (String ip : forwardIps.split("[,\\s]+")) {
+                            if (upstreamHosts.contains(InetAddress.getByName(ip))) {
+                                allowedHost = ip;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (allowedHost == null) {
+                    InetAddress remoteHost = InetAddress.getByName(request.getRemoteHost());
+                    if (upstreamHosts.contains(remoteHost))
+                        allowedHost = remoteHost.toString();
+                }
+                if (allowedHost == null && !isAuthExclude(path)) {
                     throw new MdwSecurityException("Access not allowed from host: " + request.getRemoteHost());
                 }
             }

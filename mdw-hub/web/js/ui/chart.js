@@ -3,17 +3,19 @@
 var chartMod = angular.module('mdwChart', ['mdw']);
 
 
-chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
-                                             function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
+chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
+                                             function($scope, $cookieStore, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
 	
 
 	$scope.init = function() {
 	$scope.spans = ['Week', 'Month'];	
 	$scope.span = 'Week';
-    $scope.days = 7;
+  $scope.days = 7;
+    
+  $scope.selectedChart= $cookieStore.get('selectedChart');
       
     // TODO hardcoded
-    $scope.initialSelect = 5;
+  $scope.initialSelect = 5;
     
     // TODO: hardcoded
     $scope.max = 50;
@@ -48,7 +50,8 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
   $scope.resetFilter();
   
   $scope.setStatus = function(status) {
-    $scope.filter.status = status;
+	  $scope.chartLegend ='';
+	  $scope.filter.status = status;
     $scope.updateRange();
   };
   
@@ -198,7 +201,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       url += 'app=mdw-admin&max=' + $scope.max + '&startDate=' + $scope.start;
       if ($scope.filter.status)
         url += '&status=' + $scope.filter.status;
-    
+      $scope.selected = [];
       $http.get(url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + url);
       }).success(function(data, status, headers, config) {
@@ -450,6 +453,16 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
     }
   };
   
+  $scope.setSelectedChart=function(selChart){
+	   $scope.selectedChart= selChart;
+	   $cookieStore.put('selectedChart',selChart);
+	   if(selChart =='List'){
+		   window.location.href='#/workflow/processes';
+	   }else{	   
+	       window.location.href='#/dashboard/processes?chart='+selChart;
+	   }    
+}; 
+  
   $scope.downloadExcel = function() {
       window.location = $scope.dataUrl + '&' + EXCEL_DOWNLOAD;      
   };
@@ -499,5 +512,4 @@ chartMod.directive('selectPop', [function() {
       });
     }
   };
-}]);
-
+} ]);

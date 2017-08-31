@@ -611,10 +611,11 @@ class ProcessExecutorImpl {
      * @param processInstId
      * @param activity
      * @param cause
+     * @throws DataAccessException, MdwException, SQLException
      */
     void failActivityInstance(InternalEvent event,
             ProcessInstance processInst, Long activityId, Long activityInstId,
-            BaseActivity activity, Throwable cause) {
+            BaseActivity activity, Throwable cause) throws DataAccessException, MdwException, SQLException {
 
         String tag = logtag(processInst.getProcessId(), processInst.getId(), activityId, activityInstId);
         logger.severeException("Failed to execute activity - " + cause.getClass().getName(), cause);
@@ -638,6 +639,7 @@ class ProcessExecutorImpl {
         }
         catch (Exception ex) {
             logger.severeException("Exception thrown during failActivityInstance", ex);
+            throw ex;
         }
     }
 
@@ -667,21 +669,23 @@ class ProcessExecutorImpl {
     }
 
     void cancelActivityInstance(ActivityInstance actInst,
-            ProcessInstance procinst, String statusMsg) {
+            ProcessInstance procinst, String statusMsg) throws DataAccessException, SQLException {
         String logtag = this.logtag(procinst.getProcessId(), procinst.getId(), actInst.getActivityId(), actInst.getId());
         try {
             this.cancelActivityInstance(actInst, statusMsg, procinst, logtag);
         } catch (Exception e) {
             logger.severeException("Exception thrown during canceActivityInstance", e);
+            throw e;
         }
     }
 
-    void holdActivityInstance(ActivityInstance actInst, Long procId) {
+    void holdActivityInstance(ActivityInstance actInst, Long procId) throws DataAccessException, SQLException {
         String logtag = this.logtag(procId, actInst.getProcessInstanceId(), actInst.getActivityId(), actInst.getId());
         try {
             this.holdActivityInstance(actInst, logtag);
         } catch (Exception e) {
-            logger.severeException("Exception thrown during canceActivityInstance", e);
+            logger.severeException("Exception thrown during holdActivityInstance", e);
+            throw e;
         }
     }
 

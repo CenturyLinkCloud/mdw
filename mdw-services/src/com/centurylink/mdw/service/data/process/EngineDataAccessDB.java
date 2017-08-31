@@ -658,6 +658,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         db.runUpdate(query, activityInstanceId);
         this.recordEventHistory("All Events", EventLog.SUBCAT_DEREGISTER,
                 OwnerType.ACTIVITY_INSTANCE, activityInstanceId, reason);
+        if (db.isMySQL())  //Commit since JMS message to resume activity was already sent, in case next activity to notify causes deadlock
+            db.commit();
     }
 
     /**
