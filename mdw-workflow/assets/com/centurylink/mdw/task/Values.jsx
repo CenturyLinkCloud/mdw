@@ -75,7 +75,7 @@ class Values extends Component {
             <label className="control-label col-xs-2" />
             <div className="col-xs-4">
               <Button className="mdw-btn" bsStyle='primary'>
-                <Glyphicon glyph='floppy-disk' />{' Save'}
+                <Glyphicon glyph="floppy-disk" />{' Save'}
               </Button>
             </div>
           </div>

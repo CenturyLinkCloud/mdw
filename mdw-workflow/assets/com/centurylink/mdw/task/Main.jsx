@@ -43,7 +43,7 @@ class Main extends Component {
     })
     .then(task => {
       var assignedToMe = $mdwUi.authUser.cuid === task.assigneeId;
-      var inFinalState = task.status === 'Completed' || task.status === 'Canceled';
+      var inFinalState = task.status === 'Completed' || task.status === 'Cancelled' || task.status === 'Canceled';
       task.actionable = assignedToMe && !inFinalState;
       task.editable = assignedToMe && !inFinalState;
       this.setState({
