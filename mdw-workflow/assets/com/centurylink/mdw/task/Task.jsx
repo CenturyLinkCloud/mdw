@@ -5,6 +5,7 @@ import Select from '../node/node_modules/react-select';
 import '../node/node_modules/style-loader!../react/react-select.css';
 import Workflow from '../react/Workflow.jsx';
 import UserDate from '../react/UserDate.jsx';
+import '../node/node_modules/style-loader!./task-ui.css';
 
 class Task extends Component {
     
@@ -29,7 +30,7 @@ class Task extends Component {
           return { value: group.name, label: group.name };
         }) 
       });
-    });    
+    });
   }
   
   handleClick(event) {
@@ -106,13 +107,8 @@ class Task extends Component {
             </div>
             {task.assignee &&
               <div>
-                <img src={this.context.hubRoot + '/images/user.png'} alt="user"/> {task.assignee}
-              </div>
-            }
-            {task.template &&
-              <div className="mdw-item-group" style={{marginTop:'10px'}}>
-                <Glyphicon glyph="file" style={{marginRight:'4px'}}/>
-                <a href={'#/asset/' + task.template}>Task Template</a>
+                <img src={this.context.hubRoot + '/images/user.png'} alt="user"/>
+                {' '}<a href={'#/users/' + task.assigneeId}>{task.assignee}</a>
               </div>
             }
           </div>
@@ -123,6 +119,12 @@ class Task extends Component {
             {task.processName} {task.ownerId}
           </a>
         </div>
+        {task.template &&
+          <div className="mdw-task-template">
+            <Glyphicon glyph="file" style={{marginRight:'2px',opacity:'0.6'}}/>
+            <a href={'#/asset/' + task.template}>Task Template</a>
+          </div>
+        }
         <div id="mdw-task-workflow" className="mdw-task-workflow">
           {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
             <Workflow instanceId={task.ownerId} animate={true} activity={task.activityInstanceId}

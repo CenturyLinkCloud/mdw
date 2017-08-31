@@ -62,7 +62,7 @@ class Main extends Component {
             <div className="panel panel-default mdw-panel">
               <Heading task={this.state.task} refreshTask={this.refreshTask} />
               <div className="mdw-section">
-                <Route exact path={hub} 
+                <Route exact path={hub}
                   render={(props) => <Task {...props} task={this.state.task} updateTask={this.updateTask} />} />
                 <Route exact path={hub + 'tasks/:id'} 
                   render={(props) => <Task {...props} task={this.state.task} />} />
@@ -87,7 +87,7 @@ class Main extends Component {
       hubRoot: $mdwHubRoot,
       serviceRoot: $mdwServicesRoot + '/services'
     };
-  }  
+  }
 }
 
 Main.childContextTypes = {
