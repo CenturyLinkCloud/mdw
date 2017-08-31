@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Popover, OverlayTrigger, Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import RootCloseWrapper from '../node/node_modules/react-overlays/lib/RootCloseWrapper';
 import {Link} from '../node/node_modules/react-router-dom';
 import {AsyncTypeahead, Menu, MenuItem} from '../node/node_modules/react-bootstrap-typeahead';
 import '../node/node_modules/style-loader!../react/typeahead.css';
@@ -9,11 +10,13 @@ class Action extends Component {
 
   constructor(...args) {
     super(...args);
-    this.state = {actions: [], assignees: []};
+    this.state = {actions: [], assignees: [], assigneePopOpen: false};
     this.handleActionClick = this.handleActionClick.bind(this);
     this.handleAssigneeChange = this.handleAssigneeChange.bind(this);
     this.findAssignee = this.findAssignee.bind(this);
     this.renderAssigneeMenu = this.renderAssigneeMenu.bind(this);
+    this.assigneePopRootClose = this.assigneePopRootClose.bind(this);
+    this.actionPopRootClose = this.actionPopRootClose.bind(this);
   }
   
   loadActions() {
@@ -74,7 +77,7 @@ class Action extends Component {
         return act.action === event.currentTarget.name; 
       });
       this.performAction(action.action);
-      // close popovers
+      // close popover
       this.refs.actionTrigger.hide();
     }
     return false;
@@ -85,8 +88,10 @@ class Action extends Component {
     return false;
   }
   
-  handleAssigneeChange(user) {
+  handleAssigneeChange(users) {
+    var user = users.constructor === Array ? users[0] : users;
     this.performAction('Assign', user.cuid);
+    this.assigneePopRootClose();
   }
 
   findAssignee(input) {
@@ -118,48 +123,67 @@ class Action extends Component {
     );
   }
   
+  assigneePopRootClose() {
+    var assigneeTrigger = this.refs.assigneeTrigger;
+    if (assigneeTrigger.state.show)
+      assigneeTrigger.hide();
+    if (this.refs.actionTrigger.state.show)
+      this.refs.actionTrigger.hide();
+  }
+  actionPopRootClose() {
+    var actionTrigger = this.refs.actionTrigger;
+    if (actionTrigger.state.show && !this.refs.assigneeTrigger.state.show) {
+      actionTrigger.hide();
+    }
+  }
+  
   render() {
+    // custom RootCloseWrappers to prevent closing action-pop when assignee-pop is clicked
     const assigneePopover = (
       <Popover id="assignee-pop" style={{width:'250px'}} placement="left">
-        <div>
-          <AsyncTypeahead ref="typeahead" onSearch={this.findAssignee} options={this.state.assignees} autoFocus 
-            bodyContainer={true} labelKey="name" minLength={1} placeholder=' find user' inputProps={{name:'assigneeInput'}}
-            renderMenu={this.renderAssigneeMenu} />
-        </div>
+        <RootCloseWrapper onRootClose={this.assigneePopRootClose}>
+          <div>
+            <AsyncTypeahead ref="typeahead" onSearch={this.findAssignee} options={this.state.assignees} 
+              autoFocus bodyContainer={true} labelKey="name" minLength={1} placeholder=' find user' 
+              inputProps={{name:'assigneeInput'}} renderMenu={this.renderAssigneeMenu} onChange={this.handleAssigneeChange} />
+          </div>
+        </RootCloseWrapper>
       </Popover>
     );
-    
+
     const actionPopover = (
-      <Popover id="action-pop">
-        <ul className="dropdown-menu mdw-popover-menu">
-          {this.state.actions.map(action => {
-            return (
-              <li key={action.action}>
-                {action.action === 'Assign' &&
-                  <OverlayTrigger ref="assigneeTrigger" trigger="click" 
-                    placement="left" overlay={assigneePopover} rootClose={true}>
-                    <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
-                      name={action.action} onClick={this.ignoreClick}>
-                      {action.action}
-                    </Link>
-                  </OverlayTrigger>
-                }
-                {action.action !== 'Assign' &&
-                  <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
-                    name={action.action} onClick={this.handleActionClick}>
-                    {action.action}
-                  </Link>
-                }
-              </li>
-            );
-          })}
-        </ul>        
-      </Popover>
+        <Popover id="action-pop">
+          <RootCloseWrapper onRootClose={this.actionPopRootClose}>
+            <ul className="dropdown-menu mdw-popover-menu">
+              {this.state.actions.map(action => {
+                return (
+                  <li key={action.action}>
+                    {action.action === 'Assign' &&
+                      <OverlayTrigger ref="assigneeTrigger" trigger="click" 
+                        placement="left" overlay={assigneePopover} rootClose={false}>
+                        <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
+                          name={action.action} onClick={this.ignoreClick}>
+                          {action.action}
+                        </Link>
+                      </OverlayTrigger>
+                    }
+                    {action.action !== 'Assign' &&
+                      <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
+                        name={action.action} onClick={this.handleActionClick}>
+                        {action.action}
+                      </Link>
+                    }
+                  </li>
+                );
+              })}
+            </ul>        
+          </RootCloseWrapper>
+        </Popover>
     );
-    
+
     return (
       <OverlayTrigger ref="actionTrigger" trigger="click" placement="left" 
-        overlay={actionPopover} rootClose={true}>
+        overlay={actionPopover} rootClose={false}>
         <Button className="mdw-btn" bsStyle="primary">
           <Glyphicon glyph="ok" />{" Action"}
         </Button>
