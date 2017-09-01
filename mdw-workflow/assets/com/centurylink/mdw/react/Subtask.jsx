@@ -5,7 +5,7 @@ class Subtask extends Component {
     
   constructor(...args) {
     super(...args);
-    console.log("subTask subTask subTask");
+    console.log("subTask ...");
   }
   
   handleChange(event) {
