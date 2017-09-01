@@ -1,0 +1,4 @@
+{
+  "handlerClass": "START_PROCESS?ProcessName=HandleOrder&MasterRequestID={//donsOrder/orderNumber}",
+  "path": "donsOrder"
+}

@@ -1,0 +1,9 @@
+process: # 13143
+  name: StartStop
+  instance: 1
+  activity: # 1 "2016-02-17 11:06:20"
+    name: Start
+    status: Completed
+  activity: # 2 "2016-02-17 11:06:20"
+    name: Stop
+    status: Completed

@@ -3,7 +3,6 @@
   <sourceProject name="mdw-workflow" author="dxoakes"/>
   <webProject name="mdw-hub" deployDir="deploy" />
   <mdwFramework version="6.0.06-SNAPSHOT"/>
-  <server host="localhost" port="8080" container="Tomcat"/>
+  <server host="localhost" port="8080" contextRoot="mdw"/>
   <repository provider="Git" branch="master" localPath="assets"/>
-  <database jdbcUrl="jdbc:mysql://localhost:3308/mdw?user=mdw&amp;password=wY5hjcSnQoaqKw8V8NcfcaorDxXw1x9x"/>
 </mdw-workflow>

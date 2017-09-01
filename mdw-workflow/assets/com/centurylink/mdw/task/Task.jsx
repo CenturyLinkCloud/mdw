@@ -71,12 +71,14 @@ class Task extends Component {
                   <UserDate label="Created" date={task.start} />
                   {task.due &&
                     <span>{',   '}
-                      <UserDate label="Due" date={task.due} alert={true} 
+                      <UserDate label="Due" date={task.due} alert={!task.end} 
                         editable={task.editable} notLabel="No Due Date" />
                     </span>
                   }
                   {task.end &&
-                    <UserDate label={task.status} date={task.end} />
+                    <span>{',   '}
+                      <UserDate label={task.status} date={task.end} />
+                    </span>
                   }
                 </div>
                 {task.workgroups &&

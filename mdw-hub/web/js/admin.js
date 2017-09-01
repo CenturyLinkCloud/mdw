@@ -418,6 +418,7 @@ angular.element(document).ready(function() {
     if (theUser.cuid) {
       document.cookie = 'mdw.redirect=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       angular.bootstrap(document, ['adminApp']);
+      $mdwUi.init(ng, theUser);
     }
     else {
       // redirect to login
@@ -425,6 +426,4 @@ angular.element(document).ready(function() {
       window.location.href = $mdwHubRoot + "/login";
     }
   });
-
-  $mdwUi.init(ng);
 });
