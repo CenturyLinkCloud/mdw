@@ -105,6 +105,11 @@ diagramMod.factory('Diagram',
         note.draw();
       });
     });
+    else {
+      diagram.notes.forEach(function(note) {
+        note.draw();
+      });
+    }
 
     if (this.marquee) {
       this.marquee.draw();
