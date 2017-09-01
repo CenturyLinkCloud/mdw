@@ -48,7 +48,6 @@ class Subtasks extends Component {
   }
   
   render() {
-      debugger;
       var rows = [];
       this.state.subtasks.map((subtask) => {   
           rows.push(<Row subtask = {subtask} key = {subtask.id} />);
