@@ -452,6 +452,11 @@
   font-weight: normal;
   color: #767676;
 }
+.mdw-item-sub label:after {
+  display: inline;
+  content: " ";
+  white-space: pre;
+}
 .mdw-item-sub div.popover {
   max-width: 100%;
 }

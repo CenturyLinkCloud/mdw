@@ -51,6 +51,12 @@ class Task extends Component {
   
   render() {
     var task = this.props.task;
+    var animate = true; // not relevant for ad-hoc tasks, but no logic to exclude
+    var lastWorkflowInstanceId = sessionStorage.getItem('taskWorkflowInstanceId');
+    if (task.ownerId == lastWorkflowInstanceId)
+      animate = false;  // avoid annoying animations every time
+    else
+      sessionStorage.setItem('taskWorkflowInstanceId', task.ownerId);
     return (
       <div>
         <div className="mdw-flex-item">
@@ -129,8 +135,9 @@ class Task extends Component {
         }
         <div id="mdw-task-workflow" className="mdw-task-workflow">
           {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
-            <Workflow instanceId={task.ownerId} animate={true} activity={task.activityInstanceId}
-              containerId='mdw-task-workflow' hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
+            <Workflow instanceId={task.ownerId} animate={animate} 
+              activity={task.activityInstanceId} containerId='mdw-task-workflow' 
+              hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
           }
         </div>
       </div>

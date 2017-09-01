@@ -1,9 +1,0 @@
-<PAGELET>
-  <TABLE NAME="BAM Data" VH="150">
-    <TEXT NAME="name" LABEL="Name" VW="150"/>
-    <DROPDOWN NAME="value" LABEL="Value">
-      <OPTION VALUE="#{orderNumber}">Order Number</OPTION>
-      <OPTION VALUE="#{customerLookupResponse.stringValue}">Customer</OPTION>
-    </DROPDOWN>
-  </TABLE>
-</PAGELET>
