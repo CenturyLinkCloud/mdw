@@ -14,7 +14,7 @@ authUserHeader: ct-remote-user
 
 # Allows access to all UI functions and Service APIs permitted for this
 # user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
-devUser: mdwapp
+devUser: dxoakes
 
 # Allows access to all Service APIs permitted for this user without
 # authenticating.  Useful when UI access is through login, but service access
