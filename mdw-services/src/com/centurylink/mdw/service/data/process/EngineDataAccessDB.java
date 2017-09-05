@@ -96,7 +96,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long varInstId = db.isMySQL()?null:this.getNextId("VARIABLE_INST_ID_SEQ");
         String query = "insert into VARIABLE_INSTANCE " +
             "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, " +
-            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, "+now()+",'MDWEngine')";
+            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, "+nowPrecision()+",'MDWEngine')";
         Object[] args = new Object[6];
         args[0] = varInstId;
         args[1] = var.getVariableId();
@@ -112,7 +112,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void updateVariableInstance(VariableInstance var) throws SQLException {
 //        db.openConnection();
-        String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT="+now()+" where VARIABLE_INST_ID=?";
+        String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT="+nowPrecision()+" where VARIABLE_INST_ID=?";
         Object[] args = new Object[2];
         args[0] = var.getStringValue();
         args[1] = var.getInstanceId();
@@ -159,7 +159,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long actInstId = db.isMySQL()?null:this.getNextId("ACTIVITY_INSTANCE_ID_SEQ");
         String query = "insert into ACTIVITY_INSTANCE " +
             "(ACTIVITY_INSTANCE_ID, ACTIVITY_ID, PROCESS_INSTANCE_ID, STATUS_CD, START_DT, CREATE_DT, CREATE_USR) " +
-            "values (?, ?, ?, ?, " + now() + ", " + now() + ", 'MDWEngine')";
+            "values (?, ?, ?, ?, " + nowPrecision() + ", " + nowPrecision() + ", 'MDWEngine')";
         Object[] args = new Object[4];
         args[0] = actInstId;
         args[1] = act.getActivityId();
@@ -196,7 +196,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         if (status.equals(WorkStatus.STATUS_CANCELLED)
                 || status.equals(WorkStatus.STATUS_COMPLETED)
                 || status.equals(WorkStatus.STATUS_FAILED)) {
-            query = "update ACTIVITY_INSTANCE set STATUS_CD=?, STATUS_MESSAGE=?, END_DT="+now() +
+            query = "update ACTIVITY_INSTANCE set STATUS_CD=?, STATUS_MESSAGE=?, END_DT="+nowPrecision() +
                 " where ACTIVITY_INSTANCE_ID=?";
         } else {
             query = "update ACTIVITY_INSTANCE set STATUS_CD=?, STATUS_MESSAGE=?" +
@@ -221,7 +221,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long transInstId = db.isMySQL()?null:this.getNextId("WORK_TRANS_INST_ID_SEQ");
         String query = "insert into WORK_TRANSITION_INSTANCE " +
             "(WORK_TRANS_INST_ID, WORK_TRANS_ID, PROCESS_INST_ID, STATUS_CD, START_DT, DEST_INST_ID, CREATE_DT, CREATE_USR) " +
-            "values (?, ?, ?, ?, "+now()+", ?, "+now()+", 'MDWEngine')";
+            "values (?, ?, ?, ?, "+nowPrecision()+", ?, "+nowPrecision()+", 'MDWEngine')";
         Object[] args = new Object[5];
         args[0] = transInstId;
         args[1] = trans.getTransitionID();
@@ -236,7 +236,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void completeTransitionInstance(Long transInstId, Long toActInstId) throws SQLException {
         String query = "update WORK_TRANSITION_INSTANCE " +
-                "set STATUS_CD=?, END_DT="+now()+", DEST_INST_ID=? " +
+                "set STATUS_CD=?, END_DT="+nowPrecision()+", DEST_INST_ID=? " +
                 "where WORK_TRANS_INST_ID=?";
         Object[] args = new Object[3];
         args[0] = TransitionStatus.STATUS_COMPLETED;
@@ -250,7 +250,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         String query = "insert into PROCESS_INSTANCE " +
             "(PROCESS_INSTANCE_ID, PROCESS_ID, OWNER, OWNER_ID, SECONDARY_OWNER, " +
             "SECONDARY_OWNER_ID, STATUS_CD, MASTER_REQUEST_ID, START_DT, COMMENTS, CREATE_DT, CREATE_USR) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, "+now()+", ?, " + now() + ", 'MDWEngine')";
+            "values (?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, " + nowPrecision() + ", 'MDWEngine')";
         Object[] args = new Object[9];
         args[0] = procInstId;
         args[1] = pi.getProcessId();
@@ -273,11 +273,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         if (status.equals(WorkStatus.STATUS_COMPLETED) ||
                 status.equals(WorkStatus.STATUS_CANCELLED) ||
                 status.equals(WorkStatus.STATUS_FAILED)) {
-            query = "update PROCESS_INSTANCE set STATUS_CD=?, END_DT="+now()+" " +
+            query = "update PROCESS_INSTANCE set STATUS_CD=?, END_DT="+nowPrecision()+" " +
                 " where PROCESS_INSTANCE_ID=?";
         } else if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
             status = WorkStatus.STATUS_IN_PROGRESS;
-            query = "update PROCESS_INSTANCE set STATUS_CD=?, START_DT="+now()+" " +
+            query = "update PROCESS_INSTANCE set STATUS_CD=?, START_DT="+nowPrecision()+" " +
                 " where PROCESS_INSTANCE_ID=?";
         } else {
             query = "update PROCESS_INSTANCE set STATUS_CD=?" +
@@ -298,7 +298,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
             "(DOCUMENT_ID, CREATE_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID, STATUS_CODE, STATUS_MESSAGE) " +
-            "values (?, " + now() + ", ?, ?, ?, ?, ?)";
+            "values (?, " + nowPrecision() + ", ?, ?, ?, ?, ?)";
         Object[] args = new Object[6];
         args[0] = docId;
         args[1] = doc.getDocumentType();
@@ -357,7 +357,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         if (rs.next())
             owner_type = rs.getString("OWNER_TYPE");
 
-        String query = "update DOCUMENT set MODIFY_DT = " + now() + " where DOCUMENT_ID = ?";
+        String query = "update DOCUMENT set MODIFY_DT = " + nowPrecision() + " where DOCUMENT_ID = ?";
         db.runUpdate(query, documentId);
         boolean inMongo = false;  // not found (compatibility)
         if (hasMongo() && owner_type.length() > 0) {
@@ -407,7 +407,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             throws SQLException {
         String query = "insert into EVENT_INSTANCE " +
             "(EVENT_NAME, DOCUMENT_ID, STATUS_CD, CREATE_DT, CONSUME_DT, AUXDATA, REFERENCE, PRESERVE_INTERVAL) " +
-            "values (?, ?, ?, "+now()+", ?, ?, ?, ?)";
+            "values (?, ?, ?, "+nowPrecision()+", ?, ?, ?, ?)";
         Object[] args = new Object[7];
         args[0] = eventName;
         args[1] = documentId;
@@ -441,7 +441,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     private void consumeEventInstance(EventInstance vo, int preserveSeconds) throws SQLException {
         String query = "update EVENT_INSTANCE set DOCUMENT_ID=?, STATUS_CD=?, " +
-            " CONSUME_DT="+now()+", PRESERVE_INTERVAL=? where EVENT_NAME=?";
+            " CONSUME_DT="+nowPrecision()+", PRESERVE_INTERVAL=? where EVENT_NAME=?";
         Object[] args = new Object[4];
         args[0] = vo.getDocumentId();
         args[1] = EventInstance.STATUS_CONSUMED;
@@ -551,7 +551,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             "(EVENT_WAIT_INSTANCE_ID, EVENT_NAME, EVENT_WAIT_INSTANCE_OWNER_ID, " +
             "EVENT_WAIT_INSTANCE_OWNER, EVENT_SOURCE, WORK_TRANS_INSTANCE_ID, WAKE_UP_EVENT," +
             "STATUS_CD, CREATE_DT, CREATE_USR) " +
-            "values (?, ?, ?, ?, ?, ?, ? ,?, "+now()+", 'MDWEngine')";
+            "values (?, ?, ?, ?, ?, ?, ? ,?, "+nowPrecision()+", 'MDWEngine')";
         Object[] args = new Object[8];
         args[0] = id;
         args[1] = eventName;
@@ -696,7 +696,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         String query = "insert into EVENT_LOG " +
             "(EVENT_LOG_ID, EVENT_NAME, EVENT_CATEGORY, EVENT_SUB_CATEGORY, " +
             "EVENT_SOURCE, EVENT_LOG_OWNER, EVENT_LOG_OWNER_ID, CREATE_USR, CREATE_DT, MOD_USR, COMMENTS, STATUS_CD) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, "+now()+", ?, ?, '1')";
+            "values (?, ?, ?, ?, ?, ?, ?, ?, "+nowPrecision()+", ?, ?, '1')";
         Object[] args = new Object[10];
         args[0] = id;
         args[1] = name;
@@ -994,8 +994,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public void cancelTransitionInstances(Long procInstId, String comment, Long transId)
         throws SQLException {
         if (transId!=null) {
-            String query = "update WORK_TRANSITION_INSTANCE set STATUS_CD = 10, END_DT = "+now()+"," +
-                    " MOD_DT = "+now()+", COMMENTS = ? " +
+            String query = "update WORK_TRANSITION_INSTANCE set STATUS_CD = 10, END_DT = "+nowPrecision()+"," +
+                    " MOD_DT = "+nowPrecision()+", COMMENTS = ? " +
                     "where PROCESS_INST_ID = ? and STATUS_CD in (1, 2, 4, 7) and WORK_TRANS_ID = ?";
             Object[] args = new Object[3];
             args[0] = comment;
@@ -1003,8 +1003,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             args[2] = transId;
             db.runUpdate(query, args);
         } else {
-            String query = "update WORK_TRANSITION_INSTANCE set STATUS_CD = 10, END_DT = "+now()+"," +
-                " MOD_DT = "+now()+", COMMENTS = ? " +
+            String query = "update WORK_TRANSITION_INSTANCE set STATUS_CD = 10, END_DT = "+nowPrecision()+"," +
+                " MOD_DT = "+nowPrecision()+", COMMENTS = ? " +
                 "where PROCESS_INST_ID = ? and STATUS_CD in (1, 2, 4, 7)";
             Object[] args = new Object[2];
             args[0] = comment;
