@@ -1,10 +1,10 @@
 {
   "users":  [
     {
-      "name": "Donald Oakes",
-      "id": "dxoakes",
+      "name": "MDW Application",
+      "id": "mdwapp",
       "attributes": {
-        "emailAddress": "donald.oakes@centurylink.com"
+        "emailAddress": "mdwapp@centurylink.com"
       },      
       "groups": [
         "Developers",
@@ -16,30 +16,6 @@
         "Process Design",
         "Task Execution"
       ]            
-    },
-    {
-      "name": "MDW App",
-      "cuid": "mdwapp",
-      "groups": [
-        "Developers"
-      ],
-      "roles": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ]            
-    },
-    {
-      "name": "Manoj Agrawal",
-      "cuid": "aa56486",
-      "groups": [
-        "Developers"
-      ],
-      "roles": [
-        "Process Execution",
-        "Process Design",
-        "Task Execution"
-      ]            
-    }    
+    }   
   ]
 }
