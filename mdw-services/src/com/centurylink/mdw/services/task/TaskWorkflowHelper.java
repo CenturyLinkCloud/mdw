@@ -481,8 +481,8 @@ public class TaskWorkflowHelper {
             if (taskInstance.isSubTask()) {
                 Long masterTaskInstId = taskInstance.getMasterTaskInstanceId();
                 boolean allCompleted = true;
-                for (TaskInstance subTask : getSubTasks()) {
-                    if (subTask.isInFinalStatus()) {
+                for (TaskInstance subTask : getSubTasks(masterTaskInstId)) {
+                    if (!subTask.isInFinalStatus()) {
                         allCompleted = false;
                         break;
                     }
@@ -496,7 +496,7 @@ public class TaskWorkflowHelper {
             }
 
             // in case master task
-            for (TaskInstance subTask : getSubTasks()) {
+            for (TaskInstance subTask : getSubTasks(taskInstance.getTaskInstanceId())) {
                 if (!subTask.isInFinalStatus())
                     new TaskWorkflowHelper(subTask).cancel();
             }
@@ -540,8 +540,8 @@ public class TaskWorkflowHelper {
         }
     }
 
-    private List<TaskInstance> getSubTasks() throws DataAccessException {
-        return new TaskDataAccess().getSubTaskInstances(taskInstance.getTaskInstanceId());
+    private List<TaskInstance> getSubTasks(Long masterTaskInstanceId) throws DataAccessException {
+        return new TaskDataAccess().getSubTaskInstances(masterTaskInstanceId);
     }
 
     void resume(String action) throws ServiceException {

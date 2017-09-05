@@ -1,5 +1,8 @@
 {
-  "attributes": {"Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"},
+  "attributes": {
+    "Groups": "[\"Developers\",\"MDW Support\",\"Site Admin\"]",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
   "category": "GEN",
   "logicalId": "subtaskB",
   "name": "Subtask B",

@@ -1,6 +1,7 @@
 {
   "attributes": {
     "FormName": "Autoform",
+    "Groups": "[\"Developers\",\"MDW Support\",\"Site Admin\"]",
     "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
   },
   "category": "GEN",
