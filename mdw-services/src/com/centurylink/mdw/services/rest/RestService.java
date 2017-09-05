@@ -92,12 +92,16 @@ public abstract class RestService {
                     if ((workgroup == null && user.hasRole(role)) || (workgroup != null && user.hasRole(workgroup, role))) {
                         List<Workgroup> workgroups = getRequiredWorkgroups(content);
                         // Passed Role Authorization, make sure the user is part of the necessary workgroups
-                        // Mainly used for Task services
                         // Only fail if workgroups are defined and user isn't in a workgroup
                         if (workgroups != null && !userInGroups(user, workgroups)) {
-                            // Put a decent message if it's a workgroups issue
+                            String wgs = "";
+                            for (int i = 0; i < workgroups.size(); i++) {
+                                wgs += workgroups.get(i).getName();
+                                if (i < workgroups.size() - 1)
+                                    wgs += ", ";
+                            }
                             throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                                        "User: " + userId + " not authorized for groups " + workgroups + " for: " + path);
+                                        "User: " + userId + " not authorized for groups " + wgs + " for: " + path);
                         }
                         return user;
                     }

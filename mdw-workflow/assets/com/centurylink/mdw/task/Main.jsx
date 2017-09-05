@@ -24,11 +24,31 @@ class Main extends Component {
     this.refreshTask(window.location.hash.substring(8));
   }
   
-  // supports updating dueDate and workgroups
+  // supports updating dueDate and workgroups (TODO: priority)
   updateTask(updates) {
-    // TODO: save state back to server
+    var updatedTask = Object.assign(this.state.task, updates);
+    // save
+    var ok = false;
+    fetch(new Request(this.getChildContext().serviceRoot + '/Tasks/' + this.state.task.id, {
+      method: 'PUT',
+      headers: { Accept: 'application/json'},
+      body: JSON.stringify(updatedTask)
+    }))
+    .then(response => {
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        $mdwUi.clearMessage();
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });
+    // waiting for server response could be confusing
     this.setState({
-      task: Object.assign(this.state.task, updates)
+      task: updatedTask
     });
   }
   

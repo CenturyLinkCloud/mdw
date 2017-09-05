@@ -12,8 +12,8 @@ class Task extends Component {
   constructor(...args) {
     super(...args);
     this.state = {workgroupOptions: []};
-    this.handleClick = this.handleClick.bind(this);
     this.handleWorkgroupSelectChange = this.handleWorkgroupSelectChange.bind(this);
+    this.handleDueDateChange = this.handleDueDateChange.bind(this);
   }  
 
   componentDidMount() {
@@ -33,20 +33,16 @@ class Task extends Component {
     });
   }
   
-  handleClick(event) {
-    if (event.currentTarget.type === 'button') {
-      if (event.currentTarget.value === 'save') {
-        console.log('save task...');
-      }
-    }
-  }
-  
   handleWorkgroupSelectChange(values) {
     var groups = [];
     values.split(',').forEach(val => {
       groups.push(val);
     });
     this.props.updateTask({workgroups: groups});
+  }
+  
+  handleDueDateChange(dueDate) {
+    this.props.updateTask({due: dueDate});
   }
   
   render() {
@@ -74,11 +70,11 @@ class Task extends Component {
                   }
                 </div>
                 <div className="mdw-item-group">
-                  <UserDate label="Created" date={task.start} />
+                  <UserDate id="taskCreated" label="Created" date={task.start} />
                   {task.due &&
                     <span>{',   '}
-                      <UserDate label="Due" date={task.due} alert={!task.end} 
-                        editable={task.editable} notLabel="No Due Date" />
+                      <UserDate id="taskDue" label="Due" date={task.due} alert={!task.end} 
+                        editable={task.editable} notLabel="No Due Date" onChange={this.handleDueDateChange} />
                     </span>
                   }
                   {task.end &&

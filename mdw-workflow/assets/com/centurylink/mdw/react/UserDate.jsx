@@ -1,6 +1,8 @@
 import React, {Component} from '../node/node_modules/react';
+import ReactDOM from '../node/node_modules/react-dom';
 import PropTypes from '../node/node_modules/prop-types';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Button, Glyphicon, Popover, OverlayTrigger} from '../node/node_modules/react-bootstrap';
+var DatePicker = require('../node/node_modules/react-bootstrap-date-picker');
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -11,6 +13,32 @@ class UserDate extends Component {
   constructor(...args) {
     super(...args);
     this.state = { task: {} };
+    this.showCalendar = this.showCalendar.bind(this);
+    this.expandCalendar = this.expandCalendar.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  
+  handleChange(isoString) {
+    if (this.ignore) {
+      this.ignore = false;
+      return;
+    }
+    if (this.props.onChange) {
+      this.props.onChange(new Date(isoString));
+    }
+    if (isoString != null) {
+      this.refs.popoverTrigger.hide();
+    }
+  }
+  
+  expandCalendar(event) {
+    event.srcElement.parentElement.parentElement.style.height = '280px';
+  }
+  
+  showCalendar() {
+    this.ignore = true;
+    var datePicker = ReactDOM.findDOMNode(this.refs.datePicker);
+    datePicker.firstElementChild.focus();
   }
   
   monthAndDay(date) {
@@ -104,6 +132,18 @@ class UserDate extends Component {
         text = this.future(date);
       }
     }
+
+    const datePickerPopover = (
+      <Popover id="date-picker-popover" placement="right" style={{width:'280px'}}>
+        <div>
+          <DatePicker
+           ref="datePicker" clearButtonElement={<Glyphicon glyph="calendar" />}
+           value={date ? date.toISOString() : null}
+           onClear={this.showCalendar} onFocus={this.expandCalendar} onChange={this.handleChange} />
+        </div>
+      </Popover>
+    );
+    
     return (
       <span>
         {(date || !this.props.notLabel) &&
@@ -121,10 +161,13 @@ class UserDate extends Component {
           <span><i>{this.props.notLabel}</i></span>
         }
         {this.props.editable &&
-          <Button type="button" className="mdw-btn" 
-            style={{border: '1px solid #2e6da4', padding: '3px 5px 1px 6px', marginLeft: '8px'}}>
-            <Glyphicon glyph="calendar" className="mdw-date-glyph" />
-          </Button>
+          <OverlayTrigger ref="popoverTrigger" trigger="click" placement="right" 
+            overlay={datePickerPopover} rootClose={true}>
+            <Button type="button" className="mdw-btn" onClick={this.handleClick}
+              style={{border: '1px solid #2e6da4', padding: '3px 5px 1px 6px', marginLeft: '8px'}}>
+              <Glyphicon glyph="calendar" className="mdw-date-glyph" />
+            </Button>
+          </OverlayTrigger>
         }
       </span>
     );
