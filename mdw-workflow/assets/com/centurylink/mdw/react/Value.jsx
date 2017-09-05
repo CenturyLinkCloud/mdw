@@ -8,10 +8,7 @@ class Value extends Component {
   constructor(...args) {
     super(...args);
     this.showCalendar = this.showCalendar.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
-  
-  handleChange(event) {
+    this.handleCheckboxClick = this.handleCheckboxClick.bind(this);
   }
   
   showCalendar() {
@@ -19,8 +16,14 @@ class Value extends Component {
     elem.previousElementSibling.previousElementSibling.focus();    
   }
   
-  render() {    
+  handleCheckboxClick(event) {
+    this.props.onChange(event, (this.props.value.value === 'true'));
+  }
+  
+  render() {
     var value = this.props.value;
+    var editable = this.props.editable && value.display !== 'ReadOnly';
+
     return (
       <div className={classNames('form-group', {'has-error': value.error})}>
         <label className={classNames('control-label', 'col-xs-2', {
@@ -36,25 +39,25 @@ class Value extends Component {
           {value.isDocument && value.type !== 'java.lang.Exception' &&
             <textarea className="form-control mdw-document-input" 
               id={value.name} name={value.name} rows={value.showLines} 
-              readOnly={!value.editable} value={value.value} onChange={this.handleChange} />
+              readOnly={!editable} value={value.value} onChange={this.props.onChange} />
           }
           {value.type === 'java.lang.Boolean' &&
             <input type="checkbox" className="checkbox mdw-boolean-input" 
               id={value.name} name={value.name} 
-              readOnly={!value.editable} value={value.value} onChange={this.handleChange} />
+              readOnly={!editable} value={value.value} onClick={this.handleCheckboxClick} />
           }
           {value.type === 'java.util.Date' &&
             <DatePicker
               id={value.name} name={value.name}
               clearButtonElement={<Glyphicon glyph="calendar" />}
               onClear={this.showCalendar}
-              disabled={!value.editable} value={value.value} onChange={this.handleChange} />
+              disabled={!editable} value={value.value} onChange={this.props.onChange} />
           }
           {value.type !== 'java.util.Date' && value.type !== 'java.lang.Boolean' &&
               !value.isDocument && 
             <input type="text" className="form-control" 
               id={value.name} name={value.name} value={value.value} 
-              readOnly={!value.editable} onChange={this.handleChange} />
+              readOnly={!editable} onChange={this.props.onChange} />
           }
         </div>
       </div>

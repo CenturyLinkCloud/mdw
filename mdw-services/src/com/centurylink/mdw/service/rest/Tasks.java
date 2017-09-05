@@ -391,9 +391,9 @@ public class Tasks extends JsonRestService implements JsonExportable {
           "If subData is not present, returns task summary info. Options for subData: values, indexes, regEvent")
     @ApiImplicitParams({
         @ApiImplicitParam(name="Task", paramType="body", dataType="com.centurylink.mdw.model.task.TaskInstance", value="When no subData is specified"),
-        @ApiImplicitParam(name="Indexes", paramType="body", dataType="com.centurylink.mdw.model.task.TaskIndexes", value="When {subData}=indexes"),
-        @ApiImplicitParam(name="Event", paramType="body", dataType="com.centurylink.mdw.model.event.Event", value="When {subData}=regEvent.  Only the id (event name) field is mandatory in Event object.  Optionally, a completionCode can specified - Default is FINISHED"),
-        @ApiImplicitParam(name="Values", paramType="body", dataType="java.lang.Object", value="When {subData}=values. JSON object parseable into a key/value Map.")})
+        @ApiImplicitParam(name="indexes", paramType="body", dataType="com.centurylink.mdw.model.task.TaskIndexes", value="When {subData}=indexes"),
+        @ApiImplicitParam(name="regEvent", paramType="body", dataType="com.centurylink.mdw.model.event.Event", value="When {subData}=regEvent.  Only the id (event name) field is mandatory in Event object.  Optionally, a completionCode can specified - Default is FINISHED"),
+        @ApiImplicitParam(name="values", paramType="body", dataType="java.lang.Object", value="When {subData}=values. JSON object parseable into a key/value Map.")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
