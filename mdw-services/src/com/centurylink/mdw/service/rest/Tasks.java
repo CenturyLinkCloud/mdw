@@ -76,9 +76,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * TODO: Clean up references to TaskManager and instead go through TaskServices.
- */
 @Path("/Tasks")
 @Api("Task instances")
 public class Tasks extends JsonRestService implements JsonExportable {
