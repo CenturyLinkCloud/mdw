@@ -1,5 +1,6 @@
 import React, { Component } from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import Heading from './Heading.jsx';
 import UserDate from '../react/UserDate.jsx';
 
 class History extends Component {
@@ -25,15 +26,20 @@ class History extends Component {
 
   render() {
     return (
-      <ul className="mdw-checklist">
-        {this.state.taskHistory.map( history => {
-          return (
-            <li key={history.id}>
-              <HistoryItem history={history} />
-            </li>
-          );
-        } )}
-      </ul>
+      <div>
+        <Heading task={this.props.task} />
+        <div className="mdw-section">
+          <ul className="mdw-checklist">
+            {this.state.taskHistory.map( history => {
+              return (
+                <li key={history.id}>
+                  <HistoryItem history={history} />
+                </li>
+              );
+            } )}
+          </ul>
+        </div>
+      </div>
     );
   }
 }

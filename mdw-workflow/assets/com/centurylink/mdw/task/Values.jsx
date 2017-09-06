@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import Heading from './Heading.jsx';
 import Value from '../react/Value.jsx';
 
 class Values extends Component {
@@ -115,24 +116,29 @@ class Values extends Component {
   
   render() {
     return (
-      <form name="valuesForm" className="form-horizontal" role="form">
-        {this.state.values.map(value => {
-          return (
-            <Value value={value} key={value.name} 
-              editable={this.props.task.editable} onChange={this.handleChange} />
-          );
-        })}
-        {this.props.task.editable && this.state.values.length > 0 &&
-          <div className="form-group">
-            <label className="control-label col-xs-2" />
-            <div className="col-xs-4">
-              <Button className="mdw-btn" bsStyle='primary' onClick={this.handleSave}>
-                <Glyphicon glyph="floppy-disk" />{' Save'}
-              </Button>
-            </div>
-          </div>
-        }
-      </form>
+      <div>
+        <Heading task={this.props.task} />
+        <div className="mdw-section">
+          <form name="valuesForm" className="form-horizontal" role="form">
+            {this.state.values.map(value => {
+              return (
+                <Value value={value} key={value.name} 
+                  editable={this.props.task.editable} onChange={this.handleChange} />
+              );
+            })}
+            {this.props.task.editable && this.state.values.length > 0 &&
+              <div className="form-group">
+                <label className="control-label col-xs-2" />
+                <div className="col-xs-4">
+                  <Button className="mdw-btn" bsStyle='primary' onClick={this.handleSave}>
+                    <Glyphicon glyph="floppy-disk" />{' Save'}
+                  </Button>
+                </div>
+              </div>
+            }
+          </form>
+        </div>
+      </div>
     );
   }
 }

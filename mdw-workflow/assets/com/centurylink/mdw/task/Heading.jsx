@@ -20,11 +20,12 @@ class Heading extends Component {
           </Link>
           {this.props.task.dirty && <span className="mdw-dirty">*</span>}
         </div>
-        {this.props.task.actionable &&
-          <div className="mdw-heading-actions">
+        <div className="mdw-heading-actions">
+          {this.props.children}
+          {this.props.task.actionable &&
             <Action task={this.props.task} refreshTask={this.props.refreshTask} />
-          </div>
-        }
+          }
+        </div>
       </div>
     );
   }

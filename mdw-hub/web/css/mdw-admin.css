@@ -241,6 +241,9 @@
 .mdw-heading-actions-wrap {
   float: right;
 }
+.mdw-action-btn {
+	margin-left: 4px;
+}
 .mdw-heading-options {
   float: left;
   margin: 0 20px 0 20px;  

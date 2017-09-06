@@ -256,7 +256,7 @@ class Action extends Component {
     return (
       <OverlayTrigger ref="actionTrigger" trigger="click" placement="left" 
         overlay={actionPopover} rootClose={false}>
-        <Button className="mdw-btn" bsStyle="primary">
+        <Button className="mdw-btn mdw-action-btn" bsStyle="primary">
           <Glyphicon glyph="ok" />{" Action"}
         </Button>
       </OverlayTrigger>
