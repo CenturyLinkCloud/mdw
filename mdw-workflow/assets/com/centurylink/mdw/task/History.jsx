@@ -1,5 +1,6 @@
 import React, { Component } from '../node/node_modules/react';
-import {Table} from '../node/node_modules/react-bootstrap';
+import PropTypes from '../node/node_modules/prop-types';
+import UserDate from '../react/UserDate.jsx';
 
 class History extends Component {
   constructor( ...args ) {
@@ -11,43 +12,65 @@ class History extends Component {
     fetch( new Request( '/mdw/services/Tasks/' + this.props.task.id + '/history', {
       method: 'GET',
       headers: { Accept: 'application/json' }
-    }))
+    } ) )
       .then( response => {
         return response.json();
       } )
       .then( json => {
         this.setState( {
           taskHistory: json.taskHistory
-        });
-      });
+        } );
+      } );
   }
 
   render() {
-    var rows = [];
-    this.state.taskHistory.map((history) => {   
-      rows.push(<Row history = {history} key = {history.id} />);
-    });
-    return (<div>
-      <div>
-        <label className = "col-xs-3">Date/Time</label>
-        <label className = "col-xs-3">Action</label>
-        <label className = "col-xs-3">User</label>
-        <label>Comments</label>
-     </div>
-    {rows}
-    </div>);
+    return (
+      <ul className="mdw-checklist">
+        {this.state.taskHistory.map( history => {
+          return (
+            <li key={history.id}>
+              <HistoryItem history={history} />
+            </li>
+          );
+        } )}
+      </ul>
+    );
   }
 }
 
-function Row(props) {
+function HistoryItem( props, context ) {
+  var history = props.history;
   return (
-      <div>
-        <div className = "col-xs-3">{props.history.createDate}</div>
-        <div className = "col-xs-3">{props.history.eventName}</div>
-        <div className = "col-xs-3">{props.history.createUser}</div>
-        <div>{props.history.comment}</div>
+    <div>
+      <div className="mdw-flex-item">
+        <div className="mdw-item-sub">
+          <label>Action:</label>
+          {history.eventName}
+          <span>{',   '}
+            <UserDate label="Created" date={history.createDate} />
+          </span>
+          <span>{',   '}
+            <img src={context.hubRoot + '/images/user.png'} alt="user" />
+            {' '}<a href={context.hubRoot + '#/users/' + history.createUser}>{history.createUser}</a>
+          </span>
+        </div>
       </div>
+      <div className="mdw-flex-item">
+        <div className="mdw-item-sub">
+          {history.comment &&
+            <span>
+              <label>Comments:</label>
+              {history.comment}
+            </span>
+          }
+        </div>
+      </div>
+    </div>
   );
 }
+
+History.contextTypes = HistoryItem.contextTypes = {
+  hubRoot: PropTypes.string
+};
 
 export default History; 
