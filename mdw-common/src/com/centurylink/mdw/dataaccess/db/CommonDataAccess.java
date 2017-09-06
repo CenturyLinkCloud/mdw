@@ -197,6 +197,10 @@ public class CommonDataAccess {
         return db.isMySQL()?"now()":"sysdate";
     }
 
+    protected String nowPrecision() {
+        return db.isPrecisionSupport()?db.isMySQL()?"now(6)":"systimestamp":now();
+    }
+
     protected String dateConditionToMySQL(String value) {
         value = value.replaceAll("to_date", "str_to_date");
         value = value.replaceAll("mm/dd/yyyy hh24:mi:ss", "%m/%d/%Y %H:%i:%s");
@@ -841,7 +845,7 @@ public class CommonDataAccess {
         Long varInstId = db.isMySQL() ? null : getNextId("VARIABLE_INST_ID_SEQ");
         String query = "insert into VARIABLE_INSTANCE " +
             "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, " +
-            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, "+now()+",'MDWEngine')";
+            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, "+nowPrecision()+",'MDWEngine')";
         Object[] args = new Object[6];
         args[0] = varInstId;
         args[1] = variableInstance.getVariableId();
@@ -869,7 +873,7 @@ public class CommonDataAccess {
     }
 
     protected void updateVariable0(VariableInstance variableInstance) throws SQLException {
-        String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT=" + now() + " where VARIABLE_INST_ID=?";
+        String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT=" + nowPrecision() + " where VARIABLE_INST_ID=?";
         Object[] args = new Object[2];
         args[0] = variableInstance.getStringValue();
         args[1] = variableInstance.getInstanceId();

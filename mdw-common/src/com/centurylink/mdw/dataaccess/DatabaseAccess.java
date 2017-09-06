@@ -78,6 +78,11 @@ public class DatabaseAccess {
         return isMariaDB;
     }
 
+    private boolean precisionSupport;
+    public boolean isPrecisionSupport() {
+        return precisionSupport;
+    }
+
     private boolean isEmbedded;
 
     private static boolean isMongoDB = false;
@@ -127,6 +132,11 @@ public class DatabaseAccess {
             isMariaDB = dbprop != null && dbprop.startsWith("jdbc:mariadb");
             isEmbedded = dbprop != null && isMariaDB && isEmbeddedDb(dbprop);
         }
+
+        if ("true".equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_DB_PRECISION_TIME)))
+            precisionSupport = true;
+        else
+            precisionSupport = false;
 
         if (isEmbedded) {
             try {

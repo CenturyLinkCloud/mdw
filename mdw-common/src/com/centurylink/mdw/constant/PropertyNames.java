@@ -37,6 +37,7 @@ public class PropertyNames {
     public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
     public static final String MDW_DB_BORROW_TIMEOUT = "mdw.database.borrow.timeout";   // seconds; 0 - block indefinitely, -1 - fail right away
     public static final String MDW_DB_TRACE = "mdw.database.trace";     // none, query, timing
+    public static final String MDW_DB_PRECISION_TIME = "mdw.database.macrosecondprecision.enable";  // If true, then will save datetime/timestamp using macrosecond precision - Depends on declaring table columns correctly
     // for embedded db
     public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
     public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";

@@ -253,7 +253,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 " CREATE_DT, CREATE_USR";
             if (taskInst.getTitle() != null)
                 query += ", TASK_TITLE";
-            query += ") values (?, ?, ?, ?, ?, ?, ?, " + now() + ", ?, ?, ?, ?, ?, ?, ?, ?, " + now() + ", 'mdw'";
+            query += ") values (?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", 'mdw'";
             if (taskInst.getTitle() != null)
                 query += ", ?";
             query += ")";
@@ -309,7 +309,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 i++;
             }
             if (setEndDate)
-                sb.append(", TASK_END_DT=" + now() + "");
+                sb.append(", TASK_END_DT=" + nowPrecision() + "");
             sb.append(" where TASK_INSTANCE_ID=?");
             args[n] = taskInstId;
             String query = sb.toString();
@@ -328,7 +328,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             String query = "update TASK_INSTANCE" +
-                " set TASK_INSTANCE_STATE=?, TASK_INSTANCE_STATUS=?, TASK_END_DT="+now()+
+                " set TASK_INSTANCE_STATE=?, TASK_INSTANCE_STATUS=?, TASK_END_DT="+nowPrecision()+
                 " where TASK_INSTANCE_ID=?";
             Object[] args = new Object[3];
             args[0] = taskInst.getStateCode();

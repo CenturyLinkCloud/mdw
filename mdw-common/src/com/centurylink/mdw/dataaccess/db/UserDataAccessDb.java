@@ -222,7 +222,7 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
             String query = "insert into EVENT_LOG " +
                 "(EVENT_LOG_ID, EVENT_NAME, EVENT_CATEGORY, EVENT_SUB_CATEGORY, " +
                 "EVENT_SOURCE, EVENT_LOG_OWNER, EVENT_LOG_OWNER_ID, CREATE_USR, CREATE_DT, COMMENTS, STATUS_CD) " +
-                "values (?, ?, ?, ?, ?, ?, ?, ?, " + now() + ", ?, '1')";
+                "values (?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, '1')";
             Object[] args = new Object[9];
             args[0] = id;
             args[1] = userAction.getAction().toString();
