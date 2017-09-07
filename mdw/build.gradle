@@ -245,35 +245,8 @@ task archiveAssetZips {
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.project {
-                groupId = "com.centurylink.mdw.assets"
-                fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { discoveredFile ->     
-                        def filterName = discoveredFile.name - ".zip"
-                        def artifactName
-                        def hyphenCount = 2
-                        if (filterName.contains("SNAPSHOT")) {
-                            hyphenCount = 3
-                        }
-                        def segments = filterName.split("-")
-                        if (segments.size() > hyphenCount)
-                            artifactName = segments[0] + "-" +segments[1]
-                        else
-                            artifactName = segments[0]
-                        addFilter(filterName) { artifact, file ->
-                           file.name == filterName
-                        }
-                        pom(filterName).artifactId = artifactName
-                     }
-            }
-        }
-    }
-}
-
 task buildAll(type: GradleBuild) {
-    dependsOn zipTemplates, archiveAssetZips
+    dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
