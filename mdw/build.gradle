@@ -231,56 +231,33 @@ uploadArchives {
         }
     }
 }
+
 task archiveAssetZips {
     dependsOn zipAssetPackages
-    ext.discoveredFiles = []
     doLast{
-        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*').each { file ->
+        fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { file ->
             if(file.name.endsWith("zip")) {
-                discoveredFiles.add(file)
+                def filterName = file.name - ".zip"
+                def artifactName
+                def hyphenCount = 2
+                if (filterName.contains("SNAPSHOT")) {
+                    hyphenCount = 3
+                }
+                def segments = filterName.split("-")
+                if (segments.size() > hyphenCount)
+                    artifactName = segments[0] + "-" +segments[1]
+                else
+                    artifactName = segments[0]
                 artifacts{
-                     archives file
+                     archives file:file
                 }
             }
         }
     }
 }
-task uploadAssetsToMavenCentral {
-    dependsOn archiveAssetZips
-    doLast{
-        ext.ossrhUsername = System.getProperty("ossrhUsername")
-        ext.ossrhPassword = System.getProperty("ossrhPassword")
-        repositories {
-            mavenDeployer {
-                repository(url: mavenRepoUrl) {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-                pom.project {
-                    group = "com.centurylink.mdw.assets"
-                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
-                        def filterName = discoveredFile.name - ".zip"
-                        def artifactName
-                        def hyphenCount = 2
-                        if (artifact.contains("SNAPSHOT")) {
-                            hyphenCount = 3
-                        }
-                        def segments = filterName.split("-")
-                        if (segments.size() > hyphenCount)
-                            artifactName = segments[0] + "-" +segments[1]
-                        else
-                            artifactName = segments[0]
-                        addFilter(filterName) { artifact, file ->
-                           file.name == filterName
-                        }
-                        pom(filterName).artifactId = artifactName
-                     }
-                 }   
-            }
-        }
-    }
-}
+
 task buildAll(type: GradleBuild) {
-    dependsOn zipTemplates
+    dependsOn zipTemplates, archiveAssetZips
     buildFile = "build.gradle"
     tasks = ["build"]
 }

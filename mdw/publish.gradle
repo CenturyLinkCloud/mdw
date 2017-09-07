@@ -112,9 +112,9 @@ task exportAssetPackages {
 }
 exportAssetPackages.mustRunAfter cleanPackages
 
-task zipAssetPackages {
+task zipAssetbasePackages {
     description = "Export Asset Packages"
-    file("../${mdwAssetOutputDir}").mkdirs()
+    file("../${mdwAssetZipOutputDir}").mkdirs()
     // superCats are categorized as the parent package
     // (eg com.centurylink.mdw.tests.camel is category "tests" instead of "camel")
     def superCats = ["services", "tests", "demo"]
@@ -135,9 +135,9 @@ task zipAssetPackages {
         }
         
         println "    " + pkgCat + ": " + pkgName
-        
+                
         task "zipAsset$pkgCat"(type: Zip) {
-            destinationDir = file("../${mdwAssetOutputDir}")
+            destinationDir = file("../${mdwAssetZipOutputDir}")
             archiveName = "${pkgCat}-${mdwVersion}.zip"
             from "../${mdwAssetRoot}"
             include "${pkgName}/**"
@@ -145,7 +145,7 @@ task zipAssetPackages {
     }
 }
 
-task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAsset")}) {
+task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAssetbase")}) {
 }
 
 task buildPackages(type: Copy) {
