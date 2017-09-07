@@ -28,17 +28,15 @@ class History extends Component {
     return (
       <div>
         <Heading task={this.props.task} />
-        <div className="mdw-section">
-          <ul className="mdw-checklist">
-            {this.state.taskHistory.map( history => {
-              return (
-                <li key={history.id}>
-                  <HistoryItem history={history} />
-                </li>
-              );
-            } )}
-          </ul>
-        </div>
+        <ul className="mdw-checklist">
+          {this.state.taskHistory.map( history => {
+            return (
+              <li key={history.id}>
+                <HistoryItem history={history} />
+              </li>
+            );
+          } )}
+        </ul>
       </div>
     );
   }
@@ -47,28 +45,30 @@ class History extends Component {
 function HistoryItem( props, context ) {
   var history = props.history;
   return (
-    <div>
-      <div className="mdw-flex-item">
-        <div className="mdw-item-sub">
-          <label>Action:</label>
-          {history.eventName}
-          <span>{',   '}
-            <UserDate label="Created" date={history.createDate} />
-          </span>
-          <span>{',   '}
-            <img src={context.hubRoot + '/images/user.png'} alt="user" />
-            {' '}<a href={context.hubRoot + '#/users/' + history.createUser}>{history.createUser}</a>
-          </span>
-        </div>
-      </div>
-      <div className="mdw-flex-item">
-        <div className="mdw-item-sub">
-          {history.comment &&
-            <span>
-              <label>Comments:</label>
-              {history.comment}
-            </span>
-          }
+    <div className="mdw-flex-item">
+      <div className="mdw-flex-item-left">
+        <div>
+          <div>
+            <div className="mdw-item-sub" style={{ height: '16px' }}>
+              <label>Action:</label>
+              {history.eventName}
+              <span>{',   '}
+                <UserDate label="Created" date={history.createDate} />
+              </span>
+              <span>{',   '}
+                <img src={context.hubRoot + '/images/user.png'} alt="user" />
+                {' '}<a className="mdw-link" href={context.hubRoot + '#/users/' + history.createUser}>{history.createUser}</a>
+              </span>
+            </div>
+            <div className="mdw-item-sub">
+              {history.comment &&
+                <span>
+                  <label>Comments:</label>
+                  {history.comment}
+                </span>
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
