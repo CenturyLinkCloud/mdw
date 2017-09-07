@@ -254,7 +254,7 @@ uploadArchives {
                         def filterName = discoveredFile.name - ".zip"
                         def artifactName
                         def hyphenCount = 2
-                        if (artifact.contains("SNAPSHOT")) {
+                        if (filterName.contains("SNAPSHOT")) {
                             hyphenCount = 3
                         }
                         def segments = filterName.split("-")
