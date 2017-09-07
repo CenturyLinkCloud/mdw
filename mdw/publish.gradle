@@ -112,7 +112,7 @@ task exportAssetPackages {
 }
 exportAssetPackages.mustRunAfter cleanPackages
 
-task zipAssetbasePackages {
+task zipAssetPackages {
     description = "Export Asset Packages"
     file("../${mdwAssetZipOutputDir}").mkdirs()
     // superCats are categorized as the parent package
@@ -145,7 +145,7 @@ task zipAssetbasePackages {
     }
 }
 
-task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAssetbase")}) {
+task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAsset")}) {
 }
 
 task buildPackages(type: Copy) {
