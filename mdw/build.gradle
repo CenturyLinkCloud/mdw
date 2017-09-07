@@ -250,7 +250,7 @@ uploadArchives {
         mavenDeployer {
             pom.project {
                 groupId = "com.centurylink.mdw.assets"
-                fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { file ->     
+                fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { discoveredFile ->     
                         def filterName = discoveredFile.name - ".zip"
                         def artifactName
                         def hyphenCount = 2
