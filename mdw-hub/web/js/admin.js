@@ -225,7 +225,7 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
       var url = attrs.tabLink;
       elem.bind('click', function() {
         if (url.startsWith('#')) {
-          scope.authUser.setActiveTab(url);
+          getAuthUser(scope).setActiveTab(url);
           $location.path(url.substring(1));
           scope.$apply();
         }
@@ -263,9 +263,10 @@ adminApp.directive('navLink', ['$document', '$route', '$location',
         elem.bind('click', function() {
           scope.setNavMenuWidth(); // clear full width
           if (attrs.fullWidth) {
-            var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
             scope.setFullWidth(true);
-            scope.setNavMenuWidth(navMenu[0].offsetWidth);
+            var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
+            if (navMenu)
+              scope.setNavMenuWidth(navMenu[0].offsetWidth);
           }
           else {
             scope.setFullWidth(false);
@@ -284,7 +285,7 @@ adminApp.directive('mdwRoute', ['$location', function($location) {
         var path = attrs.mdwRoute;
         if (!path.startsWith('#'))
           path = '#' + path;
-        scope.authUser.setActiveTab(path);
+        getAuthUser(scope).setActiveTab(path);
         $location.path(path.substring(1));
         scope.$apply();
       });
@@ -405,6 +406,16 @@ adminApp.filter('diff', function($sce) {
     }
   };
 }).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
+function getAuthUser(scope) {
+  var authUser = scope.authUser;
+  var parent = scope.$parent;
+  while (!authUser && parent) {
+    authUser = parent.authUser;
+    parent = parent.$parent;
+  }
+  return authUser;
+}
 
 // wait until the user is loaded to manually bootstrap angularjs
 var theUser;

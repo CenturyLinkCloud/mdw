@@ -169,6 +169,33 @@ public class ProcessCache implements CacheService {
         }
     }
 
+    /**
+     * Find all definitions matching the specified version spec.  Returns shallow processes.
+     */
+    public static List<Process> getProcessesSmart(AssetVersionSpec spec) {
+        try {
+            List<Process> matches = new ArrayList<>();
+            for (Process process : getAllProcesses()) {
+                if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
+                    if (spec.getName().equals(process.getProcessName())) {
+                        if (process.meetsVersionSpec(spec.getVersion()))
+                            matches.add(process);
+                    }
+                }
+                else
+                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                        if (process.meetsVersionSpec(spec.getVersion()))
+                            matches.add(process);
+                    }
+            }
+            return matches;
+        }
+        catch (DataAccessException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
     private Process getProcess0(String procname, int version, boolean exceptionWhenNotFound) {
         if (procname.endsWith(".proc"))
             procname = procname.substring(0, procname.length() - 5);

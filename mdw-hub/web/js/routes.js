@@ -224,7 +224,7 @@ routesSvc.factory('routes', function() {
         controller: 'ActivitiesController'
       },
       {
-        path: '/workflow/activities/:instanceId/:processInstanceId',
+        path: '/workflow/activities/:instanceId',
         templateUrl: 'workflow/activity.html',
         controller: 'ActivityController'
       },     

@@ -73,6 +73,11 @@ public class AssetVersionSpec {
             return packageName + "/" + name;
     }
 
+    public boolean isRange() {
+        return version != null && (version.indexOf('[') >= 0 || version.indexOf(',') >= 0
+                || version.indexOf(')') >= 0);
+    }
+
     public String toString() {
         if (version == null)
             return getQualifiedName();

@@ -364,7 +364,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Variable var = runtimeContext.getProcess().getVariable(name);
-        if (var == null && !runtimeContext.isExpression(name))
+        if (var == null && !ProcessRuntimeContext.isExpression(name))
             throw new ServiceException(ServiceException.NOT_FOUND, "No variable defined: " + name);
         String stringVal = null;
         if (var != null && VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), var.getVariableType())) {
@@ -422,10 +422,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 AssetVersionSpec spec = AssetVersionSpec.parse(procDefSpec);
                 if (spec.getName().endsWith(".proc"))
                     spec = new AssetVersionSpec(spec.getPackageName(), spec.getName().substring(0, spec.getName().length() - 5), spec.getVersion());
-                Process procDef = ProcessCache.getProcessSmart(spec);
-                if (procDef == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for spec: " + procDefSpec);
-                query.setFilter("processId", procDef.getId());
+                if (spec.isRange()) {
+                    List<Process> procDefs = ProcessCache.getProcessesSmart(spec);
+                    String[] procIds = new String[procDefs.size()];
+                    for (int i = 0; i < procDefs.size(); i++)
+                        procIds[i] = procDefs.get(i).getId().toString();
+                    query.setArrayFilter("processIds", procIds);
+                }
+                else {
+                    Process procDef = ProcessCache.getProcessSmart(spec);
+                    if (procDef == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for spec: " + procDefSpec);
+                    query.setFilter("processId", procDef.getId());
+                }
             }
             return getWorkflowDao().getProcessInstances(query);
         }

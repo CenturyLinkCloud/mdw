@@ -118,6 +118,25 @@ public class WorkflowDataAccess extends CommonDataAccess {
         if (processId != null) {
             sb.append(" and pi.process_id = ").append(processId).append("\n");
         }
+        else {
+            // processIds
+            String[] processIds = query.getArrayFilter("processIds");
+            if (processIds != null && processIds.length > 0) {
+                sb.append(" and pi.process_id in (");
+                for (int i = 0; i < processIds.length; i++) {
+                    sb.append(processIds[i]);
+                    if (i < processIds.length - 1)
+                        sb.append(",");
+                }
+                sb.append(")\n");
+            }
+        }
+        // activityInstanceId
+        long activityInstanceId = query.getLongFilter("activityInstanceId");
+        if (activityInstanceId > 0) {
+            sb.append(" and pi.process_instance_id in (select process_instance_id from activity_instance where activity_instance_id =");
+            sb.append(activityInstanceId).append(")\n");
+        }
         // status
         String status = query.getFilter("status");
         if (status != null) {
