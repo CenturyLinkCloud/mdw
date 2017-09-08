@@ -56,7 +56,7 @@
         <ul class="mdw-list">
           <li ng-repeat="request in solution.members.requests">
             <div>
-              <a class="mdw-item-link" href="#/workflow/requests/{{request.id}}">{{request.masterRequestId}}</a>
+              <a class="mdw-item-link" href="#/workflow/masterRequests/{{request.masterRequestId}}">{{request.masterRequestId}}</a>
               <div class="mdw-item-action" ng-if="authUser.hasRole('Task Execution')">
                 <a uib-tooltip="Remove request {{request.masterRequestId}}" tooltip-placement="left" 
                   ng-if="!edit && !confirm" ng-click="removeRequest(request)">
