@@ -8,6 +8,7 @@ import Task from './Task.jsx';
 import Values from './Values.jsx';
 import Discussion from './Discussion.jsx';
 import Subtasks from './Subtasks.jsx';
+import NewSubtask from './NewSubtask.jsx';
 import History from './History.jsx';
 
 class Main extends Component {
@@ -95,6 +96,9 @@ class Main extends Component {
                 refreshTask={this.refreshTask} updateTask={this.updateTask} />} />
               <Route path={hub + 'tasks/:id/subtasks'}
                 render={() => <Subtasks task={this.state.task}
+                refreshTask={this.refreshTask} updateTask={this.updateTask} />} />
+              <Route path={hub + 'tasks/:id/newSubtask'}
+                render={() => <NewSubtask task={this.state.task} 
                 refreshTask={this.refreshTask} updateTask={this.updateTask} />} />
               <Route path={hub + 'tasks/:id/history'} 
                 render={() => <History task={this.state.task}

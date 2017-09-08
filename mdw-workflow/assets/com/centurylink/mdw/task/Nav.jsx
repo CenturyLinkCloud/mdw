@@ -17,6 +17,7 @@ class Nav extends Component {
           <NavLink to="/values" id={id}>Values</NavLink>
           <NavLink to="/discussion" id={id}>Discussion</NavLink>
           <NavLink to="/subtasks" id={id}>Subtasks</NavLink>
+          <NavLink to="/newSubtask" id={id}>New Subtask</NavLink>
           <NavLink to="/history" id={id}>History</NavLink>
         </ul>
         <ul className="nav mdw-nav">
@@ -28,6 +29,7 @@ class Nav extends Component {
 }
 
 function NavLink(props, context) {
+    debugger;
   const path = window.location.pathname;
   if (!path.startsWith('/'))
       path = '/' + path; // ie 11
