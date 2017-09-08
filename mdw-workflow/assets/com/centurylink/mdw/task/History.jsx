@@ -27,7 +27,7 @@ class History extends Component {
   render() {
     return (
       <div>
-        <Heading task={this.props.task} />
+        <Heading task={this.props.task} refreshTask={this.props.refreshTask} />
         <ul className="mdw-checklist">
           {this.state.taskHistory.map( history => {
             return (

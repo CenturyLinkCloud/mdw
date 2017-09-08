@@ -12,7 +12,7 @@ class Discussion extends Component {
   render() {
     return (
       <div>
-        <Heading task={this.props.task}>
+        <Heading task={this.props.task} refreshTask={this.props.refreshTask}>
           <Button className="mdw-btn mdw-action-btn" bsStyle='primary'>
             <Glyphicon glyph="plus" />{' New'}
           </Button>

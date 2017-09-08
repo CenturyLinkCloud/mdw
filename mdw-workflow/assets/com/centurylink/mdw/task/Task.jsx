@@ -56,7 +56,7 @@ class Task extends Component {
       sessionStorage.setItem('taskWorkflowInstanceId', task.ownerId);
     return (
       <div>
-        <Heading task={this.props.task} />
+        <Heading task={this.props.task} refreshTask={this.props.refreshTask} />
         <div className="mdw-section">
           <div className="mdw-flex-item">
             <div className="mdw-flex-item-left">

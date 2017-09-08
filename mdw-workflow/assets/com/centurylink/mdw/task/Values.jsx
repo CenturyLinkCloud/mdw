@@ -117,7 +117,7 @@ class Values extends Component {
   render() {
     return (
       <div>
-        <Heading task={this.props.task} />
+        <Heading task={this.props.task} refreshTask={this.props.refreshTask} />
         <div className="mdw-section">
           <form name="valuesForm" className="form-horizontal" role="form">
             {this.state.values.map(value => {
