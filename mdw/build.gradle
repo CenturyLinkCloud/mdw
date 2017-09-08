@@ -3,6 +3,11 @@ apply plugin: 'signing'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
+configurations {
+    assets
+}
+
+
 task publishMdw(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishBuild"]
@@ -238,7 +243,7 @@ task archiveAssetZips {
         fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { file ->
             if(file.name.endsWith("zip")) {
                 artifacts{
-                     archives file:file
+                     assets file
                 }
             }
         }
@@ -246,12 +251,13 @@ task archiveAssetZips {
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn zipTemplates, archiveAssetZips
+    dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
 
-uploadArchives {
+uploadAssets {
+    dependsOn  archiveAssetZips
     repositories {
         mavenDeployer {
             pom.project {
