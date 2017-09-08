@@ -52,13 +52,6 @@ function HistoryItem( props, context ) {
             <div className="mdw-item-sub" style={{ height: '16px' }}>
               <label>Action:</label>
               {history.eventName}
-              <span>{',   '}
-                <UserDate label="Created" date={history.createDate} />
-              </span>
-              <span>{',   '}
-                <img src={context.hubRoot + '/images/user.png'} alt="user" />
-                {' '}<a className="mdw-link" href={context.hubRoot + '#/users/' + history.createUser}>{history.createUser}</a>
-              </span>
             </div>
             <div className="mdw-item-sub">
               {history.comment &&
@@ -67,6 +60,17 @@ function HistoryItem( props, context ) {
                   {history.comment}
                 </span>
               }
+            </div>
+            <div className="mdw-item-sub">
+              <span>
+              <UserDate label="Created" date={history.createDate} />
+              </span>
+            </div>
+            <div className="mdw-item-sub">
+              <span>
+              <img src={context.hubRoot + '/images/user.png'} alt="user" />
+              {' '}<a className="mdw-link" href={context.hubRoot + '#/users/' + history.createUser}>{history.createUser}</a>
+            </span>
             </div>
           </div>
         </div>
