@@ -8,16 +8,23 @@ class Value extends Component {
   constructor(...args) {
     super(...args);
     this.showCalendar = this.showCalendar.bind(this);
-    this.handleCheckboxClick = this.handleCheckboxClick.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
   }
   
   showCalendar() {
+    this.ignore = true;
     var elem = document.getElementById(this.props.value.name);
     elem.previousElementSibling.previousElementSibling.focus();    
   }
   
-  handleCheckboxClick(event) {
-    this.props.onChange(event, (this.props.value.value === 'true'));
+  handleDateChange(isoString) {
+    if (this.ignore) {
+      this.ignore = false;
+      return;
+    }
+    if (this.props.onChange) {
+      this.props.onChange({currentTarget:{name: this.props.value.name}}, isoString);
+    }
   }
   
   render() {
@@ -44,14 +51,14 @@ class Value extends Component {
           {value.type === 'java.lang.Boolean' &&
             <input type="checkbox" className="checkbox mdw-boolean-input" 
               id={value.name} name={value.name} 
-              readOnly={!editable} value={value.value} onClick={this.handleCheckboxClick} />
+              readOnly={!editable} checked={value.value === 'true'} onChange={this.props.onChange} />
           }
           {value.type === 'java.util.Date' &&
             <DatePicker
               id={value.name} name={value.name}
               clearButtonElement={<Glyphicon glyph="calendar" />}
               onClear={this.showCalendar}
-              disabled={!editable} value={value.value} onChange={this.props.onChange} />
+              disabled={!editable} value={value.value} onChange={this.handleDateChange} />
           }
           {value.type !== 'java.util.Date' && value.type !== 'java.lang.Boolean' &&
               !value.isDocument && 

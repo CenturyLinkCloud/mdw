@@ -46,7 +46,7 @@ class Values extends Component {
       }
       else if (val.type === 'java.util.Date' && val.value) {
         // TODO: option to specify date parse format
-        val.value = new Date(val.value);
+        val.value = new Date(val.value).toISOString();
       }
       if (val.value === null || typeof val.value === 'undefined')
         val.value = '';
@@ -74,15 +74,20 @@ class Values extends Component {
     var value = values.find(val => {
       return val.name === event.currentTarget.name;
     });
-    value.value = typeof newValue === 'undefined' ? event.currentTarget.value : newValue;
-    if (typeof value.value !== 'string')
-      value.value = '' + value.value;
+    if (typeof newValue !== 'undefined') {
+      value.value = newValue;
+    }
+    else if (event.currentTarget.type === 'checkbox') {
+      value.value = '' + event.currentTarget.checked;
+    }
+    else {
+      value.value = event.currentTarget.value;
+    }
     this.setState({
       values: values
     });
   }
   
-  // TODO: date handling and document handling
   handleSave(event) {
     var vals = {};
     this.state.values.forEach(value => {
