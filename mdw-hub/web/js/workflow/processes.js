@@ -32,15 +32,17 @@ processMod.controller('ProcessesController',
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]'].concat(PROCESS_STATUSES);
   
-  $scope.setSelectedChart=function(selChart){
-	   $scope.selectedChart= selChart;
-	   $cookieStore.put('selectedChart',$scope.selectedChart);
-	   if(selChart ==='List'){
-		   window.location.href='#/workflow/processes';
-	   }else{	   
-	       window.location.href='#/dashboard/processes?chart='+selChart;
-	   }    
-};
+  $scope.setSelectedChart=function(selChart) {
+	  $scope.selectedChart= selChart;
+	  $cookieStore.put('selectedChart',$scope.selectedChart);
+	  if (selChart ==='List') {
+		  window.location.href='#/workflow/processes';
+	  }
+	  else {	   
+	    window.location.href='#/dashboard/processes?chart='+selChart;
+	  }    
+  };
+  
   // preselected procDef
   if ($scope.processFilter.processId) {
     $scope.typeaheadMatchSelection = $cookieStore.get('processSpec');

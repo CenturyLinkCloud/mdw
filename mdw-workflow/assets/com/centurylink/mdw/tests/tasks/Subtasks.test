@@ -1,0 +1,27 @@
+package com.centurylink.mdw.tests.tasks
+
+
+start process("Subtasks") {
+
+}
+
+sleep 20
+
+action task("Subtask A") {
+    outcome = "Claim"
+}
+sleep 15
+action task("Subtask A") {
+    outcome = "Complete"
+}
+sleep 15
+action task("Subtask B") {
+    outcome = "Claim"
+}
+sleep 15
+action task("Subtask B") {
+    outcome = "Complete"
+}
+sleep 15
+
+verify process

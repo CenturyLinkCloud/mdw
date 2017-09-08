@@ -102,7 +102,7 @@ import groovy.lang.Script;
 
 public class TestCaseRun implements Runnable {
 
-    static final String POSTMAN_PKG = "com.centurylink.mdw.testing.postman";
+    static final String NODE_PACKAGE = "com.centurylink.mdw.node";
 
     private TestCase testCase;
     public TestCase getTestCase() { return testCase; }
@@ -202,11 +202,11 @@ public class TestCaseRun implements Runnable {
         startExecution();
         try {
             if (testCase.getAsset().isFormat(Asset.POSTMAN)) {
-                String runnerClass = POSTMAN_PKG + ".NodeRunner";
+                String runnerClass = NODE_PACKAGE + ".TestRunner";
                 Package pkg = PackageCache.getPackage(testCase.getPackage());
-                Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
-                Object runner = nodeRunnerClass.newInstance();
-                Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+                Class<?> testRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+                Object runner = testRunnerClass.newInstance();
+                Method runMethod = testRunnerClass.getMethod("run", TestCase.class);
                 runMethod.invoke(runner, testCase);
                 finishExecution(null);
             }
@@ -932,11 +932,11 @@ public class TestCaseRun implements Runnable {
         try {
             // close log stream and reopen after js runner to sync file access
             getLog().close();
-            String runnerClass = TestCaseRun.POSTMAN_PKG + ".NodeRunner";
+            String runnerClass = TestCaseRun.NODE_PACKAGE + ".TestRunner";
             Package pkg = PackageCache.getPackage(apiTestCase.getPackage());
-            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
-            Object runner = nodeRunnerClass.newInstance();
-            Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+            Class<?> testRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+            Object runner = testRunnerClass.newInstance();
+            Method runMethod = testRunnerClass.getMethod("run", TestCase.class);
             runMethod.invoke(runner, apiTestCase);
             setLog(new PrintStream(new FileOutputStream(getResultsDir()
                     + "/" + getTestCase().getAsset().getRootName() + ".log", true)));
@@ -951,12 +951,12 @@ public class TestCaseRun implements Runnable {
     public boolean verifyItem(TestCase testCase, TestCaseItem item) throws TestException {
         // close log stream and reopen after js runner to sync file access
         getLog().close();
-        String runnerClass = TestCaseRun.POSTMAN_PKG + ".NodeRunner";
+        String runnerClass = TestCaseRun.NODE_PACKAGE + ".TestRunner";
         Package pkg = PackageCache.getPackage(testCase.getPackage());
         try {
-            Class<?> nodeRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
-            Object runner = nodeRunnerClass.newInstance();
-            Method runMethod = nodeRunnerClass.getMethod("run", TestCase.class);
+            Class<?> testRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
+            Object runner = testRunnerClass.newInstance();
+            Method runMethod = testRunnerClass.getMethod("run", TestCase.class);
             runMethod.invoke(runner, testCase);
             setLog(new PrintStream(new FileOutputStream(getResultsDir()
                     + "/" + getTestCase().getAsset().getRootName() + ".log", true)));

@@ -1,55 +1,70 @@
 import React, {Component} from '../node/node_modules/react';
-import UserDate from './UserDate.jsx';
+import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+var classNames = require('../node/node_modules/classnames');
+var DatePicker = require('../node/node_modules/react-bootstrap-date-picker');
 
 class Value extends Component {
     
   constructor(...args) {
     super(...args);
-    console.log("VALUE VALUE VALUE");
+    this.showCalendar = this.showCalendar.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
   }
   
-  handleChange(event) {
-    if (event.currentTarget.type === 'button') {
-      if (event.currentTarget.value === 'save') {
-        console.log('save task');
-      }
+  showCalendar() {
+    this.ignore = true;
+    var elem = document.getElementById(this.props.value.name);
+    elem.previousElementSibling.previousElementSibling.focus();    
+  }
+  
+  handleDateChange(isoString) {
+    if (this.ignore) {
+      this.ignore = false;
+      return;
+    }
+    if (this.props.onChange) {
+      this.props.onChange({currentTarget:{name: this.props.value.name}}, isoString);
     }
   }
   
   render() {
     var value = this.props.value;
-    
+    var editable = this.props.editable && value.display !== 'ReadOnly';
+
     return (
-      <div className={'form-group' + (value.error ? ' has-error' : '')}>
-        <label className={'control-label col-xs-2' + (value.display && value.display.required ? 'mdw-required' : '')} >
+      <div className={classNames('form-group', {'has-error': value.error})}>
+        <label className={classNames('control-label', 'col-xs-2', {
+            'mdw-required': value.display && value.display.required})} >
           {value.label ? value.label : value.name}
         </label>
         <div className={value.isDocument ? 'col-md-10' : 'col-xs-4'}>
-          {value.isException &&
-            <textarea className="form-control mdw-document-input"
-              rows="{value.showLines}" id="{value.name}" name="{value.name}" readonly={true}>
-              {$mdwUi.util.asException(value)}
-            </textarea>
+          {value.type === 'java.lang.Exception' &&
+            <textarea className="form-control mdw-document-input"  
+              id={value.name} name={value.name} rows={value.showLines}
+              readOnly={true} value={$mdwUi.util.asException(value)} />
           }
-          {value.isDocument && !value.isException &&
+          {value.isDocument && value.type !== 'java.lang.Exception' &&
             <textarea className="form-control mdw-document-input" 
-              rows="{value.showLines}" id="{value.name}" name="{value.name}" 
-              readonly={!value.editable} onChange={this.handleChange}>
-              {value.value}
-            </textarea>
+              id={value.name} name={value.name} rows={value.showLines} 
+              readOnly={!editable} value={value.value} onChange={this.props.onChange} />
           }
           {value.type === 'java.lang.Boolean' &&
             <input type="checkbox" className="checkbox mdw-boolean-input" 
-              id="{value.name}" name="{value.name}" value={value.value} 
-              readonly={!value.editable} onChange={this.handleChange} />
+              id={value.name} name={value.name} 
+              readOnly={!editable} checked={value.value === 'true'} onChange={this.props.onChange} />
           }
           {value.type === 'java.util.Date' &&
-            <UserDate date={value.value} />
+            <DatePicker
+              id={value.name} name={value.name}
+              clearButtonElement={<Glyphicon glyph="calendar" />}
+              onClear={this.showCalendar}
+              disabled={!editable} value={value.value} onChange={this.handleDateChange} />
           }
-          {!value.isDocument && value.type !== 'java.lang.Boolean' && value.type !== 'java.util.Date' &&
+          {value.type !== 'java.util.Date' && value.type !== 'java.lang.Boolean' &&
+              !value.isDocument && 
             <input type="text" className="form-control" 
-            id="{value.name}" name="{value.name}" value={value.value} 
-            readonly={!value.editable} onChange={this.handleChange} />
+              id={value.name} name={value.name} value={value.value} 
+              readOnly={!editable} onChange={this.props.onChange} />
           }
         </div>
       </div>

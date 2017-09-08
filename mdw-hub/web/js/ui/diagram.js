@@ -99,13 +99,18 @@ diagramMod.factory('Diagram',
       }
     }
 
-    this.notes.forEach(function(note) {
-      note.draw();
-    });
-
     if (this.instance)
-      this.applyState(animate);
-    
+      this.applyState(animate, function() {
+      diagram.notes.forEach(function(note) {
+        note.draw();
+      });
+    });
+    else {
+      diagram.notes.forEach(function(note) {
+        note.draw();
+      });
+    }
+
     if (this.marquee) {
       this.marquee.draw();
     }
@@ -190,7 +195,8 @@ diagramMod.factory('Diagram',
     this.canvas.height = canvasDisplay.h;
   };
 
-  Diagram.prototype.applyState = function(animate) {
+  // post-animation callback is the only way to prevent notes from screwing up context font (why?)
+  Diagram.prototype.applyState = function(animate, callback) {
     var diagram = this; // forEach inner access
     
     if (this.process.activities) {
@@ -275,6 +281,9 @@ diagramMod.factory('Diagram',
             setTimeout(s, timeSlice);
             timeSlice = nextSlice;
           }
+          else {
+            callback();
+          }
         };
         s();
       }
@@ -283,6 +292,7 @@ diagramMod.factory('Diagram',
         if (highlighted) {
           this.scrollIntoView(highlighted, 500);
         }
+        callback();
       }
     }
   };

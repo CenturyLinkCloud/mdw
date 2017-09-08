@@ -88,7 +88,7 @@
               <span class="mdw-pre" ng-repeat="name in tabValue.names"><span class="mdw-ul">{{name.name}}</span>{{name.pad}}</span>
             </div>
             <div class="mdw-inspector-value" ng-if="tabValue.values">
-              <span class="mdw-pre" ng-repeat="value in tabValue.values"><a href="{{value.url}}" ng-if="value.url">{{value.value}}</a><a href="" ng-if="value.extended" ng-click="drillIn(value)">{{value.value}}</a><span ng-if="!value.url && !value.extended">{{value.value}}</span>{{value.pad}}</span>
+              <span class="mdw-pre" ng-repeat="value in tabValue.values"><a href="" mdw-route="{{value.url}}" ng-if="value.url">{{value.value}}</a><a href="" ng-if="value.extended" ng-click="drillIn(value)">{{value.value}}</a><span ng-if="!value.url && !value.extended">{{value.value}}</span>{{value.pad}}</span>
             </div>
           </div>
           <div class="mdw-resource-content" ng-if="drilledValue">

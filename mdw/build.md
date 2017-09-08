@@ -78,7 +78,7 @@
    -  Update and check-in MDW_VERSION in (https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/assets/com/centurylink/mdw/env/manifest.yml.appfog_dev)
    -  Copy content of above file into mdw-demo/manifest.yml    
    -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
-   -  Select a space (or press enter to skip): dev
+   -  Select a space (or press enter to skip): Prod (Dev for snapshots)
    -  cf push
 
 16 - TODO: Publish NPM package 

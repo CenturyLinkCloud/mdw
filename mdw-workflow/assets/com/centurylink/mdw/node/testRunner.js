@@ -37,7 +37,7 @@ try {
       // deep clone for values
       var vals = {};
       if (opts.valueFiles) {
-        opts.valueFiles.forEach( valueFile => {
+        opts.valueFiles.forEach(valueFile => {
           vals = Object.assign(vals, limberest.loadValuesSync(valueFile), item.values);
         });
       }
@@ -61,10 +61,16 @@ try {
         test.run(opts, vals, (error, response) => {
           var itemId = item.method + ':' + item.name;
           setTestResponse(itemId, response);
-          if (!opts.caseName) {
-            result = Object.assign(result, test.verifySync(vals));
-            result.end = new Date().toISOString();
-            setTestResult(itemId, result);
+          if (error) {
+            console.error(error);
+            setTestResult(itemId, {status: 'Errored', message: error.toString()});
+          }
+          else {
+            if (!opts.caseName) {
+              result = Object.assign(result, test.verifySync(vals));
+              result.end = new Date().toISOString();
+              setTestResult(itemId, result);
+            }
           }
         });
       }

@@ -184,15 +184,14 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Process', '$uibModal', '$routeParams', 'mdw', 'Activity',
                                             function($scope, $http, $route, Process, $uibModal, $routeParams, mdw, Activity) {
   $scope.model = {};
-  $scope.model.singalActivity = true;
-  $scope.random = Math.random(); // param to force image reload
-
-  $scope.activity = Activity.retrieve({instanceId: $routeParams.instanceId}, function() {
+  $scope.model.singleActivity = true;
+  
+  $scope.activity = Activity.retrieve({instanceId: $routeParams.instanceId}, function(activity) {
+    $scope.activity = activity;
     $scope.activity.name = $scope.activity.name;
     $scope.item = $scope.activity; // for activityItem template
-   });
-  
-  $scope.process =  Process.retrieve({instanceId: $routeParams.processInstanceId, extra: 'summary'});
+  });
+  $scope.process = Process.retrieve({activityInstanceId: $routeParams.instanceId});
 
   $scope.getSelectedActivitiesMessage = function() {
        return 'Do you want to perform the selected action on this activity?';

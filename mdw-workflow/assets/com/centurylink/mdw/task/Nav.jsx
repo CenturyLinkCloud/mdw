@@ -30,10 +30,10 @@ class Nav extends Component {
 function NavLink(props, context) {
   const path = window.location.pathname;
   if (!path.startsWith('/'))
-      path = '/' + path; // ie 11
+    path = '/' + path; // ie 11
   var dest = context.hubRoot + '/tasks/' + props.id;
   if (props.to != '/')
-      dest += props.to;
+    dest += props.to;
   var cl = '';
   if (path == dest || (path == context.hubRoot + '/' && props.to == '/'))
     cl = 'mdw-active';

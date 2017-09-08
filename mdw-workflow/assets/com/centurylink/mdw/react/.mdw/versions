@@ -1,10 +1,11 @@
 Inspector.jsx=1
 Toolbox.jsx=1
-UserDate.jsx=1
-Value.jsx=1
+UserDate.jsx=2
+Value.jsx=2
 Workflow.jsx=1
 eactprocesses.js=
 implementors.js=1
 process.js=1 Renamed from e:workspacesmdw6mdw-workflowassetscomcenturylinkmdw
 processes.js=1
 react-select.css=1
+typeahead.css=1

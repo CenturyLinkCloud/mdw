@@ -86,6 +86,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     
     this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, Subflow.BOX_OUTLINE_COLOR);
     this.diagram.context.clearRect(this.title.x - 1, this.title.y, this.title.w + 2, this.title.h);
+    this.diagram.context.font = DC.DEFAULT_FONT;
     this.diagram.context.fillText(this.title.text, this.title.x, this.title.y + DC.DEFAULT_FONT.SIZE);
 
     // animation sequence controlled by diagram 

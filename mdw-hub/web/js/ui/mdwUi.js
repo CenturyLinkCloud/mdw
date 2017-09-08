@@ -4,7 +4,7 @@
 // Drawing objects are pre-injected in admin.js.
 var $mdwUi = {
     
-   init: function(ngInjector) {
+   init: function(ngInjector, authUser) {
      $mdwUi.Shape = ngInjector.get('Shape');
      $mdwUi.Label = ngInjector.get('Label');
      $mdwUi.Diagram = ngInjector.get('Diagram');
@@ -19,6 +19,8 @@ var $mdwUi = {
      $mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
      $mdwUi.Configurator = ngInjector.get('Configurator');
      $mdwUi.util = ngInjector.get('util');
+     $mdwUi.DOCUMENT_TYPES = ngInjector.get('DOCUMENT_TYPES');
+     $mdwUi.authUser = authUser;
    },
    pseudoImplementors: [
      {
@@ -70,5 +72,11 @@ var $mdwUi = {
      OVAL_LINE_WIDTH: 3,
      HIGHLIGHT_MARGIN: 10,
      HIGHLIGHT_COLOR: '#03a9f4'
+   },
+   showMessage: function(msg) {
+     document.getElementById('mdwMainMessages').innerHTML = msg;
+   },
+   clearMessage: function() {
+     document.getElementById('mdwMainMessages').innerHTML = '';
    }
 };

@@ -31,7 +31,7 @@ import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.util.StringHelper;
 
 /**
- * TODO: members and values
+ * End-to-end composite relating requests, processes, tasks, or other solutions.
  */
 public class Solution implements Jsonable {
 

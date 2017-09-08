@@ -447,7 +447,7 @@ public class TaskWorkflowHelper {
         }
         else if (action.equalsIgnoreCase(TaskAction.FORWARD)) {
             forward(destination, comment);
-            auditLog(action, userId, destination, null);
+            auditLog(action, userId, destination, comment);
             return;  // forward notifications are handled in forwardTaskInstance()
         }
         else {
@@ -474,22 +474,15 @@ public class TaskWorkflowHelper {
         }
 
         notifyTaskAction(action, prevStatus, prevState);
-        String label = taskInstance.getTaskName();
-        if (label == null) {
-            label = "Unknown";
-            TaskTemplate template = getTemplate();
-            if (template != null)
-                label = template.getTaskName();
-        }
-        auditLog(action, userId, assigneeCuid, label);
+        auditLog(action, userId, assigneeCuid, comment);
 
         if (isComplete) {
             // in case subTask
             if (taskInstance.isSubTask()) {
                 Long masterTaskInstId = taskInstance.getMasterTaskInstanceId();
                 boolean allCompleted = true;
-                for (TaskInstance subTask : getSubTasks()) {
-                    if (subTask.isInFinalStatus()) {
+                for (TaskInstance subTask : getSubTasks(masterTaskInstId)) {
+                    if (!subTask.isInFinalStatus()) {
                         allCompleted = false;
                         break;
                     }
@@ -503,7 +496,7 @@ public class TaskWorkflowHelper {
             }
 
             // in case master task
-            for (TaskInstance subTask : getSubTasks()) {
+            for (TaskInstance subTask : getSubTasks(taskInstance.getTaskInstanceId())) {
                 if (!subTask.isInFinalStatus())
                     new TaskWorkflowHelper(subTask).cancel();
             }
@@ -547,8 +540,8 @@ public class TaskWorkflowHelper {
         }
     }
 
-    private List<TaskInstance> getSubTasks() throws DataAccessException {
-        return new TaskDataAccess().getSubTaskInstances(taskInstance.getTaskInstanceId());
+    private List<TaskInstance> getSubTasks(Long masterTaskInstanceId) throws DataAccessException {
+        return new TaskDataAccess().getSubTaskInstances(masterTaskInstanceId);
     }
 
     void resume(String action) throws ServiceException {
@@ -1103,8 +1096,6 @@ public class TaskWorkflowHelper {
         Map<String,Object> changes = new HashMap<>();
         changes.put("TASK_INSTANCE_STATUS", newStatus);
         changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
-        if (comment != null)
-            changes.put("COMMENTS", comment);
         new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes, true);
         taskInstance.setStatusCode(newStatus);
     }
@@ -1276,8 +1267,6 @@ public class TaskWorkflowHelper {
 
         Entity entity = Entity.TaskInstance;
         Long entityId = taskInstance.getTaskInstanceId();
-        if (comments == null)
-            comments = getTemplate().getTaskName();
 
         UserAction userAction = new UserAction(user, UserAction.getAction(action), entity, entityId, comments);
         userAction.setSource("Task Services");
