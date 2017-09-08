@@ -1,15 +1,15 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Link} from '../node/node_modules/react-router-dom';
 import Heading from './Heading.jsx';
 import TaskItem from './TaskItem.jsx';
-
 
 class Subtasks extends Component {
     
   constructor(...args) {
     super(...args);
     this.state = { subtasks: [] };
-    this.handleNewSubtask = this.handleNewSubtask.bind(this);    
   }  
 
   componentDidMount() {
@@ -28,17 +28,14 @@ class Subtasks extends Component {
     });
   }
   
-  handleNewSubtask(event) {
-      window.location.assign('/mdw/tasks/' + this.props.task.id +'/newSubtask');
-    }
-  
   render() {
     return (
       <div>
         <Heading task={this.props.task} refreshTask={this.props.refreshTask}>
-          <Button className="mdw-btn mdw-action-btn" bsStyle='primary' onClick={this.handleNewSubtask}>
+          <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id + '/newSubtask'}
+            className="btn mdw-btn btn-primary" style={{fontWeight:'normal',fontSize:'14px'}}>
             <Glyphicon glyph="plus" />{' New'}
-          </Button>
+          </Link>
         </Heading>
         <div className="mdw-section">
           <ul className="mdw-checklist">
@@ -55,5 +52,10 @@ class Subtasks extends Component {
     );
   }
 }
+
+Subtasks.contextTypes = {
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string  
+};
 
 export default Subtasks;  
