@@ -2,9 +2,9 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Button, ButtonToolbar, Glyphicon} from '../node/node_modules/react-bootstrap';
 import {AsyncTypeahead, Menu, MenuItem} from '../node/node_modules/react-bootstrap-typeahead';
+import {Link} from '../node/node_modules/react-router-dom';
 import '../node/node_modules/style-loader!../react/typeahead.css';
 var classNames = require('../node/node_modules/classnames');
-
 
 
 class NewSubtask extends Component {
@@ -15,7 +15,6 @@ class NewSubtask extends Component {
                    filteredTemplateList : [] ,
                    template: ""
                  };
-    this.handleCancel = this.handleCancel.bind(this);
     this.handleCreate = this.handleCreate.bind(this);    
     this.findTemplate = this.findTemplate.bind(this);
     this.handleTemplateSelection = this.handleTemplateSelection.bind(this);
@@ -70,12 +69,8 @@ class NewSubtask extends Component {
         $mdwUi.showMessage(json.status.message);
       }
     });
-    window.location.assign('/mdw/tasks/' + this.props.task.id +'/subtasks');
   }
   
-  handleCancel(event) {
-      window.location.assign('/mdw/tasks/' + this.props.task.id +'/subtasks');
-  }
   findTemplate(input) {
       var filteredTemplateList = [];
       var templateName;
@@ -90,15 +85,15 @@ class NewSubtask extends Component {
         });
     }
 
-
-
-    handleTemplateSelection(input) {
-        $mdwUi.clearMessage();
-        this.setState({
-            template: input
-          });
-    }
+  handleTemplateSelection(input) {
+    $mdwUi.clearMessage();
+    this.setState({
+        template: input
+      });
+  }
+  
 //https://github.com/ericgio/react-bootstrap-typeahead/blob/master/docs/Props.md
+//https://react-bootstrap.github.io/components.html
   render() {
     return (
       <div>
@@ -121,12 +116,14 @@ class NewSubtask extends Component {
                 <label className="control-label col-xs-2" />
                 <div className="col-xs-4">
                 <ButtonToolbar>
-                  <Button className="btn-success mdw-btn" bsStyle='primary' onClick={this.handleCreate}>
+                  <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id} onClick={this.handleCreate}
+                    className="btn mdw-btn btn-primary" style={{fontWeight:'normal',fontSize:'14px'}}>
                     <Glyphicon glyph="plus" />{' Create'}
-                  </Button>
-                  <Button className="mdw-btn mdw-cancel-btn" bsStyle='primary' onClick={this.handleCancel}>
-                    <Glyphicon glyph="cancel" />{' Cancel'}
-                  </Button>
+                  </Link>
+                  <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id + '/subtasks'} 
+                    className="btn mdw-btn btn-primary" style={{fontWeight:'normal',fontSize:'14px'}}>
+                    {' Cancel'}
+                  </Link>                  
                 </ButtonToolbar>
                 </div>
               </div>
