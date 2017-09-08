@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Button, ButtonToolbar, Glyphicon} from '../node/node_modules/react-bootstrap';
 import {AsyncTypeahead, Menu, MenuItem} from '../node/node_modules/react-bootstrap-typeahead';
 import '../node/node_modules/style-loader!../react/typeahead.css';
 var classNames = require('../node/node_modules/classnames');
@@ -120,12 +120,14 @@ class NewSubtask extends Component {
               <div className="form-group">
                 <label className="control-label col-xs-2" />
                 <div className="col-xs-4">
+                <ButtonToolbar>
                   <Button className="btn-success mdw-btn" bsStyle='primary' onClick={this.handleCreate}>
                     <Glyphicon glyph="plus" />{' Create'}
                   </Button>
                   <Button className="mdw-btn mdw-cancel-btn" bsStyle='primary' onClick={this.handleCancel}>
                     <Glyphicon glyph="cancel" />{' Cancel'}
                   </Button>
+                </ButtonToolbar>
                 </div>
               </div>
             }
