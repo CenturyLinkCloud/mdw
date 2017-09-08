@@ -246,9 +246,19 @@ task archiveAssetZips {
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn zipTemplates
+    dependsOn zipTemplates, archiveAssetZips
     buildFile = "build.gradle"
     tasks = ["build"]
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                groupId = "com.centurylink.mdw.assets"
+            }
+        }
+    }
 }
 
 task cleanAll(type: GradleBuild) {
