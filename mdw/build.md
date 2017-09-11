@@ -32,11 +32,12 @@
   - Review console output for errors.
   
 6 - Update mdw-demo
-  -  Update mdwVersion in gradle.properties  
-  -  Run upgradeMDWVer task to update assets and refresh the project
-  -  Commit and push to git (manifest.yml and mdw.properties should not be committed)
+  - git pull
+  - Update mdwVersion and mdwDesignerVersion in gradle.properties  
+  - Run updateManifestFile task to update assets and refresh the project
+  - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
-7  Deploy and Test
+7 - Deploy and Test
   - MDW6-Deploy  (You might have to start the server manually if this task does not do automatically)
   - Login to mdw-hub and run all the test cases (select Stubbing from configure icon)
   - Investigate any failed test cases
@@ -46,21 +47,26 @@
   - git push origin --tags
    
 9 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
-  - To publish on internal repo (lxdenvmtc143)- mdw6-publish-maven-internal (or -Snapshot)
-  - To publish on Maven Central repository by using mdw6-publish-maven-central (for formal and SNAPSHOT builds) 
+  - To publish on internal repo (lxdenvmtc143)- mdw6-publish-maven-internal (or -SNAPSHOT) (always run this job)
+  - To publish on Maven Central repository by using mdw6-publish-maven-central (or -SNAPSHOT) (optional job)
   - Review console output for errors.
 
-10 - Verify release artifact are published to Maven Central
-  - for formal build:  http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
-  - for SNAPHOT:       https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
+10 - Verify release artifact are published to Maven Central (https://oss.sonatype.org/#stagingRepositories)
+  - Formal build:       http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
+  - SNAPHOT:            https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
+  - Buildpack:          https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
+  - Internal buildpack: https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack/tree/master/resources/mdw
 
 11 - Upgrade mdw-demo to new version of mdw by clicking on project properties and selecting new version
+  -  Refresh Gradle dependencies
   -  Commit and push new version of com.centurylink.mdw.plugin.xml to git
 
 12 - Release Notes
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
-  - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release 'v6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
+    Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token
+  - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.06' --exclude-labels designer,internal,wontfix,duplicate,documentation
+  - git pull
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, release name should be 6.0.xx, copy the notes from updated CHANGELOG.md
   - Change release status from pre-release to release
