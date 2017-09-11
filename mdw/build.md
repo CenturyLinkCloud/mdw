@@ -8,7 +8,6 @@
     mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
     mdw-hub/package.json
     mdw-hub/bower.json
-    mdw-hub/manifest.yaml
     RestApiDefinition.java
     
 3 - Run mdw/clean and mdw/buildAll task 
@@ -16,15 +15,15 @@
 4 - Run exportAssetPackages task to update **/.mdw/package.json files
     
 5 - On GitHub:
-  - Create a milestone marker for the next upcoming build.
-  - Assign any un-delivered issues and pull request for this build's milestone to the next build's milestone.
+  - Create a milestone marker for the next build.
+  - Assign any un-delivered issues and pull request for current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
     
 5b - if doing formal build then delete SNAPSHOT release and tags
-  - Delete thr pre-release of SNAPSHOT from GitHub
   - git pull
   - git tag -d v6.0.xx-SNAPSHOT 
-  - git push origin :refs/tags/v6.0.xx
+  - git push origin :refs/tags/v6.0.xx-SNAPSHOT
+  - Delete the Draft of SNAPSHOT from GitHub
      
 6 - Commit and push these changes to Git.
 

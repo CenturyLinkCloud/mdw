@@ -42,7 +42,7 @@ class Subtasks extends Component {
             {this.state.subtasks.map(subtask => {
               return (
                 <li key={subtask.id}>
-                  <TaskItem task={subtask} />
+                  <TaskItem task={subtask} updateTask={this.props.updateTask} refreshTask={this.props.refreshTask} />
                 </li>
               );
             })}
