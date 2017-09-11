@@ -260,22 +260,6 @@ task updateJson {
       }
 }
   
-task updateManifestFile {
-      description = "Update MDW Version in manifest.yml"
-      FileCollection collection = files('../mdw-hub/manifest.yml')
-      
-      collection.each { File file ->
-          println "Updating file  " + file.name + " with version= " + mdwVersion
-              doLast {
-                  file.setWritable(true)
-                  def pkgJson = file.text
-                  file.withWriter { w ->
-                      w << pkgJson.replaceAll("/mdw/deploy/app/mdw-.*?.war", "/mdw/deploy/app/mdw-${mdwVersion}.war");
-                  }
-              }
-       }
-}
-
 task updateMdwVerInFiles {
-      dependsOn(updateManifestFile, updateJson, updatePlugInFile, updateRestApiDefinition)
+      dependsOn(updateJson, updatePlugInFile, updateRestApiDefinition)
 }
