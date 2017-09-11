@@ -1,4 +1,4 @@
-USE `mdw`;
+USE `mdw`; 
 DROP procedure IF EXISTS `mysql_cleanup`;
 DELIMITER $$
 USE `mdw`$$
