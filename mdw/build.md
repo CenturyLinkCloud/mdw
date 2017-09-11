@@ -47,7 +47,7 @@
   - git push origin --tags
    
 9 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
-  - To publish on internal repo (lxdenvmtc143)- mdw6-publish-maven-internal (or -SNAPSHOT) (always run this job)
+  - To publish on internal repo (lxdenvmtc143)- mdw6-publish-maven-internal (or -SNAPSHOT) (always run this job, this updates buildpacks too)
   - To publish on Maven Central repository by using mdw6-publish-maven-central (or -SNAPSHOT) (optional job)
   - Review console output for errors.
 
@@ -65,7 +65,7 @@
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
     Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token
-  - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.06' --exclude-labels designer,internal,wontfix,duplicate,documentation
+  - github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, release name should be 6.0.xx, copy the notes from updated CHANGELOG.md
@@ -73,20 +73,14 @@
   - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
   
 13 - Update support items delivered with this build to Resolved status.
-    
-14 - mdw-buildpack
-   - Check if the build uploaded new mdw.war at https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
-   - Check if the build uploaded new mdw.war at https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack
-    
-15 - Publishing to AppFog  
-   -  go to root of mdw-demo project
-   -  Update and check-in MDW_VERSION in (https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/assets/com/centurylink/mdw/env/manifest.yml.appfog_dev)
-   -  Copy content of above file into mdw-demo/manifest.yml    
+
+14 - Publishing to AppFog  
+   -  go to root of mdw-demo project (check correct dev/prod manifest.yml is there)
    -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
    -  Select a space (or press enter to skip): Prod (Dev for snapshots)
    -  cf push
 
-16 - TODO: Publish NPM package 
+15 - TODO: Publish NPM package 
 
-17 - Run task 1 to 4 and commit the files to start work on post release SNAPSHOT builds
+16 - Run task 1 to 4 and commit the files to start work on post release SNAPSHOT builds
     
