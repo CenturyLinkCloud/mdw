@@ -9,6 +9,10 @@ class TaskItem extends Component {
   constructor(...args) {
     super(...args);
   }  
+  handleClick(task) {
+      //this.props.updateTask(task);
+      this.props.refreshTask(task.id);
+  }
 
   render() {
     var task = this.props.task;
@@ -18,7 +22,7 @@ class TaskItem extends Component {
           <div>
             <input type="checkbox" value={false} />
             <div>
-              <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id} 
+              <Link to={this.context.hubRoot + '/#/tasks/' + task.id} onClick={() => this.handleClick(this.props.task)}
                 className="mdw-item-link">
                 {task.name} {task.id}
               </Link>
@@ -27,7 +31,7 @@ class TaskItem extends Component {
                   <span>
                     <label>Master request:</label> 
                     <a className="mdw-link"
-                      href="#/workflow/masterRequests/{{item.masterRequestId}}">
+                        href={this.context.hubRoot + '/#/workflow/masterRequests/' + task.masterRequestId}>
                       {task.masterRequestId}
                     </a>
                   </span>
