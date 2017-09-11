@@ -264,8 +264,8 @@ SET foreign_key_checks=0;
                               process_instance_id
                          FROM process_instance pi
                          WHERE
-                        -- pi.process_instance_id = doc.process_inst_id
-                        --  AND 
+                         pi.process_instance_id = doc.owner_id    
+                          AND 
                           pi.status_cd = purgestatusid)
                )
    		 -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 

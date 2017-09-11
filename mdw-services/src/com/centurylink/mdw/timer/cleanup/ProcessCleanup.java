@@ -452,7 +452,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                  */
                 logger.info("mysql import command :: " + command);
 
-                if (p.waitFor() == 0) {
+                if ((!(p==null)) && p.waitFor() == 0) {
                     logger.info("mysql procedure created successfully in the mysql database ");
                 }
                 else {
@@ -462,7 +462,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
 
             CallableStatement callStmt = null;
             if (db.isMySQL()) {
-                callStmt = db.getConnection().prepareCall("{call mysql_cleanup(?,?,?,?,?)}");
+                callStmt = db.getConnection().prepareCall("{call mysql_cleanup(?,?,?,?,?,?)}");
             }
             else if (db.isOracle()) {
                 callStmt = db.getConnection().prepareCall(query);
