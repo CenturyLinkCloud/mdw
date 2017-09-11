@@ -1,5 +1,5 @@
 ---
-permalink: /docs/guides/InstallEclipsePluginsGuide/
+permalink: /docs/getting-started/InstallEclipsePluginsGuide/
 title: Eclipse Plug-Ins for MDW Framework
 ---
 
@@ -92,7 +92,7 @@ title: Eclipse Plug-Ins for MDW Framework
 
    - Quantum DB (Database querying):           
      
-     - Copy this url: `http://quantum.sourceforge.net/update-sitet`
+     - Copy this url: `http://quantum.sourceforge.net/update-site`
      - Go to `Help > Install New Software` and paste it in the `Work with` and press Enter.
      - Select the `Core` and click `Next`   
      

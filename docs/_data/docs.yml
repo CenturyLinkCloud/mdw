@@ -23,6 +23,7 @@
   
 - title: Designer
   docs:
+  - getting-started/install-designer
   - designer/user-guide
 
 - title: Development

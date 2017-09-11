@@ -1,5 +1,5 @@
 ---
-permalink: /docs/gettingStarted/quick-start/
+permalink: /docs/getting-started/quick-start/
 title: Quick Start
 ---
 
@@ -22,7 +22,7 @@ Get up and running with MDW in a hurry.
   
 ### Initialize your workspace
   Now you can use the CLI to automatically create a new MDW workspace:
-   - Open a command window in a directory that'll be the parent of your new workspace.
+   - Open a command window in a directory that'll be the parent of your new workspace project.
    - Use the `init` command to generate your workspace:
      ```
      mdw init my-mdw
@@ -65,5 +65,7 @@ Get up and running with MDW in a hurry.
 ### Import into Eclipse
   Unless you suppressed Eclipse artifact generation (with the `--eclipse=false` option), your project is ready to be imported into
   Eclipse.  From the Eclipse File menu select > Import > General > Existing Projects into Workspace.  Then browse for your project
-  directory.  To get started creating workflows and assets using MDW Designer in Eclipse, check out the
-  [Designer User Guide](../../designer/user-guide).  
+  directory.
+  
+  To start creating workflows and assets using MDW Designer in Eclipse,
+  [install the MDW Designer plugin](../install-designer).  

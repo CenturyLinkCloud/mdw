@@ -1,5 +1,5 @@
 ---
-permalink: /docs/gettingStarted/mdw-tutorial/
+permalink: /docs/getting-started/mdw-tutorial/
 title: Take a Tutorial with MDW Demo
 ---
 

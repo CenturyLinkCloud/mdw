@@ -1,5 +1,5 @@
 ---
-permalink: /docs/gettingStarted/cli/
+permalink: /docs/getting-started/cli/
 title: MDW Command Line Interface
 ---
 ## MDW CLI

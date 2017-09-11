@@ -52,7 +52,7 @@ title: Microservices in MDW
 
 ### Deployment and Testing
   - [Tomcat setup](../../guides/SetupGuideForTomcat/)
-  - [Spring Boot](http://127.0.0.1:4000/docs/gettingStarted/quick-start/)
+  - [Spring Boot](http://127.0.0.1:4000/docs/getting-started/quick-start/)
   - [Hyperion platform](https://hyperion-ui-test1.pcfomactl.dev.intranet/home.html)
   - [Cloud Foundry setup](../../guides/SetupGuideForCloudFoundry/)
   - [Postman automated tests](../../help/groovyTestScriptSyntax.html#serviceApiTesting)

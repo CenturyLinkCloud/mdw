@@ -1,8 +1,12 @@
+img {
+  margin-top: 12px;	
+}
+
 .project-name {
-    font-size: 4.25rem;
+  font-size: 4.25rem;
 }
 
 article h4 { color: black ! important; }
 .docs article {
-    min-height: 145em ! important;;
+  min-height: 145em ! important;;
 }

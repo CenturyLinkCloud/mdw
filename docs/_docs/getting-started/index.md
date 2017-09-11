@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Guide
-permalink: /docs/gettingStarted/
+permalink: /docs/getting-started/
 ---
 
 <section class="intro">
