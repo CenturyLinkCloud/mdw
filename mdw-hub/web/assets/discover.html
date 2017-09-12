@@ -39,7 +39,7 @@
           <div class="mdw-form-footer">
             <div class="mdw-message mdw-form-message">{{discoveryMessage}}</div>
             <div class="mdw-buttons">
-              <button class="btn btn-success mdw-btn" ng-click="importDiscovered()" 
+              <button class="btn btn-success mdw-btn" ng-click="discoveredPkgList.mavenRepository ? importFromMavenRepository() : importDiscovered()" 
                 ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot || !discoveredPkgList || !discoveredPkgList.packages || discoveredPkgList.packages.length == 0 || discoveredPkgList.getSelected().length == 0">
                 <span class="glyphicon glyphicon-import"></span> Import
               </button>

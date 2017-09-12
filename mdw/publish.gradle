@@ -80,7 +80,7 @@ task exportAssetPackages {
             def pkgCat = pkgName.substring(pkgName.lastIndexOf('.') + 1)
             superCats.find { 
                 if (pkgName.endsWith(it + "." + pkgCat)) {
-                    pkgCat = it
+                    pkgCat = it + "-" + pkgCat
                     return true
                 }
                 return false
@@ -92,21 +92,12 @@ task exportAssetPackages {
             pkgFile.withWriter { w ->
                 w << pkgJson.replaceAll("\\\"version\\\": \\\".*?\\\"", "\"version\": \"${mdwPkgVer}\"");
             }
-            if (pkgName.equals("com.centurylink.mdw.db")) {
-                javaexec {
-                    maxHeapSize "1280m"
-                    classpath configurations.publish
-                    main = "com.centurylink.mdw.dataaccess.file.ImporterExporterJson"
-                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
-                }
+            javaexec {
+                classpath configurations.publish
+                main = "com.centurylink.mdw.dataaccess.file.ImporterExporterJson"
+                args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgCat}-${mdwVersion}.zip"
             }
-            else {
-                javaexec {
-                    classpath configurations.publish
-                    main = "com.centurylink.mdw.dataaccess.file.ImporterExporterJson"
-                    args "../${mdwAssetRoot}", pkgName, "../${mdwAssetOutputDir}/${pkgCat}/${pkgName}-${mdwVersion}.json"
-                }
-            }
+       
         }
     }
 }

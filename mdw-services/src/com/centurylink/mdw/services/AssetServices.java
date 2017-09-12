@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.VersionControl;
@@ -97,4 +99,6 @@ public interface AssetServices {
     public List<ArchiveDir> getArchiveDirs() throws ServiceException;
 
     public List<String> getExtraPackageNames() throws ServiceException;
+
+    public JSONObject getRepositoryPackages(String url, JSONObject jsonObj) throws ServiceException;
 }

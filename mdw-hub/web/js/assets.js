@@ -153,7 +153,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         if (error.data.status)
           $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
       }
-    );    
+    );
   };
   
   $scope.importDiscovered = function() {
@@ -176,6 +176,41 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
           $scope.discoveryMessage = 'Import failed: ' + error.data.status.message;
       }
     );
+  };
+  
+  $scope.importFromMavenRepository = function() { 
+	   var pkgLength = $scope.discoveredPkgList.getSelected().length;
+	   var count = 0;
+	    $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
+	    	$scope.pkgDiscoveryUrl = pkg.path;
+	    	$scope.pkgList = Assets.get({pkgDiscoveryUrl: $scope.pkgDiscoveryUrl}, 
+		      function(data) {
+	    		$scope.discoveryMessage = null;
+	            $http({
+		            url: mdw.roots.hub + '/asset/packages?app=mdw-admin',
+		            method: 'PUT',
+		            headers: {'Content-Type': 'application/json'},
+		            data: JSON.stringify(data),
+		            transformRequest: []
+		          }).then(function success(response) {
+		              console.log('package file uploaded');
+		              count++;
+		              if (count == pkgLength) {
+		          	    if ($scope.cacheRefresh)
+			                WorkflowCache.refresh({}, { distributed: $scope.distributedImport });
+		          	    $location.path('/packages');
+		              }
+		            }, function error(response) {
+		              console.log('Upload failed: ' + response.statusText);
+		              $scope.discoveryMessage = 'Import failed: ' + response.statusText;
+		            }
+		          );
+		    }, 
+		    function(error) {
+		    	if (error.data.status)
+		          $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+		    });	     
+	    });
   };
 
   $scope.createPackage = function() {

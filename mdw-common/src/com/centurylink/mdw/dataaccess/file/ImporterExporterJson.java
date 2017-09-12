@@ -16,7 +16,7 @@
 package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +26,11 @@ import org.apache.xmlbeans.XmlException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.JsonUtil;
-
-import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.util.file.ZipHelper;
 
 /**
  * TODO: Import/Export override attributes.
@@ -75,7 +75,7 @@ public class ImporterExporterJson {
         String packageName = args[1];
         File outFile = new File(args[2]);
 
-        VersionControlGit versionControl = new VersionControlGit();
+        /*VersionControlGit versionControl = new VersionControlGit();
         versionControl.connect(null, null, null, root);
         LoaderPersisterVcs loader = new LoaderPersisterVcs("mdw", root, versionControl, new MdwBaselineData());
         Package loaded = loader.loadPackage(loader.getPackage(packageName).getId(), true);
@@ -87,6 +87,11 @@ public class ImporterExporterJson {
             throw new IOException("Cannot create " + outFile.getParent());
         FileWriter writer = new FileWriter(outFile);
         writer.write(jsonStr);
-        writer.close();
+        writer.close();*/
+        List<File> includes = new ArrayList<>();
+        includes.add(new File(root + "/" + packageName.replace('.', '/')));
+        if (!outFile.getParentFile().exists() && !outFile.getParentFile().mkdirs())
+            throw new IOException("Cannot create " + outFile.getParent());
+        ZipHelper.writeZipWith(root, new FileOutputStream(outFile), includes, false);
     }
 }

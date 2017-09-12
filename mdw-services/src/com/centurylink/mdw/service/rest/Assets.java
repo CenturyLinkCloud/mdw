@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,24 +81,48 @@ public class Assets extends JsonRestService {
         response=PackageList.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
-        @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
+        @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="pkgDiscoveryUrl", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-
         try {
             Query query = getQuery(path, headers);
+            HttpHelper helper;
+            String url = null;
+            String pkgDiscoveryUrl = query.getFilter("pkgDiscoveryUrl");
             String discoveryUrl = query.getFilter("discoveryUrl");
+            AssetServices assetServices = ServiceLocator.getAssetServices();
             if (discoveryUrl != null) {
-                String url = discoveryUrl + "/services/" + path;
-                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
+                url = discoveryUrl + "/services/" + path;
+                try {
+                    helper = HttpHelper.getHttpHelper("GET", new URL(url));
+                    return new JsonObject(helper.get());
+                }
+                catch (JSONException ex) {
+                    url = discoveryUrl;
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("mavenRepository", "true");
+                        jsonObject.put("assetRoot", "assets");
+                        jsonObject.put("packages", new JSONArray());
+                        return assetServices.getRepositoryPackages(url.replace("Discovery", "maven/repository/com/centurylink/mdw"), jsonObject);
+                    }
+                    catch (JSONException e) {
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                "Invalid response from: " + url, ex);
+                    }
+                }
+            }
+
+            if (pkgDiscoveryUrl != null) {
+                helper = HttpHelper.getHttpHelper("GET", new URL(pkgDiscoveryUrl));
                 try {
                     return new JsonObject(helper.get());
                 }
                 catch (JSONException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid response from: " + discoveryUrl, ex);
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                            "Invalid response from: " + url, ex);
                 }
             }
-
-            AssetServices assetServices = ServiceLocator.getAssetServices();
 
             if (query.getBooleanFilter("archiveDirs")) {
                 List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
