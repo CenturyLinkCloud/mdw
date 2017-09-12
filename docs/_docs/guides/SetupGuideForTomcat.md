@@ -3,22 +3,12 @@ permalink: /docs/guides/SetupGuideForTomcat/
 title: Setup Guide for Tomcat
 ---
 
-### Prerequisite
- - Eclipse Neon for JavaEE Developers:  
-   Follow [this link](http://www.eclipse.org/downloads) to download Eclipse.
- - For installing Eclipse Plug-Ins, please follow [this link](../InstallEclipsePluginsGuide/) and return to this guide to continue.
+### Prerequisites
  - Tomcat 8:
-     - Follow [this link](https://tomcat.apache.org) to download Tomcat.
- - Chrome and Postman for testing RESTFul Web service: 
-     - Follow [this link](https://www.google.com/chrome/browser/desktop/) to download Chrome.     
-     - Follow [this link](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) to launch Postman.
+   <http://tomcat.apache.org/download-80.cgi>
+ - Eclipse with the [MDW Designer Plugin](../../getting-started/install-designer)
+ - An MDW Project, which can be created by following the [quick-start guide](../../getting-started/quick-start)
      
-### Supported Java Container (Apache Tomcat 8)  
-You can perform many cloud development activities using a remote workflow project.  However, there are certain advantages to being able to deploy locally.  
-
-### MDW Database:
-- MDW saves the workflow assets you create on your local file system until you commit them to a version control repository such as Git.  Runtime data is stored in a database. MDW uses [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or setup an external MySQL database as described in this [readme](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/readme.txt).
-  
 ### Tomcat Server:
  
 ##### Create a Tomcat Server Instance:
@@ -39,7 +29,6 @@ You can perform many cloud development activities using a remote workflow projec
   double-click the server to edit its configuration.  Expand the Timeouts section, change the start timeout value to 3600 seconds, and hit Ctrl-S to save your changes.  Then close the editor.
    ![alt text](../images/addTomcatServer3.png "addTomcatServer3")
    
-##### Note: You must have a workflow project created before you can add it to the server instance.
 - Right click the server instance, select `Add and Remove` and select the MyWorkflow from the left pane and click the Add to move it to the right pane. 
   
    ![alt text](../images/addTomcatServer4.png "addTomcatServer4")
@@ -65,7 +54,7 @@ You can perform many cloud development activities using a remote workflow projec
 
 ##### Next Steps:
 -	Check out some of the other MDW developer docs:       
-    - [Microservices](../MicroservicesCookbook/)            
+    - [Microservices](../mdw-cookbook/)
     - [SOAP Web Service](../SOAPService/)   
     
 -	Browse through the online help docs, which are the same as those in Eclipse:    

@@ -22,7 +22,7 @@ Install the MDW Designer Eclipse Plugin
     `http://centurylinkcloud.github.io/mdw/designer/updateSite`
   ![install designer plugin](../images/designerPlugin.png "designerPlugin")
   
-### Optional Plugins
+### Recommended Plugins
   These plugins are optional (although Groovy is highly recommended).
   They can be installed through Help > Install New Software... the same as above.
   - Groovy:<br>

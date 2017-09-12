@@ -7,7 +7,7 @@ title: Microservices in MDW
   - [HTTP](https://www.w3.org/Protocols/HTTP/HTTP2.html), [REST](https://en.wikipedia.org/wiki/Representational_state_transfer), [JSON](http://www.json.org/)
   - Status Codes are [standard](https://www.w3.org/Protocols/HTTP/HTRESP.html) and [meaningful](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
   - Simplicity is paramount
-  - Guidance through [tooling](../../guides/InstallEclipsePluginsGuide/) 
+  - Guidance through [tooling](../../getting-started/install-designer/) 
 
 ## 1. Consume
 

@@ -7,9 +7,9 @@ Let's walk through the essential features of MDW.  All the source code we'll cre
 is available to clone in its completed state from the [mdw-demo repository](https://github.com/CenturyLinkCloud/mdw-demo).  
 
 ### Setup
-  - Get MDW  
+  - **Get MDW**  
     The easy way to run MDW locally is by following the [5-minute quick-start](../../getting-started/quick-start).
-  - Install the Designer plugin  
+  - **Install the Designer plugin**  
     Assets can be created and edited in MDWHub, but for serious development you'll want to [install the Eclipse plugin](../../getting-started/install-designer).
 
 ### Steps in this Guide

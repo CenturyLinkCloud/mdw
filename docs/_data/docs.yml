@@ -12,9 +12,9 @@
 
 - title: Guides
   docs:
+  - guides/mdw-cookbook
   - guides/SetupGuideForTomcat
   - guides/SetupGuideForCloudFoundry
-  - guides/MicroservicesCookbook
   
 - title: Documentation
   docs:
