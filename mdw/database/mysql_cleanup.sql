@@ -257,7 +257,7 @@ SET foreign_key_checks=0;
    DELETE   from doc USING document as doc 
    		 -- 1. all documents with process instance ID populated
          WHERE (
-          doc.OWNER_TYPE = 'PROCESS_INSTANCE'
+          doc.owner_id!= 0 AND doc.OWNER_TYPE = 'PROCESS_INSTANCE' 
                 AND 
                EXISTS (
                        SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
@@ -272,14 +272,14 @@ SET foreign_key_checks=0;
             OR (    doc.create_dt <
                          CURDATE()
                        - daydiff
-               -- AND doc.process_inst_id = 0
+               AND doc.owner_id  = 0
                 AND doc.owner_type IN ('LISTENER_REQUEST', 'USER')
                )
    		 -- 3. all documents with TASK_INSTANCE as owner
             OR (    doc.create_dt <
                          CURDATE()
                        - daydiff 
-             --   AND doc.process_inst_id = 0 
+             AND doc.owner_id  = 0
                 AND doc.owner_type = 'TASK_INSTANCE' 
                )
    		--  4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted

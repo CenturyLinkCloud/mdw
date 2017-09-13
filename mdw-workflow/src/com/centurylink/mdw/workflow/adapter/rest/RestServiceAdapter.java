@@ -59,6 +59,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public Object openConnection(String proxyHost, int proxyPort) throws ConnectionException {
         try {
             String endpointUri = getEndpointUri();
+            if (endpointUri == null)
+                throw new ConnectionException("Missing endpoint URI");
             Map<String,String> params = getRequestParameters();
             if (params != null && !params.isEmpty()) {
                 StringBuffer query = new StringBuffer();

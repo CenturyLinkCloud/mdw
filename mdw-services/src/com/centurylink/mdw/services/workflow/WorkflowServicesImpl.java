@@ -93,6 +93,7 @@ import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -127,7 +128,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException {
         try {
-            getWorkflowDao().setAttributes0(ownerType, ownerId, attributes);
+            getWorkflowDao().setAttributes(ownerType, ownerId, attributes);
         }
         catch (Exception ex) {
             throw new ServiceException("Failed to set attributes for " + ownerType + "/" + ownerId, ex);
@@ -141,7 +142,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             for (Map.Entry<String, String> attribute : attributes.entrySet()) {
                 String attributeName = attribute.getKey();
                 String attributeValue = attribute.getValue();
-                getWorkflowDao().setAttribute0(ownerType, ownerId, attributeName, attributeValue);
+                getWorkflowDao().setAttribute(ownerType, ownerId, attributeName, attributeValue);
             }
         }
         catch (SQLException ex) {
@@ -401,10 +402,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 for (VariableInstance var : instance.getVariables()) {
                     Object value = var.getData();
                     if (value instanceof DocumentReference) {
-                        Document docVO = getWorkflowDao().getDocument(((DocumentReference)value).getDocumentId());
-                        value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                        try {
+                            Document docVO = getWorkflowDao().getDocument(((DocumentReference)value).getDocumentId());
+                            value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                            vars.put(var.getName(), value);
+                        }
+                        catch (TranslationException ex) {
+                            // parse error on one doc should not prevent other vars from populating
+                            logger.severeException("Error translating " + var.getName() + " for process instance " + instanceId, ex);
+                        }
                     }
-                    vars.put(var.getName(), value);
+                    else {
+                        vars.put(var.getName(), value);
+                    }
                 }
             }
             return new ProcessRuntimeContext(pkg, process, instance, vars);

@@ -89,10 +89,20 @@ processMod.controller('ProcessesController',
       if (procInsts.length > 0) {
         var matches = [];
         procInsts.forEach(function(procInst) {
-          if (procInst.id.toString().startsWith(typed))
-            matches.push({type: 'instanceId', value: procInst.id.toString()});
-          else
-            matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+          if (procInst.id.toString().startsWith(typed)) {
+            var existProcInst = matches.find(function(match) {
+              return match.type === 'instanceId' && match.value === procInst.id.toString();
+            });
+            if (!existProcInst)
+              matches.push({type: 'instanceId', value: procInst.id.toString()});
+          }
+          if (procInst.masterRequestId.startsWith(typed)) {
+            var existMrId = matches.find(function(match) {
+              return match.type === 'masterRequestId' && match.value === procInst.masterRequestId;
+            });
+            if (!existMrId)
+              matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+          }
         });
         return matches;
       }
@@ -102,10 +112,12 @@ processMod.controller('ProcessesController',
           if (response.data.length > 0) {
             var matches2 = [];
             response.data.forEach(function(procDef) {
-              if (typed.indexOf('.') > 0)
+              if (typed.indexOf('.') > 0) {
                 matches2.push({type: 'processId', value: procDef.packageName + '/' + procDef.name + ' v' + procDef.version, id: procDef.processId});
-              else
+              }
+              else {
                 matches2.push({type: 'processId', value: procDef.name + ' v' + procDef.version, id: procDef.processId});
+              }
             });
             return matches2;
           }
