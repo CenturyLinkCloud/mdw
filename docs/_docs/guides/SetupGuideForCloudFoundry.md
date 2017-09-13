@@ -80,7 +80,7 @@ It can quickly become tedious to build and push to Cloud Foundry every time you 
 
 ##### Next Steps:
 -	Check out some of the other MDW developer docs:   
-    - [Microservices](../MicroservicesCookbook/)       
+    - [MDW Cookbook](../mdw-cookbook/)       
     - [SOAP Web Service](../SOAPService/)   
  
 -   Browse through the online help docs, which are the same as those in Eclipse:   

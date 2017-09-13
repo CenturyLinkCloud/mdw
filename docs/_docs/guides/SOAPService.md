@@ -5,7 +5,7 @@ title: SOAP Web Service
 
 ### MDW SOAP document-style Web Service
 
-This document contains information about creating, exposing and consuming services through a SOAP-based Web Service. For a RESTFul Web Service, refer to [Microservices](../MicroservicesCookbook/).
+This document contains information about creating, exposing and consuming services through a SOAP-based Web Service. For a RESTFul Web Service, refer to [MDW Cookbook](../mdw-cookbook/).
 
 If you have not done a one-time setup, please follow [this link](../SetupGuideForTomcat/) to setup your environment & eclipse workspace first then return to this guide to continue.
 

@@ -14,7 +14,7 @@ title: Designer User Guide
   
 #### How to Use MDW Designer
 If you would like to create a new project from scratch,  refer to one of the following guides:  
-- [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
+- [MDW Cookbook](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/)
 
 ##### 1. Create an MDW-enabled Project
 Chances are you've already got a project, either by cloning it from Git, or by following the [MDW Quickstart](../../getting-started/quick-start).

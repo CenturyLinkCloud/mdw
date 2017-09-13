@@ -58,6 +58,6 @@ title: Microservices in MDW
   - [Postman automated tests](../../help/groovyTestScriptSyntax.html#serviceApiTesting)
   
 ## Resources
-  - [Microservices Cookbook](../../guides/MicroservicesCookbook/)
+  - [MDW Cookbook](../../guides/mdw-cookbook/)
   - Built-In [Service APIs]()
   - [mdw-demo]()

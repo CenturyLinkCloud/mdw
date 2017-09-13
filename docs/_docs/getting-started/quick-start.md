@@ -17,7 +17,7 @@ Get up and running with MDW in a hurry.
   The [MDW CLI](../cli) gives you commands for common operations like initializing your workspace and updating assets.
    - Download **mdw-cli.zip** from the latest MDW release on GitHub:<br>   
      <https://github.com/CenturyLinkCloud/mdw/releases>
-   - Unzip anywhere on your hard drive.
+   - Unzip anywhere on your hard drive (e.g.: c:\mdw on Windows).
    - Create an environment variable named MDW_HOME pointing to this location, and add its bin directory to your system PATH. 
   
 ### Initialize your workspace
@@ -35,7 +35,7 @@ Get up and running with MDW in a hurry.
   
 ### Run MDW
   At this point you have a decision to make.  MDW comes with a rich set of REST service APIs, and also
-  enables you to quickly [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/).  To host these services MDW relies on a 
+  enables you to quickly [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/).  To host these services MDW relies on a 
   Java Servlet container.  Your options are:
   1. Use the self-contained [MDW Spring Boot jar](../spring-boot)
   2. Install [Apache Tomcat (or Jetty)](../SetupGuideForTomcat)
