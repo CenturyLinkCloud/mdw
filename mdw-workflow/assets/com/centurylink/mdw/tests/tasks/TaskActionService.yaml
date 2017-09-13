@@ -1,22 +1,25 @@
-process: # 18157
+process: # 11620
   name: ManualTaskServices
   instance: 1
-  activity: # 1 "2016-08-11 17:26:13"
-    name: Start
+  activity: # 2 "2017-09-12 19:46:11"
+    name: Stop
     status: Completed
-  activity: # 4 "2016-08-11 17:26:13"
+  activity: # 3 "2017-09-12 19:45:59"
+    name: |
+      AutoForm Task 
+      for Service Access
+    status: Completed
+  activity: # 4 "2017-09-12 19:45:46"
     name: |
       Assign
       Obj Var
     status: Completed
-  activity: # 3 "2016-08-11 17:26:13"
-    name: |
-      AutoForm Task 
-      for Service Access
-    status: Waiting
-  variable: # 31035
+  activity: # 1 "2017-09-12 19:45:46"
+    name: Start
+    status: Completed
+  variable: # 14028
     name: jaxbVar
     value: <TaskJaxb attributeTwo="RequiredAttrValue"/>
-  variable: # 31036
+  variable: # 14029
     name: objectVar
     value: taskmaster: Manoj

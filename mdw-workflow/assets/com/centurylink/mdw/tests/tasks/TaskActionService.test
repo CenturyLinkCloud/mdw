@@ -8,7 +8,7 @@ start process("ManualTaskServices") {
     variables = [ jaxbVar: "<TaskJaxb/>" ] // missing required: #{jaxbVar.attributeTwo}
 }
 
-sleep 10
+sleep 20
 
 // get instance id by claiming
 taskInst = action task("AutoForm Task for Service Access") {
@@ -48,29 +48,6 @@ response = get http("services/Tasks/${taskInst.id}")
 taskInstVO = new JsonSlurper().parseText(response.content)
 assert taskInstVO.assigneeId == 'mdwapp'
 
-// Forward (without comment)
-response = post http("services/Tasks/${taskInst.id}/Forward") {
-    user = 'mdwapp'
-    password = 'ldap_012'
-    payload = '{"action":"Forward","taskInstanceId":${taskInst.id},"user":"mdwapp","destination":"Developers"}'
-}
-assert response.code == 400
-assert new JsonSlurper().parseText(response.content).status.message.startsWith('Comment required')
-
-// Forward (with comment)
-response = post http("services/Tasks/${taskInst.id}/Forward") {
-    user = 'mdwapp'
-    password = 'ldap_012'
-    payload = '{"action":"Forward","taskInstanceId":${taskInst.id},"user":"mdwapp","destination":"Developers","comment":"Forwarding to Developers group"}'
-}
-assert response.code == 200
-
-// confirm Forward
-response = get http("services/Tasks/${taskInst.id}")
-taskInstVO = new JsonSlurper().parseText(response.content)
-assert taskInstVO.assigneeId == null
-assert taskInstVO.workgroups == ['Developers']
-assert taskInstVO.comments == 'Forwarding to Developers group'
 
 // Assign
 response = post http("services/Tasks/${taskInst.id}/Assign") {
@@ -114,5 +91,7 @@ response = post http("services/Tasks/${taskInst.id}/Complete") {
     payload = '{"action":"Complete","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 200
+
+sleep 30
 
 verify process

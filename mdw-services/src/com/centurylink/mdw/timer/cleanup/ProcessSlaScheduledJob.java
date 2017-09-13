@@ -23,15 +23,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -45,6 +43,8 @@ import com.centurylink.mdw.util.log.StandardLogger;
 /*
  * Scheduled job that sweeps for expired process SLAs and triggers the
  *  embedded delay handler for any instances that exceed the SLA.
+ *  mdw.timer.task.ProcessSlaScheduledJob.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessSlaScheduledJob
+ *  mdw.timer.task.ProcessSlaScheduledJob.Schedule=0,15,30,45 * * * *
  */
 public class ProcessSlaScheduledJob implements ScheduledJob {
 
@@ -75,15 +75,22 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
             Calendar systcalendar = Calendar.getInstance();
             systcalendar.setTimeInMillis(dbtime);
 
-            for (Asset asset : AssetCache.getAssets(Asset.PROCESS)) {
-                Process processVO = ProcessCache.getProcess(asset.getId());
+            for (Process processVO : ProcessCache.getAllProcesses()) {
                 int sla = 0;
+                processVO = ProcessCache.getProcess(processVO.getId());
                 if ((processVO.getAttribute("SLA") != null && processVO.getAttribute("SLA") != "")) {
 
                     sla = Integer.parseInt(processVO.getAttribute("SLA"));
-
+                    boolean dealyHandlerDefined = false;
                     if (sla > 0) {
-                        ArrayList<ProcessInstance> listProcessVo = getProcessInstances(asset.getId());
+                        List <Process> subProcess = processVO.getSubProcesses();
+                        for (Process sProcess : subProcess){
+                            if(sProcess.getName().contains("Delay Handler")){
+                                dealyHandlerDefined = true;
+                            }
+                        }
+                      if (dealyHandlerDefined){
+                        ArrayList<ProcessInstance> listProcessVo = getProcessInstances(processVO.getId());
 
                         for (ProcessInstance tempProcessVO : listProcessVo) {
 
@@ -122,7 +129,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                                 }
                             }
                         }
-
+                      }
                     }
                 }
 
