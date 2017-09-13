@@ -307,8 +307,8 @@ processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw',
 }]);
 
 processMod.controller('ProcessDefController', 
-    ['$scope', '$routeParams', '$route', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
-    function($scope, $routeParams, $route, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
+    function($scope, $routeParams, $route, $location, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
       
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
       
@@ -361,12 +361,15 @@ processMod.controller('ProcessDefController',
         if (data.status && data.status.code !== 0) {
           mdw.messages = data.status.message;
         }
+        else {
+          $location.path('/workflow/definitions/' + $scope.process.packageName + '/' + $scope.process.name);
+        }
       }, 
       function(error) {
         mdw.messages = error.data.status.message;
       }
     );
-    // don't wait before going to live view
+    // TODO: don't wait before going to live view (which doesn't exist yet) -- then we'll remove $location.path navigation above
   };
   
   var summary = ProcessSummary.get();
