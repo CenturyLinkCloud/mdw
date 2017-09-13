@@ -40,7 +40,7 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-/*
+/**
  * Scheduled job that sweeps for expired process SLAs and triggers the
  *  embedded delay handler for any instances that exceed the SLA.
  *  mdw.timer.task.ProcessSlaScheduledJob.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessSlaScheduledJob
