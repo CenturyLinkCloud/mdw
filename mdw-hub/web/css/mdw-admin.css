@@ -306,6 +306,10 @@
   position: relative;
   top: 1px;
 }
+.mdw-request {
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-size: 13px;
+}
 .mdw-resource-heading {
   border: 1px solid #ddd;
   border-bottom: none;

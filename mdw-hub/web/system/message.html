@@ -4,7 +4,7 @@
     <div class="panel panel-default mdw-panel">
        <div class="mdw-tabbed-section">
         <uib-tabset>
-          <uib-tab heading="Http Poster">
+          <uib-tab heading="HTTP Poster">
               <div class="mdw-inner-content">
                <form name="httpHelperForm" class="form-horizontal" role="form">
                 <fieldset ng-disabled="waitingForResponse">
@@ -46,7 +46,7 @@
                   <div class="form-group">
                     <label class="control-label col-xs-2" for="requestMessageTextarea">Message Body:</label>
                     <div class="col-xs-10">
-                      <textarea id="requestMessageTextarea" name="requestMessage" class="form-control" ng-model="httpHelper.requestMessage" 
+                      <textarea id="requestMessageTextarea" name="requestMessage" class="form-control mdw-request" ng-model="httpHelper.requestMessage" 
                       rows="10"  ng-blur="httpHelper.requestMessage = httpHelper.requestMessage === '' ? undefined : httpHelper.requestMessage">
                      </textarea>
                     </div>

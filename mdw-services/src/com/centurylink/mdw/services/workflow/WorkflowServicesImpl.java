@@ -1150,24 +1150,26 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private Map<String,String> translateParameters(Process processVO, Map<String,Object> parameters) throws ProcessException {
         Map<String,String> stringParams = new HashMap<String,String>();
-        for (String key : parameters.keySet()) {
-            Object val = parameters.get(key);
-            Variable vo = processVO.getVariable(key);
-            if (vo == null)
-              throw new ProcessException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processVO.getId() + ")");
-            String translated;
-            if (val instanceof String)
-                translated = (String)val;
-            else {
-                Package pkg = PackageCache.getProcessPackage(processVO.getId());
-                if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getVariableType())) {
-                  translated = VariableTranslator.realToString(pkg, vo.getVariableType(), val);
-                }
+        if (parameters != null) {
+            for (String key : parameters.keySet()) {
+                Object val = parameters.get(key);
+                Variable vo = processVO.getVariable(key);
+                if (vo == null)
+                  throw new ProcessException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processVO.getId() + ")");
+                String translated;
+                if (val instanceof String)
+                    translated = (String)val;
                 else {
-                  translated = VariableTranslator.toString(PackageCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
+                    Package pkg = PackageCache.getProcessPackage(processVO.getId());
+                    if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getVariableType())) {
+                      translated = VariableTranslator.realToString(pkg, vo.getVariableType(), val);
+                    }
+                    else {
+                      translated = VariableTranslator.toString(PackageCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
+                    }
                 }
+                stringParams.put(key, translated);
             }
-            stringParams.put(key, translated);
         }
         return stringParams;
     }
