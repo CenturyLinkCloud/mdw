@@ -87,6 +87,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                         for (Process sProcess : subProcess){
                             if(sProcess.getName().contains("Delay Handler")){
                                 dealyHandlerDefined = true;
+                                if (dealyHandlerDefined) break;
                             }
                         }
                       if (dealyHandlerDefined){
