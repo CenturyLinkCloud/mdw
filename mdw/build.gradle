@@ -220,7 +220,7 @@ task zipTemplates(type: Zip) {
     from "templates"
     include "**/*"
 }
-/*artifacts {
+artifacts {
     archives zipTemplates
 }
 uploadArchives {
@@ -231,7 +231,7 @@ uploadArchives {
             }
         }
     }
-}*/
+}
 
 task archiveAssetZips {
     dependsOn zipAssetPackages
@@ -259,6 +259,14 @@ uploadArchives {
             }
             pom.project {
                 groupId = "com.centurylink.mdw.assets"
+                discoverAllJars.discoveredFiles.each{discoveredFile ->
+                    def filterName = discoveredFile.name - ".zip"
+                    addFilter(filterName) { artifact, file ->
+                         file.name == discoveredFile.name
+                    }
+                    pom(filterName).artifactId = filterName
+                }
+                    
             }
         }
     }
