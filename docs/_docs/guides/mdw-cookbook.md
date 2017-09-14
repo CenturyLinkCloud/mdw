@@ -314,6 +314,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   ```
   - At this point, instead copy/pasting code from this guide, why not download the completed Bugs.java artifact from the mdw-demo
     GitHub repository.  Right-click the link below and select Save Link As, overwriting Bugs.java in the assets/demo/api folder in your project.
+    Or just click the link to view the raw source in your browser, and copy/paste it into the asset. 
     <https://raw.githubusercontent.com/CenturyLinkCloud/mdw-demo/master/assets/demo/api/Bugs.java><br>
 
   - Now in Eclipse select File > Close All, and then click the Refresh Icon in Process Explorer. (**Tip**: Before refreshing Process Explorer,
