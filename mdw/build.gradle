@@ -259,7 +259,7 @@ uploadArchives {
             }
             pom.project {
                 groupId = "com.centurylink.mdw.assets"
-                discoverAllJars.discoveredFiles.each{discoveredFile ->
+                archiveAssetZips.discoveredFiles.each{discoveredFile ->
                     def filterName = discoveredFile.name - ".zip"
                     addFilter(filterName) { artifact, file ->
                          file.name == discoveredFile.name
