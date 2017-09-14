@@ -78,7 +78,7 @@ subprojects {
 }
 
 task cleanJavadocs(type: Delete) {
-    delete "../mdw-hub/web/javadoc"
+    delete "../docs/_docs/javadoc"
 }
 
 task packageSources(type: GradleBuild) {
@@ -100,7 +100,7 @@ task javadocs(type: Javadoc) {
     maxMemory = "256m"
     options.links "http://docs.oracle.com/javase/8/docs/api/"
     options.bottom "<i>Copyright &#169; 2017 CenturyLink, Inc.</i>"
-    destinationDir = file('../docs/javadoc')
+    destinationDir = file('../docs/_docs/javadoc')
 }
 
 task exportAssetPackages(type: GradleBuild) {
@@ -247,13 +247,14 @@ uploadArchives {
 }*/
 
 task buildAll(type: GradleBuild) {
-    dependsOn zipTemplates
+    dependsOn (zipTemplates,javadocs)
     buildFile = "build.gradle"
     tasks = ["build"]
 }
 
 
 task cleanAll(type: GradleBuild) {
+    dependsOn cleanJavadocs
     buildFile = "build.gradle" 
     tasks = ["clean"]
 }
