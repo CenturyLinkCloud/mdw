@@ -145,6 +145,7 @@ task deployTomcatMdwDev(type: GradleBuild) {
 }
 
 task publishToMavenCentral(type: GradleBuild) {
+    dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
@@ -247,7 +248,7 @@ uploadArchives {
 }*/
 
 task buildAll(type: GradleBuild) {
-    dependsOn (zipTemplates,javadocs)
+    dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
