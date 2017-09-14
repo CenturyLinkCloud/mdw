@@ -28,23 +28,23 @@ is available to clone in its completed state from the [mdw-demo repository](http
     project, try clicking the Refresh toolbar icon ![refresh](../images/refresh.gif) at the top of Process Explorer view.
 
 #### Create a package  
-  Everything in MDW is what we call an [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html), and these live in so-called
-  asset packages, similar to Java packages except that they contain a whole lot more than .java source files.  Let's create a package for our
+  Everything in MDW is what we call an [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html), and these live in packages, 
+  similar to Java packages except that they contain a whole lot more than .java source files.  Let's create a package for our
   bug handling workflow:
   - Expand your project tree in Process Explorer.  You'll see the mdw6 baseline packages imported by the CLI during `mdw init` or `mdw update`.
     The default package set is pretty scant, but MDW includes quite a few optional packages; some of which we'll cover later.
-  - Right-click on your project in Process Explorer and select New > MDW Package.  Name the package `com.centurylink.mdw.demo.bugs`.
+  - Right-click on your project in Process Explorer and select New > MDW Package.  Name the package "com.centurylink.mdw.demo.bugs".
     Don't select any Workgroup for now, as this would restrict visibility of your new package.
     ![create package](../images/create-pkg.png)
   
 #### Create a process  
-  - Right-click on the bugs package and select New > MDW Process.  Name the process `Create Bug`.
+  - Right-click on the bugs package and select New > MDW Process.  Name the process "Create Bug".<br>
     ![create process](../images/create-proc.png)
   
     Finally we can start building.
   
   - Double-click the process title in the Designer canvas.  Look at the Properties view at the bottom of the Eclipse window, 
-    and you'll observe that the associated property tab gains focus.  Property tabs are how design elements are configured.
+    and you'll observe that the associated property tab gained focus.  Property tabs are how design elements are configured.
   - Select the Design tab for the process and check the Service Process checkbox.  This tells MDW that this process is expected to run 
     synchronously and return a response in real time.
   
@@ -242,7 +242,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
 #### Implement a JAX-RS REST endpoint
 
   - To facilitate path-based request handling, MDW supports [@Path](http://docs.oracle.com/javaee/6/api/javax/ws/rs/Path.html) annotations.
-    Paths are qualified by the containing asset package name, so for this let's create a separate, friendlier package to house our REST service.
+    Paths are qualified by the containing asset package name, so for this let's create a separate, friendly-named package to house our REST service.
     Right-click on your project in Process Explorer and select New > MDW Package.  Name this new package simply "demo.api".
     
   - In the "demo.api" package create a Java source asset named Bugs.java like this:
@@ -284,7 +284,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - After saving Bugs.java, we're ready to POST a JSON request to http://localhost:8080/mdw/services/demo/api/bugs.
     For this you can use a tool like [Postman](https://www.getpostman.com/).
-    Or if you don't feel like biting that off just yet, MDWHub's System tab has a Messaging feature where you can submit simple HTTP requests.
+    Or if you don't feel like biting that off just now, MDWHub's System tab has a Messaging feature where you can submit simple HTTP requests.
     
     Here's what a request and response look like when submitted through MDWHub:
     ![post bug](../images/post-bug.png)  
@@ -297,11 +297,11 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
 ### 4. Document the Service API using Swagger
 
-  [Swagger](https://swagger.io/) documentation is a powerful way to communicate the specifics of your REST interface to potential consumers.  
-  MDW REST services will automatically generate Swagger documentation on the fly if a few key annotations are added to the Java source asset.  
+  [Swagger](https://swagger.io/) documentation is a powerful way to communicate the specifics of your REST interface to potential consumers.
+  MDW REST services will automatically generate Swagger documentation on the fly if a few key annotations are added to the Java source asset.
   This is not only a convenient way to maintain this documentation, but it also means that it's always up-to-date versus the implementation.  
 
-##### Add the @Api Annotation to Your Service:
+#### Add the @Api Annotation to Your Service:
   The Swagger [@Api](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#api) annotation goes on your class declaration along 
   with the JAX-RS Path annotation. The tag value in your annotation provides a high-level description of the its purpose:
 
@@ -321,7 +321,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Expand your workflow project again in Process Explorer, and open Bugs.java.  Check the
     [@ApiOperation](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apioperation) and 
     [@ApiImplicitParams](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apiimplicitparam-apiimplicitparams)
-    annotations to see how these document the POST method and indicate its expected body content.
+    annotations to see how these document the POST operation and indicate its expected body content.
     
   - Touch and save Bugs.java to trigger Designer to invoke the Cache Refresh service on the server.  Or you can always manually refresh 
     the MDW asset cache by right-clicking on the project and selecting Server > Refresh Caches.  Yet another way to manually refresh is 
@@ -337,5 +337,5 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - MDW incorporates [Swagger UI](https://swagger.io/swagger-ui/) to make available a handy user interface for surveying REST APIs.
     Click on the Swagger subtab to check out the POST operation's docs.  Swagger-UI renders expandable elements for each model object.
     If you expand POST, you can even click the "Try it out" button to submit a request from here.
-    
+    ![swagger-ui](../images/swagger-ui.png)
       
