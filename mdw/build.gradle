@@ -233,51 +233,11 @@ uploadArchives {
     }
 }
 
-task archiveAssetZips {
-    dependsOn zipAssetPackages
-    ext.discoveredFiles = []
-    doLast{
-        fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**').each { file ->
-            if(file.name.endsWith("zip")) {
-                discoveredFiles.add(file)
-                artifacts{
-                     archives file
-                }
-            }
-        }
-    }
-}
-
-uploadArchives {
-    dependsOn archiveAssetZips
-    ext.ossrhUsername = System.getProperty("ossrhUsername")
-    ext.ossrhPassword = System.getProperty("ossrhPassword")
-    repositories {
-        mavenDeployer {
-            repository(url: mavenSnapshotRepoUrl) {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            pom.project {
-                groupId = "com.centurylink.mdw.assets"
-                archiveAssetZips.discoveredFiles.each{discoveredFile ->
-                    def filterName = discoveredFile.name - ".zip"
-                    addFilter(filterName) { artifact, file ->
-                         file.name == discoveredFile.name
-                    }
-                    pom(filterName).artifactId = filterName
-                }
-                    
-            }
-        }
-    }
-}
-
 task buildAll(type: GradleBuild) {
     dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
 }
-
 
 task cleanAll(type: GradleBuild) {
     dependsOn cleanJavadocs
