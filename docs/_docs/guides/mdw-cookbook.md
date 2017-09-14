@@ -243,11 +243,11 @@ is available to clone in its completed state from the [mdw-demo repository](http
 
   - To facilitate path-based request handling, MDW supports [@Path](http://docs.oracle.com/javaee/6/api/javax/ws/rs/Path.html) annotations.
     Paths are qualified by the containing asset package name, so for this let's create a separate, friendlier package to house our REST service.
-    Right-click on your project in Process Explorer and select New > MDW Package.  Name this new package simply "api".
+    Right-click on your project in Process Explorer and select New > MDW Package.  Name this new package simply "demo.api".
     
-  - In the "api" package create a Java source asset named Bugs.java like this:
+  - In the "demo.api" package create a Java source asset named Bugs.java like this:
     ```java
-    package api;
+    package demo.api;
     
     import java.util.HashMap;
     import java.util.Map;
@@ -263,7 +263,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     import com.centurylink.mdw.services.ServiceLocator;
     import com.centurylink.mdw.services.rest.JsonRestService;
     
-    @Path("/")
+    @Path("bugs/")
     public class Bugs extends JsonRestService {
     
         @Override
@@ -282,7 +282,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     [WorkflowServices](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/WorkflowServices.html) API
     to programmatically launch our Create Bug process, and we return the result as JSON.
     
-  - After saving Bugs.java, we're ready to POST a JSON request to http://localhost:8080/mdw/services/api/Bugs.
+  - After saving Bugs.java, we're ready to POST a JSON request to http://localhost:8080/mdw/services/demo/api/bugs.
     For this you can use a tool like [Postman](https://www.getpostman.com/).
     Or if you don't feel like biting that off just yet, MDWHub's System tab has a Messaging feature where you can submit simple HTTP requests.
     
@@ -296,7 +296,46 @@ is available to clone in its completed state from the [mdw-demo repository](http
     variables are populated as expected.    
     
 ### 4. Document the Service API using Swagger
-        
-  At this point, instead of copy/pasting code why not download the completed Bugs.java
-    artifact from mdw-demo:  
+
+  [Swagger](https://swagger.io/) documentation is a powerful way to communicate the specifics of your REST interface to potential consumers.  
+  MDW REST services will automatically generate Swagger documentation on the fly if a few key annotations are added to the Java source asset.  
+  This is not only a convenient way to maintain this documentation, but it also means that it's always up-to-date versus the implementation.  
+
+##### Add the @Api Annotation to Your Service:
+  The Swagger [@Api](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#api) annotation goes on your class declaration along 
+  with the JAX-RS Path annotation. The tag value in your annotation provides a high-level description of the its purpose:
+
+  ```java
+  @Path("/bugs")
+  @Api("Bugs API")
+  public class Bugs extends JsonRestService {
+  ```
+  - At this point, instead copy/pasting code from this guide, why not download the completed Bugs.java artifact from the mdw-demo
+    GitHub repository.  Right-click the link below and select Save Link As, overwriting Bugs.java in the assets/demo/api folder in your project.
+    <https://raw.githubusercontent.com/CenturyLinkCloud/mdw-demo/master/assets/demo/api/Bugs.java><br>
+
+  - Now in Eclipse select File > Close All, and then click the Refresh Icon in Process Explorer. (**Tip**: Before refreshing Process Explorer,
+    it's a good idea to save your work and close all files.  If you have assets open when refreshing, Designer does its best to reconcile your
+    change versus what it reads from the hard-drive, but if it gets confused it can end up giving you heartburn).
     
+  - Expand your workflow project again in Process Explorer, and open Bugs.java.  Check the
+    [@ApiOperation](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apioperation) and 
+    [@ApiImplicitParams](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apiimplicitparam-apiimplicitparams)
+    annotations to see how these document the POST method and indicate its expected body content.
+    
+  - Touch and save Bugs.java to trigger Designer to invoke the Cache Refresh service on the server.  Or you can always manually refresh 
+    the MDW asset cache by right-clicking on the project and selecting Server > Refresh Caches.  Yet another way to manually refresh is 
+    through the System tab Tools link in MDWHub.
+    
+#### View generated API documentation in MDWHub 
+  - Once the server cache has been refreshed, access MDWHub in your browser and click the Services tab.  Most of what you'll see listed here
+    are paths for the built-in MDW services.  Scroll to the bottom to find your /demo/api/bugs resource path.  Click this link to investigate your service API docs.
+    Swagger uses [JSON Schema](http://www.yaml.org/spec/1.2/spec.html#id2803231) syntax, so the definitive word on your API contract is depicted on the JSON tab.
+    A more readable [YAML](http://www.yaml.org/) representation can be viewed on the YAML tab.  The raw content of both of these tabs is itself available via MDW's
+    built-in service API (in fact, that's how MDWHub gets them).
+    
+  - MDW incorporates [Swagger UI](https://swagger.io/swagger-ui/) to make available a handy user interface for surveying REST APIs.
+    Click on the Swagger subtab to check out the POST operation's docs.  Swagger-UI renders expandable elements for each model object.
+    If you expand POST, you can even click the "Try it out" button to submit a request from here.
+    
+      
