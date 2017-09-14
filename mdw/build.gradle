@@ -220,7 +220,7 @@ task zipTemplates(type: Zip) {
     from "templates"
     include "**/*"
 }
-artifacts {
+/*artifacts {
     archives zipTemplates
 }
 uploadArchives {
@@ -231,7 +231,7 @@ uploadArchives {
             }
         }
     }
-}
+}*/
 
 task archiveAssetZips {
     dependsOn zipAssetPackages
