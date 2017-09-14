@@ -68,7 +68,6 @@ public class ValidationMessage implements Jsonable {
     }
     @Override
     public JSONObject getJson() throws JSONException {
-        // TODO Auto-generated method stub
         JSONObject json = new JsonObject();
         if (message !=null) {
             json.put("message", message);
@@ -77,7 +76,6 @@ public class ValidationMessage implements Jsonable {
     }
     @Override
     public String getJsonName() {
-        // TODO Auto-generated method stub
         return "validationMessage";
     }
 }
