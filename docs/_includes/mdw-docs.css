@@ -3,6 +3,11 @@ img {
   margin-bottom: 12px;
 }
 
+.inline {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 .project-name {
   font-size: 4.25rem;
 }
@@ -29,4 +34,9 @@ article h4 {
 
 .highlighter-rouge {
 	margin-bottom: 12px;
+}
+
+li .highlighter-rouge {
+	margin-top: 0;
+	margin-bottom: 0;
 }

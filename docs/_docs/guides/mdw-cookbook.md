@@ -372,7 +372,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - Refresh the server cache and revisit the Swagger docs on MDWHub's Services tab to confirm that these changes are reflected in the docs.
   
-#### Incorporate auto-validation into the Create Bug workflow
+#### Incorporate auto-validation
   - With these model annotations in place, we can now replace our crude hand-crafted validations in the Validate Request script activity with something
     more comprehensive.  Open the Create Bug process and change the script to this:
     ```groovy
