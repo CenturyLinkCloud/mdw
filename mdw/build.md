@@ -33,8 +33,10 @@
   
 6 - Update mdw-demo
   - git pull
-  - Update mdwVersion and mdwDesignerVersion in gradle.properties  
-  - Run updateManifestFile task to update assets and refresh the project
+  - Update mdwVersion and mdwDesignerVersion in gradle.properties
+  - Copy latest manifest.yml.appfog_dev (for snapshots) or manifest.yml.appfog_prod over manifest.yml
+  - Update MDW_VERSION in manifest.yml  
+  - Run the copyAssets task to bring over the latest framework assets
   - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
 7 - Deploy and Test
