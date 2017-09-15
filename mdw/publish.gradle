@@ -112,7 +112,12 @@ task exportAssetPackages {
 }
 exportAssetPackages.mustRunAfter cleanPackages
 
+task cleanAssetZips(type: Delete) {
+    delete fileTree(dir: "../${mdwAssetZipOutputDir}")
+}
+
 task zipAssetPackages {
+    dependsOn cleanAssetZips
     description = "Export Asset Packages"
     file("../${mdwAssetZipOutputDir}").mkdirs()
     // superCats are categorized as the parent package
@@ -216,9 +221,14 @@ task uploadToMavenCentral(type: GradleBuild) {
     buildFile = "build.gradle"
     tasks = ["uploadArchives"]
 }
+
+task uploadAssetsToMavenCentral(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["uploadAssets"]
+}
   
 task publishToMavenCentral(type: GradleBuild) {
-    dependsOn uploadToMavenCentral
+    dependsOn uploadToMavenCentral, uploadAssetsToMavenCentral
     if (!mdwVersion.endsWith("-SNAPSHOT"))
         dependsOn closeAndReleaseRepository
 }

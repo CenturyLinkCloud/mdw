@@ -3,6 +3,10 @@ apply plugin: 'signing'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
+configurations { 
+    assets 
+}
+
 task publishMdw(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishBuild"]
@@ -18,13 +22,13 @@ subprojects {
     apply plugin: "eclipse-wtp"
     apply plugin: 'maven'
     apply plugin: 'signing'
-    
+
     eclipse {
         classpath {
             defaultOutputDir = file("build/classes")
         }
     }
-    
+
     sourceCompatibility = 1.8
     version = "${mdwVersion}"
 
@@ -38,11 +42,11 @@ subprojects {
             output.classesDir = "build/classes"
         }
     }
-    
+
     repositories {
         mavenCentral()
     }
-    
+
     // copy into output dir rather than including directly in jar
     // this works better in local development where deployment happens from build/classes
     task copyMeta(type: Copy) {
@@ -54,7 +58,7 @@ subprojects {
         }
         into sourceSets.main.output.classesDir
     }
-    
+
     processResources {
         dependsOn copyMeta
     }
@@ -65,10 +69,10 @@ subprojects {
         exclude "META-INF"
         exclude "**/.metadata/"
         exclude "**/.*ignore"
-    }    
+    }
 
     def packaging = 'jar'
-    
+
     task javadocJar(type: Jar) {
         enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
@@ -110,7 +114,7 @@ task exportAssetPackages(type: GradleBuild) {
 
 task zipAssetPackages(type: GradleBuild) {
     buildFile = "publish.gradle"
-    tasks = ["zipAll"]
+    tasks = ["zipAllAssets"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
@@ -139,8 +143,8 @@ task deployTomcatMdwDev(type: GradleBuild) {
     buildFile = "deploy.gradle"
     tasks = ["deployMdw"]
     startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
-                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
-                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
+        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
+        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
 task publishToMavenCentral(type: GradleBuild) {
@@ -155,17 +159,17 @@ allprojects {
     version = "${mdwVersion}"
     ext.ossrhUsername = System.getProperty("ossrhUsername")
     ext.ossrhPassword = System.getProperty("ossrhPassword")
-    
+
     if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
         signing {
             required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
             sign configurations.archives
-         }
+        }
     }
     else {
         tasks.withType(Javadoc).all { enabled = false }
     }
-    
+
     uploadArchives {
         enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         repositories {
@@ -239,9 +243,64 @@ task buildAll(type: GradleBuild) {
     tasks = ["build"]
 }
 
+task archiveAssetZips {
+    dependsOn zipAssetPackages
+    doLast{
+        ext.discoveredFiles = []
+        fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { file ->
+            if(file.name.endsWith("zip")) {
+                discoveredFiles.add(file)
+                artifacts {
+                     assets file:file 
+                }
+            }
+        }
+    }
+}
+
+task configureUploadAssets {
+    dependsOn archiveAssetZips
+    doLast{
+        uploadAssets {
+            ext.ossrhUsername = System.getProperty("ossrhUsername")
+            ext.ossrhPassword = System.getProperty("ossrhPassword")
+            repositories {
+                mavenDeployer {
+                    repository(url: mavenRepoUrl) {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+                    snapshotRepository(url: mavenSnapshotRepoUrl) {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
+                        def filterName = discoveredFile.name - ".zip"
+                        def artifactName
+                        def hyphenCount = 2
+                        if (filterName.contains("SNAPSHOT")) {
+                            hyphenCount = 3
+                        }
+                        def segments = filterName.split("-")
+                        if (segments.size() > hyphenCount)
+                            artifactName = segments[0] + "-" +segments[1]
+                        else
+                            artifactName = segments[0]
+                        addFilter(filterName) { artifact, file ->
+                            file.name == discoveredFile.name
+                        }
+                        pom(filterName).artifactId = artifactName
+                        pom(filterName).groupId = "com.centurylink.mdw.assets"
+                    }
+                }
+            }
+        }
+    }
+}
+
+uploadAssets.dependsOn configureUploadAssets
+
 task cleanAll(type: GradleBuild) {
     dependsOn cleanJavadocs
-    buildFile = "build.gradle" 
+    buildFile = "build.gradle"
     tasks = ["clean"]
 }
 
