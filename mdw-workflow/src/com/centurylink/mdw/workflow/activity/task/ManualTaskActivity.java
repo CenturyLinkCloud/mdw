@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.workflow.activity.task;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -27,6 +30,7 @@ import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
@@ -98,6 +102,10 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
         return waitForTask==null || waitForTask.equalsIgnoreCase("true");
     }
 
+    protected static final String INSTANCE_ID_VAR = "INSTANCE_ID_VAR";
+    public String getInstanceIdVariable() {
+        return this.getAttributeValue(INSTANCE_ID_VAR);
+    }
 
     protected boolean resume(String message, String completionCode) throws ActivityException {
         if (messageIsTaskAction(message)) {
@@ -190,4 +198,11 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
     protected void processOtherMessage(String message) throws ActivityException {
     }
 
+    protected void updateOwningTransition(Long taskInstanceId) throws DataAccessException {
+        Map<String,Object> changes = new HashMap<String,Object>();
+        changes.put("TASK_INST_SECONDARY_OWNER", OwnerType.WORK_TRANSITION_INSTANCE);
+        changes.put("TASK_INST_SECONDARY_OWNER_ID", getWorkTransitionInstanceId());
+        new TaskDataAccess().updateTaskInstance(taskInstanceId, changes, false);
+
+    }
 }

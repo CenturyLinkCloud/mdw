@@ -49,6 +49,7 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
@@ -1503,26 +1504,59 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
-   protected String doCompatibilityCodeSubstitutions(String in) throws IOException {
-       SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
-       if (!substitutionResult.isEmpty()) {
-           logwarn("Compatibility substitutions applied for code in activity " + getActivityName()
-               + " (details logged at debug level). Please update the code for this activity as otherwise these substitutions are applied on every execution.");
-           if (isLogDebugEnabled())
-               logdebug("Compatibility substitutions for " + getActivityName() + ":\n" + substitutionResult.getDetails());
-           if (logger.isMdwDebugEnabled())
-               logger.mdwDebug("Substitution output for " + getActivityName() + ":\n" + substitutionResult.getOutput());
-           return substitutionResult.getOutput();
-       }
-       return in;
-   }
+    protected String doCompatibilityCodeSubstitutions(String in) throws IOException {
+        SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
+        if (!substitutionResult.isEmpty()) {
+            logwarn("Compatibility substitutions applied for code in activity " + getActivityName()
+                + " (details logged at debug level). Please update the code for this activity as otherwise these substitutions are applied on every execution.");
+            if (isLogDebugEnabled())
+                logdebug("Compatibility substitutions for " + getActivityName() + ":\n" + substitutionResult.getDetails());
+            if (logger.isMdwDebugEnabled())
+                logger.mdwDebug("Substitution output for " + getActivityName() + ":\n" + substitutionResult.getOutput());
+            return substitutionResult.getOutput();
+        }
+        return in;
+    }
 
-   protected boolean isDisabled() throws ActivityException {
-       try {
-           return "true".equalsIgnoreCase(getAttributeValueSmart(DISABLED));
-       }
-       catch (PropertyException ex) {
-           throw new ActivityException(ex.getMessage(), ex);
-       }
-   }
+    protected boolean isDisabled() throws ActivityException {
+        try {
+            return "true".equalsIgnoreCase(getAttributeValueSmart(DISABLED));
+        }
+        catch (PropertyException ex) {
+            throw new ActivityException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Get a runtime value.
+     * @param spec can be a variable name or expression
+     */
+    protected Object getValue(String spec) throws ActivityException {
+        if (ProcessRuntimeContext.isExpression(spec)) {
+            return getRuntimeContext().evaluate(spec);
+        }
+        else {
+            return getVariableValue(spec);
+        }
+    }
+
+    /**
+     * Set a runtime value.
+     * @param spec can be a variable name or expression
+     * @param value the value to set
+     */
+    protected void setValue(String spec, Object value) throws ActivityException {
+        if (ProcessRuntimeContext.isExpression(spec)) {
+            // create or update document variable referenced by expression
+            ActivityRuntimeContext runtimeContext = getRuntimeContext();
+            runtimeContext.set(spec, value);
+            String rootVar = spec.substring(2, spec.indexOf('.'));
+            Variable doc = runtimeContext.getProcess().getVariable(rootVar);
+            String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getVariableType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+            setParameterValueAsDocument(rootVar, doc.getVariableType(), stringValue);
+        }
+        else {
+            setVariableValue(spec, value);
+        }
+    }
 }

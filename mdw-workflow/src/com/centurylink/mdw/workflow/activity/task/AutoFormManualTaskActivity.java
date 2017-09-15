@@ -40,18 +40,35 @@ import com.centurylink.mdw.util.timer.Tracked;
 public class AutoFormManualTaskActivity extends ManualTaskActivity {
 
     /**
-     *
-     * The method creates a new task instance, or in case a task instance ID
-     * is already known (the method getTaskInstanceId() return non-null),
-     * the method sends a response back to the task instance.
-     *
+     * Creates a task instance unless the INSTANCE_ID_VAR attribute points
+     * to a pre-existing instance.  If the attribute is populated but the variable
+     * value is null, the variable will be set to the newly-created instanceId.
      */
     @Override
     public void execute() throws ActivityException {
+        Long instanceId = null;  // pre-existing instanceId
+        String instanceIdSpec = getInstanceIdVariable();
+        if (instanceIdSpec != null) {
+            Object value = getValue(instanceIdSpec);
+            if (value instanceof Long)
+                instanceId = (Long) value;
+            else if (value != null)
+                instanceId = Long.parseLong(value.toString());
+        }
         try {
-            TaskInstance taskInstance = createTaskInstance();
-            String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + taskInstance.getId();
-            super.loginfo("Task instance created - ID " + taskInstance.getId());
+            if (instanceId == null) {
+                TaskInstance taskInstance = createTaskInstance();
+                instanceId = taskInstance.getTaskInstanceId();
+                if (instanceIdSpec != null)
+                    setValue(instanceIdSpec, instanceId);
+            }
+            else {
+                // update secondary owner
+                updateOwningTransition(instanceId);
+            }
+
+            String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + instanceId;
+            super.loginfo("Task instance created - ID " + instanceId);
             if (this.needSuspend()) {
                 getEngine().createEventWaitInstance(
                         this.getActivityInstanceId(),

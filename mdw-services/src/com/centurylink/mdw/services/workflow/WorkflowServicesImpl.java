@@ -313,6 +313,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public ProcessInstance getMasterProcess(String masterRequestId) throws ServiceException {
+        Query query = new Query();
+        query.setFilter("master", true);
+        query.setFilter("masterRequestId", masterRequestId);
+        List<ProcessInstance> instances = getProcesses(query).getProcesses();
+        if (instances.isEmpty())
+            return null;
+        else
+            return instances.get(0);
+    }
+
     public Map<String,Value> getProcessValues(Long instanceId) throws ServiceException {
         return getProcessValues(instanceId, false);
     }
@@ -892,8 +903,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+    public Object invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+        return invokeServiceProcess(name, masterRequest, masterRequestId, parameters, headers, null);
+    }
+
+    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException {
         try {
             Long docId = 0L;
             String request = null;
@@ -922,6 +938,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 if (var != null && var.isOutput() && !var.isString()) {
                     response = VariableTranslator.realToObject(pkg, var.getVariableType(), resp);
                 }
+            }
+            Variable responseHeadersVar = processVO.getVariable("responseHeaders");
+            if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getVariableType().equals("java.util.Map<String,String>")) {
+                ProcessInstance processInstance = getMasterProcess(masterRequestId);
+                Map<?,?> respHeaders = (Map<?,?>) processInstance.getVariable("responseHeaders");
+                for (Object key : respHeaders.keySet())
+                    responseHeaders.put(key.toString(), respHeaders.get(key).toString());
             }
             return response;
         }

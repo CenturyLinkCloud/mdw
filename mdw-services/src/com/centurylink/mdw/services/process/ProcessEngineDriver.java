@@ -744,8 +744,10 @@ public class ProcessEngineDriver {
         long stopMilli = System.currentTimeMillis();
         logger.info("Synchronous process executed in " +
                 ((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
-        if (completed) return resp;
-        if (lastException==null) throw new Exception("Process instance not completed");
+        if (completed)
+            return resp;
+        if (lastException == null)
+            throw new Exception("Process instance not completed");
         throw lastException;
     }
 

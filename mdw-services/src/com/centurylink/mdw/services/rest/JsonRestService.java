@@ -18,6 +18,7 @@ package com.centurylink.mdw.services.rest;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.DELETE;
@@ -30,14 +31,15 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.JsonService;
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExport;
 import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.HttpHelper;
 
 import io.swagger.annotations.Api;
@@ -254,4 +256,26 @@ public abstract class JsonRestService extends RestService implements JsonService
             throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Helper method for invoking a service process.  Populates response headers from variable value.
+     */
+    protected JSONObject invokeServiceProcess(String name, Object request, String requestId,
+            Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+        JSONObject responseJson;
+        Map<String,String> responseHeaders = new HashMap<>();
+        Object responseObject = ServiceLocator.getWorkflowServices().invokeServiceProcess(name,
+                request, requestId, parameters, headers, responseHeaders);
+        if (responseObject instanceof JSONObject)
+            responseJson = (JSONObject) responseObject;
+        else if (responseObject instanceof Jsonable)
+            responseJson = ((Jsonable) responseObject).getJson();
+        else
+            throw new ServiceException(HTTP_500_INTERNAL_ERROR,
+                    "Unsupported response type: " + responseObject.getClass());
+        for (String key : responseHeaders.keySet())
+            headers.put(key, responseHeaders.get(key));
+        return responseJson;
+    }
+
 }

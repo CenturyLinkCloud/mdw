@@ -44,6 +44,10 @@ public class AssetVersionSpec {
         this.version = version;
     }
 
+    public AssetVersionSpec(String packageProcess) {
+        this(packageProcess, "0");
+    }
+
     /**
      * For compatibility: handles with/without leading package path, and handles old-style version format.
      */

@@ -373,16 +373,13 @@ public class TaskWorkflowHelper {
         new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes, false);
     }
 
-    public void updateWorkgroups(List<String> groups)
-    throws DataAccessException {
+    public void updateWorkgroups(List<String> groups) throws DataAccessException {
         new TaskDataAccess().setTaskInstanceGroups(taskInstance.getTaskInstanceId(), groups.toArray(new String[0]));
     }
 
-    public void updatePriority(Integer priority)
-    throws DataAccessException {
+    public void updatePriority(Integer priority) throws DataAccessException {
         new TaskDataAccess().setTaskInstancePriority(taskInstance.getTaskInstanceId(), priority);
     }
-
 
     private TaskIndexProvider getIndexProvider(TaskRuntimeContext runtimeContext) throws DataAccessException {
         String indexProviderClass = runtimeContext.getTaskAttribute(TaskAttributeConstant.INDEX_PROVIDER);
