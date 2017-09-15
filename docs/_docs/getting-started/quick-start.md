@@ -7,11 +7,13 @@ Get up and running with MDW in a hurry.
 
 ### Prerequisite
   - Java 8   
-  This is the only hard requirement.  If you type `java -version` on the command line and see **1.8**, you're all set:
+  This is the only hard requirement.  Type `java -version` on the command line and if you see **1.8**, you're all set:
   ```
   java version "1.8.0_60"
   ...
   ```
+  However, make sure you're running Java from a JDK installation and not just a JRE (in other words, the JDK bin directory
+  must precede the JRE bin directory on your system PATH).  
   
 ### Install the MDW CLI
   The [MDW CLI](../cli) gives you commands for common operations like initializing your workspace and updating assets.
@@ -45,7 +47,7 @@ Get up and running with MDW in a hurry.
   or if you need more control over your container.
 
 #### Spring Boot Setup
-  - Install the MDW binaries
+  - Install the MDW binaries  
     On the command line, cd into the project directory created by `mdw init`.  Then type
     ```
     mdw install
