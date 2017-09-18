@@ -145,14 +145,18 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     }
 
     protected String evaluateBindingValue(Variable childVar, String v) {
-        if (v!=null && v.length()>0) {
+        if (v != null && v.length() > 0) {
             int varCat = childVar.getVariableCategory().intValue();
             if (varCat!=Variable.CAT_STATIC) {
                 if (valueIsVariable(v)) {
                     VariableInstance varinst = this.getVariableInstance(v.substring(1));
                     v = varinst==null?null:varinst.getStringValue();
-                } else {
-                    try {
+                }
+                else if (v.startsWith("${") && v.endsWith("}") && v.indexOf('.') == -1 && v.indexOf('[') == -1) {
+                    VariableInstance varinst = this.getVariableInstance(v.substring(2, v.length() - 1));
+                    v = varinst==null?null:varinst.getStringValue();
+                }
+                else {    try {
                         if (valueIsJavaExpression(v)) {
                             Object obj = evaluateExpression(getActivityId().toString(), JAVA_EL, v);
                             v = obj == null ? null : obj.toString();
