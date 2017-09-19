@@ -250,8 +250,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - In the "demo.api" package create a Java source asset named Bugs.java like this:
     ```java
     package demo.api;
-    
-    import java.util.HashMap;
+        
     import java.util.Map;
     
     import javax.ws.rs.Path;
@@ -261,27 +260,23 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
     import com.centurylink.mdw.common.service.ServiceException;
     import com.centurylink.mdw.demo.bugs.Bug;
-    import com.centurylink.mdw.model.StatusResponse;
-    import com.centurylink.mdw.services.ServiceLocator;
     import com.centurylink.mdw.services.rest.JsonRestService;
-    
-    @Path("bugs/")
+        
+    @Path("/bugs")
     public class Bugs extends JsonRestService {
-    
+        
         @Override
         public JSONObject post(String path, JSONObject content, Map<String,String> headers)
                 throws ServiceException, JSONException {
             String requestId = Long.toHexString(System.nanoTime());
-            Object response = ServiceLocator.getWorkflowServices().invokeServiceProcess("Create Bug",
-                    new Bug(content), requestId, new HashMap<>(), headers);
-            return ((StatusResponse)response).getJson();
+            return invokeServiceProcess("Create Bug", new Bug(content), requestId, null, headers);
         }
-    }
+    }    
     ```
     The root path of our bugs service is governed by the @Path annotation of the class.  We override `post()`
     from [JsonRestService](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/rest/JsonRestService.html)
-    to handle HTTP POST requests.  When one is received, we use the MDW 
-    [WorkflowServices](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/WorkflowServices.html) API
+    to handle HTTP POST requests.  When one is received, we use the superclass helper method  
+    [invokeServiceProcess()](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/rest/JsonRestService.html#invokeServiceProcess-java.lang.String-java.lang.Object-java.lang.String-java.util.Map-java.util.Map-).
     to programmatically launch our Create Bug process, and we return the result as JSON.
     
   - After saving Bugs.java, we're ready to POST a JSON request to http://localhost:8080/mdw/services/demo/api/bugs.
