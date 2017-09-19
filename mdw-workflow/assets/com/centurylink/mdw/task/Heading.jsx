@@ -14,7 +14,7 @@ class Heading extends Component {
     return (
       <div className="panel-heading mdw-heading">
         <div className="mdw-heading-label">
-          {this.props.task.name}
+          {this.props.task.title ? this.props.task.title : this.props.task.name}
           <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id} className="mdw-id">
             {this.props.task.id}
           </Link>

@@ -200,6 +200,8 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
 
     protected void updateOwningTransition(Long taskInstanceId) throws DataAccessException {
         Map<String,Object> changes = new HashMap<String,Object>();
+        changes.put("TASK_INSTANCE_OWNER", OwnerType.PROCESS_INSTANCE);
+        changes.put("TASK_INSTANCE_OWNER_ID", getProcessInstanceId());
         changes.put("TASK_INST_SECONDARY_OWNER", OwnerType.WORK_TRANSITION_INSTANCE);
         changes.put("TASK_INST_SECONDARY_OWNER_ID", getWorkTransitionInstanceId());
         new TaskDataAccess().updateTaskInstance(taskInstanceId, changes, false);
