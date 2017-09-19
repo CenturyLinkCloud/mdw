@@ -191,7 +191,8 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         if (advisory != null)
             json.put("advisory", getAdvisory());
         json.put("masterRequestId", masterRequestId);
-        json.put("instanceUrl", taskInstanceUrl);
+        if (taskInstanceUrl != null)
+            json.put("instanceUrl", taskInstanceUrl);
         json.put("category", getCategory());
         json.put("priority", priority);
         json.put("description", description);

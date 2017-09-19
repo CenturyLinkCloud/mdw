@@ -78,5 +78,30 @@ var $mdwUi = {
    },
    clearMessage: function() {
      document.getElementById('mdwMainMessages').innerHTML = '';
+   },
+   addRoute: function(path, template, controller) {
+     var app = angular.module('adminApp');
+     if (controller) {
+       app.config(['$routeProvider', function($routeProvider) {
+         $routeProvider.when(path, {
+           templateUrl: template,
+           controller: controller
+         });
+       }]);       
+     }
+     else if (template) {
+       app.config(['$routeProvider', function($routeProvider) {
+         $routeProvider.when(path, {
+           templateUrl: template
+         });
+       }]);       
+     }
+     else {
+       app.config(['$routeProvider', function($routeProvider) {
+         $routeProvider.when(path, {
+           templateUrl: 'ui/custom-page.html'
+         });
+       }]);       
+     }
    }
 };
