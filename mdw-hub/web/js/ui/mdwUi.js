@@ -89,19 +89,25 @@ var $mdwUi = {
          });
        }]);       
      }
-     else if (template) {
+     else if (template && template.endsWith('.html')) {
        app.config(['$routeProvider', function($routeProvider) {
          $routeProvider.when(path, {
-           templateUrl: template
+           templateUrl: template,
+           controller: 'CustomController'
          });
-       }]);       
+       }]);
      }
      else {
        app.config(['$routeProvider', function($routeProvider) {
          $routeProvider.when(path, {
-           templateUrl: 'ui/custom-page.html'
+           templateUrl: 'ui/custom-page.html',
+           controller: 'CustomController'
          });
-       }]);       
+       }]);
+       if (template && template.endsWith('.jsx')) {
+         this.routesMap[template] = path;
+       }
      }
-   }
+   },
+   routesMap: {}
 };
