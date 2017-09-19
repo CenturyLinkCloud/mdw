@@ -321,7 +321,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (instances.isEmpty())
             return null;
         else
-            return instances.get(0);
+            return getProcess(instances.get(0).getId());
     }
 
     public Map<String,Value> getProcessValues(Long instanceId) throws ServiceException {
@@ -942,9 +942,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
             Variable responseHeadersVar = processVO.getVariable("responseHeaders");
             if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getVariableType().equals("java.util.Map<String,String>")) {
                 ProcessInstance processInstance = getMasterProcess(masterRequestId);
-                Map<?,?> respHeaders = (Map<?,?>) processInstance.getVariable("responseHeaders");
-                for (Object key : respHeaders.keySet())
-                    responseHeaders.put(key.toString(), respHeaders.get(key).toString());
+                if (processInstance != null) {
+                    VariableInstance respHeadersVar = processInstance.getVariable("responseHeaders");
+                    if (respHeadersVar != null) {
+                        Document doc = getDocument(((DocumentReference)respHeadersVar.getData()).getDocumentId());
+                        Map<?,?> respHeaders = (Map<?,?>) doc.getObject("java.util.Map<String,String>", PackageCache.getPackage(processInstance.getPackageName()));
+                        for (Object key : respHeaders.keySet())
+                            responseHeaders.put(key.toString(), respHeaders.get(key).toString());
+                    }
+                }
             }
             return response;
         }
