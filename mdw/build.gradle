@@ -74,7 +74,8 @@ subprojects {
     def packaging = 'jar'
 
     task javadocJar(type: Jar) {
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        if (!mdwVersion.endsWith("-SNAPSHOT"))
+            enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
@@ -342,3 +343,11 @@ dependencies {
     compile localGroovy()
     compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
 }
+
+// update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
+task updateMDWDemoWorkspace(type: GradleBuild) {
+    buildFile = "local.gradle"
+    tasks = ["updateManifestFile"]
+    startParameter.projectProperties = [deployWarDir: "n/a", tomcatBinDir: "n/a", testServerUrl: "n/a"]
+}
+
