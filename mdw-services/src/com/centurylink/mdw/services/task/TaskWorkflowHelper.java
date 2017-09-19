@@ -42,6 +42,7 @@ import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
@@ -259,6 +260,7 @@ public class TaskWorkflowHelper {
         List<String> groups = helper.determineWorkgroups(null);
         if (groups != null && groups.size() > 0)
             new TaskDataAccess().setTaskInstanceGroups(ti.getTaskInstanceId(), StringHelper.toStringArray(groups));
+
         helper.notifyTaskAction(TaskAction.CREATE, null, null);   // notification/observer/auto-assign
         helper.auditLog("Create", "MDW");
         timer.stopAndLogTiming("");

@@ -101,38 +101,7 @@ routesSvc.factory('routes', function() {
       },
       {
         path: '/tasks/:taskInstanceId',
-        templateUrl: 'tasks/task.html',
-        controller: 'TaskController'
-      },
-      {
-        path: '/oldTasks/:taskInstanceId',
-        templateUrl: 'tasks/oldTask.html',
-        controller: 'OldTaskController'
-      },
-      {
-        path: '/oldTasks/:taskInstanceId/values',
-        templateUrl: 'tasks/taskValues.html',
-        controller: 'OldTaskValuesController'
-      },
-      {
-        path: '/oldTasks/:taskInstanceId/subtasks',
-        templateUrl: 'tasks/subtasks.html',
-        controller: 'OldSubtasksController'
-      },
-      {
-        path: '/oldTasks/:taskInstanceId/notes',
-        templateUrl: 'tasks/notes.html',
-        controller: 'OldTaskNotesController'
-      },
-      {
-        path: '/oldTasks/:taskInstanceId/attachments',
-        templateUrl: 'tasks/attachments.html',
-        controller: 'OldTaskAttachmentsController'
-      },
-      {
-        path: '/oldTasks/:taskInstanceId/history',
-        templateUrl: 'tasks/task.html',
-        controller: 'TaskController'
+        templateUrl: 'tasks/task.html'
       },
       {
         path: '/workflow-nav', 

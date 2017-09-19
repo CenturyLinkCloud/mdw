@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -34,6 +35,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskState;
@@ -162,6 +164,17 @@ public class TaskDataAccess extends CommonDataAccess {
             if (taskVO != null)
               task.setDescription(taskVO.getComment());
         }
+
+        // check for custom page
+        if (taskVO.isHasCustomPage()) {
+            String assetSpec = taskVO.getCustomPage();
+            if (taskVO.getCustomPageAssetVersion() != null)
+                assetSpec += " v" + taskVO.getCustomPageAssetVersion();
+            AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
+            String instanceUrl = ApplicationContext.getMdwHubUrl() + '/' + customPage.getPackageName() + '/' + customPage.getName();
+            task.setTaskInstanceUrl(instanceUrl);
+        }
+
         return task;
     }
 
