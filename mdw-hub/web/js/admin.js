@@ -51,6 +51,30 @@ adminApp.config(['$routeProvider', function($routeProvider) {
       });
     }
   }
+  // custom routes
+  if ($mdwCustomRoutes && !$mdwCustomRoutes.startsWith('${')) {
+    var customRoutes = JSON.parse($mdwCustomRoutes);
+    customRoutes.forEach(function(customRoute) {
+      if (customRoute.controller) {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: customRoute.asset,
+          controller: customRoute.controller
+        });
+      }
+      else if (customRoute.asset && customRoute.asset.endsWith('.html')) {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: customRoute.asset,
+          controller: 'CustomController'
+        });
+      }
+      else {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: 'ui/custom-page.html',
+          controller: 'CustomController'
+        });
+      }
+    });
+  }
   $routeProvider.otherwise({
     redirectTo: function(params, path, search) {
       var pathname = window.location.pathname;
