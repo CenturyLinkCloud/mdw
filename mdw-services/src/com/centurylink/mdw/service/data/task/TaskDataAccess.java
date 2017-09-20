@@ -172,6 +172,8 @@ public class TaskDataAccess extends CommonDataAccess {
                 assetSpec += " v" + taskVO.getCustomPageAssetVersion();
             AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
             String instanceUrl = ApplicationContext.getMdwHubUrl() + '/' + customPage.getPackageName() + '/' + customPage.getName();
+            if (instanceUrl.endsWith(".jsx"))
+                instanceUrl = instanceUrl.substring(0, instanceUrl.length() - 4) + '/' + task.getTaskInstanceId();
             task.setTaskInstanceUrl(instanceUrl);
         }
 
