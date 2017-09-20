@@ -44,8 +44,10 @@ public class CustomPageLookup {
     }
 
     public String getUrl() throws ReflectiveOperationException {
-        if (uiRouteCacheInstance == null)
-            init();
+        if (uiRouteCacheInstance == null && !init()) {
+            return null;
+        }
+
         String path = (String)routePathGetter.invoke(uiRouteCacheInstance, customPage.getPackageName() + '/' + customPage.getName());
         if (path == null) {
             // TODO: establish a default convention based on JSX asset name without extension.
@@ -63,14 +65,21 @@ public class CustomPageLookup {
     }
 
     public static JSONArray getUiRoutes() throws ReflectiveOperationException {
-        if (uiRouteCacheInstance == null)
-            init();
+        if (uiRouteCacheInstance == null && !init()) {
+            return null;
+        }
         return (JSONArray)routesGetter.invoke(uiRouteCacheInstance);
     }
 
-    private static void init() throws ReflectiveOperationException {
+    private static boolean init() throws ReflectiveOperationException {
         uiRouteCacheInstance = CacheRegistration.getInstance().getCache(UI_ROUTE_CACHE_CLASS);
-        routePathGetter = uiRouteCacheInstance.getClass().getMethod("getPath", String.class);
-        routesGetter = uiRouteCacheInstance.getClass().getMethod("getRoutes");
+        if (uiRouteCacheInstance == null) {
+            return false;
+        }
+        else {
+            routePathGetter = uiRouteCacheInstance.getClass().getMethod("getPath", String.class);
+            routesGetter = uiRouteCacheInstance.getClass().getMethod("getRoutes");
+            return true;
+        }
     }
 }
