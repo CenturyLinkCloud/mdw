@@ -45,7 +45,7 @@ public interface TaskServices {
     public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException;
     public void updateIndexes(Long taskInstanceId, Map<String,String> indexes) throws ServiceException;
 
-    public TaskInstance getInstance(Long instanceId) throws DataAccessException;
+    public TaskInstance getInstance(Long instanceId) throws ServiceException;
 
     /**
      * Returns a map of name to runtime Value.
