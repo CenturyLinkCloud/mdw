@@ -89,24 +89,27 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public Document loadDocument(Long documentId, boolean forUpdate) throws DataAccessException, SQLException {
+        Document upToDateDoc = null;
         if (edadb == null)  { // is the case for CACHE_ONLY
             EngineDataAccessDB db = new EngineDataAccessDB();
             TransactionWrapper tw = null;
             try {
                 tw = db.startTransaction();
-                return db.loadDocument(documentId, forUpdate);
+                upToDateDoc = db.loadDocument(documentId, forUpdate);
             }
             finally {
                 if (tw != null)
-                  db.stopTransaction(tw);
+                    db.stopTransaction(tw);
             }
         }
         else {
-            Document upToDateDoc = edadb.getDocument(documentId, forUpdate);
-            // Also update the cache
-            if (upToDateDoc!=null) documentCache.put(documentId, upToDateDoc);
-            return upToDateDoc;
+            upToDateDoc = edadb.getDocument(documentId, forUpdate);
         }
+        // Also update the cache
+        if (upToDateDoc!=null)
+            documentCache.put(documentId, upToDateDoc);
+
+        return upToDateDoc;
     }
 
     public synchronized Document getDocument(Long documentId, boolean forUpdate) throws SQLException {
@@ -115,6 +118,14 @@ public class EngineDataAccessCache implements EngineDataAccess {
             docvo = edadb.getDocument(documentId, forUpdate);
         } else if (cache_document==CACHE_ONLY) {
             docvo = documentCache.get(documentId);
+            if (docvo == null) {  // Could be a pass-by-reference document from non-cache-only parent process
+                try {
+                    docvo = loadDocument(documentId, forUpdate);
+                }
+                catch (DataAccessException e) {
+                    throw new SQLException(e);
+                }
+            }
         } else {
             if (forUpdate) {
                 docvo = edadb.getDocument(documentId, true);

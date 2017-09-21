@@ -18,7 +18,6 @@ package com.centurylink.mdw.dataaccess;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -49,8 +49,7 @@ public class DatabaseAccess {
     private static String INTERNAL_DATA_SOURCE = null;
     private static Long db_time_diff = null;
 
-    private static boolean loadedInternalDriver = false;
-    private static String InternalDbDriver = null;
+    private static Map<String, Boolean> loadedDataSources = new ConcurrentHashMap<String, Boolean>();
 
     private static EmbeddedDataAccess embedded;
     public static EmbeddedDataAccess getEmbedded() { return embedded; }
@@ -197,89 +196,28 @@ public class DatabaseAccess {
         ps = null;
         rs = null;
 
-        if (database_name.startsWith("jdbc:oracle:thin:")) {
-            int slash_loc = database_name.indexOf('/');
-            int at_loc = database_name.indexOf('@');
-            if (slash_loc<0||at_loc<0||at_loc<slash_loc) {
-                throw new SQLException("Incorrect Oracle connection spec: " + database_name);
-            }
-            String dbuser = database_name.substring(17,slash_loc);
-            String dbpass = database_name.substring(slash_loc+1,at_loc);
-            String dburl = "jdbc:oracle:thin:" + database_name.substring(at_loc);
-            try {
-                try {
-                    DriverManager.getDriver(dburl);
-                } catch (SQLException e) {
-                    Class.forName("oracle.jdbc.driver.OracleDriver");
-                }
-                // driver needs to be loaded when running this stand-alone, but not within WLS
-                java.util.Properties dbprops = new java.util.Properties();
-                dbprops.put("user", dbuser);
-                dbprops.put("password", dbpass);
-                if (connectParams != null) {
-                    for (String paramName : connectParams.keySet())
-                        dbprops.put(paramName, connectParams.get(paramName));
-                }
-                connection = DriverManager.getConnection(dburl, dbprops);
+        try {
+            DataSource dataSource = ApplicationContext.getDataSourceProvider().getDataSource(database_name);
 
-            } catch (ClassNotFoundException e) {
-                throw new SQLException("Cannot find Oracle Driver class");
-            }
-        } else if (database_name.startsWith("jdbc:mysql:") || database_name.startsWith("jdbc:mariadb:")) {
-            int qmark_loc = database_name.indexOf('?');
-            if (qmark_loc<0) {
-                throw new SQLException("Incorrect MySQL connection spec: " + database_name);
-            }
-            String dburl = database_name.substring(0,qmark_loc);
-            String rest = database_name.substring(qmark_loc);
-            int amp_loc = rest.indexOf('&');
-            if (amp_loc<0)
-                throw new SQLException("Incorrect MySQL connection spec: " + database_name);
-            if (!rest.startsWith("?user="))
-                throw new SQLException("Incorrect MySQL connection spec: " + database_name);
-            String dbuser = rest.substring(6,amp_loc);
-            rest = rest.substring(amp_loc);
-            if (!rest.startsWith("&password="))
-                throw new SQLException("Incorrect MySQL connection spec: " + database_name);
-            String dbpass = rest.substring(10);
-            try {
-                try {
-                    DriverManager.getDriver(dburl);
-                } catch (SQLException e) {
-                    Class.forName("com.mysql.jdbc.Driver");
-                }
-               // driver needs to be loaded when running this stand-alone, but not within WLS
-                connection = DriverManager.getConnection(dburl, dbuser, dbpass);
-            } catch (ClassNotFoundException e) {
-                throw new SQLException("Cannot find MySQL Driver class");
-            }
-        } else {
-            try {
-                DataSource dataSource = ApplicationContext.getDataSourceProvider().getDataSource(database_name);
+            // Only need to load driver the first time, which creates the connection factory.  All JDBC drivers are provided as assets in a package
+            if (loadedDataSources.get(database_name) == null) {
+                List<com.centurylink.mdw.model.workflow.Package> pkgList = PackageCache.getPackages();
+                if (pkgList == null || pkgList.size() <= 0)
+                    throw new SQLException("MDW asset package containing JDBC driver is required");
 
-                if (InternalDbDriver == null)
-                    InternalDbDriver = PropertyManager.getProperty("mdw.database.driver");
-
-                // For user-provided Oracle JDBC driver (via JAR in package asset) to be used by MDW framework code for MDW schema operations
-                // Only need to load driver the first time, which creates the connection factory
-                if (!loadedInternalDriver && this.database_name.equals(INTERNAL_DATA_SOURCE) && !StringHelper.isEmpty(InternalDbDriver) && InternalDbDriver.contains("oracle")) {
-                    com.centurylink.mdw.model.workflow.Package pkg = PackageCache.getPackage(ProcessLoader.MDW_BASE_PACKAGE);
-                    if (pkg == null)
-                        throw new SQLException("MDW Base package is required");
-
-                    ClassLoader origCL = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
-                    connection = dataSource.getConnection();
-                    Thread.currentThread().setContextClassLoader(origCL);
-                }
-                else
-                    connection = dataSource.getConnection();
-
-                loadedInternalDriver = true;
-            } catch (NamingException e) {
-                throw new SQLException("Failed to find data source " + database_name, e);
+                ClassLoader origCL = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(pkgList.get(0).getCloudClassLoader());
+                connection = dataSource.getConnection();
+                loadedDataSources.put(database_name, Boolean.valueOf(true));
+                Thread.currentThread().setContextClassLoader(origCL);
             }
+            else
+                connection = dataSource.getConnection();
+
+        } catch (NamingException e) {
+            throw new SQLException("Failed to find data source " + database_name, e);
         }
+
         connection.setAutoCommit(false);
 
         return connection;

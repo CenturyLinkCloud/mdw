@@ -1,0 +1,839 @@
+process: # 205356
+  name: SubProcessInvocationsFromRegular
+  instance: 1
+  activity: # 1 "2017-09-21 11:08:10"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:10"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:08:10"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:13"
+    name: Stop
+    status: Completed
+  variable: # 114599
+    name: var1
+    value: my nice non-document string value
+process: # 205355
+  name: SubProcessInvocationsFromRegular
+  instance: 2
+  activity: # 1 "2017-09-21 11:08:10"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:10"
+    name: Set Vars
+    status: Completed
+    result: RegularNoDocsSync
+  activity: # 13 "2017-09-21 11:08:10"
+    name: |
+      Invoke Regular Subprocess 
+      Sync no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:13"
+    name: Stop
+    status: Completed
+  variable: # 114596
+    name: processCase
+    value: RegularNoDocsSync
+  variable: # 114598
+    name: var1
+    value: my nice non-document string value
+  variable: # 114597
+    name: varDoc1
+    value: my nice string value
+process: # 205354
+  name: SubProcessInvocationsFromRegular
+  instance: 3
+  activity: # 1 "2017-09-21 11:08:05"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:05"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:08:05"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:08"
+    name: Stop
+    status: Completed
+  variable: # 114595
+    name: varDoc1
+    value: my nice string value
+process: # 205352
+  name: SubProcessInvocationsFromRegular
+  instance: 4
+  activity: # 1 "2017-09-21 11:08:05"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:05"
+    name: Set Vars
+    status: Completed
+    result: RegularWithDocsSync
+  activity: # 9 "2017-09-21 11:08:05"
+    name: |
+      Invoke Regular Subprocess 
+      Sync with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:08"
+    name: Stop
+    status: Completed
+  variable: # 114591
+    name: processCase
+    value: RegularWithDocsSync
+  variable: # 114594
+    name: var1
+    value: my nice non-document string value
+  variable: # 114593
+    name: varDoc1
+    value: my nice string value
+process: # 205350
+  name: SubProcessInvocationsFromRegular
+  instance: 5
+  activity: # 1 "2017-09-21 11:08:01"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:01"
+    name: Set Vars
+    status: Completed
+    result: ServiceNoDocsSync
+  activity: # 10 "2017-09-21 11:08:01"
+    name: |
+      Invoke Service Subprocess 
+      Sync no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:04"
+    name: Stop
+    status: Completed
+  variable: # 114587
+    name: processCase
+    value: ServiceNoDocsSync
+  variable: # 114589
+    name: var1
+    value: my nice non-document string value
+  variable: # 114588
+    name: varDoc1
+    value: my nice string value
+process: # 205348
+  name: SubProcessInvocationsFromRegular
+  instance: 6
+  activity: # 1 "2017-09-21 11:07:57"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:57"
+    name: Set Vars
+    status: Completed
+    result: ServiceWithDocsSync
+  activity: # 3 "2017-09-21 11:07:57"
+    name: |
+      Invoke Service Subprocess 
+      Sync with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:00"
+    name: Stop
+    status: Completed
+  variable: # 114583
+    name: processCase
+    value: ServiceWithDocsSync
+  variable: # 114585
+    name: var1
+    value: my nice non-document string value
+  variable: # 114584
+    name: varDoc1
+    value: my nice string value
+process: # 205347
+  name: SubProcessInvocationsFromRegular
+  instance: 7
+  activity: # 1 "2017-09-21 11:07:51"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:51"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:51"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:54"
+    name: Stop
+    status: Completed
+  variable: # 114582
+    name: var1
+    value: my nice non-document string value
+process: # 205346
+  name: SubProcessInvocationsFromRegular
+  instance: 8
+  activity: # 1 "2017-09-21 11:07:49"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:49"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:49"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:52"
+    name: Stop
+    status: Completed
+  variable: # 114581
+    name: var1
+    value: my nice non-document string value
+process: # 205344
+  name: SubProcessInvocationsFromRegular
+  instance: 9
+  activity: # 1 "2017-09-21 11:07:47"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:47"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:47"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:50"
+    name: Stop
+    status: Completed
+  variable: # 114577
+    name: varDoc1
+    value: my nice string value
+process: # 205339
+  name: SubProcessInvocationsFromRegular
+  instance: 10
+  activity: # 1 "2017-09-21 11:07:38"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:38"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:38"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:41"
+    name: Stop
+    status: Completed
+  variable: # 114568
+    name: var1
+    value: my nice non-document string value
+process: # 205336
+  name: SubProcessInvocationsFromRegular
+  instance: 11
+  activity: # 1 "2017-09-21 11:07:36"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:36"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:36"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:39"
+    name: Stop
+    status: Completed
+  variable: # 114563
+    name: var1
+    value: my nice non-document string value
+process: # 205335
+  name: SubProcessInvocationsFromRegular
+  instance: 12
+  activity: # 1 "2017-09-21 11:07:36"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:36"
+    name: Set Vars
+    status: Completed
+    result: RegularNoDocsAsync
+  activity: # 14 "2017-09-21 11:07:36"
+    name: |
+      Invoke Regular Subprocess 
+      Async no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:36"
+    name: Stop
+    status: Completed
+  variable: # 114560
+    name: processCase
+    value: RegularNoDocsAsync
+  variable: # 114562
+    name: var1
+    value: my nice non-document string value
+  variable: # 114561
+    name: varDoc1
+    value: my nice string value
+process: # 205334
+  name: SubProcessInvocationsFromRegular
+  instance: 13
+  activity: # 1 "2017-09-21 11:07:32"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:32"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:32"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:35"
+    name: Stop
+    status: Completed
+  variable: # 114559
+    name: varDoc1
+    value: my nice string value
+process: # 205332
+  name: SubProcessInvocationsFromRegular
+  instance: 14
+  activity: # 1 "2017-09-21 11:07:32"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:32"
+    name: Set Vars
+    status: Completed
+    result: RegularWithDocsAsync
+  activity: # 12 "2017-09-21 11:07:32"
+    name: |
+      Invoke Regular Subprocess 
+      Async with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:32"
+    name: Stop
+    status: Completed
+  variable: # 114555
+    name: processCase
+    value: RegularWithDocsAsync
+  variable: # 114558
+    name: var1
+    value: my nice non-document string value
+  variable: # 114557
+    name: varDoc1
+    value: my nice string value
+process: # 205330
+  name: SubProcessInvocationsFromRegular
+  instance: 15
+  activity: # 1 "2017-09-21 11:07:28"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:28"
+    name: Set Vars
+    status: Completed
+    result: ServiceNoDocsAsync
+  activity: # 11 "2017-09-21 11:07:28"
+    name: |
+      Invoke Service Subprocess 
+      Async no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:28"
+    name: Stop
+    status: Completed
+  variable: # 114551
+    name: processCase
+    value: ServiceNoDocsAsync
+  variable: # 114553
+    name: var1
+    value: my nice non-document string value
+  variable: # 114552
+    name: varDoc1
+    value: my nice string value
+process: # 205328
+  name: SubProcessInvocationsFromRegular
+  instance: 16
+  activity: # 1 "2017-09-21 11:07:24"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:24"
+    name: Set Vars
+    status: Completed
+    result: ServiceWithDocsAsync
+  activity: # 8 "2017-09-21 11:07:24"
+    name: |
+      Invoke Service Subprocess 
+      Async with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:24"
+    name: Stop
+    status: Completed
+  variable: # 114547
+    name: processCase
+    value: ServiceWithDocsAsync
+  variable: # 114549
+    name: var1
+    value: my nice non-document string value
+  variable: # 114548
+    name: varDoc1
+    value: my nice string value
+process: # 205326
+  name: SubProcessInvocationsFromRegular
+  instance: 17
+  activity: # 1 "2017-09-21 11:07:19"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:19"
+    name: Set Vars
+    status: Completed
+    result: ServiceWithDocsAsync
+  activity: # 8 "2017-09-21 11:07:19"
+    name: |
+      Invoke Service Subprocess 
+      Async with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:20"
+    name: Stop
+    status: Completed
+  variable: # 114543
+    name: processCase
+    value: ServiceWithDocsAsync
+  variable: # 114545
+    name: var1
+    value: my nice non-document string value
+  variable: # 114544
+    name: varDoc1
+    value: my nice string value
+process: # 205363
+  name: SubProcessInvocationsFromService
+  instance: 1
+  activity: # 1 "2017-09-21 11:08:38"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:38"
+    name: Set Vars
+    status: Completed
+    result: RegularNoDocsSync
+  activity: # 13 "2017-09-21 11:08:38"
+    name: |
+      Invoke Regular Subprocess 
+      Sync no Doc Binding
+    status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: Invalid attempt to synchrounously launch Non-Service sub process from a Service process...
+  activity: # 2 "2017-09-21 11:08:38"
+    name: Stop
+    status: Completed
+  variable: # 114611
+    name: processCase
+    value: RegularNoDocsSync
+  variable: # 114613
+    name: var1
+    value: my nice non-document string value
+  variable: # 114612
+    name: varDoc1
+    value: my nice string value
+process: # 205361
+  name: SubProcessInvocationsFromService
+  instance: 2
+  activity: # 1 "2017-09-21 11:08:32"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:32"
+    name: Set Vars
+    status: Completed
+    result: RegularWithDocsSync
+  activity: # 9 "2017-09-21 11:08:32"
+    name: |
+      Invoke Regular Subprocess 
+      Sync with Doc Binding
+    status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: Invalid attempt to synchrounously launch Non-Service sub process from a Service process...
+  activity: # 2 "2017-09-21 11:08:32"
+    name: Stop
+    status: Completed
+  variable: # 114608
+    name: processCase
+    value: RegularWithDocsSync
+  variable: # 114610
+    name: var1
+    value: my nice non-document string value
+  variable: # 114609
+    name: varDoc1
+    value: my nice string value
+process: # 205360
+  name: SubProcessInvocationsFromService
+  instance: 3
+  activity: # 1 "2017-09-21 11:08:21"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:22"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:08:22"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:25"
+    name: Stop
+    status: Completed
+  variable: # 114607
+    name: var1
+    value: my nice non-document string value
+process: # 205359
+  name: SubProcessInvocationsFromService
+  instance: 4
+  activity: # 1 "2017-09-21 11:08:21"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:21"
+    name: Set Vars
+    status: Completed
+    result: ServiceNoDocsSync
+  activity: # 10 "2017-09-21 11:08:21"
+    name: |
+      Invoke Service Subprocess 
+      Sync no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:25"
+    name: Stop
+    status: Completed
+  variable: # 114604
+    name: processCase
+    value: ServiceNoDocsSync
+  variable: # 114606
+    name: var1
+    value: my nice non-document string value
+  variable: # 114605
+    name: varDoc1
+    value: my nice string value
+process: # 205358
+  name: SubProcessInvocationsFromService
+  instance: 5
+  activity: # 1 "2017-09-21 11:08:11"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:11"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:08:11"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:14"
+    name: Stop
+    status: Completed
+  variable: # 114603
+    name: varDoc1
+    value: my nice string value
+process: # 205357
+  name: SubProcessInvocationsFromService
+  instance: 6
+  activity: # 1 "2017-09-21 11:08:11"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:11"
+    name: Set Vars
+    status: Completed
+    result: ServiceWithDocsSync
+  activity: # 3 "2017-09-21 11:08:11"
+    name: |
+      Invoke Service Subprocess 
+      Sync with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:14"
+    name: Stop
+    status: Completed
+  variable: # 114600
+    name: processCase
+    value: ServiceWithDocsSync
+  variable: # 114602
+    name: var1
+    value: my nice non-document string value
+  variable: # 114601
+    name: varDoc1
+    value: my nice string value
+process: # 205353
+  name: SubProcessInvocationsFromService
+  instance: 7
+  activity: # 1 "2017-09-21 11:08:03"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:03"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:08:03"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:06"
+    name: Stop
+    status: Completed
+  variable: # 114592
+    name: var1
+    value: my nice non-document string value
+process: # 205351
+  name: SubProcessInvocationsFromService
+  instance: 8
+  activity: # 1 "2017-09-21 11:08:01"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:08:01"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:08:01"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:04"
+    name: Stop
+    status: Completed
+  variable: # 114590
+    name: var1
+    value: my nice non-document string value
+process: # 205349
+  name: SubProcessInvocationsFromService
+  instance: 9
+  activity: # 1 "2017-09-21 11:07:57"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:57"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:57"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:08:00"
+    name: Stop
+    status: Completed
+  variable: # 114586
+    name: varDoc1
+    value: my nice string value
+process: # 205345
+  name: SubProcessInvocationsFromService
+  instance: 10
+  activity: # 1 "2017-09-21 11:07:49"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:49"
+    name: Set Vars
+    status: Completed
+    result: RegularNoDocsAsync
+  activity: # 14 "2017-09-21 11:07:49"
+    name: |
+      Invoke Regular Subprocess 
+      Async no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:49"
+    name: Stop
+    status: Completed
+  variable: # 114578
+    name: processCase
+    value: RegularNoDocsAsync
+  variable: # 114580
+    name: var1
+    value: my nice non-document string value
+  variable: # 114579
+    name: varDoc1
+    value: my nice string value
+process: # 205343
+  name: SubProcessInvocationsFromService
+  instance: 11
+  activity: # 1 "2017-09-21 11:07:46"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:46"
+    name: Set Vars
+    status: Completed
+    result: RegularWithDocsAsync
+  activity: # 12 "2017-09-21 11:07:46"
+    name: |
+      Invoke Regular Subprocess 
+      Async with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:47"
+    name: Stop
+    status: Completed
+  variable: # 114574
+    name: processCase
+    value: RegularWithDocsAsync
+  variable: # 114576
+    name: var1
+    value: my nice non-document string value
+  variable: # 114575
+    name: varDoc1
+    value: my nice string value
+process: # 205342
+  name: SubProcessInvocationsFromService
+  instance: 12
+  activity: # 1 "2017-09-21 11:07:44"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:44"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:44"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:47"
+    name: Stop
+    status: Completed
+  variable: # 114573
+    name: var1
+    value: my nice non-document string value
+process: # 205341
+  name: SubProcessInvocationsFromService
+  instance: 13
+  activity: # 1 "2017-09-21 11:07:42"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:42"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:42"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:45"
+    name: Stop
+    status: Completed
+  variable: # 114572
+    name: var1
+    value: my nice non-document string value
+process: # 205340
+  name: SubProcessInvocationsFromService
+  instance: 14
+  activity: # 1 "2017-09-21 11:07:42"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:42"
+    name: Set Vars
+    status: Completed
+    result: ServiceNoDocsAsync
+  activity: # 11 "2017-09-21 11:07:42"
+    name: |
+      Invoke Service Subprocess 
+      Async no Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:42"
+    name: Stop
+    status: Completed
+  variable: # 114569
+    name: processCase
+    value: ServiceNoDocsAsync
+  variable: # 114571
+    name: var1
+    value: my nice non-document string value
+  variable: # 114570
+    name: varDoc1
+    value: my nice string value
+process: # 205338
+  name: SubProcessInvocationsFromService
+  instance: 15
+  activity: # 1 "2017-09-21 11:07:38"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:38"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:38"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:41"
+    name: Stop
+    status: Completed
+  variable: # 114567
+    name: varDoc1
+    value: my nice string value
+process: # 205337
+  name: SubProcessInvocationsFromService
+  instance: 16
+  activity: # 1 "2017-09-21 11:07:38"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:38"
+    name: Set Vars
+    status: Completed
+    result: ServiceWithDocsAsync
+  activity: # 8 "2017-09-21 11:07:38"
+    name: |
+      Invoke Service Subprocess 
+      Async with Doc Binding
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:38"
+    name: Stop
+    status: Completed
+  variable: # 114564
+    name: processCase
+    value: ServiceWithDocsAsync
+  variable: # 114566
+    name: var1
+    value: my nice non-document string value
+  variable: # 114565
+    name: varDoc1
+    value: my nice string value
+process: # 205333
+  name: SubProcessInvocationsFromService
+  instance: 17
+  activity: # 1 "2017-09-21 11:07:30"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:30"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:30"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:33"
+    name: Stop
+    status: Completed
+  variable: # 114556
+    name: var1
+    value: my nice non-document string value
+process: # 205331
+  name: SubProcessInvocationsFromService
+  instance: 18
+  activity: # 1 "2017-09-21 11:07:28"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:28"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:28"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:31"
+    name: Stop
+    status: Completed
+  variable: # 114554
+    name: var1
+    value: my nice non-document string value
+process: # 205329
+  name: SubProcessInvocationsFromService
+  instance: 19
+  activity: # 1 "2017-09-21 11:07:24"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:24"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:24"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:27"
+    name: Stop
+    status: Completed
+  variable: # 114550
+    name: varDoc1
+    value: my nice string value
+process: # 205327
+  name: SubProcessInvocationsFromService
+  instance: 20
+  activity: # 1 "2017-09-21 11:07:20"
+    name: Start
+    status: Completed
+  activity: # 6 "2017-09-21 11:07:20"
+    name: Set Vars
+    status: Completed
+  activity: # 15 "2017-09-21 11:07:20"
+    name: Delay Sub execution
+    status: Completed
+  activity: # 2 "2017-09-21 11:07:23"
+    name: Stop
+    status: Completed
+  variable: # 114546
+    name: varDoc1
+    value: my nice string value
+process: # 205364
+  name: SubProcessInvocationsFromService Exception Handler
+  instance: 1
+  activity: # 18 "2017-09-21 11:08:38"
+    name: Start
+    status: Completed
+  activity: # 17 "2017-09-21 11:08:38"
+    name: Stop
+    status: Completed
+process: # 205362
+  name: SubProcessInvocationsFromService Exception Handler
+  instance: 2
+  activity: # 18 "2017-09-21 11:08:32"
+    name: Start
+    status: Completed
+  activity: # 17 "2017-09-21 11:08:32"
+    name: Stop
+    status: Completed
