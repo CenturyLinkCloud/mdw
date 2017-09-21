@@ -147,12 +147,12 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 }
                 else if (!isSynchronousCall()) {
                     if (engine.getPerformanceLevel() < 5 || !passingByReference) {
-                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId + "startproc" + subprocdef.getProcessId();
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId() + "startproc" + subprocdef.getProcessId();
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
                     }
                     else // Trying to call a any sub process async when parent is service process and documents are cache-only / not visible to child
-                        throw new ActivityException("Invalid attempt to asynchrounously launch sub process from a Service process running at performace level 5 or greater with Document variable bindings");
+                        throw new ActivityException("Invalid attempt to asynchrounously launch sub process from a Service process running at performance level 5 or greater with Document variable bindings");
                 }
                 else  // Trying to call a non-service sub process sync when parent is service process - Regular proc could hold up/delay parent service process with event waits or manual task activities
                     throw new ActivityException("Invalid attempt to synchrounously launch Non-Service sub process from a Service process");
@@ -182,7 +182,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                                 getMasterRequestId(), validParams);
                         engine.startProcessInstance(pi, 0);
                     } else {   // Either Async, or mismatch of perf lvls between parent and child - run on new thread and engine
-                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId()
                             + "startproc" + subprocdef.getProcessId();
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);

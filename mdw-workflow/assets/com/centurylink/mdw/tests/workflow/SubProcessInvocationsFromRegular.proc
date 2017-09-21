@@ -1,0 +1,277 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=383,ly=-91,type=Elbow,xs=124&154,ys=280&280"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=824,y=261,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=377,y=46,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromService",
+        "processversion": "[0.1,1)",
+        "synchronous": "true",
+        "variables": "{\"varDoc1\":\"$varDoc1\"}"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Service Subprocess \r\nSync with Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=641,ly=106,type=Elbow,xs=567&854&854,ys=74&74&261"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"varDoc1\"]",
+        "Rule": "if (processCase == null)\r\nreturn null;\r\n\r\nvar1 = \"my nice non-document string value\";\r\nvarDoc1 = \"my nice string value\";\r\n\r\nreturn processCase;",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=158,y=252,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Vars",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=198,ly=97,type=Elbow,xs=270&323&323&377,ys=280&280&77&77"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "ServiceWithDocsSync",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=273,ly=296,type=Elbow,xs=274&382,ys=284&284"},
+          "event": "FINISH",
+          "id": "T10",
+          "resultCode": "ServiceNoDocsSync",
+          "to": "A10"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=202,ly=362,type=Elbow,xs=274&381,ys=280&374"},
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "ServiceNoDocsAsync",
+          "to": "A11"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=194,ly=445,type=Elbow,xs=270&324&324&379,ys=280&280&461&461"},
+          "event": "FINISH",
+          "id": "T12",
+          "resultCode": "RegularWithDocsSync",
+          "to": "A9"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=232,ly=522,type=Elbow,xs=220&220&376,ys=310&546&546"},
+          "event": "FINISH",
+          "id": "T13",
+          "resultCode": "RegularWithDocsAsync",
+          "to": "A12"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=232,ly=609,type=Elbow,xs=220&220&375,ys=310&633&633"},
+          "event": "FINISH",
+          "id": "T14",
+          "resultCode": "RegularNoDocsSync",
+          "to": "A13"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=226,ly=694,type=Elbow,xs=220&220&375,ys=310&718&718"},
+          "event": "FINISH",
+          "id": "T20",
+          "resultCode": "RegularNoDocsAsync",
+          "to": "A14"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=191,ly=172,type=Elbow,xs=274&371,ys=280&178"},
+          "event": "FINISH",
+          "id": "T22",
+          "resultCode": "ServiceWithDocsAsync",
+          "to": "A8"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=172,ly=211,type=Elbow,xs=172&172,ys=248&174"},
+          "event": "FINISH",
+          "id": "T23",
+          "to": "A15"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=375,y=148,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromService",
+        "processversion": "[0.1,1)",
+        "synchronous": "false",
+        "variables": "{\"varDoc1\":\"$varDoc1\"}"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Service Subprocess \r\nAsync with Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=563,ly=163,type=Elbow,xs=565&854&854,ys=167&167&261"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=379,y=431,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromRegular",
+        "processversion": "[0.1,1)",
+        "synchronous": "true",
+        "variables": "{\"varDoc1\":\"$varDoc1\"}"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Regular Subprocess \r\nSync with Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=694,ly=371,type=Elbow,xs=569&820,ys=461&281"},
+        "event": "FINISH",
+        "id": "T17",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=386,y=265,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromService",
+        "processversion": "[0.1,1)",
+        "synchronous": "true",
+        "variables": "{\"var1\":\"$var1\"}"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Service Subprocess \r\nSync no Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=700,ly=283,type=Elbow,xs=576&820,ys=283&283"},
+        "event": "FINISH",
+        "id": "T15",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=386,y=342,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromService",
+        "processversion": "[0.1,1)",
+        "synchronous": "false",
+        "variables": "{\"var1\":\"$var1\"}"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Service Subprocess \r\nAsync no Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=698,ly=327,type=Elbow,xs=576&820,ys=372&281"},
+        "event": "FINISH",
+        "id": "T16",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=376,y=516,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromRegular",
+        "processversion": "[0.1,1)",
+        "synchronous": "false",
+        "variables": "{\"varDoc1\":\"$varDoc1\"}"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Regular Subprocess \r\nAsync with Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=693,ly=413,type=Elbow,xs=566&820,ys=546&281"},
+        "event": "FINISH",
+        "id": "T18",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=375,y=603,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromRegular",
+        "processversion": "[0.1,1)",
+        "synchronous": "true",
+        "variables": "{\"var1\":\"$var1\"}"
+      },
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Regular Subprocess \r\nSync no Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=692,ly=457,type=Elbow,xs=565&820,ys=633&281"},
+        "event": "FINISH",
+        "id": "T19",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=375,y=688,w=186,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SubProcessInvocationsFromRegular",
+        "processversion": "[0.1,1)",
+        "synchronous": "false",
+        "variables": "{\"var1\":\"$var1\"}"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Regular Subprocess \r\nAsync no Doc Binding",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=709,ly=511,type=Elbow,xs=565&854,ys=718&305"},
+        "event": "FINISH",
+        "id": "T21",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "sleep(3000)",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=75,y=109,w=112,h=61"
+      },
+      "id": "A15",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Delay Sub execution",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=409,ly=135,type=Elbow,xs=187&854&854,ys=139&139&261"},
+        "event": "FINISH",
+        "id": "T24",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=17,y=18,w=324,h=27"
+  },
+  "variables": {
+    "processCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "var1": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "varDoc1": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    }
+  }
+}
