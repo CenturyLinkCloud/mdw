@@ -417,8 +417,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
     Label the activity Persist Bug, and in the Icon text box type *bug.png*.  Click Next, and for Dynamic Java Class Name, type *PersistBugActivity*.
   
   - After clicking Finish, replace the generated Java code with 
-    [PersistBugActivity.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/PersistBugActivity.java)
-    PersistBugActivity implements `execute()` to tell the MDW workflow engine what to do:
+    [PersistBugActivity.java on GitHub], which implements `execute()` to tell the MDW workflow engine what to do.  These lines
+    from `execute()` take care of creating the task:
     ```java
     public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
       Bug requestBug = (Bug) this.getVariableValue("request");
@@ -434,26 +434,11 @@ is available to clone in its completed state from the [mdw-demo repository](http
               getProcessInstanceId(), null, null, requestBug.getTitle(), requestBug.getDescription());
   
           loginfo("Created task instance " + instance.getId() + " (" + template.getTaskName() + ")");
-
-          // clone request for bug response
-          Bug bug = new Bug(instance.getTaskInstanceId(), requestBug.getJson());
-          // change the response
-          setVariableValue("response", bug);
-          
-          // set response status and headers
-          Map<String,String> headers = new HashMap<>();
-          headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.CREATED.getCode()));
-          headers.put("Location", ApplicationContext.getServicesUrl() + "/demo/api/bugs/" + bug.getId());
-          setVariableValue("responseHeaders", headers);
-          return null;
-      }
-      catch (DataAccessException | ServiceException ex) {
-          throw new ActivityException("Error creating task " + TASK_TEMPLATE, ex);
-      }
-    }    
+      ....
     ```
-    In this case we're telling MDW to create a task instance, which requires a [Task Template](http://centurylinkcloud.github.io/mdw/docs/help/taskTemplates.html) asset to specify the pattern
-    for creating the Task.  The TASK_TEMPLATE constant uses an asset designation that's very common in MDW: `com.centurylink.mdw.demo.bugs/ResolveBug.task`.
+    Here we're calling [TaskServices.createTask()](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/TaskServices.html#createTask-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-), 
+    which requires a [Task Template](http://centurylinkcloud.github.io/mdw/docs/help/taskTemplates.html) asset to specify a pattern.
+    The TASK_TEMPLATE constant illustrates an asset designation that's very common in MDW: `com.centurylink.mdw.demo.bugs/ResolveBug.task`.
     This equates to assets/com/centurylink/mdw/demo/bugs/ResolveBug.task in your project directory.  Unlike a qualified Java class name,
     a slash separates the package from the asset name.  We'll create the task template asset in the next step.
     
@@ -473,11 +458,12 @@ is available to clone in its completed state from the [mdw-demo repository](http
 
 #### Create a task template asset
   - Right-click on the com.centurylink.mdw.demo.bugs package and select New > Task Template.  Name the template ResolveBug.task, and 
-    make sure you select Custom for Language/Format:
+    make sure you select Custom for Language/Format:<br>
     ![create task template](../images/create-task-template.png)<br>
     
   - When the wizard finishes, ResolveBug.task will open in Designer's template editor.  Notice the tabs at the bottom of the editor pane.
-    On the General tab, for Task Name enter the expression `${bug.title}`, which tells MDW to use the *bug* process variable's *title* value.
+    On the General tab, for Task Name enter the [Java Expression](http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html) `${bug.title}`, 
+    which tells MDW to use the *bug* process variable's *title* value.<br>
     ![task template editor](../images/task-template-editor.png)<br>
     
   - Then on the Workgroups tab, add Developers to the Selected Groups.  That's all we need to do to the template for now.  Later on we'll
@@ -485,10 +471,15 @@ is available to clone in its completed state from the [mdw-demo repository](http
      
 #### Run the revised process and view the task
   - Submit a (valid) bug request via HTTP POST as before, and view your process in Designer.  The flow should have run to completion.
+    On the Values tab, double-click the responseHeaders variable.  When submitting you may have noticed that the HTTP status code 
+    changed to 201 (Created), and the response headers now include *Location*.  Review the code in PersistBugActivity.execute() to see
+    how responseHeaders is populated.  It's another example of a convention in MDW whereby you can readily control the behavior of 
+    your REST service.  
   
   - Point your browser to MDWHub, and click on the Tasks tab.  You should see the top task named whatever you submitted for the bug's title.
-    Click to drill into the task.  What the...?  You got a blank page!  The MDW tasks UI relies on a couple of optional asset packages.
-    We can import these using MDWHub or Designer.  We'll use MDWHub since we're already there.
+    Click to drill into the task.  What the...?  You got a blank page!  It's common practice in MDW to deliver optional features in the
+    form of asset packages.  MDWHub's Task UI relies on a couple of these packages.  We can import them using MDWHub or Designer.  
+    We'll use Hub since we're already there.
     
   - Click on the Admin tab in MDWHub, and select the Assets nav link to see your packages (ignoring any errors regarding Git Branch mismatches).
     Click Import > Discover.  Then click the Discover button on the discovery page to see a list of available packages.
@@ -497,9 +488,41 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - The com.centurylink.mdw.node package requires a server restart after being imported.  So restart your server,
     and then when you revisit the Tasks tab and click on the link it should be able to display the task page.
+    
+  - In Designer, close all open files and refresh Process Explorer to reflect the newly-imported packages. 
   
 ### 2.2 Invoke a subprocess
+  What to do when a bug gets created?  With human action required, it'll be a long-running workflow, which obviously cannot respond in real time.
+  Whereas Create Bug is a service process and must respond within a second or two, once the bug is created we want to spawn a separate flow
+  that can proceed at length.  The pattern to accomplish this in MDW is to invoke a subprocess.
+  
+#### Use the Invoke Subprocess activity
+  - First create a new process under package com.centurylink.mdw.demo.bugs.  Call this process "A Bug's Life".  We'll not check Service Process
+    on the Design tab this time.  By definition service processes are not long-running, and they're restricted from containing certain activities.
+    Now add a variable named 'bug' with type com.centurylink.mdw.model.Jsonable and mode Input.  Save "A Bug's Life".
     
-   
+  - Return to the Create Bug process, and from the Toolbox drag an Invoke Subprocess activity.  Name it "Invoke Bug Subflow", and Link it 
+    after Save Bug and before Created.  Double click the subprocess activity and on the Design tab select "A Bug's Life" for Subprocess. 
+    Also uncheck Synchronous since we don't want to wait for the subflow to complete before responding.  Lastly, click the Bindings tab which
+    displays all the input variables from our selected subprocess.  Enter ${response} as the Binding Expression for the 'bug' input variable:
+    ![create bug 3](../images/create-bug-3.png)<br>
     
+    The [Java expression](http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html) ${response} in this context means that the 'response' 
+    variable from Create Bug will be bound to 'bug' in the subflow.
+    
+  - Save everything and invoke the service as before.  Open the latest "Create Bug" process instance in Designer or MDWHub, and select the
+    Invoke Bug Workflow activity.  On the Subprocesses property tab, double-click (in Designer) or click (in Hub) the "A Bug's Life" instance.
+    View the subflow Values to confirm that 'bug' is populated correctly.
+
+#### Add a manual task step
+  - Returning to "A Bug's Life", drag a Custom Manual Task activity and insert it between Start and Stop.  Change the label to
+    "Await Resolution".  On the Design tab, select the ResolveBug task template we create.  For Instance ID Variable instead of selecting
+    from the dropdown, type the expression `${bug.id}`.  This tells MDW that we've already created the task, and we just need our activity
+    to await task completion.<br>
+    ![a bugs life](../images/a-bugs-life.png)<br>
+    
+  - Save and run to confirm that the status of Await Resolution is *Waiting*.  This indicates that flow will resume once the associated
+    manual task is completed.
+    
+  - 
     
