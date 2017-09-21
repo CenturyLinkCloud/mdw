@@ -43,7 +43,7 @@
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
         "WORK_DISPLAY_INFO": "x=101,y=124,w=102,h=75",
-        "jdbcDataSource": "#{props['mdw.database.url']}?user=#{props['mdw.database.username']}&password=#{props['mdw.database.password']}",
+        "jdbcDataSource": "MDWDataSource",
         "parameterVariable": "userCuid",
         "queryType": "Select",
         "sqlQuery": "select * from user_info where cuid = ?"
