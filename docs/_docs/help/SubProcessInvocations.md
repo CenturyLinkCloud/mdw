@@ -1,3 +1,8 @@
+---
+permalink: /docs/help/SubProcessInvocations/
+title: MDW Sub-ProcessInvocations
+---
+
 ### Using InvokeSubprocessActivity to Launch a Sub Process
 
 When launching a sub process using the built-in InvokeSubProcessActivity activity, many factors come into play to determine how that sub process will execute.
