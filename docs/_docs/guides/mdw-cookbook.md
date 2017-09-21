@@ -35,7 +35,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     project, try clicking the Refresh toolbar icon <img src="../images/refresh.gif" class="inline" alt="refresh"> at the top of Process Explorer view.
 
 #### Create a package  
-  Everything in MDW is what we call an [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html), and these live in packages, 
+  Everything in MDW is what we call an [Asset](../../help/assets.html), and these live in packages, 
   similar to Java packages except that they contain a whole lot more than .java source files.  Let's create a package for our
   bug handling workflow:
   - Expand your project tree in Process Explorer.  You'll see the mdw6 baseline packages imported by the CLI during `mdw init` or `mdw update`.
@@ -436,8 +436,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
           loginfo("Created task instance " + instance.getId() + " (" + template.getTaskName() + ")");
       ....
     ```
-    Here we're calling [TaskServices.createTask()](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/TaskServices.html#createTask-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-), 
-    which requires a [Task Template](http://centurylinkcloud.github.io/mdw/docs/help/taskTemplates.html) asset to specify a pattern.
+    Here we're calling [TaskServices.createTask()](../../javadoc/com/centurylink/mdw/services/TaskServices.html#createTask-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-), 
+    which requires a [Task Template](../../help/taskTemplates.html) asset to specify a pattern.
     The TASK_TEMPLATE constant illustrates an asset designation that's very common in MDW: `com.centurylink.mdw.demo.bugs/ResolveBug.task`.
     This equates to assets/com/centurylink/mdw/demo/bugs/ResolveBug.task in your project directory.  Unlike a qualified Java class name,
     a slash separates the package from the asset name.  We'll create the task template asset in the next step.
@@ -521,8 +521,17 @@ is available to clone in its completed state from the [mdw-demo repository](http
     to await task completion.<br>
     ![a bugs life](../images/a-bugs-life.png)<br>
     
-  - Save and run to confirm that the status of Await Resolution is *Waiting*.  This indicates that flow will resume once the associated
-    manual task is completed.
+  - Save and run to confirm that the status of Await Resolution in "A Bug's Life" is *Waiting*.  This indicates that flow will resume 
+    once the associated manual task is completed.
     
-  - 
+  - In MDWHub click the Tasks tab, find the just-created bug task, and drill into it.  Click the Action button and select Claim.
+    By default you must be assigned a task to complete it (although this behavior [can be overridden](../../help/taskAction.html)).
+    Click the Action button again and select Complete.
+    
+  - Return to the Bug's Life instance in MDWHub or Designer, and refresh to confirm that now the subflow has run to completion.
+    Manual tasks provide a great mechanism for humans to interact with workflows.  Aside from triggering actions, another key aspect
+    of manual tasks in MDWHub is enabling data entry.  With [AutoForm tasks](../../javadoc/com/centurylink/mdw/workflow/activity/task/AutoFormManualTaskActivity.html), 
+    data entry can be tied to variables through configuration, and a data-entry form is generated on the fly by MDWHub.
+    Remember, however, that we chose a [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
+    In section 4 we'll build a page to capture data related to our bug task. 
     

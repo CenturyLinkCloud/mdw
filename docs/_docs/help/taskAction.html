@@ -8,15 +8,14 @@
 <h1>Manual Task Activity</h1>
 
 Manual task activities are used to create a manual task instance
-in the task manager. The following links contain additional information
-about tasks:
+in a workflow.
 <ul>
   <li><a href="taskNotices.html">Task notices</a>: Task notices provide the capability to automatically 
   	send templated e-mail notifications when a stage in the task instance lifecycle is reached.</li>
   <li><a href="taskSLA.html">Task SLA</a>: describes SLA (a.k.a due dates) of tasks.</li>
 </ul>
 
-<h2>Configurable Attributes</h2>
+<h2>Task Template Attributes</h2>
 <table>
 <tr><th>Attribute</th><th>Description</th></tr>
 <tr><td>Task Name</td><td>The name displayed in MDW Hub.</td></tr>
@@ -33,8 +32,10 @@ about tasks:
 <tr><td>Recipient Variable</td><td>Follow <a href="taskNotices.html">this link</a> for information on task notices.</td></tr>
 </table>
 
-<h3>Standard Actions</h3>
-Standard actions have specific pre-determined outcomes which may be overridden in your process definition.  The following table summarizes the available actions and their default outcomes.
+<a name="taskActions"><h3>Standard Actions</h3></a>
+The rules governing allowable standard actions are defined in asset com.centurylink.mdw.tasks/mdw-task-actions.xml.
+Standard actions have specific pre-determined outcomes which may be overridden in your process definition.  
+The following table summarizes the available standard actions and their default outcomes.
 <br/><br/>
 <table>
   <tr>
