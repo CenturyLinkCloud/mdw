@@ -1,6 +1,6 @@
 ---
 permalink: /docs/help/SubProcessInvocations/
-title: MDW Sub-ProcessInvocations
+title: MDW Sub-Process Invocations
 ---
 
 ### Using InvokeSubprocessActivity to Launch a Sub Process
