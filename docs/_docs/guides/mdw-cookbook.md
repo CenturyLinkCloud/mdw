@@ -3,13 +3,13 @@ permalink: /docs/guides/mdw-cookbook/
 title: MDW Cookbook
 ---
 
-Let's walk through the essential features of MDW.  All the source code we'll create in this guide
+Let's walk through the essential features of MDW.  All the source code referenced in this guide
 is available to clone in its completed state from the [mdw-demo repository](https://github.com/CenturyLinkCloud/mdw-demo).  
 
-## Steps in this Guide
+## Sections in this Guide
   MDW is a [workflow](../../features-guide) framework specializing in [microservice orchestration](../../presentations/microservices).
-  This guide focuses on these aspects, with additional emphasis on manual task handling and MDWHub UI customization.
-  For our use case we'll create a bug management workflow.
+  We'll focus these topics, and dive into other key features like manual task handling and web UI development.
+  Our use case is a bug management workflow.
   1. [Implement a REST Service](#1-implement-a-rest-service)
      - 1.1 [Setup](#11-setup) 
      - 1.2 [Create a service process](#12-create-a-service-process)
@@ -23,17 +23,17 @@ is available to clone in its completed state from the [mdw-demo repository](http
      - 2.3 [Add a manual task activity](#23-add-a-manual-task-activity)
      - 2.4 [Create a Spring asset](#24-create-a-spring-asset)
      - 2.5 [Consume a REST service](#25-consume-a-rest-service)
-  3. [Document and Run Automated Tests](#3-create-an-automated-test)
-     - TODO: document the Create Bug process
-     - TODO: service test with workflow verification
-  4. [Integrate a Custom Web UI](#4-integrate-a-custom-web-ui)
+  3. [Integrate a Custom Web UI](#4-integrate-a-custom-web-ui)
      - TODO: Custom bug submit page
      - TODO: Custom task page
+  4. [Document and Run Automated Tests](#3-create-an-automated-test)
+     - TODO: document the Create Bug process
+     - TODO: service test with workflow verification
 
 ## 1. Implement a REST Service
 ### 1.1 Setup
   - **Get MDW**  
-    The easy way to run MDW locally is by following the [5-minute quick-start](../../getting-started/quick-start).
+    The easy way to run MDW locally is by following the [5-minute quick start](../../getting-started/quick-start).
   - **Install the Designer plugin**  
     Assets can be created and edited in MDWHub, but for serious development you'll want to [install the Eclipse plugin](../../getting-started/install-designer).
   
@@ -545,7 +545,6 @@ is available to clone in its completed state from the [mdw-demo repository](http
     of manual tasks in MDWHub is enabling data entry.  With [AutoForm tasks](../../javadoc/com/centurylink/mdw/workflow/activity/task/AutoFormManualTaskActivity.html), 
     data entry can be tied to variables through configuration, and a data-entry form is generated on the fly by MDWHub.
     Remember, however, that we chose a [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
-    In section 4 we'll build a page to capture data related to our bug task. 
     
 ### 2.4 Create a Spring asset
   MDW uses [Spring](https://spring.io/) internally, and one of the key extensibility mechanisms MDW provides is the ability to create
@@ -601,7 +600,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     to dynamically determine a task's priority level as well as when it's due.  In the com.centurylink.mdw.demo.bugs package
     create a new Java Source asset named Prioritization.java with 
     [code from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Prioritization.java).
-    The logic here is very straightforward, but it's worth mentioning an annotation we haven't seen before:
+    The logic here is very straightforward, but it's worth mentioning this annotation we haven't seen before:
     ```
     @RegisteredService(PrioritizationStrategy.class)
     public class Prioritization ...
@@ -618,7 +617,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
       - [RoutingStrategy](../../javadoc/com/centurylink/mdw/observer/task/RoutingStrategy.html) - autoroute to designated workgroups
       - [AutoAssignStrategy](../../javadoc/com/centurylink/mdw/observer/task/AutoAssignStrategy.html) - assign to a specific person
 
-    All these strategies have access to the instance runtime state if they extend ParameterizedStrategy live we've done.  They all also have various built-in
+    All these strategies have access to the instance runtime state if they extend ParameterizedStrategy like we've done.  They all also have various built-in
     strategy options available from their dropdowns.  All the dropdowns include the **Rules-Based** option, which enables you to
     maintain the rules in an Excel spreadsheet asset which acts as a [Drools decision table](https://docs.jboss.org/drools/release/6.5.0.Final/drools-docs/html/ch06.html#d0e5713).
     (Rules-based strategies depend on the optional com.centurylink.mdw.drools asset package). 
@@ -627,7 +626,52 @@ is available to clone in its completed state from the [mdw-demo repository](http
     such as [Email and Slack notifications](../../help/taskNotices.html) based on HTML template assets.
   
   - If you're done for now, save ResolveBug.task and resubmit with various values for 'severity' to confirm its impact on the due interval
-    on the Tasks tab in MDWHub.
+    by checking the Tasks tab in MDWHub.
     
 ### 2.5 Consume a REST service
+  Way back in [Section 1](#1-implement-a-rest-service) we covered how to produce a REST service.  Now we want to consume a REST API, specifically
+  a [microservice](https://en.wikipedia.org/wiki/Microservices), from within our workflow.  You'll find that the microservice architectural approach, with
+  its emphasis on tightly-focused services, lends itself to the visual orchestration capabilities in MDW.
+
+#### Import the microservice package
+  The MDW term for an activity that invokes an external service (whatever the protocol), is *adapter activity* (or simply *adapter*).
+  In the base package there's a built-in general REST adapter, but the optional `com.centurylink.mdw.microservice' package includes assets
+  that are especially well-suited to the microservice paradigm.  So first we'll import this package.
+   
+  - Back on the Admin tab in MDWHub, select the Assets nav link and click Click Import > Discover.  Click the Discover button and select
+    **com.centurylink.mdw.microservice**, and then click Import at the bottom of the page.
+  
+#### Add an adapter activity
+  During the bug lifecycle we'll want to confirm any associated commit, and for this we'll use the [GitHub REST API](https://developer.github.com/v3/).
+  
+  - In Designer open "A Bug's Life" and drag from the toolbox a Microservice REST Adapter.  Link it between "Await Resolution" and "Close", and 
+    label it "Retrieve Commit".  We need a variable to hold the adapter response, so on the process Variables tab add a local variable named 'commit'.
+    We're not going to build a Jsonable model for this object, so just make the 'commit' variable type org.json.JSONObject.
+    
+  - On the REST adapter Design tab, make sure the GET method is selected, and paste this for Resource URL:<br>
+    `https://api.github.com/repos/CenturyLinkCloud/mdw-demo/commits/${bug.commitId}`  
+        
+  - Also on the activity Design tab, select GET for the HTTP Method, and in the Response Variable dropdown select 'response'.  We don't need a request
+    variable for an HTTP GET.  Here's what the process should look like:
+    ![a bugs life 2](../images/a-bugs-life-2.png)<br>    
+    
+  - Save "A Bug's Life" now.  In section 3 we'll build a page to capture data related to bug tasks, where a resolver will enter the commit ID.
+    For the time being, to test our REST adapter we'll just submit a bug with commitId already populated.  Post a new request with something like this:
+    ```json
+    {
+      "title": "Missing documentation on external Error Handler processes",
+      "description": "Someone needs to step up.  I'm not saying who.",
+      "severity": 2,
+      "commitId": "52c7b84"
+    }
+    ```
+    The commitId above is the short form of a valid commit hash in mdw-demo on GitHub.
+
+  - Now check the Tasks tab in MDWHub and drill into the task for the bug you just submitted.  Claim and complete the task so then you can click
+    over to the Workflow tab, select "All Processes" in the dropdown, and set the Filter to Completed to see your the latest Bug's Life at the top.
+    Check the values to make sure that we got back a commit from GitHub.  Another item of note: if you click on the Retrieve Commit adapter you'll
+    see that it has Requests and Responses property tabs where you can drill in to see other information like the URL and HTTP headers.
+    
+    
+    
     

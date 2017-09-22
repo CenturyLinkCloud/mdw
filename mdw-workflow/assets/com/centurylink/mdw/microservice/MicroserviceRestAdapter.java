@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.microservice;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,21 +26,16 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
 /**
@@ -51,36 +45,9 @@ import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     public static final String JSON_RESPONSE_VARIABLE = "JSON Response Variable";
-    public static final String LOCAL_TUNNEL_PROXY_PORT = "Local Tunnel Proxy Port";
 
     /**
-     * Overridden to support local tunnel proxying.
-     */
-    @Override
-    public Object openConnection() throws ConnectionException {
-        try {
-            String proxyPortAttr = getAttributeValueSmart(LOCAL_TUNNEL_PROXY_PORT);
-            if (proxyPortAttr != null && !proxyPortAttr.isEmpty()) {
-                try {
-                    int port = Integer.parseInt(proxyPortAttr);
-                    loginfo("Using local tunnel proxy port: " + port);
-                    return super.openConnection("127.0.0.1", port);
-                }
-                catch (NumberFormatException ex) {
-                    throw new PropertyException("Invalid integer for " + LOCAL_TUNNEL_PROXY_PORT
-                            + ": " + proxyPortAttr);
-                }
-            }
-        }
-        catch (PropertyException ex) {
-            throw new ConnectionException(-1, ex.getMessage(), ex);
-        }
-
-        return super.openConnection();
-    }
-
-    /**
-     * Overridden to build JSON request headers.
+     * Overridden to append JSON headers.
      */
     @Override
     public Map<String, String> getRequestHeaders() {
@@ -234,14 +201,13 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      * This returns the microservice that is to be updated in the serviceSummary
      * It defaults to the value of "packageName/processName".
      * In the case where this won't work (i.e we are in a deep subprocess)
-     * it can be overriden by defining the value in the activity for "Microservice name"
+     * it can be overridden by defining the value in the activity for "Microservice name"
      * @return the microservice to be updated in the serviceSummary
      */
     public String getMicroservice() {
         String microservice = getAttributeValue(ServiceSummary.MICROSERVICE);
-        if (StringHelper.isEmpty(microservice))
+        if (microservice == null)
             microservice = getPackage().getName() + "/" + getProcessDefinition().getName();
-        microservice = getMicroservicePath(microservice);
         return microservice;
     }
 
@@ -254,7 +220,6 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         ServiceSummary serviceSummary = (ServiceSummary) getVariableValue(
                 ServiceSummary.SERVICE_SUMMARY);
         if (serviceSummary == null) {
-            logger.severe(ServiceSummary.SERVICE_SUMMARY + " not found");
             return null;
         }
         else {
@@ -293,104 +258,6 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                         "Invalid value for " + requestIdVarName + ": " + requestIdObj);
             }
         }
-    }
-
-    /**
-     * Overrides the standard functionality to update the serviceSummary
-     * with a 500 response for any errors
-     *
-     */
-    @Override
-    public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
-            throws ConnectionException, AdapterException {
-        HttpHelper httpHelper = null;
-        String httpMethod = null;
-        try {
-            httpHelper = getHttpHelper(conn);
-
-            int connectTimeout = getConnectTimeout();
-            if (connectTimeout > 0)
-                httpHelper.setConnectTimeout(connectTimeout);
-
-            int readTimeout = getReadTimeout();
-            if (readTimeout > 0)
-                httpHelper.setReadTimeout(readTimeout);
-
-            if (headers != null)
-                httpHelper.setHeaders(headers);
-
-            httpMethod = getHttpMethod();
-            String response = null;
-            if (httpMethod.equals("GET"))
-                response =  httpHelper.get();
-            else if (httpMethod.equals("POST"))
-                response =  httpHelper.post(request);
-            else if (httpMethod.equals("PUT"))
-                response =  httpHelper.put(request);
-            else if (httpMethod.equals("PATCH"))
-                response =  httpHelper.patch(request);
-            else if (httpMethod.equals("DELETE"))
-                response =  httpHelper.delete();
-            else
-                throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
-
-            if (response != null) {
-                int codeThreshold = DEFAULT_HTTP_CODE;
-                String retryCodes = getAttributeValueSmart(RETRY_HTTP_CODES);
-                if (retryCodes != null) {
-                    try {
-                        codeThreshold = Integer.parseInt(retryCodes);
-                    }
-                    catch (NumberFormatException ex) {} // Use default in this case
-                }
-
-                Response httpResponse = super.getResponse(conn, response);
-                if (httpResponse.getStatusCode() >= codeThreshold)
-                    throw new IOException("Server returned HTTP response code: " + httpResponse.getStatusCode());
-            }
-
-            return response;
-        }
-        catch (IOException ex) {
-            Response response = null;
-            if (httpHelper != null && httpHelper.getResponse() != null) {
-                response = new Response(httpHelper.getResponse());
-                response.setStatusCode(httpHelper.getResponseCode());
-                response.setStatusMessage(httpHelper.getResponseMessage());
-            }
-            else {
-                // Make sure that we log a 500 and a message in the service
-                // summary
-                response = new Response();
-                response.setStatusCode(Status.INTERNAL_ERROR.getCode());
-                response.setStatusMessage(
-                        getAdapterInvocationErrorMessage() + ":" + ex.getMessage());
-                response.setContent("{}");
-            }
-            logResponse(response);
-            /**
-             * Plugs into automatic retrying
-             */
-            logexception(ex.getMessage(), ex);
-            throw new ConnectionException(-1, ex.getMessage(), ex);
-        }
-        catch (Exception ex) {
-            int responseCode = -1;
-            if (httpHelper != null)
-                responseCode = httpHelper.getResponseCode();
-            throw new AdapterException(responseCode, ex.getMessage(), ex);
-        }
-        finally {
-            if (httpHelper != null)
-                setResponseHeaders(httpHelper.getHeaders());
-        }
-    }
-    /**
-     * Trim microservice subprocess per naming convention
-     */
-    public String getMicroservicePath(String assetPath) {
-        AssetVersionSpec spec = AssetVersionSpec.parse(assetPath);
-        return spec.getPackageName().substring(spec.getPackageName().lastIndexOf('.') + 1) + "/" + spec.getName();
     }
 
 }
