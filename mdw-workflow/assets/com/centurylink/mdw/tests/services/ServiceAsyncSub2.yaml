@@ -229,22 +229,22 @@ process: # 10203
     name: stackTrace
     value: |
       com.centurylink.mdw.activity.ActivityException: I've fallen and I can't get up
-      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:116)
-      	at com.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:41)
-      	at com.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:222)
-      	at com.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:232)
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:378)
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:611)
-      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:577)
-      	at com.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:37)
-      	at com.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:263)
-      	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-      	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-      	at java.lang.Thread.run(Thread.java:745)
-      	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:232)
+      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:${~\\d+})
+      	at com.centurylink.mdw.workflow.activity.DefaultActivityImpl.execute(DefaultActivityImpl.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.BaseActivity.execute(BaseActivity.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.BaseActivity.executeTimed(BaseActivity.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.executeActivity(ProcessEngineDriver.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvent(ProcessEngineDriver.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.ProcessEngineDriver.processEvents(ProcessEngineDriver.java:${~\\d+})
+      	at com.centurylink.mdw.services.process.InternalEventDriver.run(InternalEventDriver.java:${~\\d+})
+      	at com.centurylink.mdw.container.plugin.CommonThreadPool$Work.run(CommonThreadPool.java:${~\\d+})
+      	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:${~\\d+})
+      	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:${~\\d+})
+      	at java.lang.Thread.run(Thread.java:${~\\d+})
+      	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:${~\\d+})
       Caused by: com.centurylink.mdw.java.JavaExecutionException: I've fallen and I can't get up
       	at com.centurylink.mdw.tests.services.Error_A3.execute(Error_A3.java:16)
-      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:98)
+      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:${~\\d+})
       	... 12 more
 process: # 10201
   name: ServiceMain
