@@ -20,6 +20,15 @@ is available to clone in its completed state from the [mdw-demo repository](http
   2. [Build out the Bugs Workflow](#2-build-out-the-bugs-workflow)
      - 2.1 [Implement a custom activity](#21-implement-a-custom-activity)
      - 2.2 [Invoke a subprocess](#22-invoke-a-subprocess)
+     - 2.3 [Add a manual task activity](#23-add-a-manual-task-activity)
+     - 2.4 [Create a Spring asset](#24-create-a-spring-asset)
+     - 2.5 [Consume a REST service](#25-consume-a-rest-service)
+  3. [Document and Run Automated Tests](#3-create-an-automated-test)
+     - TODO: document the Create Bug process
+     - TODO: service test with workflow verification
+  4. [Integrate a Custom Web UI](#4-integrate-a-custom-web-ui)
+     - TODO: Custom bug submit page
+     - TODO: Custom task page
 
 ## 1. Implement a REST Service
 ### 1.1 Setup
@@ -514,16 +523,19 @@ is available to clone in its completed state from the [mdw-demo repository](http
     Invoke Bug Workflow activity.  On the Subprocesses property tab, double-click (in Designer) or click (in Hub) the "A Bug's Life" instance.
     View the subflow Values to confirm that 'bug' is populated correctly.
 
-#### Add a manual task step
-  - Returning to "A Bug's Life", drag a Custom Manual Task activity and insert it between Start and Stop.  Change the label to
+### 2.3 Add a manual task activity
+
+#### Insert a manual task 
+  - Returning to "A Bug's Life", drag a Custom Manual Task activity and link it between Start and Stop.  Change the label to
     "Await Resolution".  On the Design tab, select the ResolveBug task template we create.  For Instance ID Variable instead of selecting
-    from the dropdown, type the expression `${bug.id}`.  This tells MDW that we've already created the task, and we just need our activity
-    to await task completion.<br>
+    from the dropdown, type the expression `${bug.id}`.  This tells MDW that we've already created the task (in Save Bug), and we just need 
+    our activity to await task completion.<br>
     ![a bugs life](../images/a-bugs-life.png)<br>
     
   - Save and run to confirm that the status of Await Resolution in "A Bug's Life" is *Waiting*.  This indicates that flow will resume 
     once the associated manual task is completed.
-    
+
+#### Perform actions on the task    
   - In MDWHub click the Tasks tab, find the just-created bug task, and drill into it.  Click the Action button and select Claim.
     By default you must be assigned a task to complete it (although this behavior [can be overridden](../../help/taskAction.html)).
     Click the Action button again and select Complete.
@@ -534,4 +546,88 @@ is available to clone in its completed state from the [mdw-demo repository](http
     data entry can be tied to variables through configuration, and a data-entry form is generated on the fly by MDWHub.
     Remember, however, that we chose a [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
     In section 4 we'll build a page to capture data related to our bug task. 
+    
+### 2.4 Create a Spring asset
+  MDW uses [Spring](https://spring.io/) internally, and one of the key extensibility mechanisms MDW provides is the ability to create
+  your own custom Spring contexts.  Unlike regular Spring app contexts, your Spring assets are dynamic in that changes can be applied without
+  a redeployment.
+  
+#### Customize baseline data  
+  - In Designer, open the ResolveBug.task template.  Check out the options available in the Category dropdown.  None of these options
+    seem like a good fit for a bug.  It would be nice to add our own values as options.  This is the problem we'll solve by creating a
+    Spring asset.
+    
+  - Right-click on the com.centurylink.mdw.demo.bugs package and select New > Spring Config.  Name the asset bugsContext.spring, and click Finish.
+    Paste this into bugsContext.spring:
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans
+      xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+      <!-- custom baseline data -->
+      <bean id="bugCategories" class="com.centurylink.mdw.demo.bugs.Categories" />
+    </beans>
+    ``` 
+    Aside from namespace boilerplate, this context contains a single Spring bean declaration with an *id* of bugCategories.
+    The *id* is not significant, but the *class* attribute is.  This is where we plug in our custom behavior.
+    
+  - Create a new Java Source asset in the same package named Categories.java.  Paste its content from
+    [Categories.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Categories.java).
+    The important thing to note about this code is this:
+    ```java
+    public class Categories extends MdwBaselineData {
+        private List<TaskCategory> bugCategories;
+  
+        public Categories() {
+            bugCategories = new ArrayList<>();
+            bugCategories.add(new TaskCategory(201L, "ISSUE", "Bug"));
+        }
+    ....    
+    ```     
+    We extend [MdwBaselineData](../../javadoc/com/centurylink/mdw/dataaccess/file/MdwBaselineData.html), which provides the entry-point 
+    for us to designate our own values for certain reference data in MDW.  In the Categories constructor, we're building our own list
+    of TaskCategories to include along with the MDW built-in ones.
+    
+#### Configure the ResolveBug task template    
+  - Designer caches this type of data obtained from the MDW server, so close everything and refresh Process Explorer.  When you
+    re-expand the project tree, that's when Designer pulls these values from the server.  After that, open up ResolveBug.task and
+    change the Category to ISSUE - Bug.
+    
+  - While we're here let's explore some other aspects of manual tasks.  We could specify a [due interval](../../help/taskSLA.html)
+    in minutes or hours.  But a hardwired interval turns out to be not that useful.  Instead let's implement a
+    [PrioritizationStrategy](../../javadoc/com/centurylink/mdw/observer/task/PrioritizationStrategy.html)
+    to dynamically determine a task's priority level as well as when it's due.  In the com.centurylink.mdw.demo.bugs package
+    create a new Java Source asset named Prioritization.java with 
+    [code from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Prioritization.java).
+    The logic here is very straightforward, but it's worth mentioning an annotation we haven't seen before:
+    ```
+    @RegisteredService(PrioritizationStrategy.class)
+    public class Prioritization ...
+    ```
+    The @RegisteredService annotation gives your Dynamic Java code an extensibility hook into MDW.  To see the available implementations
+    you can plug in, have a look at the [All Known Subinterfaces](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/common/service/RegisteredService.html) 
+    section of the javadoc.
+    
+  - Now return to ResolveBug.task and on the General tab paste the fully qualified name of the class we just created into
+    Prioritization Strategy: `com.centurylink.mdw.demo.bugs.Prioritization`.  This strategy pattern is common to many attributes of
+    a task template:
+      - [PrioritizationStrategy](../../javadoc/com/centurylink/mdw/observer/task/PrioritizationStrategy.html) - priority and due interval
+      - [SubtaskStrategy](../../javadoc/com/centurylink/mdw/observer/task/SubTaskStrategy.html) - rules for creating subtasks
+      - [RoutingStrategy](../../javadoc/com/centurylink/mdw/observer/task/RoutingStrategy.html) - autoroute to designated workgroups
+      - [AutoAssignStrategy](../../javadoc/com/centurylink/mdw/observer/task/AutoAssignStrategy.html) - assign to a specific person
+
+    All these strategies have access to the instance runtime state if they extend ParameterizedStrategy live we've done.  They all also have various built-in
+    strategy options available from their dropdowns.  All the dropdowns include the **Rules-Based** option, which enables you to
+    maintain the rules in an Excel spreadsheet asset which acts as a [Drools decision table](https://docs.jboss.org/drools/release/6.5.0.Final/drools-docs/html/ch06.html#d0e5713).
+    (Rules-based strategies depend on the optional com.centurylink.mdw.drools asset package). 
+      
+  - You can poke around the task template design tabs and click on the help links to explore additional template attributes,
+    such as [Email and Slack notifications](../../help/taskNotices.html) based on HTML template assets.
+  
+  - If you're done for now, save ResolveBug.task and resubmit with various values for 'severity' to confirm its impact on the due interval
+    on the Tasks tab in MDWHub.
+    
+### 2.5 Consume a REST service
     
