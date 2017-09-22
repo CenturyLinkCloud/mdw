@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Guides
+title: Getting Started
 permalink: /docs/guides/
 ---
 

@@ -42,7 +42,6 @@ import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
@@ -162,7 +161,9 @@ public class TaskWorkflowHelper {
         Package taskPkg = PackageCache.getTaskTemplatePackage(taskId);
         if (taskPkg != null && !taskPkg.isDefaultPackage())
             label = taskPkg.getLabel() + "/" + label;
-        Instant due = Instant.now().plusSeconds(dueInSeconds);
+        Instant due = null;
+        if (dueInSeconds > 0)
+            due = Instant.now().plusSeconds(dueInSeconds);
         int pri = 0;
         // use the prioritization strategy if one is defined for the task
         try {
@@ -171,7 +172,7 @@ public class TaskWorkflowHelper {
                 Date calcDueDate = prioritizationStrategy.determineDueDate(task);
                 if (calcDueDate != null)
                     due = calcDueDate.toInstant();
-                pri = prioritizationStrategy.determinePriority(task, Date.from(due));
+                pri = prioritizationStrategy.determinePriority(task, due == null ? null : Date.from(due));
             }
         }
         catch (Exception ex) {

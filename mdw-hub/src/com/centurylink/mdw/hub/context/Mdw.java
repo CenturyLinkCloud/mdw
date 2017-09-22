@@ -75,6 +75,10 @@ public class Mdw {
     public String getDiscoveryUrl() { return discoveryUrl; }
     public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
 
+    private String customRoutes;
+    public String getCustomRoutes() { return customRoutes; }
+    public void setCustomRoutes(String customRoutes) { this.customRoutes = customRoutes; }
+
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;
         this.build = build;

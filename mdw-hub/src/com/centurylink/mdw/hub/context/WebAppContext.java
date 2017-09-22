@@ -33,6 +33,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
+import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class WebAppContext {
@@ -76,6 +77,15 @@ public class WebAppContext {
             if (discoveryUrl == null)
                 discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
             mdw.setDiscoveryUrl(discoveryUrl);
+
+            try {
+                JSONArray routes = CustomPageLookup.getUiRoutes();
+                if (routes != null)
+                    mdw.setCustomRoutes(routes.toString());
+            }
+            catch (ReflectiveOperationException ex) {
+                LoggerUtil.getStandardLogger().severeException(ex.getMessage(), ex);
+            }
         }
         return mdw;
     }

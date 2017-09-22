@@ -51,6 +51,7 @@ dependencies {
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/camel", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/drools", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/node", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/mysql", includes: ["*.jar"])
  
 	//  Un-comment below if you add the tibco and/or ibmmq package(s) to your workspace's assets
     //providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/tibco", includes: ["*.jar"])
@@ -70,7 +71,7 @@ dependencies {
     compile(group: "commons-validator", name: "commons-validator", version: "1.3.1") { exclude(module: "commons-digester") } 
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "el-impl", name: "el-impl", version: "1.0"
-    compile group: "mysql", name: "mysql-connector-java", version: "5.1.29"
+//    compile group: "mysql", name: "mysql-connector-java", version: "5.1.29"
     
     // spring boot
     providedCompile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion

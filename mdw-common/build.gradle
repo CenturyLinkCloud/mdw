@@ -57,7 +57,7 @@ dependencies {
     compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
     compile group: "com.jcraft", name: "jsch", version: "0.1.51" // for jgit
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
-    compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
+//    compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
     compile group: "el-impl", name: "el-impl", version: "1.0"
     compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
     compile group: "org.yaml", name: "snakeyaml", version: "1.18"

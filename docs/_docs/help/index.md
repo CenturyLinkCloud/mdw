@@ -42,11 +42,12 @@ permalink: /docs/help/
   <li><a href='packageConfig.html'>Workflow Package Configuration</a></li>
 </ul>
 
-<h3>MDWHub</h3>
+<h3>MDWHub and Manual Tasks</h3>
 <ul>
   <li><a href='customWeb.html'>Custom Web</a></li>
   <li><a href='taskAction.html'>Defining Task Actions</a></li>
   <li><a href='taskTemplates.html'>Manual Task Templates</a></li>
+  <li><a href='taskSLA.html'>Task SLAs and Prioritization</a></li>
   <li><a href='taskNotices.html'>Task Notices</a></li>
   <li><a href='taskRouting.html'>Workgroup Routing</a></li>
 </ul>

@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -43,6 +42,7 @@ import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -144,37 +144,42 @@ public class TaskDataAccess extends CommonDataAccess {
         task.setPriority(rs.getInt("PRIORITY"));
         task.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
 
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(task.getTaskId());
-        if (taskVO == null) {
+        TaskTemplate template = TaskTemplateCache.getTaskTemplate(task.getTaskId());
+        if (template == null) {
             String ref = rs.getString("TASK_INSTANCE_REFERRED_AS");
             logger.warn("ERROR: Task instance ID " + task.getTaskInstanceId() + " missing task definition (" + ref + ").");
             task.setTaskName(ref);
             task.setInvalid(true);
             return task;
         }
-        task.setCategoryCode(taskVO.getTaskCategory());
-        task.setTaskName(taskVO.getTaskName());
+        task.setCategoryCode(template.getTaskCategory());
+        task.setTaskName(template.getTaskName());
         if (task.getTaskName() == null) {
-            task.setTaskName(taskVO.getTaskName());
+            task.setTaskName(template.getTaskName());
         }
         if (hasTaskTitleColumn)
             task.setTitle(rs.getString("TASK_TITLE"));
         if (isVOversion) {
             task.setAssigneeCuid(rs.getString("CUID"));
-            if (taskVO != null)
-              task.setDescription(taskVO.getComment());
+            if (template != null)
+              task.setDescription(template.getComment());
         }
 
         // check for custom page
-        if (taskVO.isHasCustomPage()) {
-            String assetSpec = taskVO.getCustomPage();
-            if (taskVO.getCustomPageAssetVersion() != null)
-                assetSpec += " v" + taskVO.getCustomPageAssetVersion();
-            AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
-            String instanceUrl = ApplicationContext.getMdwHubUrl() + '/' + customPage.getPackageName() + '/' + customPage.getName();
-            if (instanceUrl.endsWith(".jsx"))
-                instanceUrl = instanceUrl.substring(0, instanceUrl.length() - 4) + '/' + task.getTaskInstanceId();
-            task.setTaskInstanceUrl(instanceUrl);
+        if (template.isHasCustomPage()) {
+            String assetSpec = template.getCustomPage();
+            if (assetSpec.endsWith(".jsx")) {
+                if (template.getCustomPageAssetVersion() != null)
+                    assetSpec += " v" + template.getCustomPageAssetVersion();
+                AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
+                try {
+                    CustomPageLookup pageLookup = new CustomPageLookup(customPage, task.getTaskInstanceId());
+                    task.setTaskInstanceUrl(pageLookup.getUrl());
+                }
+                catch (Exception ex) {
+                    logger.severeException("Cannot determine custom page URL for task: " + template.getLabel(), ex);
+                }
+            }
         }
 
         return task;

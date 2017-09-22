@@ -18,7 +18,6 @@ var $mdwUi = {
      $mdwUi.Inspector = ngInjector.get('Inspector');
      $mdwUi.InspectorTabs = ngInjector.get('InspectorTabs');
      $mdwUi.Configurator = ngInjector.get('Configurator');
-     $mdwUi.util = ngInjector.get('util');
      $mdwUi.DOCUMENT_TYPES = ngInjector.get('DOCUMENT_TYPES');
      $mdwUi.authUser = authUser;
    },
@@ -78,36 +77,5 @@ var $mdwUi = {
    },
    clearMessage: function() {
      document.getElementById('mdwMainMessages').innerHTML = '';
-   },
-   addRoute: function(path, template, controller) {
-     var app = angular.module('adminApp');
-     if (controller) {
-       app.config(['$routeProvider', function($routeProvider) {
-         $routeProvider.when(path, {
-           templateUrl: template,
-           controller: controller
-         });
-       }]);       
-     }
-     else if (template && template.endsWith('.html')) {
-       app.config(['$routeProvider', function($routeProvider) {
-         $routeProvider.when(path, {
-           templateUrl: template,
-           controller: 'CustomController'
-         });
-       }]);
-     }
-     else {
-       app.config(['$routeProvider', function($routeProvider) {
-         $routeProvider.when(path, {
-           templateUrl: 'ui/custom-page.html',
-           controller: 'CustomController'
-         });
-       }]);
-       if (template && template.endsWith('.jsx')) {
-         this.routesMap[template] = path;
-       }
-     }
-   },
-   routesMap: {}
+   }
 };

@@ -6,6 +6,7 @@ title: MDW Command Line Interface
   The MDW Command Line Interface has commands for common operations like initializing a workspace and updating assets. 
 
 ### Installation
+   - Make sure Java 8 JDK is installed and on your system path.   
    - Download **mdw-cli.zip** from the latest MDW release on GitHub:<br>   
      <https://github.com/CenturyLinkCloud/mdw/releases>
    - Unzip anywhere on your hard drive.
@@ -84,3 +85,7 @@ title: MDW Command Line Interface
       Usage: version
 
   ```      
+
+### Quick Start
+  The [Quick Start](../quick-start/) has step-by-step instructions on how to use the CLI to get
+  running quickly with MDW.

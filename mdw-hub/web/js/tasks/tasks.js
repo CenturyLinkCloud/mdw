@@ -243,23 +243,11 @@ tasksMod.factory('TaskAction', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-tasksMod.factory('TaskUtil', ['$location', 'mdw', 'util', function($location, mdw, util) {
+tasksMod.factory('TaskUtil', ['$location', '$route', 'mdw', 'util', function($location, $route, mdw, util) {
   return {
     setTask: function(task) {
       if (task.instanceUrl) {
-        console.log("$location: " + JSON.stringify($location, null, 2));
-        var mdwHubBase = $location.$$protocol + '://' + $location.$$host;
-        if ($location.$$port)
-          mdwHubBase += ':' + $location.$$port;
-        mdwHubBase += mdw.roots.hub;
-        if (task.instanceUrl.startsWith(mdwHubBase)) {
-          task.link = mdwHubBase + '/#' + $mdwUi.routesMap['demo/Bug.jsx'];
-          if (task.link.endsWith('/:id'))
-            task.link = task.link.substring(0, task.link.length - 3) + task.id;
-        }
-        else {
-          task.link = task.instanceUrl;
-        }
+        task.link = task.instanceUrl;
       }
       else {
         task.link = '#/tasks/' + task.id;

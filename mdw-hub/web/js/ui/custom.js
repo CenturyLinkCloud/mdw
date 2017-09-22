@@ -2,12 +2,17 @@
 
 var customMod = angular.module('mdwCustom', ['mdw']);
 
-customMod.controller('CustomController', ['$scope', 'mdw',
-  function($scope, mdw) {
-    console.log("CUSTOM CONTROLLER: " + $mdwUi.routesMap['demo/Bug.jsx']);
-    
+customMod.controller('CustomController', ['$scope', '$route', 'mdw',
+  function($scope, $route, mdw) {
+  
     $scope.getJsxAsset = function() {
-      return 'demo/Bug.jsx';
+      if ($mdwCustomRoutes && !$mdwCustomRoutes.startsWith('${')) {
+          var match = JSON.parse($mdwCustomRoutes).find(function(customRoute) {
+            return customRoute.path === $route.current.$$route.originalPath;
+          });
+          if (match)
+            return match.asset;
+      }
     };
   }
 ]);

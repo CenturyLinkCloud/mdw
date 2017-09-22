@@ -102,6 +102,7 @@ public class WebpackCache implements PreloadableCache {
     @Override
     public void clearCache() {
         webpackAssets.clear();
+        watchedAssets.clear();
     }
 
     public File getCompiled(AssetInfo asset) throws IOException, ServiceException {

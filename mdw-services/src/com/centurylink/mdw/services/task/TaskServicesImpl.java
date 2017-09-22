@@ -237,20 +237,20 @@ public class TaskServicesImpl implements TaskServices {
         logger.info("SubTask instance created - ID: " + subTaskInstance.getTaskInstanceId());
     }
 
-    public TaskInstance getInstance(Long taskInstanceId) throws DataAccessException {
-        return TaskWorkflowHelper.getTaskInstance(taskInstanceId);
+    public TaskInstance getInstance(Long id) throws ServiceException {
+        try {
+            return TaskWorkflowHelper.getTaskInstance(id);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot retrieve task instance: " + id, ex);
+        }
     }
 
     public TaskRuntimeContext getContext(Long instanceId) throws ServiceException {
-        try {
-            TaskInstance taskInstance = getInstance(instanceId);
-            if (taskInstance == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
-            return getContext(taskInstance);
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot get runtime context for task instance: " + instanceId, ex);
-        }
+        TaskInstance taskInstance = getInstance(instanceId);
+        if (taskInstance == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
+        return getContext(taskInstance);
     }
 
     public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException {
@@ -258,25 +258,17 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public Map<String,Value> getValues(Long instanceId) throws ServiceException {
-        try {
-            TaskInstance taskInstance = getInstance(instanceId);
-            if (taskInstance == null) {
-                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
-            }
-            TaskRuntimeContext runtimeContext = getContext(taskInstance);
-            if (runtimeContext.getTaskTemplate().isAutoformTask()) {
-                return new AutoFormTaskValuesProvider().collect(runtimeContext);
-            }
-            else {
-                // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
-                return new HashMap<String,Value>();
-            }
+        TaskInstance taskInstance = getInstance(instanceId);
+        if (taskInstance == null) {
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
         }
-        catch (ServiceException ex) {
-            throw ex;
+        TaskRuntimeContext runtimeContext = getContext(taskInstance);
+        if (runtimeContext.getTaskTemplate().isAutoformTask()) {
+            return new AutoFormTaskValuesProvider().collect(runtimeContext);
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException("Error getting values for task instance: " + instanceId, ex);
+        else {
+            // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
+            return new HashMap<String,Value>();
         }
     }
 
