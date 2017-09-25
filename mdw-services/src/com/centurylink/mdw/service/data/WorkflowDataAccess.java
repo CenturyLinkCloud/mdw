@@ -47,9 +47,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
             String where;
             if (query.getFind() != null) {
                 try {
-                    // numeric value means instance id
+                    // numeric value means instance id or master request id
                     long findInstId = Long.parseLong(query.getFind());
-                    where = "where pi.process_instance_id like '" + findInstId + "%'\n";
+                    where = "where (pi.process_instance_id like '" + findInstId
+                            + "%' or pi.master_request_id like '" + query.getFind() + "%')\n";
                 }
                 catch (NumberFormatException ex) {
                     // otherwise master request id
