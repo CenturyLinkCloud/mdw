@@ -328,7 +328,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
         boolean logging = doLogging();
         try {
             init();
-            if (!StringHelper.isEmpty(requestData) && doLogging())
+            if (requestData != null && doLogging())
                 logRequest(requestData);
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
