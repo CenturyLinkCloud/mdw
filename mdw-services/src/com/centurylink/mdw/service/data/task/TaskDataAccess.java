@@ -865,10 +865,10 @@ public class TaskDataAccess extends CommonDataAccess {
         // category
         String category = query.getFilter("category");
         if (category != null) {
-            Long categoryCode = getCategoryId(category);
-            if (categoryCode == null)
+            Long categoryId = getCategoryId(category);
+            if (categoryId == null)
                 throw new DataAccessException("Unable to find code for category: " + category);
-            String catTasksClause = buildCategoryTasksClause((int)categoryCode.longValue());
+            String catTasksClause = buildCategoryTasksClause((int)categoryId.longValue());
             if (catTasksClause != null)
                 where.append(" and ").append(catTasksClause).append("\n");
         }
@@ -974,10 +974,10 @@ public class TaskDataAccess extends CommonDataAccess {
         return DataAccess.getBaselineData().getTaskCategoryCodes().get(categoryId);
     }
 
-    protected Long getCategoryId(String categoryName) throws DataAccessException {
-        if (categoryName != null) {
+    protected Long getCategoryId(String categoryNameOrCode) throws DataAccessException {
+        if (categoryNameOrCode != null) {
             for (TaskCategory taskCategory : DataAccess.getBaselineData().getTaskCategories().values()) {
-                if (categoryName.equals(taskCategory.getName())) {
+                if (categoryNameOrCode.equals(taskCategory.getName()) || categoryNameOrCode.equals(taskCategory.getCode())) {
                     return taskCategory.getId();
                 }
             }

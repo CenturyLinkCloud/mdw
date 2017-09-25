@@ -48,6 +48,8 @@ class Task extends Component {
   
   render() {
     var task = this.props.task;
+    // TODO: this refBase doesn't work for non-hash (react) locations
+    var refBase = location.hash ? '#/' : location.origin + this.context.hubRoot + '/#/';
     var animate = true; // not relevant for ad-hoc tasks, but no logic to exclude
     var lastWorkflowInstanceId = sessionStorage.getItem('taskWorkflowInstanceId');
     if (task.ownerId == lastWorkflowInstanceId)
@@ -66,7 +68,7 @@ class Task extends Component {
                     {task.masterRequestId && 
                       <span>
                         <label>Master request:</label>
-                        <a href={'#/workflow/masterRequests/' + task.masterRequestId} 
+                        <a href={refBase + 'workflow/masterRequests/' + task.masterRequestId} 
                             className="mdw-link">{task.masterRequestId}
                         </a>
                       </span>
@@ -100,7 +102,7 @@ class Task extends Component {
                   {task.secondaryOwnerType == 'TASK_INSTANCE' &&
                     <div className="mdw-item-group">
                       Master Task: 
-                      <a href={'#/tasks/' + task.secondaryOwnerId}>{task.secondaryOwnerId}</a>
+                      <a href={refBase + 'tasks/' + task.secondaryOwnerId}>{task.secondaryOwnerId}</a>
                     </div>
                   }
                 </div>
@@ -115,21 +117,21 @@ class Task extends Component {
               {task.assignee &&
                 <div>
                   <img src={this.context.hubRoot + '/images/user.png'} alt="user"/>
-                  {' '}<a href={'#/users/' + task.assigneeId}>{task.assignee}</a>
+                  {' '}<a href={refBase + 'users/' + task.assigneeId}>{task.assignee}</a>
                 </div>
               }
             </div>
           </div>
           <div className="mdw-task-process">
             <span className="mdw-task-package">{task.packageName}/</span>
-            <a href={'#/workflow/processes/' + task.ownerId}>
+            <a href={refBase + 'workflow/processes/' + task.ownerId}>
               {task.processName} {task.ownerId}
             </a>
           </div>
           {task.template &&
             <div className="mdw-task-template">
               <Glyphicon glyph="file" style={{marginRight:'2px',opacity:'0.6'}}/>
-              <a href={'#/asset/' + task.template}>Task Template</a>
+              <a href={refBase + 'asset/' + task.template}>Task Template</a>
             </div>
           }
           <div id="mdw-task-workflow" className="mdw-task-workflow">
