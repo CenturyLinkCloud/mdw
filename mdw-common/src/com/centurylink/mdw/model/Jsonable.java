@@ -29,7 +29,7 @@ public interface Jsonable extends io.limberest.json.Jsonable {
 
     @ApiModelProperty(hidden=true)
     default JSONObject getJson() throws JSONException {
-        return new Jsonator(this).getJson(new JsonObject());
+        return new Jsonator(this).getJson(create());
     };
 
     /**

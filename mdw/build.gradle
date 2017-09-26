@@ -9,16 +9,6 @@ task publishMdw(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
 }
 
-task publishMdwSnapshot(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
-}
-
-task publishSnapshot {
-    dependsOn(publishMdwSnapshot)
-}
-
 task publishFormal {
     dependsOn(publishMdw)
 }
@@ -118,9 +108,21 @@ task exportAssetPackages(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+task zipAssetPackages(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["zipAll"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
 task updateRestApiDefinition(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["updateRestApiDefinition"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
+task updateMdwVerInFiles(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["updateMdwVerInFiles"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
@@ -144,18 +146,6 @@ task deployTomcatMdwDev(type: GradleBuild) {
 task publishToMavenCentral(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
-}
-
-task tagRelease(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["tagRelease"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
-}
-
-task pushToOrigin(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["pushToOrigin"]
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
@@ -241,7 +231,54 @@ uploadArchives {
         }
     }
 }
-
+task archiveAssetZips {
+    dependsOn zipAssetPackages
+    ext.discoveredFiles = []
+    doLast{
+        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*').each { file ->
+            if(file.name.endsWith("zip")) {
+                discoveredFiles.add(file)
+                artifacts{
+                     archives file
+                }
+            }
+        }
+    }
+}
+task uploadAssetsToMavenCentral {
+    dependsOn archiveAssetZips
+    doLast{
+        ext.ossrhUsername = System.getProperty("ossrhUsername")
+        ext.ossrhPassword = System.getProperty("ossrhPassword")
+        repositories {
+            mavenDeployer {
+                repository(url: mavenRepoUrl) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                pom.project {
+                    group = "com.centurylink.mdw.assets"
+                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
+                        def filterName = discoveredFile.name - ".zip"
+                        def artifactName
+                        def hyphenCount = 2
+                        if (artifact.contains("SNAPSHOT")) {
+                            hyphenCount = 3
+                        }
+                        def segments = filterName.split("-")
+                        if (segments.size() > hyphenCount)
+                            artifactName = segments[0] + "-" +segments[1]
+                        else
+                            artifactName = segments[0]
+                        addFilter(filterName) { artifact, file ->
+                           file.name == filterName
+                        }
+                        pom(filterName).artifactId = artifactName
+                     }
+                 }   
+            }
+        }
+    }
+}
 task buildAll(type: GradleBuild) {
     dependsOn zipTemplates
     buildFile = "build.gradle"
@@ -249,7 +286,7 @@ task buildAll(type: GradleBuild) {
 }
 
 task cleanAll(type: GradleBuild) {
-    buildFile = "build.gradle"
+    buildFile = "build.gradle" 
     tasks = ["clean"]
 }
 

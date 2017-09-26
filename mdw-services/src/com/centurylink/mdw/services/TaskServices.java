@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public interface TaskServices {
      * Create an ad-hoc manual task instance.
      * @return the newly-created instance
      */
-    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Date dueDate) throws ServiceException;
+    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Instant due) throws ServiceException;
 
     public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
     throws ServiceException, DataAccessException;

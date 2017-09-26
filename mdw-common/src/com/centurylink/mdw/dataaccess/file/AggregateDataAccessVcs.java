@@ -164,7 +164,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 }else{
                     sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
                 }
-            }
+            }         
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
             Map<Date,List<ProcessCount>> map = new HashMap<Date,List<ProcessCount>>();
@@ -177,7 +177,9 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     map.put(startDate, processCounts);
                 }
                 ProcessCount processCount = new ProcessCount(rs.getLong("ct"));
-                processCount.setMeanCompletionTime(rs.getLong("coTi"));
+                if (query.getBooleanFilter("completionTime")){
+                   processCount.setMeanCompletionTime(rs.getLong("coTi"));
+                }
                 if (statusCodes != null)
                     processCount.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
                 else if (processIds != null)

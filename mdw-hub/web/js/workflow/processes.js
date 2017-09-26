@@ -9,9 +9,10 @@ processMod.controller('ProcessesController',
   // two-way bound to/from directive
   $scope.processList = {};
   
+  $scope.selectedChart=$cookieStore.get('selectedChart');
   $scope.processFilter = $cookieStore.get('processFilter');
   if (!$scope.processFilter) {
-    $scope.processFilter = { 
+	    $scope.processFilter = { 
         master: true,
         status: '[Active]',
         sort: 'startDate',
@@ -25,6 +26,7 @@ processMod.controller('ProcessesController',
     // fix date format stored in cookieStore
     if ($scope.processFilter.startDate)
     	$scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
+    $cookieStore.remove('selectedChart');
   }
   
   // pseudo-status [Active] means non-final
@@ -32,19 +34,24 @@ processMod.controller('ProcessesController',
   
   $scope.setSelectedChart=function(selChart){
 	   $scope.selectedChart= selChart;
-	   window.location.href='#/dashboard/processes?chart='+selChart;
-  };
-  
+	   $cookieStore.put('selectedChart',$scope.selectedChart);
+	   if(selChart ==='List'){
+		   window.location.href='#/workflow/processes';
+	   }else{	   
+	       window.location.href='#/dashboard/processes?chart='+selChart;
+	   }    
+};
   // preselected procDef
   if ($scope.processFilter.processId) {
     $scope.typeaheadMatchSelection = $cookieStore.get('processSpec');
   }
   else {
-    $cookieStore.remove('processSpec');
+    $cookieStore.remove('processSpec'); 
   }
   
   $scope.$on('page-retrieved', function(event, processList) {
-    // start date and end date, adjusted for db offset
+	$cookieStore.remove('selectedChart');
+	// start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
     processList.processInstances.forEach(function(processInstance) {
       processInstance.startDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.startDate), dbDate));
@@ -133,6 +140,8 @@ processMod.controller('ProcessesController',
 processMod.controller('ProcessController', 
     ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
      function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
+  
+  $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
   
   $scope.retrieveProcess = function() {
     if ($routeParams.triggerId) {
@@ -287,6 +296,8 @@ processMod.controller('ProcessDefController',
     ['$scope', '$routeParams', '$route', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
     function($scope, $routeParams, $route, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
       
+  $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
+      
   $scope.process = { 
     packageName: $routeParams.packageName,
     name: $routeParams.processName,
@@ -303,6 +314,8 @@ processMod.controller('ProcessDefController',
       var procSpec = $scope.process.name;
       if ($scope.process.version)
         procSpec += ' v' + $scope.process.version;
+      else if ($routeParams.version)
+        procSpec += ' v' + $routeParams.version;
       procFilter.master = false;
       procFilter.status = null;
       $cookieStore.put('processFilter', procFilter);

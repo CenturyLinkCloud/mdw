@@ -17,7 +17,6 @@ package com.centurylink.mdw.task.types;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -28,7 +27,6 @@ import com.centurylink.mdw.model.InstanceList;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.util.StringHelper;
 
 public class TaskList implements Jsonable, InstanceList<TaskInstance> {
 
@@ -43,8 +41,6 @@ public class TaskList implements Jsonable, InstanceList<TaskInstance> {
 
     public TaskList(String name, JSONObject jsonObj) throws JSONException, ParseException {
         this.name = name;
-        if (jsonObj.has("retrieveDate"))
-            retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
         if (jsonObj.has("count"))
             count = jsonObj.getInt("count");
         if (jsonObj.has("total"))
@@ -70,7 +66,6 @@ public class TaskList implements Jsonable, InstanceList<TaskInstance> {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         if (total > 0)
             json.put("total", total);
@@ -90,10 +85,6 @@ public class TaskList implements Jsonable, InstanceList<TaskInstance> {
     private String name;
     public String getName() { return name;}
     public void setName(String name) { this.name = name; }
-
-    private Date retrieveDate;
-    public Date getRetrieveDate() { return retrieveDate; }
-    public void setRetrieveDate(Date d) { this.retrieveDate = d; }
 
     private int count;
     public int getCount() { return count; }

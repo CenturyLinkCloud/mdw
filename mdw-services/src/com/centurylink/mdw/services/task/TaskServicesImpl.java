@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.task;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,7 +87,7 @@ public class TaskServicesImpl implements TaskServices {
         return TaskWorkflowHelper.createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, title, comments);
     }
 
-    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Date dueDate) throws ServiceException {
+    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Instant due) throws ServiceException {
         TaskTemplate template = TaskTemplateCache.getTaskTemplate(logicalId);
         if (template == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
@@ -94,7 +95,7 @@ public class TaskServicesImpl implements TaskServices {
         if (user == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "User '" + userCuid + "' not found");
         try {
-            return TaskWorkflowHelper.createTaskInstance(template.getId(), null, title, comments, dueDate, user.getId(), 0L);
+            return TaskWorkflowHelper.createTaskInstance(template.getId(), null, title, comments, due, user.getId(), 0L);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -199,7 +200,6 @@ public class TaskServicesImpl implements TaskServices {
         filteredList.setTasks(taskInstances);
         filteredList.setCount(taskInstances.size());
         filteredList.setTotal(taskInstances.size());
-        filteredList.setRetrieveDate(taskList.getRetrieveDate());
         return filteredList;
     };
 
@@ -207,7 +207,6 @@ public class TaskServicesImpl implements TaskServices {
         TaskDataAccess taskDao = new TaskDataAccess(new DatabaseAccess(null));
         List<TaskInstance> tasks = taskDao.getTaskInstancesForProcessInstance(processInstanceId, true);
         TaskList taskList = new TaskList(TaskList.PROCESS_TASKS, tasks);
-        taskList.setRetrieveDate(DatabaseAccess.getDbDate());
         taskList.setCount(tasks.size());
         return taskList;
     }
@@ -400,9 +399,7 @@ public class TaskServicesImpl implements TaskServices {
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException {
         try {
             List<TaskInstance> subtasks = getTaskDAO().getSubTaskInstances(masterTaskInstanceId);
-            TaskList subtaskList = new TaskList("subtasks", subtasks);
-            subtaskList.setRetrieveDate(DatabaseAccess.getDbDate());
-            return subtaskList;
+            return new TaskList("subtasks", subtasks);
         }
         catch (DataAccessException ex) {
             throw new ServiceException("Problem getting subtasks for: " + masterTaskInstanceId, ex);
@@ -491,14 +488,14 @@ public class TaskServicesImpl implements TaskServices {
             TaskWorkflowHelper helper = new TaskWorkflowHelper(oldTaskInstance);
 
             // due date
-            if (taskInstance.getDueDate() == null) {
-                if (oldTaskInstance.getDueDate() != null)
-                    helper.updateDueDate(null, userCuid, null);
+            if (taskInstance.getDue() == null) {
+                if (oldTaskInstance.getDue() != null)
+                    helper.updateDue(null, userCuid, null);
             }
-            else if (!taskInstance.getDueDate().equals(oldTaskInstance.getDueDate())) {
-                if (taskInstance.getDueDate().compareTo(DatabaseAccess.getDbDate()) < 0)
+            else if (!taskInstance.getDue().equals(oldTaskInstance.getDue())) {
+                if (Date.from(taskInstance.getDue()).compareTo(DatabaseAccess.getDbDate()) < 0)
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Cannot set due date in the past for task instance " + instanceId);
-                helper.updateDueDate(taskInstance.getDueDate(), userCuid, null);
+                helper.updateDue(taskInstance.getDue(), userCuid, null);
             }
 
             // priority

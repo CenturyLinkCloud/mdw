@@ -37,6 +37,7 @@ public class PropertyNames {
     public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
     public static final String MDW_DB_BORROW_TIMEOUT = "mdw.database.borrow.timeout";   // seconds; 0 - block indefinitely, -1 - fail right away
     public static final String MDW_DB_TRACE = "mdw.database.trace";     // none, query, timing
+    public static final String MDW_DB_PRECISION_TIME = "mdw.database.macrosecondprecision.enable";  // If true, then will save datetime/timestamp using macrosecond precision - Depends on declaring table columns correctly
     // for embedded db
     public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
     public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
@@ -87,22 +88,11 @@ public class PropertyNames {
 
     public static final String APPLICATION_NAME = "mdw.application.name";
     public static final String MDW_WAR_NAME = "mdw.war.name";
-    public static final String TASK_MANAGER_URL_OLD = "MDWFramework.TaskManagerWeb/task.manager.url";
-    public static final String TASK_MANAGER_URL = "mdw.task.manager.url";
-    public static final String TASK_MANAGER_WELCOME_PATH = "MDWFramework.TaskManagerWeb/task.manager.welcome.path";
-    public static final String MDW_WEB_URL_OLD = "MDWFramework.MDWDesigner/helpers.url";
     public static final String MDW_WEB_URL = "mdw.web.url";
-    public static final String MDW_SERVICES_URL_OLD = "MDWFramework.MDWDesigner/services.url";
     public static final String MDW_SERVICES_URL = "mdw.services.url";
-    public static final String ACTIVITY_RESUME_DELAY = "MDWFramework.WorkflowEngine/ActivityResumeDelay";
-    public static final String MDW_CONFIG_DIRECOTRY = "MDWFramework.ApplicationDetails/ConfigDir";
-    public static final String TASK_MANAGER_UI_DEF_FILE = "MDWFramework.TaskManagerWeb/view.ui.definition.file";
-    public static final String TASK_MANAGER_ACTIONS_FILE = "MDWFramework.TaskManagerWeb/ui.task.actions.file";
-    public static final String ATTACHMENTS_STORAGE_LOCATION = "MDWFramework.TaskManagerWeb/attachments.storage.location";
-    public static final String ATTACHMENTS_DOWNLOAD_SERVLET_URL = "MDWFramework.TaskManagerWeb/attachments.download.servlet.url";
-    public static final String WEB_RENDER_ERROR_DETAILS = "MDWFramework.TaskManagerWeb/render.error.details";
-    public static final String NOTIFICATION_EMAIL_FROM_ADDRESS = "MDWFramework.TaskManagerWeb/task.notice.email.from.address";
-    public static final String MDW_TASKMGR_PROCESS_DYNAMIC_JAVA_JSF_ANNOTATIONS = "mdw.taskmgr.dynamic.java.jsf.annotations";
+    public static final String ACTIVITY_RESUME_DELAY = "mdw.activity.resume.delay";
+    public static final String ATTACHMENTS_STORAGE_LOCATION = "mdw.attachments.storage.loc";
+    public static final String TASK_NOTICE_EMAIL_FROM = "mdw.task.notice.email.from";
     public static final String MDW_DYNAMIC_JAVA_COMPILE_OPTIONS = "mdw.dynamic.java.compile.options";
     public static final String TASK_RESUME_NOTIFY_ENDPOINT = "mdw.task.resume.notify.endpoint";
     public static final String MDW_WEBSOCKET_URL = "mdw.websocket.url";
@@ -150,17 +140,8 @@ public class PropertyNames {
     public static final String MDW_SERVER_PROXY = "mdw.server.proxy";
 
     public static final String MDW_HUB_URL = "mdw.hub.url";
-    public static final String MDW_DEFAULT_RENDERING_ENGINE = "mdw.default.rendering.engine";
-    public static final String MDW_HUB_VIEW_DEF = "mdw.hub.view.definition";
-    public static final String MDW_HUB_ACTION_DEF = "mdw.hub.action.definition";
-    public static final String MDW_BLV_TOPIC = "mdw.blv.topic.name";
-    public static final String MDW_HUB_PROCESS_DYNAMIC_JAVA_JSF_ANNOTATIONS = "mdw.hub.dynamic.java.jsf.annotations";
+    public static final String MDW_TASK_ACTION_DEF = "mdw.hub.action.definition";
     public static final String MDW_HUB_OVERRIDE_PACKAGE = "mdw.hub.override.package";
-    public static final String MDW_TASKS_UI = "mdw.tasks.ui";
-
-    public static final String MDW_ADMIN_URL = "mdw.admin.url";
-    public static final String MDW_DASHBOARD_URL = "mdw.dashboard.url";
-    public static final String MDW_SOLUTIONS_URL = "mdw.solutions.url";
 
     public static final String MDW_SCRIPT_EXECUTOR = "mdw.script.executor";
 
@@ -178,9 +159,6 @@ public class PropertyNames {
     public static final String MDW_GIT_TRUSTED_HOST = "mdw.git.trusted.host";
     public static final String MDW_GIT_AUTO_PULL = "mdw.git.auto.pull";
     public static final String MDW_GITHUB_SECRET_TOKEN = "MDW_GITHUB_SECRET_TOKEN";
-
-    // Task with these status will not be cancelled when process instance completes
-    public static final String FINAL_TASK_STATUSES = "mdw.task.statuses.final";
 
     // automated testing
     public static final String MDW_TEST_RESULTS_LOCATION = "mdw.test.results.location";
@@ -219,4 +197,9 @@ public class PropertyNames {
     public static final String MDW_OAUTH_REST_APP_DOMAIN = "mdw.oauth.rest.app.domain";
     public static final String MDW_OAUTH_REST_USER_DOMAIN = "mdw.oauth.rest.user.domain";
     public static final String MDW_OAUTH_REST_HEADERS = "mdw.oauth.rest.headers";
+
+    // Transaction Retry
+    public static final String MDW_TRANSACTION_RETRY_INTERVAL = "mdw.transaction.retry.interval";
+    public static final String MDW_TRANSACTION_RETRY_MAX = "mdw.transaction.retry.max";
+
 }

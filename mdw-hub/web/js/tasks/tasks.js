@@ -30,9 +30,8 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.$on('page-retrieved', function(event, taskList) {
     // create date and due date
-    var dbDate = new Date(taskList.retrieveDate);
     taskList.tasks.forEach(function(task) {
-      TaskUtil.setTask(task, dbDate);
+      TaskUtil.setTask(task);
     });
     // retrieve TaskActions
     $http.get(mdw.roots.hub + '/services/Tasks/bulkActions?app=mdw-admin&myTasks=' + ($scope.model.taskFilter.assignee == '[My Tasks]'))
@@ -246,19 +245,22 @@ tasksMod.factory('TaskAction', ['$resource', 'mdw', function($resource, mdw) {
 
 tasksMod.factory('TaskUtil', ['util', function(util) {
   return {
-    setTask: function(task, dbDate) {
-      task.startDate = util.correctDbDate(new Date(task.startDate), dbDate);
-      task.created = util.past(task.startDate);
-      if (task.dueDate) {
-        if (!task.endDate) {
-          task.dueDate = util.correctDbDate(new Date(task.dueDate), dbDate);
-          if (task.dueDate.getTime() >= Date.now()) {
+    setTask: function(task) {
+      var startDate = new Date(task.start);
+      task.start = util.past(startDate);
+      if (task.due) {
+        if (task.end) {
+          task.due = null;
+        }
+        else {
+          var dueDate = new Date(task.due);
+          if (dueDate.getTime() >= Date.now()) {
             task.alert = false;
-            task.due = util.future(task.dueDate);
+            task.due = util.future(dueDate);
           }
           else {
             task.alert = true;
-            task.due = util.past(task.dueDate);
+            task.due = util.past(dueDate);
           }
         }
       }
@@ -266,8 +268,9 @@ tasksMod.factory('TaskUtil', ['util', function(util) {
         task.alert = false;
         task.due = null;
       }
-      if (task.endDate)
-        task.endDate = util.past(util.correctDbDate(new Date(task.endDate), dbDate));          
+      if (task.end) {
+        task.end = util.past(new Date(task.end));
+      }
     }
   };
 }]);

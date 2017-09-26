@@ -3,9 +3,9 @@
 var chartMod = angular.module('mdwChart', ['mdw']);
 
 
-chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
-                                             function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
-	
+chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
+                                             function($scope, $cookieStore, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
+		
 
 	$scope.init = function() {
 	$scope.spans = ['Week', 'Month'];	

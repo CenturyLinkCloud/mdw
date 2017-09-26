@@ -13,7 +13,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
       sort: 'startDate',
       descending: true
   };
-
+  
   $scope.allStatuses = ACTIVITY_STATUSES;
 
   $scope.getSelectedActivities = function() {
@@ -181,8 +181,8 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   };
 }]);
 
-activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uibModal', '$routeParams', 'mdw', 'Activity',
-                                            function($scope, $http, $route, $uibModal, $routeParams, mdw, Activity) {
+activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Process', '$uibModal', '$routeParams', 'mdw', 'Activity',
+                                            function($scope, $http, $route, Process, $uibModal, $routeParams, mdw, Activity) {
   $scope.model = {};
   $scope.model.singalActivity = true;
   $scope.random = Math.random(); // param to force image reload
@@ -191,7 +191,9 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uib
     $scope.activity.name = $scope.activity.name;
     $scope.item = $scope.activity; // for activityItem template
    });
-   
+  
+  $scope.process =  Process.retrieve({instanceId: $routeParams.processInstanceId, extra: 'summary'});
+
   $scope.getSelectedActivitiesMessage = function() {
        return 'Do you want to perform the selected action on this activity?';
   };
@@ -224,7 +226,7 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', '$uib
          });
          $scope.$close();
          request.error(errorHandler).success(successHandler);
-         $scope.refreshWorkflowImage();
+         $route.reload();
    };
    
    $scope.cancelAction = function(){ 

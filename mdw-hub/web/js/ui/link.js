@@ -73,13 +73,13 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     };
   }; 
   
-  Link.prototype.draw = function() {
+  Link.prototype.draw = function(animationTimeSlice) {
     var color = this.getColor();
         
     this.diagram.context.strokeStyle = color;
     this.diagram.context.fillStyle = color;
     
-    this.drawConnector();
+    this.drawConnector(null, null, animationTimeSlice);
 
     if (this.label) {
       if (this.diagram.instance && (!this.instances || this.instances.length === 0))
@@ -166,10 +166,6 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.setDisplay({ lx: x, ly: y, type: this.display.type, xs: this.display.xs, ys: this.display.ys });
   };
   
-  Link.prototype.applyState = function(transitionInstances) {
-    this.instances = transitionInstances;
-  };
-  
   Link.prototype.getColor = function() {
     var color = Link.EVENTS[this.transition.event].color;
     if (this.diagram.instance) {
@@ -188,7 +184,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   // if hitX and hitY are passed, checks for hover instead of stroking
-  Link.prototype.drawConnector = function(hitX, hitY) {
+  Link.prototype.drawConnector = function(hitX, hitY, animationTimeSlice) {
     var context = this.diagram.context;
     var type = this.display.type;
     var xs = this.display.xs;
@@ -210,7 +206,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     
     if (!type || type.startsWith('Elbow')) {
       if (xs.length == 2) {
-        hit = this.drawAutoElbowConnector(context, hitX, hitY);
+        hit = this.drawAutoElbowConnector(context, hitX, hitY, animationTimeSlice);
       }
       else {
         // TODO: make use of Link.CORR
@@ -236,8 +232,43 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           context.stroke();
       }
     }
+    else if (type === Link.LINK_TYPES.STRAIGHT) {
+      var segments = [];
+      xs.forEach(function(x, i) {
+        if (i < xs.length - 1) {
+          segments.push({
+            from: {x: xs[i], y: ys[i]},
+            to: {x: xs[i + 1], y: ys[i + 1]}
+          });
+        }
+      });
+      if (animationTimeSlice) {
+        var linkThis = this;
+        segments[xs.length - 2].lineEnd = function(context) {
+          context.strokeStyle = linkThis.getColor();
+          linkThis.drawConnectorArrow.call(linkThis, context);
+          context.strokeStyle = DC.DEFAULT_COLOR;
+        };
+        this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+      }
+      else {
+        if (hitX) {
+          segments.forEach(function(seg) {
+            context.beginPath();
+            context.moveTo(seg.from.x, seg.from.y);
+            context.lineTo(seg.to.x, seg.to.y);
+            if (context.isPointInStroke && context.isPointInStroke(hitX, hitY)) {
+              hit = true;
+            }
+          });
+        }
+        else {
+          this.diagram.drawLine(segments, this.getColor(), Link.LINK_WIDTH);
+        }
+      }
+    }
     
-    if (!hit)
+    if (!hit && !animationTimeSlice)
       hit = this.drawConnectorArrow(context, hitX, hitY);
 
     context.lineWidth = DC.DEFAULT_LINE_WIDTH;
@@ -247,51 +278,143 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     return hit;
   };
   
-  Link.prototype.drawAutoElbowConnector = function(context, hitX, hitY) {
+  Link.prototype.drawAutoElbowConnector = function(context, hitX, hitY, animationTimeSlice) {
     var xs = this.display.xs;
     var ys = this.display.ys;
     var t;
     var xcorr = xs[0] < xs[1] ? Link.CORR : -Link.CORR;
     var ycorr = ys[0] < ys[1] ? Link.CORR : -Link.CORR;
+    var drawArrow = null;
+    var segments = [];
+    if (animationTimeSlice) {
+      var linkThis = this;
+      drawArrow = function(context) {
+        context.strokeStyle = linkThis.getColor();
+        linkThis.drawConnectorArrow.call(linkThis, context);
+        context.strokeStyle = DC.DEFAULT_COLOR;
+      };
+    }
     context.beginPath();
     switch (this.getAutoElbowLinkType()) {
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_H:
-        context.moveTo(xs[0] - xcorr, ys[0]);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSlice) {
+          segments.push({
+            from: {x: xs[0] - xcorr, y: ys[0]},
+            to: {x: xs[1], y: ys[1]},
+            lineEnd: drawArrow
+          });
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+        }
+        else {
+          context.moveTo(xs[0] - xcorr, ys[0]);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V:
-        context.moveTo(xs[0], ys[0] - ycorr);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSlice) {
+          segments.push({
+            from: {x: xs[0], y: ys[0] - ycorr},
+            to: {x: xs[1], y: ys[1]},
+            lineEnd: drawArrow
+          });
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+        }
+        else {
+          context.moveTo(xs[0], ys[0] - ycorr);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HVH:
         t = (xs[0] + xs[1]) / 2;
-        context.moveTo(xs[0] - xcorr, ys[0]);
-        context.lineTo(t > xs[0] ? t - Link.CR : t + Link.CR, ys[0]);
-        context.quadraticCurveTo(t, ys[0], t, ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
-        context.lineTo(t, ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
-        context.quadraticCurveTo(t, ys[1], xs[1] > t ? t + Link.CR : t - Link.CR, ys[1]);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSlice) {
+          let from = {x: xs[0] - xcorr, y: ys[0]};
+          let to = {x: t > xs[0] ? t - Link.CR : t + Link.CR, y: ys[0]};
+          let curveTo = {x: t, y: ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR};
+          let curve = {cpx: t, cpy: ys[0], x: curveTo.x, y: curveTo.y};
+          segments.push({from: from, to: to, lineEnd: curve});
+          from = curveTo;
+          to = {x: t, y: ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR};
+          curveTo = {x: xs[1] > t ? t + Link.CR : t - Link.CR, y: ys[1]};
+          curve = {cpx: t, cpy: ys[1], x: curveTo.x, y: curveTo.y};
+          segments.push({from: from, to: to, lineEnd: curve});
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          segments.push({from: from, to: to, lineEnd: drawArrow});
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+        }
+        else {
+          context.moveTo(xs[0] - xcorr, ys[0]);
+          context.lineTo(t > xs[0] ? t - Link.CR : t + Link.CR, ys[0]);
+          context.quadraticCurveTo(t, ys[0], t, ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
+          context.lineTo(t, ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
+          context.quadraticCurveTo(t, ys[1], xs[1] > t ? t + Link.CR : t - Link.CR, ys[1]);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VHV:
         t = (ys[0] + ys[1]) / 2;
-        context.moveTo(xs[0], ys[0] - ycorr);
-        context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
-        context.quadraticCurveTo(xs[0], t, xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, t);
-        context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
-        context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSlice) {
+          let from = {x: xs[0], y: ys[0] - ycorr};
+          let to = {x: xs[0], y: t > ys[0] ? t - Link.CR : t + Link.CR};
+          let curveTo = {x: xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, y: t};
+          let curve = {cpx: xs[0], cpy: t, x: curveTo.x, y: curveTo.y};
+          segments.push({from: from, to: to, lineEnd: curve});
+          from = curveTo;
+          to = {x: xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, y: t};
+          curveTo = {x: xs[1], y: ys[1] > t ? t + Link.CR : t-Link.CR};
+          curve = {cpx: xs[1], cpy: t, x: curveTo.x, y: curveTo.y};
+          segments.push({from: from, to: to, lineEnd: curve});
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          segments.push({from: from, to: to, lineEnd: drawArrow});
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+        }
+        else {
+          context.moveTo(xs[0], ys[0] - ycorr);
+          context.lineTo(xs[0], t > ys[0] ? t - Link.CR : t + Link.CR);
+          context.quadraticCurveTo(xs[0], t, xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, t);
+          context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, t);
+          context.quadraticCurveTo(xs[1], t, xs[1], ys[1] > t ? t + Link.CR : t-Link.CR);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV:
-        context.moveTo(xs[0] - xcorr, ys[0]);
-        context.lineTo(xs[1] > xs[0] ? xs[1] -Link.CR : xs[1] + Link.CR, ys[0]);
-        context.quadraticCurveTo(xs[1], ys[0], xs[1], ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSlice) {
+          let from = {x: xs[0] - xcorr, y: ys[0]};
+          let to = {x: xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, y: ys[0]};
+          let curveTo = {x: xs[1], y: ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR};
+          let curve = {cpx: xs[1], cpy: ys[0], x: curveTo.x, y: curveTo.y};
+          segments.push({from: from, to: to, lineEnd: curve});
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          segments.push({from: from, to: to, lineEnd: drawArrow});
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+        }
+        else {
+          context.moveTo(xs[0] - xcorr, ys[0]);
+          context.lineTo(xs[1] > xs[0] ? xs[1] - Link.CR : xs[1] + Link.CR, ys[0]);
+          context.quadraticCurveTo(xs[1], ys[0], xs[1], ys[1] > ys[0] ? ys[0] + Link.CR : ys[0] - Link.CR);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
       case Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_VH:
-        context.moveTo(xs[0], ys[0] - ycorr);
-        context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
-        context.quadraticCurveTo(xs[0], ys[1], xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, ys[1]);
-        context.lineTo(xs[1], ys[1]);
+        if (animationTimeSlice) {
+          let from = {x: xs[0], y: ys[0] - ycorr};
+          let to = {x: xs[0], y: ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR};
+          let curveTo = {x: xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, y: ys[1]};
+          let curve = {cpx: xs[0], cpy: ys[1], x: curveTo.x, y: curveTo.y};
+          segments.push({from: from, to: to, lineEnd: curve});
+          from = curveTo;
+          to = {x: xs[1], y: ys[1]};
+          segments.push({from: from, to: to, lineEnd: drawArrow});
+          this.diagram.animateLine(segments, this.getColor(), Link.LINK_WIDTH, animationTimeSlice);
+        }
+        else {
+          context.moveTo(xs[0], ys[0] - ycorr);
+          context.lineTo(xs[0], ys[1] > ys[0] ? ys[1] - Link.CR : ys[1] + Link.CR);
+          context.quadraticCurveTo(xs[0], ys[1], xs[1] > xs[0] ? xs[0] + Link.CR : xs[0] - Link.CR, ys[1]);
+          context.lineTo(xs[1], ys[1]);
+        }
         break;
     }
     
@@ -305,7 +428,6 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   Link.prototype.drawConnectorArrow = function(context, hitX, hitY) {
-    
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
@@ -801,7 +923,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     if (x1 == x2) 
       slope = (y1 < y2) ? Math.PI / 2 : -Math.PI / 2;
     else
-      slope = Math.atan(y2 - y1)/(x2 - x1);
+      slope = Math.atan((y2 - y1)/(x2 - x1));
     if (x1 > x2) {
         if (slope > 0)
           slope -= Math.PI;
