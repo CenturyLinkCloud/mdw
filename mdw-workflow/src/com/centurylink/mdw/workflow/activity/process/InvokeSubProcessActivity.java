@@ -57,7 +57,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     private static final String ERR_OUTPARA = "Actual parameter for OUTPUT parameter is not a variable";
 
     public boolean needSuspend() {
-        return (!getEngine().isInService() && subprocIsService && isSynchronousCall() && (getEngine().getPerformanceLevel() < 9 || !passingByReference))?false:this.isSynchronousCall();
+        return (!getEngine().isInService() && subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (getEngine().getPerformanceLevel() < 9 || !passingByReference))?false:this.isSynchronousCall();
     }
 
     private boolean isSynchronousCall() {
@@ -158,7 +158,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     throw new ActivityException("Invalid attempt to synchrounously launch Non-Service sub process from a Service process");
             }
             else {  // Current process is Non-service (regular)
-                if (subprocIsService && isSynchronousCall() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {
+                if (subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {
                     // Documents exist in DB and so are visible to child
                     ProcessEngineDriver engineDriver = new ProcessEngineDriver();
                     Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getProcessId(), ownerId, getMasterRequestId(),
@@ -173,7 +173,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
                         engine.startProcessInstance(pi, 0);  // call directly using same engine so documents are visible to child (PerfLvl 9)  */
                 }
-                else if (!passingByReference || isSynchronousCall() || (!isSynchronousCall() && engine.getPerformanceLevel() < 9)) {  // Sub is regular process
+                else if (!passingByReference || isSynchronousCall() || (!isSynchronousCall() && engine.getPerformanceLevel() < 9)) {  // Sub is regular process (or service but parent is service running as regular, so execute child also as regular)
                     int perfLevel = subprocdef.getPerformanceLevel();
                     if (isSynchronousCall() && (perfLevel==0 || perfLevel==engine.getPerformanceLevel())) {
                         ProcessInstance pi = getEngine().createProcessInstance(
