@@ -178,6 +178,12 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
       return response.data.requests;
     });
   };
+
+  $scope.findProcess = function(typed) {
+	    return $http.get(mdw.roots.services + '/services/Processes?app=mdw-admin&onlyProcessInstance=true&find=' + typed).then(function(response) {
+	      return response.data.processInstances;
+	    });
+  };
   
   $scope.addSelectedTask = function(selTask) {
     console.log('adding task: ' + selTask.id + 'to solution: ' + $scope.solution.id);
@@ -225,6 +231,29 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
     $scope.closePopover();
   };
   
+  $scope.addSelectedProcess = function(selProcess) {
+	    console.log('adding Process: ' + selProcess.id + 'to solution: ' + $scope.solution.id);
+	    Solutions.create({id: $scope.solution.id, rel: 'processes', relId: selProcess.id }, Solutions.shallowCopy({}, $scope.solution),
+	        function(data) {
+	          if (data.status.code !== 0) {
+	            $scope.solution.message = data.status.message;
+	          }
+	          else {
+	            if (!$scope.solution.members.processes)
+	              $scope.solution.members.processes = [];
+	            $scope.solution.members.processes.push(selProcess);
+	            $scope.solution.members.processes.sort(function(mr1, mr2) {
+	              return mr1.id - mr2.id;
+	            });
+	          }
+	        },
+	        function(error) {
+	          $scope.solution.message = error.data.status.message;
+	        });
+
+	    $scope.closePopover();
+  };
+  
   $scope.removeTask = function(task) {
     Solutions.remove({id: $scope.solution.id, rel: 'tasks', relId: task.id }, Solutions.shallowCopy({}, $scope.solution),
         function(data) {
@@ -253,6 +282,21 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
         function(error) {
           $scope.solution.message = error.data.status.message;
         });
+  };
+  
+  $scope.removeProcess = function(process) {
+	    Solutions.remove({id: $scope.solution.id, rel: 'processes', relId: process.id }, Solutions.shallowCopy({}, $scope.solution),
+	        function(data) {
+	          if (data.status.code !== 0) {
+	            $scope.solution.message = data.status.message;
+	          }
+	          else {
+	            $scope.solution.members.processes.splice($scope.solution.members.processes.indexOf(process), 1);
+	          }
+	        },
+	        function(error) {
+	          $scope.solution.message = error.data.status.message;
+	        });
   };
   
 }]);

@@ -914,7 +914,7 @@ public class CommonDataAccess {
         pi.setId(rs.getLong("process_instance_id"));
         pi.setProcessId(rs.getLong("process_id"));
         pi.setOwner(rs.getString("owner"));
-        pi.setOwnerId(rs.getLong("owner_id"));
+        pi.setOwnerId(rs.getLong("pi.owner_id"));
         int statusCode = rs.getInt("status_cd");
         pi.setStatus(WorkStatuses.getWorkStatuses().get(statusCode));
         pi.setStartDate(rs.getTimestamp("start_dt"));

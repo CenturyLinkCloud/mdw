@@ -415,11 +415,17 @@ public class SolutionsDataAccess extends CommonDataAccess {
         task.setSecondaryOwnerType(rs.getString("task_inst_secondary_owner"));
         task.setSecondaryOwnerId(rs.getLong("task_inst_secondary_owner_id"));
         task.setAssigneeId(rs.getLong("task_claim_user_id"));
-        task.setStart(rs.getTimestamp("task_start_dt").toInstant());
-        task.setEnd(rs.getTimestamp("task_end_dt").toInstant());
+        Date startDate = rs.getTimestamp("task_start_dt");
+        if (startDate != null)
+            task.setStart(startDate.toInstant());
+        Date endDate = rs.getTimestamp("task_end_dt");
+        if (endDate != null)
+            task.setEnd(endDate.toInstant());
         task.setComments(rs.getString("comments"));
         task.setStateCode(rs.getInt("task_instance_state"));
-        task.setDue(rs.getTimestamp("due_date").toInstant());
+        Date dueDate = rs.getTimestamp("due_date");
+        if (dueDate != null)
+            task.setDue(dueDate.toInstant());
         task.setPriority(rs.getInt("priority"));
         task.setMasterRequestId(rs.getString("master_request_id"));
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(task.getTaskId());
