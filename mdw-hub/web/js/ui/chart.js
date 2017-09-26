@@ -35,7 +35,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       $scope.breakdowns.push('Total');
     if ($scope.breakdownConfig.Status) {
       $scope.statuses = $scope.breakdownConfig.Status.throughput.slice();
-    }    
+    }
     $scope.setBreakdown($scope.breakdowns[0]);    
   };
 
@@ -151,7 +151,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
   $scope.isSelected = function(sel) {
     return $scope.selected.includes(sel);
   };
-  $scope.applySelect = function() {
+  $scope.applySelect = function() {  
     $scope.backupSelected = null;
     $scope.closeSelectPop();
     $scope.updateData();
@@ -197,8 +197,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
         url += '?';
       url += 'app=mdw-admin&max=' + $scope.max + '&startDate=' + $scope.start;
       if ($scope.filter.status)
-        url += '&status=' + $scope.filter.status;
-      
+        url += '&status=' + $scope.filter.status;    
       $http.get(url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + url);
       }).success(function(data, status, headers, config) {
@@ -210,7 +209,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
             if (val && $scope.selected.length < $scope.initialSelect)
               $scope.selected.push(val);
           }
-        }
+        }        
         $scope.updateData();
       });
     }
@@ -233,8 +232,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
     }
   };
   
-  $scope.updateData = function() {
-    
+  $scope.updateData = function() {  
     // based on selected
     $scope.clearData();
     
@@ -247,7 +245,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       $scope.dataUrl += '?';
     $scope.dataUrl += 'app=mdw-admin&startDate=' + $scope.start;
     if (breakdown && breakdown.instancesParam) 
-        $scope.dataUrl += '&' + breakdown.instancesParam + '=[' + $scope.selected + ']';  
+        $scope.dataUrl += '&' + breakdown.instancesParam + '=[' + $scope.selected + ']';
     $http.get($scope.dataUrl).error(function(data, status) {
       console.log('HTTP ' + status + ': ' + $scope.dataUrl);
     }).success(function(data, status, headers, config) {
@@ -256,7 +254,7 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
       // TODO: handle 'Other'
       var seriesData = [];
       var seriesTotal = 0;
-      if (breakdown && $scope.chartType ==='chart chart-line') {
+      if (breakdown && $scope.chartType ==='chart chart-line') {    	
         $scope.selected.forEach(function(sel) {
         	$scope.series.push(sel);  	
           seriesData = [];
@@ -264,22 +262,23 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
            $scope.data.push(seriesData); 
            $scope.dates.forEach(function(date) {
             var ct = 0;
-            var dateCounts = $scope.dateObjs[date];// horizondal  dates    
+            var dateCounts = $scope.dateObjs[date];// horizondal  dates
             if (dateCounts) {
               for (var k = 0; k < dateCounts.length; k++) {
                 if (dateCounts[k][$scope.selField] == sel) {
                   	if((breakdown.throughput).indexOf("completionTime=true") == -1)  
                       ct = dateCounts[k].count;
                 	else
-                	 ct = dateCounts[k].meanCompletionTime; //Vertical 
-                  seriesTotal += ct;                  
+                	 ct = dateCounts[k].meanCompletionTime; //Vertical                   	 
+                  seriesTotal += ct;
                   break;
                 }
               }
-            }
+            }           
              seriesData.push(ct);
    
-          });           
+          });      
+           
           var top = $scope.getTop(sel);
           if (top){
               top.seriesTotal = seriesTotal;
@@ -378,18 +377,18 @@ chartMod.controller('MdwChartController', ['$scope', '$http', '$location', 'mdw'
   
   $scope.setSpan = function(span) {
     $scope.span = span;
-    $scope.days = $scope.span == 'Month' ? 30 : 7;    
+    $scope.days = $scope.span == 'Month' ? 30 : 7;
     $scope.updateRange();
   };
 
-  $scope.setBreakdown = function(breakdown) {
+  $scope.setBreakdown = function(breakdown) {	  
     $scope.breakdown = breakdown;
     if ($scope.breakdownConfig[breakdown]) {
       $scope.selField = $scope.breakdownConfig[breakdown].selectField;
       $scope.selectLabel = $scope.breakdownConfig[breakdown].selectLabel;
     }
     $scope.selected = [];
-    $scope.resetFilter();
+    $scope.resetFilter();    
     $scope.updateRange();
   };
   // current breakdown obj (returns undefined, array or object)
