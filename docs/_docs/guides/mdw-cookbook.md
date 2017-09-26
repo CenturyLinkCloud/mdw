@@ -24,11 +24,13 @@ is available to clone in its completed state from the [mdw-demo repository](http
      - 2.4 [Create a Spring asset](#24-create-a-spring-asset)
      - 2.5 [Consume a REST service](#25-consume-a-rest-service)
   3. [Integrate a Custom Web UI](#3-integrate-a-custom-web-ui)
-     - 3.1: Custom bug submit page
-     - TODO: Custom task page
-  4. [Document and Run Automated Tests](#3-create-an-automated-test)
+     - 3.1 [Build a JSX task page](#31-build-a-jsx-task-page)
+     - 3.2 [Add a new tab to MDWHub](#32-add-a-new-tab-to-mdwhub)
+     - 3.3 [Create a process submit page](#33-create-a-process-submit-page)
+  4. [Document and Run Automated Tests](#TODO-create-an-automated-test)
      - TODO: document the Create Bug process
      - TODO: service test with workflow verification
+     - TODO: package-level error handlers
 
 ## 1. Implement a REST Service
 ### 1.1 Setup
@@ -253,7 +255,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     Here we're counting on Jsonable autobinding since we access request.title through its getter method, and we expect it to contain JSON title property value.
     We assign response to a StatusResponse, which is a built-in Jsonable representing an [HTTP Status Code](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).
     
-  - Save the Create Bug process after making these changes.  
+  - Save the Create Bug process after making these changes.
   
 #### Implement a JAX-RS REST endpoint
 
@@ -297,10 +299,17 @@ is available to clone in its completed state from the [mdw-demo repository](http
     For this you can use a tool like [Postman](https://www.getpostman.com/).
     Or if you don't feel like biting that off just now, MDWHub's System tab has a Messaging feature where you can submit simple HTTP requests.
     
+  - Whatever submit mechanism you use, post a request something like this:
+    ```json
+    {
+      "title": "This is a good bug",
+      "description": "Whatever that means"
+    }
+    ```
     Here's what a request and response look like when submitted through MDWHub:
     ![post bug](../images/post-bug.png)  
   
-    Something important to point out about our development cycle: Notice that we didn't perform any compilation step on our java source assets.
+    Something to point out about our development cycle: Notice that we didn't perform any compilation step on our java source assets.
     We simply saved them, and Designer told MDW server to refresh its asset cache to reflect our changes next time we ran.
   
   - After submitting a request, view the corresponding process instance in Designer or MDWHub.  Confirm that the "request" and "response"
@@ -553,9 +562,16 @@ is available to clone in its completed state from the [mdw-demo repository](http
     Manual tasks provide a great mechanism for humans to interact with workflows.  Aside from triggering actions, another key aspect
     of manual tasks in MDWHub is enabling data entry.  In [subsection 2.5](#25-consume-a-rest-service) we'll explore how, with 
     [AutoForm tasks](../../javadoc/com/centurylink/mdw/workflow/activity/task/AutoFormManualTaskActivity.html), 
-    data entry can be tied to variables through configuration, and a data-entry form is generated on the fly by MDWHub.
+    data entry can be tied to variables through configuration.  In this case a data-entry form is generated on-the-fly by MDWHub.
     Later, in [section 3](#3-integrate-a-custom-web-ui), we'll create an entirely custom web UI based around a 
     [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
+    
+  - Before we move on, make one last change to "A Bug's Life".  On the Definition property tab of the outbound link from the manual
+    task activity, change the Result from blank to "Resolve" like so:<br> 
+    ![dynamic action](../images/dynamic-action.png)<br>
+    Setting the outbound link's result is a convenient way to customize the actions available for a given task.  Now if you resubmit
+    and claim the corresponding task, you'll see that "Resolve" replaces "Complete" in MDWHub's task action popover.  By branching into
+    two or more outgoing links from a manual task, you can give users the power to drive workflow outcomes through their task actions. 
     
 ### 2.4 Create a Spring asset
   MDW uses [Spring](https://spring.io/) internally, and one of the key extensibility mechanisms MDW provides is the ability to create
@@ -606,7 +622,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     change the Category to ISSUE - Bug.
     
   - While we're here let's explore some other aspects of manual tasks.  We could specify a [due interval](../../help/taskSLA.html)
-    in minutes or hours.  But a hardwired interval turns out to be not that useful.  Instead let's implement a
+    in minutes or hours.  But a hard-wired interval turns out to be not that useful.  Instead let's implement a
     [PrioritizationStrategy](../../javadoc/com/centurylink/mdw/observer/task/PrioritizationStrategy.html)
     to dynamically determine a task's priority level as well as when it's due.  In the com.centurylink.mdw.demo.bugs package
     create a new Java Source asset named Prioritization.java with 
@@ -664,28 +680,35 @@ is available to clone in its completed state from the [mdw-demo repository](http
         
   - Also on the activity Design tab, select GET for the HTTP Method, and in the Response Variable dropdown select 'response'.  We don't need a request
     variable for an HTTP GET.  Here's what the process should look like:
-    ![a bugs life 2](../images/a-bugs-life-2.png)<br>    
+    ![a bugs life 2](../images/a-bugs-life-2.png)<br> 
     
 #### Capture commitId via Autoform    
-  - Now we need a way for resolvers to enter the commit ID.  Open   
+  - Now we need a way for users to enter the commit ID when they resolve a bug.  Open ResolveBugAutoform.task again.  On the Variables design tab
+    enter expressions to show and capture data from the *bug* runtime value:<br>
+    ![autoform variables](../images/autoform-variables.png)<br>
   
-  - Save "A Bug's Life" now.  In section 3 we'll build a page to capture data related to bug tasks, where a resolver will enter the commit ID.
-    For the time being, to test our REST adapter we'll just submit a bug with commitId already populated.  Post a new request with something like this:
+  - Save ResolveBugAutoform.task and the process "A Bug's Life".  Post a new request with something like the following, (remembering to include the
+    `autoform` header):
     ```json
     {
-      "title": "Missing documentation on external Error Handler processes",
+      "title": "Missing documentation on package-level handlers",
       "description": "Someone needs to step up.  I'm not saying who...",
-      "severity": 2,
-      "commitId": "52c7b84"
+      "severity": 3
     }
     ```
-    The commitId above is the short form of a valid commit hash in mdw-demo on GitHub.
 
-  - Now check the Tasks tab in MDWHub and drill into the task for the bug you just submitted.  Claim and complete the task so then you can click
-    over to the Workflow tab, select "All Processes" in the dropdown, and set the Filter to Completed to see your the latest Bug's Life at the top.
-    Check the values to make sure that we got back a commit from GitHub.  Another item of note: if you click on the Retrieve Commit adapter you'll
+  - Now check the Tasks tab in MDWHub and drill into the task for the bug you just submitted.  Claim the task so that you can edit its data.
+    Now click on the Values nav link and you'll see the results of our autoform variables configuration.  Enter `52c7b84` for Commit:<br>
+    ![autoform](../images/autoform.png)<br>
+    The commitId above is the short form of a valid commit hash in mdw-demo on GitHub.  Click Save and then perform the Resolve action.
+    
+  - Click over to the Workflow tab in MDWHub.  Select "All Processes" in the dropdown, and set the Filter to Completed to see your the latest 
+    "A Bug's Life" at the top.  View the value of *bug* to confirm that the commit id we entered is reflected back into our workflow.
+    Check the value of *commit* to see what came back from GitHub.  Another item of note: if you click on the Retrieve Commit adapter you'll
     see that it has Requests and Responses property tabs where you can drill in to see other information like the URL and HTTP headers.
     
+    
+
     
     
     
