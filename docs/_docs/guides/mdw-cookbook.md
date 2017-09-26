@@ -23,16 +23,18 @@ is available to clone in its completed state from the [mdw-demo repository](http
      - 2.3 [Add a manual task activity](#23-add-a-manual-task-activity)
      - 2.4 [Create a Spring asset](#24-create-a-spring-asset)
      - 2.5 [Consume a REST service](#25-consume-a-rest-service)
-  3. [Integrate a Custom Web UI](#3-integrate-a-custom-web-ui)
+  3. [Design a Custom Web UI](#3-design-a-custom-web-ui)
      - 3.1 [Build a JSX task page](#31-build-a-jsx-task-page)
      - 3.2 [Add a new tab to MDWHub](#32-add-a-new-tab-to-mdwhub)
      - 3.3 [Create a process submit page](#33-create-a-process-submit-page)
-  4. [Document and Run Automated Tests](#TODO-create-an-automated-test)
-     - TODO: document the Create Bug process
-     - TODO: service test with workflow verification
-     - TODO: package-level error handlers
+  4. [Explore other Features](#4-explore-other-features)
+     - 4.1 [Add markdown workflow documentation](#41-add-markdown-workflow-documentation)
+     - 4.2 [Unit test an activity using MockRuntimeContext](#42-unit-test-an-activity-using-mockruntimecontext)
+     - 4.3 [Automate service tests with workflow verification](#43-automate-service-tests-with-workflow-verification)
+     - 4.4 [Designate a package-level error handler](#44-designate-a-package-level-error-handler)
 
 ## 1. Implement a REST Service
+
 ### 1.1 Setup
   - **Get MDW**  
     The easy way to run MDW locally is by following the [5-minute quick start](../../getting-started/quick-start).
@@ -706,9 +708,139 @@ is available to clone in its completed state from the [mdw-demo repository](http
     "A Bug's Life" at the top.  View the value of *bug* to confirm that the commit id we entered is reflected back into our workflow.
     Check the value of *commit* to see what came back from GitHub.  Another item of note: if you click on the Retrieve Commit adapter you'll
     see that it has Requests and Responses property tabs where you can drill in to see other information like the URL and HTTP headers.
-    
-    
 
+#### Access task values through REST
+  - One of the many built-in REST APIs in MDW is for viewing and updating task values.  To illustrate, paste this URL into your browser:
+    `http://localhost:8080/mdw/services/Tasks/{id}/values` (where *{id}* is the task id for an instance of the bug task).
+    Notice that the Autoform UI descriptor elements such as *label* and *display* are returned along with the data.  This exposes a nice clean
+    interface for external systems to interact with MDW tasks via REST.  Even if the tasks UI is a completely separate system, it can use REST
+    to perform the same actions as MDWHub, while reserving control about what can be updated in the hands of the workflow developer.    
+    
+## 3. Design a Custom Web UI
+
+### 3.1 Build a JSX task page
+  The autoform task layout we built in [section 2](#2-build-out-the-bugs-workflow) is great for quick and simple data entry.
+  But its limitations are obvious.  For complex data entry with client-side and cross-field validations, you'll want to developer a
+  custom page.  In MDW, the built-in tasks UI is implemented using [React](https://facebook.github.io/react/), and that's exactly what we'll
+  use in this section as we create a custom task JSX asset.
+  
+#### Switch to custom task
+  - Create a new task template under com.centurylink.mdw.demo.bugs named ResolveBugCustom.task.  On the General design tab, configure it
+    just like ResolveBugAutoform.task:<br>
+    ![custom task template](../images/custom-task-template.png)<br>
+    Also just like autoform, select Developers on the Workgroups tab (notice that there's no Variables tab this time).
+    
+  - Save ResolveBugCustom.task.  Open "A Bug's Life" and double-click the "Await Resolution" manual task activity.  On the Definition
+    property tab, in the Implementor dropdown select 'com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity' instead of AutoFormManualTaskActivity.
+    (This is a shortcut that saves us having to delete and re-drag a different activity from the Toolbox.)
+    On the Design property tab, select the ResolveBugCustom.task asset we just created (don't worry about the read-only Pagelet field).
+    Also, if you hard-coded the the return value from PersistBugActivity.getTaskTemplate(), undo that so it returns our new custom task template.
+    Save "A Bug's Life", and submit a new bug request (with the `autoform` header removed or set to false).
+    
+  - Drill in to the just-created task in MDWHub and click on the Values nav link.  It's empty!  In fact MDW does not automatically populate
+    any values for custom tasks (except for [Task Indexes](../../help/taskIndexes.html), which is a subject we'll return to in 
+    [subsection 3.2](#32-add-a-new-tab-to-mdwhub).  We wouldn't have switched to custom task if we wanted MDW to populate Values.
+    In a moment we'll build a complete replacement task view anyway. 
+    
+#### Create a JSX page asset
+  - Right-click on your top-level project in Designer and select New > MDW Package, and name it simply "demo".  Since our page asset's URL
+    path is driven by it's package name, we want to keep it simple.  Now right-click on the "demo" package and select New > Page.  Name the page
+    "Bug.jsx" and select JSX for Language/Format:<br>
+    ![new page](../images/new-page.png)<br>
+    
+  - To start with, paste the following into Bugs.jsx:
+    ```typescript
+    import React, {Component} from '../com/centurylink/mdw/node/node_modules/react';
+    import PropTypes from '../com/centurylink/mdw/node/node_modules/prop-types';
+    
+    class Bug extends Component {
+        
+      constructor(...args) {
+        super(...args);
+        this.state = {bug: {}};
+      }
+    
+      componentDidMount() {
+        var bugId = location.hash.substring(9);
+        fetch(new Request('/mdw/services/demo/api/bugs/' + bugId, {
+          method: 'GET',
+          headers: {Accept: 'application/json'}
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(bug => {
+          this.setState({bug: bug}); 
+        });
+      }
+      
+      render() {
+        return (
+          <div>
+            <h2>Bug:</h2>
+            <pre>{JSON.stringify(this.state.bug, null, 2)}</pre>
+          </div>
+        );
+      }
+    }
+    
+    Bug.contextTypes = {
+      hubRoot: PropTypes.string,
+      serviceRoot: PropTypes.string
+    };
+    export default Bug;
+    ```
+    Here using [JSX syntax](https://facebook.github.io/react/docs/jsx-in-depth.html) we're fetching bug details
+    in the [componentDidMount](https://facebook.github.io/react/docs/react-component.html#componentdidmount) React
+    component lifecycle method.  This submits an HTTP GET request, which is handled by the get() method in our
+    [Bugs.java](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/demo/api/Bugs.java) REST service asset.  Then, 
+    in the render() method of our component, we're simply stringifying the bug to JSON and calling that a UI!
+    <img src="../images/shucks.png" style="margin-top:-20px;margin-bottom:0;position:relative;top:5px;" alt="embarrassed">
+    
+  - Save Bug.jsx and routes.json, and then return to ResolveBugCustom.tasks.  On the General Design tab, select Bug.jsx for Custom Page
+    and save.
+    
+#### Set up a navigation route
+  - This provides necessary linkage between MDWHub and our JSX asset.  Create a new package named "mdw-hub.js".
+    The naming here must be exact, because it takes advantage of an MDWHub extensibility hook which enables you to
+    override any of Hub's built-in web artifacts (we'll return to this topic in the next subsection).
+    Right-click on mdw-hub.js and select New > JSON to create an asset named routes.json (again, exact naming).
+    Paste this into routes.json:
+    ```json
+    [
+      {
+        "path": "/issues/:id",
+        "asset": "demo/Bug.jsx"
+      }
+    ]
+    ```
+  
+  - Save routes.json.  Because it's our first-ever mdw-hub package override, this last change requires a server restart.  
+    So do that and then submit a new request (always without the `autoform` header from this point forward).  
+    In MDWHub drill in to the latest bug task.  It should look something like this:<br>
+    ![raw bug](../images/raw-bug.png)<br>
+    Not very impressive.  Let's get busy making this into a real working page.
+    
+#### Build out the Bugs.jsx asset
+
+
+
+## TODO:
+
+### 3.2 Add a new tab to MDWHub
+
+### 3.3 Create a process submit page]
+
+
+## 4. Explore other Features
+
+### 4.1 Add markdown workflow documentation
+
+### 4.2 Unit test an activity using MockRuntimeContext
+     
+### 4.3 Automate service tests with workflow verification
+
+### 4.4 Designate a package-level error handler
     
     
     
