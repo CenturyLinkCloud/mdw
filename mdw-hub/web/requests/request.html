@@ -9,6 +9,10 @@
         <div class="mdw-heading-label" ng-if="!request.masterRequestId">
           {{request.outbound ? 'Outbound' : 'Inbound'}} Request: {{request.id}}
         </div>
+        <div class="btn-group mdw-heading-actions" ng-if="request.format == 'json'">
+          <label class="btn btn-primary mdw-push" ng-model="view.request" uib-btn-radio="'Raw'">Raw</label>
+          <label class="btn btn-primary mdw-push" ng-model="view.request" uib-btn-radio="'Formatted'">Formatted</label>          
+        </div>
       </div>
       <div class="mdw-section">
         <div ng-if="request.masterRequestId" style="margin-bottom:5px">
@@ -21,7 +25,8 @@
           <div ng-if="request.statusCode">Status Code: <span class="mdw-resource-value">{{request.statusCode}}</span></div>          
           <div ng-if="request.statusMessage">Status Message: <span class="mdw-resource-value">{{request.statusMessage}}</span></div>          
         </div>
-        <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="request.content | highlight:request.format | unsafe"></code></pre>
+        <pre class="mdw-resource-content" ng-if="view.request != 'Formatted'"><code class="mdw-code" ng-bind-html="request.content | highlight:request.format | unsafe"></code></pre>
+        <pre class="mdw-resource-content" ng-if="view.request == 'Formatted'"><code class="mdw-code" ng-bind-html="request.formattedContent | highlight:request.format | unsafe"></code></pre>
       </div>
     </div>  
   </div>

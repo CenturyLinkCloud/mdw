@@ -1148,6 +1148,9 @@
   font-size: 22px;
   color: transparent;
 }
+.mdw-push {
+	font-size: 12px;
+}
 .mdw-highlight {
   color: #880000;
 }
