@@ -36,11 +36,11 @@ public class CustomPageLookup {
     private static Method routesGetter;
 
     private AssetVersionSpec customPage;
-    private Long instanceId;
+    private Long id;
 
-    public CustomPageLookup(AssetVersionSpec customPage, Long instanceId) {
+    public CustomPageLookup(AssetVersionSpec customPage, Long id) {
         this.customPage = customPage;
-        this.instanceId = instanceId;
+        this.id = id;
     }
 
     public String getUrl() throws ReflectiveOperationException {
@@ -48,17 +48,19 @@ public class CustomPageLookup {
             return null;
         }
 
-        String path = (String)routePathGetter.invoke(uiRouteCacheInstance, customPage.getPackageName() + '/' + customPage.getName());
+        String path = (String) routePathGetter.invoke(uiRouteCacheInstance,
+                customPage.getPackageName() + '/' + customPage.getName(), id != null);
         if (path == null) {
-            // TODO: establish a default convention based on JSX asset name without extension.
-            path = '/' + customPage.getPackageName() + '/' + customPage.getName().substring(0, customPage.getName().length() - 4);
-            if (instanceId != null)
-                path = path + '/' + instanceId;
+            // TODO: implement this default convention based on JSX asset path without extension.
+            path = '/' + customPage.getPackageName() + '/'
+                    + customPage.getName().substring(0, customPage.getName().length() - 4);
+            if (id != null)
+                path = path + '/' + id;
         }
         else {
             path = "/#" + path;
-            if (path.endsWith("/:id") && instanceId != null) {
-                path = path.substring(0, path.length() - 3) + instanceId;
+            if (path.endsWith("/:id") && id != null) {
+                path = path.substring(0, path.length() - 3) + id;
             }
         }
         return ApplicationContext.getMdwHubUrl() + path;
@@ -77,7 +79,8 @@ public class CustomPageLookup {
             return false;
         }
         else {
-            routePathGetter = uiRouteCacheInstance.getClass().getMethod("getPath", String.class);
+            routePathGetter = uiRouteCacheInstance.getClass().getMethod("getPath", String.class,
+                    boolean.class);
             routesGetter = uiRouteCacheInstance.getClass().getMethod("getRoutes");
             return true;
         }
