@@ -284,27 +284,25 @@ public class TaskServicesImpl implements TaskServices {
                 valuesProvider = new AutoFormTaskValuesProvider();
             else
                 valuesProvider = new CustomTaskValuesProvider();
-            if (runtimeContext.getTaskTemplate().isAutoformTask()) {
-                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                valuesProvider.apply(runtimeContext, values);
-                Map<String,Object> newValues = new HashMap<String,Object>();
-                for (String name : values.keySet()) {
-                    if (TaskRuntimeContext.isExpression(name)) {
-                        String rootVar;
-                        if (name.indexOf('.') > 0)
-                          rootVar = name.substring(2, name.indexOf('.'));
-                        else
-                          rootVar = name.substring(2, name.indexOf('}'));
-                        newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
-                    }
-                    else {
-                        newValues.put(name, runtimeContext.getVariables().get(name));
-                    }
+            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+            valuesProvider.apply(runtimeContext, values);
+            Map<String,Object> newValues = new HashMap<String,Object>();
+            for (String name : values.keySet()) {
+                if (TaskRuntimeContext.isExpression(name)) {
+                    String rootVar;
+                    if (name.indexOf('.') > 0)
+                      rootVar = name.substring(2, name.indexOf('.'));
+                    else
+                      rootVar = name.substring(2, name.indexOf('}'));
+                    newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
                 }
-                for (String name : newValues.keySet()) {
-                    Object newValue = newValues.get(name);
-                    workflowServices.setVariable(runtimeContext, name, newValue);
+                else {
+                    newValues.put(name, runtimeContext.getVariables().get(name));
                 }
+            }
+            for (String name : newValues.keySet()) {
+                Object newValue = newValues.get(name);
+                workflowServices.setVariable(runtimeContext, name, newValue);
             }
         }
         catch (ServiceException ex) {
