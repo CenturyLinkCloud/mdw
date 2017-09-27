@@ -313,19 +313,24 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public void performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
-            String destination, boolean notifyEngine) throws ServiceException, DataAccessException {
-        TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
-        User user = UserGroupCache.getUser(userCuid);
-        if (user == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
-        Long assigneeId = null;
-        if (assigneeCuid != null) {
-            User assignee = UserGroupCache.getUser(assigneeCuid);
-            if (assignee == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "Assignee not found: " + assigneeCuid);
-            assigneeId = assignee.getId();
+            String destination, boolean notifyEngine) throws ServiceException {
+        try {
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
+            User user = UserGroupCache.getUser(userCuid);
+            if (user == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
+            Long assigneeId = null;
+            if (assigneeCuid != null) {
+                User assignee = UserGroupCache.getUser(assigneeCuid);
+                if (assignee == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Assignee not found: " + assigneeCuid);
+                assigneeId = assignee.getId();
+            }
+            helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
         }
-        helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error doing " + action + " on task " + taskInstanceId, ex);
+        }
     }
 
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException {

@@ -78,7 +78,7 @@ public interface TaskServices {
 
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException;
     public void performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
-            String destination, boolean notifyEngine) throws ServiceException, DataAccessException;
+            String destination, boolean notifyEngine) throws ServiceException;
 
     public List<EventLog> getHistory(Long taskInstanceId) throws ServiceException;
 
