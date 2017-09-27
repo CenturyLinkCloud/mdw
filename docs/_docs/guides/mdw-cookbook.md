@@ -751,7 +751,6 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - To start with, paste the following into Bugs.jsx:
     ```typescript
     import React, {Component} from '../com/centurylink/mdw/node/node_modules/react';
-    import PropTypes from '../com/centurylink/mdw/node/node_modules/prop-types';
     
     class Bug extends Component {
         
@@ -784,10 +783,6 @@ is available to clone in its completed state from the [mdw-demo repository](http
       }
     }
     
-    Bug.contextTypes = {
-      hubRoot: PropTypes.string,
-      serviceRoot: PropTypes.string
-    };
     export default Bug;
     ```
     Here using [JSX syntax](https://facebook.github.io/react/docs/jsx-in-depth.html) we're fetching bug details
