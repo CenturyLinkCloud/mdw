@@ -25,8 +25,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
      - 2.5 [Consume a REST service](#25-consume-a-rest-service)
   3. [Design a Custom Web UI](#3-design-a-custom-web-ui)
      - 3.1 [Build a JSX task page](#31-build-a-jsx-task-page)
-     - 3.2 [Add a new tab to MDWHub](#32-add-a-new-tab-to-mdwhub)
-     - 3.3 [Create a process submit page](#33-create-a-process-submit-page)
+     - 3.2 [Create a process start page](#32-create-a-process-start-page)
+     - 3.3 [Add a new tab to MDWHub](#33-add-a-new-tab-to-mdwhub)
   4. [Explore other Features](#4-explore-other-features)
      - 4.1 [Add markdown workflow documentation](#41-add-markdown-workflow-documentation)
      - 4.2 [Unit test an activity using MockRuntimeContext](#42-unit-test-an-activity-using-mockruntimecontext)
@@ -739,7 +739,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - Drill in to the just-created task in MDWHub and click on the Values nav link.  It's empty!  In fact MDW does not automatically populate
     any values for custom tasks (except for [Task Indexes](../../help/taskIndexes.html), which is a subject we'll return to in 
-    [subsection 3.2](#32-add-a-new-tab-to-mdwhub).  We wouldn't have switched to custom task if we wanted MDW to populate Values.
+    [subsection 3.3](#33-add-a-new-tab-to-mdwhub).  We wouldn't have switched to custom task if we wanted MDW to populate Values.
     In a moment we'll build a complete replacement task view anyway. 
     
 #### Create a JSX page asset
@@ -816,17 +816,102 @@ is available to clone in its completed state from the [mdw-demo repository](http
     ![raw bug](../images/raw-bug.png)<br>
     Not very impressive.  Let's get busy making this into a real working page.
     
-#### Build out the Bugs.jsx asset
+#### Build out the Bug.jsx asset
+  - For the next step in the evolution of Bug.jsx, grab [this version from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/a1db92eee7b5da3586a5747b97da9dc3a7e4c950/assets/demo/Bug.jsx).
+    This implements a simple custom form for updating and resolving a bug.  Since this guide is not a [React tutorial](https://facebook.github.io/react/tutorial/tutorial.html),
+    we won't go into all the specifics of Bug.jsx.  But let's touch on a few points.  First, take a look at the imports:
+    ```typescript
+    import React, {Component} from '../com/centurylink/mdw/node/node_modules/react';
+    import {Button, Glyphicon} from '../com/centurylink/mdw/node/node_modules/react-bootstrap';
+    ``` 
+    Notice the relative path to node_modules.  If you've done [Node.js](https://nodejs.org/en/) development before, you're probably used to imports that look
+    more like:
+    ```typescript
+    import React, {Component} from 'react';
+    import {Button, Glyphicon} from 'react-bootstrap';
+    ```
+    The background on this is that MDW's base package *com.centurylink.mdw.node* already comes with a node_modules folder that includes all the React-related
+    packages you're ever likely to need (such as react-bootstrap in the example above).  If you want to bring your own node_modules, you'll need to include it 
+    in one of your asset packages, and point your imports to that location.
+    
+  - Save Bug.jsx with the above content, then submit a request and visit the newly-created bug task in MDWHub.  It should look like this:<br>
+    ![custom bug](../images/custom-bug.png)<br>
+    
+  - When a user clicks on the Save button, the following code from handleClick() is executed: 
+    ```typescript
+    if (event.currentTarget.name === 'save') {
+      fetch(new Request('/mdw/services/demo/api/bugs/' + this.state.bug.id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state.bug)
+      }))
+      ...
+    ```
+    This performs an HTTP PUT request that's handled by the put() method in Bugs.java.  Here's what happens when the Resolve button is clicked:
+    ```typescript
+    else if (event.currentTarget.name === 'resolve') {
+      fetch(new Request('/mdw/services/Tasks/' +  this.state.bug.id + '/Resolve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          action: 'Resolve',
+          user: $mdwUi.authUser.cuid, 
+          taskInstanceId: this.state.bug.id})
+      }))
+      ...
+    ```    
+    This performs a POST to http://localhost:8080/mdw/services/Tasks/{id}/Resolve, to perform the Resolve action.  The distinction here is that
+    this uses the MDW built-in Tasks API instead of our demo API.  As you build out your UI, you'll want to lean heavily on the MDW APIs, and the easy
+    way to get familiar with them is by perusing their Swagger docs.  Another trick that's very useful is to use your browser's developer tools to
+    watch the REST network traffic between MDWHub and the server to see how MDW itself leverages these APIs.
+    
+### 3.2 Create a process start page
+  To this point the only way of triggering our bugs workflow is by using Postman or MDWHub to submit a JSON payload.  That's fine if our
+  client is an upstream system.  For our bug reporting use case, however, we'd expect end users to be able to submit bugs themselves through their browsers.
+  To facilitate this, we'll create a custom start page that's similar in concept to the custom task page we just created.
+    
+#### Compare MDWHub's default process run page
+  - On the Workflow tab in MDWHub, click the Definitions nav link.  Drill into the "Create Bug" process and click the Run button.  This is what you'll see:<br>
+    ![default start page](../images/default-start-page.png)<br>
+    Not very user-friendly.  This default process start page is meant for testing, similar to the process launch configuration in Designer.
 
+#### Set Bug.jsx as our process start page
+  - Open the "Create Bug" process in Designer.  Check out the Variables property tab.  You may have already noticed the UI Label and Sequene columns, which
+    can autogenerate a layout similar to the task autoform feature we explored in [subsection 2.3](http://127.0.0.1:4000/docs/guides/mdw-cookbook/#configure-the-resolvebugautoform-task-template).
+    Instead of going that route, let's use the custom page we've already built.  Click on the Design tab for the process and select Bug.jsx as its Custom Start Page:<br>
+    ![custom start page](../images/custom-start-page.png)<br>
+    Save "Create Bug".
+  
+  - Edit the asset mdw-hub.js/routes.json and save as follows:
+    ```json
+    [
+      {
+        "path": "/issues/new",
+        "asset": "demo/Bug.jsx"
+      },
+      {
+        "path": "/issues/:id",
+        "asset": "demo/Bug.jsx"
+      }
+    ]
+    ```
+    Here we've added a new route for creating a bug.
+    
+  - Modify Bug.jsx to handle the process start scenario.  Use [this version on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/8ed9f4c1513e3c695e8c1e16008a81ad8ea9ab12/assets/demo/Bug.jsx).
+    Note the conditional handling for the case where `this.state.bug.id === 0`, which is true when creating a new bug.  Now, instead of always submitting
+    an HTTP POST request to run "Create Bug", you can use your start page.
+    
+  - On MDWHub's Workflow tab, click the Definitions nav link and drill into "Create Bug".  If you click the Run button now, it'll take you to your custom start page.
+    More importantly, you can publicize the direct URL (eg: http://localhost:8080/mdw/issues/new) to users so they can report a bug through your UI.
+    An instance of Create Bug is invoked every time someone reports a bug.
+    
+### 3.3 Add a new tab to MDWHub 
+  You can access the MDWHub Tasks tab to view an up-to-date list of bugs.  But there's a drawback in that the Tasks tab displays ALL manual tasks, potentially
+  mixing in completely unrelated tasks.  Let's create an Issues tab to track only bug reports.
+  
+#### Override MDWHub's tabs
 
-
-## TODO:
-
-### 3.2 Add a new tab to MDWHub
-
-### 3.3 Create a process submit page]
-
-
+TODO:
 ## 4. Explore other Features
 
 ### 4.1 Add markdown workflow documentation
