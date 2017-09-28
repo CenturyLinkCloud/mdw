@@ -121,11 +121,12 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 secondaryOwnerId = null;
                 secondaryOwnerType = null;
             }
+            ProcessExecutor engine = getEngine();
             //If it is an asynchronous call to sub process (or executing in new engine) and the
             //parent process is running in a Memory Only thread, then the subprocess won't have any handle
             //to the parent process. So mark the Owner/OwnerId as the root process instance Owner/OwnerId
-            if ((!isSynchronousCall() && getEngine().isInMemory()) ||
-                    (getEngine().isInMemory() && !getEngine().isInService() && subprocIsService && !passingByReference)) {
+            if ((!isSynchronousCall() && engine.isInMemory()) ||
+                (engine.isInMemory() && !engine.isInService() && subprocIsService && !passingByReference && !getProcessDefinition().isService())) {
                 Object[] rootProcessOwner = getRootProcessOwner(getProcessInstanceOwnerId(), getProcessInstanceOwner());
                 ownerId = (Long) rootProcessOwner[0];
                 ownerType = (String) rootProcessOwner[1];
@@ -134,7 +135,6 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     subprocdef.getProcessId(), ownerType,
                     ownerId, getMasterRequestId(), null,
                     secondaryOwnerType, secondaryOwnerId);
-            ProcessExecutor engine = getEngine();
 
             if (engine.isInService()) {  // Current process is Non-service
                 if (subprocIsService && isSynchronousCall()) {

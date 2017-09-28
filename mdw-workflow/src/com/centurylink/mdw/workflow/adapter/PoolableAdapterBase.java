@@ -424,10 +424,12 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
                 if (getEngine().isInService() || (count >= max_tries && errorCode != ConnectionException.POOL_EXHAUSTED)) {
                     if (max_tries > 1 && !getEngine().isInService())
                         errorCause = new AdapterException(AdapterException.EXCEED_MAXTRIES, "Maximum number of tries/retries reached", errorCause);
-                    else if (getEngine().isInService())
-                        errorCause = new AdapterException(AdapterException.RETRY_NOT_ALLOWED, "Retry is not allowed when executing as a Service process", errorCause);
-                    else
+                    else {
+                        if (max_tries > 1 && getEngine().isInService())
+                            logger.warn("Retry is not allowed when executing as a Service process. Ignoring retry configuration...");
                         errorCause = new AdapterException(-1, errorCause.getMessage(), errorCause);
+                    }
+
                 } else {
                 if(isRetryEnabled&&!isConnectionException)
                     handleRetry(-1, errorCause);
