@@ -220,7 +220,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     }
     ```
     This code illustrates a few concepts essential to understanding how MDW JSON binding works:
-      - Our model class implements [Jsonable](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/model/Jsonable.html).
+      - Our model class implements [Jsonable](../../javadoc/com/centurylink/mdw/model/Jsonable.html).
         The Jsonable interface provides an ultra-convenient mechanism for autobinding and serializing from/to JSON.
       - By convention every Jsonable implements a constructor that takes an org.json.JSONObject.  In our constructor we invoke the `bind()` method,
         which is where the autobinding magic happens.
@@ -292,9 +292,9 @@ is available to clone in its completed state from the [mdw-demo repository](http
     }    
     ```
     The root path of our bugs service is governed by the @Path annotation of the class.  We override `post()`
-    from [JsonRestService](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/rest/JsonRestService.html)
+    from [JsonRestService](../../javadoc/com/centurylink/mdw/services/rest/JsonRestService.html)
     to handle HTTP POST requests.  When one is received, we use the superclass helper method  
-    [invokeServiceProcess()](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/services/rest/JsonRestService.html#invokeServiceProcess-java.lang.String-java.lang.Object-java.lang.String-java.util.Map-java.util.Map-).
+    [invokeServiceProcess()](../../javadoc/com/centurylink/mdw/services/rest/JsonRestService.html#invokeServiceProcess-java.lang.String-java.lang.Object-java.lang.String-java.util.Map-java.util.Map-).
     to programmatically launch our Create Bug process, and we return the result as JSON.
     
   - After saving Bugs.java, we're ready to POST a JSON request to http://localhost:8080/mdw/services/demo/api/bugs.
@@ -428,7 +428,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
 
 ### 2.1 Implement a custom activity
   A bug probably requires someone to take action.  In MDW, steps requiring manual intervention are represented by the 
-  [TaskInstance](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/model/task/TaskInstance.html) model object.
+  [TaskInstance](../../javadoc/com/centurylink/mdw/model/task/TaskInstance.html) model object.
   To integrate our Bug object into the Create Bug workflow, we'll use the TaskInstance model, and map the data to our Bug object.
   
 #### Create an activity implementor asset
@@ -635,7 +635,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     public class Prioritization ...
     ```
     The @RegisteredService annotation gives your Dynamic Java code an extensibility hook into MDW.  To see the available implementations
-    you can plug in, have a look at the [All Known Subinterfaces](http://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/common/service/RegisteredService.html) 
+    you can plug in, have a look at the [All Known Subinterfaces](../../javadoc/com/centurylink/mdw/common/service/RegisteredService.html) 
     section of the javadoc.
     
   - Now return to ResolveBugAutoform.task and on the General tab paste the fully qualified name of the class we just created into
@@ -910,7 +910,107 @@ is available to clone in its completed state from the [mdw-demo repository](http
   mixing in completely unrelated tasks.  Let's create an Issues tab to track only bug reports.
   
 #### Override MDWHub's tabs
+  Remember creating the mdw-hub.js package?  Packages with root name *mdw-hub* have special meaning.  They allow you to override these MDWHub artifacts:
+  
+  | Package/Asset                | Asset Types       | MDWHub Source                                                                          |
+  | :--------------------------- | :---------------- | :------------------------------------------------------------------------------------- |
+  | mdw-hub.js/\*\*/\(*.js|json) | javascript, json  | [mdw-hub/web/js](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-hub/web/js)   |
+  | mdw-hub.css/\*\*/\*.css      | stylesheets       | [mdw-hub/web/css](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-hub/web/css) |
+  | mdw-hub/\*\*/\*.html         | html              | [mdw-hub/web](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-hub/web)         |
+  | mdw-hub.images/\*\*/\*       | png, gif, jpg     | [mdw-hub/web](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-hub/web/images)  |
+  | mdw-hub.layout/\*\*/\*.html  | templates & menus | [mdw-hub/web](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-hub/web/layout)  |
 
+  You have absolute power to override any file MDWHub sends to the browser.  You can even replace index.html!  Naturally you'll want to begin with
+  some understanding of how the MDWHub artifacts are arranged and what they do.  (That's the purpose of the source links above).  Furthermore, you can 
+  always link to your own custom (non-overriding) assets through a URL like */mdw/assets/mypkgpath/myasset.ext*.  For example, here's a link you 
+  can try in your browser to the bug.png asset we imported earlier: `http://localhost:8080/mdw/asset/com.centurylink.mdw.demo.bugs/bug.png`.
+  
+  Using stylesheets, you can adapt MDWHub's look-and-feel to integrate it into existing sites. Unless you're replacing whole-hog replacing the MDW styles, 
+  a better approach than replacing Hub's defaults would be to create your own css assets and link to those from html:
+  ```html
+  <link rel="stylesheet" href="/mdw/asset/demo/super-cool.css">
+  ```
+  
+  - To override tabs, right-click on mdw-hub.js and select New > Script.  Name the asset tabs.js and select JavaScript for the language.
+    This will now shade [MDWHub's tabs.js](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-hub/web/js/tabs.js).
+    Start with Hub's version, and insert a new tab in the array after the Tasks tab with an object like this:
+    ```
+    ...
+      {
+        id: 'issuesTab',
+        label: 'Issues',     
+        url: '#/issues',
+        routes: ['/issues']
+      },
+    ...          
+    ```
+    Here's the [end result on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/mdw-hub/js/tabs.js).
+    
+  - Now tabs.js points to a url (*#/issues*) for a route that doesn't exist.  Modify routes.json in the same package:
+    ```json
+    [
+      {
+        "path": '/issues', 
+        "asset": 'demo/issues.html', 
+        "controller": 'BugsController'
+      },
+      {
+        "path": "/issues/new",
+        "asset": "demo/Bug.jsx"
+      },
+      {
+        "path": "/issues/:id",
+        "asset": "demo/Bug.jsx"
+      }  
+    ]  
+    ```
+    
+  - The new route at the top references a controller (*BugsController*) that doesn't exist.  Create a new js asset in
+    mdw-hub.js named demo.js with the following content:
+    ```javascript
+    'use strict';
+    
+    var app = angular.module('adminApp');
+    
+    app.controller('BugsController', ['$scope', '$controller',
+          function ($scope, $controller, TasksController) {
+      // initialize and extend built-in TasksController
+      angular.extend(this, $controller('TasksController', {$scope: $scope}));
+      
+      $scope.authUser.setActiveTab('/issues');
+      $scope.tasksLabel = 'Issues';
+      $scope.model.taskFilter.category = 'ISSUE';
+    }]);
+    ```
+    This extends the MDW TasksController, which is written in [AngularJS](https://angularjs.org/).  The important points are that
+    we're overriding the tasksLabel to be 'Issues', and we're wiring the taskFilter.category to be 'ISSUE'.
+    But this illustrates another important point about overriding MDWHub.  Any *.js asset that lives in under the mdw-hub.js package
+    is **automatically** loaded in index.html served up by MDWHub.  This gives you the ability to execute any custom javascript you create.
+    
+  - The issues route also references an HTML template, *issues.html*, create that in the demo package (not under mdw-hub) using the New > Page
+    wizard like this:
+    ```html
+    <div ng-include="'tasks/tasks.html'">
+    </div>    
+    ```
+  - Save these assets and refresh your browser on MDWHub.  You should see the new Issues tab, and if you click on it you'll
+    see a task list very much like that on the Tasks tab, except that it only displays tasks whose category is ISSUE.
+    This is a good time be harken back to the Indexes design tab custom task template.  
+    We're not going to add indexes here, but let's briefly mention their purpose, which is to provide a performant mechanism for displaying
+    aggregate data on a list page like our new Issues tab.  Say we wanted to display the commitId field for every bug in the list.
+    Without indexes, the only way to do this would be to retrieve the runtime data for every single task, which would be terribly expensive.
+    When you decide to tackle a requirement of this kind, you can read up on [Task Indexes](../../help/taskIndexes.html) and learn how to
+    populate them during the task lifecyle, either through expressions or by implementing a [TaskIndexProvider](../../javadoc/com/centurylink/mdw/observer/task/TaskIndexProvider.html). 
+  
+#### Put it all together
+  At this point we've built enough of the Issues UI to convey the key points around designing a custom UI for MDWHub.  Now is a good time
+  to completely sync with mdw-demo from on GitHub to see how it all comes together.
+  
+  - Follow these instructions from the repository readme for cloning and running mdw-demo:
+    <https://github.com/CenturyLinkCloud/mdw-demo/blob/master/README.md>
+    
+  - Run mdw-demo through Eclipse and try out the Bugs functionality we've just developed.
+  
 TODO:
 ## 4. Explore other Features
 
@@ -921,6 +1021,8 @@ TODO:
 ### 4.3 Automate service tests with workflow verification
 
 ### 4.4 Designate a package-level error handler
+
+### 4.5 Create a custom chart
     
     
     
