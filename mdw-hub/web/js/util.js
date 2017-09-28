@@ -178,6 +178,11 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
     	// Uses the callback mechanism to update the except variable (gets around jshint error)
     	return function(el) {
             exceptHolder.exceptionMessage += '\tat ' + el.class;
+            if (el.method) {
+              if (el.method.startsWith('<'))
+                el.method = '&lt;' + el.method.substring(1);
+              exceptHolder.exceptionMessage += '.' + el.method;
+            }
             if (el.file) {
               exceptHolder.exceptionMessage += '(' + el.file;
               if (el.line) {
