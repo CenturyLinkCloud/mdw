@@ -37,16 +37,6 @@ public class Init extends Setup {
     @Parameter(description="<project>", required=true)
     private String project;
 
-    @Parameter(names="--asset-loc", description="Asset location")
-    private String assetLoc = "assets";
-    public String getAssetLoc() { return assetLoc; }
-    public void setAssetLoc(String assetLoc) { this.assetLoc = assetLoc; }
-
-    @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
-    private String releasesUrl = "http://repo.maven.apache.org/maven2";
-    public String getReleasesUrl() { return releasesUrl; }
-    public void setReleasesUrl(String url) { this.releasesUrl = url; }
-
     @Parameter(names="--snapshots", description="Whether to include snapshot builds")
     private boolean snapshots;
     public boolean isSnapshots() { return snapshots; }
@@ -93,6 +83,7 @@ public class Init extends Setup {
                 throw new IOException("Unable to create destination: " + projectDir);
         }
 
+        String releasesUrl = getReleasesUrl();
         if (!releasesUrl.endsWith("/"))
             releasesUrl += "/";
 
@@ -110,7 +101,7 @@ public class Init extends Setup {
         String templatesUrl;
         if (isSnapshots())
             templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
-        else 
+        else
             templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();

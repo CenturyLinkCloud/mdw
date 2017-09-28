@@ -29,6 +29,7 @@ public class Main {
         Help help = new Help();
         Main main = new Main();
         Init init = new Init();
+        Import mport = new Import();
         Update update = new Update();
         Install install = new Install();
         Run run = new Run();
@@ -38,6 +39,7 @@ public class Main {
             .addObject(main)
             .addCommand("help", help)
             .addCommand("init", init)
+            .addCommand("import", mport)
             .addCommand("update", update)
             .addCommand("install", install)
             .addCommand("run", run)
@@ -60,6 +62,9 @@ public class Main {
                 if (command.equals("init")) {
                     init.run(getMonitor());
                     new Update(init).run(getMonitor());
+                }
+                else if (command.equals("import")) {
+                    mport.run(getMonitor());
                 }
                 else if (command.equals("update")) {
                     update.run(getMonitor());

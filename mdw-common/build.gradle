@@ -25,6 +25,9 @@ dependencies {
 
     cli group: "com.beust", name: "jcommander", version: "1.72"
     cli group: "org.json", name: "json", version: "20160810"
+    cli group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "4.8.0.201706111038-r"
+    cli group: "com.jcraft", name: "jsch", version: "0.1.54" // for jgit
+    cli group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.1.2"
 
     schemas fileTree(dir: '../mdw/libs', include: 'mdw-schemas.jar')
     
@@ -54,10 +57,9 @@ dependencies {
     compile group: "commons-jexl", name: "commons-jexl", version: "1.1"
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "junit", name: "junit", version: "4.8.1"
-    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
-    compile group: "com.jcraft", name: "jsch", version: "0.1.51" // for jgit
+    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "4.8.0.201706111038-r"
+    compile group: "com.jcraft", name: "jsch", version: "0.1.54" // for jgit
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
-//    compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
     compile group: "el-impl", name: "el-impl", version: "1.0"
     compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
     compile group: "org.yaml", name: "snakeyaml", version: "1.18"

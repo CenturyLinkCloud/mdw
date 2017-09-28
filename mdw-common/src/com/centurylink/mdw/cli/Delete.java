@@ -24,7 +24,7 @@ import java.io.IOException;
 public class Delete implements Operation {
 
     private File file;
-    private boolean includeSubpackages;
+    private boolean includeSubs;
 
     public Delete(File file) {
         this(file, false);
@@ -32,14 +32,14 @@ public class Delete implements Operation {
 
     public Delete(File file, boolean includeSubpackages) {
         this.file = file;
-        this.includeSubpackages = includeSubpackages;
+        this.includeSubs = includeSubpackages;
     }
 
     public Delete run(ProgressMonitor... progressMonitors) throws IOException {
         if (file.isDirectory()) {
             for (File child : file.listFiles()) {
-                if (includeSubpackages || !new File(child + "/.mdw/package.json").isFile())
-                    new Delete(child, includeSubpackages).run();
+                if (includeSubs || !new File(child + "/.mdw/package.json").isFile())
+                    new Delete(child, includeSubs).run();
             }
         }
         if (!file.delete())

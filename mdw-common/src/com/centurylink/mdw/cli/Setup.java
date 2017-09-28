@@ -52,11 +52,42 @@ public abstract class Setup implements Operation {
     public String getDiscoveryUrl() { return discoveryUrl; }
     public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
 
+    @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
+    private String releasesUrl = "http://repo.maven.apache.org/maven2";
+    public String getReleasesUrl() { return releasesUrl; }
+    public void setReleasesUrl(String url) { this.releasesUrl = url; }
+
+    @Parameter(names="--asset-loc", description="Asset location")
+    private String assetLoc = "assets";
+    public String getAssetLoc() { return assetLoc; }
+    public void setAssetLoc(String assetLoc) { this.assetLoc = assetLoc; }
+
     @Parameter(names="--base-asset-packages", description="MDW Base Asset Packages (comma-separated)",
             splitter=CommaParameterSplitter.class)
     private List<String> baseAssetPackages;
     public List<String> getBaseAssetPackages() { return baseAssetPackages; }
     public void setBaseAssetPackages(List<String> packages) { this.baseAssetPackages = packages; }
+
+    // Git Parameters used by Import (otherwise only for templates)
+    @Parameter(names="--git-remote-url", description="Git repository URL")
+    private String gitRemoteUrl = "https://github.com/CenturyLinkCloud/mdw-demo.git";
+    public String getGitRemoteUrl() { return gitRemoteUrl; }
+    public void setGitRemoteUrl(String url) { this.gitRemoteUrl = url; }
+
+    @Parameter(names="--git-branch", description="Git branch")
+    private String gitBranch = "master";
+    public String getGitBranch() { return gitBranch; }
+    public void setGitBranch(String branch) { this.gitBranch = branch; }
+
+    @Parameter(names="--git-user", description="Git user")
+    private String gitUser = "anonymous";
+    public String getGitUser() { return gitUser; }
+    public void setGitUser(String user) { this.gitUser = user; }
+
+    @Parameter(names="--git-password", description="Git password")
+    private String gitPassword;
+    String getGitPassword() { return this.gitPassword; }
+    public void setGitPassword(String password) { this.gitPassword = password; }
 
     /**
      * Checks for any existing packages.  If none present, adds the defaults.

@@ -15,13 +15,15 @@
  */
 package com.centurylink.mdw.model.asset;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
 
 public class CommitInfo implements Jsonable {
 
@@ -56,7 +58,7 @@ public class CommitInfo implements Jsonable {
         if (json.has("email"))
             this.email = json.getString("email");
         if (json.has("date"))
-            this.date = StringHelper.stringToDate(json.getString("date"));
+            this.date = stringToDate(json.getString("date"));
         if (json.has("message"))
             this.message = json.getString("message");
     }
@@ -70,7 +72,7 @@ public class CommitInfo implements Jsonable {
         if (email != null)
             json.put("email", email);
         if (date != null)
-            json.put("date", StringHelper.dateToString(date));
+            json.put("date", dateToString(date));
         if (message != null)
             json.put("message", message);
         return json;
@@ -78,5 +80,23 @@ public class CommitInfo implements Jsonable {
 
     public String getJsonName() {
         return "commitInfo";
+    }
+
+    // TODO: use an Instant
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public static String dateToString(Date d) {
+        return d == null ? null : DATE_FORMAT.format(d);
+    }
+
+    public static Date stringToDate(String s) {
+        if (s == null)
+            return null;
+        try {
+            return DATE_FORMAT.parse(s);
+        }
+        catch (ParseException e) {
+            return null;
+        }
     }
 }
