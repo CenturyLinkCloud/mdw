@@ -64,6 +64,8 @@ public class ProcessInstance implements Serializable, Jsonable {
         // summary info
         if (jsonObj.has("id"))
             this.id = jsonObj.getLong("id");
+        if (jsonObj.has("solutionId"))
+            solutionId = jsonObj.getString("solutionId");
         if (jsonObj.has("masterRequestId"))
             masterRequestId = jsonObj.getString("masterRequestId");
         if (jsonObj.has("processId"))
@@ -150,6 +152,14 @@ public class ProcessInstance implements Serializable, Jsonable {
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
     public void setMasterRequestId(String s) { masterRequestId = s; }
+
+    private String solutionId;
+    public String getSolutionId() {
+        return solutionId;
+    }
+    public void setSolutionId(String solutionId) {
+        this.solutionId = solutionId;
+    }
 
     private String owner;
     public String getOwner() { return owner; }
@@ -313,6 +323,8 @@ public class ProcessInstance implements Serializable, Jsonable {
         json.put("id", this.id);
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
+        if (solutionId != null)
+            json.put("solutionId", solutionId);
         if (processId != null)
             json.put("processId", processId);
         if (processName != null)
@@ -379,6 +391,8 @@ public class ProcessInstance implements Serializable, Jsonable {
         json.put("id", this.id);
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
+        if (solutionId != null)
+            json.put("solutionId", solutionId);
         if (processId != null)
             json.put("processId", processId);
         if (processName != null)

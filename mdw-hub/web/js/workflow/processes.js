@@ -23,6 +23,7 @@ processMod.controller('ProcessesController',
     // don't remember these
     $scope.processFilter.instanceId = null;
     $scope.processFilter.masterRequestId = null;
+    $scope.processFilter.solutionId = null;
     // fix date format stored in cookieStore
     if ($scope.processFilter.startDate)
     	$scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
@@ -81,7 +82,7 @@ processMod.controller('ProcessesController',
     $cookieStore.put('processFilter', $scope.processFilter);
   });
   
-  // instanceId, masterRequestId, processName, packageName
+  // instanceId, masterRequestId, processName, packageName, solutionId
   $scope.findTypeaheadMatches = function(typed) {
     return $http.get(mdw.roots.services + '/services/Processes' + '?app=mdw-admin&find=' + typed).then(function(response) {
       // service matches on instanceId or masterRequestId
@@ -102,6 +103,13 @@ processMod.controller('ProcessesController',
             });
             if (!existMrId)
               matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+          }
+          if (procInst.solutionId.startsWith(typed)) {
+              var existSolutionId = matches.find(function(match) {
+                return match.type === 'solutionId' && match.value === procInst.solutionId;
+              });
+              if (!existSolutionId)
+                matches.push({type: 'solutionId', value: procInst.solutionId});
           }
         });
         return matches;
@@ -132,6 +140,8 @@ processMod.controller('ProcessesController',
       $scope.processFilter.instanceId = null;
     if ($scope.processFilter.masterRequestId)
       $scope.processFilter.masterRequestId = null;
+    if ($scope.processFilter.solutionId)
+        $scope.processFilter.solutionId = null;    
     if ($scope.processFilter.processId)
       $scope.processFilter.processId = null;
   };
