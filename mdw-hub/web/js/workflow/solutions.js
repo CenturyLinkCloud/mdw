@@ -180,7 +180,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   };
 
   $scope.findProcess = function(typed) {
-	    return $http.get(mdw.roots.services + '/services/Processes?app=mdw-admin&onlyProcessInstance=true&find=' + typed).then(function(response) {
+	    return $http.get(mdw.roots.services + '/services/Processes?app=mdw-admin&find=' + typed).then(function(response) {
 	      return response.data.processInstances;
 	    });
   };

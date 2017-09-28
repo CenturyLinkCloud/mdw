@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.workflow.Solution.MemberType;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -60,12 +61,16 @@ public class SolutionsDataAccess extends CommonDataAccess {
     /**
      * TODO: pagination and filtering
      */
-    public List<Solution> getSolutions() throws DataAccessException {
+    public List<Solution> getSolutions(String solutionId) throws DataAccessException {
 
         try {
             List<Solution> solutions = new ArrayList<Solution>();
             db.openConnection();
-            String sql = "select " + SOLUTION_COLS + " from solution s";
+            String sql;
+            if (StringHelper.isEmpty(solutionId))
+                sql = "select " + SOLUTION_COLS + " from solution s";
+            else
+                sql = "select " + SOLUTION_COLS + " from solution s where id like '" + solutionId + "%'";
             ResultSet rs = db.runSelect(sql, null);
             while (rs.next())
                 solutions.add(buildSolution(rs, false, false));

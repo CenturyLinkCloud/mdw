@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.workflow.Solution;
 import com.centurylink.mdw.model.workflow.SolutionList;
@@ -22,7 +23,7 @@ import com.centurylink.mdw.model.workflow.Solution.MemberType;
 
 public interface SolutionServices {
 
-    public SolutionList getSolutions() throws ServiceException;
+    public SolutionList getSolutions(Query query) throws ServiceException;
     public Solution getSolution(String id) throws ServiceException;
 
     public void createSolution(Solution solution) throws ServiceException;
