@@ -167,6 +167,7 @@ public class AssetCache implements PreloadableCache {
             if (match != null && !match.isLoaded()) {
                 assetVO = DataAccess.getProcessLoader().getAsset(match.getId());
             }
+         // TODO If match == null, check ASSET_REF DB table to retrieve from git history
         } catch (Exception ex) {
             logger.severeException("Failed to load asset: "+spec.toString()+ " : "+ex.getMessage(), ex);
         }
@@ -201,6 +202,7 @@ public class AssetCache implements PreloadableCache {
                     }
                 }
             }
+            // TODO If match == null, check ASSET_REF DB table to retrieve from git history
         } catch (DataAccessException ex) {
             logger.severeException("Failed to load asset: "+spec.toString()+ " : "+ex.getMessage(), ex);
         }
@@ -394,6 +396,7 @@ public class AssetCache implements PreloadableCache {
                     return DataAccess.getProcessLoader().getAsset(asset.getId());
                 }
             }
+         // TODO If didn't find it, check ASSET_REF DB table to retrieve from git history
             return null;
         }
         catch (Exception ex) {

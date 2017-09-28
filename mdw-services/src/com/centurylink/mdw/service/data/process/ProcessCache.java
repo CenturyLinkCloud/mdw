@@ -233,6 +233,7 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().loadProcess(id, true);
+            // TODO If proc == null, check ASSET_REF DB table to retrieve from git history
             if (proc != null) {
                 // all db attributes are override attributes
                 Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, id);
