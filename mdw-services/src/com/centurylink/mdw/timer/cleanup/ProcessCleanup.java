@@ -41,9 +41,22 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
- * Clean up old database entries from processes that are older than a specified
- * amount
+ * Clean up old database entries from tables that are older than a specified amount
+ * Add following to mdw.properties
+ * # Scheduled job - process clean up.
+ * mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup
+ * # run every 15 min
+ * mdw.timer.task.ProcessCleanup.Schedule=0,15,30,45 * * * *
+ * # .sql file should be in config dir
+ * MDWFramework.ProcessCleanup/RuntimeCleanupScript=mysql_cleanup.sql
+ * # How old process instance should be to be a candidate for deleting
+ * MDWFramework.ProcessCleanup/ProcessExpirationAgeInDays=90
+ * # How many process instances to be deleted in each run
+ * MDWFramework.ProcessCleanup/MaximumProcessExpiration=1000
+ * MDWFramework.ProcessCleanup/ExternalEventExpirationAgeInDays=90
+ * MDWFramework.ProcessCleanup/CommitInterval=10000
  */
+
 public class ProcessCleanup extends RoundRobinScheduledJob {
 
     private static final String PROCESS_SQL_FILE_NAME = "ProcessSql.txt";
@@ -430,7 +443,6 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             if (query.endsWith("/"))
                 query = query.substring(0, query.length() - 1);
 
-
             CallableStatement callStmt = null;
             if (jdbcUrl != null || db.isMySQL()) {
                 ScriptRunner runner = new ScriptRunner(conn, false, false);
@@ -442,22 +454,15 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                 callStmt = db.getConnection().prepareCall(query);
                 enable_output(db, 16384);
             }
-
             callStmt.setInt(1, maxProcInst); // max proc instances to delete
-            callStmt.setInt(2, processExpirationDays); // number of days for
-                                                       // expiration for process
-                                                       // and related
-            callStmt.setInt(3, eventExpirationDays); // number of days for
-                                                     // expiration for events
+            callStmt.setInt(2, processExpirationDays); // number of days for expiration for process and related
+            callStmt.setInt(3, eventExpirationDays); // number of days for expiration for events
             callStmt.setInt(4, 0); // process ID; 0 indicates any process
             callStmt.setString(5,
                     WorkStatus.STATUS_FAILED.toString() + ","
                             + WorkStatus.STATUS_COMPLETED.toString() + ","
-                            + WorkStatus.STATUS_CANCELLED.toString()); // process
-                                                                       // instance
-                                                                       // statuses
+                            + WorkStatus.STATUS_CANCELLED.toString()); // process instance statuses
             callStmt.setInt(6, commitInterval);
-
             callStmt.execute();
             if (db != null && !db.isMySQL())
                 show_output(db);

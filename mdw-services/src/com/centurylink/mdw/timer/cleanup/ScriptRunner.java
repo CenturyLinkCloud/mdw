@@ -3,11 +3,8 @@
  */
 package com.centurylink.mdw.timer.cleanup;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,12 +15,17 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+
 /**
  * Tool to run database scripts
  */
 public class ScriptRunner {
 
     private static final String DEFAULT_DELIMITER = ";";
+    private StandardLogger logger;
+
     /**
      * regex to detect delimiter.
      * ignores spaces, allows delimiter in comment, allows an equals-sign
@@ -34,9 +36,6 @@ public class ScriptRunner {
 
     private final boolean stopOnError;
     private final boolean autoCommit;
-
-    private PrintWriter logWriter = null;
-    private PrintWriter errorLogWriter = null;
 
     private String delimiter = DEFAULT_DELIMITER;
     private boolean fullLineDelimiter = false;
@@ -49,52 +48,15 @@ public class ScriptRunner {
         this.connection = connection;
         this.autoCommit = autoCommit;
         this.stopOnError = stopOnError;
-        File logFile = new File("create_db.log");
-        File errorLogFile = new File("create_db_error.log");
-        try {
-            if (logFile.exists()) {
-                logWriter = new PrintWriter(new FileWriter(logFile, true));
-            } else {
-                logWriter = new PrintWriter(new FileWriter(logFile, false));
-            }
-        } catch(IOException e){
-            System.err.println("Unable to access or create the db_create log");
-        }
-        try {
-            if (logFile.exists()) {
-                errorLogWriter = new PrintWriter(new FileWriter(errorLogFile, true));
-            } else {
-                errorLogWriter = new PrintWriter(new FileWriter(errorLogFile, false));
-            }
-        } catch(IOException e){
-            System.err.println("Unable to access or create the  db_create error log");
-        }
+        logger = LoggerUtil.getStandardLogger();
+
         String timeStamp = new SimpleDateFormat("dd/mm/yyyy HH:mm:ss").format(new java.util.Date());
-        println("\n-------\n" + timeStamp + "\n-------\n");
-        printlnError("\n-------\n" + timeStamp + "\n-------\n");
+        logger.debug("\n-------\n" + timeStamp + "\n-------\n");
     }
 
     public void setDelimiter(String delimiter, boolean fullLineDelimiter) {
         this.delimiter = delimiter;
         this.fullLineDelimiter = fullLineDelimiter;
-    }
-
-    /**
-     * Setter for logWriter property
-     *
-     * @param logWriter - the new value of the logWriter property
-     */
-    public void setLogWriter(PrintWriter logWriter) {
-        this.logWriter = logWriter;
-    }
-
-    /**
-     * Setter for errorLogWriter property
-     *
-     * @param errorLogWriter - the new value of the errorLogWriter property
-     */
-    public void setErrorLogWriter(PrintWriter errorLogWriter) {
-        this.errorLogWriter = errorLogWriter;
     }
 
     /**
@@ -147,7 +109,7 @@ public class ScriptRunner {
                 } else if (delimMatch.matches()) {
                     setDelimiter(delimMatch.group(2), false);
                 } else if (trimmedLine.startsWith("--")) {
-                    println(trimmedLine);
+                    logger.debug(trimmedLine);
                 } else if (trimmedLine.length() < 1
                         || trimmedLine.startsWith("--")) {
                     // Do nothing
@@ -176,7 +138,6 @@ public class ScriptRunner {
             throw new IOException(String.format("Error executing '%s': %s", command, e.getMessage()), e);
         } finally {
             conn.rollback();
-            flush();
         }
     }
 
@@ -184,7 +145,7 @@ public class ScriptRunner {
                              LineNumberReader lineReader) throws SQLException {
         Statement statement = conn.createStatement();
 
-        println(command);
+        logger.debug(command.toString());
 
         boolean hasResults = false;
         try {
@@ -192,7 +153,7 @@ public class ScriptRunner {
         } catch (SQLException e) {
             final String errText = String.format("Error executing '%s' (line %d): %s",
                     command, lineReader.getLineNumber(), e.getMessage());
-            printlnError(errText);
+            logger.debug(errText);
             System.err.println(errText);
             if (stopOnError) {
                 throw new SQLException(errText, e);
@@ -209,15 +170,15 @@ public class ScriptRunner {
             int cols = md.getColumnCount();
             for (int i = 1; i <= cols; i++) {
                 String name = md.getColumnLabel(i);
-                print(name + "\t");
+                logger.debug(name + "\t");
             }
-            println("");
+            logger.debug("");
             while (rs.next()) {
                 for (int i = 1; i <= cols; i++) {
                     String value = rs.getString(i);
-                    print(value + "\t");
+                    logger.debug(value + "\t");
                 }
-                println("");
+                logger.debug("");
             }
         }
 
@@ -232,30 +193,4 @@ public class ScriptRunner {
         return delimiter;
     }
 
-    private void print(Object o) {
-        if (logWriter != null) {
-            logWriter.print(o);
-        }
-    }
-
-    private void println(Object o) {
-        if (logWriter != null) {
-            logWriter.println(o);
-        }
-    }
-
-    private void printlnError(Object o) {
-        if (errorLogWriter != null) {
-            errorLogWriter.println(o);
-        }
-    }
-
-    private void flush() {
-        if (logWriter != null) {
-            logWriter.flush();
-        }
-        if (errorLogWriter != null) {
-            errorLogWriter.flush();
-        }
-    }
 }
