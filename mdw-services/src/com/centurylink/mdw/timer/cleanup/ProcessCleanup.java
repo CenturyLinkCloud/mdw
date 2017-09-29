@@ -16,10 +16,15 @@
 package com.centurylink.mdw.timer.cleanup;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -27,7 +32,6 @@ import java.util.ArrayList;
 
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyGroups;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
@@ -79,7 +83,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
         if (cleanupScript != null) {
             DatabaseAccess db = new DatabaseAccess(null);
             cleanup(db, cleanupScript, maxProcesses, processExpirationDays, eventExpirationDays,
-                    commitInterval);
+                    commitInterval, null);
         }
         else {
             try {
@@ -402,68 +406,37 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
     }
 
     private void cleanup(DatabaseAccess db, String filename, int maxProcInst,
-            int processExpirationDays, int eventExpirationDays, int commitInterval) {
+            int processExpirationDays, int eventExpirationDays, int commitInterval, String jdbcUrl) {
         try {
-            InputStream is = FileHelper.openConfigurationFile(filename,
-                    getClass().getClassLoader());
+            Connection conn = null;
+            File file = FileHelper.getFile(filename, getClass().getClassLoader());
+            InputStream is = new FileInputStream(file);
+            if (jdbcUrl != null) {  //added this logic to do unit testing db connection is not longer possible with DatabaseAccess using jdbcUrl
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    conn = DriverManager.getConnection(jdbcUrl);
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Unable to get mysql driver: " + e);
+                }
+            }
+            else {
+                db.openConnection();
+                conn = db.getConnection();
+            }
+
             byte[] bytes = FileHelper.readFromResourceStream(is);
             String query = new String(bytes);
-
             query = query.replaceAll("\\r", "").trim();
-
             if (query.endsWith("/"))
                 query = query.substring(0, query.length() - 1);
 
-            db.openConnection();
-
-            // for mysql
-            if (db.isMySQL()) {
-
-                // this creates the procedure in the mysql DB and makes it
-                // available for running
-
-                // lets read the below from the property file
-                // path of mysql, if not added to environment path , full path
-                // should be provided here
-                String mysql = "mysql";
-                // mysql username , read from property
-                String username = PropertyManager.getProperty(PropertyNames.MDW_DB_USERNAME);
-                // mysql password , read from property
-                String password = PropertyManager.getProperty(PropertyNames.MDW_DB_PASSWORD);
-                // mysql port number
-                String port = PropertyManager.getProperty(PropertyNames.MDW_DB_URL);
-                //setting to the default port
-                String mysqlport = "3306";
-                if (port != null) {
-                    String[] parts = port.split("[//:]");
-                    mysqlport = parts[5];
-                }
-
-                String command = mysql + " -u" + username + " -p" + password + " --port="
-                        + mysqlport + "  -e \"" + "source " + filename + "\"";
-
-                Runtime runTime = Runtime.getRuntime();
-                Process p = runTime.exec(command);
-
-                /*
-                 * Process p = runTime
-                 * .exec("C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysql -umdw -pmdw --port=3308 mdw -e \"source "
-                 * + filename + "\"");
-                 */
-                logger.info("mysql import command :: " + command);
-
-                if ((!(p==null)) && p.waitFor() == 0) {
-                    logger.info("mysql procedure created successfully in the mysql database ");
-                }
-                else {
-                    logger.info("mysql procedure creation failed in the mysql database ");
-                }
-            }
 
             CallableStatement callStmt = null;
-            if (db.isMySQL()) {
-
-                callStmt = db.getConnection().prepareCall("{call mysql_cleanup(?,?,?,?,?,?)}");
+            if (jdbcUrl != null || db.isMySQL()) {
+                ScriptRunner runner = new ScriptRunner(conn, false, false);
+                String filePath = file.getAbsolutePath().replace("\\","\\\\");
+                runner.runScript(new BufferedReader(new FileReader(filePath)));
+                callStmt = conn.prepareCall("{call mysql_cleanup(?,?,?,?,?,?)}");
             }
             else if (db.isOracle()) {
                 callStmt = db.getConnection().prepareCall(query);
@@ -486,7 +459,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             callStmt.setInt(6, commitInterval);
 
             callStmt.execute();
-            if (!db.isMySQL())
+            if (db != null && !db.isMySQL())
                 show_output(db);
 
         }
@@ -494,29 +467,18 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             e.printStackTrace();
         }
         finally {
-            db.closeConnection();
+            if (db != null)
+                db.closeConnection();
         }
     }
 
     public static void main(String args[]) throws Exception {
-
         // "jdbc:oracle:thin:mdwdev/mdwdev@mdwdevdb.dev.qintra.com:1594:mdwdev";
-        String url1 = "jdbc:mysql://localhost:3308/mdw?user=mdw&password=mdw";
-        DatabaseAccess db = new DatabaseAccess(url1);
+        //String mariadb = "jdbc:mariadb://localhost:3308/mdw?user=mdw&password=mdw";
+        String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/mdw?user=root&password=mdw";
         ProcessCleanup me = new ProcessCleanup();
-        String file = "C://biswa//MDW//mysql_cleanup_input.sql";
-
-        if (db.isMySQL()) {
-            // db , cleanupfile , maxprocessinstid, maxexpirationday ,
-            // eventexpiration , commitinterval
-            me.cleanup(db, file, 5, 180, 175, 2);
-        }
-        else {
-            me.cleanup(db, "Cleanup-Runtime.sql", 5, 180, 175, 2);
-
-        }
-
-        // }
+        // db , cleanupfile , maxProcInst, processExpirationDays , eventExpirationDays , commitInterval, status IN (3,4,5)
+        me.cleanup(null, "mysql_cleanup.sql", 1, 360, 360, 2, jdbcUrl);
     }
 
     // TODO misc things for runtime data clean ups

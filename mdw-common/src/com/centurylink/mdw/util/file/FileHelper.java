@@ -315,7 +315,9 @@ public final class FileHelper {
     public static InputStream openConfigurationFile(String filepath, ClassLoader classLoader) throws FileNotFoundException {
         return openConfigurationFile(filepath, classLoader, true);
     }
-
+    public static File getFile(String filepath, ClassLoader classLoader) throws FileNotFoundException {
+        return getFile(filepath, classLoader, true);
+    }
     /**
      * Open configuration file. If Java system property mdw.config.location is defined,
      * and the file exists in that directory, it will load the file. Otherwise it loads through
@@ -361,6 +363,43 @@ public final class FileHelper {
                 throw new FileNotFoundException(filepath);  // give up
         }
         return is;
+    }
+
+    public static File getFile(String filepath, ClassLoader classLoader, boolean useMDWConfigLocation) throws FileNotFoundException {
+        String configDir = null;
+        if (useMDWConfigLocation) {
+            configDir = System.getProperty(PropertyManager.MDW_CONFIG_LOCATION);
+        }
+        File file;
+        if (configDir == null)
+            file = new File(filepath);
+        else if (configDir.endsWith("/"))
+            file = new File(configDir + filepath);
+        else
+            file = new File(configDir + "/" + filepath);
+        if (file.exists()) {
+            logger.info("Located configuration file: " + file.getAbsolutePath());
+            return file;
+        }
+
+        // last resort is classLoader classpath
+        InputStream is = classLoader.getResourceAsStream(filepath);
+        if (is == null) {
+            if (ApplicationContext.getDeployPath() != null) {
+                // try META-INF/mdw
+                String deployPath = ApplicationContext.getDeployPath();
+                if (!deployPath.endsWith("/"))
+                    deployPath += "/";
+                file = new File(deployPath + "META-INF/mdw/" + filepath);
+                if (file.exists()) {
+                    logger.info("Located configuration file: " + file.getAbsolutePath());
+                }
+            }
+
+            if (is == null)
+                throw new FileNotFoundException(filepath);  // give up
+        }
+        return file;
     }
 
     public static final String BUNDLE_CLASSPATH_BASE = "META-INF/mdw";
