@@ -143,6 +143,7 @@ public class Archive {
                 if (archiveDest.exists())
                     new Delete(archiveDest).run();
                 new Copy(tempPkgDir, archiveDest).run();
+                // TODO:  Insert assets from pkg into ASSET_REF DB table
             }
         }
 

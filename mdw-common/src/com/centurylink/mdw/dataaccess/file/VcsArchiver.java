@@ -207,6 +207,7 @@ public class VcsArchiver {
                 if (archiveDest.exists())
                     newLoader.deletePkg(archiveDest);
                 newLoader.copyPkg(tempPkgDir, archiveDest);
+             // TODO:  Insert assets from pkg into ASSET_REF DB table
             }
         }
 
