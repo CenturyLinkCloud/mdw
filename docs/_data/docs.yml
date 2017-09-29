@@ -19,6 +19,7 @@
 - title: Documentation
   docs:
   - link-to-javadoc
+  - getting-started/cli
   - help
   
 - title: Designer
