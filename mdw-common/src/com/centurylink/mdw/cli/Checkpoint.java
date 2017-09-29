@@ -79,7 +79,7 @@ public class Checkpoint implements Operation {
         List<AssetRef> refs = new ArrayList<>();
         String pkgName = null;
         if (new File(dir + "/.mdw").isDirectory()) {
-            pkgName = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length())
+            pkgName = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1)
                     .replace('/', '.').replace('\\', '.');
         }
         for (File file : dir.listFiles()) {
