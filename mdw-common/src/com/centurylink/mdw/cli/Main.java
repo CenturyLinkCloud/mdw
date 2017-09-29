@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -26,6 +27,12 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+        if (args.length > 1 && args[0].equals("git")) {
+            // git pass-through command
+            Git.main(args);
+            return;
+        }
+
         Help help = new Help();
         Main main = new Main();
         Init init = new Init();
@@ -33,6 +40,7 @@ public class Main {
         Update update = new Update();
         Install install = new Install();
         Run run = new Run();
+        Git git = new Git();
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
@@ -44,6 +52,7 @@ public class Main {
             .addCommand("install", install)
             .addCommand("run", run)
             .addCommand("version", version)
+            .addCommand("git", git)
             .build();
 
         cmd.setProgramName("mdw");
@@ -67,19 +76,22 @@ public class Main {
                     mport.run(getMonitor());
                 }
                 else if (command.equals("update")) {
+                    checkLoc(update.getProjectDir());
                     update.run(getMonitor());
                 }
                 else if (command.equals("install")) {
+                    checkLoc(install.getProjectDir());
                     install.run(getMonitor());
                 }
                 else if (command.equals("run")) {
+                    checkLoc(run.getProjectDir());
                     run.run(getMonitor());
                 }
             }
         }
         catch (ParameterException ex) {
             System.err.println(ex.getMessage());
-            cmd.usage();
+            System.err.println("'mdw help' for usage information");
         }
     }
 
@@ -89,7 +101,7 @@ public class Main {
     /**
      * Every call with >= 100% progress will print a new line.
      */
-    private static ProgressMonitor getMonitor() {
+    static ProgressMonitor getMonitor() {
         return prog -> {
             System.out.print("\b\b\b\b\b\b\b\b\b");
             if (prog >= 100)
@@ -99,5 +111,12 @@ public class Main {
             else
                 System.out.printf(" --> %3d%%", prog);
         };
+    }
+
+    static void checkLoc(File projectDir) throws ParameterException {
+        File props = new File(projectDir + "/config/mdw.properties");
+        if (!props.isFile()) {
+            throw new ParameterException("Invalid project: " + projectDir.getAbsolutePath());
+        }
     }
 }

@@ -81,6 +81,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.WorkingTreeIterator;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
+import org.eclipse.jgit.pgm.Main;
 
 import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.dataaccess.AssetRevision;
@@ -778,5 +779,12 @@ public class VersionControlGit implements VersionControl {
 
     public boolean exists() {
         return new File(localDir + "/.git").isDirectory();
+    }
+
+    /**
+     * Execute an arbitrary git command.
+     */
+    public void git(String... args) throws Exception {
+        Main.main(args);
     }
 }
