@@ -109,7 +109,7 @@ requestMod.controller('RequestController', ['$scope', '$location', '$route', '$r
   $scope.view = {
       request: 'Raw',
       response: 'Raw'
-  }
+  };
   
   var response = $route.current.loadedTemplateUrl.startsWith('requests/response');
   var master = false;
