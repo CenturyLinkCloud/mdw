@@ -32,4 +32,8 @@ public class DbInfo {
     private String password;
     String getPassword() { return password; }
 
+    public String toString() {
+        return "url=" + url + ", user=" + user;
+    }
+
 }

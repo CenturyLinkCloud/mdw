@@ -41,4 +41,8 @@ public class VcInfo {
 
     private String branch;
     public String getBranch() { return branch; }
+
+    public String toString() {
+        return "url=" + url + ", user=" + user + ", localDir=" + localDir + ", branch=" + branch;
+    }
 }

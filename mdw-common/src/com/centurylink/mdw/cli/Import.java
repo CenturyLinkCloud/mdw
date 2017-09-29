@@ -16,6 +16,7 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.beust.jcommander.Parameter;
@@ -33,6 +34,8 @@ public class Import extends Setup {
     private String project;
 
     public Import run(ProgressMonitor... progressMonitors) throws IOException {
+        System.out.println("Importing " + project + "...");
+        projectDir = new File(project);
 
         VcInfo vcInfo = new VcInfo(getGitRemoteUrl(), getGitUser(), getGitPassword(), getProjectDir(), getGitBranch());
         Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", getGitBranch());

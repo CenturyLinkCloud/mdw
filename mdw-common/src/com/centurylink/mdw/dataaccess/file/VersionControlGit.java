@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import org.eclipse.jgit.lib.ObjectStream;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.notes.Note;
 import org.eclipse.jgit.notes.NoteMap;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -587,15 +589,21 @@ public class VersionControlGit implements VersionControl {
         git.add().addFilepattern(filePattern).call();
     }
 
+    public void cloneNoCheckout() throws Exception {
+        cloneNoCheckout(false);
+    }
+
     /**
      * In lieu of sparse checkout since it's not yet supported in JGit:
      * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772
      */
-    public void cloneNoCheckout() throws Exception {
+    public void cloneNoCheckout(boolean withProgress) throws Exception {
         CloneCommand clone = Git.cloneRepository().setURI(repositoryUrl).setDirectory(localRepo.getDirectory().getParentFile()).setNoCheckout(true);
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=442029
         if (credentialsProvider != null)
             clone.setCredentialsProvider(credentialsProvider);
+        if (withProgress)
+            clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)));
         clone.call();
     }
 
@@ -768,4 +776,7 @@ public class VersionControlGit implements VersionControl {
         return out.toString();
     }
 
+    public boolean exists() {
+        return new File(localDir + "/.git").isDirectory();
+    }
 }

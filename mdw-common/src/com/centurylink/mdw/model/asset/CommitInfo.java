@@ -23,9 +23,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-
-public class CommitInfo implements Jsonable {
+public class CommitInfo { // implements Jsonable (removed for CLI)
 
     private String commit;
     public String getCommit() { return commit; }
@@ -64,7 +62,7 @@ public class CommitInfo implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-        JSONObject json = create();
+        JSONObject json = new JSONObject();
         if (commit != null)
             json.put("commit", commit);
         if (committer != null)

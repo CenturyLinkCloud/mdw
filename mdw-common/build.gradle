@@ -25,9 +25,6 @@ dependencies {
 
     cli group: "com.beust", name: "jcommander", version: "1.72"
     cli group: "org.json", name: "json", version: "20160810"
-    cli group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "4.8.0.201706111038-r"
-    cli group: "com.jcraft", name: "jsch", version: "0.1.54" // for jgit
-    cli group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.1.2"
 
     schemas fileTree(dir: '../mdw/libs', include: 'mdw-schemas.jar')
     
@@ -115,11 +112,19 @@ task cliJar(type: Jar) {
     manifest {
         attributes("MDW-Version": "${version}",
             "MDW-Build": new Date().format(mdwBuildTimeFormat),
-            "Main-Class": "com.centurylink.mdw.cli.Main")
+            "Main-Class": "com.centurylink.mdw.cli.Main",
+            "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar")
     }
     
     from("build/classes") {
         include "com/centurylink/mdw/cli/**/*.class"
+        include "com/centurylink/mdw/dataaccess/AssetRevision.class"
+        include "com/centurylink/mdw/dataaccess/VersionControl.class"
+        include "com/centurylink/mdw/dataaccess/file/VersionControlGit.class"
+        include "com/centurylink/mdw/dataaccess/file/VersionControlGit\$*.class"
+        include "com/centurylink/mdw/dataaccess/file/GitDiffs.class"
+        include "com/centurylink/mdw/dataaccess/file/GitDiffs\$*.class"
+        include "com/centurylink/mdw/model/asset/CommitInfo.class"
     }
     
     from configurations.cli.asFileTree.files.collect {
