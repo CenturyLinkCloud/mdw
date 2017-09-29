@@ -18,7 +18,6 @@ package com.centurylink.mdw.cli;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,9 +47,6 @@ public class Git implements Operation {
 
     public Git(String mavenRepoUrl, VcInfo vcInfo, String command, Object...params) {
         this.mavenRepoUrl = mavenRepoUrl;
-        if (!this.mavenRepoUrl.endsWith("/"))
-            this.mavenRepoUrl += "/";
-
         this.vcInfo = vcInfo;
         this.command = command;
         this.params = params;
@@ -59,22 +55,8 @@ public class Git implements Operation {
     @Override
     public Git run(ProgressMonitor... progressMonitors) throws IOException {
 
-        String mdwHome = System.getenv("MDW_HOME");
-        if (mdwHome == null)
-            throw new IOException("Missing environment variable: MDW_HOME");
-        File mdwDir = new File(mdwHome);
-        if (!mdwDir.isDirectory())
-            throw new IOException("MDW_HOME is not a directory: " + mdwDir.getAbsolutePath());
-        File libDir = new File (mdwDir + "/lib");
-        if (!libDir.exists() && !libDir.mkdirs())
-            throw new IOException("Cannot create lib dir: " + libDir.getAbsolutePath());
-
         for (String dep : DEPENDENCIES.keySet()) {
-            File depJar = new File(libDir + "/" + dep.substring(dep.lastIndexOf('/')));
-            if (!depJar.exists()) {
-                System.out.println("Downloading " + depJar + "...");
-                new Download(new URL(mavenRepoUrl + dep), depJar, DEPENDENCIES.get(dep)).run(progressMonitors);
-            }
+            new Dependency(mavenRepoUrl, dep, DEPENDENCIES.get(dep)).run(progressMonitors);
         }
 
         try {

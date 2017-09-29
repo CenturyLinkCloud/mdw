@@ -21,20 +21,21 @@ import java.io.IOException;
 /**
  * Capture current asset version info to DB.
  */
-public class Snapshot implements Operation {
+public class Checkpoint implements Operation {
 
     private File projectDir;
     private String assetLoc;
     private DbInfo dbInfo;
 
-    public Snapshot(File projectDir, String assetLoc, DbInfo dbInfo) {
+    public Checkpoint(File projectDir, String assetLoc, DbInfo dbInfo) {
         this.projectDir = projectDir;
         this.assetLoc = assetLoc;
         this.dbInfo = dbInfo;
     }
 
     @Override
-    public Snapshot run(ProgressMonitor... progressMonitors) throws IOException {
+    public Checkpoint run(ProgressMonitor... progressMonitors) throws IOException {
+
         // TODO
         System.out.println("SNAPSHOT...");
 

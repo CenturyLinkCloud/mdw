@@ -41,9 +41,9 @@ public class Import extends Setup {
         Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", getGitBranch());
 
         DbInfo dbInfo = null; // TODO
-        Snapshot snapshot = new Snapshot(getProjectDir(), getAssetLoc(), dbInfo);
+        Checkpoint checkpoint = new Checkpoint(getProjectDir(), getAssetLoc(), dbInfo);
 
-        snapshot.run(progressMonitors);
+        checkpoint.run(progressMonitors);
         git.run(progressMonitors);
 
         return this;
