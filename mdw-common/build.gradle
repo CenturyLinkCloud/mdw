@@ -113,7 +113,8 @@ task cliJar(type: Jar) {
         attributes("MDW-Version": "${version}",
             "MDW-Build": new Date().format(mdwBuildTimeFormat),
             "Main-Class": "com.centurylink.mdw.cli.Main",
-            "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar")
+            "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/slf4j-api-1.7.25.jar"
+              + " ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/mariadb-java-client-1.2.2.jar")
     }
     
     from("build/classes") {
@@ -124,6 +125,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/dataaccess/file/VersionControlGit\$*.class"
         include "com/centurylink/mdw/dataaccess/file/GitDiffs.class"
         include "com/centurylink/mdw/dataaccess/file/GitDiffs\$*.class"
+        include "com/centurylink/mdw/dataaccess/AssetRef.class"
         include "com/centurylink/mdw/model/asset/CommitInfo.class"
     }
     

@@ -38,12 +38,12 @@ public class Import extends Setup {
         projectDir = new File(project);
 
         VcInfo vcInfo = new VcInfo(getGitRemoteUrl(), getGitUser(), getGitPassword(), getProjectDir(), getGitBranch());
-        Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", getGitBranch());
 
         DbInfo dbInfo = null; // TODO
-        Checkpoint checkpoint = new Checkpoint(getProjectDir(), getAssetLoc(), dbInfo);
-
+        Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);
         checkpoint.run(progressMonitors);
+
+        Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch());
         git.run(progressMonitors);
 
         return this;

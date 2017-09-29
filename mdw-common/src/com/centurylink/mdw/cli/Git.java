@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -44,6 +43,8 @@ public class Git implements Operation {
     private VcInfo vcInfo;
     private String command;
     private Object[] params;
+    private Object result;
+    public Object getResult() { return result; }
 
     public Git(String mavenRepoUrl, VcInfo vcInfo, String command, Object...params) {
         this.mavenRepoUrl = mavenRepoUrl;
@@ -59,27 +60,32 @@ public class Git implements Operation {
             new Dependency(mavenRepoUrl, dep, DEPENDENCIES.get(dep)).run(progressMonitors);
         }
 
-        try {
-            invokeVersionControl();
-        }
-        catch (ReflectiveOperationException ex) {
-            throw new IOException(ex.getMessage(), ex);
+        if (command != null) {
+            try {
+                invokeVersionControl();
+            }
+            catch (ReflectiveOperationException ex) {
+                throw new IOException(ex.getMessage(), ex);
+            }
         }
 
         return this;
     }
 
+    private Class<? extends VersionControl> vcClass;
+    private VersionControl versionControl;
+    VersionControl getVersionControl() { return versionControl; }
+
     private void invokeVersionControl()
-            throws ReflectiveOperationException {
-        Class<? extends VersionControl> cls = Class.forName(VERSION_CONTROL).asSubclass(VersionControl.class);
-        Object vcGit = cls.newInstance();
-        Method connect = cls.getMethod("connect", String.class, String.class, String.class, File.class);
-        connect.invoke(vcGit, vcInfo.getUrl(), vcInfo.getUser(), vcInfo.getPassword(), vcInfo.getLocalDir());
-        Method exists = cls.getMethod("exists");
-        Object gitExists = exists.invoke(vcGit);
-        if (!"true".equalsIgnoreCase(gitExists.toString())) {
-            System.out.println("Git local not found: " + vcInfo.getLocalDir() + " -- cloning from " + vcInfo.getUrl() + "...");
-            cls.getMethod("cloneNoCheckout", boolean.class).invoke(vcGit, true);
+            throws ReflectiveOperationException, IOException {
+        if (vcClass == null) {
+            vcClass = Class.forName(VERSION_CONTROL).asSubclass(VersionControl.class);
+            versionControl = vcClass.newInstance();
+            versionControl.connect(vcInfo.getUrl(), vcInfo.getUser(), vcInfo.getPassword(), vcInfo.getLocalDir());
+            if (!versionControl.exists()) {
+                System.out.println("Git local not found: " + vcInfo.getLocalDir() + " -- cloning from " + vcInfo.getUrl() + "...");
+                vcClass.getMethod("cloneNoCheckout", boolean.class).invoke(versionControl, true);
+            }
         }
 
         // run the requested command
@@ -91,8 +97,8 @@ public class Git implements Operation {
                 args.add(param);
             }
         }
-        Method method = cls.getMethod(command, types.toArray(new Class<?>[0]));
-        method.invoke(vcGit, args.toArray(new Object[0]));
+        Method method = vcClass.getMethod(command, types.toArray(new Class<?>[0]));
+        result = method.invoke(versionControl, args.toArray(new Object[0]));
     }
 
 }

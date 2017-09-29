@@ -704,6 +704,10 @@ public class AssetServicesImpl implements AssetServices {
 
         public void clear() {
         }
+
+        public boolean exists() {
+            return false;
+        }
     }
 
 }
