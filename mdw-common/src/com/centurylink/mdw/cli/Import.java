@@ -26,6 +26,7 @@ import com.beust.jcommander.Parameters;
  * Import assets from Git.
  * Archiving is replaced by population of ASSET_REF db table.
  * Extends setup only so that Git info can be shared for template population.
+ * TODO: If local .git already present, confirm existing branch matches requested
  */
 @Parameters(commandNames="import", commandDescription="Import assets from Git", separators="=")
 public class Import extends Setup {

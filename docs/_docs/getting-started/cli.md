@@ -133,6 +133,14 @@ title: MDW Command Line Interface
             Default: https://github.com/CenturyLinkCloud/mdw/releases
           --mdw-version
             MDW Version
+          --releases-url
+            MDW Releases Maven Repo URL
+            Default: http://repo.maven.apache.org/maven2
+          --webapps-dir
+            Webapps dir for Tomcat or Jetty installation
+          --webtools
+            Include webtools
+            Default: false
 
     run      Run MDW
       Usage: run [options]
@@ -160,6 +168,10 @@ title: MDW Command Line Interface
   running quickly with MDW.
   
 ### Examples
+  - Install mdw.war for Tomcat on Linux
+  ```
+  mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.0.06
+  ```
   - Git Status
   ```
   mdw git status

@@ -27,9 +27,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        if (args.length > 1 && args[0].equals("git")) {
+        // this trimming is necessary on linux
+        String[] cmdArgs = new String[args.length];
+        for (int i = 0; i < args.length; i++)
+            cmdArgs[i] = args[i].trim();
+
+        if (cmdArgs.length > 1 && cmdArgs[0].equals("git")) {
             // git pass-through command
-            Git.main(args);
+            Git.main(cmdArgs);
             return;
         }
 
@@ -58,8 +63,8 @@ public class Main {
         cmd.setProgramName("mdw");
 
         try {
-            cmd.parse(args);
-            if (!init.isEclipse() && Arrays.asList(args).contains("--eclipse"))
+            cmd.parse(cmdArgs);
+            if (!init.isEclipse() && Arrays.asList(cmdArgs).contains("--eclipse"))
                 init.setEclipse(true); // needed to support superfluous setting
             String command = cmd.getParsedCommand();
 
@@ -80,7 +85,8 @@ public class Main {
                     update.run(getMonitor());
                 }
                 else if (command.equals("install")) {
-                    checkLoc(install.getProjectDir());
+                    if (install.getWebappsDir() == null)
+                        checkLoc(install.getProjectDir());
                     install.run(getMonitor());
                 }
                 else if (command.equals("run")) {
@@ -90,6 +96,7 @@ public class Main {
             }
         }
         catch (ParameterException ex) {
+            ex.printStackTrace();
             System.err.println(ex.getMessage());
             System.err.println("'mdw help' for usage information");
         }
@@ -103,7 +110,12 @@ public class Main {
      */
     static ProgressMonitor getMonitor() {
         return prog -> {
-            System.out.print("\b\b\b\b\b\b\b\b\b");
+            if ("\\".equals(System.getProperty("file.separator"))) {
+                System.out.print("\b\b\b\b\b\b\b\b\b");
+            }
+            else {
+                System.out.print("\r         \r");
+            }
             if (prog >= 100)
                 System.out.println(" --> Done");
             else if (prog <= 0) // don't report zero progress since it may indicate unknown
