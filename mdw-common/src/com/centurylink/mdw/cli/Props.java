@@ -62,11 +62,11 @@ public class Props {
     private Properties getProperties(File file) throws IOException {
         Properties properties = propFiles.get(file);
         if (properties == null) {
-            if (!file.exists())
-                throw new IOException("Missing: " + file.getAbsolutePath());
-            properties = new Properties();
-            properties.load(new FileInputStream(file));
-            propFiles.put(file, properties);
+            if (file.exists()) {
+                properties = new Properties();
+                properties.load(new FileInputStream(file));
+                propFiles.put(file, properties);
+            }
         }
         return properties;
     }
@@ -83,7 +83,11 @@ public class Props {
                 return value.toString();
         }
         File propFile = new File(projectDir + "/" + prop.getFile());
-        String value = getProperties(propFile).getProperty(prop.getProperty());
+        Properties properties = getProperties(propFile);
+        String value = null;
+        if (properties != null) {
+            value = properties.getProperty(prop.getProperty());
+        }
         if (value == null && required)
             throw new IOException("Missing value: " + prop);
         return value;

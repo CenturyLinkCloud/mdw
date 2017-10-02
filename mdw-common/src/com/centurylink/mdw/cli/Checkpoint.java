@@ -77,20 +77,22 @@ public class Checkpoint extends Setup {
             pkgName = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1)
                     .replace('/', '.').replace('\\', '.');
         }
-        for (File file : dir.listFiles()) {
-            if (pkgName != null && file.isFile()) {
-                AssetRevision rev = versionControl.getRevision(file);
-                if (rev == null) {
-                    rev = new AssetRevision();
-                    rev.setVersion(0);
-                    rev.setModDate(new Date());
+        if (dir.exists()) {
+            for (File file : dir.listFiles()) {
+                if (pkgName != null && file.isFile()) {
+                    AssetRevision rev = versionControl.getRevision(file);
+                    if (rev == null) {
+                        rev = new AssetRevision();
+                        rev.setVersion(0);
+                        rev.setModDate(new Date());
+                    }
+                    // logical path
+                    String name = pkgName + "/" + file.getName() + " " + rev.getFormattedVersion();
+                    refs.add(new AssetRef(name, versionControl.getId(new File(name)), commit));
                 }
-                // logical path
-                String name = pkgName + "/" + file.getName() + " " + rev.getFormattedVersion();
-                refs.add(new AssetRef(name, versionControl.getId(new File(name)), commit));
-            }
-            if (file.isDirectory()) {
-                refs.addAll(getRefs(file));
+                if (file.isDirectory()) {
+                    refs.addAll(getRefs(file));
+                }
             }
         }
         return refs;

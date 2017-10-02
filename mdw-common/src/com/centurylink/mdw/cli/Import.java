@@ -31,22 +31,29 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="import", commandDescription="Import assets from Git", separators="=")
 public class Import extends Setup {
 
-    @Parameter(description="<project>", required=true)
+    @Parameter(description="<project>")
     private String project;
 
     public Import run(ProgressMonitor... progressMonitors) throws IOException {
-        System.out.println("Importing " + project + "...");
-        projectDir = new File(project);
+        String proj = project;
+        if (proj == null)
+            proj = ".";
+        System.out.println("Importing " + proj + "...");
+        projectDir = new File(proj);
 
         Props props = new Props(projectDir, this);
         String gitUrl = props.get(Props.Git.REMOTE_URL);
         String gitUser = props.get(Props.Git.USER);
         String gitPassword = props.get(Props.Git.PASSWORD, false);
         String gitBranch = props.get(Props.Git.BRANCH, false);
-
         VcInfo vcInfo = new VcInfo(gitUrl, gitUser, gitPassword, projectDir, gitBranch);
 
-        DbInfo dbInfo = null; // TODO
+        String dbUrl = props.get(Props.Db.URL);
+        String dbUser = props.get(Props.Db.USER);
+        String dbPassword = props.get(Props.Db.PASSWORD);
+
+
+        DbInfo dbInfo = new DbInfo(dbUrl, dbUser, dbPassword);
         Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);
         checkpoint.run(progressMonitors);
 
