@@ -37,11 +37,6 @@ public class Init extends Setup {
     @Parameter(description="<project>", required=true)
     private String project;
 
-    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
-    private boolean snapshots;
-    public boolean isSnapshots() { return snapshots; }
-    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
-
     @Parameter(names="--user", description="Dev user")
     private String user = System.getProperty("user.name");
     public String getUser() { return user; }
@@ -83,26 +78,14 @@ public class Init extends Setup {
                 throw new IOException("Unable to create destination: " + projectDir);
         }
 
-        String releasesUrl = getReleasesUrl();
-        if (!releasesUrl.endsWith("/"))
-            releasesUrl += "/";
-
-        if (getMdwVersion() == null) {
-            // find latest non-snapshot
-            URL url = new URL(releasesUrl + "com/centurylink/mdw/mdw-templates/");
-            Crawl crawl = new Crawl(url, snapshots);
-            crawl.run();
-            if (crawl.getReleases().size() == 0)
-                throw new IOException("Unable to locate MDW releases: " + url);
-            setMdwVersion(crawl.getReleases().get(crawl.getReleases().size() - 1));
-        }
+        findMdwVersion();
 
         String templates = "mdw-templates-" + getMdwVersion() + ".zip";
         String templatesUrl;
         if (isSnapshots())
             templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
         else
-            templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
+            templatesUrl = getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run(progressMonitors);

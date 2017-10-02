@@ -32,7 +32,7 @@ import com.beust.jcommander.Parameters;
  * Handle War download.
  */
 @Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
-public class Install implements Operation {
+public class Install extends Setup {
 
     private static final String WEBTOOLS = "com/centurylink/mdw/mdw/5.5.40/mdw-webtools-5.5.40.war";
 
@@ -56,15 +56,6 @@ public class Install implements Operation {
         this.projectDir = projectDir;
     }
 
-    @Parameter(names="--mdw-version", description="MDW Version")
-    private String mdwVersion;
-    protected String getMdwVersion() throws IOException {
-        if (mdwVersion == null)
-            mdwVersion = new Version().getMdwVersion(getProjectDir());
-        return mdwVersion;
-    }
-    public void setMdwVersion(String version) { this.mdwVersion = version; }
-
     @Parameter(names="--webapps-dir", description="Webapps dir for Tomcat or Jetty installation")
     private File webappsDir;
     public File getWebappsDir() { return webappsDir; }
@@ -74,11 +65,6 @@ public class Install implements Operation {
     private String binariesUrl = "https://github.com/CenturyLinkCloud/mdw/releases";
     public String getBinariesUrl() { return binariesUrl; }
     public void setBinariesUrl(String url) { this.binariesUrl = url; }
-
-    @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
-    private String releasesUrl = "http://repo.maven.apache.org/maven2";
-    public String getReleasesUrl() { return releasesUrl; }
-    public void setReleasesUrl(String url) { this.releasesUrl = url; }
 
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
         String mdwVer = getMdwVersion();
@@ -107,12 +93,9 @@ public class Install implements Operation {
                 }
             }
             // download from releases-url
-            String releasesUrl = getReleasesUrl();
-            if (!releasesUrl.endsWith("/"))
-                releasesUrl += "/";
-            URL url = new URL(releasesUrl + "com/centurylink/mdw/mdw/" + mdwVer + "/mdw-" + mdwVer + ".war");
+            URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw/" + mdwVer + "/mdw-" + mdwVer + ".war");
             if (webtools) {
-                URL webtoolsUrl = new URL(releasesUrl + WEBTOOLS);
+                URL webtoolsUrl = new URL(getReleasesUrl() + "/" + WEBTOOLS);
                 downloads = new Download[]{new Download(url, warFile, MDW_WAR_SIZE), new Download(webtoolsUrl, webtoolsWar)};
             }
             else {
@@ -168,9 +151,7 @@ public class Install implements Operation {
                 }
             }
             else {
-                if (!binariesUrl.endsWith("/"))
-                    binariesUrl += "/";
-                downloads = new Download[]{new Download(new URL(binariesUrl + "download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile, MDW_BOOT_SIZE)};
+                downloads = new Download[]{new Download(new URL(getBinariesUrl() + "/download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile, MDW_BOOT_SIZE)};
             }
         }
 

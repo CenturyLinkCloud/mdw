@@ -16,14 +16,13 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +45,22 @@ public abstract class Setup implements Operation {
     private String mdwVersion;
     public String getMdwVersion() { return mdwVersion; }
     public void setMdwVersion(String version) { this.mdwVersion = version; }
+    public String findMdwVersion() throws IOException {
+        if (getMdwVersion() == null) {
+            URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/");
+            Crawl crawl = new Crawl(url, isSnapshots());
+            crawl.run();
+            if (crawl.getReleases().size() == 0)
+                throw new IOException("Unable to locate MDW releases: " + url);
+            setMdwVersion(crawl.getReleases().get(crawl.getReleases().size() - 1));
+        }
+        return mdwVersion;
+    }
+
+    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
+    private boolean snapshots;
+    public boolean isSnapshots() { return snapshots; }
+    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
@@ -54,7 +69,9 @@ public abstract class Setup implements Operation {
 
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
-    public String getReleasesUrl() { return releasesUrl; }
+    public String getReleasesUrl() {
+        return releasesUrl.endsWith("/") ? releasesUrl.substring(0, releasesUrl.length() - 1) : releasesUrl;
+    }
     public void setReleasesUrl(String url) { this.releasesUrl = url; }
 
     @Parameter(names="--asset-loc", description="Asset location")
@@ -89,12 +106,34 @@ public abstract class Setup implements Operation {
     String getGitPassword() { return this.gitPassword; }
     public void setGitPassword(String password) { this.gitPassword = password; }
 
+    @Parameter(names="--database-url", description="JDBC URL (without credentials)")
+    private String databaseUrl = "jdbc:mariadb://localhost:3308/mdw";
+    public String getDatabaseUrl() { return databaseUrl; }
+    public void setDatabaseUrl(String url) { this.databaseUrl = url; }
+
+    @Parameter(names="--database-user", description="DB User")
+    private String databaseUser = "mdw";
+    public String getDatabaseUser() { return databaseUser; }
+    public void setDatabaseUser(String user) { this.databaseUser = user; }
+
+    @Parameter(names="--database-password", description="DB Password")
+    private String databasePassword = "mdw";
+    public String getDatabasePassword() { return databasePassword; }
+    public void setDatabasePassword(String password) { this.databasePassword = password; }
+
+    private String databaseDriver = "org.mariadb.jdbc.Driver";
+    public String getDatabaseDriver() {
+        String driver = DbInfo.getDatabaseDriver(getDatabaseUrl());
+        return driver == null ? databaseDriver : driver;
+    }
+    public void setDatabaseDriver(String driver) { this.databaseDriver = driver; }
+
     /**
      * Checks for any existing packages.  If none present, adds the defaults.
      */
     protected void initBaseAssetPackages() throws IOException {
         baseAssetPackages = new ArrayList<>();
-        String assetLoc = getProperty("mdw.asset.location");
+        String assetLoc = new Props(projectDir, this).get(Props.ASSET_LOC);
         File assetDir = new File(projectDir + "/" + assetLoc);
         addBasePackages(assetDir, assetDir);
         if (baseAssetPackages.isEmpty())
@@ -208,24 +247,5 @@ public abstract class Setup implements Operation {
             capNextChar = false;
         }
         return nameBuilder.toString();
-    }
-
-    protected Properties getProperties() throws IOException {
-        File propFile = new File(projectDir + "/config/mdw.properties");
-        if (!propFile.exists())
-            throw new IOException("Missing: " + propFile.getAbsolutePath());
-        Properties props = new Properties();
-        props.load(new FileInputStream(propFile));
-        return props;
-    }
-
-    /**
-     * Reloads every time.  Use {@link #getProperties()} for multiple.
-     */
-    protected String getProperty(String name) throws IOException {
-        String prop = getProperties().getProperty(name);
-        if (prop == null)
-            throw new IOException("Missing in config/mdw.properties: " + name);
-        return prop;
     }
 }

@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DbInfo {
 
     public DbInfo(String url, String user, String password) {
@@ -34,6 +37,28 @@ public class DbInfo {
 
     public String toString() {
         return "url=" + url + ", user=" + user;
+    }
+
+    public static Map<String,Long> getDependencies(String dbUrl) {
+        Map<String,Long> map = new HashMap<>();
+        if (dbUrl.startsWith("jdbc:mariadb"))
+            map.put("org/mariadb/jdbc/mariadb-java-client/1.2.2/mariadb-java-client-1.2.2.jar", 300713L);
+        else if (dbUrl.startsWith("jdbc:mysql"))
+            map.put("mysql/mysql-connector-java/5.1.29/mysql-connector-java-5.1.29.jar", 876730L);
+        else if (dbUrl.startsWith("jdbc:oracle"))
+            map.put("com/oracle/ojdbc6/12.1.0.2.0/ojdbc6-12.1.0.2.0.jar", 3692096L);
+        return map;
+    }
+
+    public static String getDatabaseDriver(String dbUrl) {
+        if (dbUrl.startsWith("jdbc:mariadb"))
+            return "org.mariadb.jdbc.Driver";
+        else if (dbUrl.startsWith("jdbc:mysql"))
+            return "com.mysql.jdbc.Driver";
+        else if (dbUrl.startsWith("jdbc:oracle"))
+            return "oracle.jdbc.driver.OracleDriver";
+        else
+            return null;
     }
 
 }

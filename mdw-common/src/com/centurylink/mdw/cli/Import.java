@@ -38,7 +38,13 @@ public class Import extends Setup {
         System.out.println("Importing " + project + "...");
         projectDir = new File(project);
 
-        VcInfo vcInfo = new VcInfo(getGitRemoteUrl(), getGitUser(), getGitPassword(), getProjectDir(), getGitBranch());
+        Props props = new Props(projectDir, this);
+        String gitUrl = props.get(Props.Git.REMOTE_URL);
+        String gitUser = props.get(Props.Git.USER);
+        String gitPassword = props.get(Props.Git.PASSWORD, false);
+        String gitBranch = props.get(Props.Git.BRANCH, false);
+
+        VcInfo vcInfo = new VcInfo(gitUrl, gitUser, gitPassword, projectDir, gitBranch);
 
         DbInfo dbInfo = null; // TODO
         Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);

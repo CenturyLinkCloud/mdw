@@ -18,7 +18,6 @@ package com.centurylink.mdw.cli;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,23 +45,6 @@ public class Git implements Operation {
         cmd.parse(gitArgs);
         git.run(Main.getMonitor());
     }
-
-    private static final String VERSION_CONTROL = "com.centurylink.mdw.dataaccess.file.VersionControlGit";
-
-    private static final Map<String,Long> DEPENDENCIES = new HashMap<>();
-    static {
-        DEPENDENCIES.put("org/eclipse/jgit/org.eclipse.jgit/4.8.0.201706111038-r/org.eclipse.jgit-4.8.0.201706111038-r.jar", 2474713L);
-        DEPENDENCIES.put("org/eclipse/jgit/org.eclipse.jgit.pgm/4.8.0.201706111038-r/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar", 251079L);
-        DEPENDENCIES.put("org/eclipse/jgit/org.eclipse.jgit.http.apache/4.8.0.201706111038-r/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar", 22168L);
-        DEPENDENCIES.put("org/eclipse/jgit/org.eclipse.jgit.lfs/4.8.0.201706111038-r/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar", 46166L);
-        DEPENDENCIES.put("org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L);
-        DEPENDENCIES.put("org/slf4j/slf4j-simple/1.7.25/slf4j-simple-1.7.25.jar", 15257L);
-        DEPENDENCIES.put("com/jcraft/jsch/0.1.54/jsch-0.1.54.jar", 280515L);
-        DEPENDENCIES.put("args4j/args4j/2.0.15/args4j-2.0.15.jar",  155379L);
-        DEPENDENCIES.put("commons-logging/commons-logging/1.2/commons-logging-1.2.jar", 61829L);
-        DEPENDENCIES.put("org/apache/httpcomponents/httpcore/4.4.7/httpcore-4.4.7.jar", 325123L);
-        DEPENDENCIES.put("org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar", 747794L);
-    };
 
     private String mavenRepoUrl;
     private VcInfo vcInfo;
@@ -93,8 +75,9 @@ public class Git implements Operation {
     @Override
     public Git run(ProgressMonitor... progressMonitors) throws IOException {
 
-        for (String dep : DEPENDENCIES.keySet()) {
-            new Dependency(mavenRepoUrl, dep, DEPENDENCIES.get(dep)).run(progressMonitors);
+        Map<String,Long> gitDependencies = VcInfo.getDependencies("git");
+        for (String dep : gitDependencies.keySet()) {
+            new Dependency(mavenRepoUrl, dep, gitDependencies.get(dep)).run(progressMonitors);
         }
 
         if (command != null) {
@@ -116,7 +99,8 @@ public class Git implements Operation {
     private void invokeVersionControl()
             throws ReflectiveOperationException, IOException {
         if (vcClass == null) {
-            vcClass = Class.forName(VERSION_CONTROL).asSubclass(VersionControl.class);
+            String vcClassName = VcInfo.getVersionControlClass("git");
+            vcClass = Class.forName(vcClassName).asSubclass(VersionControl.class);
             versionControl = vcClass.newInstance();
             if (!command.equals("git")) {
                 versionControl.connect(vcInfo.getUrl(), vcInfo.getUser(), vcInfo.getPassword(), vcInfo.getLocalDir());

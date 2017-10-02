@@ -18,8 +18,6 @@ public class Dependency implements Operation {
 
     public Dependency(String mavenRepoUrl, String path, long size) {
         this.mavenRepoUrl = mavenRepoUrl;
-        if (!this.mavenRepoUrl.endsWith("/"))
-            this.mavenRepoUrl += "/";
         this.path = path;
         this.size = size;
     }
@@ -39,7 +37,7 @@ public class Dependency implements Operation {
         File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));
         if (!depJar.exists()) {
             System.out.println("Downloading " + depJar + "...");
-            new Download(new URL(mavenRepoUrl + path), depJar, size).run(progressMonitors);
+            new Download(new URL(mavenRepoUrl + "/" + path), depJar, size).run(progressMonitors);
         }
         return this;
     }

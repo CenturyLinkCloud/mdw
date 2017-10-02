@@ -45,14 +45,15 @@ public class Update extends Setup {
     }
 
     public Update run(ProgressMonitor... progressMonitors) throws IOException {
-        this.assetDir = new File(this.projectDir + "/" + getProperty("mdw.asset.location"));
+        Props props = new Props(projectDir, this);
+        this.assetDir = new File(this.projectDir + "/" + props.get(Props.ASSET_LOC));
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
         }
 
         List<String> discovered = new ArrayList<>();
-        String discoveryUrl = getProperty("mdw.discovery.url");
+        String discoveryUrl = props.get(Props.DISCOVERY_URL);
         System.out.println("Discovering assets from: " + discoveryUrl);
         String assetsJson = new Fetch(new URL(discoveryUrl + "/services/Assets")).run().getData();
         JSONObject json = new JSONObject(assetsJson);

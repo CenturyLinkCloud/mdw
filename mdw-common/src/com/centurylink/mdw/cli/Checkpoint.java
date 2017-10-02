@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +29,7 @@ import com.centurylink.mdw.dataaccess.VersionControl;
 /**
  * Capture current asset version info to DB.
  */
-public class Checkpoint implements Operation {
-
-    private static final Map<String,Long> DEPENDENCIES = new HashMap<>();
-    static {
-        DEPENDENCIES.put("org/mariadb/jdbc/mariadb-java-client/1.2.2/mariadb-java-client-1.2.2.jar", 300713L);
-    };
+public class Checkpoint extends Setup {
 
     private String mavenRepoUrl;
     private VcInfo vcInfo;
@@ -54,8 +48,9 @@ public class Checkpoint implements Operation {
     @Override
     public Checkpoint run(ProgressMonitor... progressMonitors) throws IOException {
 
-        for (String dep : DEPENDENCIES.keySet()) {
-            new Dependency(mavenRepoUrl, dep, DEPENDENCIES.get(dep)).run(progressMonitors);
+        Map<String,Long> dbDependencies = DbInfo.getDependencies(dbInfo.getUrl());
+        for (String dep : dbDependencies.keySet()) {
+            new Dependency(mavenRepoUrl, dep, dbDependencies.get(dep)).run(progressMonitors);
         }
 
         Git git = new Git(mavenRepoUrl, vcInfo, "getCommit");
