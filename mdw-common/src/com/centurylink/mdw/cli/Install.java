@@ -67,7 +67,7 @@ public class Install extends Setup {
     public void setBinariesUrl(String url) { this.binariesUrl = url; }
 
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
-        String mdwVer = getMdwVersion();
+        String mdwVer = new Props(getProjectDir(), this).get(Props.Gradle.MDW_VERSION);
         Download[] downloads = null;
         if (webappsDir != null) {
             // download war from maven releases-url
