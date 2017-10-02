@@ -39,12 +39,17 @@ public abstract class Setup implements Operation {
     }
 
     File projectDir;
-    public File getProjectDir() { return projectDir; }
+    public File getProjectDir() {
+        return projectDir;
+    }
 
     @Parameter(names="--mdw-version", description="MDW Version")
     private String mdwVersion;
     public String getMdwVersion() { return mdwVersion; }
-    public void setMdwVersion(String version) { this.mdwVersion = version; }
+    public void setMdwVersion(String version) {
+        this.mdwVersion = version;
+        Props.Gradle.MDW_VERSION.specified = true;
+    }
     public String findMdwVersion() throws IOException {
         if (getMdwVersion() == null) {
             URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/");
@@ -52,7 +57,7 @@ public abstract class Setup implements Operation {
             crawl.run();
             if (crawl.getReleases().size() == 0)
                 throw new IOException("Unable to locate MDW releases: " + url);
-            setMdwVersion(crawl.getReleases().get(crawl.getReleases().size() - 1));
+            mdwVersion = crawl.getReleases().get(crawl.getReleases().size() - 1);
         }
         return mdwVersion;
     }
@@ -65,19 +70,28 @@ public abstract class Setup implements Operation {
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
     public String getDiscoveryUrl() { return discoveryUrl; }
-    public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
+    public void setDiscoveryUrl(String url) {
+        this.discoveryUrl = url;
+        Props.DISCOVERY_URL.specified = true;
+    }
 
     @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
     public String getReleasesUrl() {
         return releasesUrl.endsWith("/") ? releasesUrl.substring(0, releasesUrl.length() - 1) : releasesUrl;
     }
-    public void setReleasesUrl(String url) { this.releasesUrl = url; }
+    public void setReleasesUrl(String url) {
+        this.releasesUrl = url;
+        Props.Gradle.MAVEN_REPO_URL.specified = true;
+    }
 
     @Parameter(names="--asset-loc", description="Asset location")
     private String assetLoc = "assets";
     public String getAssetLoc() { return assetLoc; }
-    public void setAssetLoc(String assetLoc) { this.assetLoc = assetLoc; }
+    public void setAssetLoc(String assetLoc) {
+        this.assetLoc = assetLoc;
+        Props.ASSET_LOC.specified = true;
+    }
 
     @Parameter(names="--base-asset-packages", description="MDW Base Asset Packages (comma-separated)",
             splitter=CommaParameterSplitter.class)
@@ -89,37 +103,58 @@ public abstract class Setup implements Operation {
     @Parameter(names="--git-remote-url", description="Git repository URL")
     private String gitRemoteUrl = "https://github.com/CenturyLinkCloud/mdw-demo.git";
     public String getGitRemoteUrl() { return gitRemoteUrl; }
-    public void setGitRemoteUrl(String url) { this.gitRemoteUrl = url; }
+    public void setGitRemoteUrl(String url) {
+        this.gitRemoteUrl = url;
+        Props.Git.REMOTE_URL.specified = true;
+    }
 
     @Parameter(names="--git-branch", description="Git branch")
     private String gitBranch = "master";
     public String getGitBranch() { return gitBranch; }
-    public void setGitBranch(String branch) { this.gitBranch = branch; }
+    public void setGitBranch(String branch) {
+        this.gitBranch = branch;
+        Props.Git.BRANCH.specified = true;
+    }
 
     @Parameter(names="--git-user", description="Git user")
     private String gitUser = "anonymous";
     public String getGitUser() { return gitUser; }
-    public void setGitUser(String user) { this.gitUser = user; }
+    public void setGitUser(String user) {
+        this.gitUser = user;
+        Props.Git.USER.specified = true;
+    }
 
     @Parameter(names="--git-password", description="Git password")
     private String gitPassword;
     String getGitPassword() { return this.gitPassword; }
-    public void setGitPassword(String password) { this.gitPassword = password; }
+    public void setGitPassword(String password) {
+        this.gitPassword = password;
+        Props.Git.PASSWORD.specified = true;
+    }
 
     @Parameter(names="--database-url", description="JDBC URL (without credentials)")
     private String databaseUrl = "jdbc:mariadb://localhost:3308/mdw";
     public String getDatabaseUrl() { return databaseUrl; }
-    public void setDatabaseUrl(String url) { this.databaseUrl = url; }
+    public void setDatabaseUrl(String url) {
+        this.databaseUrl = url;
+        Props.Db.URL.specified = true;
+    }
 
     @Parameter(names="--database-user", description="DB User")
     private String databaseUser = "mdw";
     public String getDatabaseUser() { return databaseUser; }
-    public void setDatabaseUser(String user) { this.databaseUser = user; }
+    public void setDatabaseUser(String user) {
+        this.databaseUser = user;
+        Props.Db.USER.specified = true;
+    }
 
     @Parameter(names="--database-password", description="DB Password")
     private String databasePassword = "mdw";
     public String getDatabasePassword() { return databasePassword; }
-    public void setDatabasePassword(String password) { this.databasePassword = password; }
+    public void setDatabasePassword(String password) {
+        this.databasePassword = password;
+        Props.Db.PASSWORD.specified = true;
+    }
 
     private String databaseDriver = "org.mariadb.jdbc.Driver";
     public String getDatabaseDriver() {
@@ -133,8 +168,8 @@ public abstract class Setup implements Operation {
      */
     protected void initBaseAssetPackages() throws IOException {
         baseAssetPackages = new ArrayList<>();
-        String assetLoc = new Props(projectDir, this).get(Props.ASSET_LOC);
-        File assetDir = new File(projectDir + "/" + assetLoc);
+        String assetLoc = new Props(getProjectDir(), this).get(Props.ASSET_LOC);
+        File assetDir = new File(getProjectDir() + "/" + assetLoc);
         addBasePackages(assetDir, assetDir);
         if (baseAssetPackages.isEmpty())
             baseAssetPackages = defaultBasePackages;

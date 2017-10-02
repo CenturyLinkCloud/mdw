@@ -47,7 +47,7 @@ public class Props {
     }
     public static class Db {
         public static final Prop URL = new Prop("database-url", MDW, "mdw.database.url");
-        public static final Prop USER = new Prop("database-user", MDW, "mdw.database.user");
+        public static final Prop USER = new Prop("database-user", MDW, "mdw.database.username");
         public static final Prop PASSWORD = new Prop("database-password", MDW, "mdw.database.password");
         public static final Prop DRIVER = new Prop("database-driver", MDW, "mdw.database.driver");
     }
@@ -76,17 +76,26 @@ public class Props {
     }
 
     public String get(Prop prop, boolean required) throws IOException {
-        if (setup != null) {
-            // command-line params take precedence
-            Object value = setup.getValue(prop.getName());
-            if (value != null)
-                return value.toString();
-        }
-        File propFile = new File(projectDir + "/" + prop.getFile());
-        Properties properties = getProperties(propFile);
         String value = null;
-        if (properties != null) {
-            value = properties.getProperty(prop.getProperty());
+        if (prop.specified && setup != null) {
+            // command-line params take precedence
+            Object obj = setup.getValue(prop.getName());
+            if (obj != null)
+                value = obj.toString();
+        }
+        if (value == null) {
+            // read from prop file (if exists)
+            File propFile = new File(projectDir + "/" + prop.getFile());
+            Properties properties = getProperties(propFile);
+            if (properties != null) {
+                value = properties.getProperty(prop.getProperty());
+            }
+            if (value == null && setup != null) {
+                // fall back to default (non-specified) value
+                Object obj = setup.getValue(prop.getName());
+                if (obj != null)
+                    value = obj.toString();
+            }
         }
         if (value == null && required)
             throw new IOException("Missing value: " + prop);

@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,12 @@ public class DbInfo {
         this.url = url;
         this.user = user;
         this.password = password;
+    }
+
+    public DbInfo(Props props) throws IOException {
+        this.url = props.get(Props.Db.URL);
+        this.user = props.get(Props.Db.USER);
+        this.password = props.get(Props.Db.PASSWORD);
     }
 
     private String url;

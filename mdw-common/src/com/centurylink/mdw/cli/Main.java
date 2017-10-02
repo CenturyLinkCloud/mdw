@@ -32,10 +32,16 @@ public class Main {
         for (int i = 0; i < args.length; i++)
             cmdArgs[i] = args[i].trim();
 
-        if (cmdArgs.length > 1 && cmdArgs[0].equals("git")) {
-            // git pass-through command
-            Git.main(cmdArgs);
-            return;
+        if (cmdArgs.length > 1) {
+            if (cmdArgs[0].equals("git")) {
+                // git pass-through command
+                Git.main(cmdArgs);
+                return;
+            }
+            else if (cmdArgs[0].equals("asset")) {
+                Asset.main(cmdArgs);
+                return;
+            }
         }
 
         Help help = new Help();
@@ -46,6 +52,7 @@ public class Main {
         Install install = new Install();
         Run run = new Run();
         Git git = new Git();
+        Asset asset = new Asset();
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
@@ -58,6 +65,7 @@ public class Main {
             .addCommand("run", run)
             .addCommand("version", version)
             .addCommand("git", git)
+            .addCommand("asset", asset)
             .build();
 
         cmd.setProgramName("mdw");

@@ -39,8 +39,16 @@ public class Prop {
         this.property = property;
     }
 
+    /**
+     * Specified via command-line.
+     */
+    boolean specified;
+
     public String toString() {
-        return name + " --> (" + file + ") " + property;
+        String s = name + " --> (" + file + ") " + property;
+        if (specified)
+            s += "*";
+        return s;
     }
 
 }

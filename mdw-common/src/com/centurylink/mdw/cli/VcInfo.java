@@ -16,17 +16,26 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class VcInfo {
 
-    public VcInfo(String url, String user, String password, File localDir, String branch) {
+    public VcInfo(File localDir, String url, String user, String password, String branch) {
+        this.localDir = localDir;
         this.url = url;
         this.user = user;
         this.password = password;
-        this.localDir = localDir;
         this.branch = branch;
+    }
+
+    public VcInfo(File localDir, Props props) throws IOException {
+        this.localDir = localDir;
+        this.url = props.get(Props.Git.REMOTE_URL);
+        this.user = props.get(Props.Git.USER);
+        this.password = props.get(Props.Git.PASSWORD, false);
+        this.branch = props.get(Props.Git.BRANCH, false);
     }
 
     private String url;

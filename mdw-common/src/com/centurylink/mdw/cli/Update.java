@@ -32,10 +32,6 @@ public class Update extends Setup {
 
     private File assetDir;
 
-    public Update(File projectDir) {
-        this.projectDir = projectDir;
-    }
-
     public Update(Setup cloneFrom) {
         super(cloneFrom);
     }

@@ -18,44 +18,32 @@ package com.centurylink.mdw.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 /**
  * Import assets from Git.
  * Archiving is replaced by population of ASSET_REF db table.
- * Extends setup only so that Git info can be shared for template population.
  * TODO: If local .git already present, confirm existing branch matches requested
  */
 @Parameters(commandNames="import", commandDescription="Import assets from Git", separators="=")
 public class Import extends Setup {
 
-    @Parameter(description="<project>")
-    private String project;
-
     public Import run(ProgressMonitor... progressMonitors) throws IOException {
-        String proj = project;
-        if (proj == null)
-            proj = ".";
-        System.out.println("Importing " + proj + "...");
-        projectDir = new File(proj);
+        File projectDir = getProjectDir();
+        System.out.println("Importing " + projectDir + "...");
 
         Props props = new Props(projectDir, this);
-        String gitUrl = props.get(Props.Git.REMOTE_URL);
-        String gitUser = props.get(Props.Git.USER);
-        String gitPassword = props.get(Props.Git.PASSWORD, false);
-        String gitBranch = props.get(Props.Git.BRANCH, false);
-        VcInfo vcInfo = new VcInfo(gitUrl, gitUser, gitPassword, projectDir, gitBranch);
-
-        String dbUrl = props.get(Props.Db.URL);
-        String dbUser = props.get(Props.Db.USER);
-        String dbPassword = props.get(Props.Db.PASSWORD);
-
-
-        DbInfo dbInfo = new DbInfo(dbUrl, dbUser, dbPassword);
+        VcInfo vcInfo = new VcInfo(projectDir, props);
+        DbInfo dbInfo = new DbInfo(props);
         Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);
-        checkpoint.run(progressMonitors);
+        try {
+            checkpoint.run(progressMonitors).updateRefs();;
+        }
+        catch (SQLException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
 
         Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch());
         git.run(progressMonitors);
