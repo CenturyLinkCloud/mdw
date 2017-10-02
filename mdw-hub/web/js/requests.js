@@ -106,6 +106,11 @@ requestMod.controller('RequestController', ['$scope', '$location', '$route', '$r
                                              function($scope, $location, $route, $routeParams, mdw, util, Request) {
   $scope.context = $location.path().startsWith('/service/') ? 'service' : 'workflow';
   
+  $scope.view = {
+      request: 'Raw',
+      response: 'Raw'
+  };
+  
   var response = $route.current.loadedTemplateUrl.startsWith('requests/response');
   var master = false;
   var id = $routeParams.requestId;
@@ -118,21 +123,41 @@ requestMod.controller('RequestController', ['$scope', '$location', '$route', '$r
     var trimmed;
     if (response) {
       trimmed = $scope.request.responseContent.trim();
-      if (trimmed.startsWith('{'))
+      if (trimmed.startsWith('{')) {
         $scope.request.responseFormat = 'json';
-      else if (trimmed.startsWith('<'))
+        try {
+          var parsedResponse = JSON.parse(trimmed);
+          $scope.request.formattedResponse = JSON.stringify(parsedResponse, null, 2);
+        }
+        catch (ex) {
+          console.log(ex);
+        }
+      }
+      else if (trimmed.startsWith('<')) {
         $scope.request.responseFormat = 'xml';
-      if ($scope.request.responseMeta && $scope.request.responseMeta.headers)
+      }
+      if ($scope.request.responseMeta && $scope.request.responseMeta.headers) {
         $scope.request.responseMetaHeaders = $scope.getMetaHeaders($scope.request.responseMeta.headers);
+      }
     }
     else {
       trimmed = $scope.request.content.trim();
-      if (trimmed.startsWith('{'))
+      if (trimmed.startsWith('{')) {
         $scope.request.format = 'json';
-      else if (trimmed.startsWith('<'))
+        try {
+          var parsedRequest = JSON.parse(trimmed);
+          $scope.request.formattedContent = JSON.stringify(parsedRequest, null, 2);
+        }
+        catch (ex) {
+          console.log(ex);
+        }
+      }
+      else if (trimmed.startsWith('<')) {
         $scope.request.format = 'xml';
-      if ($scope.request.meta && $scope.request.meta.headers)
+      }
+      if ($scope.request.meta && $scope.request.meta.headers) {
         $scope.request.metaHeaders = $scope.getMetaHeaders($scope.request.meta.headers);
+      }
     }
   });
   

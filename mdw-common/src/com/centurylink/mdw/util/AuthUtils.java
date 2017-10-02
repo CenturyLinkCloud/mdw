@@ -123,7 +123,8 @@ public class AuthUtils {
         if (authorizationHeader == null)
             authorizationHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
 
-        if (authorizationHeader!=null) {
+        // Do NOT try to authenticate if it's not Basic auth
+        if (authorizationHeader!=null && authorizationHeader.startsWith("Basic")) {
             authorizationHeader = authorizationHeader.replaceFirst("Basic ", "");
 
             byte[] valueDecoded= Base64.decodeBase64(authorizationHeader.getBytes());

@@ -257,9 +257,9 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw', 'util', 'Assets',
-                                               function($scope, $cookieStore, mdw, util, Assets) {
-  $scope.definitionList = Assets.get({extension: 'proc'}, function success() {
+processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw', 'util', 'ProcessDef',
+                                               function($scope, $cookieStore, mdw, util, ProcessDef) {
+  $scope.definitionList = ProcessDef.retrieve({}, function success() {
     var pkgs = $scope.definitionList.packages;
     pkgs.forEach(function(pkg) {
       pkg.assets.forEach(function(a) {

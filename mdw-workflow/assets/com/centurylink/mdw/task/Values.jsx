@@ -54,14 +54,19 @@ class Values extends Component {
       values.push(val);
     });
     values.sort((val1, val2) => {
-      var diff = val1.sequence - val2.sequence;
-      if (diff === 0) {
+      if (typeof val1.sequence === 'number') {
+        if (typeof val2.sequence === 'number')
+          return val1.sequence - val2.sequence;
+        else
+          return -1;
+      }
+      else if (typeof val2.sequence === 'number') {
+        return 1;
+      }
+      else {
         var label1 = val1.label ? val1.label : val1.name;
         var label2 = val2.label ? val2.label : val2.name;
         return label1.toLowerCase().localeCompare(label2.toLowerCase());
-      }
-      else {
-        return diff;
       }
     });      
     this.setState({
@@ -153,4 +158,4 @@ Values.contextTypes = {
   serviceRoot: PropTypes.string  
 };
 
-export default Values;  
+export default Values;

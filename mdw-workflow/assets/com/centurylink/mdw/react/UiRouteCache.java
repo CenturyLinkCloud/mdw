@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.react;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -34,13 +31,12 @@ import com.centurylink.mdw.model.asset.Asset;
 @RegisteredService(value=CacheService.class)
 public class UiRouteCache implements CacheService {
 
-    private static JSONArray routesJson;  // null if no routes.json asset
-    private static Map<String,String> jsxToPath;  // never null if loaded
+    // Null if not loaded; empty if no routes.json asset.
+    private static JSONArray routesJson;
 
     @Override
     public void clearCache() {
         routesJson = null;
-        jsxToPath = null;
     }
 
     @Override
@@ -49,29 +45,36 @@ public class UiRouteCache implements CacheService {
     }
 
     public static synchronized void loadCache() {
-        jsxToPath = new HashMap<>();
         String hubOverridePackage = ApplicationContext.getHubOverridePackage();
         Asset routesAsset = AssetCache.getAsset(hubOverridePackage + ".js/routes.json");
-        if (routesAsset != null) {
+        if (routesAsset == null) {
+            routesJson = new JSONArray();
+        }
+        else {
             routesJson = new JSONArray(routesAsset.getStringContent());
-            for (int i = 0; i < routesJson.length(); i++) {
-                JSONObject route = routesJson.getJSONObject(i);
-                String asset = route.getString("asset");
-                if (asset.endsWith(".jsx")) {
-                    jsxToPath.put(asset, route.getString("path"));
-                }
-            }
         }
     }
 
-    public static String getPath(String jsxAsset) {
-        if (jsxToPath == null)
+    public static String getPath(String jsxAsset, boolean parameterized) {
+        if (routesJson == null)
             loadCache();
-        return jsxToPath.get(jsxAsset);
+        for (int i = 0; i < routesJson.length(); i++) {
+            JSONObject route = routesJson.getJSONObject(i);
+            String asset = route.getString("asset");
+            if (asset.endsWith(".jsx")) {
+                if (asset.equals(jsxAsset)) {
+                    String path = route.getString("path");
+                    boolean hasParam = path.indexOf("/:") >= 0;
+                    if ((parameterized && hasParam) || (!parameterized && !hasParam))
+                        return path;
+                }
+            }
+        }
+        return null;
     }
 
     public static JSONArray getRoutes() {
-        if (jsxToPath == null)
+        if (routesJson == null)
             loadCache();
         return routesJson;
     }

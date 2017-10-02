@@ -21,7 +21,7 @@ Below explains the different behaviors:
 		
 	2. Regular Parent process:
 	
-		- Launching sub Service process Sync (Perf lvl < 9 OR not binding any document variables to sub): Executes in same thread but new engine to respect sub perf lvl.
+		- Launching sub Service process Sync (Perf lvl < 9 OR not binding any document variables to sub): Executes in same thread but new engine to respect sub perf lvl.  Note: If parent is running as a regular process, but it is defined as a Service process, the sub process (defined as a Service) will also execute as a regular process in same thread and same engine as parent.
 		
 		- Launching sub Service/Regular process Sync (Perf lvl 9 AND binding document variables to sub): Executes in same thread and same engine to maintain cached documents.
 		
