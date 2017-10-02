@@ -21,15 +21,13 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -44,11 +42,10 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * Clean up old database entries from tables that are older than a specified amount
  * Add following to mdw.properties
  * # Scheduled job - process clean up.
+ * Make sure appropriate db package is imported and Cleanup-Runtime.sql is there.
  * mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup
  * # run every 15 min
  * mdw.timer.task.ProcessCleanup.Schedule=0,15,30,45 * * * *
- * # .sql file should be in config dir
- * MDWFramework.ProcessCleanup/RuntimeCleanupScript=mysql_cleanup.sql
  * # How old process instance should be to be a candidate for deleting
  * MDWFramework.ProcessCleanup/ProcessExpirationAgeInDays=90
  * # How many process instances to be deleted in each run
@@ -58,11 +55,6 @@ import com.centurylink.mdw.util.log.StandardLogger;
  */
 
 public class ProcessCleanup extends RoundRobinScheduledJob {
-
-    private static final String PROCESS_SQL_FILE_NAME = "ProcessSql.txt";
-    private static final String EXTERNAL_SQL_FILE_NAME = "EventSql.txt";
-    private static final String EVENT_LOG_SQL_FILE_NAME = "EventLogSql.txt";
-    private static final String SQL_DELIMITER = "@@@@@";
 
     private StandardLogger logger;
 
@@ -93,289 +85,15 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
         String cleanupScript = PropertyManager
                 .getProperty(PropertyGroups.PROCESS_CLEANUP + "/RuntimeCleanupScript");
 
-        if (cleanupScript != null) {
-            DatabaseAccess db = new DatabaseAccess(null);
-            cleanup(db, cleanupScript, maxProcesses, processExpirationDays, eventExpirationDays,
-                    commitInterval, null);
+        if (cleanupScript == null) {
+            cleanupScript = "Cleanup-Runtime.sql";
         }
-        else {
-            try {
-                ArrayList<String> eventLogSql = readSql(EVENT_LOG_SQL_FILE_NAME);
-                executeEventLogDelete(eventLogSql, maxProcesses, eventExpirationDays);
 
-                // find the minimum PID to start looking at
-                Long minPID = getMinPid();
-
-                ArrayList<Long> expiredProcesses = getProcessIds(processExpirationDays,
-                        maxProcesses, minPID);
-                ArrayList<String> processSql = readSql(PROCESS_SQL_FILE_NAME);
-                executeDelete(processSql, expiredProcesses);
-
-                ArrayList<Long> expiredEvents = getEventIds(eventExpirationDays, maxProcesses,
-                        minPID);
-                ArrayList<String> eventSql = readSql(EXTERNAL_SQL_FILE_NAME);
-                executeDelete(eventSql, expiredEvents);
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-                throw new RuntimeException(ex);
-            }
-        }
+        DatabaseAccess db = new DatabaseAccess(null);
+        cleanup(db, cleanupScript, maxProcesses, processExpirationDays, eventExpirationDays,
+                commitInterval, null);
 
         logger.info("methodExit-->ProcessCleanup.run()");
-    }
-
-    // PRIVATE METHODS ------------------------------------------------
-    /**
-     * Takes a filename on the classpath as a param, and reads SQL statements
-     * delimited by SQL_DELIMITER on it's own line
-     *
-     * @param filename
-     * @return ArrayList<String> with each element containing a SQL statement
-     */
-    private ArrayList<String> readSql(String filename) throws IOException {
-        ArrayList<String> sqlStatements = new ArrayList<String>();
-        InputStream stream = null;
-        stream = this.getClass().getClassLoader().getResourceAsStream(filename);
-        BufferedReader bsr = new BufferedReader(new InputStreamReader(stream));
-        String line = "";
-        StringBuffer sb = new StringBuffer();
-        String statement = null;
-        while (line != null) {
-            line = bsr.readLine();
-            if (!SQL_DELIMITER.equals(line)) {
-                sb.append(line);
-            }
-            else {
-                statement = sb.toString();
-                sqlStatements.add(statement);
-                sb = new StringBuffer();
-            }
-        }
-
-        bsr.close();
-        stream.close();
-
-        return sqlStatements;
-    }
-
-    /**
-     * Get the list of process ID's that fit the criteria of being in the
-     * correct state and old enough to warrant deletion.
-     *
-     * @param days
-     * @param maxIds
-     * @return ArrayList<Long> of ID's
-     */
-    private ArrayList<Long> getProcessIds(int pDays, int pMaxIds, Long pMinPID) {
-        final ArrayList<Long> pids = new ArrayList<Long>();
-        String getPidSql = "select process_instance_id from ( "
-                + " select process_instance_id from process_instance where status_cd = 4 "
-                + " and process_instance_id >= ? and round(sysdate - create_dt) > ? order by process_instance_id) "
-                + " where rownum < ? ";
-
-        DatabaseAccess db = new DatabaseAccess(null);
-        try {
-            db.openConnection();
-            Object[] args = new Object[3];
-            args[0] = pMinPID;
-            args[1] = pDays;
-            args[2] = pMaxIds;
-            ResultSet rs = db.runSelect(getPidSql, args);
-            while (rs.next()) {
-                pids.add(rs.getLong(1));
-            }
-        }
-        catch (SQLException ex) {
-            logger.severeException(ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
-        }
-
-        return pids;
-    }
-
-    /**
-     * Get the list of event ID's that fit the criteria of being in the correct
-     * state and old enough to warrant deletion.
-     *
-     * @param days
-     * @param maxIds
-     * @return ArrayList<Long> of ID's
-     */
-    private ArrayList<Long> getEventIds(int pDays, int pMaxIds, Long pMinPID) {
-        final ArrayList<Long> eids = new ArrayList<Long>();
-        String getEidSql = "  select owner_id from ( select owner_id, owner from ( "
-                + " select owner_id, owner from process_instance where status_cd = 4 "
-                + " and process_instance_id > ? and round(sysdate - create_dt) > ? order by process_instance_id) "
-                + " where rownum < ? ) where owner = 'EXTERNAL_EVENT_INSTANCE'";
-
-        DatabaseAccess db = new DatabaseAccess(null);
-        try {
-            db.openConnection();
-            Object[] args = new Object[3];
-            args[0] = pMinPID;
-            args[1] = pDays;
-            args[2] = pMaxIds;
-            ResultSet rs = db.runSelect(getEidSql, args);
-            while (rs.next()) {
-                eids.add(rs.getLong(1));
-            }
-        }
-        catch (SQLException ex) {
-            logger.severeException(ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
-        }
-
-        return eids;
-    }
-
-    /**
-     * Returns the minimum process_instance ID that has a status code of 4
-     *
-     * @return Long - minPid where the status_cd = 4
-     */
-    private Long getMinPid() {
-        String minPidSql = "select min(PROCESS_INSTANCE_ID) FROM PROCESS_INSTANCE WHERE status_cd = 4";
-        DatabaseAccess db = new DatabaseAccess(null);
-        Long MinPid;
-        try {
-            db.openConnection();
-            ResultSet rs = db.runSelect(minPidSql, null);
-            if (rs.next())
-                MinPid = rs.getLong(1);
-            else
-                MinPid = null; // not possible
-        }
-        catch (SQLException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            MinPid = null;
-        }
-        finally {
-            db.closeConnection();
-        }
-        return MinPid;
-    }
-
-    /**
-     * Take a list of delete statements, and for each ID, iterate over each
-     * statement to perform the deletes
-     *
-     * @param pStatementList
-     * @param pIds
-     *
-     */
-    private void executeDelete(ArrayList<String> pStatementList, ArrayList<Long> pIds) {
-        int[] countByQuery = new int[pStatementList.size()];
-
-        DatabaseAccess db = new DatabaseAccess(null);
-        int deletedRows = 0;
-        try {
-            db.openConnection();
-            // iterate over the queries and then pIds
-            for (int j = 0; j < pStatementList.size(); j++) {
-                logger.debug("Executing " + pStatementList.get(j));
-                db.prepareStatement(pStatementList.get(j));
-                for (int i = 0; i < pIds.size(); i++) {
-                    db.addToBatch(new Object[] { pIds.get(i) });
-                }
-                int[] counts = db.runBatchUpdate();
-                for (int i = 0; i < counts.length; i++) {
-                    deletedRows += counts[i];
-                    countByQuery[j] += counts[j];
-                }
-            }
-        }
-        catch (SQLException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            ex.printStackTrace();
-        }
-        finally {
-            db.closeConnection();
-        }
-
-        logger.info("ProcessCleanup.executeDelete() -> Total rows deleted from multiple tables: "
-                + deletedRows);
-
-        for (int j = 0; j < pStatementList.size(); j++) {
-            logger.info("ProcessCleanup.executeDelete() " + countByQuery[j] + " deletes for SQL: "
-                    + pStatementList.get(j));
-        }
-
-    }
-
-    /**
-     * Take a list of Event Delete statements, execute the delete for everything
-     * earlier than pRetainDays
-     *
-     * @param pStatementList
-     * @param pMaxRows
-     * @param pRetainDays
-     */
-    private void executeEventLogDelete(ArrayList<String> pStatementList, int pMaxRows,
-            int pRetainDays) {
-        // This first part determines the min EventLog ID
-        String minELidSql = "select min(EVENT_LOG_ID) FROM EVENT_LOG";
-        int[] countByQuery = new int[pStatementList.size()];
-
-        DatabaseAccess db = new DatabaseAccess(null);
-        Long ELid;
-
-        try {
-            db.openConnection();
-            ResultSet rs = db.runSelect(minELidSql, null);
-            if (rs.next())
-                ELid = rs.getLong(1);
-            else
-                ELid = null; // not possible
-        }
-        catch (SQLException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            ex.printStackTrace();
-            return;
-        }
-        finally {
-            db.closeConnection();
-        }
-
-        // create a query object for each statement, creating an setId method to
-        // set the long value
-        // before each execution
-
-        int deletedRows = 0;
-        try {
-            db.openConnection();
-            Object[] args = new Object[4];
-            args[0] = ELid;
-            args[1] = ELid;
-            args[2] = pMaxRows;
-            args[3] = pRetainDays;
-            for (int i = 0; i < pStatementList.size(); i++) {
-                logger.debug("Executing " + pStatementList.get(i));
-                int count = db.runUpdate(pStatementList.get(i), args);
-                deletedRows += count;
-                countByQuery[i] += count;
-            }
-        }
-        catch (SQLException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            ex.printStackTrace();
-        }
-        finally {
-            db.closeConnection();
-        }
-
-        logger.info(
-                "ProcessCleanup.executeEventLogDelete() -> Total rows deleted from multiple tables: "
-                        + deletedRows);
-        for (int j = 0; j < pStatementList.size(); j++) {
-            logger.info("ProcessCleanup.executeEventLogDelete() " + countByQuery[j]
-                    + " deletes for SQL: " + pStatementList.get(j));
-        }
-
     }
 
     private void enable_output(DatabaseAccess db, int bufsize) throws SQLException {
@@ -420,16 +138,46 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
 
     private void cleanup(DatabaseAccess db, String filename, int maxProcInst,
             int processExpirationDays, int eventExpirationDays, int commitInterval, String jdbcUrl) {
+        Connection conn = null;
+        InputStream is = null;
         try {
-            Connection conn = null;
-            File file = FileHelper.getFile(filename, getClass().getClassLoader());
-            InputStream is = new FileInputStream(file);
+            File cleanupScript;
+            File assetRoot = ApplicationContext.getAssetRoot();
+
+            if (db.isMySQL()) {
+                if (assetRoot != null)
+                    cleanupScript = new File(assetRoot + "com/centurylink/mdw/mysql/" + filename);
+                else
+                    cleanupScript = new File(assetRoot + "/" + "com/centurylink/mdw/mysql/" + filename);
+                if (cleanupScript.exists()) {
+                    logger.info("Located MySQL Cleanup Script file: " + cleanupScript.getAbsolutePath());
+                }
+                else {
+                    logger.info("Unable to locate MySQL cleanup Script file: Make sure com.centurylink.mdw.mysql package has Cleanup-Runtime.sql");
+                }
+            }
+            else {  //Assume Oracle DB by default
+                if (assetRoot != null)
+                    cleanupScript = new File(assetRoot + "com/centurylink/mdw/oracle/" + filename);
+                else
+                    cleanupScript = new File(assetRoot + "/" + "com/centurylink/mdw/oracle/" + filename);
+                if (cleanupScript.exists()) {
+                    logger.info("Located Oracle cleanup Script file: " + cleanupScript.getAbsolutePath());
+                }
+                else {
+                    logger.info("Unable to locate Oracle Cleanup Script file: Make sure com.centurylink.mdw.oracle package has Cleanup-Runtime.sql");
+                }
+            }
+            is = new FileInputStream(cleanupScript);
             if (jdbcUrl != null) {  //added this logic to do unit testing db connection is not longer possible with DatabaseAccess using jdbcUrl
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
                     conn = DriverManager.getConnection(jdbcUrl);
                 } catch (ClassNotFoundException e) {
-                    System.err.println("Unable to get mysql driver: " + e);
+                    logger.info("Unable to get mysql driver: " + e);
+                    if (is != null)
+                        is.close();
+                    return;
                 }
             }
             else {
@@ -446,7 +194,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             CallableStatement callStmt = null;
             if (jdbcUrl != null || db.isMySQL()) {
                 ScriptRunner runner = new ScriptRunner(conn, false, false);
-                String filePath = file.getAbsolutePath().replace("\\","\\\\");
+                String filePath = cleanupScript.getAbsolutePath().replace("\\","\\\\");
                 runner.runScript(new BufferedReader(new FileReader(filePath)));
                 callStmt = conn.prepareCall("{call mysql_cleanup(?,?,?,?,?,?)}");
             }
@@ -469,11 +217,19 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
 
         }
         catch (Exception e) {
+            logger.severeException(e.getMessage(), e);
             e.printStackTrace();
         }
         finally {
             if (db != null)
                 db.closeConnection();
+            if (is != null)
+                try {
+                    is.close();
+                }
+                catch (IOException e) {
+                    logger.severeException(e.getMessage(), e);
+                }
         }
     }
 
