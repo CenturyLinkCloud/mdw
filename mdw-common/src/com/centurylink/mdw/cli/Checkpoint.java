@@ -131,7 +131,7 @@ public class Checkpoint extends Setup {
     public void updateRefs() throws SQLException, IOException {
         List<AssetRef> refs = getCurrentRefs();
         loadDbDriver();
-        String select = "select definition_id from asset_ref where definition_id = ?";
+        String select = "select name, ref from asset_ref where definition_id = ?";
         try (Connection conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUser(), dbInfo.getPassword());
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             for (AssetRef ref : refs) {
@@ -143,11 +143,14 @@ public class Checkpoint extends Setup {
                             throw new IOException("Unexpected name for id=" + ref.getDefinitionId()
                                     + " (expected '" + ref.getName() + "', found '" + name + "'");
                         }
-                        String update = "update asset_ref set ref = ? where definition_id = ?";
-                        try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
-                            updateStmt.setString(1, ref.getRef());
-                            updateStmt.setLong(2, ref.getDefinitionId());
-                            updateStmt.executeUpdate();
+                        String oldRef = rs.getString("ref");
+                        if (!oldRef.equals(ref.getRef())) {
+                            String update = "update asset_ref set ref = ? where definition_id = ?";
+                            try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
+                                updateStmt.setString(1, ref.getRef());
+                                updateStmt.setLong(2, ref.getDefinitionId());
+                                updateStmt.executeUpdate();
+                            }
                         }
                     }
                     else {

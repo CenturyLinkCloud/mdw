@@ -39,7 +39,7 @@ public class Import extends Setup {
         DbInfo dbInfo = new DbInfo(props);
         Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);
         try {
-            checkpoint.run(progressMonitors).updateRefs();;
+            checkpoint.run(progressMonitors).updateRefs();
         }
         catch (SQLException ex) {
             throw new IOException(ex.getMessage(), ex);
