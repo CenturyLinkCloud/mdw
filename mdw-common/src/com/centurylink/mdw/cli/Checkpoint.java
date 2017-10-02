@@ -46,7 +46,9 @@ public class Checkpoint extends Setup {
     public Checkpoint(String mavenRepoUrl, VcInfo vcInfo, String assetLoc, DbInfo dbInfo) {
         this.mavenRepoUrl = mavenRepoUrl;
         this.vcInfo = vcInfo;
-        this.assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
+        this.assetRoot = new File(assetLoc);
+        if (!this.assetRoot.isAbsolute())
+            this.assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
         this.dbInfo = dbInfo;
     }
 

@@ -787,4 +787,31 @@ public class VersionControlGit implements VersionControl {
     public void git(String... args) throws Exception {
         Main.main(args);
     }
+
+    public byte[] readFromCommit(String commitId, String path) throws Exception {
+        try (RevWalk revWalk = new RevWalk(localRepo)) {
+            RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitId));
+            // use commit's tree find the path
+            RevTree tree = commit.getTree();
+            System.out.println("Having tree: " + tree);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
+                treeWalk.addTree(tree);
+                treeWalk.setRecursive(true);
+                treeWalk.setFilter(PathFilter.create(path));
+                if (!treeWalk.next()) {
+                    return null;
+                }
+
+                ObjectId objectId = treeWalk.getObjectId(0);
+                ObjectLoader loader = localRepo.open(objectId);
+
+                loader.copyTo(baos);
+            }
+            revWalk.dispose();
+            return baos.toByteArray();
+        }
+    }
 }

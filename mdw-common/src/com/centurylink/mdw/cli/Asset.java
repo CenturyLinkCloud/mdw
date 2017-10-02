@@ -56,7 +56,8 @@ public class Asset extends Setup {
         Props props = new Props(projectDir, this);
         VcInfo vcInfo = new VcInfo(projectDir, props);
         DbInfo dbInfo = new DbInfo(props);
-        Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);
+        String assetLoc = props.get(Props.ASSET_LOC);
+        Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, assetLoc, dbInfo);
         try {
             checkpoint.run(progressMonitors);
             System.out.println("Asset info:");
@@ -70,7 +71,21 @@ public class Asset extends Setup {
                     ref = checkpoint.getCurrentRef(arg);
                     System.out.println("  current ref: " + ref);
                 }
-                // TODO: show git content
+                if (ref != null) {
+                    // show git content (TODO: only if requested and check for binary)
+                    File assetRoot = new File(assetLoc);
+                    if (!assetRoot.isAbsolute())
+                        assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
+                    String localDir = vcInfo.getLocalDir().getAbsolutePath();
+                    if (localDir.endsWith(System.getProperty("file.separator") + "."))
+                        localDir = localDir.substring(0, localDir.length() - 2);
+                    String assetPath = assetRoot.getAbsolutePath().substring(localDir.length() + 1).replace('\\', '/');
+                    assetPath += "/" + ref.getPath();
+                    Git git = new Git(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, "readFromCommit", ref.getRef(), assetPath);
+                    git.run(progressMonitors); // connect
+                    byte[] bytes = (byte[]) git.getResult();
+                    System.out.println(new String(bytes));
+                }
             }
         }
         catch (SQLException ex) {

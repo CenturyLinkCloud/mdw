@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.dataaccess;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class AssetRef {
 
     private Long definitionId;
@@ -43,5 +46,25 @@ public class AssetRef {
 
     public String toString() {
         return name + " (" + definitionId + "=" + ref + ")";
+    }
+
+
+    private static final Pattern pathPattern = Pattern.compile("(.*) v[0-9\\.\\[,\\)]*$");
+
+    /**
+     * File path corresponding to name.
+     */
+    public String getPath() {
+        Matcher matcher = pathPattern.matcher(name);
+        if (matcher.find()) {
+            String match = matcher.group(1);
+            int lastDot = match.lastIndexOf('.');
+            if (lastDot == -1)
+                throw new IllegalStateException("Bad asset path: " + match);
+            return match.substring(0, lastDot).replace('.', '/') + match.substring(lastDot);
+        }
+        else {
+            return null;
+        }
     }
 }
