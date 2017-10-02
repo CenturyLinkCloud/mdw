@@ -54,7 +54,7 @@ sourceSets {
 }
 
 repositories {
-     maven { url "{{releases-url}}" }
+     maven { url repositoryUrl }
 }
 
 dependencies {
