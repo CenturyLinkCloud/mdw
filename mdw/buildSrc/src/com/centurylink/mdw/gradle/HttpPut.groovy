@@ -143,7 +143,6 @@ class HttpPut extends DefaultTask {
                     String version = rootname.substring(versionStart + 1)
                     if (assetsUrl != null) {
                         if (fromFile != null && fromFile.isDirectory()) {
-                            //String path = file.toString().substring(fromFile.toString().length() + 1, file.toString().length() - filename.length() - 1).replace('\\', '/')
                             url = new URL(assetsUrl + "/" + artifactId + "/" + version + "/" + filename)
                         }
                     }
