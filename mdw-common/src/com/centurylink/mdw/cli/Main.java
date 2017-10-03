@@ -38,8 +38,8 @@ public class Main {
                 Git.main(cmdArgs);
                 return;
             }
-            else if (cmdArgs[0].equals("asset")) {
-                Asset.main(cmdArgs);
+            else if (cmdArgs[0].equals("archive")) {
+                Archive.main(cmdArgs);
                 return;
             }
         }
@@ -52,7 +52,7 @@ public class Main {
         Install install = new Install();
         Run run = new Run();
         Git git = new Git();
-        Asset asset = new Asset();
+        Archive asset = new Archive(false);
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()

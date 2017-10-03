@@ -793,10 +793,7 @@ public class VersionControlGit implements VersionControl {
             RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitId));
             // use commit's tree find the path
             RevTree tree = commit.getTree();
-            System.out.println("Having tree: " + tree);
-
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
                 treeWalk.addTree(tree);
                 treeWalk.setRecursive(true);

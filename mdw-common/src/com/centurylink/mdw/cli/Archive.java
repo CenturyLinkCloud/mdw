@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,11 +30,19 @@ import java.util.Properties;
 
 import org.json.JSONObject;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.dataaccess.AssetRef;
+
 /**
- * This is not for VCS asset imports; only for discovery.
+ * Serves two functions: 1) as command, show asset ref with Git archive info;
+ * 2) as utility, perform old-style Archiving (backup()/archive()) when importing
+ * through discovery (local import).
  * Provides no recovery of deleted Archive packages as does VcsArchiver.
  */
-public class Archive {
+@Parameters(commandNames="archive", commandDescription="Asset ref info (--show for contents)")
+public class Archive extends Setup {
 
     private static final String ARCHIVE = "Archive";
     private static final String PKG_META = ".mdw/package.json";
@@ -46,6 +55,24 @@ public class Archive {
     private List<File> tempPkgDirs;
     private List<Pkg> oldPkgs;
 
+    public static void main(String[] args) throws IOException {
+        JCommander cmd = new JCommander();
+        List<String> archiveArgs = new ArrayList<>();;
+        archiveArgs.add("archive");
+        archiveArgs.add("args");
+        boolean show = false;
+        for (int i = 1; i < args.length; i++) {
+            if (args[i].startsWith("--show"))
+                show = true;
+            else
+              archiveArgs.add(args[i]);
+        }
+        Archive archive = new Archive(show);
+        cmd.addCommand("archive", archive);
+        cmd.parse(archiveArgs.toArray(new String[0]));
+        archive.run(Main.getMonitor());
+    }
+
     public Archive(File assetDir) {
         this.assetDir = assetDir;
         packages = new ArrayList<>();
@@ -56,6 +83,69 @@ public class Archive {
         this.assetDir = assetDir;
         this.packages = packages;
     }
+
+    private boolean show;
+    public Archive(boolean show) {
+        this.show = show;
+    }
+
+    /**
+     * Command arguments = list of asset specs.
+     */
+    @Parameter(names="args", description="pass-thru jgit arguments", variableArity = true)
+    public List<String> args = new ArrayList<>();
+
+    /**
+     * Command for displaying asset info from Git archive.
+     */
+    @Override
+    public Archive run(ProgressMonitor... progressMonitors) throws IOException {
+        File projectDir = getProjectDir();
+
+        Props props = new Props(projectDir, this);
+        VcInfo vcInfo = new VcInfo(projectDir, props);
+        DbInfo dbInfo = new DbInfo(props);
+        String assetLoc = props.get(Props.ASSET_LOC);
+        Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, assetLoc, dbInfo);
+        try {
+            checkpoint.run(progressMonitors);
+            System.out.println("Asset info:");
+            for (String arg : args) {
+                AssetRef ref = null;
+                if (arg.matches(".* v[0-9\\.\\[,\\)]*$")) {
+                    ref = checkpoint.retrieveRef(arg);
+                    System.out.println("  db ref: " + ref);
+                }
+                if (ref == null) {
+                    ref = checkpoint.getCurrentRef(arg);
+                    System.out.println("  current ref: " + ref);
+                }
+                if (ref != null && show) {
+                    File assetRoot = new File(assetLoc);
+                    if (!assetRoot.isAbsolute())
+                        assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
+                    String localDir = vcInfo.getLocalDir().getAbsolutePath();
+                    if (localDir.endsWith(System.getProperty("file.separator") + "."))
+                        localDir = localDir.substring(0, localDir.length() - 2);
+                    String assetPath = assetRoot.getAbsolutePath().substring(localDir.length() + 1).replace('\\', '/');
+                    assetPath += "/" + ref.getPath();
+                    Git git = new Git(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, "readFromCommit", ref.getRef(), assetPath);
+                    git.run(progressMonitors); // connect
+                    byte[] bytes = (byte[]) git.getResult();
+                    if (isBinary(bytes))
+                        System.out.println("(Binary content)");
+                    else
+                        System.out.println(new String(bytes));
+                }
+            }
+        }
+        catch (SQLException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
+
+        return this;
+    }
+
 
     /**
      * Save asset packages to temp dir.
@@ -81,7 +171,8 @@ public class Archive {
     }
 
     /**
-     * Move replaced package(s) to archive from temp (those not found in updated asset folder).
+     * Move replaced package(s) to Archive folder from temp (those not found in updated asset folder).
+     * Intended only for local development in-flight support (other environments use Git archiving -- run()).
      */
     public void archive(boolean deleteBackups) throws IOException {
         if (tempPkgDirs == null)
@@ -231,4 +322,35 @@ public class Archive {
             return name + " v" + ver;
         }
     }
+
+    private static final boolean isBinary(final byte[] bytes) {
+        int expectedLength = 0;
+        for (int i = 0; i < bytes.length; i++) {
+            if ((bytes[i] & 0b10000000) == 0b00000000) {
+                expectedLength = 1;
+            } else if ((bytes[i] & 0b11100000) == 0b11000000) {
+                expectedLength = 2;
+            } else if ((bytes[i] & 0b11110000) == 0b11100000) {
+                expectedLength = 3;
+            } else if ((bytes[i] & 0b11111000) == 0b11110000) {
+                expectedLength = 4;
+            } else if ((bytes[i] & 0b11111100) == 0b11111000) {
+                expectedLength = 5;
+            } else if ((bytes[i] & 0b11111110) == 0b11111100) {
+                expectedLength = 6;
+            } else {
+                return true;
+            }
+            while (--expectedLength > 0) {
+                if (++i >= bytes.length) {
+                    return true;
+                }
+                if ((bytes[i] & 0b11000000) != 0b10000000) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
