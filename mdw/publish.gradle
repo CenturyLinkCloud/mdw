@@ -65,7 +65,7 @@ task cleanAssetZips(type: Delete) {
 task zipAssetPackages {
     dependsOn cleanAssetZips
     description = "Export Asset Packages"
-    file("../${mdwAssetZipOutputDir}").mkdirs()
+    file("../${mdwAssetOutputDir}").mkdirs()
     // superCats are categorized as the parent package
     // (eg com.centurylink.mdw.tests.camel is category "tests" instead of "camel")
     def superCats = ["services", "tests", "demo"]

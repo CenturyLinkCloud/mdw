@@ -267,20 +267,13 @@ task configureUploadAssets {
                     }
                     archiveAssetZips.discoveredFiles.each { discoveredFile ->
                         def filterName = discoveredFile.name - ".zip"
-                        def artifactName
-                        def hyphenCount = 2
-                        if (filterName.contains("SNAPSHOT")) {
-                            hyphenCount = 3
-                        }
-                        def segments = filterName.split("-")
-                        if (segments.size() > hyphenCount)
-                            artifactName = segments[0] + "-" +segments[1]
-                        else
-                            artifactName = segments[0]
+                        def artifactName = filterName - "-SNAPSHOT"
+                        def versionStart = artifactName.lastIndexOf("-")
+                        def artifactId = artifactName.substring(0, versionStart)
                         addFilter(filterName) { artifact, file ->
                             file.name == discoveredFile.name
                         }
-                        pom(filterName).artifactId = artifactName
+                        pom(filterName).artifactId = artifactId
                         pom(filterName).groupId = "com.centurylink.mdw.assets"
                     }
                 }
