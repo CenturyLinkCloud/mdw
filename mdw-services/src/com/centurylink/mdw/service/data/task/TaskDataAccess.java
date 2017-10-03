@@ -696,6 +696,8 @@ public class TaskDataAccess extends CommonDataAccess {
                     // otherwise master request id
                     where = "where ti.master_request_id like '" + query.getFind() + "%'\n";
                 }
+                if (!db.isMySQL())
+                    where = where + " and ui.user_info_id(+) = ti.task_claim_user_id\n";
             }
             else {
                 where = buildTaskInstanceWhere(query);

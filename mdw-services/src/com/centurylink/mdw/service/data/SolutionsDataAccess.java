@@ -47,7 +47,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    protected static final String SOLUTION_COLS = "s.solution_id, s.id, s.name, s.owner_type, s.owner_id, s.create_dt, s.create_usr, s.mod_dt, s.mod_usr, s.comments";
+    protected static final String SOLUTION_COLS = "s.solution_id, s.id, s.name, s.owner_type, s.owner_id as sol_owner_id, s.create_dt, s.create_usr, s.mod_dt, s.mod_usr, s.comments";
     protected static final String SOLUTION_MAP_COLS = "sm.solution_id, sm.member_type, sm.member_id";
 
     protected static final String TASK_INST_COLS = "ti.task_instance_id, ti.task_id, ti.task_instance_status, ti.task_instance_owner, ti.task_instance_owner_id, " +
@@ -392,7 +392,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         String id = rs.getString("id");
         String name = rs.getString("name");
         String ownerType = rs.getString("owner_type");
-        String ownerId = rs.getString("owner_id");
+        String ownerId = rs.getString("sol_owner_id");
         Date createDate = rs.getTimestamp("create_dt");
         String createUser = rs.getString("create_usr");
         Solution solution = new Solution(solutionId, id, name, ownerType, ownerId, createDate, createUser);

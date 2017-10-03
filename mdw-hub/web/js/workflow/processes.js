@@ -104,7 +104,7 @@ processMod.controller('ProcessesController',
             if (!existMrId)
               matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
           }
-          if (procInst.solutionId.startsWith(typed)) {
+          if (procInst.solutionId && procInst.solutionId.startsWith(typed)) {
               var existSolutionId = matches.find(function(match) {
                 return match.type === 'solutionId' && match.value === procInst.solutionId;
               });
