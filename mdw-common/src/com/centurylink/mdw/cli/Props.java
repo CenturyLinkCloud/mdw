@@ -38,6 +38,8 @@ public class Props {
 
     public static final Prop ASSET_LOC = new Prop("asset-loc", MDW, "mdw.asset.location");
     public static final Prop DISCOVERY_URL = new Prop("discovery-url", MDW, "mdw.discovery.url");
+    public static final Prop SERVICES_URL = new Prop("services-url", MDW, "mdw.services.url");
+    public static final Prop HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
 
     public static class Git {
         public static final Prop REMOTE_URL = new Prop("git-remote-url", MDW, "mdw.git.remote.url");
