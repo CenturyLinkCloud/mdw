@@ -107,12 +107,6 @@ task javadocs(type: Javadoc) {
     destinationDir = file('../docs/_docs/javadoc')
 }
 
-task exportAssetPackages(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["exportAssetPackages"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
-}
-
 task zipAssetPackages(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["zipAllAssets"]
@@ -248,12 +242,10 @@ task archiveAssetZips {
     dependsOn zipAssetPackages
     doLast{
         ext.discoveredFiles = []
-        fileTree(dir: "../${mdwAssetZipOutputDir}", include:'**/*').each { file ->
-            if(file.name.endsWith("zip")) {
-                discoveredFiles.add(file)
-                artifacts {
-                     assets file:file 
-                }
+        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
+            discoveredFiles.add(file)
+            artifacts {
+                 assets file:file 
             }
         }
     }
