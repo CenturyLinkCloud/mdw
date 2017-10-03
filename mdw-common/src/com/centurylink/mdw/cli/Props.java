@@ -18,7 +18,9 @@ package com.centurylink.mdw.cli;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -33,13 +35,21 @@ public class Props {
         this.setup = setup;
     }
 
-    public static final String MDW = "config/mdw.properties";
-    public static final String GRADLE = "gradle.properties";
+    private static final String MDW = "config/mdw.properties";
+    private static final String GRADLE = "gradle.properties";
+
+    public static List<Prop> ALL_PROPS = new ArrayList<>();
 
     public static final Prop ASSET_LOC = new Prop("asset-loc", MDW, "mdw.asset.location");
     public static final Prop DISCOVERY_URL = new Prop("discovery-url", MDW, "mdw.discovery.url");
     public static final Prop SERVICES_URL = new Prop("services-url", MDW, "mdw.services.url");
     public static final Prop HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
+    static {
+        ALL_PROPS.add(ASSET_LOC);
+        ALL_PROPS.add(DISCOVERY_URL);
+        ALL_PROPS.add(SERVICES_URL);
+        ALL_PROPS.add(HUB_URL);
+    }
 
     public static class Git {
         public static final Prop REMOTE_URL = new Prop("git-remote-url", MDW, "mdw.git.remote.url");
@@ -47,11 +57,23 @@ public class Props {
         public static final Prop USER = new Prop("git-user", MDW, "mdw.git.user");
         public static final Prop PASSWORD = new Prop("git-password", MDW, "mdw.git.password");
     }
+    static {
+        ALL_PROPS.add(Git.REMOTE_URL);
+        ALL_PROPS.add(Git.BRANCH);
+        ALL_PROPS.add(Git.USER);
+        ALL_PROPS.add(Git.PASSWORD);
+    }
     public static class Db {
         public static final Prop URL = new Prop("database-url", MDW, "mdw.database.url");
         public static final Prop USER = new Prop("database-user", MDW, "mdw.database.username");
         public static final Prop PASSWORD = new Prop("database-password", MDW, "mdw.database.password");
         public static final Prop DRIVER = new Prop("database-driver", MDW, "mdw.database.driver");
+    }
+    static {
+        ALL_PROPS.add(Db.URL);
+        ALL_PROPS.add(Db.USER);
+        ALL_PROPS.add(Db.PASSWORD);
+        ALL_PROPS.add(Db.DRIVER);
     }
 
     public static class Gradle {
@@ -59,6 +81,12 @@ public class Props {
         public static final Prop SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion");
         public static final Prop ASSET_LOC = new Prop("asset-loc", GRADLE, "assetLoc");
         public static final Prop MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl");
+    }
+    static {
+        ALL_PROPS.add(Gradle.MDW_VERSION);
+        ALL_PROPS.add(Gradle.SPRING_VERSION);
+        ALL_PROPS.add(Gradle.ASSET_LOC);
+        ALL_PROPS.add(Gradle.MAVEN_REPO_URL);
     }
 
     private Properties getProperties(File file) throws IOException {

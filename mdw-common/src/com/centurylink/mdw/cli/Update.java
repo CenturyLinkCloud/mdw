@@ -30,8 +30,17 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="update", commandDescription="Update MDW assets locally via Discovery", separators="=")
 public class Update extends Setup {
 
-    public Update(Setup cloneFrom) {
-        super(cloneFrom);
+    private File projDir;
+    @Override
+    public File getProjectDir() {
+        if (projDir != null)
+            return projDir;
+        else
+            return super.getProjectDir();
+    }
+
+    public Update(File projectDir) {
+        this.projDir = projectDir;
     }
 
     Update() {
@@ -39,7 +48,7 @@ public class Update extends Setup {
     }
 
     public Update run(ProgressMonitor... progressMonitors) throws IOException {
-        Props props = new Props(projectDir, this);
+        Props props = new Props(getProjectDir(), this);
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();

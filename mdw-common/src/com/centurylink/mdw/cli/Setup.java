@@ -39,9 +39,8 @@ public abstract class Setup implements Operation {
         defaultBasePackages.add("com.centurylink.mdw.testing");
     }
 
-    File projectDir;
     public File getProjectDir() {
-        return projectDir;
+        return new File(".");
     }
 
     @Parameter(names="--mdw-version", description="MDW Version")
@@ -62,6 +61,11 @@ public abstract class Setup implements Operation {
         }
         return mdwVersion;
     }
+
+    @Parameter(names="--debug", description="Display CLI debug information")
+    private boolean debug;
+    public boolean isDebug() { return debug; }
+    public void setDebug(boolean debug) { this.debug = debug; }
 
     @Parameter(names="--snapshots", description="Whether to include snapshot builds")
     private boolean snapshots;
@@ -192,17 +196,6 @@ public abstract class Setup implements Operation {
     }
 
     protected Setup() {
-        projectDir = new File(".");
-    }
-
-    /**
-     * Copies param values
-     */
-    public Setup(Setup cloneFrom) {
-        projectDir = cloneFrom.getProjectDir();
-        mdwVersion = cloneFrom.getMdwVersion();
-        discoveryUrl = cloneFrom.getDiscoveryUrl();
-        baseAssetPackages = cloneFrom.getBaseAssetPackages();
     }
 
     static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
@@ -297,15 +290,51 @@ public abstract class Setup implements Operation {
         return getRelativePath(getProjectDir(), file);
     }
 
-    public String getAssetPath(File file) {
-        return getRelativePath(new File(getAssetLoc()), file);
+    public String getAssetPath(File file) throws IOException {
+        return getRelativePath(getAssetRoot(), file);
     }
 
-    public File getAssetRoot() {
-        return new File(getProjectDir() + "/" + getAssetLoc());
+    public File getAssetRoot() throws IOException {
+        String assetLoc = new Props(getProjectDir(), this).get(Props.ASSET_LOC, false);
+        File assetRoot = new File(assetLoc);
+        if (assetRoot.isAbsolute())
+            return assetRoot;
+        else
+            return new File(getProjectDir() + "/" + getAssetLoc());
     }
 
     public boolean gitExists() {
         return new File(getProjectDir() + "/.git").isDirectory();
+    }
+
+    /**
+     * Override for extended debug info (always calling super.debug()).
+     */
+    public boolean validate() throws IOException {
+        Path projPath = Paths.get(getProjectDir().getPath()).normalize().toAbsolutePath();
+        Path assetPath = Paths.get(getAssetRoot().getPath()).normalize().toAbsolutePath();
+        if (!assetPath.startsWith(projPath)) {
+            System.err.println("Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Override for extended debug info (always calling super.debug()).
+     */
+    public void debug() throws IOException {
+        status();
+        System.out.println("CLI Props:");
+        Props props = new Props(getProjectDir(), this);
+        for (Prop prop : Props.ALL_PROPS) {
+            System.out.println("  " + prop);
+            System.out.println("    = " + props.get(prop, false));
+        }
+    }
+
+    public void status() throws IOException {
+        System.out.println("Project Dir:\n  " + getProjectDir().getAbsolutePath());
+        System.out.println("Asset Root:\n  " + getAssetRoot());
     }
 }

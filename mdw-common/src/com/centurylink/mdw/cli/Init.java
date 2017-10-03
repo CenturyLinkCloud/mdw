@@ -62,20 +62,27 @@ public class Init extends Setup {
     public boolean isSpringBoot() { return springBoot; }
     public void setSpringBoot(boolean springBoot) { this.springBoot = springBoot; }
 
+    @Override
+    public File getProjectDir() {
+        if (project != null)
+            return new File(project);
+        else
+            return super.getProjectDir();
+    }
+
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
         System.out.println("Initializing " + project + "...");
-        projectDir = new File(project);
         int slashIndex = project.lastIndexOf('/');
         if (slashIndex > 0)
             project = project.substring(slashIndex + 1);
 
-        if (projectDir.exists()) {
-            if (!projectDir.isDirectory() || projectDir.list().length > 0)
-                throw new IOException(projectDir + " already exists and is not an empty directory");
+        if (getProjectDir().exists()) {
+            if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0)
+                throw new IOException(getProjectDir() + " already exists and is not an empty directory");
         }
         else {
-            if (!projectDir.mkdirs())
-                throw new IOException("Unable to create destination: " + projectDir);
+            if (!getProjectDir().mkdirs())
+                throw new IOException("Unable to create destination: " + getProjectDir());
         }
 
         findMdwVersion();
@@ -89,13 +96,14 @@ public class Init extends Setup {
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
-        new Unzip(tempZip, projectDir, false, opt -> {
+        new Unzip(tempZip, getProjectDir(), false, opt -> {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
         System.out.println("Writing: ");
-        subst(projectDir);
+        subst(getProjectDir());
 
+        new Update(getProjectDir()).run(progressMonitors);
         return this;
     }
 }
