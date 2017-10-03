@@ -42,6 +42,7 @@ public class Checkpoint extends Setup {
     private DbInfo dbInfo;
     private VersionControl versionControl;
     private String commit;
+    private Connection pooledConn;
 
     public Checkpoint(String mavenRepoUrl, VcInfo vcInfo, String assetLoc, DbInfo dbInfo) {
         this.mavenRepoUrl = mavenRepoUrl;
@@ -50,6 +51,13 @@ public class Checkpoint extends Setup {
         if (!this.assetRoot.isAbsolute())
             this.assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
         this.dbInfo = dbInfo;
+    }
+
+    public Checkpoint(String assetLoc, VersionControl vc, String commit, Connection conn) {
+        this.assetRoot = new File(assetLoc);
+        this.pooledConn = conn;
+        this.versionControl = vc;
+        this.commit = commit;
     }
 
     @Override
@@ -108,12 +116,11 @@ public class Checkpoint extends Setup {
     }
 
     /**
-     * Finds an asset ref from the database.
+     * Finds an asset ref from the database by asset name.
      */
     public AssetRef retrieveRef(String name) throws IOException, SQLException {
-        loadDbDriver();
         String select = "select definition_id, name, ref from asset_ref where name = ?";
-        try (Connection conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUser(), dbInfo.getPassword());
+        try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -126,13 +133,29 @@ public class Checkpoint extends Setup {
     }
 
     /**
+     * Finds an asset ref from the database by definitionID.
+     */
+    public AssetRef retrieveRef(Long id) throws IOException, SQLException {
+        String select = "select definition_id, name, ref from asset_ref where definitionID = ?";
+        try (Connection conn = getDbConnection();
+                PreparedStatement stmt = conn.prepareStatement(select)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new AssetRef(rs.getString("name"), id, rs.getString("ref"));
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Update refs in db.
      */
     public void updateRefs() throws SQLException, IOException {
         List<AssetRef> refs = getCurrentRefs();
-        loadDbDriver();
         String select = "select name, ref from asset_ref where definition_id = ?";
-        try (Connection conn = DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUser(), dbInfo.getPassword());
+        try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             for (AssetRef ref : refs) {
                 stmt.setLong(1, ref.getDefinitionId());
@@ -150,6 +173,7 @@ public class Checkpoint extends Setup {
                                 updateStmt.setString(1, ref.getRef());
                                 updateStmt.setLong(2, ref.getDefinitionId());
                                 updateStmt.executeUpdate();
+                                conn.commit();
                             }
                         }
                     }
@@ -160,6 +184,7 @@ public class Checkpoint extends Setup {
                             insertStmt.setString(2, ref.getName());
                             insertStmt.setString(3, ref.getRef());
                             insertStmt.executeUpdate();
+                            conn.commit();
                         }
                     }
                 }
@@ -174,5 +199,14 @@ public class Checkpoint extends Setup {
         catch (ClassNotFoundException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
+    }
+
+    private Connection getDbConnection() throws SQLException, IOException {
+        if (pooledConn == null) {
+            loadDbDriver();
+            return DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUser(), dbInfo.getPassword());
+        }
+        else
+            return pooledConn;
     }
 }
