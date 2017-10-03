@@ -66,7 +66,7 @@ public class Import extends Setup {
         System.out.println("Importing " + projectDir + "...");
 
         DbInfo dbInfo = new DbInfo(props);
-        Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetLoc(), dbInfo);
+        Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
         try {
             checkpoint.run(progressMonitors).updateRefs();
         }

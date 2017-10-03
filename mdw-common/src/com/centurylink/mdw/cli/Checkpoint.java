@@ -43,12 +43,10 @@ public class Checkpoint extends Setup {
     private VersionControl versionControl;
     private String commit;
 
-    public Checkpoint(String mavenRepoUrl, VcInfo vcInfo, String assetLoc, DbInfo dbInfo) {
+    public Checkpoint(String mavenRepoUrl, VcInfo vcInfo, File assetRoot, DbInfo dbInfo) {
         this.mavenRepoUrl = mavenRepoUrl;
         this.vcInfo = vcInfo;
-        this.assetRoot = new File(assetLoc);
-        if (!this.assetRoot.isAbsolute())
-            this.assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
+        this.assetRoot = assetRoot;
         this.dbInfo = dbInfo;
     }
 
@@ -75,8 +73,7 @@ public class Checkpoint extends Setup {
         List<AssetRef> refs = new ArrayList<>();
         String pkgName = null;
         if (new File(dir + "/.mdw").isDirectory()) {
-            pkgName = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1)
-                    .replace('/', '.').replace('\\', '.');
+            pkgName = getAssetPath(dir).replace('/', '.');
         }
         if (dir.exists()) {
             for (File file : dir.listFiles()) {
