@@ -101,12 +101,16 @@ public class Archive extends Setup {
     @Override
     public Archive run(ProgressMonitor... progressMonitors) throws IOException {
         File projectDir = getProjectDir();
+        if (!gitExists()) {
+            System.err.println("Git not found: " + projectDir + "/.git");
+            return this;
+        }
 
         Props props = new Props(projectDir, this);
         VcInfo vcInfo = new VcInfo(projectDir, props);
         DbInfo dbInfo = new DbInfo(props);
         String assetLoc = props.get(Props.ASSET_LOC);
-        Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, assetLoc, dbInfo);
+        Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, getAssetRoot(), dbInfo);
         try {
             checkpoint.run(progressMonitors);
             System.out.println("Asset info:");
@@ -121,14 +125,7 @@ public class Archive extends Setup {
                     System.out.println("  current ref: " + ref);
                 }
                 if (ref != null && show) {
-                    File assetRoot = new File(assetLoc);
-                    if (!assetRoot.isAbsolute())
-                        assetRoot = new File(vcInfo.getLocalDir() + "/" + assetLoc);
-                    String localDir = vcInfo.getLocalDir().getAbsolutePath();
-                    if (localDir.endsWith(System.getProperty("file.separator") + "."))
-                        localDir = localDir.substring(0, localDir.length() - 2);
-                    String assetPath = assetRoot.getAbsolutePath().substring(localDir.length() + 1).replace('\\', '/');
-                    assetPath += "/" + ref.getPath();
+                    String assetPath = getGitPath(new File(assetLoc)) + "/" + ref.getPath();
                     Git git = new Git(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, "readFromCommit", ref.getRef(), assetPath);
                     git.run(progressMonitors); // connect
                     byte[] bytes = (byte[]) git.getResult();
@@ -145,7 +142,6 @@ public class Archive extends Setup {
 
         return this;
     }
-
 
     /**
      * Save asset packages to temp dir.
@@ -250,7 +246,7 @@ public class Archive extends Setup {
 
     private void findPackages(File dir) {
         if (new File(dir + "/" + PKG_META).isFile()) {
-            packages.add(dir.getAbsolutePath().substring(assetDir.getAbsolutePath().length() - 1).replace('/', '.').replace('\\', '.'));
+            packages.add(getAssetPath(dir).replace('/', '.'));
         }
         for (File child : dir.listFiles()) {
             if (child.isDirectory())

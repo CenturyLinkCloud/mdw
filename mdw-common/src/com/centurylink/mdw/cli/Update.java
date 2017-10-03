@@ -27,10 +27,8 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandNames="update", commandDescription="Update MDW assets", separators="=")
+@Parameters(commandNames="update", commandDescription="Update MDW assets locally via Discovery", separators="=")
 public class Update extends Setup {
-
-    private File assetDir;
 
     public Update(Setup cloneFrom) {
         super(cloneFrom);
@@ -42,7 +40,6 @@ public class Update extends Setup {
 
     public Update run(ProgressMonitor... progressMonitors) throws IOException {
         Props props = new Props(projectDir, this);
-        this.assetDir = new File(this.projectDir + "/" + props.get(Props.ASSET_LOC));
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
@@ -99,6 +96,7 @@ public class Update extends Setup {
         new Download(new URL(discoveryUrl + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip).run(monitors);
 
         // import packages
+        File assetDir = getAssetRoot();
         Archive archive = new Archive(assetDir, packages);
         archive.backup();
         System.out.println("Unzipping into: " + assetDir);

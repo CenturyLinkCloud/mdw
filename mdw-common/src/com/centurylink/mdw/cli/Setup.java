@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -168,9 +169,7 @@ public abstract class Setup implements Operation {
      */
     protected void initBaseAssetPackages() throws IOException {
         baseAssetPackages = new ArrayList<>();
-        String assetLoc = new Props(getProjectDir(), this).get(Props.ASSET_LOC);
-        File assetDir = new File(getProjectDir() + "/" + assetLoc);
-        addBasePackages(assetDir, assetDir);
+        addBasePackages(getAssetRoot(), getAssetRoot());
         if (baseAssetPackages.isEmpty())
             baseAssetPackages = defaultBasePackages;
     }
@@ -182,7 +181,7 @@ public abstract class Setup implements Operation {
             throw new IOException("Expected directory: " + dir.getAbsolutePath());
 
         if (new File(dir + "/.mdw/package.json").isFile()) {
-            String pkg = dir.getAbsolutePath().substring(assetDir.getAbsolutePath().length() - 1).replace('/', '.').replace('\\', '.');
+            String pkg = getAssetPath(dir).replace('/', '.');
             if (pkg.startsWith("com.centurylink.mdw."))
                 baseAssetPackages.add(pkg);
         }
@@ -282,5 +281,31 @@ public abstract class Setup implements Operation {
             capNextChar = false;
         }
         return nameBuilder.toString();
+    }
+
+    /**
+     * Returns 'to' file or dir path relative to 'from' dir.
+     * Result always uses forward slashes and has no trailing slash.
+     */
+    public String getRelativePath(File from, File to) {
+        Path fromPath = Paths.get(from.getPath()).normalize().toAbsolutePath();
+        Path toPath = Paths.get(to.getPath()).normalize().toAbsolutePath();
+        return fromPath.relativize(toPath).toString().replace('\\', '/');
+    }
+
+    public String getGitPath(File file) {
+        return getRelativePath(getProjectDir(), file);
+    }
+
+    public String getAssetPath(File file) {
+        return getRelativePath(new File(getAssetLoc()), file);
+    }
+
+    public File getAssetRoot() {
+        return new File(getProjectDir() + "/" + getAssetLoc());
+    }
+
+    public boolean gitExists() {
+        return new File(getProjectDir() + "/.git").isDirectory();
     }
 }
