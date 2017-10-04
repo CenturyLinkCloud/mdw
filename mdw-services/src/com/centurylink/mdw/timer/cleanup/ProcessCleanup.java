@@ -140,41 +140,43 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             int processExpirationDays, int eventExpirationDays, int commitInterval, String jdbcUrl) {
         Connection conn = null;
         InputStream is = null;
+        String printMsg = "";
         try {
-            File cleanupScript;
+            File cleanupScript = null;
             File assetRoot = ApplicationContext.getAssetRoot();
 
-            if (db.isMySQL()) {
+            if (jdbcUrl != null || db.isMySQL()) {
                 if (assetRoot != null)
-                    cleanupScript = new File(assetRoot + "com/centurylink/mdw/mysql/" + filename);
+                    cleanupScript = new File(assetRoot + "/com/centurylink/mdw/mysql/" + filename);
+                if (cleanupScript.exists())
+                    printMsg = "Located MySQL Cleanup Script file: " + cleanupScript.getAbsolutePath();
                 else
-                    cleanupScript = new File(assetRoot + "/" + "com/centurylink/mdw/mysql/" + filename);
-                if (cleanupScript.exists()) {
-                    logger.info("Located MySQL Cleanup Script file: " + cleanupScript.getAbsolutePath());
-                }
-                else {
-                    logger.info("Unable to locate MySQL cleanup Script file: Make sure com.centurylink.mdw.mysql package has Cleanup-Runtime.sql");
-                }
+                    printMsg = "Unable to locate MySQL cleanup Script file: Make sure com.centurylink.mdw.mysql package has Cleanup-Runtime.sql";
             }
             else {  //Assume Oracle DB by default
                 if (assetRoot != null)
-                    cleanupScript = new File(assetRoot + "com/centurylink/mdw/oracle/" + filename);
+                    cleanupScript = new File(assetRoot + "/com/centurylink/mdw/oracle/" + filename);
+               if (cleanupScript.exists())
+                   printMsg = "Located Oracle cleanup Script file: " + cleanupScript.getAbsolutePath();
                 else
-                    cleanupScript = new File(assetRoot + "/" + "com/centurylink/mdw/oracle/" + filename);
-                if (cleanupScript.exists()) {
-                    logger.info("Located Oracle cleanup Script file: " + cleanupScript.getAbsolutePath());
-                }
-                else {
-                    logger.info("Unable to locate Oracle Cleanup Script file: Make sure com.centurylink.mdw.oracle package has Cleanup-Runtime.sql");
-                }
+                    printMsg = "Unable to locate Oracle Cleanup Script file: Make sure com.centurylink.mdw.oracle package has Cleanup-Runtime.sql";
             }
+            if (null == logger)
+                System.out.println(printMsg);
+            else
+                logger.info(printMsg);
+
             is = new FileInputStream(cleanupScript);
             if (jdbcUrl != null) {  //added this logic to do unit testing db connection is not longer possible with DatabaseAccess using jdbcUrl
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
                     conn = DriverManager.getConnection(jdbcUrl);
                 } catch (ClassNotFoundException e) {
-                    logger.info("Unable to get mysql driver: " + e);
+                    printMsg = "Unable to get mysql driver: " + e;
+                    if (null == logger)
+                        System.out.println(printMsg);
+                    else
+                        logger.info(printMsg);
                     if (is != null)
                         is.close();
                     return;
@@ -217,7 +219,11 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
 
         }
         catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            printMsg = e.getMessage();
+            if (null == logger)
+                System.out.println(printMsg);
+            else
+                logger.severeException(printMsg, e);
             e.printStackTrace();
         }
         finally {
@@ -228,18 +234,18 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                     is.close();
                 }
                 catch (IOException e) {
-                    logger.severeException(e.getMessage(), e);
+                    System.out.println(e.getMessage());
                 }
         }
     }
 
     public static void main(String args[]) throws Exception {
         // "jdbc:oracle:thin:mdwdev/mdwdev@mdwdevdb.dev.qintra.com:1594:mdwdev";
-        //String mariadb = "jdbc:mariadb://localhost:3308/mdw?user=mdw&password=mdw";
-        String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/mdw?user=root&password=mdw";
+        String jdbcUrl = "jdbc:mariadb://localhost:3308/mdw?user=mdw&password=mdw";
+        //String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/mdw?user=root&password=mdw";
         ProcessCleanup me = new ProcessCleanup();
         // db , cleanupfile , maxProcInst, processExpirationDays , eventExpirationDays , commitInterval, status IN (3,4,5)
-        me.cleanup(null, "mysql_cleanup.sql", 1, 360, 360, 2, jdbcUrl);
+        me.cleanup(null, "Cleanup-Runtime.sql", 1, 360, 360, 2, jdbcUrl);
     }
 
     // TODO misc things for runtime data clean ups
