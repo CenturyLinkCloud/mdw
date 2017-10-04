@@ -5,17 +5,15 @@ var chartMod = angular.module('mdwChart', ['mdw']);
 
 chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
                                              function($scope, $cookieStore, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
-	
+		
 
 	$scope.init = function() {
 	$scope.spans = ['Week', 'Month'];	
 	$scope.span = 'Week';
-  $scope.days = 7;
-    
-  $scope.selectedChart= $cookieStore.get('selectedChart');
+    $scope.days = 7;
       
     // TODO hardcoded
-  $scope.initialSelect = 5;
+    $scope.initialSelect = 5;
     
     // TODO: hardcoded
     $scope.max = 50;
@@ -27,17 +25,17 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
     $scope.selected = [];
     $scope.breakdowns = [];
     var bd = 0;
-    for (var prop in $scope.breakdownConfig) {
+    for (var prop in $scope.breakdownConfig) {  
       if ($scope.breakdownConfig.hasOwnProperty(prop) && typeof $scope.breakdownConfig[prop] === 'object') {
-        $scope.breakdowns[bd] = prop;
+    	$scope.breakdowns[bd] = prop;
         bd++;
       }
-    }
+    }    
     if ($scope.showTotal)
       $scope.breakdowns.push('Total');
     if ($scope.breakdownConfig.Status) {
       $scope.statuses = $scope.breakdownConfig.Status.throughput.slice();
-    }    
+    }
     $scope.setBreakdown($scope.breakdowns[0]);    
   };
 
@@ -50,8 +48,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
   $scope.resetFilter();
   
   $scope.setStatus = function(status) {
-	  $scope.chartLegend ='';
-	  $scope.filter.status = status;
+    $scope.filter.status = status;
     $scope.updateRange();
   };
   
@@ -154,7 +151,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
   $scope.isSelected = function(sel) {
     return $scope.selected.includes(sel);
   };
-  $scope.applySelect = function() {
+  $scope.applySelect = function() {  
     $scope.backupSelected = null;
     $scope.closeSelectPop();
     $scope.updateData();
@@ -200,8 +197,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
         url += '?';
       url += 'app=mdw-admin&max=' + $scope.max + '&startDate=' + $scope.start;
       if ($scope.filter.status)
-        url += '&status=' + $scope.filter.status;
-      $scope.selected = [];
+        url += '&status=' + $scope.filter.status;    
       $http.get(url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + url);
       }).success(function(data, status, headers, config) {
@@ -209,11 +205,11 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
         if ($scope.selected.length === 0) {
           // initialize to top 5
           for (var i = 0; i < $scope.tops.length; i++) {
-            var val = $scope.tops[i][$scope.selField];
+            var val = $scope.tops[i][$scope.selField];           
             if (val && $scope.selected.length < $scope.initialSelect)
               $scope.selected.push(val);
           }
-        }
+        }        
         $scope.updateData();
       });
     }
@@ -236,8 +232,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
     }
   };
   
-  $scope.updateData = function() {
-    
+  $scope.updateData = function() {  
     // based on selected
     $scope.clearData();
     
@@ -251,7 +246,6 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
     $scope.dataUrl += 'app=mdw-admin&startDate=' + $scope.start;
     if (breakdown && breakdown.instancesParam) 
         $scope.dataUrl += '&' + breakdown.instancesParam + '=[' + $scope.selected + ']';
-
     $http.get($scope.dataUrl).error(function(data, status) {
       console.log('HTTP ' + status + ': ' + $scope.dataUrl);
     }).success(function(data, status, headers, config) {
@@ -260,7 +254,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       // TODO: handle 'Other'
       var seriesData = [];
       var seriesTotal = 0;
-      if (breakdown && $scope.chartType ==='chart chart-line') {
+      if (breakdown && $scope.chartType ==='chart chart-line') {    	
         $scope.selected.forEach(function(sel) {
         	$scope.series.push(sel);  	
           seriesData = [];
@@ -268,19 +262,23 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
            $scope.data.push(seriesData); 
            $scope.dates.forEach(function(date) {
             var ct = 0;
-            var dateCounts = $scope.dateObjs[date];
+            var dateCounts = $scope.dateObjs[date];// horizondal  dates
             if (dateCounts) {
               for (var k = 0; k < dateCounts.length; k++) {
                 if (dateCounts[k][$scope.selField] == sel) {
-                  ct = dateCounts[k].count;
-                  seriesTotal += ct; 
+                  	if((breakdown.throughput).indexOf("completionTime=true") == -1)  
+                      ct = dateCounts[k].count;
+                	else
+                	 ct = dateCounts[k].meanCompletionTime; //Vertical                   	 
+                  seriesTotal += ct;
                   break;
                 }
               }
-            }
+            }           
              seriesData.push(ct);
    
-          });
+          });      
+           
           var top = $scope.getTop(sel);
           if (top){
               top.seriesTotal = seriesTotal;
@@ -379,18 +377,18 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
   
   $scope.setSpan = function(span) {
     $scope.span = span;
-    $scope.days = $scope.span == 'Month' ? 30 : 7;    
+    $scope.days = $scope.span == 'Month' ? 30 : 7;
     $scope.updateRange();
   };
 
-  $scope.setBreakdown = function(breakdown) {
+  $scope.setBreakdown = function(breakdown) {	  
     $scope.breakdown = breakdown;
     if ($scope.breakdownConfig[breakdown]) {
       $scope.selField = $scope.breakdownConfig[breakdown].selectField;
       $scope.selectLabel = $scope.breakdownConfig[breakdown].selectLabel;
     }
     $scope.selected = [];
-    $scope.resetFilter();
+    $scope.resetFilter();    
     $scope.updateRange();
   };
   // current breakdown obj (returns undefined, array or object)
@@ -419,10 +417,13 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       if (top.version)
         label += ' v' + top.version;
       if (top.definitionMissing)
-        label = '[' + label + ']';
-      if (top.count)
-        label += ' (' + top.count + ')';
-      else if (seriesTotal && typeof top.seriesTotal != 'undefined')
+        label = '[' + label + ']';      
+      if (top.count){
+    	  if((breakdown.throughput).indexOf("completionTime=true") == -1)  
+    		  label += ' (' + top.count + ')';
+    	  else
+    		 label += ' (' + top.meanCompletionTime + ')';  
+    } else if (seriesTotal && typeof top.seriesTotal != 'undefined')
         label += ' (' + top.seriesTotal + ')';
       return label;
     }
@@ -452,16 +453,6 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       $location.path($scope.listRoute.substring(1));
     }
   };
-  
-  $scope.setSelectedChart=function(selChart){
-	   $scope.selectedChart= selChart;
-	   $cookieStore.put('selectedChart',selChart);
-	   if(selChart =='List'){
-		   window.location.href='#/workflow/processes';
-	   }else{	   
-	       window.location.href='#/dashboard/processes?chart='+selChart;
-	   }    
-}; 
   
   $scope.downloadExcel = function() {
       window.location = $scope.dataUrl + '&' + EXCEL_DOWNLOAD;      
@@ -512,4 +503,5 @@ chartMod.directive('selectPop', [function() {
       });
     }
   };
-} ]);
+}]);
+
