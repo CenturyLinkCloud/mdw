@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.script;
+package com.centurylink.mdw.services.rules;
 
-import java.util.Map;
+import org.json.JSONObject;
 
-public interface ScriptExecutor {
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.RuntimeContext;
+import com.centurylink.mdw.script.ExecutionException;
+
+public interface RulesExecutor {
 
     public String getName();
-    public void setName(String name);
 
-    public Object execute(String script, Map<String,Object> bindings) throws ExecutionException;
+    public JSONObject execute(Asset rulesAsset, JSONObject inputFacts,
+            RuntimeContext context) throws ExecutionException;
+
 }

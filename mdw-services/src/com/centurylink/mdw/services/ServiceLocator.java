@@ -21,6 +21,7 @@ import com.centurylink.mdw.services.history.HistoryServicesImpl;
 import com.centurylink.mdw.services.project.CollaborationServicesImpl;
 import com.centurylink.mdw.services.project.SolutionServicesImpl;
 import com.centurylink.mdw.services.request.RequestServicesImpl;
+import com.centurylink.mdw.services.rules.RulesServicesImpl;
 import com.centurylink.mdw.services.system.SystemServicesImpl;
 import com.centurylink.mdw.services.task.TaskServicesImpl;
 import com.centurylink.mdw.services.test.TestingServicesImpl;
@@ -84,6 +85,10 @@ public class ServiceLocator {
 
     public static SystemServices getSystemServices() {
         return new SystemServicesImpl();
+    }
+
+    public static RulesServices getRulesServices() {
+        return new RulesServicesImpl();
     }
 
 }
