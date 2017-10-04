@@ -77,8 +77,10 @@ public class Init extends Setup {
             project = project.substring(slashIndex + 1);
 
         if (getProjectDir().exists()) {
-            if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0)
-                throw new IOException(getProjectDir() + " already exists and is not an empty directory");
+            if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {
+                System.err.println(getProjectDir() + " already exists and is not an empty directory");
+                return this;
+            }
         }
         else {
             if (!getProjectDir().mkdirs())
