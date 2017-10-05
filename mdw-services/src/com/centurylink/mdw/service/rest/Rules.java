@@ -79,6 +79,8 @@ public class Rules extends JsonRestService {
         Status status = input.getStatus();
         if (status != null) {
             headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(status.getCode()));
+            if (response == null)
+                return status.getJson();
         }
 
         return response;
@@ -110,6 +112,8 @@ public class Rules extends JsonRestService {
         Status status = input.getStatus();
         if (status != null) {
             headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(status.getCode()));
+            if (response == null)
+                return status.getJson();
         }
 
         return response;
