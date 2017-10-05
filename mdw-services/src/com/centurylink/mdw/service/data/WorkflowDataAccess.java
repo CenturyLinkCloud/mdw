@@ -32,6 +32,7 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.Solution.MemberType;
 
 public class WorkflowDataAccess extends CommonDataAccess {
 
@@ -50,17 +51,26 @@ public class WorkflowDataAccess extends CommonDataAccess {
                     // numeric value means instance id or master request id
                     long findInstId = Long.parseLong(query.getFind());
                     where = "where (pi.process_instance_id like '" + findInstId
-                            + "%' or pi.master_request_id like '" + query.getFind() + "%')\n";
+                            + "%' or pi.master_request_id like '" + query.getFind() + "%' or solutionId like  '" + query.getFind() + "%')\n";
                 }
                 catch (NumberFormatException ex) {
                     // otherwise master request id
-                    where = "where pi.master_request_id like '" + query.getFind() + "%'\n";
+                    where = "where (pi.master_request_id like '" + query.getFind() + "%' or solutionId like  '" + query.getFind() + "%')\n";
                 }
             }
             else {
                 where = buildWhere(query);
             }
-            String countSql = "select count(process_instance_id) from process_instance pi\n" + where;
+
+            String from = " from process_instance pi LEFT OUTER JOIN " +
+                       " (select ss.id as solutionId, sm1.member_id as member_id from solution_map sm1, solution ss where ss.solution_id = sm1.solution_id " +
+                       " and (sm1.member_type = '"+ MemberType.ProcessInstance  + "' or sm1.member_type = '" + MemberType.MasterRequest  + "')) s ";
+            if (db.isMySQL())
+                from = from + " on (s.member_id = pi.process_instance_id  or s.member_id = pi.master_request_id) ";
+            else
+                from = from + " on (s.member_id = '' || pi.process_instance_id  or s.member_id = pi.master_request_id) ";
+
+            String countSql = "select count(process_instance_id) " + from + where;
             ResultSet rs = db.runSelect(countSql, null);
             if (rs.next())
                 count = rs.getLong(1);
@@ -69,13 +79,21 @@ public class WorkflowDataAccess extends CommonDataAccess {
             StringBuilder sql = new StringBuilder();
             if (query.getMax() != Query.MAX_ALL)
               sql.append(db.pagingQueryPrefix());
-            sql.append("select ").append(PROC_INST_COLS).append(" from process_instance pi\n").append(where).append(orderBy);
-            if (query.getMax() != Query.MAX_ALL)
+              sql.append("select ").append(PROC_INST_COLS + ", solutionId ").append(from).append(where).append(orderBy);
+             if (query.getMax() != Query.MAX_ALL)
                 sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
             rs = db.runSelect(sql.toString(), null);
-            while (rs.next())
-                procInsts.add(buildProcessInstance(rs));
-
+            String solutionId = query.getFilter("solutionId");
+            while (rs.next()) {
+                ProcessInstance pi = buildProcessInstance(rs);
+                if (solutionId !=null)
+                    pi.setSolutionId(solutionId);
+                else if (rs.getString("solutionId") != null)
+                    pi.setSolutionId(rs.getString("solutionId"));
+                else
+                    pi.setSolutionId("");
+                procInsts.add(pi);
+            }
             ProcessList list = new ProcessList(ProcessList.PROCESS_INSTANCES, procInsts);
             list.setTotal(count);
             list.setRetrieveDate(DatabaseAccess.getDbDate());
@@ -101,6 +119,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
         String masterRequestId = query.getFilter("masterRequestId");
         if (masterRequestId != null)
             sb.append(" and pi.master_request_id = '" + masterRequestId + "'\n");
+
+        String solutionId = query.getFilter("solutionId");
+        if (solutionId != null)
+            sb.append(" and solutionId = '" + solutionId + "'\n");
 
         String owner = query.getFilter("owner");
         if (owner == null) {

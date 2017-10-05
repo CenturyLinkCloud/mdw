@@ -65,7 +65,7 @@ env:
     "mdw.database.password": "mdw",
     "mdw.database.poolsize": "10",
     "mdw.database.poolMaxIdle": "5",
-    "mdw.database.validationQuery": "select 1",
+    "mdw.database.validationQuery": "select 1 from dual",
     
     "mdw.server.list": "{{project}}.useast.appfog.ctl.io:80",
     

@@ -12,6 +12,11 @@
             <a href="#/workflow/masterRequests/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a>
           </span>
         </div>
+        <div class="mdw-item-sub" ng-if="item.solutionId">
+          <span>Solution ID: 
+            <a href="#/solutions/{{item.solutionId}}" class="mdw-link">{{item.solutionId}}</a>
+          </span>
+        </div>
         <div class="mdw-item-sub">Started {{item.startDate}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
           <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
         </div>
