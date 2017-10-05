@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.services.rules;
+package com.centurylink.mdw.rules;
 
-import org.json.JSONObject;
+import com.centurylink.mdw.common.MdwException;
 
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.workflow.RuntimeContext;
-import com.centurylink.mdw.script.ExecutionException;
+public class ExecutionException extends MdwException {
 
-public interface RulesExecutor {
+    public ExecutionException(String message) {
+        super(message);
+    }
 
-    public String getName();
+    public ExecutionException(String message, Throwable t){
+        super(message, t);
+    }
 
-    public JSONObject execute(Asset rulesAsset, JSONObject inputFacts,
-            RuntimeContext context) throws ExecutionException;
-
+    public ExecutionException(int code, String message, Throwable t){
+        super(code, message, t);
+    }
 }

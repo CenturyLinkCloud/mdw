@@ -18,7 +18,7 @@ process: # 13605
     status: Completed
   variable: # 20591
     name: dueDate
-    value: Fri Mar 20 12:30:00 MDT 2015
+    value: ${~.* [0-3]\\d [0-2]\\d:[0-5]\\d:[0-5]\\d .* 201\\d}
   variable: # 20590
     name: orderNumber
     value: 295417

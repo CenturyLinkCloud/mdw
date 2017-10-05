@@ -17,18 +17,17 @@ package com.centurylink.mdw.drools;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.json.JSONObject;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.StatelessKieSession;
 import org.kie.internal.command.CommandFactory;
 
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.workflow.RuntimeContext;
+import com.centurylink.mdw.rules.Operand;
+import com.centurylink.mdw.rules.RulesExecutor;
 import com.centurylink.mdw.script.ExecutionException;
-import com.centurylink.mdw.services.rules.RulesExecutor;
 
 /**
  * Drools rules executor.
@@ -42,14 +41,13 @@ public class DroolsExecutor implements RulesExecutor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public JSONObject execute(Asset rulesAsset, JSONObject inputFacts,
-            RuntimeContext context) throws ExecutionException {
+    public Object execute(Asset rulesAsset, Operand input) throws ExecutionException {
 
         ClassLoader cloudClassLoader = null;
-        if (context != null)
-            cloudClassLoader = context.getPackage().getCloudClassLoader();
+        if (input.getContext() != null && input.getContext().getPackage() != null)
+            cloudClassLoader = input.getContext().getPackage().getCloudClassLoader();
         if (cloudClassLoader == null) // fall back to rules asset pkg classloader
-            cloudClassLoader = PackageCache.getPackage(rulesAsset.getPackageName()).getClassLoader();
+            cloudClassLoader = PackageCache.getPackage(rulesAsset.getPackageName()).getCloudClassLoader();
 
         KnowledgeBaseAsset kbAsset = DroolsKnowledgeBaseCache
                 .getKnowledgeBaseAsset(rulesAsset.getName(), null, null, cloudClassLoader);
@@ -63,20 +61,14 @@ public class DroolsExecutor implements RulesExecutor {
         StatelessKieSession kSession = knowledgeBase.newStatelessKieSession();
 
         List<Object> facts = new ArrayList<Object>();
-        facts.add(inputFacts);
-
-        if (context != null) {
-            Map<String,Object> values = context.getVariables();
-            if (values != null) {
-                for (String name : values.keySet()) {
-                    kSession.setGlobal(name, values.get(name));
-                }
-            }
+        if (input.getInput() != null) {
+            facts.add(input.getInput()); // direct access
+            if (input.getInput() instanceof Jsonable)
+                facts.add(((Jsonable)input.getInput()).getJson());
         }
-        JSONObject result = new JSONObject();
-        // facts.add(result);
 
+        kSession.setGlobal("operand", input);
         kSession.execute(CommandFactory.newInsertElements(facts));
-        return result;
+        return input.getResult();
     }
 }

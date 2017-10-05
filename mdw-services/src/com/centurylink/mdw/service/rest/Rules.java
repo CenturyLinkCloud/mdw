@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,18 +24,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.model.workflow.RuntimeContextAdapter;
+import com.centurylink.mdw.rules.Operand;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.rules.RulesServicesImpl;
-import com.centurylink.mdw.model.workflow.Package;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -60,6 +61,30 @@ public class Rules extends JsonRestService {
     }
 
     /**
+     * Apply rules designated in asset path against incoming request parameters.
+     */
+    @Override
+    public JSONObject get(String path, Map<String, String> headers)
+            throws ServiceException, JSONException {
+        Asset rules = getRulesAsset(path);
+
+        Operand input = new Operand();
+        input.setContext(getContext(path));
+        Query query = getQuery(path, headers);
+        input.setParams(query.getFilters());
+        input.setMeta(headers);
+
+        JSONObject response = invokeRules(rules, input, getExecutor(headers));
+
+        Status status = input.getStatus();
+        if (status != null) {
+            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(status.getCode()));
+        }
+
+        return response;
+    }
+
+    /**
      * Apply rules designated in asset path against incoming JSONObject.
      */
     @Override
@@ -72,6 +97,25 @@ public class Rules extends JsonRestService {
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
 
+        Asset rules = getRulesAsset(path);
+
+        Operand input = new Operand(content);
+        input.setContext(getContext(path));
+        Query query = getQuery(path, headers);
+        input.setParams(query.getFilters());
+        input.setMeta(headers);
+
+        JSONObject response = invokeRules(rules, input, getExecutor(headers));
+
+        Status status = input.getStatus();
+        if (status != null) {
+            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(status.getCode()));
+        }
+
+        return response;
+    }
+
+    protected Asset getRulesAsset(String path) throws ServiceException {
         String[] pathSegments = getSegments(path);
         if (pathSegments.length != 3)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
@@ -89,28 +133,40 @@ public class Rules extends JsonRestService {
         if (asset == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Rules asset not found: " + assetPath);
 
-        Query query = getQuery(path, headers);
-        final Map<String,String> filters = query.getFilters();
-        final Package assetPackage = PackageCache.getPackage(asset.getPackageName());
-        RuntimeContext context = new RuntimeContextAdapter() {
-            public Map<String,Object> getVariables() {
-                Map<String,Object> values = new HashMap<>();
-                if (filters != null && !filters.isEmpty()) {
-                    for (String name : filters.keySet())
-                        values.put(name, filters.get(name));
-                }
-                return values;
-            }
-            @Override
-            public Package getPackage() {
-                return assetPackage;
-            }
-        };
+        return asset;
+    }
 
+    /**
+     * Override to specify runtime context.
+     */
+    protected RuntimeContext getContext(String path)
+            throws ServiceException {
+        return new RuntimeContextAdapter();
+    }
+
+    protected String getExecutor(Map<String,String> headers) {
         String executor = headers.get("rules-executor");
         if (executor == null)
             executor = RulesServicesImpl.DROOLS_EXECUTOR;
 
-        return ServiceLocator.getRulesServices().applyRules(asset, content, context, executor);
+        return executor;
     }
+
+    protected JSONObject invokeRules(Asset rules, Operand input, String executor) throws ServiceException {
+        Object result = ServiceLocator.getRulesServices().applyRules(rules, input, executor);
+
+        if (result instanceof Jsonable) {
+            return ((Jsonable)result).getJson();
+        }
+        else if (result instanceof JSONObject) {
+            return (JSONObject)result;
+        }
+        else if (result == null) {
+            return null; // default response
+        }
+        else {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid result type: " + result.getClass());
+        }
+    }
+
 }

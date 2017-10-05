@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -107,7 +108,8 @@ public class Excel2007Parser implements DecisionTableParser {
                         if (merged != null) {
                             XSSFRow topRow = sheet.getRow(merged.getFirstRow());
                             XSSFCell topLeft = topRow.getCell(merged.getFirstColumn());
-                            newCell(listeners, i, cellNum, topLeft.getStringCellValue(), topLeft.getColumnIndex());
+                            String cellValue = topLeft.getCellType() == CellType.NUMERIC.getCode() ? String.valueOf(topLeft.getNumericCellValue()) : topLeft.getStringCellValue();
+                            newCell(listeners, i, cellNum, cellValue, topLeft.getColumnIndex());
                         }
                         else {
                             String cellValue = null;
