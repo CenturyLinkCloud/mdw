@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
@@ -75,7 +76,8 @@ public class Solutions extends JsonRestService {
                 return solution.getJson();
         }
         else {
-            return solutionServices.getSolutions().getJson();
+            Query query = getQuery(path, headers);
+            return solutionServices.getSolutions(query).getJson();
         }
     }
 

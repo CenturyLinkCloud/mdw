@@ -1,0 +1,3 @@
+<input type="text" class="form-control mdw-inline" focus-me placeholder=" find process instance" 
+  ng-model="selectedProcess" uib-typeahead="id as process.id for process in findProcess($viewValue)" 
+  typeahead-editable="false" typeahead-on-select="addSelectedProcess($item)">

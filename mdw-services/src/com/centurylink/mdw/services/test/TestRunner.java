@@ -248,7 +248,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
      */
     private void sendSlackNotice(TestCaseList testCaseList) {
         MdwWebSocketServer webSocketServer = MdwWebSocketServer.getInstance();
-        if (webSocketServer.hasInterestedConnections("SlackNotice")) {
+        if (webSocketServer.hasInterestedConnections("SlackNotice") && testCaseList != null) {
             try {
                 int count = 0;
                 for (TestCase testCase : testCaseList.getTestCases()) {

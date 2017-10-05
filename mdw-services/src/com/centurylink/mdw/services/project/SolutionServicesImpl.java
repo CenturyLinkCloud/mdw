@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -34,9 +35,10 @@ public class SolutionServicesImpl implements SolutionServices {
         return new SolutionsDataAccess();
     }
 
-    public SolutionList getSolutions() throws ServiceException {
+    public SolutionList getSolutions(Query query) throws ServiceException {
         try {
-            List<Solution> solutions = getDAO().getSolutions();
+            String solutionId = query.getFind();
+            List<Solution> solutions = getDAO().getSolutions(solutionId);
             SolutionList solutionList = new SolutionList(solutions);
             solutionList.setRetrieveDate(DatabaseAccess.getDbDate());
             solutionList.setTotal(solutions.size());
