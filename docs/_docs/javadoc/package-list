@@ -54,6 +54,7 @@ com.centurylink.mdw.monitor.impl
 com.centurylink.mdw.observer
 com.centurylink.mdw.observer.task
 com.centurylink.mdw.provider
+com.centurylink.mdw.rules
 com.centurylink.mdw.script
 com.centurylink.mdw.service.action
 com.centurylink.mdw.service.api
@@ -78,6 +79,7 @@ com.centurylink.mdw.services.process
 com.centurylink.mdw.services.project
 com.centurylink.mdw.services.request
 com.centurylink.mdw.services.rest
+com.centurylink.mdw.services.rules
 com.centurylink.mdw.services.system
 com.centurylink.mdw.services.task
 com.centurylink.mdw.services.task.factory
