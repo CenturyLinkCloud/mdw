@@ -743,6 +743,9 @@ public class TaskDataAccess extends CommonDataAccess {
                     if (taskName != null && taskName.equals(taskInst.getName())) {
                         taskInstances.add(taskInst);
                     }
+                    else if (taskName == null) {
+                        taskInstances.add(taskInst);
+                    }
                 }
             }
             TaskList taskList = new TaskList(TaskList.TASKS, taskInstances);
