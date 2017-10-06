@@ -144,8 +144,11 @@ public class TaskTemplateCache implements PreloadableCache {
             // If didn't find, check ASSET_REF DB table to retrieve from git history
             if (taskTemplate == null && !assetVersionSpec.getVersion().equals("0")) {
                 AssetRef ref = AssetRefCache.getAssetRef(assetVersionSpec);
-                if (ref != null)
+                if (ref != null) {
                     taskTemplate = AssetRefConverter.getTaskTemplate(ref);
+                    if (taskTemplate != null)
+                        taskVoCache.add(taskTemplate);
+                }
             }
             if (taskTemplate != null)
                 templateVersions.put(assetVersionSpec.toString(), taskTemplate);

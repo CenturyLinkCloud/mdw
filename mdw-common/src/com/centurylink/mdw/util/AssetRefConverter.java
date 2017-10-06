@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.util;
 
+import java.io.File;
 import java.util.Date;
 
 import com.centurylink.mdw.dataaccess.AssetRef;
@@ -30,77 +31,75 @@ public class AssetRefConverter {
 
     public static Process getProcess(AssetRef assetRef) throws Exception {
         Process proc = null;
-
-        if (assetRef != null) {
-            LoaderPersisterVcs lp = (LoaderPersisterVcs)DataAccess.getProcessLoader();
-            VersionControlGit vc = (VersionControlGit)lp.getVersionControl();
-            byte[] contentBytes = vc.readFromCommit(assetRef.getRef(), assetRef.getName());
-
-            if (contentBytes != null && contentBytes.length > 0) {
-                proc = new Process(new JsonObject(new String(contentBytes)));
-                proc.setId(assetRef.getDefinitionId());
-                int startIdx = assetRef.getName().lastIndexOf('/') + 1;
-                int endIdx = assetRef.getName().lastIndexOf(".proc v");
-                proc.setName(assetRef.getName().substring(startIdx, endIdx));
-                proc.setLanguage(Asset.PROCESS);
-                proc.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+6)));
-                proc.setPackageName(assetRef.getName().substring(0, startIdx-1));
-//          process.setRawFile(assetFile);
-//        process.setModifyDate(assetFile.getRevision().getModDate());
-//        process.setModifyingUser(assetFile.getRevision().getModUser());
-//        process.setRevisionComment(assetFile.getRevision().getComment());
-
-//         process.setPackageVersion(pkgDir.getPackageVersion());
-            }
+        byte[] contentBytes = readAsset(assetRef);
+        if (contentBytes != null && contentBytes.length > 0) {
+            proc = new Process(new JsonObject(new String(contentBytes)));
+            proc.setId(assetRef.getDefinitionId());
+            int startIdx = assetRef.getName().lastIndexOf('/') + 1;
+            int endIdx = assetRef.getName().lastIndexOf(".proc v");
+            proc.setName(assetRef.getName().substring(startIdx, endIdx));
+            proc.setLanguage(Asset.PROCESS);
+            proc.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+6)));
+            proc.setPackageName(assetRef.getName().substring(0, startIdx-1));
         }
         return proc;
     }
 
     public static Asset getAsset(AssetRef assetRef) throws Exception {
         Asset asset = null;
+        byte[] contentBytes = readAsset(assetRef);
 
-        if (assetRef != null) {
-            LoaderPersisterVcs lp = (LoaderPersisterVcs)DataAccess.getProcessLoader();
-            VersionControlGit vc = (VersionControlGit)lp.getVersionControl();
-            byte[] contentBytes = vc.readFromCommit(assetRef.getRef(), assetRef.getName());
-
-            if (contentBytes != null && contentBytes.length > 0) {
-                asset = new Asset();
-                asset.setId(assetRef.getDefinitionId());
-                int startIdx = assetRef.getName().lastIndexOf('/') + 1;
-                int endIdx = assetRef.getName().lastIndexOf(" v");
-                asset.setName(assetRef.getName().substring(startIdx, endIdx));
-                asset.setLanguage(Asset.getFormat(asset.getName()));
-                asset.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
-                asset.setPackageName(assetRef.getName().substring(0, startIdx-1));
-                asset.setLoadDate(new Date());
-                asset.setRaw(true);
-                // do not load jar assets into memory
-                if (!Asset.excludedFromMemoryCache(asset.getName()))
-                    asset.setRawContent(contentBytes);
-            }
+        if (contentBytes != null && contentBytes.length > 0) {
+            asset = new Asset();
+            asset.setId(assetRef.getDefinitionId());
+            int startIdx = assetRef.getName().lastIndexOf('/') + 1;
+            int endIdx = assetRef.getName().lastIndexOf(" v");
+            asset.setName(assetRef.getName().substring(startIdx, endIdx));
+            asset.setLanguage(Asset.getFormat(asset.getName()));
+            asset.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
+            asset.setPackageName(assetRef.getName().substring(0, startIdx-1));
+            asset.setLoadDate(new Date());
+            asset.setRaw(true);
+            // do not load jar assets into memory
+            if (!Asset.excludedFromMemoryCache(asset.getName()))
+                asset.setRawContent(contentBytes);
         }
         return asset;
     }
 
     public static TaskTemplate getTaskTemplate(AssetRef assetRef) throws Exception {
         TaskTemplate taskVO = null;
+        byte[] contentBytes = readAsset(assetRef);
 
+        if (contentBytes != null && contentBytes.length > 0) {
+            taskVO = new TaskTemplate(new JsonObject(new String(contentBytes)));
+            taskVO.setTaskId(assetRef.getDefinitionId());
+            int startIdx = assetRef.getName().lastIndexOf('/') + 1;
+            int endIdx = assetRef.getName().lastIndexOf(" v");
+            taskVO.setName(assetRef.getName().substring(startIdx, endIdx));
+            taskVO.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
+            taskVO.setPackageName(assetRef.getName().substring(0, startIdx-1));
+        }
+        return taskVO;
+    }
+
+    private static byte[] readAsset(AssetRef assetRef) throws Exception {
+        byte[] contentBytes = null;
         if (assetRef != null) {
             LoaderPersisterVcs lp = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)lp.getVersionControl();
-            byte[] contentBytes = vc.readFromCommit(assetRef.getRef(), assetRef.getName());
-
-            if (contentBytes != null && contentBytes.length > 0) {
-                taskVO = new TaskTemplate(new JsonObject(new String(contentBytes)));
-                taskVO.setTaskId(assetRef.getDefinitionId());
-                int startIdx = assetRef.getName().lastIndexOf('/') + 1;
-                int endIdx = assetRef.getName().lastIndexOf(" v");
-                taskVO.setName(assetRef.getName().substring(startIdx, endIdx));
-                taskVO.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
-                taskVO.setPackageName(assetRef.getName().substring(0, startIdx-1));
-            }
+            String path = getMissingPath(lp.getStorageDir(), "") + assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v"));
+            contentBytes = vc.readFromCommit(assetRef.getRef(), path);
         }
-        return taskVO;
+        return contentBytes;
+    }
+
+    private static String getMissingPath(File assetLoc, String path) {
+        File test = new File(assetLoc.getPath() + "/.git");
+        if (test.isDirectory())
+            return path;
+
+        return getMissingPath(new File(assetLoc.getParent()), assetLoc.getName() + "/" + path);
+
     }
 }
