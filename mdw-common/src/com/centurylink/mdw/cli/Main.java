@@ -53,6 +53,7 @@ public class Main {
         Run run = new Run();
         Git git = new Git();
         Archive asset = new Archive(false);
+        Status status = new Status();
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
@@ -65,6 +66,7 @@ public class Main {
             .addCommand("run", run)
             .addCommand("version", version)
             .addCommand("git", git)
+            .addCommand("status", status)
             .addCommand("asset", asset)
             .build();
 
@@ -81,25 +83,43 @@ public class Main {
             }
             else {
                 version.run();
+                Operation op = null;
                 if (command.equals("init")) {
-                    init.run(getMonitor());
-                    new Update(init).run(getMonitor());
+                    op = init;
                 }
                 else if (command.equals("import")) {
-                    mport.run(getMonitor());
+                    op = mport;
                 }
                 else if (command.equals("update")) {
                     checkLoc(update.getProjectDir());
-                    update.run(getMonitor());
+                    op = update;
                 }
                 else if (command.equals("install")) {
                     if (install.getWebappsDir() == null)
                         checkLoc(install.getProjectDir());
-                    install.run(getMonitor());
+                    op = install;
                 }
                 else if (command.equals("run")) {
                     checkLoc(run.getProjectDir());
-                    run.run(getMonitor());
+                    op = run;
+                }
+                else if (command.equals("status")) {
+                    checkLoc(run.getProjectDir());
+                    op = status;
+                }
+
+                if (op == null) {
+                    cmd.usage();
+                }
+                else {
+                    if (op instanceof Setup) {
+                        Setup setup = (Setup) op;
+                        if (setup.isDebug())
+                            setup.debug();
+                        if (!setup.validate())
+                            return;
+                    }
+                    op.run(getMonitor());
                 }
             }
         }

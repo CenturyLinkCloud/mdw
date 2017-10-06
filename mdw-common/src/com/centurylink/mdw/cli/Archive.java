@@ -61,22 +61,23 @@ public class Archive extends Setup {
         archiveArgs.add("archive");
         archiveArgs.add("args");
         boolean show = false;
+        boolean debug = false;
         for (int i = 1; i < args.length; i++) {
             if (args[i].startsWith("--show"))
                 show = true;
+            else if (args[i].startsWith("--debug"))
+                debug = true;
             else
               archiveArgs.add(args[i]);
         }
         Archive archive = new Archive(show);
         cmd.addCommand("archive", archive);
         cmd.parse(archiveArgs.toArray(new String[0]));
+        if (debug)
+            archive.debug();
+        if (!archive.validate())
+            return;
         archive.run(Main.getMonitor());
-    }
-
-    public Archive(File assetDir) {
-        this.assetDir = assetDir;
-        packages = new ArrayList<>();
-        findPackages(assetDir);
     }
 
     public Archive(File assetDir, List<String> packages) {
@@ -242,16 +243,6 @@ public class Archive extends Setup {
     private void removeBackups() throws IOException {
         System.out.println("Removing temp backups...");
         new Delete(tempDir, true).run();
-    }
-
-    private void findPackages(File dir) {
-        if (new File(dir + "/" + PKG_META).isFile()) {
-            packages.add(getAssetPath(dir).replace('/', '.'));
-        }
-        for (File child : dir.listFiles()) {
-            if (child.isDirectory())
-                findPackages(child);
-        }
     }
 
     private List<Pkg> getPkgs(List<String> packages) throws IOException {
