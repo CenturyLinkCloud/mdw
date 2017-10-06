@@ -285,10 +285,10 @@ CREATE TABLE TASK_INST_INDEX (
 );
 
 CREATE TABLE ASSET_REF (
-  DEFINITION_ID       BIGINT                    NOT NULL,
-  NAME                VARCHAR(512)              NOT NULL,
-  REF                 VARCHAR(64)               NOT NULL,
-  ARCHIVE_DT          TIMESTAMP                 NOT NULL,
+  DEFINITION_ID    	  BIGINT                    NOT NULL,
+  NAME	 		          VARCHAR(512)              NOT NULL,
+  REF           	    VARCHAR(64)               NOT NULL,
+  ARCHIVE_DT          TIMESTAMP					        NOT NULL,
   PRIMARY KEY (DEFINITION_ID)
 );
 

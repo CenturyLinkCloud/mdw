@@ -22,6 +22,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,8 +52,8 @@ public class Checkpoint extends Setup {
         this.dbInfo = dbInfo;
     }
 
-    public Checkpoint(String assetLoc, VersionControl vc, String commit, Connection conn) {
-        this.assetRoot = new File(assetLoc);
+    public Checkpoint(File assetLoc, VersionControl vc, String commit, Connection conn) {
+        this.assetRoot = assetLoc;
         this.pooledConn = conn;
         this.versionControl = vc;
         this.commit = commit;
@@ -133,7 +134,7 @@ public class Checkpoint extends Setup {
      * Finds an asset ref from the database by definitionID.
      */
     public AssetRef retrieveRef(Long id) throws IOException, SQLException {
-        String select = "select definition_id, name, ref from asset_ref where definitionID = ?";
+        String select = "select definition_id, name, ref from asset_ref where definition_id = ?";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setLong(1, id);
@@ -144,6 +145,28 @@ public class Checkpoint extends Setup {
             }
         }
         return null;
+    }
+
+    /**
+     * Finds all asset refs from the database since cutoffDate, or all if cutoffDate is null.
+     */
+    public List<AssetRef> retrieveAllRefs(Date cutoffDate) throws IOException, SQLException {
+        List<AssetRef> assetRefList = null;
+        String select = "select definition_id, name, ref from asset_ref ";
+        if (cutoffDate != null)
+            select += "where ARCHIVE_DT >= ? ";
+        select += "order by ARCHIVE_DT desc";
+        try (Connection conn = getDbConnection();
+                PreparedStatement stmt = conn.prepareStatement(select)) {
+            stmt.setTimestamp(1, new Timestamp(cutoffDate.getTime()));
+            try (ResultSet rs = stmt.executeQuery()) {
+                assetRefList = new ArrayList<AssetRef>();
+                while (rs.next()) {
+                    assetRefList.add(new AssetRef(rs.getString("name"), rs.getLong("definition_id"), rs.getString("ref")));
+                }
+            }
+        }
+        return assetRefList;
     }
 
     /**

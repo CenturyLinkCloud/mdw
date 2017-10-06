@@ -21,13 +21,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -233,7 +236,12 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().loadProcess(id, true);
-            // TODO If proc == null, check ASSET_REF DB table to retrieve from git history
+            // If proc == null, check ASSET_REF DB table and retrieve from git history
+            if (proc == null) {
+                AssetRef assetRef = AssetRefCache.getAssetRef(id);
+                if (assetRef != null)
+                    proc = AssetRefConverter.getProcess(assetRef);
+            }
             if (proc != null) {
                 // all db attributes are override attributes
                 Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, id);

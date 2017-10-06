@@ -22,13 +22,16 @@ import java.util.Map;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -122,8 +125,9 @@ public class TaskTemplateCache implements PreloadableCache {
      * in the matching asset is not unique, then the latest template with this logicalId
      * will be returned regardless of assetVersionSpec.
      * So CHANGE THE LOGICAL_ID if you want in-flight tasks to use a different template.
+     * @throws Exception
      */
-    public static TaskTemplate getTaskTemplate(AssetVersionSpec assetVersionSpec) throws CachingException {
+    public static TaskTemplate getTaskTemplate(AssetVersionSpec assetVersionSpec) throws Exception {
         TaskTemplate taskTemplate = templateVersions.get(assetVersionSpec.toString());
         if (taskTemplate == null) {
             if (assetVersionSpec.getPackageName() != null) {
@@ -136,6 +140,12 @@ public class TaskTemplateCache implements PreloadableCache {
                         }
                     }
                 }
+            }
+            // If didn't find, check ASSET_REF DB table to retrieve from git history
+            if (taskTemplate == null && !assetVersionSpec.getVersion().equals("0")) {
+                AssetRef ref = AssetRefCache.getAssetRef(assetVersionSpec);
+                if (ref != null)
+                    taskTemplate = AssetRefConverter.getTaskTemplate(ref);
             }
             if (taskTemplate != null)
                 templateVersions.put(assetVersionSpec.toString(), taskTemplate);

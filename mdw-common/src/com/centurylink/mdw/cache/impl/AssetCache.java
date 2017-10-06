@@ -26,11 +26,13 @@ import java.util.TreeMap;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -167,7 +169,12 @@ public class AssetCache implements PreloadableCache {
             if (match != null && !match.isLoaded()) {
                 assetVO = DataAccess.getProcessLoader().getAsset(match.getId());
             }
-         // TODO If match == null, check ASSET_REF DB table to retrieve from git history
+         //  If match == null, check ASSET_REF DB table to retrieve from git history
+            if (match == null && !spec.getVersion().equals("0")) {
+                AssetRef ref = AssetRefCache.getAssetRef(spec);
+                if (ref != null)
+                    assetVO = AssetRefConverter.getAsset(ref);
+            }
         } catch (Exception ex) {
             logger.severeException("Failed to load asset: "+spec.toString()+ " : "+ex.getMessage(), ex);
         }
@@ -202,7 +209,7 @@ public class AssetCache implements PreloadableCache {
                     }
                 }
             }
-            // TODO If match == null, check ASSET_REF DB table to retrieve from git history
+  // TODO If match == null, check ASSET_REF DB table to retrieve from git history - For when Asset attributes are implemented
         } catch (DataAccessException ex) {
             logger.severeException("Failed to load asset: "+spec.toString()+ " : "+ex.getMessage(), ex);
         }
@@ -396,7 +403,22 @@ public class AssetCache implements PreloadableCache {
                     return DataAccess.getProcessLoader().getAsset(asset.getId());
                 }
             }
-         // TODO If didn't find it, check ASSET_REF DB table to retrieve from git history
+         // If didn't find it, check ASSET_REF DB table to retrieve from git history
+            AssetRef ref = null;
+            if (key.getId() != null && key.getId() > 0L)  // We have a specific ID we are looking for
+                ref = AssetRefCache.getAssetRef(key.getId());
+            else if (key.getVersion() > 0) {  // We have a full name (pkg + asset) and specific version we are looking for
+                int delimIdx = getDelimIndex(key);
+                if (delimIdx > 0) {
+                    String pkgName = key.getName().substring(0, delimIdx);
+                    String assetName = key.getName().substring(delimIdx + 1);
+                    String version = Asset.formatVersion(key.getVersion());
+                    ref = AssetRefCache.getAssetRef(pkgName + "/" + assetName + " v" + version);
+                }
+            }
+            if (ref != null)
+                return AssetRefConverter.getAsset(ref);
+
             return null;
         }
         catch (Exception ex) {
