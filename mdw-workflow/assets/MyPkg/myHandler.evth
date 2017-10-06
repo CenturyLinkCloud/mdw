@@ -1,0 +1,4 @@
+{
+  "handlerClass": "MyPkg.MyPkgHandler",
+  "path": "JackMessage"
+}
