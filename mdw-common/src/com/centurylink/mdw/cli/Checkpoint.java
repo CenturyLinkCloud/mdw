@@ -84,14 +84,8 @@ public class Checkpoint extends Setup {
         if (new File(dir + "/.mdw").isDirectory()) {
             if (pooledConn == null)
                 pkgName = getAssetPath(dir).replace('/', '.');
-            else {
-                String tmpPath = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1);
-                if (tmpPath.startsWith("Archive")) {
-                    tmpPath = tmpPath.substring(8);
-                    tmpPath = tmpPath.substring(0, tmpPath.lastIndexOf(" v"));
-                }
-                pkgName = tmpPath.replace('\\', '/').replace('/', '.');
-            }
+            else
+                pkgName = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1).replace('\\', '/').replace('/', '.');
         }
         if (dir.exists()) {
             for (File file : dir.listFiles()) {
@@ -106,7 +100,7 @@ public class Checkpoint extends Setup {
                     String name = pkgName + "/" + file.getName() + " " + rev.getFormattedVersion();
                     refs.add(new AssetRef(name, versionControl.getId(new File(name)), commit));
                 }
-                if (file.isDirectory()) {
+                if (file.isDirectory() && !file.getName().equals("Archive")) {
                     refs.addAll(getCurrentRefs(file));
                 }
             }
