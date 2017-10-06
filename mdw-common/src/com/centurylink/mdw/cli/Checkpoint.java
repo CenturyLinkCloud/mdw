@@ -86,9 +86,11 @@ public class Checkpoint extends Setup {
                 pkgName = getAssetPath(dir).replace('/', '.');
             else {
                 String tmpPath = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1);
-                if (tmpPath.startsWith("Archive"))
+                if (tmpPath.startsWith("Archive")) {
                     tmpPath = tmpPath.substring(8);
-                pkgName = tmpPath.replace('/', '.');
+                    tmpPath = tmpPath.substring(0, tmpPath.lastIndexOf(" v"));
+                }
+                pkgName = tmpPath.replace('\\', '/').replace('/', '.');
             }
         }
         if (dir.exists()) {
