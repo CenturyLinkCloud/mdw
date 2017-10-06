@@ -82,7 +82,14 @@ public class Checkpoint extends Setup {
         List<AssetRef> refs = new ArrayList<>();
         String pkgName = null;
         if (new File(dir + "/.mdw").isDirectory()) {
-            pkgName = getAssetPath(dir).replace('/', '.');
+            if (pooledConn == null)
+                pkgName = getAssetPath(dir).replace('/', '.');
+            else {
+                String tmpPath = dir.getAbsolutePath().substring(assetRoot.getAbsolutePath().length() + 1);
+                if (tmpPath.startsWith("Archive"))
+                    tmpPath = tmpPath.substring(8);
+                pkgName = tmpPath.replace('/', '.');
+            }
         }
         if (dir.exists()) {
             for (File file : dir.listFiles()) {
