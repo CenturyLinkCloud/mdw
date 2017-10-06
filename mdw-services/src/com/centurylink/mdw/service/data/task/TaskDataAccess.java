@@ -739,7 +739,10 @@ public class TaskDataAccess extends CommonDataAccess {
                             logger.severeException("Cannot find assignee: " + taskInst.getAssigneeCuid(), ex);
                         }
                     }
-                    taskInstances.add(taskInst);
+                    String taskName = query.getFilter("name");
+                    if (taskName != null && taskName.equals(taskInst.getName())) {
+                        taskInstances.add(taskInst);
+                    }
                 }
             }
             TaskList taskList = new TaskList(TaskList.TASKS, taskInstances);

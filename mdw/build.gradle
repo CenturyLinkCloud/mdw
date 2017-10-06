@@ -97,6 +97,8 @@ allprojects {
 }
 
 task javadocs(type: Javadoc) {
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     dependsOn "cleanJavadocs"
     source subprojects.collect {project -> project.sourceSets.main.java }
     classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
