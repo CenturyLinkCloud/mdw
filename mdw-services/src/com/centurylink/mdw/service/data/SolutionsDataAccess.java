@@ -138,6 +138,19 @@ public class SolutionsDataAccess extends CommonDataAccess {
         }
     }
 
+    public List<Jsonable> getMembers(Long solutionId, MemberType memberType) throws DataAccessException {
+        try {
+            db.openConnection();
+            return getMembers0(solutionId, memberType);
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to retrieve members for solutionId= " + solutionId + ", memberType= " + memberType, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     private Map<MemberType,List<Jsonable>> getMembers0(Long solutionId) throws SQLException {
         Map<MemberType,List<Jsonable>> members = new HashMap<MemberType,List<Jsonable>>();
         for (MemberType type : MemberType.values()) {
@@ -460,5 +473,31 @@ public class SolutionsDataAccess extends CommonDataAccess {
         return task;
     }
 
+    public List<Solution> getSolutions(MemberType memberType, String memberId) throws DataAccessException {
 
+        try {
+            List<Solution> solutions = new ArrayList<Solution>();
+            db.openConnection();
+
+            StringBuilder query =  new StringBuilder();
+            query.append("select " + SOLUTION_COLS  +
+                    " from solution s, solution_map sm" +
+                "\n where s.solution_id = sm.solution_id" +
+                "\n and sm.member_id = '" + memberId + "'" );
+
+            if (memberType != null && !StringHelper.isEmpty(memberType.toString()))
+                query.append("\n and sm.member_type = '"  + memberType + "'");
+
+            ResultSet rs = db.runSelect(query.toString(), null);
+            while (rs.next())
+                solutions.add(buildSolution(rs, false, false));
+            return solutions;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to retrieve Solutions for memberId = " + memberId + "memberType = "  + memberType, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
 }
