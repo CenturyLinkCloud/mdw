@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-3.0.xsd">
+
+  <bean id="myDBSource"
+    class="org.apache.commons.dbcp2.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+    <property name="url" value="jdbc:oracle:thin:@NE1ITCDRHDB15.ne1.savvis.net:1550:mdwc" />
+    <property name="username" value="mdw" />
+    <property name="password" value="mdw" />
+    <property name="maxTotal" value="5" />
+    <property name="maxIdle" value="3"/>
+    <property name="validationQuery" value="SELECT 1 FROM DUAL" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testWhileIdle" value="true" />
+    <property name="removeAbandonedOnBorrow" value="true"/>
+    <property name="logAbandoned" value="true"/>
+    <property name="removeAbandonedTimeout" value="600"/>
+  </bean>
+  
+  <!-- export our DataSource through JMX -->
+  <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+    <property name="beans">
+      <map>
+        <entry key="com.centurylink.mdw:name=myDBSource" value-ref="myDBSource"/>
+        <entry key="com.centurylink.mdw:name=myDBSource2" value-ref="myDBSource2"/>
+      </map>
+    </property>
+    <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING"/>
+  </bean>  
+  
+  <bean id="myDBSource2"
+    class="org.apache.commons.dbcp2.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://localhost:3306/mdw" />
+    <property name="username" value="mdw" />
+    <property name="password" value="mdw" />
+    <property name="maxTotal" value="5" />
+    <property name="maxIdle" value="3"/>
+    <property name="validationQuery" value="SELECT 1" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testWhileIdle" value="true" />
+    <property name="removeAbandonedOnBorrow" value="true"/>
+    <property name="logAbandoned" value="true"/>
+    <property name="removeAbandonedTimeout" value="600"/>
+  </bean>
+  
+</beans>

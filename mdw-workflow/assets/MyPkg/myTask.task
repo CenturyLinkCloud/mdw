@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "TaskDescription": "my task template v0.1",
+    "TaskSLA": "3600"
+  },
+  "category": "GEN",
+  "description": "my task template v0.1",
+  "logicalId": "myTask",
+  "name": "myTask",
+  "version": "0.1"
+}
