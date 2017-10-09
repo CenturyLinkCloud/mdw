@@ -120,6 +120,9 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     public JavaExecutor getExecutorInstance() throws MdwJavaException {
         if (executorInstance == null) {
             try {
+                if (getPackage().getName() == null || "null".equalsIgnoreCase(getPackage().getName()))  // In case in-flight pulled out of Git history
+                    getPackage().setPackageName(getProcessDefinition().getPackageName());
+
                 String className = getClassName();
                 Class<?> clazz = CompiledJavaCache.getClass(getPackage(), className, javaCode);
                 if (clazz == null)

@@ -103,6 +103,18 @@ public class TaskTemplateCache implements PreloadableCache {
                 return task;
             }
         }
+        // Look in Git history using ASSET_REF
+        AssetRef ref = AssetRefCache.getAssetRef(taskId);
+        if (ref != null) {
+            try {
+                TaskTemplate template = AssetRefConverter.getTaskTemplate(ref);
+                taskVoCache.add(template);
+                return template;
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        }
         return null;
     }
 
