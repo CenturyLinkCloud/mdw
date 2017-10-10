@@ -1,0 +1,191 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=190,ly=210,type=Elbow,xs=124&181,ys=280&280"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=712,y=258,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "MyPkg/myTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=185,y=246,w=100,h=60",
+        "Wait for Task": "true"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "New Task for TestProcess",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=237,ly=227,type=Elbow,xs=237&237,ys=242&198"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "/**\r\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\r\n */\r\n\r\npackage MyPkg;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class NewDynamicJava_A4 implements JavaExecutor\r\n{\r\n  \r\n  public void initialize(ActivityRuntimeContext context) throws MdwJavaException\r\n  {\r\n    // TODO Auto-generated method stub\r\n  }\r\n\r\n  public Object execute(Map<String,Object> variables) throws JavaExecutionException\r\n  {\r\n    variables.put(\"value\", \"value2\");\r\n    return null;\r\n  }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=190,y=134,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "New Dynamic Java",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=321,ly=164,type=Elbow,xs=294&348,ys=164&164"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "MyPkg/myTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=347,y=245,w=100,h=60",
+        "Wait for Task": "true"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "New Task for TestProcess2",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=484,ly=274,type=Elbow,xs=451&518,ys=274&274"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "value=\"value2\";\r\nregion=\"Western\"",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=352,y=135,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "setup",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=398,ly=221,type=Elbow,xs=399&399,ys=199&241"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "KnowledgeBase": "com.centurylink.mdw.tests.workflow/drools-orderRoutingDrool.drl",
+        "KnowledgeBase_assetVersion": "[0.2,1)",
+        "WORK_DISPLAY_INFO": "x=522,y=243,w=100,h=60"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.drools.DroolsActivity",
+      "name": "New Drools Activity",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=583,ly=214,type=Elbow,xs=569&569,ys=239&197"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "WESTERN",
+          "to": "A9"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=497,ly=210,type=Elbow,xs=569&569,ys=239&197"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "EASTERN",
+          "to": "A9"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "KnowledgeBase": "com.centurylink.mdw.tests.workflow/drools-orderRoutingDecisionTable.xlsx",
+        "KnowledgeBase_assetVersion": "[0.2,1)",
+        "WORK_DISPLAY_INFO": "x=695,y=134,w=100,h=60"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.drools.DroolsDecisionTableActivity",
+      "name": "New Drools Decision Table",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=742,ly=226,type=Elbow,xs=742&742,ys=198&254"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.donsfuse",
+        "Output Documents": "xmlBeanVar",
+        "Rule": "import com.centurylink.mdw.service.ApplicationSummaryDocument \r\nimport com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary     \r\n\r\nxmlBeanVar = ApplicationSummaryDocument.Factory.newInstance();  \r\nApplicationSummary appSummary = xmlBeanVar.addNewApplicationSummary(); \r\nappSummary.setMdwVersion('5.5');",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=517,y=133,w=100,h=60"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Setup XMLBean",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=655,ly=163,type=Elbow,xs=621&691,ys=163&163"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A8"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=113,h=27"
+  },
+  "variables": {
+    "billedPrice": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    },
+    "dueDate": {
+      "category": "LOCAL",
+      "type": "java.util.Date"
+    },
+    "orderNumber": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "quotedPrice": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    },
+    "region": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "value": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "workgroup": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "xmlBeanVar": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    }
+  }
+}
