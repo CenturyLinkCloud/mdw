@@ -157,6 +157,11 @@ public class AssetCache implements PreloadableCache {
                     else
                         assetVO = match;
                 }
+                else if (!spec.getVersion().equals("0")) { // check ASSET_REF DB table to retrieve from git history
+                    AssetRef ref = AssetRefCache.getAssetRef(spec);
+                    if (ref != null)
+                        assetVO = AssetRefConverter.getAsset(ref);
+                }
                 return assetVO;
             }
 
