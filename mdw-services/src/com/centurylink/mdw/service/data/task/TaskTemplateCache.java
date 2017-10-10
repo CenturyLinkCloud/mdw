@@ -108,8 +108,10 @@ public class TaskTemplateCache implements PreloadableCache {
         if (ref != null) {
             try {
                 TaskTemplate template = AssetRefConverter.getTaskTemplate(ref);
-                taskVoCache.add(template);
-                return template;
+                if (template != null) {
+                    taskVoCache.add(template);
+                    return template;
+                }
             }
             catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);

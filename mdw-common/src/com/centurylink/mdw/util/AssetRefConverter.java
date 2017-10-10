@@ -88,7 +88,10 @@ public class AssetRefConverter {
         if (assetRef != null) {
             LoaderPersisterVcs lp = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)lp.getVersionControl();
-            String path = getMissingPath(lp.getStorageDir(), "") + assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v"));
+            String tempName = assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v"));
+            int fileExtIdx = tempName.lastIndexOf(".");
+            tempName = tempName.substring(0, fileExtIdx).replace('.', '/');
+            String path = getMissingPath(lp.getStorageDir(), "") + tempName + assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v")).substring(fileExtIdx);
             contentBytes = vc.readFromCommit(assetRef.getRef(), path);
         }
         return contentBytes;

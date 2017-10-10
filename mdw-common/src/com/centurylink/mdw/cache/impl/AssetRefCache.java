@@ -91,9 +91,9 @@ public class AssetRefCache implements CacheService {
         if (assetRefs == null)
             load();
 
+        String name = spec.getPackageName() != null ? spec.getPackageName() : "";
+        name += "/" + spec.getName() + " v";
         for (AssetRef curRef : assetRefs.values()) {
-            String name = spec.getPackageName() != null ? spec.getPackageName() : "";
-            name += "/" + spec.getName() + " v";
             if (curRef.getName().contains(name)) {
                 Asset asset = new Asset();
                 asset.setVersion(Asset.parseVersion(curRef.getName().substring((curRef.getName().lastIndexOf(" v")+1))));
