@@ -164,7 +164,8 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 }else{
                     sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
                 }
-            }         
+            }
+
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
             Map<Date,List<ProcessCount>> map = new HashMap<Date,List<ProcessCount>>();
@@ -212,9 +213,15 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         else
             where.append("where start_dt >= '" + startStr + "' ");
         where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
+
         if (query.getBooleanFilter("master"))
             where.append(", 'PROCESS_INSTANCE' ");
-        where.append(") ");
+            where.append(") ");
+        if (query.getBooleanFilter("completionTime")){
+
+            where.append(" and end_dt is not null ");
+
+        }
         String status = query.getFilter("status");
         if (status != null)
             where.append("and STATUS_CD = " + WorkStatuses.getCode(status));
