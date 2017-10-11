@@ -1,0 +1,62 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=54,y=152,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=192,ly=166,type=Elbow,xs=118&181,ys=172&172"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=668,y=150,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=457,y=140,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait Forever",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=614,ly=170,type=Elbow,xs=561&664,ys=170&170"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "package com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class SetoldVar_A5 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\r\n        variables.put(\"oldVar\", \"from InflightBefore\");\r\n        return null;\r\n    }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=185,y=141,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Set oldVar",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=354,ly=170,type=Elbow,xs=289&453,ys=170&170"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=46,y=49,w=123,h=27"
+  },
+  "variables": {"oldVar": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }}
+}
