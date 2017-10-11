@@ -537,11 +537,13 @@ public class AssetServicesImpl implements AssetServices {
 
     public void deleteAsset(String path) throws ServiceException {
         int lastSlash = path.lastIndexOf('/');
-        File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
+        String pkgPath = assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/');
+        File assetFile = new File(pkgPath + path.substring(lastSlash));
         if (!assetFile.isFile())
             throw new ServiceException(ServiceException.NOT_FOUND, "Asset file not found: " + assetFile);
         try {
             FileHelper.deleteRecursive(assetFile);
+            getVersionControl().deleteRev(assetFile);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());

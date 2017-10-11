@@ -1,0 +1,84 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=47,y=155,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=165,ly=136,type=Elbow,xs=111&165,ys=175&175"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=668,y=155,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=483,y=146,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait Forever",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=631,ly=175,type=Elbow,xs=587&664,ys=175&175"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "newVar = 'hello I am newVar'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=328,y=145,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set newVar",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=458,ly=175,type=Elbow,xs=432&479,ys=175&175"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "package com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class SetoldVar_A5 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\r\n        variables.put(\"oldVar\", \"from InflightAfter\");\r\n        return null;\r\n    }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=169,y=145,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Set oldVar",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=300,ly=175,type=Elbow,xs=273&324,ys=175&175"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=46,y=49,w=107,h=27"
+  },
+  "variables": {
+    "newVar": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "oldVar": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}
