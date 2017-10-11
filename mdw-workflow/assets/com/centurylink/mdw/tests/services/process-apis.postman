@@ -1,0 +1,89 @@
+{
+	"variables": [],
+	"info": {
+		"name": "process-apis",
+		"_postman_id": "2f35b1b9-049f-2da0-77d5-1a875ac20a18",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "run",
+			"request": {
+				"url": "{{base-url}}/Processes/run/{{id}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{procRunJson}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "summary",
+			"request": {
+				"url": {
+					"raw": "{{base-url}}/Workflow/{{asset-path}}?summary=true",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"Workflow",
+						"{{asset-path}}"
+					],
+					"query": [
+						{
+							"key": "summary",
+							"value": "true",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"masterRequestId\": \"dxoakes-20171011-110511\",\r\n  \"definitionId\": 189003922,\r\n  \"values\": {\r\n    \"invar\": {\r\n      \"type\": \"java.lang.String\",\r\n      \"name\": \"invar\",\r\n      \"sequence\": 0,\r\n      \"isException\": false,\r\n      \"editable\": true,\r\n      \"value\": \"varval\",\r\n      \"dirty\": true\r\n    }\r\n  }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "run",
+			"request": {
+				"url": "{{base-url}}/Processes/run/{{id}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"masterRequestId\": \"dxoakes-20171011-110511\",\r\n  \"definitionId\": 189003922,\r\n  \"values\": {\r\n    \"invar\": {\r\n      \"type\": \"java.lang.String\",\r\n      \"name\": \"invar\",\r\n      \"sequence\": 0,\r\n      \"isException\": false,\r\n      \"editable\": true,\r\n      \"value\": \"varval\",\r\n      \"dirty\": true\r\n    }\r\n  }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

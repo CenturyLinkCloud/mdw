@@ -1,0 +1,107 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+svcPkg = 'com.centurylink.mdw.tests.services'
+wfPkg = 'com.centurylink.mdw.tests.workflow'
+
+def vals = [
+    'asset-path': wfPkg + '/Inflight.proc'
+];
+
+// cleanup if exists
+def DEL = request(svcPkg + '/asset-apis.postman/DEL:asset') {
+    values = vals;
+    options = [ captureResult: false ]
+}
+def response = submit DEL
+if (response.status.code != 404)
+    refreshCache()
+
+// create new
+def POST = request(svcPkg + '/asset-apis.postman/POST:asset') {
+    values = vals
+}
+response = submit POST
+assert response.status.code == 200
+
+// get v0.1 def
+vals['asset-path'] = wfPkg + '/InflightBefore.proc'
+def GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
+    values = vals
+}
+response = submit GET
+assert response.status.code == 200
+
+// update with v0.1 def
+vals['asset-path'] = wfPkg + '/Inflight.proc'
+vals['version'] = '0.1'
+vals['procDefJson'] = response.body
+def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
+    values = vals
+}
+response = submit PUT
+assert response.status.code == 200
+
+refreshCache()
+
+startProcess('oldOldVar')
+sleep 3
+
+// get v0.2 def
+vals['asset-path'] = wfPkg + '/InflightAfter.proc'
+GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
+    values = vals
+}
+response = submit GET
+assert response.status.code == 200
+
+// update with v0.2 def
+vals['asset-path'] = wfPkg + '/Inflight.proc'
+vals['version'] = '0.2'
+vals['procDefJson'] = response.body
+PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
+    values = vals
+}
+response = submit PUT
+assert response.status.code == 200
+
+refreshCache()
+
+startProcess('newOldVar')
+
+// TODO: retrieve and check instances
+
+long startProcess(String oldVar) {
+    def vals = ['asset-path': wfPkg + '/Inflight.proc']
+    def GET = request(svcPkg + '/process-apis.postman/GET:summary') {
+        values = vals
+    }
+    def resp = submit GET
+    assert resp.status.code == 200
+    def sum = new JsonSlurper().parseText(resp.body)
+    vals['id'] = sum.id
+    GET = request(svcPkg + '/process-apis.postman/GET:run') {
+        values = vals
+    }
+    resp = submit GET
+    assert resp.status.code == 200
+    def procRun = new JsonSlurper().parseText(resp.body)
+    procRun.values.oldVar.value = oldVar
+    def procRunJson = JsonOutput.toJson(procRun)
+    vals['procRunJson'] = procRunJson
+    def POST = request(svcPkg + '/process-apis.postman/POST:run') {
+        values = vals
+    }
+    resp = submit POST
+    assert response.status.code == 200
+    return new JsonSlurper().parseText(resp.body).instanceId
+}
+
+void refreshCache() {
+    // refresh the cache (TODO: exclude?)
+    def POST = request(svcPkg + '/asset-apis.postman/POST:refresh') {
+        values = [:]
+    }
+    response = submit POST
+    assert response.status.code == 200
+}
