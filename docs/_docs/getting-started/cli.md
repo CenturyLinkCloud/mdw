@@ -1,6 +1,6 @@
 ---
 permalink: /docs/getting-started/cli/
-title: MDW Command Line Interface
+title: Command Line Interface
 ---
 ## MDW CLI
   The MDW Command Line Interface has commands for common operations like initializing a workspace and updating assets. 

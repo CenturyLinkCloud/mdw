@@ -14,11 +14,11 @@ action task("Activity Exception Fallout") {
     outcome = "Retry"
 }
 sleep 20
-action task("Activity Exception Fallout[1]") {
+action task("Activity Exception Fallout") {
     outcome = "Claim"
 }
 sleep 10
-action task("Activity Exception Fallout[1]") {
+action task("Activity Exception Fallout") {
     outcome = "AltAction"
 }
 wait process

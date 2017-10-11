@@ -66,7 +66,7 @@ testingMod.controller('TestsController',
       pkg.selected = $scope.selectedState.all;
       pkg.testCases.forEach(function(testCase) {
         testCase.selected = $scope.selectedState.all;
-        if (testCase.items) {
+        if (testCase.items && (!pkg.selected || $scope.config.includePostmanItems)) {
           testCase.items.forEach(function(item) {
             item.selected = pkg.selected;
           });
@@ -77,7 +77,7 @@ testingMod.controller('TestsController',
   $scope.togglePackage = function(pkg) {
     pkg.testCases.forEach(function(testCase) {
       testCase.selected = pkg.selected;
-      if (testCase.items) {
+      if (testCase.items && (!testCase.selected || $scope.config.includePostmanItems)) {
         testCase.items.forEach(function(item) {
           item.selected = pkg.selected;
         });
