@@ -27,17 +27,20 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandNames="update", commandDescription="Update MDW assets", separators="=")
+@Parameters(commandNames="update", commandDescription="Update MDW assets locally via Discovery", separators="=")
 public class Update extends Setup {
 
-    private File assetDir;
-
-    public Update(File projectDir) {
-        this.projectDir = projectDir;
+    private File projDir;
+    @Override
+    public File getProjectDir() {
+        if (projDir != null)
+            return projDir;
+        else
+            return super.getProjectDir();
     }
 
-    public Update(Setup cloneFrom) {
-        super(cloneFrom);
+    public Update(File projectDir) {
+        this.projDir = projectDir;
     }
 
     Update() {
@@ -45,14 +48,14 @@ public class Update extends Setup {
     }
 
     public Update run(ProgressMonitor... progressMonitors) throws IOException {
-        this.assetDir = new File(this.projectDir + "/" + getProperty("mdw.asset.location"));
+        Props props = new Props(getProjectDir(), this);
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
         }
 
         List<String> discovered = new ArrayList<>();
-        String discoveryUrl = getProperty("mdw.discovery.url");
+        String discoveryUrl = props.get(Props.DISCOVERY_URL);
         System.out.println("Discovering assets from: " + discoveryUrl);
         String assetsJson = new Fetch(new URL(discoveryUrl + "/services/Assets")).run().getData();
         JSONObject json = new JSONObject(assetsJson);
@@ -102,6 +105,7 @@ public class Update extends Setup {
         new Download(new URL(discoveryUrl + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip).run(monitors);
 
         // import packages
+        File assetDir = getAssetRoot();
         Archive archive = new Archive(assetDir, packages);
         archive.backup();
         System.out.println("Unzipping into: " + assetDir);

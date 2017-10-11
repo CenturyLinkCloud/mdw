@@ -16,14 +16,14 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,18 +39,64 @@ public abstract class Setup implements Operation {
         defaultBasePackages.add("com.centurylink.mdw.testing");
     }
 
-    File projectDir;
-    public File getProjectDir() { return projectDir; }
+    public File getProjectDir() {
+        return new File(".");
+    }
 
     @Parameter(names="--mdw-version", description="MDW Version")
     private String mdwVersion;
     public String getMdwVersion() { return mdwVersion; }
-    public void setMdwVersion(String version) { this.mdwVersion = version; }
+    public void setMdwVersion(String version) {
+        this.mdwVersion = version;
+        Props.Gradle.MDW_VERSION.specified = true;
+    }
+    public String findMdwVersion() throws IOException {
+        if (getMdwVersion() == null) {
+            URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/");
+            Crawl crawl = new Crawl(url, isSnapshots());
+            crawl.run();
+            if (crawl.getReleases().size() == 0)
+                throw new IOException("Unable to locate MDW releases: " + url);
+            mdwVersion = crawl.getReleases().get(crawl.getReleases().size() - 1);
+        }
+        return mdwVersion;
+    }
+
+    @Parameter(names="--debug", description="Display CLI debug information")
+    private boolean debug;
+    public boolean isDebug() { return debug; }
+    public void setDebug(boolean debug) { this.debug = debug; }
+
+    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
+    private boolean snapshots;
+    public boolean isSnapshots() { return snapshots; }
+    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
     public String getDiscoveryUrl() { return discoveryUrl; }
-    public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
+    public void setDiscoveryUrl(String url) {
+        this.discoveryUrl = url;
+        Props.DISCOVERY_URL.specified = true;
+    }
+
+    @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
+    private String releasesUrl = "http://repo.maven.apache.org/maven2";
+    public String getReleasesUrl() {
+        return releasesUrl.endsWith("/") ? releasesUrl.substring(0, releasesUrl.length() - 1) : releasesUrl;
+    }
+    public void setReleasesUrl(String url) {
+        this.releasesUrl = url;
+        Props.Gradle.MAVEN_REPO_URL.specified = true;
+    }
+
+    @Parameter(names="--asset-loc", description="Asset location")
+    private String assetLoc = "assets";
+    public String getAssetLoc() { return assetLoc; }
+    public void setAssetLoc(String assetLoc) {
+        this.assetLoc = assetLoc;
+        Props.ASSET_LOC.specified = true;
+    }
 
     @Parameter(names="--base-asset-packages", description="MDW Base Asset Packages (comma-separated)",
             splitter=CommaParameterSplitter.class)
@@ -58,14 +104,76 @@ public abstract class Setup implements Operation {
     public List<String> getBaseAssetPackages() { return baseAssetPackages; }
     public void setBaseAssetPackages(List<String> packages) { this.baseAssetPackages = packages; }
 
+    // Git Parameters used by Import (otherwise only for templates)
+    @Parameter(names="--git-remote-url", description="Git repository URL")
+    private String gitRemoteUrl = "https://github.com/CenturyLinkCloud/mdw-demo.git";
+    public String getGitRemoteUrl() { return gitRemoteUrl; }
+    public void setGitRemoteUrl(String url) {
+        this.gitRemoteUrl = url;
+        Props.Git.REMOTE_URL.specified = true;
+    }
+
+    @Parameter(names="--git-branch", description="Git branch")
+    private String gitBranch = "master";
+    public String getGitBranch() { return gitBranch; }
+    public void setGitBranch(String branch) {
+        this.gitBranch = branch;
+        Props.Git.BRANCH.specified = true;
+    }
+
+    @Parameter(names="--git-user", description="Git user")
+    private String gitUser = "anonymous";
+    public String getGitUser() { return gitUser; }
+    public void setGitUser(String user) {
+        this.gitUser = user;
+        Props.Git.USER.specified = true;
+    }
+
+    @Parameter(names="--git-password", description="Git password")
+    private String gitPassword;
+    String getGitPassword() { return this.gitPassword; }
+    public void setGitPassword(String password) {
+        this.gitPassword = password;
+        Props.Git.PASSWORD.specified = true;
+    }
+
+    @Parameter(names="--database-url", description="JDBC URL (without credentials)")
+    private String databaseUrl = "jdbc:mariadb://localhost:3308/mdw";
+    public String getDatabaseUrl() { return databaseUrl; }
+    public void setDatabaseUrl(String url) {
+        this.databaseUrl = url;
+        Props.Db.URL.specified = true;
+    }
+
+    @Parameter(names="--database-user", description="DB User")
+    private String databaseUser = "mdw";
+    public String getDatabaseUser() { return databaseUser; }
+    public void setDatabaseUser(String user) {
+        this.databaseUser = user;
+        Props.Db.USER.specified = true;
+    }
+
+    @Parameter(names="--database-password", description="DB Password")
+    private String databasePassword = "mdw";
+    public String getDatabasePassword() { return databasePassword; }
+    public void setDatabasePassword(String password) {
+        this.databasePassword = password;
+        Props.Db.PASSWORD.specified = true;
+    }
+
+    private String databaseDriver = "org.mariadb.jdbc.Driver";
+    public String getDatabaseDriver() {
+        String driver = DbInfo.getDatabaseDriver(getDatabaseUrl());
+        return driver == null ? databaseDriver : driver;
+    }
+    public void setDatabaseDriver(String driver) { this.databaseDriver = driver; }
+
     /**
      * Checks for any existing packages.  If none present, adds the defaults.
      */
     protected void initBaseAssetPackages() throws IOException {
         baseAssetPackages = new ArrayList<>();
-        String assetLoc = getProperty("mdw.asset.location");
-        File assetDir = new File(projectDir + "/" + assetLoc);
-        addBasePackages(assetDir, assetDir);
+        addBasePackages(getAssetRoot(), getAssetRoot());
         if (baseAssetPackages.isEmpty())
             baseAssetPackages = defaultBasePackages;
     }
@@ -77,7 +185,7 @@ public abstract class Setup implements Operation {
             throw new IOException("Expected directory: " + dir.getAbsolutePath());
 
         if (new File(dir + "/.mdw/package.json").isFile()) {
-            String pkg = dir.getAbsolutePath().substring(assetDir.getAbsolutePath().length() - 1).replace('/', '.').replace('\\', '.');
+            String pkg = getAssetPath(dir).replace('/', '.');
             if (pkg.startsWith("com.centurylink.mdw."))
                 baseAssetPackages.add(pkg);
         }
@@ -88,17 +196,6 @@ public abstract class Setup implements Operation {
     }
 
     protected Setup() {
-        projectDir = new File(".");
-    }
-
-    /**
-     * Copies param values
-     */
-    public Setup(Setup cloneFrom) {
-        projectDir = cloneFrom.getProjectDir();
-        mdwVersion = cloneFrom.getMdwVersion();
-        discoveryUrl = cloneFrom.getDiscoveryUrl();
-        baseAssetPackages = cloneFrom.getBaseAssetPackages();
     }
 
     static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
@@ -179,22 +276,65 @@ public abstract class Setup implements Operation {
         return nameBuilder.toString();
     }
 
-    protected Properties getProperties() throws IOException {
-        File propFile = new File(projectDir + "/config/mdw.properties");
-        if (!propFile.exists())
-            throw new IOException("Missing: " + propFile.getAbsolutePath());
-        Properties props = new Properties();
-        props.load(new FileInputStream(propFile));
-        return props;
+    /**
+     * Returns 'to' file or dir path relative to 'from' dir.
+     * Result always uses forward slashes and has no trailing slash.
+     */
+    public String getRelativePath(File from, File to) {
+        Path fromPath = Paths.get(from.getPath()).normalize().toAbsolutePath();
+        Path toPath = Paths.get(to.getPath()).normalize().toAbsolutePath();
+        return fromPath.relativize(toPath).toString().replace('\\', '/');
+    }
+
+    public String getGitPath(File file) {
+        return getRelativePath(getProjectDir(), file);
+    }
+
+    public String getAssetPath(File file) throws IOException {
+        return getRelativePath(getAssetRoot(), file);
+    }
+
+    public File getAssetRoot() throws IOException {
+        String assetLoc = new Props(getProjectDir(), this).get(Props.ASSET_LOC, false);
+        File assetRoot = new File(assetLoc);
+        if (assetRoot.isAbsolute())
+            return assetRoot;
+        else
+            return new File(getProjectDir() + "/" + getAssetLoc());
+    }
+
+    public boolean gitExists() {
+        return new File(getProjectDir() + "/.git").isDirectory();
     }
 
     /**
-     * Reloads every time.  Use {@link #getProperties()} for multiple.
+     * Override for extended debug info (always calling super.debug()).
      */
-    protected String getProperty(String name) throws IOException {
-        String prop = getProperties().getProperty(name);
-        if (prop == null)
-            throw new IOException("Missing in config/mdw.properties: " + name);
-        return prop;
+    public boolean validate() throws IOException {
+        Path projPath = Paths.get(getProjectDir().getPath()).normalize().toAbsolutePath();
+        Path assetPath = Paths.get(getAssetRoot().getPath()).normalize().toAbsolutePath();
+        if (!assetPath.startsWith(projPath)) {
+            System.err.println("Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Override for extended debug info (always calling super.debug()).
+     */
+    public void debug() throws IOException {
+        status();
+        System.out.println("CLI Props:");
+        Props props = new Props(getProjectDir(), this);
+        for (Prop prop : Props.ALL_PROPS) {
+            System.out.println("  " + prop);
+            System.out.println("    = " + props.get(prop, false));
+        }
+    }
+
+    public void status() throws IOException {
+        System.out.println("Project Dir:\n  " + getProjectDir().getAbsolutePath());
+        System.out.println("Asset Root:\n  " + getAssetRoot());
     }
 }

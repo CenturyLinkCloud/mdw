@@ -15,7 +15,7 @@
   <repositories>
     <repository>
       <id>mdw</id>
-      <url>http://lxdenvmtc143.dev.qintra.com:7021/maven/repository</url>
+      <url>{{releases-url}}</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

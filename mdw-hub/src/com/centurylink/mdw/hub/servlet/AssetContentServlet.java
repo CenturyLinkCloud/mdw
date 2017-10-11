@@ -154,7 +154,7 @@ public class AssetContentServlet extends HttpServlet {
                     String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
                     if (branch == null)
                         throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
-                    VersionControlGit vcGit = VersionControlGit.getFrameworkGit();
+                    VersionControlGit vcGit = getFrameworkGit();
                     String gitPath = vcGit.getRelativePath(assetFile);
                     in = vcGit.getRemoteContentStream(branch, gitPath);
                     if (in == null)
@@ -389,4 +389,22 @@ public class AssetContentServlet extends HttpServlet {
             }
         }
     }
+
+    public static VersionControlGit getFrameworkGit() throws PropertyException, IOException {
+        String gitRoot = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
+        if (gitRoot == null)
+            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_LOCAL_PATH);
+        String gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+        if (gitRemoteUrl == null)
+            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_REMOTE_URL);
+        String gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+        if (gitBranch == null)
+            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
+        String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
+        String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
+        VersionControlGit vcGit = new VersionControlGit();
+        vcGit.connect(gitRemoteUrl, user, password, new File(gitRoot));
+        return vcGit;
+    }
+
 }

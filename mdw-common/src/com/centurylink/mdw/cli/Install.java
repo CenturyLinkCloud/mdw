@@ -32,10 +32,20 @@ import com.beust.jcommander.Parameters;
  * Handle War download.
  */
 @Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
-public class Install implements Operation {
+public class Install extends Setup {
+
+    private static final String WEBTOOLS = "com/centurylink/mdw/mdw/5.5.40/mdw-webtools-5.5.40.war";
+
+    private static final long MDW_WAR_SIZE = 50000000L; // roughly
+    private static final long MDW_BOOT_SIZE = 65000000L; // roughly
 
     private File projectDir;
     public File getProjectDir() { return projectDir; }
+
+    @Parameter(names="--webtools", description="Include webtools")
+    private boolean webtools;
+    public boolean isWebtools() { return webtools; }
+    public void setWebtools(boolean webtools) { this.webtools = webtools; }
 
     Install() {
         // cli only
@@ -46,14 +56,10 @@ public class Install implements Operation {
         this.projectDir = projectDir;
     }
 
-    @Parameter(names="--mdw-version", description="MDW Version")
-    private String mdwVersion;
-    protected String getMdwVersion() throws IOException {
-        if (mdwVersion == null)
-            mdwVersion = new Version().getMdwVersion(getProjectDir());
-        return mdwVersion;
-    }
-    public void setMdwVersion(String version) { this.mdwVersion = version; }
+    @Parameter(names="--webapps-dir", description="Webapps dir for Tomcat or Jetty installation")
+    private File webappsDir;
+    public File getWebappsDir() { return webappsDir; }
+    public void setWebappsDir(File dir) { this.webappsDir = dir; }
 
     @Parameter(names="--binaries-url", description="MDW Binaries URL")
     private String binariesUrl = "https://github.com/CenturyLinkCloud/mdw/releases";
@@ -61,63 +67,100 @@ public class Install implements Operation {
     public void setBinariesUrl(String url) { this.binariesUrl = url; }
 
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
-        String mdwVer = getMdwVersion();
-        File binDir = new File(getProjectDir() + "/bin");
-        File jarFile = new File(binDir + "/mdw-boot-" + mdwVer + ".jar");
-        if (binDir.isDirectory()) {
-            if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
-                System.out.println("Already up-to-date.");
-                return this;
+        String mdwVer = new Props(getProjectDir(), this).get(Props.Gradle.MDW_VERSION);
+        Download[] downloads = null;
+        if (webappsDir != null) {
+            // download war from maven releases-url
+            // clean out old installs
+            File warFile = new File(webappsDir + "/mdw.war");
+            if (warFile.isFile()) {
+                Files.delete(Paths.get(warFile.getPath()));
             }
-
-            for (File file : binDir.listFiles()) {
-                if (file.isFile() && file.getName().startsWith("mdw-") && file.getName().endsWith(".jar")) {
-                    // remove any mdw jars
-                    Files.delete(Paths.get(file.getPath()));
+            File webtoolsWar = new File(webappsDir + "/webtools.war");
+            if (webtools) {
+                if (webtoolsWar.isFile()) {
+                    Files.delete(Paths.get(webtoolsWar.getPath()));
                 }
+            }
+            File warDir = new File(webappsDir + "/mdw");
+            if (warDir.isDirectory()) {
+                new Delete(warDir).run(progressMonitors);
+            }
+            if (webtools) {
+                File webtoolsDir = new File(webappsDir + "/webtools");
+                if (webtoolsDir.isDirectory()) {
+                    new Delete(webtoolsDir).run(progressMonitors);
+                }
+            }
+            // download from releases-url
+            URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw/" + mdwVer + "/mdw-" + mdwVer + ".war");
+            if (webtools) {
+                URL webtoolsUrl = new URL(getReleasesUrl() + "/" + WEBTOOLS);
+                downloads = new Download[]{new Download(url, warFile, MDW_WAR_SIZE), new Download(webtoolsUrl, webtoolsWar)};
+            }
+            else {
+                downloads = new Download[]{new Download(url, warFile, MDW_WAR_SIZE)};
             }
         }
         else {
-            Files.createDirectories(Paths.get(binDir.getPath()));
-        }
-
-        Download download = null;
-        if (binariesUrl.startsWith("https://github.com/")) {
-            // use the github api to find the boot jar size
-            URL releasesApiUrl = new URL("https://api.github.com/repos/" + binariesUrl.substring(19));
-            JSONArray releasesArr = new JSONArray(new Fetch(releasesApiUrl).run().getData());
-            JSONObject releaseJson = null;
-            for (int i = 0; i < releasesArr.length(); i++) {
-                JSONObject relObj = releasesArr.getJSONObject(i);
-                if (relObj.optString("name").equals(mdwVer)) {
-                    releaseJson = relObj;
-                    break;
+            // download spring boot from binaries-url
+            File binDir = new File(getProjectDir() + "/bin");
+            File jarFile = new File(binDir + "/mdw-boot-" + mdwVer + ".jar");
+            if (binDir.isDirectory()) {
+                if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
+                    System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
+                    return this;
                 }
-            }
-            if (releaseJson == null)
-                throw new FileNotFoundException("Release not found: " + mdwVer);
-            if (releaseJson.has("assets")) {
-                JSONArray assetsArr = releaseJson.getJSONArray("assets");
-                for (int i = 0; i < assetsArr.length(); i++) {
-                    JSONObject assetObj = assetsArr.getJSONObject(i);
-                    if (assetObj.optString("name").equals(jarFile.getName()) && assetObj.has("browser_download_url")) {
-                        if (assetObj.has("size"))
-                            download = new Download(new URL(assetObj.getString("browser_download_url")), jarFile, assetObj.getInt("size"));
-                        else
-                            download = new Download(new URL(assetObj.getString("browser_download_url")), jarFile);
+
+                for (File file : binDir.listFiles()) {
+                    if (file.isFile() && file.getName().startsWith("mdw-") && file.getName().endsWith(".jar")) {
+                        // remove any mdw jars
+                        Files.delete(Paths.get(file.getPath()));
                     }
                 }
             }
-        }
-        else {
-            if (!binariesUrl.endsWith("/"))
-                binariesUrl += "/";
-            download = new Download(new URL(binariesUrl + "download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile);
-        }
-        System.out.println("Downloading " + jarFile + "...");
-        if(download!=null)
-            download.run(progressMonitors);
+            else {
+                Files.createDirectories(Paths.get(binDir.getPath()));
+            }
 
+            if (binariesUrl.startsWith("https://github.com/")) {
+                // use the github api to find the boot jar size
+                URL releasesApiUrl = new URL("https://api.github.com/repos/" + binariesUrl.substring(19));
+                JSONArray releasesArr = new JSONArray(new Fetch(releasesApiUrl).run().getData());
+                JSONObject releaseJson = null;
+                for (int i = 0; i < releasesArr.length(); i++) {
+                    JSONObject relObj = releasesArr.getJSONObject(i);
+                    if (relObj.optString("name").equals(mdwVer)) {
+                        releaseJson = relObj;
+                        break;
+                    }
+                }
+                if (releaseJson == null)
+                    throw new FileNotFoundException("Release not found: " + mdwVer);
+                if (releaseJson.has("assets")) {
+                    JSONArray assetsArr = releaseJson.getJSONArray("assets");
+                    for (int i = 0; i < assetsArr.length(); i++) {
+                        JSONObject assetObj = assetsArr.getJSONObject(i);
+                        if (assetObj.optString("name").equals(jarFile.getName()) && assetObj.has("browser_download_url")) {
+                            if (assetObj.has("size"))
+                                downloads = new Download[]{new Download(new URL(assetObj.getString("browser_download_url")), jarFile, assetObj.getInt("size"))};
+                            else
+                                downloads = new Download[]{new Download(new URL(assetObj.getString("browser_download_url")), jarFile)};
+                        }
+                    }
+                }
+            }
+            else {
+                downloads = new Download[]{new Download(new URL(getBinariesUrl() + "/download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile, MDW_BOOT_SIZE)};
+            }
+        }
+
+        if (downloads != null) {
+            for (Download download : downloads) {
+                System.out.println("Downloading " + download.getTo() + "...");
+                download.run(progressMonitors);
+            }
+        }
         return this;
     }
 }

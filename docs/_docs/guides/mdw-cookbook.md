@@ -1004,15 +1004,15 @@ is available to clone in its completed state from the [mdw-demo repository](http
   
 #### Put it all together
   At this point we've built enough of the Issues UI to convey the key points around designing a custom UI for MDWHub.  Now is a good time
-  to completely sync with mdw-demo from on GitHub to see how it all comes together.
+  to completely sync with mdw-demo from GitHub to see how it all comes together.
   
   - Follow these instructions from the repository readme for cloning and running mdw-demo:
     <https://github.com/CenturyLinkCloud/mdw-demo/blob/master/README.md>
     
   - Run mdw-demo through Eclipse and try out the Bugs functionality we've just developed.
   
-TODO:
 ## 4. Explore other Features
+**TODO**
 
 ### 4.1 Add markdown workflow documentation
 

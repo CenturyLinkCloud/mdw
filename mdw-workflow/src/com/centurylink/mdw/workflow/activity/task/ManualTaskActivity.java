@@ -79,7 +79,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
     }
 
     protected TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId, String title, String comments) throws ServiceException, DataAccessException {
+            Long activityInstanceId, Long transitionId, String title, String comments) throws Exception {
 
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
         if (taskVO == null)

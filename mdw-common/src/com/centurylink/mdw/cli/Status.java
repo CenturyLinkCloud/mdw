@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.dataaccess;
+package com.centurylink.mdw.cli;
 
-import java.io.File;
 import java.io.IOException;
 
-public interface VersionControl {
-    public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException;
-    public long getId(File file) throws IOException;
-    public File getFile(long id);
-    public AssetRevision getRevision(File file) throws IOException;
-    public void setRevision(File file, AssetRevision rev) throws IOException;
-    public void clearId(File file);
-    public void deleteRev(File file) throws IOException;
-    public void clear();
-    public boolean exists();
+import com.beust.jcommander.Parameters;
+
+@Parameters(commandNames="status", commandDescription="Project status", separators="=")
+public class Status extends Setup {
+
+    @Override
+    public Status run(ProgressMonitor... progressMonitors) throws IOException {
+        status();
+        return this;
+    }
+
 }

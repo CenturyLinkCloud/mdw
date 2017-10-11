@@ -284,6 +284,14 @@ CREATE TABLE TASK_INST_INDEX (
   PRIMARY KEY (TASK_INSTANCE_ID,INDEX_KEY)
 );
 
+CREATE TABLE ASSET_REF (
+  DEFINITION_ID    	  BIGINT                    NOT NULL,
+  NAME	 		          VARCHAR(512)              NOT NULL,
+  REF           	    VARCHAR(64)               NOT NULL,
+  ARCHIVE_DT          TIMESTAMP					        NOT NULL,
+  PRIMARY KEY (DEFINITION_ID)
+);
+
 CREATE TABLE SOLUTION
 (
   SOLUTION_ID    BIGINT            PRIMARY KEY auto_increment,

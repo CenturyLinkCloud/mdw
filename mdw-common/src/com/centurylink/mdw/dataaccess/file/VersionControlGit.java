@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import org.eclipse.jgit.lib.ObjectStream;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.notes.Note;
 import org.eclipse.jgit.notes.NoteMap;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -79,19 +81,14 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.WorkingTreeIterator;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
+import org.eclipse.jgit.pgm.Main;
 
-import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.model.asset.CommitInfo;
-import com.centurylink.mdw.util.file.FileHelper;
 
-/**
- * TODO: Caching of VCS info (probably not need for file system info).
- */
 public class VersionControlGit implements VersionControl {
 
     public static final String HEAD_REF = "refs/heads/master";
@@ -341,9 +338,8 @@ public class VersionControlGit implements VersionControl {
         if (rev == null) {
             ObjectId workingId = getObjectId(file);
 
-            RevWalk walk = new RevWalk(localRepo);
-            try {
-                Ref ref = localRepo.getRef(NOTES_REF);
+            try (RevWalk walk = new RevWalk(localRepo)) {
+                Ref ref = localRepo.findRef(NOTES_REF);
                 if (ref != null) {
                     RevCommit notesCommit = walk.parseCommit(ref.getObjectId());
                     NoteMap notes = NoteMap.read(walk.getObjectReader(), notesCommit);
@@ -357,9 +353,6 @@ public class VersionControlGit implements VersionControl {
                     }
                 }
             }
-            finally {
-                walk.release();
-            }
         }
 
         return rev;
@@ -370,8 +363,8 @@ public class VersionControlGit implements VersionControl {
      */
     public void setRevisionGitNotes(File file, AssetRevision rev) throws IOException {
         ObjectId workingId = getObjectId(file);
-        RevWalk walk = new RevWalk(localRepo);
-        try {
+
+        try (RevWalk walk = new RevWalk(localRepo)) {
             RevObject notesObj;
             try {
                 notesObj = walk.parseAny(workingId);
@@ -387,9 +380,6 @@ public class VersionControlGit implements VersionControl {
         }
         catch (Exception ex) {
             throw new IOException(ex.getMessage(), ex);
-        }
-        finally {
-            walk.dispose();
         }
     }
 
@@ -433,21 +423,22 @@ public class VersionControlGit implements VersionControl {
      * TODO: see if performance can be improved
      */
     private ObjectId getObjectId(File file) throws IOException {
-        TreeWalk treeWalk = new TreeWalk(localRepo);
-        treeWalk.addTree(new FileTreeIterator(localRepo));
+        try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
+            treeWalk.addTree(new FileTreeIterator(localRepo));
 
-        String path = getRepoPath(file);
-        treeWalk.setFilter(PathFilter.create(path));
+            String path = getRepoPath(file);
+            treeWalk.setFilter(PathFilter.create(path));
 
-        while (treeWalk.next()) {
-            WorkingTreeIterator workingTreeIterator = treeWalk.getTree(0, WorkingTreeIterator.class);
-            if (treeWalk.getPathString().equals(path))
-                return workingTreeIterator.getEntryObjectId();
-            if (workingTreeIterator.getEntryFileMode().equals(FileMode.TREE))
-                treeWalk.enterSubtree();
+            while (treeWalk.next()) {
+                WorkingTreeIterator workingTreeIterator = treeWalk.getTree(0, WorkingTreeIterator.class);
+                if (treeWalk.getPathString().equals(path))
+                    return workingTreeIterator.getEntryObjectId();
+                if (workingTreeIterator.getEntryFileMode().equals(FileMode.TREE))
+                    treeWalk.enterSubtree();
+            }
+
+            return ObjectId.zeroId(); // not found
         }
-
-        return ObjectId.zeroId(); // not found
     }
 
     private String getRepoPath(File file) {
@@ -511,14 +502,15 @@ public class VersionControlGit implements VersionControl {
         List<File> preserveList = new ArrayList<File>();
         preserveList.add(new File(localDir + "/.git"));
         preserveList.add(new File(localDir + "/" + path));
-        FileHelper.deleteRecursive(localDir, preserveList);
+        new Delete(localDir, true).run();
     }
 
     /**
      * Performs a HARD reset and FORCED checkout.
      * Only to be used on server (not Designer).
+     * FIXME: path is ignored
      */
-    public void hardCheckout(String branch, String path) throws Exception {
+    public void hardCheckout(String branch) throws Exception {
         fetch(); // in case the branch is not known locally
         hardReset();
         checkout(branch);
@@ -535,7 +527,7 @@ public class VersionControlGit implements VersionControl {
      */
     protected void createBranchIfNeeded(String branch) throws Exception {
         fetch(); // in case the branch is not known locally
-        if (localRepo.getRef(branch) == null) {
+        if (localRepo.findRef(branch) == null) {
             git.branchCreate()
                .setName(branch)
                .setUpstreamMode(SetupUpstreamMode.TRACK)
@@ -598,15 +590,21 @@ public class VersionControlGit implements VersionControl {
         git.add().addFilepattern(filePattern).call();
     }
 
+    public void cloneNoCheckout() throws Exception {
+        cloneNoCheckout(false);
+    }
+
     /**
      * In lieu of sparse checkout since it's not yet supported in JGit:
      * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772
      */
-    public void cloneNoCheckout() throws Exception {
+    public void cloneNoCheckout(boolean withProgress) throws Exception {
         CloneCommand clone = Git.cloneRepository().setURI(repositoryUrl).setDirectory(localRepo.getDirectory().getParentFile()).setNoCheckout(true);
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=442029
         if (credentialsProvider != null)
             clone.setCredentialsProvider(credentialsProvider);
+        if (withProgress)
+            clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)));
         clone.call();
     }
 
@@ -617,21 +615,30 @@ public class VersionControlGit implements VersionControl {
     public boolean isTracked(String path) throws IOException {
         ObjectId objectId = localRepo.resolve(Constants.HEAD);
         RevTree tree;
-        if (objectId != null)
-          tree = new RevWalk(localRepo).parseTree(objectId);
-        else
+        RevWalk walk = null;
+        if (objectId != null) {
+          walk = new RevWalk(localRepo);
+          tree = walk.parseTree(objectId);
+        }
+        else {
           tree = null;
+        }
 
-        TreeWalk treeWalk = new TreeWalk(localRepo);
-        treeWalk.setRecursive(true);
-        if (tree != null)
-          treeWalk.addTree(tree);
-        else
-          treeWalk.addTree(new EmptyTreeIterator());
+        try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
+            treeWalk.setRecursive(true);
+            if (tree != null)
+              treeWalk.addTree(tree);
+            else
+              treeWalk.addTree(new EmptyTreeIterator());
 
-        treeWalk.addTree(new DirCacheIterator(localRepo.readDirCache()));
-        treeWalk.setFilter(PathFilterGroup.createFromStrings(Collections.singleton(path)));
-        return treeWalk.next();
+            treeWalk.addTree(new DirCacheIterator(localRepo.readDirCache()));
+            treeWalk.setFilter(PathFilterGroup.createFromStrings(Collections.singleton(path)));
+            return treeWalk.next();
+        }
+        finally {
+            if (walk != null)
+                walk.close();
+        }
     }
 
     public void pull(String branch) throws Exception {
@@ -737,9 +744,8 @@ public class VersionControlGit implements VersionControl {
 
     public ObjectStream getRemoteContentStream(String branch, String path) throws Exception {
         ObjectId id = localRepo.resolve("refs/remotes/origin/" + branch);
-        ObjectReader reader = localRepo.newObjectReader();
-        try {
-            RevWalk walk = new RevWalk(reader);
+        try (ObjectReader reader = localRepo.newObjectReader();
+                RevWalk walk = new RevWalk(reader)) {
             RevCommit commit = walk.parseCommit(id);
             RevTree tree = commit.getTree();
             TreeWalk treewalk = TreeWalk.forPath(reader, path, tree);
@@ -749,9 +755,6 @@ public class VersionControlGit implements VersionControl {
             else {
                 return null;
             }
-        }
-        finally {
-            reader.release();
         }
     }
 
@@ -774,20 +777,38 @@ public class VersionControlGit implements VersionControl {
         return out.toString();
     }
 
-    public static VersionControlGit getFrameworkGit() throws PropertyException, IOException {
-        String gitRoot = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
-        if (gitRoot == null)
-            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_LOCAL_PATH);
-        String gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
-        if (gitRemoteUrl == null)
-            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_REMOTE_URL);
-        String gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
-        if (gitBranch == null)
-            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
-        String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
-        String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
-        VersionControlGit vcGit = new VersionControlGit();
-        vcGit.connect(gitRemoteUrl, user, password, new File(gitRoot));
-        return vcGit;
+    public boolean exists() {
+        return new File(localDir + "/.git").isDirectory();
+    }
+
+    /**
+     * Execute an arbitrary git command.
+     */
+    public void git(String... args) throws Exception {
+        Main.main(args);
+    }
+
+    public byte[] readFromCommit(String commitId, String path) throws Exception {
+        try (RevWalk revWalk = new RevWalk(localRepo)) {
+            RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitId));
+            // use commit's tree find the path
+            RevTree tree = commit.getTree();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
+                treeWalk.addTree(tree);
+                treeWalk.setRecursive(true);
+                treeWalk.setFilter(PathFilter.create(path));
+                if (!treeWalk.next()) {
+                    return null;
+                }
+
+                ObjectId objectId = treeWalk.getObjectId(0);
+                ObjectLoader loader = localRepo.open(objectId);
+
+                loader.copyTo(baos);
+            }
+            revWalk.dispose();
+            return baos.toByteArray();
+        }
     }
 }

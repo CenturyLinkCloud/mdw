@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -26,29 +27,54 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+        // this trimming is necessary on linux
+        String[] cmdArgs = new String[args.length];
+        for (int i = 0; i < args.length; i++)
+            cmdArgs[i] = args[i].trim();
+
+        if (cmdArgs.length > 1) {
+            if (cmdArgs[0].equals("git")) {
+                // git pass-through command
+                Git.main(cmdArgs);
+                return;
+            }
+            else if (cmdArgs[0].equals("archive")) {
+                Archive.main(cmdArgs);
+                return;
+            }
+        }
+
         Help help = new Help();
         Main main = new Main();
         Init init = new Init();
+        Import mport = new Import();
         Update update = new Update();
         Install install = new Install();
         Run run = new Run();
+        Git git = new Git();
+        Archive asset = new Archive(false);
+        Status status = new Status();
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
             .addCommand("help", help)
             .addCommand("init", init)
+            .addCommand("import", mport)
             .addCommand("update", update)
             .addCommand("install", install)
             .addCommand("run", run)
             .addCommand("version", version)
+            .addCommand("git", git)
+            .addCommand("status", status)
+            .addCommand("asset", asset)
             .build();
 
         cmd.setProgramName("mdw");
 
         try {
-            cmd.parse(args);
-            if (!init.isEclipse() && Arrays.asList(args).contains("--eclipse"))
+            cmd.parse(cmdArgs);
+            if (!init.isEclipse() && Arrays.asList(cmdArgs).contains("--eclipse"))
                 init.setEclipse(true); // needed to support superfluous setting
             String command = cmd.getParsedCommand();
 
@@ -57,24 +83,50 @@ public class Main {
             }
             else {
                 version.run();
+                Operation op = null;
                 if (command.equals("init")) {
-                    init.run(getMonitor());
-                    new Update(init).run(getMonitor());
+                    op = init;
+                }
+                else if (command.equals("import")) {
+                    op = mport;
                 }
                 else if (command.equals("update")) {
-                    update.run(getMonitor());
+                    checkLoc(update.getProjectDir());
+                    op = update;
                 }
                 else if (command.equals("install")) {
-                    install.run(getMonitor());
+                    if (install.getWebappsDir() == null)
+                        checkLoc(install.getProjectDir());
+                    op = install;
                 }
                 else if (command.equals("run")) {
-                    run.run(getMonitor());
+                    checkLoc(run.getProjectDir());
+                    op = run;
+                }
+                else if (command.equals("status")) {
+                    checkLoc(run.getProjectDir());
+                    op = status;
+                }
+
+                if (op == null) {
+                    cmd.usage();
+                }
+                else {
+                    if (op instanceof Setup) {
+                        Setup setup = (Setup) op;
+                        if (setup.isDebug())
+                            setup.debug();
+                        if (!setup.validate())
+                            return;
+                    }
+                    op.run(getMonitor());
                 }
             }
         }
         catch (ParameterException ex) {
+            ex.printStackTrace();
             System.err.println(ex.getMessage());
-            cmd.usage();
+            System.err.println("'mdw help' for usage information");
         }
     }
 
@@ -84,9 +136,14 @@ public class Main {
     /**
      * Every call with >= 100% progress will print a new line.
      */
-    private static ProgressMonitor getMonitor() {
+    static ProgressMonitor getMonitor() {
         return prog -> {
-            System.out.print("\b\b\b\b\b\b\b\b\b");
+            if ("\\".equals(System.getProperty("file.separator"))) {
+                System.out.print("\b\b\b\b\b\b\b\b\b");
+            }
+            else {
+                System.out.print("\r         \r");
+            }
             if (prog >= 100)
                 System.out.println(" --> Done");
             else if (prog <= 0) // don't report zero progress since it may indicate unknown
@@ -94,5 +151,12 @@ public class Main {
             else
                 System.out.printf(" --> %3d%%", prog);
         };
+    }
+
+    static void checkLoc(File projectDir) throws ParameterException {
+        File props = new File(projectDir + "/config/mdw.properties");
+        if (!props.isFile()) {
+            throw new ParameterException("Invalid project: " + projectDir.getAbsolutePath());
+        }
     }
 }

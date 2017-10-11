@@ -71,17 +71,19 @@ public class CloudClassLoader extends ClassLoader {
             jarAssets = new ArrayList<Asset>();
             jarAssets.addAll(newJarAssets);
             // same-package jars go first
-            Collections.sort(jarAssets, new Comparator<Asset>() {
-                public int compare(Asset rs1, Asset rs2) {
-                    String pkgName = mdwPackage.getName();
-                    if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
-                        return -1;
-                    else if (pkgName.equals(rs2.getPackageName()) && !pkgName.equals(rs1.getPackageName()))
-                        return 1;
-                    else
-                        return 0;
-                }
-            });
+            if (this.mdwPackage.getName() != null) {
+                Collections.sort(jarAssets, new Comparator<Asset>() {
+                    public int compare(Asset rs1, Asset rs2) {
+                        String pkgName = mdwPackage.getName();
+                        if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
+                            return -1;
+                        else if (pkgName.equals(rs2.getPackageName()) && !pkgName.equals(rs1.getPackageName()))
+                            return 1;
+                        else
+                            return 0;
+                    }
+                });
+            }
         }
 
         return jarAssets;

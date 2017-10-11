@@ -68,4 +68,8 @@ public class VersionControlDummy implements VersionControl {
 
     public void deleteRev(File file) {
     }
+
+    public boolean exists() {
+        return true;
+    }
 }
