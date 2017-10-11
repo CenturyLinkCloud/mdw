@@ -740,7 +740,7 @@ public class TaskDataAccess extends CommonDataAccess {
                         }
                     }
                     String taskName = query.getFilter("name");
-                    if (taskName != null && taskName.equals(taskInst.getName())) {
+                    if (taskName != null && taskName.startsWith(taskInst.getName())) {
                         taskInstances.add(taskInst);
                     }
                     else if (taskName == null) {
