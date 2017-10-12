@@ -4,6 +4,8 @@ import groovy.json.JsonOutput
 svcPkg = 'com.centurylink.mdw.tests.services'
 wfPkg = 'com.centurylink.mdw.tests.workflow'
 
+allValues = [:];
+
 def vals = [
     'asset-path': wfPkg + '/Inflight.proc'
 ];
@@ -14,8 +16,8 @@ def DEL = request(svcPkg + '/asset-apis.postman/DEL:asset') {
     options = [ captureResult: false ]
 }
 def response = submit DEL
-if (response.status.code != 404)
-    refreshCache()
+//if (response.status.code != 404)
+//    refreshCache()
 
 // create new
 vals['asset-name'] = 'Inflight.proc'
@@ -43,10 +45,10 @@ def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
 response = submit PUT
 assert response.status.code == 200
 
-refreshCache()
+//refreshCache()
 
-startProcess('oldOldVar')
-sleep 3
+def oldProcRun = startProcess('oldOldVar')
+sleep 5
 
 // get v0.2 def
 vals['asset-path'] = wfPkg + '/InflightAfter.proc'
@@ -66,13 +68,24 @@ PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
 response = submit PUT
 assert response.status.code == 200
 
-refreshCache()
+//refreshCache()
 
-startProcess('newOldVar')
+def newProcRun = startProcess('newOldVar')
+sleep 5
 
-// TODO: retrieve and check instances
+// resume old and new process
+notifyProcess(oldProcRun.masterRequestId)
+notifyProcess(newProcRun.masterRequestId)
+sleep 5
 
-long startProcess(String oldVar) {
+// retrieve instance values for verification
+getValues(oldProcRun.instanceId)
+def resp = getValues(newProcRun.instanceId)
+verify(resp) {
+    values = vals
+}
+
+Object startProcess(String oldVar) {
     def vals = ['process-path': wfPkg + '/Inflight.proc']
     def GET = request(svcPkg + '/process-apis.postman/GET:summary') {
         values = vals
@@ -95,14 +108,33 @@ long startProcess(String oldVar) {
     }
     resp = submit POST
     assert response.status.code == 200
-    return new JsonSlurper().parseText(resp.body).instanceId
+    return new JsonSlurper().parseText(resp.body)
 }
 
-void refreshCache() {
+Object notifyProcess(masterRequestId) {
+    def POST = request(svcPkg + '/process-apis.postman/POST:events/{event-id}') {
+        values = ['event-id': masterRequestId]
+    }
+    resp = submit POST
+    assert response.status.code == 200
+    return new JsonSlurper().parseText(response.body)
+}
+
+Object getValues(processInstanceId) {
+    def GET = request(svcPkg + '/process-apis.postman/GET:{process-instance-id}/values') {
+        values = ['process-instance-id': processInstanceId]
+    }
+    def resp = submit GET
+    assert resp.status.code == 200
+    return resp
+}
+
+Object refreshCache() {
     // refresh the cache (TODO: exclude?)
     def POST = request(svcPkg + '/asset-apis.postman/POST:refresh') {
         values = [:]
     }
     response = submit POST
     assert response.status.code == 200
+    return new JsonSlurper().parseText(response.body)
 }

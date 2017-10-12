@@ -1,0 +1,19 @@
+test: 'GET:{process-instance-id}/values'
+request:
+  url: '${base-url}/Processes/${process-instance-id}/values'
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 400
+    message: Bad Request
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "status": {
+        "code": 400,
+        "message": "Unsupported path segment: ${process-instance-id}"
+      }
+    }
