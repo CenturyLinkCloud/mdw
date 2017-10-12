@@ -225,6 +225,8 @@ testingMod.controller('TestsController',
   
   $scope.applyUpdate = function(newTestCaseList) {
     newTestCaseList.packages.forEach(function(newPkg) {
+      if (!$scope.testCaseList.packages)
+        return;
       var oldPkg = null;
       for (var i = 0; i < $scope.testCaseList.packages.length; i++) {
         if ($scope.testCaseList.packages[i].name == newPkg.name) {
