@@ -1,0 +1,19 @@
+test: 'DEL:asset'
+request:
+  url: >-
+    ${base-url}/Assets/${asset-path}
+  method: DELETE
+  headers: {}
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

@@ -8,36 +8,16 @@
 	},
 	"item": [
 		{
-			"name": "run",
-			"request": {
-				"url": "{{base-url}}/Processes/run/{{id}}",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{{procRunJson}}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
 			"name": "summary",
 			"request": {
 				"url": {
-					"raw": "{{base-url}}/Workflow/{{asset-path}}?summary=true",
+					"raw": "{{base-url}}/Workflow/{{process-path}}?summary=true",
 					"host": [
 						"{{base-url}}"
 					],
 					"path": [
 						"Workflow",
-						"{{asset-path}}"
+						"{{process-path}}"
 					],
 					"query": [
 						{
@@ -68,7 +48,7 @@
 		{
 			"name": "run",
 			"request": {
-				"url": "{{base-url}}/Processes/run/{{id}}",
+				"url": "{{base-url}}/Processes/run/{{process-id}}",
 				"method": "GET",
 				"header": [
 					{
@@ -80,6 +60,26 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"masterRequestId\": \"dxoakes-20171011-110511\",\r\n  \"definitionId\": 189003922,\r\n  \"values\": {\r\n    \"invar\": {\r\n      \"type\": \"java.lang.String\",\r\n      \"name\": \"invar\",\r\n      \"sequence\": 0,\r\n      \"isException\": false,\r\n      \"editable\": true,\r\n      \"value\": \"varval\",\r\n      \"dirty\": true\r\n    }\r\n  }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "run",
+			"request": {
+				"url": "{{base-url}}/Processes/run/{{process-id}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{proc-run-json}}"
 				},
 				"description": ""
 			},

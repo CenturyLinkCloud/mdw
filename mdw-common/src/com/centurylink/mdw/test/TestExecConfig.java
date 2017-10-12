@@ -66,7 +66,7 @@ public class TestExecConfig implements Jsonable {
     public boolean isPinToServer() { return pinToServer; }
     public void setPinToServer(boolean pinToServer) { this.pinToServer = pinToServer; }
 
-    private boolean includePostmanItems = false;
+    private boolean includePostmanItems = true;
     public boolean isIncludePostmanItems() { return includePostmanItems; }
     public void setIncludePostmanItems(boolean includePostmanItems) { this.includePostmanItems = includePostmanItems; }
 
