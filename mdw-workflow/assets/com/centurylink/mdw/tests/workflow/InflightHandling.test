@@ -18,6 +18,7 @@ if (response.status.code != 404)
     refreshCache()
 
 // create new
+vals['asset-name'] = 'Inflight.proc'
 def POST = request(svcPkg + '/asset-apis.postman/POST:asset') {
     values = vals
 }
@@ -35,7 +36,7 @@ assert response.status.code == 200
 // update with v0.1 def
 vals['asset-path'] = wfPkg + '/Inflight.proc'
 vals['version'] = '0.1'
-vals['procDefJson'] = response.body
+vals['proc-def-json'] = response.body
 def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
     values = vals
 }
@@ -58,7 +59,7 @@ assert response.status.code == 200
 // update with v0.2 def
 vals['asset-path'] = wfPkg + '/Inflight.proc'
 vals['version'] = '0.2'
-vals['procDefJson'] = response.body
+vals['proc-def-json'] = response.body
 PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
     values = vals
 }
@@ -72,14 +73,14 @@ startProcess('newOldVar')
 // TODO: retrieve and check instances
 
 long startProcess(String oldVar) {
-    def vals = ['asset-path': wfPkg + '/Inflight.proc']
+    def vals = ['process-path': wfPkg + '/Inflight.proc']
     def GET = request(svcPkg + '/process-apis.postman/GET:summary') {
         values = vals
     }
     def resp = submit GET
     assert resp.status.code == 200
     def sum = new JsonSlurper().parseText(resp.body)
-    vals['id'] = sum.id
+    vals['process-id'] = sum.id
     GET = request(svcPkg + '/process-apis.postman/GET:run') {
         values = vals
     }
@@ -88,7 +89,7 @@ long startProcess(String oldVar) {
     def procRun = new JsonSlurper().parseText(resp.body)
     procRun.values.oldVar.value = oldVar
     def procRunJson = JsonOutput.toJson(procRun)
-    vals['procRunJson'] = procRunJson
+    vals['proc-run-json'] = procRunJson
     def POST = request(svcPkg + '/process-apis.postman/POST:run') {
         values = vals
     }

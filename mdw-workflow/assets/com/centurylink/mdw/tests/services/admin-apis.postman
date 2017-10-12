@@ -2,39 +2,11 @@
 	"variables": [],
 	"info": {
 		"name": "admin-apis",
-		"_postman_id": "c9e58dd6-ad7f-6d97-909d-2f9c44d1c4e7",
+		"_postman_id": "5d45e0f7-6546-1772-c9cc-d2be1a6972f8",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "workgroups/{group-name}",
-			"request": {
-				"url": "{{base-url}}/Workgroups/{{group-name}}",
-				"method": "GET",
-				"header": [
-					{
-						"key": "header-a",
-						"value": "header-a-value",
-						"description": ""
-					}
-				],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "workgroups/{group-name}",
-			"request": {
-				"url": "{{base-url}}/Workgroups/{{group-name}}",
-				"method": "DELETE",
-				"header": [],
-				"body": {},
-				"description": ""
-			},
-			"response": []
-		},
 		{
 			"name": "workgroups",
 			"request": {
@@ -59,6 +31,26 @@
 			"name": "workgroups/{group-name}",
 			"request": {
 				"url": "{{base-url}}/Workgroups/{{group-name}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "header-a",
+						"value": "header-a-value",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "workgroups/{group-name}",
+			"request": {
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
 				"method": "PUT",
 				"header": [
 					{
@@ -70,6 +62,20 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"name\": \"{{group-name}}\",\r\n  \"description\": \"a group for testing (updated)\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "workgroups/{group-name}",
+			"request": {
+				"url": "{{base-url}}/Workgroups/{{group-name}}",
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
 				},
 				"description": ""
 			},

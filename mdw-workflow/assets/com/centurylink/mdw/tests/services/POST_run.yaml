@@ -1,0 +1,41 @@
+test: 'POST:run'
+request:
+  url: '${base-url}/Processes/run/${process-id}'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "definitionId": ${process-id},
+      "masterRequestId": "${~.*}",
+      "values": {
+        "inputVar": {
+          "display": "Optional",
+          "type": "java.lang.String",
+          "value": "inputVarVal"
+        }
+      }
+    }
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
+  body: |-
+    {
+      "definitionId": ${process-id},
+      "id": ${~[0-9]*},
+      "instanceId": ${~[0-9]*},
+      "masterRequestId": "${~.*}",
+      "ownerId": ${~[0-9]*},
+      "ownerType": "DOCUMENT",
+      "values": {
+        "inputVar": {
+          "display": "Optional",
+          "type": "java.lang.String",
+          "value": "inputVarVal"
+        }
+      }
+    }

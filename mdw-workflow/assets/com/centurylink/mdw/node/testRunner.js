@@ -12,15 +12,13 @@ process.on('uncaughtException', (err) => {
     console.error(err.stack);
 });
 
-// Runs multiple test items, each with their own case.
-var testCase = null;
 try {
   const limberest = require('limberest');
   // const limberest = require('../../../../../../../limberest-js/index.js');
   const path = require('path');
   
-  testCase = getTestCase();
-  
+  // Runs multiple test items, each with their own case.
+  var testCase = getTestCase();
   var testLoc = path.dirname(testCase.file);
   
   var options = {
@@ -30,7 +28,9 @@ try {
   };
 
   if (testCase.items) {
-    testCase.items.forEach(item => {
+    var itemIdx = 0;
+
+    const runCaseItem = function(item) {
       var opts = Object.assign({}, options, item.options);
       if (opts.debug)
         console.log("options: " + JSON.stringify(opts, null, 2));
@@ -72,9 +72,18 @@ try {
               setTestResult(itemId, result);
             }
           }
+          // run the next test item
+          itemIdx++;
+          if (itemIdx < testCase.items.length) {
+            runCaseItem(testCase.items[itemIdx]);
+          }
         });
       }
-    });
+    };
+    
+    if (itemIdx < testCase.items.length) {
+      runCaseItem(testCase.items[itemIdx]);
+    }
   }
 }
 catch (err) {
@@ -97,4 +106,3 @@ catch (err) {
       console.error(e.stack);
   }
 }
-

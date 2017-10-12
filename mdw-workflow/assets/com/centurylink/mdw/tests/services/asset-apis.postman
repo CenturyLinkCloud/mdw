@@ -10,6 +10,63 @@
 		{
 			"name": "asset",
 			"request": {
+				"url": "{{base-url}}/Assets/{{asset-path}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"{{asset-name}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "asset",
+			"request": {
+				"url": {
+					"raw": "{{asset-base}}/{{asset-path}}?version={{asset-version}}",
+					"host": [
+						"{{asset-base}}"
+					],
+					"path": [
+						"{{asset-path}}"
+					],
+					"query": [
+						{
+							"key": "version",
+							"value": "{{asset-version}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{proc-def-json}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "asset",
+			"request": {
 				"url": "{{asset-base}}/{{asset-path}}",
 				"method": "GET",
 				"header": [],
@@ -30,86 +87,9 @@
 			"response": []
 		},
 		{
-			"name": "asset",
-			"request": {
-				"url": "{{base-url}}/Assets/{{asset-path}}",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"name\": \"Inflight.proc\"\n}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "asset",
-			"request": {
-				"url": {
-					"raw": "{{asset-base}}/{{asset-path}}?version={{version}}",
-					"host": [
-						"{{asset-base}}"
-					],
-					"path": [
-						"{{asset-path}}"
-					],
-					"query": [
-						{
-							"key": "version",
-							"value": "{{version}}",
-							"equals": true,
-							"description": ""
-						}
-					],
-					"variable": []
-				},
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{{procDefJson}}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
 			"name": "refresh",
 			"request": {
 				"url": "{{base-url}}/WorkflowCache",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"distributed\": true\n}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "refresh/{cache}",
-			"request": {
-				"url": "{{base-url}}/WorkflowCache/{{cache-name}}",
 				"method": "POST",
 				"header": [
 					{
