@@ -215,6 +215,36 @@ public class Checkpoint extends Setup {
         }
     }
 
+    public void updateRef(AssetRef ref) throws SQLException, IOException {
+        String select = "select name, ref from asset_ref where name = ?";
+        try (Connection conn = getDbConnection();
+                PreparedStatement stmt = conn.prepareStatement(select)) {
+            stmt.setString(1, ref.getName());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String update = "update asset_ref set definition_id = ?, ref = ? where name = ?";
+                    try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
+                        updateStmt.setLong(1, ref.getDefinitionId());
+                        updateStmt.setString(2, ref.getRef());
+                        updateStmt.setString(3, ref.getName());
+                        updateStmt.executeUpdate();
+                        conn.commit();
+                    }
+                }
+                else {
+                    String insert = "insert into asset_ref (definition_id, name, ref) values (?, ?, ?)";
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
+                        insertStmt.setLong(1, ref.getDefinitionId());
+                        insertStmt.setString(2, ref.getName());
+                        insertStmt.setString(3, ref.getRef());
+                        insertStmt.executeUpdate();
+                        conn.commit();
+                    }
+                }
+            }
+        }
+    }
+
     private void loadDbDriver() throws IOException {
         try {
             Class.forName(DbInfo.getDatabaseDriver(dbInfo.getUrl()));

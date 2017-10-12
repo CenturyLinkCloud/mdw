@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,14 +39,17 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
@@ -66,6 +70,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
@@ -270,7 +275,8 @@ public class AssetContentServlet extends HttpServlet {
 
                     if (version == null)
                         version = asset.getVersionString();
-                    logger.info("Saving asset: " + path + " v" + version);
+
+                    logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + version);
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     InputStream is = request.getInputStream();
@@ -294,7 +300,21 @@ public class AssetContentServlet extends HttpServlet {
                     int newVer = Asset.parseVersion(version);
                     if (newVer < ver)
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid asset version: v" + version);
+
+                    // update ASSET_REF with current info before saving
                     verChange = newVer != ver;
+                    if (verChange) {
+                        String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
+                        AssetServices assetServices = ServiceLocator.getAssetServices();
+                        VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
+                        AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
+                        DatabaseAccess db = new DatabaseAccess(null);
+                        try (Connection conn = db.openConnection()) {
+                            Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), conn);
+                            cp.updateRef(curRef);
+                        }
+                    }
+
                     asset.setVersion(newVer);
                     if (asset instanceof Process) {
                         persisterVcs.save((Process)asset, pkgDir);
