@@ -74,6 +74,7 @@
   - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
   
 13 - Update support items delivered with this build to Resolved status.
+   - Delete any obsolete branches on GitHub that were merged as part of this build.
 
 14 - Publishing to AppFog  
    -  go to root of mdw-demo project (check correct dev/prod manifest.yml is there)

@@ -94,6 +94,7 @@ public class Processes extends JsonRestService implements JsonExportable {
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        Query query = getQuery(path, headers);
         try {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
@@ -109,7 +110,8 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
                         else {
                             // all values
-                            Map<String,Value> values = workflowServices.getProcessValues(id);
+                            Map<String,Value> values = workflowServices.getProcessValues(id,
+                                    query.getBooleanFilter("includeEmpty"));
                             JSONObject valuesJson = new JsonObject();
                             for (String name : values.keySet()) {
                                 valuesJson.put(name, values.get(name).getJson());
@@ -136,7 +138,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                 }
                 catch (NumberFormatException ex) {
                     // path must be special
-                    Query query = getQuery(path, headers);
                     if (segOne.equals("definitions")) {
                         List<Process> processVOs = workflowServices.getProcessDefinitions(query);
                         JSONArray jsonProcesses = new JSONArray();
@@ -215,7 +216,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                 }
             }
             else {
-                Query query = getQuery(path, headers);
                 long triggerId = query.getLongFilter("triggerId");
                 if (triggerId > 0) {
                     // retrieve instance by trigger -- just send summary

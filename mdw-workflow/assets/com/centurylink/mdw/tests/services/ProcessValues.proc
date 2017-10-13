@@ -15,7 +15,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
-        "WORK_DISPLAY_INFO": "x=346,y=90,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=512,y=90,w=60,h=40"
       },
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
@@ -32,9 +32,25 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Assign\r\nObj Var",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=305,ly=110,type=Elbow,xs=269&342,ys=110&110"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=297,ly=92,type=Elbow,xs=269&325,ys=109&109"},
         "event": "FINISH",
         "id": "T2",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "[[\"Hell freezes over\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=329,y=74,w=109,h=70"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait\r\nForever",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=475,ly=110,type=Elbow,xs=442&508,ys=110&110"},
+        "event": "FINISH",
+        "id": "T3",
         "to": "A2"
       }]
     }
@@ -59,6 +75,10 @@
     "jaxbVar": {
       "category": "INPUT",
       "type": "javax.xml.bind.JAXBElement"
+    },
+    "jsonUnassigned": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
     },
     "objectVar": {
       "category": "LOCAL",

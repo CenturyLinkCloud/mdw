@@ -80,10 +80,7 @@ sleep 5
 
 // retrieve instance values for verification
 getValues(oldProcRun.instanceId)
-def resp = getValues(newProcRun.instanceId)
-verify(resp) {
-    values = vals
-}
+def values = getValues(newProcRun.instanceId)
 
 Object startProcess(String oldVar) {
     def vals = ['process-path': wfPkg + '/Inflight.proc']
@@ -107,7 +104,7 @@ Object startProcess(String oldVar) {
         values = vals
     }
     resp = submit POST
-    assert response.status.code == 200
+    assert resp.status.code == 200
     return new JsonSlurper().parseText(resp.body)
 }
 
@@ -115,7 +112,7 @@ Object notifyProcess(masterRequestId) {
     def POST = request(svcPkg + '/process-apis.postman/POST:events/{event-id}') {
         values = ['event-id': masterRequestId]
     }
-    resp = submit POST
+    def response = submit POST
     assert response.status.code == 200
     return new JsonSlurper().parseText(response.body)
 }
@@ -124,9 +121,9 @@ Object getValues(processInstanceId) {
     def GET = request(svcPkg + '/process-apis.postman/GET:{process-instance-id}/values') {
         values = ['process-instance-id': processInstanceId]
     }
-    def resp = submit GET
-    assert resp.status.code == 200
-    return resp
+    def response = submit GET
+    assert response.status.code == 200
+    return new JsonSlurper().parseText(response.body)
 }
 
 Object refreshCache() {
@@ -134,7 +131,7 @@ Object refreshCache() {
     def POST = request(svcPkg + '/asset-apis.postman/POST:refresh') {
         values = [:]
     }
-    response = submit POST
+    def response = submit POST
     assert response.status.code == 200
     return new JsonSlurper().parseText(response.body)
 }

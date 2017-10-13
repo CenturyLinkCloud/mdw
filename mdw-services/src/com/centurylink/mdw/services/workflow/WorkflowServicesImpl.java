@@ -1045,23 +1045,30 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     varInst.setName(varName);
                     varInst.setVariableId(var.getVariableId());
                     varInst.setType(type);
-                    if (value instanceof String)
-                        varInst.setStringValue((String)value);
-                    else
-                        varInst.setData(value);
-                    workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                    if (value != null && !value.equals("")) {
+                        if (value instanceof String)
+                            varInst.setStringValue((String)value);
+                        else
+                            varInst.setData(value);
+                        workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                    }
                 }
                 else {
-                    if (value instanceof String)
-                        varInst.setStringValue((String)value);
-                    else
-                        varInst.setData(value);
-                    workflowDataAccess.updateVariable(varInst);
+                    if (value == null || value.equals("")) {
+                        workflowDataAccess.deleteVariable(varInst);
+                    }
+                    else {
+                        if (value instanceof String)
+                            varInst.setStringValue((String)value);
+                        else
+                            varInst.setData(value);
+                        workflowDataAccess.updateVariable(varInst);
+                    }
                 }
             }
             catch (SQLException ex) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating "
-                        + varName + " for process: " + context.getProcessInstanceId());
+                        + varName + " for process: " + context.getProcessInstanceId(), ex);
             }
         }
     }
@@ -1081,11 +1088,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
         VariableInstance varInst = context.getProcessInstance().getVariable(varName);
-        if (varInst == null) {
+        if (varInst == null && value != null && !value.equals("")) {
             createDocument(context, varName, value);
         }
         else {
-            updateDocument(context, varName, value);
+            if (value == null || value.equals("")) {
+                try {
+                    // TODO: delete doc content also
+                    getWorkflowDao().deleteVariable(varInst);
+                }
+                catch (SQLException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error deleting "
+                            + varName + " for process: " + context.getProcessInstanceId(), ex);
+                }
+            }
+            else {
+                updateDocument(context, varName, value);
+            }
         }
     }
 

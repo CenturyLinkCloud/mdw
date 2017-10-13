@@ -175,19 +175,23 @@ processMod.controller('ProcessController',
   $scope.valuesEdit = false;
   $scope.editValues = function(edit) {
     $scope.valuesEdit = edit;
+    if ($scope.valuesEdit)
+      $scope.values = $scope.allValues;
+    else
+      $scope.values = $scope.populatedValues;
   };
   $scope.saveValues = function() {
     console.log('saving process values for instance: ' + $scope.process.id);
     var newValues = {};
     util.getProperties($scope.values).forEach(function(name) {
       var value = $scope.values[name];
-      if (value.dirty && value.value) {
-        if (value.type === 'java.util.Date') {
-          var timezoneAbbr = 'MST'; // TODO
-          newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
+      if (value.dirty) {
+        if (value.type === 'java.util.Date' && value.value) {
+            var timezoneAbbr = 'MST'; // TODO
+            newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
         }    
         else {
-          newValues[value.name] = value.value;
+          newValues[value.name] = value.value === null ? '' : value.value;
         }
       }
     });
@@ -218,7 +222,18 @@ processMod.controller('ProcessController',
       });
     }
     else {
-      $scope.values = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values'});
+      $scope.allValues = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values', includeEmpty: 'true'}, function() {
+        $scope.populatedValues = {};
+        var emptyValues = {};
+        util.getProperties($scope.allValues).forEach(function(name) {
+          var value = $scope.allValues[name];
+          if (value.value)
+            $scope.populatedValues[name] = value;
+          else
+            emptyValues[name] = value;
+        });
+        $scope.values = $scope.populatedValues;
+      });
     }
     
     $scope.process = ProcessSummary.get();
