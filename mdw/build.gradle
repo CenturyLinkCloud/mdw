@@ -337,7 +337,7 @@ dependencies {
 // update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
 task updateMDWDemoWorkspace(type: GradleBuild) {
     buildFile = "local.gradle"
-    tasks = ["updateManifestFile"]
+    tasks = ["updateMDWDemoWorkspace"]
     startParameter.projectProperties = [deployWarDir: "n/a", tomcatBinDir: "n/a", testServerUrl: "n/a"]
 }
 

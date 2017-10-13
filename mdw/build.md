@@ -31,7 +31,7 @@
 7 - Update mdw-demo
   - git pull
   - Update mdwVersion and mdwDesignerVersion in gradle.properties
-  - Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/raw/master/assets/com/centurylink/mdw/env/local.gradle to mdw folder
+  - Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder and update mdwDemoDir
   - Run the mdw/updateMDWDemoWorkspace task to bring over the latest framework assets and update manifest file
   - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
@@ -40,7 +40,7 @@
   - Login to mdw-hub and run all the test cases (select Stubbing from configure icon)
   - Investigate any failed test cases
   
-9 - Tag release (First time)
+9 - Tag release
   - git tag -a v6.0.xx -m 'v6.0.xx'
   - git push origin --tags
    

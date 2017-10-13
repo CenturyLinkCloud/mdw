@@ -214,7 +214,7 @@ task updateJson {
 
 // update MDW version  all the packages in the mdw-workflow/assets directory
 task updateMDWVerInAssetPackages {
-    description = "Export Asset Packages"
+    description = "Update Asset Package Version" + mdwVersion
 
     // superCats are categorized as the parent package
     // (eg com.centurylink.mdw.tests.camel is category "tests" instead of "camel")
@@ -248,5 +248,5 @@ task updateMDWVerInAssetPackages {
 }
 
 task updateMdwVerInFiles {
-      dependsOn(updateJson, updatePlugInFile, updateRestApiDefinition, exportAssetPackages)
+      dependsOn(updateJson, updatePlugInFile, updateRestApiDefinition, updateMDWVerInAssetPackages)
 }
