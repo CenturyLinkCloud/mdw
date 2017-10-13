@@ -46,7 +46,9 @@ subprojects {
     repositories {
         mavenCentral()
     }
-
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+            tasks.withType(Javadoc).all { enabled = false }
+    
     // copy into output dir rather than including directly in jar
     // this works better in local development where deployment happens from build/classes
     task copyMeta(type: Copy) {
@@ -82,6 +84,7 @@ subprojects {
 }
 
 task cleanJavadocs(type: Delete) {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     delete "../docs/_docs/javadoc"
 }
 
