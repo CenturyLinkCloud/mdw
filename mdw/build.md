@@ -68,16 +68,16 @@
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, release name should be 6.0.xx, copy the notes from updated CHANGELOG.md
   - Change release status from pre-release to release
-  - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
-  
-14 - Update support items delivered with this build to Resolved status.
-   - Delete any obsolete branches on GitHub that were merged as part of this build.
+  - Check if mdw-cli-{{version}}.zip and mdw-boot-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
 
-15 - Publishing to AppFog  
+14 - Publishing to AppFog  
    -  go to root of mdw-demo project (check correct dev/prod manifest.yml is there)
    -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
    -  Select a space (or press enter to skip): Prod (Dev for snapshots)
    -  cf push
+  
+15 - Update support items delivered with this build to Resolved status.
+   - Delete any obsolete branches on GitHub that were merged as part of this build.
 
 16 - TODO: Publish NPM package 
 
