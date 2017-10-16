@@ -258,16 +258,18 @@ task configureUploadAssets {
                     snapshotRepository(url: mavenSnapshotRepoUrl) {
                         authentication(userName: ossrhUsername, password: ossrhPassword)
                     }
-                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
-                        def filterName = discoveredFile.name - ".zip"
-                        def artifactName = filterName - "-SNAPSHOT"
-                        def versionStart = artifactName.lastIndexOf("-")
-                        def artifactId = artifactName.substring(0, versionStart)
-                        addFilter(filterName) { artifact, file ->
-                            file.name == discoveredFile.name
+                    pom.project {
+                        archiveAssetZips.discoveredFiles.each { discoveredFile ->
+                            def filterName = discoveredFile.name - ".zip"
+                            def artifactName = filterName - "-SNAPSHOT"
+                            def versionStart = artifactName.lastIndexOf("-")
+                            def artifactId = artifactName.substring(0, versionStart)
+                            addFilter(filterName) { artifact, file ->
+                                file.name == discoveredFile.name
+                            }
+                            pom(filterName).artifactId = artifactId
+                            pom(filterName).groupId = "com.centurylink.mdw.assets"
                         }
-                        pom(filterName).artifactId = artifactId
-                        pom(filterName).groupId = "com.centurylink.mdw.assets"
                     }
                 }
             }
