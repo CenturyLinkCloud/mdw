@@ -2,11 +2,11 @@ com.centurylink.mdw.activity
 com.centurylink.mdw.activity.types
 com.centurylink.mdw.adapter
 com.centurylink.mdw.annotations
-com.centurylink.mdw.ant.taskdef
 com.centurylink.mdw.app
 com.centurylink.mdw.auth
 com.centurylink.mdw.cache
 com.centurylink.mdw.cache.impl
+com.centurylink.mdw.cli
 com.centurylink.mdw.cloud
 com.centurylink.mdw.common
 com.centurylink.mdw.common.service
@@ -25,8 +25,8 @@ com.centurylink.mdw.dataaccess.file
 com.centurylink.mdw.email
 com.centurylink.mdw.event
 com.centurylink.mdw.groovy
+com.centurylink.mdw.hub
 com.centurylink.mdw.hub.context
-com.centurylink.mdw.hub.service
 com.centurylink.mdw.hub.servlet
 com.centurylink.mdw.java
 com.centurylink.mdw.jaxb
@@ -43,7 +43,6 @@ com.centurylink.mdw.model.event
 com.centurylink.mdw.model.listener
 com.centurylink.mdw.model.message
 com.centurylink.mdw.model.monitor
-com.centurylink.mdw.model.note
 com.centurylink.mdw.model.request
 com.centurylink.mdw.model.system
 com.centurylink.mdw.model.task
@@ -55,6 +54,7 @@ com.centurylink.mdw.monitor.impl
 com.centurylink.mdw.observer
 com.centurylink.mdw.observer.task
 com.centurylink.mdw.provider
+com.centurylink.mdw.rules
 com.centurylink.mdw.script
 com.centurylink.mdw.service.action
 com.centurylink.mdw.service.api
@@ -79,6 +79,7 @@ com.centurylink.mdw.services.process
 com.centurylink.mdw.services.project
 com.centurylink.mdw.services.request
 com.centurylink.mdw.services.rest
+com.centurylink.mdw.services.rules
 com.centurylink.mdw.services.system
 com.centurylink.mdw.services.task
 com.centurylink.mdw.services.task.factory
@@ -108,7 +109,6 @@ com.centurylink.mdw.workflow.activity.event
 com.centurylink.mdw.workflow.activity.java
 com.centurylink.mdw.workflow.activity.notification
 com.centurylink.mdw.workflow.activity.process
-com.centurylink.mdw.workflow.activity.rules
 com.centurylink.mdw.workflow.activity.script
 com.centurylink.mdw.workflow.activity.sync
 com.centurylink.mdw.workflow.activity.task
@@ -126,8 +126,6 @@ com.centurylink.mdw.workflow.adapter.rest
 com.centurylink.mdw.workflow.adapter.slack
 com.centurylink.mdw.workflow.adapter.soap
 com.centurylink.mdw.workflow.adapter.socket
-com.centurylink.mdw.workflow.drools
-com.centurylink.mdw.workflow.drools.cache
 com.centurylink.mdw.workflow.task.notifier
 com.centurylink.mdw.workflow.task.strategy
 com.centurylink.mdw.xml

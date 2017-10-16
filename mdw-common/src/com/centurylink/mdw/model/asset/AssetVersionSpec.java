@@ -18,7 +18,11 @@ package com.centurylink.mdw.model.asset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AssetVersionSpec {
+import org.json.JSONObject;
+
+import com.centurylink.mdw.model.Jsonable;
+
+public class AssetVersionSpec implements Jsonable {
 
     public static final String VERSION_LATEST = "0";
     public static final Pattern VERSION_PATTERN = Pattern.compile(" v[0-9\\.\\[,\\)]*$");
@@ -42,6 +46,10 @@ public class AssetVersionSpec {
         this.packageName = packageName;
         this.name = name;
         this.version = version;
+    }
+
+    public AssetVersionSpec(String packageProcess) {
+        this(packageProcess, "0");
     }
 
     /**
@@ -71,6 +79,11 @@ public class AssetVersionSpec {
             return name;
         else
             return packageName + "/" + name;
+    }
+
+    public boolean isRange() {
+        return version != null && (version.indexOf('[') >= 0 || version.indexOf(',') >= 0
+                || version.indexOf(')') >= 0);
     }
 
     public String toString() {
@@ -118,5 +131,23 @@ public class AssetVersionSpec {
         int dot = version.indexOf('.');
         int major = dot > 0 ? Integer.parseInt(version.substring(0, dot)) : 0;
         return "[" + version + "," + ++major + ")";
+    }
+
+    public AssetVersionSpec(JSONObject json) {
+        this.name = json.getString("name");
+        if (json.has("packageName"))
+            this.packageName = json.getString("packageName");
+        if (json.has("version"))
+            this.version = json.getString("version");
+    }
+
+    public JSONObject getJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        if (packageName != null)
+            json.put("packageName", packageName);
+        if (version != null && !"0".equals(version))
+            json.put("version", version);
+        return json;
     }
 }

@@ -1,7 +1,61 @@
 # Change Log
 
+## [v6.0.07](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.07) (2017-10-13)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.06...v6.0.07)
+
+**Implemented enhancements:**
+
+- Rules as a service in Drools package [\#228](https://github.com/CenturyLinkCloud/mdw/issues/228)
+- Runtime determination of service/nonservice process nature [\#220](https://github.com/CenturyLinkCloud/mdw/issues/220)
+- Allow creaton of data sources using any app-provided driver [\#217](https://github.com/CenturyLinkCloud/mdw/issues/217)
+- Search by Solution ID in the Workflow tab typeahead [\#214](https://github.com/CenturyLinkCloud/mdw/issues/214)
+- Populate asset archive from Git instead of during import [\#207](https://github.com/CenturyLinkCloud/mdw/issues/207)
+- Task UI JSX History page [\#194](https://github.com/CenturyLinkCloud/mdw/issues/194)
+- Task UI JSX Subtasks page [\#193](https://github.com/CenturyLinkCloud/mdw/issues/193)
+- Task UI JSX Values page [\#192](https://github.com/CenturyLinkCloud/mdw/issues/192)
+- Formatting options for request and response content [\#189](https://github.com/CenturyLinkCloud/mdw/issues/189)
+- Show process name in tool tip of Charts [\#185](https://github.com/CenturyLinkCloud/mdw/issues/185)
+- MySQL cleanup script implementation [\#168](https://github.com/CenturyLinkCloud/mdw/issues/168)
+- React component assets for task page customization [\#150](https://github.com/CenturyLinkCloud/mdw/issues/150)
+- Implement a GitHub Integration to trigger autotest execution in AppFog [\#97](https://github.com/CenturyLinkCloud/mdw/issues/97)
+
+**Closed issues:**
+
+- Cannot set values for unpopulated variables in Runtime UI [\#226](https://github.com/CenturyLinkCloud/mdw/issues/226)
+- Handle incoming JWT token when using Layer 7 Gateway authentication  [\#221](https://github.com/CenturyLinkCloud/mdw/issues/221)
+- Adapters should save a blank request with associated meta for HTTP GET operations [\#219](https://github.com/CenturyLinkCloud/mdw/issues/219)
+- Javadocs are not produced correctly by the MDW build [\#216](https://github.com/CenturyLinkCloud/mdw/issues/216)
+- Duplicate master request IDs in Workflow tab typeahead [\#213](https://github.com/CenturyLinkCloud/mdw/issues/213)
+- MDW-hub’s variables section for process not renter properly [\#212](https://github.com/CenturyLinkCloud/mdw/issues/212)
+- Suitable error flagging on unsupported subprocess invocations [\#205](https://github.com/CenturyLinkCloud/mdw/issues/205)
+- Cannot Discover assets for import in mdw-hub from repo on 143 server [\#91](https://github.com/CenturyLinkCloud/mdw/issues/91)
+- Stopping InProgress Test Cases when server shuts down [\#83](https://github.com/CenturyLinkCloud/mdw/issues/83)
+
+## [v6.0.06](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.06) (2017-09-11)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05...v6.0.06)
+
+**Implemented enhancements:**
+
+- Support link type Straight in workflow process canvas [\#200](https://github.com/CenturyLinkCloud/mdw/issues/200)
+- Support forwarding headers for ClearTrust auth in PaaS [\#199](https://github.com/CenturyLinkCloud/mdw/issues/199)
+- Task UI revamp using React JSX assets [\#191](https://github.com/CenturyLinkCloud/mdw/issues/191)
+- For REST service adapters, populate standard message if the HTTP response msg is empty [\#190](https://github.com/CenturyLinkCloud/mdw/issues/190)
+- Millisecond precision for db TIMESTAMP and DATETIME fields [\#178](https://github.com/CenturyLinkCloud/mdw/issues/178)
+- Microservice API automated tests [\#125](https://github.com/CenturyLinkCloud/mdw/issues/125)
+- Enhance DB transactions to retry in case of deadlock/lock timeouts automatically [\#116](https://github.com/CenturyLinkCloud/mdw/issues/116)
+
+**Closed issues:**
+
+- Master task should wait to be completed before all Subtasks are completed [\#206](https://github.com/CenturyLinkCloud/mdw/issues/206)
+- Fix mdw version in mdw-cli when using SNAPSHOT build [\#202](https://github.com/CenturyLinkCloud/mdw/issues/202)
+- Fix display of process instance image on Activity page. [\#201](https://github.com/CenturyLinkCloud/mdw/issues/201)
+- Charts losing information when filters are selected [\#186](https://github.com/CenturyLinkCloud/mdw/issues/186)
+- Fix Chart Type selection [\#163](https://github.com/CenturyLinkCloud/mdw/issues/163)
+- Runtime UI can overlook subprocess instances for superseded definitions [\#161](https://github.com/CenturyLinkCloud/mdw/issues/161)
+- Postman autotests fail on Cloud Foundry \(at least AppFog\) [\#154](https://github.com/CenturyLinkCloud/mdw/issues/154)
+
 ## [v6.0.05](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05) (2017-08-11)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05-SNAPSHOT...v6.0.05)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.04...v6.0.05)
 
 **Implemented enhancements:**
 
@@ -17,7 +71,9 @@
 - Caching for Swagger annotations scan results [\#131](https://github.com/CenturyLinkCloud/mdw/issues/131)
 - Redesign event waits/publishing paradigm [\#129](https://github.com/CenturyLinkCloud/mdw/issues/129)
 - MDW CLI for quickstart setup [\#124](https://github.com/CenturyLinkCloud/mdw/issues/124)
+- Package-based routing and scalability [\#108](https://github.com/CenturyLinkCloud/mdw/issues/108)
 - MDW deployable as a Spring Boot application [\#100](https://github.com/CenturyLinkCloud/mdw/issues/100)
+- Add sonarqube analysis to our CI builds [\#79](https://github.com/CenturyLinkCloud/mdw/issues/79)
 - Task Event Wait registration service [\#34](https://github.com/CenturyLinkCloud/mdw/issues/34)
 
 **Closed issues:**
@@ -28,14 +84,6 @@
 - Intra-MDW dependencies incorrectly reflected in published .pom artifacts [\#132](https://github.com/CenturyLinkCloud/mdw/issues/132)
 - Cross-VM fix for event processing deadlocks [\#122](https://github.com/CenturyLinkCloud/mdw/issues/122)
 - Tomcat 8.5 status messages always "OK" for REST services [\#113](https://github.com/CenturyLinkCloud/mdw/issues/113)
-
-## [v6.0.05-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05-SNAPSHOT) (2017-06-22)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.04...v6.0.05-SNAPSHOT)
-
-**Implemented enhancements:**
-
-- Package-based routing and scalability [\#108](https://github.com/CenturyLinkCloud/mdw/issues/108)
-- Add sonarqube analysis to our CI builds [\#79](https://github.com/CenturyLinkCloud/mdw/issues/79)
 
 ## [v6.0.04](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.04) (2017-06-19)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.03...v6.0.04)
@@ -52,7 +100,6 @@
 - Internal/Enterprise package supporting WebSphere MQ messaging [\#98](https://github.com/CenturyLinkCloud/mdw/issues/98)
 - AppFog should deploy mdw-buildpack from the GitHub repository [\#95](https://github.com/CenturyLinkCloud/mdw/issues/95)
 - EventHandlers and ActivityImpls should be full-blown workflow assets. [\#66](https://github.com/CenturyLinkCloud/mdw/issues/66)
-- Error reports should be sent through a REST service instead of SMTP [\#55](https://github.com/CenturyLinkCloud/mdw/issues/55)
 - Test Case HTTP support for net proxy config [\#51](https://github.com/CenturyLinkCloud/mdw/issues/51)
 - Create Pie Chart reports in MDWHub [\#43](https://github.com/CenturyLinkCloud/mdw/issues/43)
 - Add ability to create a Task Template from mdw-admin [\#19](https://github.com/CenturyLinkCloud/mdw/issues/19)

@@ -154,7 +154,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           Status: 'status',
           Start: 'startDate',
           End: 'endDate',
-          Result: 'statusMessage'
+          Result: 'message'
         }],
         /* named one-item array, followed by function:
          * Function returns an array of promises from which are extracted
@@ -213,6 +213,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             ID: 'id',
             '_url': '${"#/tasks/" + it.id}',
             Name: 'name',
+            Title: 'title',
             Status: 'status',
             Assignee: 'assignee',
             Created: 'startDate',

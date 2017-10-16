@@ -243,9 +243,15 @@ tasksMod.factory('TaskAction', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-tasksMod.factory('TaskUtil', ['util', function(util) {
+tasksMod.factory('TaskUtil', ['$location', '$route', 'mdw', 'util', function($location, $route, mdw, util) {
   return {
     setTask: function(task) {
+      if (task.instanceUrl) {
+        task.link = task.instanceUrl;
+      }
+      else {
+        task.link = '#/tasks/' + task.id;
+      }
       var startDate = new Date(task.start);
       task.start = util.past(startDate);
       if (task.due) {

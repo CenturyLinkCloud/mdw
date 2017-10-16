@@ -124,6 +124,10 @@ public interface WorkflowServices {
     ProcessInstance getProcess(Long instanceId) throws ServiceException;
     ProcessInstance getProcess(Long instanceId, boolean withSubprocs) throws ServiceException;
     ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException;
+    /**
+     * If multiple matches, returns latest.
+     */
+    ProcessInstance getMasterProcess(String masterRequestId) throws ServiceException;
 
     ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
 
@@ -160,10 +164,15 @@ public interface WorkflowServices {
     public Long launchProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String, String> params) throws ServiceException;
 
-    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String, String> params) throws ServiceException;
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
+    /**
+     * responseHeaders will be populated from process variable, if any
+     */
+    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException;
+    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,String> params) throws ServiceException;
 
     public Integer notify(String event, String message, int delay) throws ServiceException;
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;

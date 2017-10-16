@@ -284,6 +284,18 @@ public class CommonDataAccess {
         } else return null;
     }
 
+    public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
+    throws SQLException {
+        try {
+            db.openConnection();
+            setAttributes0(ownerType, ownerId, attributes);
+            db.commit();
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     public void setAttributes0(String ownerType, Long ownerId, Map<String,String> attributes)
     throws SQLException {
         List<Attribute> attrs = null;
@@ -300,29 +312,42 @@ public class CommonDataAccess {
           addAttributes0(ownerType, ownerId, attrs);
     }
 
+    public Long setAttribute(String ownerType, Long ownerId,
+            String attrName, String attrValue) throws SQLException {
+        try {
+            db.openConnection();
+            Long id = setAttribute0(ownerType, ownerId, attrName, attrValue);
+            db.commit();
+            return id;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     public Long setAttribute0(String ownerType, Long ownerId,
-            String attrname, String attrvalue)
+            String attrName, String attrValue)
             throws SQLException {
         String query = "select ATTRIBUTE_ID from ATTRIBUTE where " +
                     "ATTRIBUTE_OWNER=? and ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_NAME=?";
         Object[] args = new Object[3];
         args[0] = ownerType;
         args[1] = ownerId;
-        args[2] = attrname;
+        args[2] = attrName;
         ResultSet rs = db.runSelect(query, args);
         Long existingId = null;
         if (rs.next()) {
-            Long attrid = rs.getLong(1);
-            if (attrvalue==null) {
+            Long attrId = rs.getLong(1);
+            if (attrValue==null) {
                 query = "delete ATTRIBUTE where " +
                 "ATTRIBUTE_OWNER=? and ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_NAME=?";
             } else {
                 query = "update ATTRIBUTE set ATTRIBUTE_VALUE=? where ATTRIBUTE_ID=?";
                 args = new Object[2];
-                args[0] = attrvalue;
-                args[1] = attrid;
+                args[0] = attrValue;
+                args[1] = attrId;
             }
-            existingId = attrid;
+            existingId = attrId;
         } else {
             query = "insert into ATTRIBUTE" +
                 " (ATTRIBUTE_ID,ATTRIBUTE_OWNER,ATTRIBUTE_OWNER_ID,ATTRIBUTE_NAME,ATTRIBUTE_VALUE," +
@@ -332,8 +357,8 @@ public class CommonDataAccess {
             args = new Object[4];
             args[0] = ownerType;
             args[1] = ownerId;
-            args[2] = attrname;
-            args[3] = attrvalue;
+            args[2] = attrName;
+            args[3] = attrValue;
         }
         db.runUpdate(query, args);
         return existingId;
@@ -878,6 +903,22 @@ public class CommonDataAccess {
         args[0] = variableInstance.getStringValue();
         args[1] = variableInstance.getInstanceId();
         db.runUpdate(query, args);
+    }
+
+    public void deleteVariable(VariableInstance variableInstance) throws SQLException {
+        try {
+            db.openConnection();
+            deleteVariable0(variableInstance);
+            db.commit();
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected void deleteVariable0(VariableInstance variableInstance) throws SQLException {
+        String query = "delete from VARIABLE_INSTANCE where VARIABLE_INST_ID=?";
+        db.runUpdate(query, variableInstance.getInstanceId());
     }
 
     /**

@@ -59,13 +59,13 @@ env:
     "mdw.container.threadpool_provider": "MDW",
     "mdw.container.messenger": "jms",
     
-    "mdw.database.driver": "org.mariadb.jdbc.Driver",
-    "mdw.database.url": "jdbc:mariadb://localhost:3308/mdw",
-    "mdw.database.username": "mdw",
-    "mdw.database.password": "mdw",
+    "mdw.database.driver": "{{database-driver}}",
+    "mdw.database.url": "{{database-url}}",
+    "mdw.database.username": "{{database-user}}",
+    "mdw.database.password": "{{database-password}}",
     "mdw.database.poolsize": "10",
     "mdw.database.poolMaxIdle": "5",
-    "mdw.database.validationQuery": "select 1",
+    "mdw.database.validationQuery": "select 1 from dual",
     
     "mdw.server.list": "{{project}}.useast.appfog.ctl.io:80",
     
@@ -74,12 +74,13 @@ env:
     "mdw.temp.dir": "../mdw/.temp",
     
     "mdw.git.local.path": ".",
-    "mdw.git.remote.url": "https://github.com/CenturyLinkCloud/mdw-demo.git",
-    "mdw.git.branch": "master",
+    "mdw.git.remote.url": "{{git-remote-url}}",
+    "mdw.git.branch": "{{git.branch}}",
+    "mdw.git.user": "{{git.user}}",
   
     "mdw.hub.url": "https://{{project}}.useast.appfog.ctl.io/mdw",
     "mdw.services.url": "http://{{project}}.useast.appfog.ctl.io:80/mdw",
-    "mdw.git.user": "anonymous",    
+    "mdw.discovery.url": "{{discovery-url}}",
       
     "mdw.application.name": "{{project}}",
     

@@ -96,6 +96,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Workgroup,
         Asset,
         Role,
+        Rule,
         Category,
         Event,
         Note,

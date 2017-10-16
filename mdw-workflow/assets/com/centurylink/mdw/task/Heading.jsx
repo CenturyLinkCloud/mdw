@@ -14,14 +14,17 @@ class Heading extends Component {
     return (
       <div className="panel-heading mdw-heading">
         <div className="mdw-heading-label">
-          {this.props.task.name}
+          {this.props.task.title ? this.props.task.title : this.props.task.name}
           <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id} className="mdw-id">
             {this.props.task.id}
           </Link>
           {this.props.task.dirty && <span className="mdw-dirty">*</span>}
         </div>
         <div className="mdw-heading-actions">
-          <Action task={this.props.task} />
+          {this.props.children}
+          {this.props.task.actionable &&
+            <Action task={this.props.task} refreshTask={this.props.refreshTask} />
+          }
         </div>
       </div>
     );

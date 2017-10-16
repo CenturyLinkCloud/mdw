@@ -21,6 +21,6 @@ public interface ScriptExecutor {
 
     public String getName();
     public void setName(String name);
-    
+
     public Object execute(String script, Map<String,Object> bindings) throws ExecutionException;
 }

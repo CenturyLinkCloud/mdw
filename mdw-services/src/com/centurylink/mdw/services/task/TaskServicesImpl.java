@@ -237,20 +237,20 @@ public class TaskServicesImpl implements TaskServices {
         logger.info("SubTask instance created - ID: " + subTaskInstance.getTaskInstanceId());
     }
 
-    public TaskInstance getInstance(Long taskInstanceId) throws DataAccessException {
-        return TaskWorkflowHelper.getTaskInstance(taskInstanceId);
+    public TaskInstance getInstance(Long id) throws ServiceException {
+        try {
+            return TaskWorkflowHelper.getTaskInstance(id);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot retrieve task instance: " + id, ex);
+        }
     }
 
     public TaskRuntimeContext getContext(Long instanceId) throws ServiceException {
-        try {
-            TaskInstance taskInstance = getInstance(instanceId);
-            if (taskInstance == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
-            return getContext(taskInstance);
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot get runtime context for task instance: " + instanceId, ex);
-        }
+        TaskInstance taskInstance = getInstance(instanceId);
+        if (taskInstance == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
+        return getContext(taskInstance);
     }
 
     public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException {
@@ -258,25 +258,17 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public Map<String,Value> getValues(Long instanceId) throws ServiceException {
-        try {
-            TaskInstance taskInstance = getInstance(instanceId);
-            if (taskInstance == null) {
-                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
-            }
-            TaskRuntimeContext runtimeContext = getContext(taskInstance);
-            if (runtimeContext.getTaskTemplate().isAutoformTask()) {
-                return new AutoFormTaskValuesProvider().collect(runtimeContext);
-            }
-            else {
-                // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
-                return new HashMap<String,Value>();
-            }
+        TaskInstance taskInstance = getInstance(instanceId);
+        if (taskInstance == null) {
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + instanceId);
         }
-        catch (ServiceException ex) {
-            throw ex;
+        TaskRuntimeContext runtimeContext = getContext(taskInstance);
+        if (runtimeContext.getTaskTemplate().isAutoformTask()) {
+            return new AutoFormTaskValuesProvider().collect(runtimeContext);
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException("Error getting values for task instance: " + instanceId, ex);
+        else {
+            // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
+            return new HashMap<String,Value>();
         }
     }
 
@@ -292,27 +284,25 @@ public class TaskServicesImpl implements TaskServices {
                 valuesProvider = new AutoFormTaskValuesProvider();
             else
                 valuesProvider = new CustomTaskValuesProvider();
-            if (runtimeContext.getTaskTemplate().isAutoformTask()) {
-                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                valuesProvider.apply(runtimeContext, values);
-                Map<String,Object> newValues = new HashMap<String,Object>();
-                for (String name : values.keySet()) {
-                    if (TaskRuntimeContext.isExpression(name)) {
-                        String rootVar;
-                        if (name.indexOf('.') > 0)
-                          rootVar = name.substring(2, name.indexOf('.'));
-                        else
-                          rootVar = name.substring(2, name.indexOf('}'));
-                        newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
-                    }
-                    else {
-                        newValues.put(name, runtimeContext.getVariables().get(name));
-                    }
+            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+            valuesProvider.apply(runtimeContext, values);
+            Map<String,Object> newValues = new HashMap<String,Object>();
+            for (String name : values.keySet()) {
+                if (TaskRuntimeContext.isExpression(name)) {
+                    String rootVar;
+                    if (name.indexOf('.') > 0)
+                      rootVar = name.substring(2, name.indexOf('.'));
+                    else
+                      rootVar = name.substring(2, name.indexOf('}'));
+                    newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
                 }
-                for (String name : newValues.keySet()) {
-                    Object newValue = newValues.get(name);
-                    workflowServices.setVariable(runtimeContext, name, newValue);
+                else {
+                    newValues.put(name, runtimeContext.getVariables().get(name));
                 }
+            }
+            for (String name : newValues.keySet()) {
+                Object newValue = newValues.get(name);
+                workflowServices.setVariable(runtimeContext, name, newValue);
             }
         }
         catch (ServiceException ex) {
@@ -321,19 +311,24 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public void performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
-            String destination, boolean notifyEngine) throws ServiceException, DataAccessException {
-        TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
-        User user = UserGroupCache.getUser(userCuid);
-        if (user == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
-        Long assigneeId = null;
-        if (assigneeCuid != null) {
-            User assignee = UserGroupCache.getUser(assigneeCuid);
-            if (assignee == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "Assignee not found: " + assigneeCuid);
-            assigneeId = assignee.getId();
+            String destination, boolean notifyEngine) throws ServiceException {
+        try {
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
+            User user = UserGroupCache.getUser(userCuid);
+            if (user == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
+            Long assigneeId = null;
+            if (assigneeCuid != null) {
+                User assignee = UserGroupCache.getUser(assigneeCuid);
+                if (assignee == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Assignee not found: " + assigneeCuid);
+                assigneeId = assignee.getId();
+            }
+            helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
         }
-        helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error doing " + action + " on task " + taskInstanceId, ex);
+        }
     }
 
     public void performTaskAction(UserTaskAction taskAction) throws ServiceException {

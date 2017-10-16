@@ -93,6 +93,7 @@ import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -127,7 +128,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException {
         try {
-            getWorkflowDao().setAttributes0(ownerType, ownerId, attributes);
+            getWorkflowDao().setAttributes(ownerType, ownerId, attributes);
         }
         catch (Exception ex) {
             throw new ServiceException("Failed to set attributes for " + ownerType + "/" + ownerId, ex);
@@ -141,7 +142,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             for (Map.Entry<String, String> attribute : attributes.entrySet()) {
                 String attributeName = attribute.getKey();
                 String attributeValue = attribute.getValue();
-                getWorkflowDao().setAttribute0(ownerType, ownerId, attributeName, attributeValue);
+                getWorkflowDao().setAttribute(ownerType, ownerId, attributeName, attributeValue);
             }
         }
         catch (SQLException ex) {
@@ -312,6 +313,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public ProcessInstance getMasterProcess(String masterRequestId) throws ServiceException {
+        Query query = new Query();
+        query.setFilter("master", true);
+        query.setFilter("masterRequestId", masterRequestId);
+        List<ProcessInstance> instances = getProcesses(query).getProcesses();
+        if (instances.isEmpty())
+            return null;
+        else
+            return getProcess(instances.get(0).getId());
+    }
+
     public Map<String,Value> getProcessValues(Long instanceId) throws ServiceException {
         return getProcessValues(instanceId, false);
     }
@@ -364,7 +376,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Variable var = runtimeContext.getProcess().getVariable(name);
-        if (var == null && !runtimeContext.isExpression(name))
+        if (var == null && !ProcessRuntimeContext.isExpression(name))
             throw new ServiceException(ServiceException.NOT_FOUND, "No variable defined: " + name);
         String stringVal = null;
         if (var != null && VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), var.getVariableType())) {
@@ -401,10 +413,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 for (VariableInstance var : instance.getVariables()) {
                     Object value = var.getData();
                     if (value instanceof DocumentReference) {
-                        Document docVO = getWorkflowDao().getDocument(((DocumentReference)value).getDocumentId());
-                        value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                        try {
+                            Document docVO = getWorkflowDao().getDocument(((DocumentReference)value).getDocumentId());
+                            value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                            vars.put(var.getName(), value);
+                        }
+                        catch (TranslationException ex) {
+                            // parse error on one doc should not prevent other vars from populating
+                            logger.severeException("Error translating " + var.getName() + " for process instance " + instanceId, ex);
+                        }
                     }
-                    vars.put(var.getName(), value);
+                    else {
+                        vars.put(var.getName(), value);
+                    }
                 }
             }
             return new ProcessRuntimeContext(pkg, process, instance, vars);
@@ -422,10 +443,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 AssetVersionSpec spec = AssetVersionSpec.parse(procDefSpec);
                 if (spec.getName().endsWith(".proc"))
                     spec = new AssetVersionSpec(spec.getPackageName(), spec.getName().substring(0, spec.getName().length() - 5), spec.getVersion());
-                Process procDef = ProcessCache.getProcessSmart(spec);
-                if (procDef == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for spec: " + procDefSpec);
-                query.setFilter("processId", procDef.getId());
+                if (spec.isRange()) {
+                    List<Process> procDefs = ProcessCache.getProcessesSmart(spec);
+                    String[] procIds = new String[procDefs.size()];
+                    for (int i = 0; i < procDefs.size(); i++)
+                        procIds[i] = procDefs.get(i).getId().toString();
+                    query.setArrayFilter("processIds", procIds);
+                }
+                else {
+                    Process procDef = ProcessCache.getProcessSmart(spec);
+                    if (procDef == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for spec: " + procDefSpec);
+                    query.setFilter("processId", procDef.getId());
+                }
             }
             return getWorkflowDao().getProcessInstances(query);
         }
@@ -873,8 +903,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+    public Object invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+        return invokeServiceProcess(name, masterRequest, masterRequestId, parameters, headers, null);
+    }
+
+    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException {
         try {
             Long docId = 0L;
             String request = null;
@@ -902,6 +937,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 Variable var = processVO.getVariable(responseVarName);
                 if (var != null && var.isOutput() && !var.isString()) {
                     response = VariableTranslator.realToObject(pkg, var.getVariableType(), resp);
+                }
+            }
+            Variable responseHeadersVar = processVO.getVariable("responseHeaders");
+            if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getVariableType().equals("java.util.Map<String,String>")) {
+                ProcessInstance processInstance = getMasterProcess(masterRequestId);
+                if (processInstance != null) {
+                    VariableInstance respHeadersVar = processInstance.getVariable("responseHeaders");
+                    if (respHeadersVar != null) {
+                        Document doc = getDocument(((DocumentReference)respHeadersVar.getData()).getDocumentId());
+                        Map<?,?> respHeaders = (Map<?,?>) doc.getObject("java.util.Map<String,String>", PackageCache.getPackage(processInstance.getPackageName()));
+                        for (Object key : respHeaders.keySet())
+                            responseHeaders.put(key.toString(), respHeaders.get(key).toString());
+                    }
                 }
             }
             return response;
@@ -997,23 +1045,30 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     varInst.setName(varName);
                     varInst.setVariableId(var.getVariableId());
                     varInst.setType(type);
-                    if (value instanceof String)
-                        varInst.setStringValue((String)value);
-                    else
-                        varInst.setData(value);
-                    workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                    if (value != null && !value.equals("")) {
+                        if (value instanceof String)
+                            varInst.setStringValue((String)value);
+                        else
+                            varInst.setData(value);
+                        workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                    }
                 }
                 else {
-                    if (value instanceof String)
-                        varInst.setStringValue((String)value);
-                    else
-                        varInst.setData(value);
-                    workflowDataAccess.updateVariable(varInst);
+                    if (value == null || value.equals("")) {
+                        workflowDataAccess.deleteVariable(varInst);
+                    }
+                    else {
+                        if (value instanceof String)
+                            varInst.setStringValue((String)value);
+                        else
+                            varInst.setData(value);
+                        workflowDataAccess.updateVariable(varInst);
+                    }
                 }
             }
             catch (SQLException ex) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating "
-                        + varName + " for process: " + context.getProcessInstanceId());
+                        + varName + " for process: " + context.getProcessInstanceId(), ex);
             }
         }
     }
@@ -1033,11 +1088,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
         VariableInstance varInst = context.getProcessInstance().getVariable(varName);
-        if (varInst == null) {
+        if (varInst == null && value != null && !value.equals("")) {
             createDocument(context, varName, value);
         }
         else {
-            updateDocument(context, varName, value);
+            if (value == null || value.equals("")) {
+                try {
+                    // TODO: delete doc content also
+                    getWorkflowDao().deleteVariable(varInst);
+                }
+                catch (SQLException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error deleting "
+                            + varName + " for process: " + context.getProcessInstanceId(), ex);
+                }
+            }
+            else {
+                updateDocument(context, varName, value);
+            }
         }
     }
 
@@ -1131,24 +1198,26 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private Map<String,String> translateParameters(Process processVO, Map<String,Object> parameters) throws ProcessException {
         Map<String,String> stringParams = new HashMap<String,String>();
-        for (String key : parameters.keySet()) {
-            Object val = parameters.get(key);
-            Variable vo = processVO.getVariable(key);
-            if (vo == null)
-              throw new ProcessException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processVO.getId() + ")");
-            String translated;
-            if (val instanceof String)
-                translated = (String)val;
-            else {
-                Package pkg = PackageCache.getProcessPackage(processVO.getId());
-                if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getVariableType())) {
-                  translated = VariableTranslator.realToString(pkg, vo.getVariableType(), val);
-                }
+        if (parameters != null) {
+            for (String key : parameters.keySet()) {
+                Object val = parameters.get(key);
+                Variable vo = processVO.getVariable(key);
+                if (vo == null)
+                  throw new ProcessException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processVO.getId() + ")");
+                String translated;
+                if (val instanceof String)
+                    translated = (String)val;
                 else {
-                  translated = VariableTranslator.toString(PackageCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
+                    Package pkg = PackageCache.getProcessPackage(processVO.getId());
+                    if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getVariableType())) {
+                      translated = VariableTranslator.realToString(pkg, vo.getVariableType(), val);
+                    }
+                    else {
+                      translated = VariableTranslator.toString(PackageCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
+                    }
                 }
+                stringParams.put(key, translated);
             }
-            stringParams.put(key, translated);
         }
         return stringParams;
     }

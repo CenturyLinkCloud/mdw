@@ -34,6 +34,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskState;
@@ -41,6 +42,7 @@ import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -142,26 +144,44 @@ public class TaskDataAccess extends CommonDataAccess {
         task.setPriority(rs.getInt("PRIORITY"));
         task.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
 
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(task.getTaskId());
-        if (taskVO == null) {
+        TaskTemplate template = TaskTemplateCache.getTaskTemplate(task.getTaskId());
+        if (template == null) {
             String ref = rs.getString("TASK_INSTANCE_REFERRED_AS");
             logger.warn("ERROR: Task instance ID " + task.getTaskInstanceId() + " missing task definition (" + ref + ").");
             task.setTaskName(ref);
             task.setInvalid(true);
             return task;
         }
-        task.setCategoryCode(taskVO.getTaskCategory());
-        task.setTaskName(taskVO.getTaskName());
+        task.setCategoryCode(template.getTaskCategory());
+        task.setTaskName(template.getTaskName());
         if (task.getTaskName() == null) {
-            task.setTaskName(taskVO.getTaskName());
+            task.setTaskName(template.getTaskName());
         }
         if (hasTaskTitleColumn)
             task.setTitle(rs.getString("TASK_TITLE"));
         if (isVOversion) {
             task.setAssigneeCuid(rs.getString("CUID"));
-            if (taskVO != null)
-              task.setDescription(taskVO.getComment());
+            if (template != null)
+              task.setDescription(template.getComment());
         }
+
+        // check for custom page
+        if (template.isHasCustomPage()) {
+            String assetSpec = template.getCustomPage();
+            if (assetSpec.endsWith(".jsx")) {
+                if (template.getCustomPageAssetVersion() != null)
+                    assetSpec += " v" + template.getCustomPageAssetVersion();
+                AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
+                try {
+                    CustomPageLookup pageLookup = new CustomPageLookup(customPage, task.getTaskInstanceId());
+                    task.setTaskInstanceUrl(pageLookup.getUrl());
+                }
+                catch (Exception ex) {
+                    logger.severeException("Cannot determine custom page URL for task: " + template.getLabel(), ex);
+                }
+            }
+        }
+
         return task;
     }
 
@@ -676,6 +696,8 @@ public class TaskDataAccess extends CommonDataAccess {
                     // otherwise master request id
                     where = "where ti.master_request_id like '" + query.getFind() + "%'\n";
                 }
+                if (!db.isMySQL())
+                    where = where + " and ui.user_info_id(+) = ti.task_claim_user_id\n";
             }
             else {
                 where = buildTaskInstanceWhere(query);
@@ -717,7 +739,13 @@ public class TaskDataAccess extends CommonDataAccess {
                             logger.severeException("Cannot find assignee: " + taskInst.getAssigneeCuid(), ex);
                         }
                     }
-                    taskInstances.add(taskInst);
+                    String taskName = query.getFilter("name");
+                    if (taskName != null && taskName.equals(taskInst.getName())) {
+                        taskInstances.add(taskInst);
+                    }
+                    else if (taskName == null) {
+                        taskInstances.add(taskInst);
+                    }
                 }
             }
             TaskList taskList = new TaskList(TaskList.TASKS, taskInstances);
@@ -845,10 +873,10 @@ public class TaskDataAccess extends CommonDataAccess {
         // category
         String category = query.getFilter("category");
         if (category != null) {
-            Long categoryCode = getCategoryId(category);
-            if (categoryCode == null)
+            Long categoryId = getCategoryId(category);
+            if (categoryId == null)
                 throw new DataAccessException("Unable to find code for category: " + category);
-            String catTasksClause = buildCategoryTasksClause((int)categoryCode.longValue());
+            String catTasksClause = buildCategoryTasksClause((int)categoryId.longValue());
             if (catTasksClause != null)
                 where.append(" and ").append(catTasksClause).append("\n");
         }
@@ -954,10 +982,10 @@ public class TaskDataAccess extends CommonDataAccess {
         return DataAccess.getBaselineData().getTaskCategoryCodes().get(categoryId);
     }
 
-    protected Long getCategoryId(String categoryName) throws DataAccessException {
-        if (categoryName != null) {
+    protected Long getCategoryId(String categoryNameOrCode) throws DataAccessException {
+        if (categoryNameOrCode != null) {
             for (TaskCategory taskCategory : DataAccess.getBaselineData().getTaskCategories().values()) {
-                if (categoryName.equals(taskCategory.getName())) {
+                if (categoryNameOrCode.equals(taskCategory.getName()) || categoryNameOrCode.equals(taskCategory.getCode())) {
                     return taskCategory.getId();
                 }
             }

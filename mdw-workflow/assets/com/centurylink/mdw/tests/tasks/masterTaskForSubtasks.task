@@ -2,6 +2,7 @@
   "attributes": {
     "ALERT_INTERVAL": "7200",
     "FormName": "Autoform",
+    "Groups": "[\"MDW Support\",\"Site Admin\",\"Developers\"]",
     "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
     "SubTaskStrategy": "com.centurylink.mdw.tests.tasks.SubtaskStrategy",
     "SubtasksCompleteMaster": "true",

@@ -12,17 +12,19 @@
 
 - title: Guides
   docs:
+  - guides/mdw-cookbook
   - guides/SetupGuideForTomcat
   - guides/SetupGuideForCloudFoundry
-  - guides/MicroservicesCookbook
   
 - title: Documentation
   docs:
   - link-to-javadoc
+  - getting-started/cli
   - help
   
 - title: Designer
   docs:
+  - getting-started/install-designer
   - designer/user-guide
 
 - title: Development

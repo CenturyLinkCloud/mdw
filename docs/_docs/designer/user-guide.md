@@ -5,22 +5,40 @@ title: Designer User Guide
 ### MDW Designer User Guide
 
 #### Getting Started with MDW Designer
-- The MDW Designer application comes with an Eclipse plug-in for developers, which requires a setup and that information can be found in the `readme.md` file in any of the following mdw projects hosted on CenturyLink's GitHub site:
-     - [MDW Demo](https://github.com/CenturyLinkCloud/mdw-demo)
-     - [Full-Blown MDW 6](https://github.com/CenturyLinkCloud/mdw)
-
-- In addition to this document, there is a great deal of online help docs and guides that are available via the menu option, HELP on the home page, as well as on Eclipse under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning, etc. 
-
+- If you haven't already, [install the MDW Designer plugin for Eclipse](../../getting-started/install-designer).
+- In addition to this document, there is a great deal of [online help](../../help) available.
+  This same help content can be accessed in Eclipse through Help > Help Contents > MDW Designer.
+  Links to relevant help pages are also sprinkled throughout Designer property pages and toolsets.   
 - Once you've installed and launched MDW Designer, you will be able to view processes for various projects and environments in the Process Explorer view. 
-- If you have cloned an existing mdw project from the GitHub, you will see the mdw project from the MDW Designer perspective. You can refer to the `How to use MDW Designer` in this document to start exploring the MDW Designer.
- 
-- If however, you have not cloned the mdw project from the GitHub, please refer to `Clone mdw-demo project into your workspace` in the mdw-demo/readme.md file and return to this guide to continue.
+- If you've cloned an existing mdw project from Git, you'll see should the project in MDW Designer perspective. 
   
 #### How to Use MDW Designer
-If you would like to create a new process from scratch,  refer to one of the following cookbook(s) hosted in CenturyLink's GitHub repository:  
-- [MicroservicesCookbook](http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/)
+If you would like to create a new project from scratch,  refer to one of the following guides:  
+- [MDW Cookbook](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/)
 
-#####  1.  Create a  Workflow Process
+##### 1. Create an MDW-enabled Project
+Chances are you've already got a project, either by cloning it from Git, or by following the [MDW Quickstart](../../getting-started/quick-start).
+However, there's also an Eclipse wizard to accomplish the same thing.
+- Open Designer Perspective in Eclipse:
+  - From the menus select Window > Open Perspective > Other > MDW Designer.
+- Launch the Local Project wizard:
+- Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you will be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you will use.
+  ![workflow](../images/workflow.png "workflow")
+- Click Next, and then enter the settings for your environment. For the password, you can enter `tomcat`.  For details about these settings, refer to the server-specific cookbooks listed above under "Supported Java Containers" section.
+  ![tomcat setup](../images/tomcatSetting.png "tomcatSetting")
+- Click Next again and enter your database connection info. The depicted info is for the included [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md).  The default password for Embedded DB is `mdw`.<br>
+  ![db setup](../images/dbSetting.png "dbSetting")
+- Click Finish to generate your local project.
+
+###### The MDW Base Package:
+- When you create design artifacts in MDW, these are organized into workflow packages, which are different from Java packages in that they can contain assets in a wide variety of formats.  Much of the MDW framework's core functionality itself is delivered this way.  The essential assets required by MDW are included in the packages `com.centurylink.mdw.base` and `com.centurylink.mdw.hub`.  If you choose the built-in database asset persistence, these base packages will already exist, and you can skip down to Section 2.  Otherwise, if you're using a new database or VCS asset persistence, you'll need to import these packages locally from the MDW repository as follows.
+- Expand your newly-created workflow project in Process Explorer and you will see that it currently contains no packages.  Right-click on the project and select Import > Package.  Choose the `Discover` option and leave the repository location as the default.<br> 
+  ![alt text](../images/importBasePackages.png "importBasePackages")
+- After you click Next it will take a few moments for Designer to locate the available packages.  Once these are displayed, put a check mark on base, db and hub packages.<br>
+  ![alt text](../images/importBasePackages2.png "importBasePackages2")
+- Click Finish, and the packages will be downloaded and become visible in your Process Explorer project tree.
+
+##### 2. Create a Workflow Process
 - At the top level of the Process Explorer tree are workflow packages.  A package is simply a convenient way of grouping processes together.  You can create a new 
   package by clicking on the `New Package` toolbar button, second from the right at the top of Process Explorer, or you can right-click your project > New > MDW Package.
   
@@ -42,7 +60,7 @@ If you would like to create a new process from scratch,  refer to one of the fol
    
    ![alt text](../images/mdwWorkflowProcess.png "mdwWorkflowProcess")
 
-##### Add some Process Variables:
+##### 3. Add some Process Variables:
 -  Once you have a process created, you will need to add some variables to receive and respond to a request. The convention in MDW is that a service request variable is named "request" and a service response variable is named "response".  You have option to name them differently, but for simplicity we will name them as request and response.  On the Variables property tab, create these two variables in your process with type org.json.JSONObject.  Set the mode for the request variable to be Input, and the mode for the response to be Output.  Add String variables orderId and validationResult.
 
    ![alt text](../images/myOrderProcessVariable.png "myOrderProcessVariable")
@@ -58,12 +76,12 @@ If you would like to create a new process from scratch,  refer to one of the fol
 - You can hover over each of the icons for a tooltip explanation of their functionality.  Many of these functions are also available from the right click menu either in
   Process Explorer or from the Designer Canvas itself.
 
-#####  2.  Save and Run Your Workflow Process
+##### 4. Save and Run Your Workflow Process
 - Save your process design by selecting File > Save from the menu (or by clicking the disk icon in the Eclipse toolbar, or by typing ctrl-s).  Select to overwrite the current version and to keep the process locked after saving.  During iterative development for convenience you'll sometimes overwrite the existing version of a process definition.  However once you've exported to another environment you'll want to increment the version since you cannot re-import a changed process with the same version number.  Details are covered under Help > Cheat Sheets > MDW Workflow > Importing, Exporting and Versioning.  
 
    ![alt text](../images/saveOrderProcess.png "saveOrderProcess")
  
-#####  3.  View  Your  Workflow Activity Instance
+##### 5. View  Your  Workflow Activity Instance
 - At this point your process consists of just a Start and Stop activity, but you can still run it.  Check in Servers view and make sure your server is running.  
   Right-click on the process in the Process Explorer tree and select > `Run`.  This will open the Process Launch Configuration dialog where you can specify parameters and 
   run your process. If you do not see the `Run` option, refresh the mdw-demo project from the MDW Designer perspective.

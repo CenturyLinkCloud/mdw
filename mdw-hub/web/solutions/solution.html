@@ -56,7 +56,7 @@
         <ul class="mdw-list">
           <li ng-repeat="request in solution.members.requests">
             <div>
-              <a class="mdw-item-link" href="#/workflow/requests/{{request.id}}">{{request.masterRequestId}}</a>
+              <a class="mdw-item-link" href="#/workflow/masterRequests/{{request.masterRequestId}}">{{request.masterRequestId}}</a>
               <div class="mdw-item-action" ng-if="authUser.hasRole('Task Execution')">
                 <a uib-tooltip="Remove request {{request.masterRequestId}}" tooltip-placement="left" 
                   ng-if="!edit && !confirm" ng-click="removeRequest(request)">
@@ -64,7 +64,8 @@
                 </a>
               </div>
             </div>
-            <div class="mdw-item-sub">In Progress</div>
+            <div class="mdw-item-sub">Process Instance ID: {{request.processInstanceId}}</div>
+            <div class="mdw-item-sub">Start Date: {{request.processStart}}</div>
           </li>
         </ul>
       </div>
@@ -92,6 +93,33 @@
               </div>
             </div>
             <div class="mdw-item-sub">{{task.id}} - {{task.status}}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mdw-split-left">
+      <div class="panel panel-default mdw-panel">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-label">Processes</div>
+          <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('Task Execution')">
+            <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'solutions/findProcess.html'" 
+              popover-placement="left" pop-click>
+              <span class="glyphicon glyphicon-plus"></span> Add
+            </button>          
+          </div>
+        </div>
+        <ul class="mdw-list">
+          <li ng-repeat="process in solution.members.processes">
+            <div>
+              <a class="mdw-item-link" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
+              <div class="mdw-item-action" ng-if="authUser.hasRole('Task Execution')">
+                <a uib-tooltip="Remove process {{process.id}}" tooltip-placement="left" 
+                  ng-if="!edit && !confirm" ng-click="removeRequest(process)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </div>
+            </div>
+            <div class="mdw-item-sub">{{process.status}}</div>
           </li>
         </ul>
       </div>

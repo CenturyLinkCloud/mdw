@@ -26,14 +26,18 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetPackageList;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
 import io.swagger.annotations.Api;
@@ -89,6 +93,15 @@ public class Workflow extends JsonRestService {
             }
 
             String[] segments = getSegments(path);
+
+            if (segments.length == 1) {
+                // definitions -- with start pages
+                Query procQuery = new Query();
+                procQuery.setFilter("extension", "proc");
+                AssetPackageList procPkgList = ServiceLocator.getAssetServices().getAssetPackageList(procQuery);
+                return procPkgList.getJson();
+            }
+
             if (segments.length < 3)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Path segments {packageName}/{processName} are required");
             if (query.getBooleanFilter("summary")) {
@@ -113,6 +126,16 @@ public class Workflow extends JsonRestService {
                 json.put("name", process.getName());
                 json.put("id", process.getId());
                 json.put("packageName", process.getPackageName());
+                String startPage = process.getAttribute(WorkAttributeConstant.PROCESS_START_PAGE);
+                if (startPage != null) {
+                    String assetSpec = startPage;
+                    String ver = process.getAttribute(WorkAttributeConstant.PROCESS_START_PAGE_ASSET_VERSION);
+                    if (ver != null)
+                        assetSpec += " v" + ver;
+                    AssetVersionSpec startPageSpec = AssetVersionSpec.parse(assetSpec);
+                    json.put("startPageUrl", new CustomPageLookup(startPageSpec, null).getUrl());
+                }
+
                 return json;
             }
         }

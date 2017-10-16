@@ -1,0 +1,110 @@
+{
+	"variables": [],
+	"info": {
+		"name": "asset-apis",
+		"_postman_id": "891b95d4-9c86-53d4-6f10-d538e2ca259e",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "asset",
+			"request": {
+				"url": "{{base-url}}/Assets/{{asset-path}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"{{asset-name}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "asset",
+			"request": {
+				"url": {
+					"raw": "{{asset-base}}/{{asset-path}}?version={{asset-version}}",
+					"host": [
+						"{{asset-base}}"
+					],
+					"path": [
+						"{{asset-path}}"
+					],
+					"query": [
+						{
+							"key": "version",
+							"value": "{{asset-version}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{proc-def-json}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "asset",
+			"request": {
+				"url": "{{asset-base}}/{{asset-path}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "asset",
+			"request": {
+				"url": "{{base-url}}/Assets/{{asset-path}}",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "refresh",
+			"request": {
+				"url": "{{base-url}}/WorkflowCache",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"distributed\": true\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

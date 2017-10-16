@@ -28,18 +28,38 @@ try {
   if (input.debug)
     console.log('webpack config: ' + JSON.stringify(config, null, 2));
 
-  var compiler = webpack(config);
+  const compiler = webpack(config);
   
-  compiler.run((err, stats) => {
-    if (err) {
-      setWebpackResult({status: 'Failed', content: err.toString()});
-    }
-    else {
-      var debug = stats.errors && stats.errors.length && input.debug;
-      var stats = JSON.stringify(stats.toJson(debug ? 'normal' : 'minimal'));
-      setWebpackResult({status: 'OK', content: stats});
-    }
-  });  
+  if (input.devMode) {
+    // watching keeps this process alive until the server is stopped
+    compiler.watch({
+      aggregateTimeout: 300
+    }, (err, stats) => {
+      if (err) {
+        console.log('webpack failed: ' + err);
+      }
+      else {
+        var st = stats.toJson(webpackConfig.bareStats);
+        if (st.errors && st.errors.length > 0)
+          console.log('webpack errors: ' + JSON.stringify(st.errors, null, 2));
+        if (st.warnings && st.warnings.length > 0)
+          console.log('webpack warnings: ' + JSON.stringify(st.warnings, null, 2));
+        console.log('webpack compile time: ' + st.time + ' ms');
+      }
+    });
+  }
+  else {
+    compiler.run((err, stats) => {
+      if (err) {
+        setWebpackResult({status: 'Failed', message: err.toString()});
+      }
+      else {
+        var debug = stats.errors && stats.errors.length && input.debug;
+        var statsStr = JSON.stringify(stats.toJson(debug ? 'normal' : 'minimal'));
+        setWebpackResult({status: 'OK', message: statsStr});
+      }
+    });
+  }
 }
 catch (err) {
   // if not caught, VM can crash

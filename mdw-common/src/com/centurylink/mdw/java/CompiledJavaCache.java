@@ -311,7 +311,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null)
-            throw new MdwJavaException("No Java compiler available");
+            throw new MdwJavaException("No Java compiler available.  JDK must precede JRE on system PATH.");
 
         final JavaFileObject jfo = new StringJavaFileObject(className, javaCode);
 

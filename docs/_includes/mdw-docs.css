@@ -1,8 +1,42 @@
-.project-name {
-    font-size: 4.25rem;
+img {
+  margin-top: 10px;
+  margin-bottom: 12px;
 }
 
-article h4 { color: black ! important; }
+.inline {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.project-name {
+  font-size: 4.25rem;
+}
+
+article h4 { 
+	color: black !important;
+}
+
 .docs article {
-    min-height: 145em ! important;;
+  min-height: 145em !important;;
+}
+
+.highlight .k {
+  color: #7195db !important;
+}
+
+.highlight .kd {
+  color: #34d058 !important;
+}
+
+.highlight .kt {
+  color: #5ca4ae !important;
+}
+
+.highlighter-rouge {
+	margin-bottom: 12px;
+}
+
+li .highlighter-rouge {
+	margin-top: 0;
+	margin-bottom: 0;
 }

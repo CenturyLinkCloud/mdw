@@ -1,0 +1,23 @@
+test: 'GET:run'
+request:
+  url: '${base-url}/Processes/run/${process-id}'
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "definitionId": ${process-id},
+      "masterRequestId": "${~.*}",
+      "values": {
+        "inputVar": {
+          "display": "Optional",
+          "type": "java.lang.String"
+        }
+      }
+    }

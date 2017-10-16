@@ -52,11 +52,12 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     private static final String VARIABLES = "variables";
     private static final String SYNCHRONOUS = "synchronous";
     private boolean subprocIsService = false;
+    private boolean passingByReference = true;
 
     private static final String ERR_OUTPARA = "Actual parameter for OUTPUT parameter is not a variable";
 
     public boolean needSuspend() {
-        return (!getEngine().isInService() && subprocIsService)?false:this.isSynchronousCall();
+        return (!getEngine().isInService() && subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (getEngine().getPerformanceLevel() < 9 || !passingByReference))?false:this.isSynchronousCall();
     }
 
     private boolean isSynchronousCall() {
@@ -111,6 +112,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             subprocIsService = subprocdef.getProcessType().equals(ProcessVisibilityConstant.SERVICE);
             List<Variable> childVars = subprocdef.getVariables();
             Map<String,String> validParams = createVariableBinding(childVars);
+            passingByReference = containsDocReference(validParams);
             String ownerType = OwnerType.PROCESS_INSTANCE;
             String secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
             Long secondaryOwnerId = getActivityInstanceId();
@@ -119,11 +121,12 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 secondaryOwnerId = null;
                 secondaryOwnerType = null;
             }
-            //If it is an asynchronous call to a regular process and the
+            ProcessExecutor engine = getEngine();
+            //If it is an asynchronous call to sub process (or executing in new engine) and the
             //parent process is running in a Memory Only thread, then the subprocess won't have any handle
             //to the parent process. So mark the Owner/OwnerId as the root process instance Owner/OwnerId
-            if ((!isSynchronousCall() && getEngine().isInMemory()) ||
-                    (!getEngine().isInService() && getEngine().isInMemory() && subprocIsService)) {
+            if ((!isSynchronousCall() && engine.isInMemory()) ||
+                (engine.isInMemory() && !engine.isInService() && subprocIsService && !passingByReference && !getProcessDefinition().isService())) {
                 Object[] rootProcessOwner = getRootProcessOwner(getProcessInstanceOwnerId(), getProcessInstanceOwner());
                 ownerId = (Long) rootProcessOwner[0];
                 ownerType = (String) rootProcessOwner[1];
@@ -132,40 +135,61 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     subprocdef.getProcessId(), ownerType,
                     ownerId, getMasterRequestId(), null,
                     secondaryOwnerType, secondaryOwnerId);
-            ProcessExecutor engine = getEngine();
-            if (engine.isInService()) {
-                if (subprocIsService) {        // call directly
+
+            if (engine.isInService()) {  // Current process is Non-service
+                if (subprocIsService && isSynchronousCall()) {
                     ProcessInstance pi = getEngine().createProcessInstance(
                             subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
                             getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                             getMasterRequestId(), validParams);
-                    engine.startProcessInstance(pi, 0);
-                } else {                    // call externally
-                    String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId + "startproc" + subprocdef.getProcessId();
-                    evMsg.setParameters(validParams);    // TODO this can be large!
-                    engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
+
+                    engine.startProcessInstance(pi, 0);  // call directly using same engine so documents are visible to child when PerfLvl >= 5  */
                 }
-            } else {
-                if (subprocIsService) {
+                else if (!isSynchronousCall()) {
+                    if (engine.getPerformanceLevel() < 5 || !passingByReference) {
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId() + "startproc" + subprocdef.getProcessId();
+                        evMsg.setParameters(validParams);    // TODO this can be large!
+                        engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
+                    }
+                    else // Trying to call a any sub process async when parent is service process and documents are cache-only / not visible to child
+                        throw new ActivityException("Invalid attempt to asynchrounously launch sub process from a Service process running at performance level 5 or greater with Document variable bindings");
+                }
+                else  // Trying to call a non-service sub process sync when parent is service process - Regular proc could hold up/delay parent service process with event waits or manual task activities
+                    throw new ActivityException("Invalid attempt to synchrounously launch Non-Service sub process from a Service process");
+            }
+            else {  // Current process is Non-service (regular)
+                if (subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {
+                    // Documents exist in DB and so are visible to child
                     ProcessEngineDriver engineDriver = new ProcessEngineDriver();
                     Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getProcessId(), ownerId, getMasterRequestId(),
                             validParams, subprocdef.getPerformanceLevel());
                     this.bindVariables(params, true);        // last arg should be true only when perf_level>=9 (DHO:actually 5), but this works
-                } else {
+                }
+                else if (isSynchronousCall() && engine.getPerformanceLevel() >= 9) {  // Documents are cache-only, need to execute in same thread and same engine - ignore child's perf lvl, if any specified
+                        ProcessInstance pi = getEngine().createProcessInstance(
+                                subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
+                                getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
+                                getMasterRequestId(), validParams);
+
+                        engine.startProcessInstance(pi, 0);  // call directly using same engine so documents are visible to child (PerfLvl 9)  */
+                }
+                else if (!passingByReference || isSynchronousCall() || (!isSynchronousCall() && engine.getPerformanceLevel() < 9)) {  // Sub is regular process (or service but parent is service running as regular, so execute child also as regular)
                     int perfLevel = subprocdef.getPerformanceLevel();
-                    if (perfLevel==0 || perfLevel==engine.getPerformanceLevel()) {
+                    if (isSynchronousCall() && (perfLevel==0 || perfLevel==engine.getPerformanceLevel())) {
                         ProcessInstance pi = getEngine().createProcessInstance(
                                 subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                                 getMasterRequestId(), validParams);
                         engine.startProcessInstance(pi, 0);
-                    } else {
-                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + secondaryOwnerId
+                    } else {   // Either Async, or mismatch of perf lvls between parent and child - run on new thread and engine
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId()
                             + "startproc" + subprocdef.getProcessId();
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
                     }
                 }
+                else // Trying to call a any sub process async when parent is non-service process and documents are cache-only (lvl9) / not visible to child
+                    throw new ActivityException("Invalid attempt to asynchrounously launch sub process from a Non-Service process running at performance level 9 with Document variable bindings");
             }
         } catch (ActivityException ex) {
             throw ex;
@@ -304,4 +328,11 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         return getSubProcessVO(name, verSpec);
     }
 
+    private boolean containsDocReference(Map<String, String> params) {
+        for (String value : params.values()) {
+            if (value != null && value.startsWith("DOCUMENT:"))
+                return true;
+        }
+        return false;
+    }
 }

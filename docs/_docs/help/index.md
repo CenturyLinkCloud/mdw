@@ -10,7 +10,7 @@ permalink: /docs/help/
 </ul>
 <h3>Web Services</h3>
 <ul>
-  <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/MicroservicesCookbook/'>Microservices</a></li>
+  <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/MDW Cookbook/'>mdw-cookbook</a></li>
   <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/SOAPService/'>SOAP Web Service</a></li>
 </ul>
 
@@ -42,11 +42,12 @@ permalink: /docs/help/
   <li><a href='packageConfig.html'>Workflow Package Configuration</a></li>
 </ul>
 
-<h3>MDWHub</h3>
+<h3>MDWHub and Manual Tasks</h3>
 <ul>
   <li><a href='customWeb.html'>Custom Web</a></li>
   <li><a href='taskAction.html'>Defining Task Actions</a></li>
   <li><a href='taskTemplates.html'>Manual Task Templates</a></li>
+  <li><a href='taskSLA.html'>Task SLAs and Prioritization</a></li>
   <li><a href='taskNotices.html'>Task Notices</a></li>
   <li><a href='taskRouting.html'>Workgroup Routing</a></li>
 </ul>
@@ -58,7 +59,7 @@ permalink: /docs/help/
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='listener.html'>Developing Listeners and External Event Handlers</a></li>
   <li><a href='dynamicJava.html'>Dynamic Java</a></li>
-  <li><a href='../javadoc/index.html'>Java Docs</a></li>
+  <li><a href='../javadoc/index.html'>Javadoc</a></li>
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
   <li><a href='scheduledJobs.html'>Scheduled Jobs</a></li>

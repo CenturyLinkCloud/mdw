@@ -38,6 +38,7 @@ module.exports = function(grunt) {
           $mdwAuthMethod: false,
           $mdwAutoTestWebSocketUrl: false,
           $mdwDiscoveryUrl: false,
+          $mdwCustomRoutes: false,
           $mdwUi: true,
           hljs: false,
           JsDiff: false,

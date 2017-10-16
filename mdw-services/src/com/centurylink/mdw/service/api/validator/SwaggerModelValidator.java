@@ -37,7 +37,8 @@ public class SwaggerModelValidator extends SwaggerValidator {
 
     public SwaggerModelValidator(String method, String path) throws ValidationException {
         super(new SwaggerRequest(HttpMethod.valueOf(method.toUpperCase()),
-                new ResourcePath('/' + path), MdwSwaggerCache.getSwagger('/' + path)));
+                new ResourcePath(path.startsWith("/") ? path : '/' + path),
+                MdwSwaggerCache.getSwagger(path.startsWith("/") ? path : '/' + path)));
     }
 
     public void validate(String path, Query query, JSONObject body, Map<String, String> headers)

@@ -17,13 +17,17 @@ package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -207,9 +211,20 @@ public class VcsArchiver {
                 if (archiveDest.exists())
                     newLoader.deletePkg(archiveDest);
                 newLoader.copyPkg(tempPkgDir, archiveDest);
+             // TODO:  Insert assets from pkg into ASSET_REF DB table
             }
         }
-
+        if (versionControl instanceof VersionControlGit) {
+            progressMonitor.subTask("Adding asset Git references to ASSET_REF table");
+            DatabaseAccess db = new DatabaseAccess(null);
+            try (Connection conn = db.openConnection()){
+                Checkpoint cp = new Checkpoint(assetDir, versionControl, ((VersionControlGit)versionControl).getCommit(), conn);
+                cp.updateRefs();
+            }
+            catch (SQLException e) {
+                throw new DataAccessException(e.getErrorCode(), e.getMessage());
+            }
+        }
         progressMonitor.progress(20);
         if (deleteBackups) {
             progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);

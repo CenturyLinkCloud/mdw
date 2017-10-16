@@ -6,17 +6,15 @@ title: Setup Guide for CloudFoundry
 ### MDW Cloud Foundry Setup Guide
 
 ### Prerequisite
- - Eclipse Neon for JavaEE Developers:  
-   Follow [this link](http://www.eclipse.org/downloads) to download Eclipse.
- - For installing Eclipse Plug-Ins, please follow [this link](../InstallEclipsePluginsGuide/) and return to this guide to continue.
- - Running MDW Locally:
-     - Refer to `Tomcat Container` in this guide 
+ - Eclipse with the [MDW Designer Plugin](../../getting-started/install-designer)
+ - An MDW Project, which can be created by following the [quick-start guide](../../getting-started/quick-start)
+ - For running MDW locally in Tomcat, refer to the [Tomcat Setup Guide](../SetupGuideForTomcat) 
  
 ### Running in the Cloud
 
 #### 1. Clone the Demo Project from GitHub
 
-A quick way to get familiar with the layout of an mdw workflow cloud project is to start with the mdw-demo project. This project is available from our GitHub instance of the CenturyLink.
+A quick way to get familiar with the layout of an mdw project is to start with the mdw-demo project. This project is available from our GitHub instance of the CenturyLink.
 - For your Eclipse setup guide, refer to the `README.md` file (step 1 and step 3 only) in the [mdw-demo](https://github.com/CenturyLinkCloud/mdw-demo) project and return to this guide to continue. 
 
 ##### MDW Designer Perspective:
@@ -73,23 +71,7 @@ Note: The following examples use the MDW demo deployment in CenturyLink's AppFog
 
 It can quickly become tedious to build and push to Cloud Foundry every time you want to test a code change.  To deploy mdw-demo locally, you can run on Tomcat.  With a Tomcat server running locally, your changes can be hot-deployed so that pushes and server restarts are not required.
 
-##### Supported Tomcat Containers:
--	Apache Tomcat 8: Please follow the [Setup Guide for Tomcat](../SetupGuideForTomcat/) and return to this guide to continue.                             
- 
 #### 2. Deploy Locally
-
-##### Run Tomcat:
--	Edit the following properties in `config/mdw.properties':
-```
-  mdw.asset.location - This is the directory path on your hard-drive where your assets are located.     
-  mdw.git.local.path - The root directory of your mdw-demo Git project.     
-  mdw.hub.user - You may have noticed the Java system property runtimeEnv in your server config, which is preset to "dev".  This property allows you to bypass authentication locally.  
-```
--	Now that you've created the WTP server instance, the Servers view gives you a handy way to start and stop Tomcat.  And output is directed to the Eclipse Console view, where you can click on stack traces to open associated source code (including MDW code and Dynamic Java).  Start your server in debug mode by right-clicking on it and selecting Debug (or use the icon in the Servers view toolbar).
--	The first time you start your server Tomcat explodes the mdw.war file in your deploy/webapps directory and caches the deployable content.  This can sometimes take a minute.  With the server running you should see MDW output in the Eclipse Console view.
-Tip: When you upgrade to a new MDW build version in Eclipse, Designer automatically downloads the corresponding mdw.war file into your deploy/webapps directory.  If at any time you want to clean out the MDW deployment and start fresh, you can delete mdw.war and the exploded mdw directory (and for a very thorough cleansing you can even delete the Tomcat cache under deploy/work/Catalina/localhost/mdw).  Then you can deploy from scratch from Package Explorer view by right-clicking on your mdw-workflow or mdw-demo project and selecting MDW Update > Update Framework Libraries.
--	You can confirm that MDW was successfully deployed by accessing MDWHub in your browser:                          
-  [http://localhost:8080/mdw](http://localhost:8080/mdw)
 
 ##### Make and Test a Change:
 -	Make another change to the Employees service.  After saving the asset in Designer, you should be able to access the service right away and see your changes at:                                             
@@ -98,7 +80,7 @@ Tip: When you upgrade to a new MDW build version in Eclipse, Designer automatica
 
 ##### Next Steps:
 -	Check out some of the other MDW developer docs:   
-    - [Microservices](../MicroservicesCookbook/)       
+    - [MDW Cookbook](../mdw-cookbook/)       
     - [SOAP Web Service](../SOAPService/)   
  
 -   Browse through the online help docs, which are the same as those in Eclipse:   

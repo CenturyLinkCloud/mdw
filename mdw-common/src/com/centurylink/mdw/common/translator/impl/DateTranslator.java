@@ -18,6 +18,8 @@ package com.centurylink.mdw.common.translator.impl;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 import com.centurylink.mdw.translator.TranslationException;
@@ -30,7 +32,10 @@ public class DateTranslator extends VariableTranslator {
     }
 
     public String toString(Object obj){
-        return dateFormat.format((Date)obj);
+        if (obj instanceof Instant)
+            return obj.toString();
+        else
+            return dateFormat.format((Date)obj);
     }
 
     public Object toObject(String str) throws TranslationException {
@@ -38,7 +43,13 @@ public class DateTranslator extends VariableTranslator {
             return dateFormat.parse(str);
         }
         catch (ParseException ex) {
-            throw new TranslationException(ex.getMessage(), ex);
+            try {
+                // service dates can now be passed in ISO format
+                return Date.from(Instant.parse(str));
+            }
+            catch (DateTimeParseException ex2) {
+                throw new TranslationException(ex.getMessage(), ex);
+            }
         }
     }
 }

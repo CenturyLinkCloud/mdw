@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Guides
+title: Getting Started
 permalink: /docs/guides/
 ---
 
@@ -14,23 +14,23 @@ permalink: /docs/guides/
 <section class="features">
   <div class="grid">
     <div class="unit one-third">
+      <h2>MDW Cookbook</h2>
+      <p>
+        Walk through the essential features of MDW 
+      </p>
+      <a href="mdw-cookbook/">MDW Cookbook &rarr;</a>
+    </div>
+    <div class="unit one-third">
       <h2>Setup Guide for Tomcat</h2>
       <p>
         Deploying on Tomcat
        </p>
-      <a href="SetupGuideForTomcat/">Setup Guide for Tomcat &rarr;</a>
+      <a href="SetupGuideForTomcat/">Tomcat Setup Guide&rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Setup Guide for CloudFoundry</h2>
-      <p>Deploying on CloudFoundry</p>
-      <a href="SetupGuideForCloudFoundry/">Setup Guide for CloudFoundry &rarr;</a>
-    </div>
-    <div class="unit one-third">
-      <h2>Microservices Cookbook</h2>
-      <p>
-        Cookbook to get you started with Microservices 
-      </p>
-      <a href="MicroservicesCookbook/">Microservices Cookbook &rarr;</a>
+      <h2>Setup Guide for Cloud Foundry</h2>
+      <p>Deploying on Cloud Foundry</p>
+      <a href="SetupGuideForCloudFoundry/">Cloud Foundry Setup Guide&rarr;</a>
     </div>
     <div class="clear"></div>
   </div>

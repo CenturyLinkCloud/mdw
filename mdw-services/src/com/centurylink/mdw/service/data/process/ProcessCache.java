@@ -21,13 +21,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -169,6 +172,33 @@ public class ProcessCache implements CacheService {
         }
     }
 
+    /**
+     * Find all definitions matching the specified version spec.  Returns shallow processes.
+     */
+    public static List<Process> getProcessesSmart(AssetVersionSpec spec) {
+        try {
+            List<Process> matches = new ArrayList<>();
+            for (Process process : getAllProcesses()) {
+                if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
+                    if (spec.getName().equals(process.getProcessName())) {
+                        if (process.meetsVersionSpec(spec.getVersion()))
+                            matches.add(process);
+                    }
+                }
+                else
+                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                        if (process.meetsVersionSpec(spec.getVersion()))
+                            matches.add(process);
+                    }
+            }
+            return matches;
+        }
+        catch (DataAccessException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
     private Process getProcess0(String procname, int version, boolean exceptionWhenNotFound) {
         if (procname.endsWith(".proc"))
             procname = procname.substring(0, procname.length() - 5);
@@ -206,6 +236,12 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().loadProcess(id, true);
+            // If proc == null, check ASSET_REF DB table and retrieve from git history
+            if (proc == null) {
+                AssetRef assetRef = AssetRefCache.getAssetRef(id);
+                if (assetRef != null)
+                    proc = AssetRefConverter.getProcess(assetRef);
+            }
             if (proc != null) {
                 // all db attributes are override attributes
                 Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, id);

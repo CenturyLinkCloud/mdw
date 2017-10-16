@@ -59,6 +59,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public Object openConnection(String proxyHost, int proxyPort) throws ConnectionException {
         try {
             String endpointUri = getEndpointUri();
+            if (endpointUri == null)
+                throw new ConnectionException("Missing endpoint URI");
             Map<String,String> params = getRequestParameters();
             if (params != null && !params.isEmpty()) {
                 StringBuffer query = new StringBuffer();
@@ -139,15 +141,15 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             String httpMethod = getHttpMethod();
             String response = null;
             if (httpMethod.equals("GET"))
-                response =  httpHelper.get();
+                response = httpHelper.get();
             else if (httpMethod.equals("POST"))
-                response =  httpHelper.post(request);
+                response = httpHelper.post(request);
             else if (httpMethod.equals("PUT"))
-                response =  httpHelper.put(request);
+                response = httpHelper.put(request);
             else if (httpMethod.equals("DELETE"))
-                response =  httpHelper.delete();
+                response = httpHelper.delete();
             else if (httpMethod.equals("PATCH"))
-                response =  httpHelper.patch(request);
+                response = httpHelper.patch(request);
             else
                 throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
 

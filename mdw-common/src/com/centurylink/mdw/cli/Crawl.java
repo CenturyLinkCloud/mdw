@@ -58,6 +58,10 @@ public class Crawl implements Operation {
             // try maven-central list format
             releases = findReleases(page, "<a href=\"", release, "/\"");
         }
+        if (releases.isEmpty()) {
+            // try oss.sonatype.org format
+            releases = findReleases(page, "<a href=\"" + url, release, "/\"");
+        }
         return this;
     }
 

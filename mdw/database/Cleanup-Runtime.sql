@@ -59,7 +59,7 @@ BEGIN
       || ' set status_cd = '
       || purgestatusid
 
-      || ' where create_dt < TO_DATE (TO_CHAR (SYSDATE, '
+      || ' where end_dt < TO_DATE (TO_CHAR (SYSDATE, '
       || ''''
       || 'MM/DD/YYYY'
       || ''''
@@ -282,16 +282,16 @@ BEGIN
      FROM DUAL;
 
    DBMS_OUTPUT.put_line ('Start Purging Document Records: ' || dt);
-
-   -- delete DOCUMENT 
-   DELETE      document doc
-   		 -- 1. all documents with process instance ID populated
-         WHERE (    doc.process_inst_id != 0
-                AND EXISTS (
+   
+   --deleting from document_content to avoid the integrity constraint issue
+    DELETE document_content where document_id IN (
+   SELECT document_id FROM document doc
+   WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'PROCESS_INSTANCE'  
+               AND EXISTS (
                        SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
                               process_instance_id
                          FROM process_instance pi
-                        WHERE pi.process_instance_id = doc.process_inst_id
+                        WHERE pi.process_instance_id = doc.owner_id
                           AND pi.status_cd = purgestatusid)
                )
    		 -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 
@@ -299,8 +299,45 @@ BEGIN
                          TO_DATE (TO_CHAR (SYSDATE, 'MM/DD/YYYY'),
                                   'MM/DD/YYYY'
                                  )
-                       - daydiff
-                AND doc.process_inst_id = 0
+                       - daydiff        
+                AND doc.owner_id = 0 
+                AND doc.owner_type IN ('LISTENER_REQUEST', 'USER')
+               )
+   		 -- 3. all documents with TASK_INSTANCE as owner
+            OR (    doc.create_dt <
+                         TO_DATE (TO_CHAR (SYSDATE, 'MM/DD/YYYY'),
+                                  'MM/DD/YYYY'
+                                 )
+                       - daydiff             
+               AND doc.owner_id = 0
+                AND doc.owner_type = 'TASK_INSTANCE'
+               )
+   		 -- 4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
+            OR (    doc.owner_type IN ('LISTENER_RESPONSE', 'DOCUMENT')
+                AND NOT EXISTS (SELECT *
+                                  FROM document doc2
+                                 WHERE doc2.document_id = doc.owner_id)
+               ));
+
+   -- delete DOCUMENT 
+   DELETE      document doc
+   		 -- 1. all documents with process instance ID populated
+         WHERE (  
+            doc.owner_id!= 0 AND  doc.OWNER_TYPE = 'PROCESS_INSTANCE' 
+               AND EXISTS (
+                       SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
+                              process_instance_id
+                         FROM process_instance pi
+                        WHERE pi.process_instance_id = doc.owner_id
+                          AND pi.status_cd = purgestatusid)
+               )
+   		 -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 
+            OR (    doc.create_dt <
+                         TO_DATE (TO_CHAR (SYSDATE, 'MM/DD/YYYY'),
+                                  'MM/DD/YYYY'
+                                 )
+                       - daydiff             
+             AND doc.owner_id  = 0
                 AND doc.owner_type IN ('LISTENER_REQUEST', 'USER')
                )
    		 -- 3. all documents with TASK_INSTANCE as owner
@@ -309,7 +346,7 @@ BEGIN
                                   'MM/DD/YYYY'
                                  )
                        - daydiff
-                AND doc.process_inst_id = 0
+                AND doc.owner_id   = 0
                 AND doc.owner_type = 'TASK_INSTANCE'
                )
    		 -- 4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted

@@ -32,15 +32,17 @@ processMod.controller('ProcessesController',
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]'].concat(PROCESS_STATUSES);
   
-  $scope.setSelectedChart=function(selChart){
-	   $scope.selectedChart= selChart;
-	   $cookieStore.put('selectedChart',$scope.selectedChart);
-	   if(selChart ==='List'){
-		   window.location.href='#/workflow/processes';
-	   }else{	   
-	       window.location.href='#/dashboard/processes?chart='+selChart;
-	   }    
-};
+  $scope.setSelectedChart=function(selChart) {
+	  $scope.selectedChart= selChart;
+	  $cookieStore.put('selectedChart',$scope.selectedChart);
+	  if (selChart ==='List') {
+		  window.location.href='#/workflow/processes';
+	  }
+	  else {	   
+	    window.location.href='#/dashboard/processes?chart='+selChart;
+	  }    
+  };
+  
   // preselected procDef
   if ($scope.processFilter.processId) {
     $scope.typeaheadMatchSelection = $cookieStore.get('processSpec');
@@ -87,10 +89,20 @@ processMod.controller('ProcessesController',
       if (procInsts.length > 0) {
         var matches = [];
         procInsts.forEach(function(procInst) {
-          if (procInst.id.toString().startsWith(typed))
-            matches.push({type: 'instanceId', value: procInst.id.toString()});
-          else
-            matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+          if (procInst.id.toString().startsWith(typed)) {
+            var existProcInst = matches.find(function(match) {
+              return match.type === 'instanceId' && match.value === procInst.id.toString();
+            });
+            if (!existProcInst)
+              matches.push({type: 'instanceId', value: procInst.id.toString()});
+          }
+          if (procInst.masterRequestId.startsWith(typed)) {
+            var existMrId = matches.find(function(match) {
+              return match.type === 'masterRequestId' && match.value === procInst.masterRequestId;
+            });
+            if (!existMrId)
+              matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+          }
         });
         return matches;
       }
@@ -100,10 +112,12 @@ processMod.controller('ProcessesController',
           if (response.data.length > 0) {
             var matches2 = [];
             response.data.forEach(function(procDef) {
-              if (typed.indexOf('.') > 0)
+              if (typed.indexOf('.') > 0) {
                 matches2.push({type: 'processId', value: procDef.packageName + '/' + procDef.name + ' v' + procDef.version, id: procDef.processId});
-              else
+              }
+              else {
                 matches2.push({type: 'processId', value: procDef.name + ' v' + procDef.version, id: procDef.processId});
+              }
             });
             return matches2;
           }
@@ -161,19 +175,23 @@ processMod.controller('ProcessController',
   $scope.valuesEdit = false;
   $scope.editValues = function(edit) {
     $scope.valuesEdit = edit;
+    if ($scope.valuesEdit)
+      $scope.values = $scope.allValues;
+    else
+      $scope.values = $scope.populatedValues;
   };
   $scope.saveValues = function() {
     console.log('saving process values for instance: ' + $scope.process.id);
     var newValues = {};
     util.getProperties($scope.values).forEach(function(name) {
       var value = $scope.values[name];
-      if (value.dirty && value.value) {
-        if (value.type === 'java.util.Date') {
-          var timezoneAbbr = 'MST'; // TODO
-          newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
+      if (value.dirty) {
+        if (value.type === 'java.util.Date' && value.value) {
+            var timezoneAbbr = 'MST'; // TODO
+            newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
         }    
         else {
-          newValues[value.name] = value.value;
+          newValues[value.name] = value.value === null ? '' : value.value;
         }
       }
     });
@@ -204,7 +222,18 @@ processMod.controller('ProcessController',
       });
     }
     else {
-      $scope.values = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values'});
+      $scope.allValues = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values', includeEmpty: 'true'}, function() {
+        $scope.populatedValues = {};
+        var emptyValues = {};
+        util.getProperties($scope.allValues).forEach(function(name) {
+          var value = $scope.allValues[name];
+          if (value.value)
+            $scope.populatedValues[name] = value;
+          else
+            emptyValues[name] = value;
+        });
+        $scope.values = $scope.populatedValues;
+      });
     }
     
     $scope.process = ProcessSummary.get();
@@ -233,9 +262,9 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw', 'util', 'Assets',
-                                               function($scope, $cookieStore, mdw, util, Assets) {
-  $scope.definitionList = Assets.get({extension: 'proc'}, function success() {
+processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw', 'util', 'ProcessDef',
+                                               function($scope, $cookieStore, mdw, util, ProcessDef) {
+  $scope.definitionList = ProcessDef.retrieve({}, function success() {
     var pkgs = $scope.definitionList.packages;
     pkgs.forEach(function(pkg) {
       pkg.assets.forEach(function(a) {
@@ -293,8 +322,8 @@ processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw',
 }]);
 
 processMod.controller('ProcessDefController', 
-    ['$scope', '$routeParams', '$route', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
-    function($scope, $routeParams, $route, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
+    function($scope, $routeParams, $route, $location, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
       
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
       
@@ -347,12 +376,15 @@ processMod.controller('ProcessDefController',
         if (data.status && data.status.code !== 0) {
           mdw.messages = data.status.message;
         }
+        else {
+          $location.path('/workflow/definitions/' + $scope.process.packageName + '/' + $scope.process.name);
+        }
       }, 
       function(error) {
         mdw.messages = error.data.status.message;
       }
     );
-    // don't wait before going to live view
+    // TODO: don't wait before going to live view (which doesn't exist yet) -- then we'll remove $location.path navigation above
   };
   
   var summary = ProcessSummary.get();

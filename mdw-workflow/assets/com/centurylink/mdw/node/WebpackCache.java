@@ -45,7 +45,6 @@ import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 
-
 /**
  * Customize these annotations for preload options by extending WebpackCache in a custom
  * package and set property mdw.webpack.cache.class.name (see JsxServlet.java).
@@ -57,6 +56,7 @@ public class WebpackCache implements PreloadableCache {
     private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<AssetInfo,File> webpackAssets = new HashMap<>();
+    private static Map<AssetInfo,File> watchedAssets = new HashMap<>();  // for devMode
 
     @Override
     public void initialize(Map<String,String> params) {
@@ -73,11 +73,14 @@ public class WebpackCache implements PreloadableCache {
             if (logger.isDebugEnabled())
                 logger.debug("  - node_modules unzipped in " + (System.currentTimeMillis() - before) + " ms");
 
-            // initialize specified JSX assets
-            String preloadedJsx = params.get("PreloadedJsx");
-            if (preloadedJsx != null && preloadedJsx.length() > 0) {
-                for (String jsxAssetPath : preloadedJsx.split(",")) {
-                    getCompiled(ServiceLocator.getAssetServices().getAsset(jsxAssetPath));
+            // nothing is precompiled in dev mode (keep server startup quick)
+            if (!isDevMode()) {
+                // initialize specified JSX assets
+                String preloadedJsx = params.get("PreloadedJsx");
+                if (preloadedJsx != null && preloadedJsx.length() > 0) {
+                    for (String jsxAssetPath : preloadedJsx.split(",")) {
+                        getCompiled(ServiceLocator.getAssetServices().getAsset(jsxAssetPath));
+                    }
                 }
             }
         }
@@ -91,7 +94,6 @@ public class WebpackCache implements PreloadableCache {
         // only specified assets are preloaded
     }
 
-
     @Override
     public void refreshCache() throws Exception {
         clearCache();  // lazy loading
@@ -100,11 +102,13 @@ public class WebpackCache implements PreloadableCache {
     @Override
     public void clearCache() {
         webpackAssets.clear();
+        watchedAssets.clear();
     }
 
     public File getCompiled(AssetInfo asset) throws IOException, ServiceException {
         return getCompiled(asset, getStarter(asset));
     }
+
 
     /**
      * Starter file will be compiled, but asset used to compute output path.
@@ -115,7 +119,9 @@ public class WebpackCache implements PreloadableCache {
             file = webpackAssets.get(asset);
             if (file == null || !file.exists() || file.lastModified() < asset.getFile().lastModified()
                     || (starter != null && file.lastModified() < starter.lastModified())) {
-                file = compile(asset, starter);
+                file = getOutput(asset);
+                compile(asset, starter, file);
+                return file;
             }
         }
         return file;
@@ -159,34 +165,62 @@ public class WebpackCache implements PreloadableCache {
         return sb.toString();
     }
 
-    private File compile(AssetInfo asset, File source) throws IOException, ServiceException {
-        File outputFile = new File(
-                ApplicationContext.getTempDirectory() + "/" + asset.getExtension()
-                    + asset.getFile().getAbsolutePath().substring(
-                            ApplicationContext.getAssetRoot().getAbsolutePath().length()) + ".out");
+    private File getOutput(AssetInfo asset) {
+        return new File(ApplicationContext.getTempDirectory() + "/" + asset.getExtension()
+            + asset.getFile().getAbsolutePath().substring(
+                ApplicationContext.getAssetRoot().getAbsolutePath().length()) + ".out");
+    }
 
+    /**
+     * Returns null except in dev mode.
+     */
+    private void compile(AssetInfo asset, File source, File target) throws IOException, ServiceException {
+        File watched = watchedAssets.get(asset);
+        if (watched == null) {
+            if (isDevMode()) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            // avoid recursive compiles
+                            if (isDevMode())
+                                watchedAssets.put(asset, target);
+                            doCompile(asset, source, target);
+                        }
+                        catch (Exception ex) {
+                            logger.severeException(ex.getMessage(), ex);
+                        }
+                    }
+                }).start();
+            }
+            else {
+                doCompile(asset, source, target);
+            }
+        }
+    }
+
+    private void doCompile(AssetInfo asset, File source, File target) throws IOException, ServiceException {
         long before = System.currentTimeMillis();
-        JSONObject statsJson = compile(source, outputFile);
+        Result webpackResult = compile(source, target);
+        JSONObject resultsJson = new JSONObject(webpackResult.message);
         if (logger.isDebugEnabled()) {
-            logger.debug("*** Webpack stats:\n" + statsJson.toString(2));
+            logger.debug("*** Webpack stats:\n" + resultsJson.toString(2));
             long time = System.currentTimeMillis() - before;
             logger.debug("*** Webpack build time: " + time + " ms");
         }
-        if (statsJson.has("errors")) {
-            JSONArray errors = statsJson.getJSONArray("errors");
+        if (resultsJson.has("errors")) {
+            JSONArray errors = resultsJson.getJSONArray("errors");
             if (errors.length() > 0) {
                 throw new ServiceException(
                     new Status(Status.OK, "console.error(JSON.stringify({webpackErrors: " + errors + "}, null, 2));"));
             }
         }
-        webpackAssets.put(asset, outputFile);
-        return outputFile;
+        webpackAssets.put(asset, target);
     }
 
     /**
      * This can take a while.
      */
-    private JSONObject compile(File source, File target) throws IOException, ServiceException {
+    private Result compile(File source, File target) throws IOException, ServiceException {
         AssetServices assetServices = ServiceLocator.getAssetServices();
         AssetInfo parser = assetServices.getAsset(NODE_PACKAGE + "/parser.js");
         AssetInfo runner = assetServices.getAsset(NODE_PACKAGE + "/webpackRunner.js");
@@ -207,7 +241,7 @@ public class WebpackCache implements PreloadableCache {
             public Object invoke(V8Object receiver, V8Array parameters) {
                 V8Object resultObj = parameters.getObject(0);
                 parseResult.status = resultObj.getString("status");
-                parseResult.content = resultObj.getString("message");
+                parseResult.message = resultObj.getString("message");
                 resultObj.release();
                 return null;
             }
@@ -231,7 +265,8 @@ public class WebpackCache implements PreloadableCache {
         inputObj.add("source", source.getAbsolutePath());
         inputObj.add("root", assetServices.getAssetRoot().getAbsolutePath());
         inputObj.add("output", target.getAbsolutePath());
-        inputObj.add("debug", true); // TODO
+        inputObj.add("debug", logger.isDebugEnabled());
+        inputObj.add("devMode", isDevMode());
         callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
               return inputObj;
@@ -244,7 +279,7 @@ public class WebpackCache implements PreloadableCache {
             public Object invoke(V8Object receiver, V8Array parameters) {
                 V8Object resultObj = parameters.getObject(0);
                 webpackResult.status = resultObj.getString("status");
-                webpackResult.content = resultObj.getString("content");
+                webpackResult.message = resultObj.getString("message");
                 resultObj.release();
                 return null;
             }
@@ -261,15 +296,22 @@ public class WebpackCache implements PreloadableCache {
         if (!webpackResult.status.equals("OK"))
             throw new ServiceException(source + " -> " + webpackResult);
 
-        return new JSONObject(webpackResult.content);
+        return webpackResult;
+    }
+
+    private boolean isDevMode() {
+        String devMode = System.getProperty("mdw.webpack.dev.mode");
+        if (devMode == null)
+            return ApplicationContext.isDevelopment();
+        else
+            return devMode.equals("true");
     }
 
     private class Result {
         String status;
-        String content;
+        String message;
         public String toString() {
-            return status + ": " + content;
+            return status + ": " + message;
         }
     }
-
 }

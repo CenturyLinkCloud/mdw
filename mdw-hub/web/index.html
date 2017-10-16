@@ -48,7 +48,6 @@
   <script src="js/system/message.js"></script>
   <script src="js/system/system.js"></script>
   <script src="js/tasks/tasks.js"></script>
-  <script src="js/tasks/task.js"></script>
   <script src="js/workflow/processes.js"></script>
   <script src="js/workflow/activities.js"></script>
   <script src="js/workflow/solutions.js"></script>
@@ -82,6 +81,7 @@
   <script src="js/ui/converters/object-table.js"></script>
   <script src="js/ui/swagger.js"></script>
   <script src="js/ui/jsx.js"></script>
+  <script src="js/ui/custom.js"></script>
   <script src="js/dashboard/processes.js"></script>
   <script src="js/dashboard/requests.js"></script>
   <script src="js/dashboard/activities.js"></script>
@@ -101,6 +101,7 @@
     var $mdwAuthMethod = '${mdw.authMethod}';
     var $mdwAutoTestWebSocketUrl = '${mdw.autoTestWebSocketUrl}';
     var $mdwDiscoveryUrl = '${mdw.discoveryUrl}';
+    var $mdwCustomRoutes = '${mdw.customRoutes}';
   </script>
   <div id="mdw-header" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/header.html'"></div>
   <div id="mdw-tabs" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/tabs.html'"></div>

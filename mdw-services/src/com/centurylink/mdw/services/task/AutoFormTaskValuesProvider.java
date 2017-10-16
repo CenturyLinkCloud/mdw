@@ -79,7 +79,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                 throw new ServiceException(400, "Read-only value: " + name);
         }
         for (String name : values.keySet()) {
-            if (runtimeContext.isExpression(name)) {
+            if (TaskRuntimeContext.isExpression(name)) {
                 try {
                     runtimeContext.set(name, values.get(name));
                 }

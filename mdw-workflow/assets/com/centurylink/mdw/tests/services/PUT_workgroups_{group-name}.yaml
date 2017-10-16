@@ -1,6 +1,6 @@
 test: 'PUT:workgroups/{group-name}'
 request:
-  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
+  url: '${base-url}/Workgroups/${group-name}'
   method: PUT
   headers:
     Content-Type: application/json
@@ -14,8 +14,8 @@ response:
     code: 200
     message: OK
   headers:
-    mdw-request-id: '${~[0-9]*}'
     content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
   body: |-
     {
       "status": {

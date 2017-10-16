@@ -72,6 +72,8 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     private boolean forceParallel;
     private boolean synchronous;
 
+    private Map<String, Boolean> outputVariableUpdated = new HashMap<String, Boolean>();
+
     /**
      * Default constructor with params
      */
@@ -416,9 +418,17 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                     else if (value.startsWith("DOCUMENT:"))
                         value0 = VariableTranslator.toObject(var.getVariableType(), value);
                     else {
+                        synchronized(outputVariableUpdated) {
+                            if (outputVariableUpdated.get(varname))
+                                throw new ActivityException("Output Document variable value already returned by another sub process");
+                            else
+                                outputVariableUpdated.put(varname,  Boolean.valueOf(true));
+                        }
                         DocumentReference docref = super.createDocument(var.getVariableType(),
                                 value, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                         value0 = new DocumentReference(docref.getDocumentId());
+
+                     // check map for variable, not allowed multiple children to update same docs
                     }
                 } else {
                     value0 = VariableTranslator.toObject(var.getVariableType(), value);

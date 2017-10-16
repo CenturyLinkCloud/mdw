@@ -4,8 +4,8 @@ var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket'
  'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwDiagram', 'mdwShape', 
  'mdwStep', 'mdwLink', 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwSelection', 'mdwInspector', 'mdwInspectorTabs', 
  'mdwToolbox', 'mdwConfigurator', 'mdwCompatibility', 'mdwTask', 'authUser', 'mdw', 'util', 'mdwUtil', 'mdwJsx', 
- 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'task', 'processes', 'activities', 
- 'requests', 'services', 'system', 'solutions', 'message', 'objectTableConverter', 'mdwSwagger', 
+ 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'processes', 'activities', 
+ 'requests', 'services', 'system', 'solutions', 'message', 'objectTableConverter', 'mdwSwagger', 'mdwCustom',
  'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
@@ -50,6 +50,30 @@ adminApp.config(['$routeProvider', function($routeProvider) {
         controller: route.controller
       });
     }
+  }
+  // custom routes
+  if ($mdwCustomRoutes && !$mdwCustomRoutes.startsWith('${')) {
+    var customRoutes = JSON.parse($mdwCustomRoutes);
+    customRoutes.forEach(function(customRoute) {
+      if (customRoute.controller) {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: customRoute.asset,
+          controller: customRoute.controller
+        });
+      }
+      else if (customRoute.asset && customRoute.asset.endsWith('.html')) {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: customRoute.asset,
+          controller: 'CustomController'
+        });
+      }
+      else {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: 'ui/custom-page.html',
+          controller: 'CustomController'
+        });
+      }
+    });
   }
   $routeProvider.otherwise({
     redirectTo: function(params, path, search) {
@@ -225,7 +249,7 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
       var url = attrs.tabLink;
       elem.bind('click', function() {
         if (url.startsWith('#')) {
-          scope.authUser.setActiveTab(url);
+          getAuthUser(scope).setActiveTab(url);
           $location.path(url.substring(1));
           scope.$apply();
         }
@@ -263,9 +287,10 @@ adminApp.directive('navLink', ['$document', '$route', '$location',
         elem.bind('click', function() {
           scope.setNavMenuWidth(); // clear full width
           if (attrs.fullWidth) {
-            var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
             scope.setFullWidth(true);
-            scope.setNavMenuWidth(navMenu[0].offsetWidth);
+            var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
+            if (navMenu)
+              scope.setNavMenuWidth(navMenu[0].offsetWidth);
           }
           else {
             scope.setFullWidth(false);
@@ -284,7 +309,7 @@ adminApp.directive('mdwRoute', ['$location', function($location) {
         var path = attrs.mdwRoute;
         if (!path.startsWith('#'))
           path = '#' + path;
-        scope.authUser.setActiveTab(path);
+        getAuthUser(scope).setActiveTab(path);
         $location.path(path.substring(1));
         scope.$apply();
       });
@@ -406,6 +431,16 @@ adminApp.filter('diff', function($sce) {
   };
 }).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
 
+function getAuthUser(scope) {
+  var authUser = scope.authUser;
+  var parent = scope.$parent;
+  while (!authUser && parent) {
+    authUser = parent.authUser;
+    parent = parent.$parent;
+  }
+  return authUser;
+}
+
 // wait until the user is loaded to manually bootstrap angularjs
 var theUser;
 var theRoutes;
@@ -418,6 +453,7 @@ angular.element(document).ready(function() {
     if (theUser.cuid) {
       document.cookie = 'mdw.redirect=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       angular.bootstrap(document, ['adminApp']);
+      $mdwUi.init(ng, theUser);
     }
     else {
       // redirect to login
@@ -425,6 +461,4 @@ angular.element(document).ready(function() {
       window.location.href = $mdwHubRoot + "/login";
     }
   });
-
-  $mdwUi.init(ng);
 });

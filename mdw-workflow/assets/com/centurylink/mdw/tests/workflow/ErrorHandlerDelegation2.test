@@ -12,11 +12,11 @@ action task("A Task For Testing Variables") {
     outcome = "Retry"
 }
 sleep 20
-action task("A Task For Testing Variables[1]") {
+action task("A Task For Testing Variables") {
     outcome = "Claim"
 }
 sleep 10
-action task("A Task For Testing Variables[1]") {
+action task("A Task For Testing Variables") {
     outcome = "yes"
 }
 wait process

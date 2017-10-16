@@ -31,6 +31,9 @@
   <Cache Name="MdwSwaggerCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.api.MdwSwaggerCache</Property>
   </Cache>
+  <Cache Name="AssetRefCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetRefCache</Property>
+  </Cache>
   <!-- AllowableTasks is empty for non-VCS Assets, which use the classic MDWHub mechanism -->
   <Cache Name="AllowableTaskActions" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.task.AllowableTaskActions</Property>

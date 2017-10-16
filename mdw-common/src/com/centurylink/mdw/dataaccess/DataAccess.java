@@ -154,7 +154,7 @@ public class DataAccess {
                             if (!vcGit.localRepoExists()) {
                                 logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
                                 vcGit.cloneNoCheckout();
-                                vcGit.hardCheckout(branch, assetPath);
+                                vcGit.hardCheckout(branch);
                             }
 
                             // sanity checks
@@ -190,7 +190,7 @@ public class DataAccess {
                                     VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
                                     logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
                                     archiver.backup();
-                                    vcGit.hardCheckout(branch, assetPath);
+                                    vcGit.hardCheckout(branch);
                                     archiver.archive();
                                 }
                             }

@@ -241,6 +241,9 @@
 .mdw-heading-actions-wrap {
   float: right;
 }
+.mdw-action-btn {
+	margin-left: 4px;
+}
 .mdw-heading-options {
   float: left;
   margin: 0 20px 0 20px;  
@@ -302,6 +305,10 @@
   margin-top: 2px;
   position: relative;
   top: 1px;
+}
+.mdw-request {
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-size: 13px;
 }
 .mdw-resource-heading {
   border: 1px solid #ddd;
@@ -390,6 +397,15 @@
 .mdw-item-highlight {
   font-weight: bold;
 }
+.mdw-date-btn {
+	border: 1px solid #2e6da4;
+	padding: 3px 6px;
+}
+.mdw-date-glyph {
+  color: #337ab7;
+  font-size: 18px;
+  opacity: .9;
+}
 .mdw-link {
   font-weight: bold;
 }
@@ -442,6 +458,11 @@
   font-size: 13px;
   font-weight: normal;
   color: #767676;
+}
+.mdw-item-sub label:after {
+  display: inline;
+  content: " ";
+  white-space: pre;
 }
 .mdw-item-sub div.popover {
   max-width: 100%;
@@ -501,29 +522,31 @@
   text-decoration: none;
 }
 .mdw-item-group {
-	font-size: 16px;
-	color: #424242;
-	line-height: 2.2;
+  font-size: 15px;
+  color: #424242;
+  line-height: 2;
 }
 .mdw-item-group label {
   margin-right: 3px;
   font-size: 14px;
   font-weight: bold;
 }
-.mdw-item group label:after {
+.mdw-item-group label:after {
   display: table;
   content: " ";
 }
 .mdw-item-select {
   display: inline-flex;
   font-size: 14px;
-  line-height: 1.2
+  line-height: 1.2;
+  position: relative;
+  top: 2px;
 }
 .mdw-item-select .Select-control {
   height: 34px;
 }
 .mdw-item-select .Select-multi-value-wrapper {
-	height: 31px;
+  height: 31px;
 }
 .mdw-resource-info {
   font-size: 13px;
@@ -808,27 +831,6 @@
 }
 .mdw-task-package {
 	font-weight: normal;
-}
-.mdw-task-process {
-	margin-left: 20px;
-	position: relative;
-  top: 12px;
-  font-size: 16px;
-  font-weight: bold;
-}
-.mdw-task-workflow {
-  height: calc(100vh - 250px);
-  overflow: auto;
-  border: 1px solid #757575;
-  border-radius: 4px;
-  box-shadow: 4px 4px 16px #757575;
-  margin: 20px;
-}
-.mdw-date-glyph {
-	color: #337ab7;
-  font-size: 16px;
-  position: relative;
-  top: 3px;	
 }
 .mdw-canvas {
   /* prevent highlighting on double-click */
@@ -1145,6 +1147,9 @@
   font-weight: bold;
   font-size: 22px;
   color: transparent;
+}
+.mdw-push {
+	font-size: 12px;
 }
 .mdw-highlight {
   color: #880000;

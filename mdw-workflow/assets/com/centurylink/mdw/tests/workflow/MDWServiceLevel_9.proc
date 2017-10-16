@@ -27,7 +27,7 @@
         "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild",
         "processversion": "[2.3,3)",
         "synchronous": "FALSE",
-        "variables": "inputVar=${myvar}"
+        "variables": "{\"inputVar\":\"#{myvar}\"}"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",

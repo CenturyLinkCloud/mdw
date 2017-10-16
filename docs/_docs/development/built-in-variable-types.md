@@ -5,16 +5,18 @@ permalink: /docs/development/built-in-variable-types/
 
  - java.lang.Boolean
  - java.lang.Exception
- - java.lang.Intiger
+ - java.lang.Integer
  - java.lang.Long
  - java.lang.Object
  - java.lang.String
  - java.net.URI
  - java.util.Date
- - java.util.List< Intiger>
- - java.util.List< Long>
- - java.util.List< String>
- - java.util.List< String, String>
+ 
+ <h3>Document Variables</h3>
+ - java.util.List\<Integer>
+ - java.util.List\<Long>
+ - java.util.List\<String>
+ - java.util.List\<String,String>
  - java.xml.bind.JAXBElement
  - groovy.util.Node
  - org.apache.camel.component.cxf.CxfPayload

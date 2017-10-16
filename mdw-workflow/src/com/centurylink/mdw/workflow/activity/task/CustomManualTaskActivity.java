@@ -23,6 +23,7 @@ import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.task.TaskAction;
+import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.ActionRequestDocument;
@@ -34,19 +35,40 @@ public class CustomManualTaskActivity extends ManualTaskActivity implements Susp
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-     /**
-     * Executes the controlled activity
-     * @throws ActivityException
+    /**
+     * Creates a task instance unless the INSTANCE_ID_VAR attribute points
+     * to a pre-existing instance.  If the attribute is populated but the variable
+     * value is null, the variable will be set to the newly-created instanceId.
      */
+    @Override
     public void execute() throws ActivityException {
+        Long instanceId = null;  // pre-existing instanceId
+        String instanceIdSpec = getInstanceIdVariable();
+        if (instanceIdSpec != null) {
+            Object value = getValue(instanceIdSpec);
+            if (value instanceof Long)
+                instanceId = (Long) value;
+            else if (value != null)
+                instanceId = Long.parseLong(value.toString());
+        }
         try {
-            getEngine().createEventWaitInstance(getActivityInstanceId(), "TaskAction-" + getActivityInstanceId(), null, true, true);
+            if (instanceId == null) {
+                TaskInstance taskInstance = createTaskInstance();
+                instanceId = taskInstance.getTaskInstanceId();
+                if (instanceIdSpec != null)
+                    setValue(instanceIdSpec, instanceId);
+            }
+            else {
+                // update secondary owner
+                updateOwningTransition(instanceId);
+            }
 
-            createTaskInstance();
-
-            EventWaitInstance received = registerWaitEvents(false,true);
-            if (received != null)
-              resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
+            if (needSuspend()) {
+                getEngine().createEventWaitInstance(getActivityInstanceId(), "TaskAction-" + getActivityInstanceId(), null, true, true);
+                EventWaitInstance received = registerWaitEvents(false,true);
+                if (received != null)
+                  resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

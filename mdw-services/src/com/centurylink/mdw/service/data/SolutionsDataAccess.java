@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.workflow.Solution.MemberType;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -46,7 +47,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    protected static final String SOLUTION_COLS = "s.solution_id, s.id, s.name, s.owner_type, s.owner_id, s.create_dt, s.create_usr, s.mod_dt, s.mod_usr, s.comments";
+    protected static final String SOLUTION_COLS = "s.solution_id, s.id, s.name, s.owner_type, s.owner_id as sol_owner_id, s.create_dt, s.create_usr, s.mod_dt, s.mod_usr, s.comments";
     protected static final String SOLUTION_MAP_COLS = "sm.solution_id, sm.member_type, sm.member_id";
 
     protected static final String TASK_INST_COLS = "ti.task_instance_id, ti.task_id, ti.task_instance_status, ti.task_instance_owner, ti.task_instance_owner_id, " +
@@ -60,12 +61,16 @@ public class SolutionsDataAccess extends CommonDataAccess {
     /**
      * TODO: pagination and filtering
      */
-    public List<Solution> getSolutions() throws DataAccessException {
+    public List<Solution> getSolutions(String solutionId) throws DataAccessException {
 
         try {
             List<Solution> solutions = new ArrayList<Solution>();
             db.openConnection();
-            String sql = "select " + SOLUTION_COLS + " from solution s";
+            String sql;
+            if (StringHelper.isEmpty(solutionId))
+                sql = "select " + SOLUTION_COLS + " from solution s";
+            else
+                sql = "select " + SOLUTION_COLS + " from solution s where id like '" + solutionId + "%'";
             ResultSet rs = db.runSelect(sql, null);
             while (rs.next())
                 solutions.add(buildSolution(rs, false, false));
@@ -127,6 +132,19 @@ public class SolutionsDataAccess extends CommonDataAccess {
         }
         catch (Exception ex) {
             throw new DataAccessException("Failed to retrieve members for solution: " + solutionId, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public List<Jsonable> getMembers(Long solutionId, MemberType memberType) throws DataAccessException {
+        try {
+            db.openConnection();
+            return getMembers0(solutionId, memberType);
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to retrieve members for solutionId= " + solutionId + ", memberType= " + memberType, ex);
         }
         finally {
             db.closeConnection();
@@ -387,7 +405,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         String id = rs.getString("id");
         String name = rs.getString("name");
         String ownerType = rs.getString("owner_type");
-        String ownerId = rs.getString("owner_id");
+        String ownerId = rs.getString("sol_owner_id");
         Date createDate = rs.getTimestamp("create_dt");
         String createUser = rs.getString("create_usr");
         Solution solution = new Solution(solutionId, id, name, ownerType, ownerId, createDate, createUser);
@@ -415,11 +433,17 @@ public class SolutionsDataAccess extends CommonDataAccess {
         task.setSecondaryOwnerType(rs.getString("task_inst_secondary_owner"));
         task.setSecondaryOwnerId(rs.getLong("task_inst_secondary_owner_id"));
         task.setAssigneeId(rs.getLong("task_claim_user_id"));
-        task.setStart(rs.getTimestamp("task_start_dt").toInstant());
-        task.setEnd(rs.getTimestamp("task_end_dt").toInstant());
+        Date startDate = rs.getTimestamp("task_start_dt");
+        if (startDate != null)
+            task.setStart(startDate.toInstant());
+        Date endDate = rs.getTimestamp("task_end_dt");
+        if (endDate != null)
+            task.setEnd(endDate.toInstant());
         task.setComments(rs.getString("comments"));
         task.setStateCode(rs.getInt("task_instance_state"));
-        task.setDue(rs.getTimestamp("due_date").toInstant());
+        Date dueDate = rs.getTimestamp("due_date");
+        if (dueDate != null)
+            task.setDue(dueDate.toInstant());
         task.setPriority(rs.getInt("priority"));
         task.setMasterRequestId(rs.getString("master_request_id"));
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(task.getTaskId());
@@ -449,5 +473,31 @@ public class SolutionsDataAccess extends CommonDataAccess {
         return task;
     }
 
+    public List<Solution> getSolutions(MemberType memberType, String memberId) throws DataAccessException {
 
+        try {
+            List<Solution> solutions = new ArrayList<Solution>();
+            db.openConnection();
+
+            StringBuilder query =  new StringBuilder();
+            query.append("select " + SOLUTION_COLS  +
+                    " from solution s, solution_map sm" +
+                "\n where s.solution_id = sm.solution_id" +
+                "\n and sm.member_id = '" + memberId + "'" );
+
+            if (memberType != null && !StringHelper.isEmpty(memberType.toString()))
+                query.append("\n and sm.member_type = '"  + memberType + "'");
+
+            ResultSet rs = db.runSelect(query.toString(), null);
+            while (rs.next())
+                solutions.add(buildSolution(rs, false, false));
+            return solutions;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to retrieve Solutions for memberId = " + memberId + "memberType = "  + memberType, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
 }

@@ -142,7 +142,7 @@ public abstract class ServiceServlet extends HttpServlet {
         }
 
         if (headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-            if (ApplicationContext.isDevelopment() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
+            if (ApplicationContext.isDevelopment()) {
                 // auth failed or not provided but allow dev override
                 if (ApplicationContext.getDevUser() != null) {
                     headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
@@ -150,7 +150,7 @@ public abstract class ServiceServlet extends HttpServlet {
                         headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
                 }
             }
-            else if (ApplicationContext.isServiceApiOpen() && headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
+            else if (ApplicationContext.isServiceApiOpen()) {
               // auth failed or not provided but allow service user override
               if (ApplicationContext.getServiceUser() != null) {
                   headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());

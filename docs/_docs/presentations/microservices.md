@@ -7,7 +7,7 @@ title: Microservices in MDW
   - [HTTP](https://www.w3.org/Protocols/HTTP/HTTP2.html), [REST](https://en.wikipedia.org/wiki/Representational_state_transfer), [JSON](http://www.json.org/)
   - Status Codes are [standard](https://www.w3.org/Protocols/HTTP/HTRESP.html) and [meaningful](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
   - Simplicity is paramount
-  - Guidance through [tooling](../../guides/InstallEclipsePluginsGuide/) 
+  - Guidance through [tooling](../../getting-started/install-designer/) 
 
 ## 1. Consume
 
@@ -52,12 +52,12 @@ title: Microservices in MDW
 
 ### Deployment and Testing
   - [Tomcat setup](../../guides/SetupGuideForTomcat/)
-  - [Spring Boot](http://127.0.0.1:4000/docs/gettingStarted/quick-start/)
+  - [Spring Boot](http://127.0.0.1:4000/docs/getting-started/quick-start/)
   - [Hyperion platform](https://hyperion-ui-test1.pcfomactl.dev.intranet/home.html)
   - [Cloud Foundry setup](../../guides/SetupGuideForCloudFoundry/)
   - [Postman automated tests](../../help/groovyTestScriptSyntax.html#serviceApiTesting)
   
 ## Resources
-  - [Microservices Cookbook](../../guides/MicroservicesCookbook/)
+  - [MDW Cookbook](../../guides/mdw-cookbook/)
   - Built-In [Service APIs]()
   - [mdw-demo]()

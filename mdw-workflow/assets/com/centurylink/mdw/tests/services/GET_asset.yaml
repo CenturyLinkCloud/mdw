@@ -1,0 +1,54 @@
+test: 'GET:asset'
+request:
+  url: '${asset-base}/${asset-path}'
+  method: GET
+  headers: {}
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: text/plain
+  body: |-
+    {
+      "activities": [
+        {
+          "attributes": {
+            "WORK_DISPLAY_INFO": "x=68,y=132,w=60,h=40"
+          },
+          "id": "A1",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [
+            {
+              "attributes": {
+                "TRANSITION_DISPLAY_INFO": "lx=302,ly=227,type=Elbow,xs=132&476,ys=152&280"
+              },
+              "event": "FINISH",
+              "id": "T1",
+              "to": "A2"
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "WORK_DISPLAY_INFO": "x=480,y=260,w=60,h=40"
+          },
+          "id": "A2",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "ArrowStyle": "ArrowEnd",
+        "NodeStyle": "BoxIcon",
+        "PROCESS_VISIBILITY": "PUBLIC",
+        "WORK_DISPLAY_INFO": "x=50,y=50,w=54,h=27"
+      },
+      "variables": {
+        "tempVar": {
+          "category": "INPUT",
+          "type": "java.lang.String"
+        }
+      }
+    }
