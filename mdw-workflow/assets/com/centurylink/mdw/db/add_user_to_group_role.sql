@@ -1,5 +1,5 @@
 insert into user_role_mapping
-(user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr)
+(user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
 values ('USER_GROUP_MAP',
     (select user_group_mapping_id from user_group_mapping ugm, user_group ug, user_info ui
      where ugm.user_group_id = ug.user_group_id
@@ -7,4 +7,4 @@ values ('USER_GROUP_MAP',
      and ui.cuid = ?
      and ui.end_date is null
      and ug.group_name = ?),
-     (select user_role_id from user_role where user_role_name = ?),'MDW');
+     (select user_role_id from user_role where user_role_name = ?),'MDW', now());
