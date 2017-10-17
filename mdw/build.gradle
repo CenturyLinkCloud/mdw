@@ -258,19 +258,37 @@ task configureUploadAssets {
                     snapshotRepository(url: mavenSnapshotRepoUrl) {
                         authentication(userName: ossrhUsername, password: ossrhPassword)
                     }
-                    pom.project {
-                        archiveAssetZips.discoveredFiles.each { discoveredFile ->
-                            def filterName = discoveredFile.name - ".zip"
-                            def artifactName = filterName - "-SNAPSHOT"
-                            def versionStart = artifactName.lastIndexOf("-")
-                            def artifactId = artifactName.substring(0, versionStart)
-                            addFilter(filterName) { artifact, file ->
-                                file.name == discoveredFile.name
-                            }
-                            pom(filterName).artifactId = artifactId
-                            pom(filterName).groupId = "com.centurylink.mdw.assets"
+                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
+                        def filterName = discoveredFile.name - ".zip"
+                        def artifactName = filterName - "-SNAPSHOT"
+                        def versionStart = artifactName.lastIndexOf("-")
+                        def artifactId = artifactName.substring(0, versionStart)
+                        addFilter(filterName) { artifact, file ->
+                            file.name == discoveredFile.name
                         }
-                    }
+                        pom(filterName).artifactId = artifactId
+                        pom(filterName).groupId = "com.centurylink.mdw.assets"
+                        pom(filterName).name = 'MDW Assets'
+                        pom(filterName).withXml { provider ->
+                            def node = provider.asNode()
+                            node.appendNode('description',
+                                'MDW is a cloud workflow framework')
+                            node.appendNode('url', 'http://centurylinkcloud.github.io/mdw/')
+                            def licenses = node.appendNode('licenses')
+                            def license = licenses.appendNode('license')
+                            license.appendNode('name', 'The Apache License, Version 2.0')
+                            license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                            def developers = node.appendNode('developers')
+                            def developer  = developers.appendNode('developer')
+                            developer.appendNode('id', 'mdwdev')
+                            developer.appendNode('name', 'MDW Development')
+                            developer.appendNode('email', 'mdwdev@centurylink.com')
+                            def scm = node.appendNode('scm')
+                            scm.appendNode('connection', 'scm:git:git://github.com/CenturyLinkCloud/mdw.git')
+                            scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
+                            scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
+                        }
+                    }                    
                 }
             }
         }
