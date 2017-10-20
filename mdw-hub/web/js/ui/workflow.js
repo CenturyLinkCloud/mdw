@@ -62,7 +62,7 @@ workflowMod.controller('MdwWorkflowController',
   $scope.renderProcess = function() {
     var packageName = $scope.process.packageName;
     var processName = $scope.process.name;
-    var processVersion = null; // TODO: version
+    var processVersion = $scope.process.archived ? $scope.process.version : null;
     var instanceId = $scope.process.id;
     var masterRequestId = $scope.process.masterRequestId;
     var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;

@@ -16,8 +16,8 @@ def DEL = request(svcPkg + '/asset-apis.postman/DEL:asset') {
     options = [ captureResult: false ]
 }
 def response = submit DEL
-//if (response.status.code != 404)
-//    refreshCache()
+if (response.status.code != 404)
+    refreshCache()
 
 // create new
 vals['asset-name'] = 'Inflight.proc'
@@ -37,7 +37,7 @@ assert response.status.code == 200
 
 // update with v0.1 def
 vals['asset-path'] = wfPkg + '/Inflight.proc'
-vals['version'] = '0.1'
+vals['asset-version'] = '0.1'
 vals['proc-def-json'] = response.body
 def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
     values = vals
@@ -45,9 +45,10 @@ def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
 response = submit PUT
 assert response.status.code == 200
 
-//refreshCache()
+refreshCache()
 
 def oldProcRun = startProcess('oldOldVar')
+println('Inflight v0.1: ' + oldProcRun.masterRequestId + ' (' + oldProcRun.instanceId + ')')
 sleep 5
 
 // get v0.2 def
@@ -60,7 +61,7 @@ assert response.status.code == 200
 
 // update with v0.2 def
 vals['asset-path'] = wfPkg + '/Inflight.proc'
-vals['version'] = '0.2'
+vals['asset-version'] = '0.2'
 vals['proc-def-json'] = response.body
 PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
     values = vals
@@ -68,10 +69,13 @@ PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
 response = submit PUT
 assert response.status.code == 200
 
-//refreshCache()
+refreshCache() // otherwise v0.1 summary will e retrieved
 
 def newProcRun = startProcess('newOldVar')
+println('Inflight v0.2: ' + newProcRun.masterRequestId + ' (' + newProcRun.instanceId + ')')
 sleep 5
+
+return
 
 // resume old and new process
 notifyProcess(oldProcRun.masterRequestId)

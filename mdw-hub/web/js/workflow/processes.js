@@ -392,6 +392,9 @@ processMod.controller('ProcessDefController',
     $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
     $scope.process.definitionId = summary.definitionId;
+    $scope.process.archived = summary.archived;
+    if ($scope.process.archived)
+      $scope.process.version = summary.version;
     if ($scope.isRun)
       $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
     $scope.definitionId = $scope.process.definitionId;
