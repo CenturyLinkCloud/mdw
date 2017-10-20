@@ -31,7 +31,7 @@
 7 - Update mdw-demo
   - git pull
   - Update mdwVersion and mdwDesignerVersion in gradle.properties
-  - Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/raw/master/assets/com/centurylink/mdw/env/local.gradle to mdw folder
+  - Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder and update mdwDemoDir
   - Run the mdw/updateMDWDemoWorkspace task to bring over the latest framework assets and update manifest file
   - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
@@ -40,7 +40,7 @@
   - Login to mdw-hub and run all the test cases (select Stubbing from configure icon)
   - Investigate any failed test cases
   
-9 - Tag release (First time)
+9 - Tag release
   - git tag -a v6.0.xx -m 'v6.0.xx'
   - git push origin --tags
    
@@ -68,16 +68,16 @@
   - git commit CHANGELOG.md -m "Release notes" (commits and pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, release name should be 6.0.xx, copy the notes from updated CHANGELOG.md
   - Change release status from pre-release to release
-  - Check if mdw-cli-{{version}}.zip and mdw-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
-  
-14 - Update support items delivered with this build to Resolved status.
-   - Delete any obsolete branches on GitHub that were merged as part of this build.
+  - Check if mdw-cli-{{version}}.zip and mdw-boot-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
 
-15 - Publishing to AppFog  
+14 - Publishing to AppFog  
    -  go to root of mdw-demo project (check correct dev/prod manifest.yml is there)
    -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
    -  Select a space (or press enter to skip): Prod (Dev for snapshots)
    -  cf push
+  
+15 - Update support items delivered with this build to Resolved status.
+   - Delete any obsolete branches on GitHub that were merged as part of this build.
 
 16 - TODO: Publish NPM package 
 

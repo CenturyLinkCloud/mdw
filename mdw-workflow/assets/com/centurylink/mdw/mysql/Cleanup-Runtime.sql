@@ -3,7 +3,7 @@ DELIMITER $$
 CREATE PROCEDURE `mysql_cleanup`(IN inputrnum INT , inputdaydiff INT, inputeldaydiff INT,
 inputprocid INT, inputworkstatusids VARCHAR (100) , inputcommitcnt INT)
 BEGIN
-DECLARE dt                 DATETIME(6);
+DECLARE dt                 DATETIME;
    DECLARE rnum               INT;
    DECLARE daydiff            INT;
    DECLARE eldaydiff          INT;

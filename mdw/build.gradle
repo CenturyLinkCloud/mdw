@@ -1,20 +1,8 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
 
 configurations { 
     assets 
-}
-
-task publishMdw(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
-}
-
-task publishFormal {
-    dependsOn(publishMdw)
 }
 
 subprojects {
@@ -48,7 +36,7 @@ subprojects {
     }
     if (mdwVersion.endsWith("-SNAPSHOT"))
             tasks.withType(Javadoc).all { enabled = false }
-    
+
     // copy into output dir rather than including directly in jar
     // this works better in local development where deployment happens from build/classes
     task copyMeta(type: Copy) {
@@ -77,7 +65,7 @@ subprojects {
 
     task javadocJar(type: Jar) {
         if (!mdwVersion.endsWith("-SNAPSHOT"))
-            enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
@@ -143,8 +131,8 @@ task deployTomcatMdwDev(type: GradleBuild) {
     buildFile = "deploy.gradle"
     tasks = ["deployMdw"]
     startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
-        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
-        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
+                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
+                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
 task publishToMavenCentral(type: GradleBuild) {
@@ -164,7 +152,7 @@ allprojects {
         signing {
             required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
             sign configurations.archives
-        }
+         }
     }
     else {
         tasks.withType(Javadoc).all { enabled = false }
@@ -249,12 +237,12 @@ task archiveAssetZips {
         ext.discoveredFiles = []
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
             discoveredFiles.add(file)
-            artifacts {
+                artifacts{
                  assets file:file 
+                }
             }
         }
     }
-}
 
 task configureUploadAssets {
     dependsOn archiveAssetZips
@@ -280,7 +268,27 @@ task configureUploadAssets {
                         }
                         pom(filterName).artifactId = artifactId
                         pom(filterName).groupId = "com.centurylink.mdw.assets"
-                    }
+                        pom(filterName).name = 'MDW Assets'
+                        pom(filterName).withXml { provider ->
+                            def node = provider.asNode()
+                            node.appendNode('description',
+                                'MDW is a cloud workflow framework')
+                            node.appendNode('url', 'http://centurylinkcloud.github.io/mdw/')
+                            def licenses = node.appendNode('licenses')
+                            def license = licenses.appendNode('license')
+                            license.appendNode('name', 'The Apache License, Version 2.0')
+                            license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                            def developers = node.appendNode('developers')
+                            def developer  = developers.appendNode('developer')
+                            developer.appendNode('id', 'mdwdev')
+                            developer.appendNode('name', 'MDW Development')
+                            developer.appendNode('email', 'mdwdev@centurylink.com')
+                            def scm = node.appendNode('scm')
+                            scm.appendNode('connection', 'scm:git:git://github.com/CenturyLinkCloud/mdw.git')
+                            scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
+                            scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
+                        }
+                    }                    
                 }
             }
         }
@@ -295,49 +303,10 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-/**
- * Eclipse setup, sourceSets and dependencies are convenience configs to enable gradle plugin
- * debugging from Eclipse.  The actual gradle plugin build is controlled by buildSrc/build.gradle.
- */
-eclipse {
-    // associate Gradle API source
-    classpath {
-        file {
-            whenMerged { cp ->
-                cp.entries.each { entry ->
-                    if ((entry in org.gradle.plugins.ide.eclipse.model.AbstractLibrary) && (entry.library.file.name.startsWith('gradle-'))) {
-                        entry.sourcePath = new org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory().fromPath(gradleSrc)
-                    }
-                }
-            }
-        }
-    }
-}
-sourceSets {
-    main {
-        groovy {
-            srcDir "buildSrc/src"
-            include "com/centurylink/mdw/gradle/plugin/**"
-        }
-        resources {
-            srcDirs "buildSrc/src"
-            include "META-INF/**"
-        }
-    }
-}
-repositories {
-    mavenCentral()
-}
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
-}
-
 // update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
 task updateMDWDemoWorkspace(type: GradleBuild) {
     buildFile = "local.gradle"
-    tasks = ["updateManifestFile"]
+    tasks = ["updateMDWDemoWorkspace"]
     startParameter.projectProperties = [deployWarDir: "n/a", tomcatBinDir: "n/a", testServerUrl: "n/a"]
 }
 

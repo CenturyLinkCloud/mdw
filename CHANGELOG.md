@@ -1,5 +1,36 @@
 # Change Log
 
+## [v6.0.07](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.07) (2017-10-13)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.06...v6.0.07)
+
+**Implemented enhancements:**
+
+- Rules as a service in Drools package [\#228](https://github.com/CenturyLinkCloud/mdw/issues/228)
+- Runtime determination of service/nonservice process nature [\#220](https://github.com/CenturyLinkCloud/mdw/issues/220)
+- Allow creaton of data sources using any app-provided driver [\#217](https://github.com/CenturyLinkCloud/mdw/issues/217)
+- Search by Solution ID in the Workflow tab typeahead [\#214](https://github.com/CenturyLinkCloud/mdw/issues/214)
+- Populate asset archive from Git instead of during import [\#207](https://github.com/CenturyLinkCloud/mdw/issues/207)
+- Task UI JSX History page [\#194](https://github.com/CenturyLinkCloud/mdw/issues/194)
+- Task UI JSX Subtasks page [\#193](https://github.com/CenturyLinkCloud/mdw/issues/193)
+- Task UI JSX Values page [\#192](https://github.com/CenturyLinkCloud/mdw/issues/192)
+- Formatting options for request and response content [\#189](https://github.com/CenturyLinkCloud/mdw/issues/189)
+- Show process name in tool tip of Charts [\#185](https://github.com/CenturyLinkCloud/mdw/issues/185)
+- MySQL cleanup script implementation [\#168](https://github.com/CenturyLinkCloud/mdw/issues/168)
+- React component assets for task page customization [\#150](https://github.com/CenturyLinkCloud/mdw/issues/150)
+- Implement a GitHub Integration to trigger autotest execution in AppFog [\#97](https://github.com/CenturyLinkCloud/mdw/issues/97)
+
+**Closed issues:**
+
+- Cannot set values for unpopulated variables in Runtime UI [\#226](https://github.com/CenturyLinkCloud/mdw/issues/226)
+- Handle incoming JWT token when using Layer 7 Gateway authentication  [\#221](https://github.com/CenturyLinkCloud/mdw/issues/221)
+- Adapters should save a blank request with associated meta for HTTP GET operations [\#219](https://github.com/CenturyLinkCloud/mdw/issues/219)
+- Javadocs are not produced correctly by the MDW build [\#216](https://github.com/CenturyLinkCloud/mdw/issues/216)
+- Duplicate master request IDs in Workflow tab typeahead [\#213](https://github.com/CenturyLinkCloud/mdw/issues/213)
+- MDW-hub’s variables section for process not renter properly [\#212](https://github.com/CenturyLinkCloud/mdw/issues/212)
+- Suitable error flagging on unsupported subprocess invocations [\#205](https://github.com/CenturyLinkCloud/mdw/issues/205)
+- Cannot Discover assets for import in mdw-hub from repo on 143 server [\#91](https://github.com/CenturyLinkCloud/mdw/issues/91)
+- Stopping InProgress Test Cases when server shuts down [\#83](https://github.com/CenturyLinkCloud/mdw/issues/83)
+
 ## [v6.0.06](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.06) (2017-09-11)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05...v6.0.06)
 
