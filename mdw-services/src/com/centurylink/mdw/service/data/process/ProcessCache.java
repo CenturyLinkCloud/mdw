@@ -26,6 +26,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
@@ -263,6 +264,15 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().getProcessBase(name, version);
+            if (proc == null) {
+                String refName = name;
+                if (!refName.endsWith(".proc"))
+                    refName += ".proc";
+                refName += " v" + Asset.formatVersion(version);
+                AssetRef assetRef = AssetRefCache.getAssetRef(refName);
+                if (assetRef != null)
+                    proc = AssetRefConverter.getProcess(assetRef);
+            }
             if (proc != null) {
                 // all db attributes are override attributes
                 Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getProcessId());

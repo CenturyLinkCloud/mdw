@@ -308,7 +308,7 @@ public abstract class TestCaseScript extends Script {
                 item.setOption("retainResult", "true");
             item.setOption("verify", "true");
             if (response.getValues() != null)
-                item.setValues(new JSONObject(apiRequest.getValues()));
+                item.setValues(new JSONObject(response.getValues()));
             item.setStatus(Status.Stopped); // otherwise this adhoc item causes havoc
             testCase.addItem(item);
             getTestCaseRun().verifyItem(testCase, item);
@@ -713,5 +713,9 @@ public abstract class TestCaseScript extends Script {
 
     public boolean isHasTestingPackage() throws TestException {
         return asset("com.centurylink.mdw.testing/readme.md").getRawFile().exists();
+    }
+
+    public void logLine(String message) {
+        getTestCaseRun().getLog().println(message);
     }
 }

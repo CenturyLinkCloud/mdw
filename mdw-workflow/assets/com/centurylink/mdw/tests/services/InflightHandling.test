@@ -4,16 +4,18 @@ import groovy.json.JsonOutput
 svcPkg = 'com.centurylink.mdw.tests.services'
 wfPkg = 'com.centurylink.mdw.tests.workflow'
 
-allValues = [:];
-
 def vals = [
     'asset-path': wfPkg + '/Inflight.proc'
-];
+]
+
+def opts = [
+    captureResult: false
+]
 
 // cleanup if exists
 def DEL = request(svcPkg + '/asset-apis.postman/DEL:asset') {
     values = vals;
-    options = [ captureResult: false ]
+    options = opts;
 }
 def response = submit DEL
 if (response.status.code != 404)
@@ -23,6 +25,7 @@ if (response.status.code != 404)
 vals['asset-name'] = 'Inflight.proc'
 def POST = request(svcPkg + '/asset-apis.postman/POST:asset') {
     values = vals
+    options = opts
 }
 response = submit POST
 assert response.status.code == 200
@@ -31,6 +34,7 @@ assert response.status.code == 200
 vals['asset-path'] = wfPkg + '/InflightBefore.proc'
 def GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
     values = vals
+    options = opts
 }
 response = submit GET
 assert response.status.code == 200
@@ -41,6 +45,7 @@ vals['asset-version'] = '0.1'
 vals['proc-def-json'] = response.body
 def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
     values = vals
+    options = opts
 }
 response = submit PUT
 assert response.status.code == 200
@@ -48,13 +53,14 @@ assert response.status.code == 200
 refreshCache()
 
 def oldProcRun = startProcess('oldOldVar')
-println('Inflight v0.1: ' + oldProcRun.masterRequestId + ' (' + oldProcRun.instanceId + ')')
+logLine('Inflight v0.1: ' + oldProcRun.masterRequestId + ' (' + oldProcRun.instanceId + ')')
 sleep 5
 
 // get v0.2 def
 vals['asset-path'] = wfPkg + '/InflightAfter.proc'
 GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
     values = vals
+    options = opts
 }
 response = submit GET
 assert response.status.code == 200
@@ -65,17 +71,16 @@ vals['asset-version'] = '0.2'
 vals['proc-def-json'] = response.body
 PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
     values = vals
+    options = opts
 }
 response = submit PUT
 assert response.status.code == 200
 
-refreshCache() // otherwise v0.1 summary will e retrieved
+refreshCache() // otherwise v0.1 summary will be retrieved
 
 def newProcRun = startProcess('newOldVar')
-println('Inflight v0.2: ' + newProcRun.masterRequestId + ' (' + newProcRun.instanceId + ')')
+logLine('Inflight v0.2: ' + newProcRun.masterRequestId + ' (' + newProcRun.instanceId + ')')
 sleep 5
-
-return
 
 // resume old and new process
 notifyProcess(oldProcRun.masterRequestId)
@@ -84,12 +89,26 @@ sleep 5
 
 // retrieve instance values for verification
 getValues(oldProcRun.instanceId)
-def values = getValues(newProcRun.instanceId)
+def valuesResponse = getValues(newProcRun.instanceId)
+verify(valuesResponse) {
+  values = [
+      oldInstId: oldProcRun.instanceId,
+      newInstId: newProcRun.instanceId
+  ]
+}
+
+// verify process
+setMasterRequestId(oldProcRun.masterRequestId)
+verify process("com.centurylink.mdw.tests.workflow/Inflight v0.1")
+setMasterRequestId(newProcRun.masterRequestId)
+verify process("com.centurylink.mdw.tests.workflow/Inflight")  // should be v0.2
+
 
 Object startProcess(String oldVar) {
     def vals = ['process-path': wfPkg + '/Inflight.proc']
     def GET = request(svcPkg + '/process-apis.postman/GET:summary') {
         values = vals
+        options = [captureResult: false]
     }
     def resp = submit GET
     assert resp.status.code == 200
@@ -97,6 +116,7 @@ Object startProcess(String oldVar) {
     vals['process-id'] = sum.id
     GET = request(svcPkg + '/process-apis.postman/GET:run') {
         values = vals
+        options = [captureResult: false]
     }
     resp = submit GET
     assert resp.status.code == 200
@@ -106,6 +126,7 @@ Object startProcess(String oldVar) {
     vals['proc-run-json'] = procRunJson
     def POST = request(svcPkg + '/process-apis.postman/POST:run') {
         values = vals
+        options = [captureResult: false]
     }
     resp = submit POST
     assert resp.status.code == 200
@@ -115,27 +136,41 @@ Object startProcess(String oldVar) {
 Object notifyProcess(masterRequestId) {
     def POST = request(svcPkg + '/process-apis.postman/POST:events/{event-id}') {
         values = ['event-id': masterRequestId]
+        options = [captureResult: false]
     }
     def response = submit POST
     assert response.status.code == 200
     return new JsonSlurper().parseText(response.body)
 }
 
+/**
+ * returns response object to be passed to verify()
+ */
 Object getValues(processInstanceId) {
     def GET = request(svcPkg + '/process-apis.postman/GET:{process-instance-id}/values') {
         values = ['process-instance-id': processInstanceId]
+        options = [captureResult: true]
     }
     def response = submit GET
     assert response.status.code == 200
-    return new JsonSlurper().parseText(response.body)
+    return response
 }
 
 Object refreshCache() {
     // refresh the cache (TODO: exclude?)
     def POST = request(svcPkg + '/asset-apis.postman/POST:refresh') {
         values = [:]
+        options = [captureResult: false]
     }
     def response = submit POST
     assert response.status.code == 200
     return new JsonSlurper().parseText(response.body)
+}
+
+/**
+ * Change Inflight.proc's version back to 0.1 so it has the correct asset
+ * archive history.
+ */
+void resetVersion() {
+    // TODO
 }
