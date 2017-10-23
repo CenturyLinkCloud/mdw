@@ -433,7 +433,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         process.setModifyingUser(assetFile.getRevision().getModUser());
         process.setRevisionComment(assetFile.getRevision().getComment());
         process.setPackageName(pkgDir.getPackageName());
-        process.setPackageVersion(pkgDir.getPackageVersion());
 
         return process;
     }
@@ -487,7 +486,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         Asset asset = new Asset();
         asset.setId(assetFile.getId());
         asset.setPackageName(pkgDir.getPackageName());
-        asset.setPackageVersion(pkgDir.getPackageVersion());
         asset.setName(assetFile.getName());
         asset.setLanguage(Asset.getFormat(assetFile.getName()));
         asset.setVersion(assetFile.getRevision().getVersion());
