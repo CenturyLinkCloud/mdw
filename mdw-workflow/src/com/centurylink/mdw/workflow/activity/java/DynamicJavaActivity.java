@@ -133,10 +133,14 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
                         }
                     };
                     tempPkg.setPackageName(getProcessDefinition().getPackageName());
+                    // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key
+                    tempPkg.setVersion((-1 * getProcessDefinition().getVersion()));
                 }
 
+                setExecutorClassLoader(tempPkg.getCloudClassLoader());
+
                 String className = getClassName();
-                Class<?> clazz = CompiledJavaCache.getClass(tempPkg, className, javaCode);
+                Class<?> clazz = CompiledJavaCache.getClass(getExecutorClassLoader(), tempPkg, className, javaCode);
                 if (clazz == null)
                     throw new ClassNotFoundException(className);
 

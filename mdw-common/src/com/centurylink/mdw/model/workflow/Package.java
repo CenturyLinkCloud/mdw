@@ -504,6 +504,9 @@ public class Package implements Serializable, Jsonable {
     }
 
     public static String formatVersion(int version) {
+        if (version < 0) // Negative version means fake pkg (for when retrieving assets from Git history)
+            return "-" + formatVersion((version * -1));
+
         int major = version/1000;
         int minor = version%1000;
         int point = minor%100;
