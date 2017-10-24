@@ -1,5 +1,8 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import java.nio.file.Files
+import java.nio.file.Paths
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
 svcPkg = 'com.centurylink.mdw.tests.services'
 wfPkg = 'com.centurylink.mdw.tests.workflow'
@@ -87,6 +90,8 @@ notifyProcess(oldProcRun.masterRequestId)
 notifyProcess(newProcRun.masterRequestId)
 sleep 5
 
+cleanup()
+
 // retrieve instance values for verification
 getValues(oldProcRun.instanceId)
 def valuesResponse = getValues(newProcRun.instanceId)
@@ -96,13 +101,6 @@ verify(valuesResponse) {
       newInstId: newProcRun.instanceId
   ]
 }
-
-// verify process
-setMasterRequestId(oldProcRun.masterRequestId)
-verify process("com.centurylink.mdw.tests.workflow/Inflight v0.1")
-setMasterRequestId(newProcRun.masterRequestId)
-verify process("com.centurylink.mdw.tests.workflow/Inflight")  // should be v0.2
-
 
 Object startProcess(String oldVar) {
     def vals = ['process-path': wfPkg + '/Inflight.proc']
@@ -168,9 +166,17 @@ Object refreshCache() {
 }
 
 /**
- * Change Inflight.proc's version back to 0.1 so it has the correct asset
- * archive history.
+ * Overwrite Inflight.proc with InflightBefore.proc, and change it's version back to 0.1
+ * so that it has the correct asset archive history.
  */
-void resetVersion() {
-    // TODO
+void cleanup() {
+    def beforePath = Paths.get(asset(wfPkg + '/InflightBefore.proc').rawFile.path)
+    def inflightPath = Paths.get(asset(wfPkg + '/Inflight.proc').rawFile.path)
+    logLine 'copying from: ' + beforePath + ' to: ' + inflightPath
+    Files.copy(beforePath, inflightPath, REPLACE_EXISTING)
+
+    def versionsFile = new File(inflightPath.parent.toString() + '/.mdw/versions')
+    logLine 'reset version in ' + versionsFile
+    def newVers = versionsFile.text.replace('\nInflight.proc=2', '\nInflight.proc=1')
+    Files.write(Paths.get(versionsFile.path), newVers.getBytes())
 }

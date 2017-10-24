@@ -555,6 +555,8 @@ public class TestCaseRun implements Runnable {
     }
 
     Asset getAsset(String path) throws TestException {
+        if (path.endsWith(".proc"))
+            return getProcess(path);
         try {
             return AssetCache.getAsset(path.indexOf('/') > 0 ? path : getTestCase().getPackage() + '/' + path);
         }
