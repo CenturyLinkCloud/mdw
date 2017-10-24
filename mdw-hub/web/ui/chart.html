@@ -25,6 +25,20 @@
 			</ul>
 		</div>
 	</div>
+	
+	<div class="mdw-heading-input"  ng-if="breakdown == 'Completion Time'">
+	    <span class="mdw-heading-label mdw-med-indent">Show In:&nbsp; </span>
+		<div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+			<i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
+				class="form-control mdw-inline mdw-dropfilter mdw-med-width"
+				value="{{timefilter}}" uib-dropdown-toggle readonly>
+			<ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
+				aria-labelledby="simple-dropdown">
+				<li ng-repeat="tf in timefilters"><a href="" ng-click="setTimefilter(tf)">{{tf}}</a>
+				</li>
+			</ul>
+		</div>
+	</div>
 
 	<!-- TODO: wrap attribute varies according to buttons included -->
 	<mdw-actions wrap="1170px"> <!-- TODO: Actions is only when something selected (also, gravity not used) -->
