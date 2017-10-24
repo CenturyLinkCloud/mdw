@@ -84,6 +84,7 @@ SET foreign_key_checks=0;
    -- mdw tables that need to be cleaned up based on date range   
    SET row_count = 0;
    REPEAT
+   	COMMIT;
      DELETE FROM event_log
          WHERE create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY)
          LIMIT commitcnt;
@@ -95,6 +96,7 @@ SET foreign_key_checks=0;
 
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE FROM event_instance
          WHERE create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY) 
          AND  event_name NOT LIKE 'ScheduledJob%'
@@ -108,6 +110,7 @@ SET foreign_key_checks=0;
    -- delete the event wait instance table
    SET row_count = 0;
    REPEAT
+     COMMIT;
      DELETE from   event_wait_instance 
          WHERE event_wait_instance_owner = 'ACTIVITY_INSTANCE'
            AND event_wait_instance_owner_id IN (
@@ -133,6 +136,7 @@ SET foreign_key_checks=0;
    -- delete all the activity instances
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE  from  activity_instance 
          WHERE process_instance_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                  process_instance_id
@@ -148,6 +152,7 @@ SET foreign_key_checks=0;
    -- delete all the work transition instances that belong to current process instance and child instanes
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE  from    work_transition_instance 
          WHERE process_inst_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                               process_instance_id
@@ -163,6 +168,7 @@ SET foreign_key_checks=0;
    -- delete all the variable instances that belong to current process instance and child instanes
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE from   variable_instance 
          WHERE process_inst_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                              process_instance_id
@@ -183,6 +189,7 @@ SET foreign_key_checks=0;
    -- delete all the instance notes for the task instances
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE  from instance_note
          WHERE instance_note_owner_id IN (
                   SELECT task_instance_id
@@ -212,6 +219,7 @@ SET foreign_key_checks=0;
    -- delete all task instance indices
      SET row_count = 0;
 	   REPEAT
+	   	 COMMIT;
 	     DELETE  from    task_inst_index
          WHERE task_instance_id IN (
                   SELECT task_instance_id
@@ -232,6 +240,7 @@ SET foreign_key_checks=0;
    -- delete all task instance group mappings
      SET row_count = 0;
      REPEAT
+       COMMIT;
        DELETE  from    task_inst_grp_mapp
          WHERE task_instance_id IN (
                   SELECT task_instance_id
@@ -253,6 +262,7 @@ SET foreign_key_checks=0;
    -- delete all the taskInstances that belong to current process instance and child instanes
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE   from   task_instance 
          WHERE task_instance_owner = 'PROCESS_INSTANCE'
            AND task_instance_owner_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
@@ -276,6 +286,7 @@ SET foreign_key_checks=0;
    -- deleting from document_content to avoid the integrity constraint issue
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE from document_content where document_id IN (
       SELECT document_id FROM document doc
        WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'PROCESS_INSTANCE'  
@@ -319,6 +330,7 @@ SET foreign_key_checks=0;
    -- delete DOCUMENT 
    SET row_count = 0;
    REPEAT
+   	 COMMIT;
      DELETE from document 
    		 -- 1. all documents with process instance ID populated
          WHERE (
@@ -366,6 +378,7 @@ SET foreign_key_checks=0;
    -- delete the process instance
    SET row_count = 0;
    REPEAT
+   	COMMIT;
     DELETE  from    process_instance 
          WHERE status_cd = purgestatusid
       LIMIT commitcnt;
