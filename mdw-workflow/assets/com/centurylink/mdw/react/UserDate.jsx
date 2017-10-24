@@ -6,7 +6,6 @@ var DatePicker = require('../node/node_modules/react-bootstrap-date-picker');
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const dayMs = 24 * 3600 * 1000;
 
 class UserDate extends Component {
     
@@ -37,7 +36,7 @@ class UserDate extends Component {
   
   showCalendar() {
     this.ignore = true;
-    var datePicker = ReactDOM.findDOMNode(this.refs.datePicker);
+    var datePicker = ReactDOM.findDOMNode(this.refs.datePicker); // eslint-disable-line react/no-find-dom-node
     datePicker.firstElementChild.focus();
   }
   
@@ -122,11 +121,11 @@ class UserDate extends Component {
       date = new Date(date);
     var past = false;
     if (date) {
-      var title = this.formatDateTime(date);
-      var text = title;
+      title = this.formatDateTime(date);
+      text = title;
       if (date < Date.now()) {
         past = true;
-        text = this.past(date)
+        text = this.past(date);
       }
       else {
         text = this.future(date);

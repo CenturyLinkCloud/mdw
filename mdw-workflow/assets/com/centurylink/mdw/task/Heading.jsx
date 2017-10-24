@@ -1,6 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import {Link} from '../node/node_modules/react-router-dom';
 import Action from './Action.jsx';
 

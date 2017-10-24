@@ -32,7 +32,7 @@ class Values extends Component {
     var values = [];
     Object.keys(vals).forEach(key => {
       var val = vals[key];
-      val.name = key
+      val.name = key;
       val.isDocument = val.type && $mdwUi.DOCUMENT_TYPES[val.type];
       if (val.isDocument) {
         val.showLines = this.showLines;
@@ -93,7 +93,7 @@ class Values extends Component {
     });
   }
   
-  handleSave(event) {
+  handleSave() {
     var vals = {};
     this.state.values.forEach(value => {
       if (value.value !== '' && value.display !== 'ReadOnly') {

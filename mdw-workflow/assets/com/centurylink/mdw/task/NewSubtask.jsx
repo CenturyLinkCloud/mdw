@@ -1,11 +1,9 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Button, ButtonToolbar, Glyphicon} from '../node/node_modules/react-bootstrap';
-import {AsyncTypeahead, Menu, MenuItem} from '../node/node_modules/react-bootstrap-typeahead';
+import {ButtonToolbar, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {AsyncTypeahead} from '../node/node_modules/react-bootstrap-typeahead';
 import {Link} from '../node/node_modules/react-router-dom';
 import '../node/node_modules/style-loader!../react/typeahead.css';
-var classNames = require('../node/node_modules/classnames');
-
 
 class NewSubtask extends Component {
     
@@ -38,12 +36,12 @@ class NewSubtask extends Component {
       });
     }
 
-  handleCreate(event) {
+  handleCreate() {
     if (this.state.template === "") {
         $mdwUi.showMessage('Please choose a template!');
         return;
     }
-    console.log('creating subtask: ' +this.state.template[0].logicalId);
+    console.log('creating subtask: ' + this.state.template[0].logicalId); // eslint-disable-line no-console
     var ok = false;  
     var createAction = {
             taskAction: 'create',

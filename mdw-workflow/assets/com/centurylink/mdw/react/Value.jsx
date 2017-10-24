@@ -1,5 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Glyphicon} from '../node/node_modules/react-bootstrap';
 var classNames = require('../node/node_modules/classnames');
 var DatePicker = require('../node/node_modules/react-bootstrap-date-picker');
 

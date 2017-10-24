@@ -2,7 +2,6 @@ import React, { Component } from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import Heading from './Heading.jsx';
 import UserDate from '../react/UserDate.jsx';
-import {Link} from '../node/node_modules/react-router-dom';
 
 class History extends Component {
   constructor( ...args ) {
@@ -27,15 +26,8 @@ class History extends Component {
 
   render() {
     return (
-      <div>            
-        <div className="panel-heading mdw-heading">
-          <div className="mdw-heading-label">
-              {this.props.task.name}
-              <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id} className="mdw-id">
-                {this.props.task.id}
-              </Link>
-          </div>
-        </div> 
+      <div>
+        <Heading task={this.props.task} refreshTask={this.props.refreshTask} />
         <ul className="mdw-checklist">
           {this.state.taskHistory.map( history => {
             return (
@@ -50,7 +42,7 @@ class History extends Component {
   }
 }
 
-function HistoryItem( props, context ) {
+function HistoryItem(props, context) {
   var history = props.history;
   return (
     <div className="mdw-flex-item">

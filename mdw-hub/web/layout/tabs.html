@@ -6,11 +6,11 @@
           <div>
             <a tabindex="{{tab.index}}" tab-link="{{tab.url}}">{{tab.label}}</a>
           </div>
-          <img class="mdw_tab_active_image" src="images/tab_sel.png" ng-if="tab.active" alt="Selected">
+          <img class="mdw_tab_active_image" src="images/tab_sel.png" ng-if="tab.active">
         </div>
       </td>
       <td ng-repeat-end ng-if="tab.index != authUser.tabs.length">
-        <img src="images/tab_spacer.png" alt="spacer">
+        <img src="images/tab_spacer.png">
       </td>
     </tr>
   </tbody>

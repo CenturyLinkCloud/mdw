@@ -163,7 +163,7 @@ class Action extends Component {
     });
   }
   
-  handleCommentedAction(event) {
+  handleCommentedAction() {
     this.performAction(null, this.state.comment);
     this.hidePopover(this.action.action + '_commentTrigger');
     this.hidePopover('actionTrigger');
@@ -275,7 +275,7 @@ class AssigneeMenuItem extends MenuItem {
     this.handleClick = this.handleClick.bind(this);
   }
   
-  handleClick(event) {
+  handleClick(event) { // eslint-disable-line no-unused-vars
     this.props.onChange(this.props.option);
   }
   

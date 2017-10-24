@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Glyphicon} from '../node/node_modules/react-bootstrap';
 import Select from '../node/node_modules/react-select';
 import '../node/node_modules/style-loader!../react/react-select.css';
 import Heading from './Heading.jsx';
