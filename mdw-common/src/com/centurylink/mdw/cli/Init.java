@@ -28,6 +28,7 @@ public class Init extends Setup {
 
     public Init(File projectDir) {
         super(projectDir);
+        project = projectDir.getName();
     }
 
     Init() {
@@ -35,7 +36,7 @@ public class Init extends Setup {
     }
 
     @Parameter(description="<project>", required=true)
-    private String projectName;
+    private String project;
 
     @Parameter(names="--user", description="Dev user")
     private String user = System.getProperty("user.name");
@@ -64,14 +65,14 @@ public class Init extends Setup {
 
     @Override
     public File getProjectDir() {
-        return projectDir == null ? new File(projectName) : projectDir;
+        return projectDir == null ? new File(project) : projectDir;
     }
 
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
-        System.out.println("Initializing " + projectName + "...");
-        int slashIndex = projectName.lastIndexOf('/');
+        System.out.println("Initializing " + project + "...");
+        int slashIndex = project.lastIndexOf('/');
         if (slashIndex > 0)
-            projectName = projectName.substring(slashIndex + 1);
+            project = project.substring(slashIndex + 1);
 
         if (getProjectDir().exists()) {
             if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {

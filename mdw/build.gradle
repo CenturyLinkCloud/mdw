@@ -207,11 +207,12 @@ allprojects {
  * needs a build project, and we don't want one especially for templates).
  */
 task zipTemplates(type: Zip) {
-    destinationDir = file("../${mdwOutputDir}")
-    archiveName = "mdw-templates-${mdwVersion}.zip"
-    from "templates"
-    include "**/*"
+	// ant zip is the workaround to ensure .gitignore is included
+    ant.zip(destfile: "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip") {
+        fileset(dir: 'templates', defaultexcludes:"no")
+    }
 }
+
 artifacts {
     archives zipTemplates
 }
