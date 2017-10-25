@@ -1,6 +1,6 @@
 ---
 permalink: /docs/guides/tomcat-guide/
-title: Tomcat Guide
+title: Tomcat Setup Guide
 ---
 
 Run MDW on Apache Tomcat.
@@ -15,7 +15,7 @@ Run MDW on Apache Tomcat.
   MDW war in your project is like this:
   ```
   cd <project_dir>
-  mdw install --tomcat 
+  mdw install --webapp 
   ```
   That's it.  The war is located under project_dir/deploy/webapps/.
   If you want to install the MDW war to a different location, use the `--webapps-dir` CLI option.

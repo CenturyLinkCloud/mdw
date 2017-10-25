@@ -1,6 +1,6 @@
 ---
 permalink: /docs/guides/SetupGuideForCloudFoundry/
-title: Setup Guide for CloudFoundry
+title: Cloud Foundry Setup Guide
 ---
 
 ### MDW Cloud Foundry Setup Guide
