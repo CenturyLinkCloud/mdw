@@ -8,7 +8,7 @@ title: Setup Guide for CloudFoundry
 ### Prerequisite
  - Eclipse with the [MDW Designer Plugin](../../getting-started/install-designer)
  - An MDW Project, which can be created by following the [quick-start guide](../../getting-started/quick-start)
- - For running MDW locally in Tomcat, refer to the [Tomcat Setup Guide](../SetupGuideForTomcat) 
+ - For running MDW locally in Tomcat, refer to the [Tomcat Setup Guide](../tomcat-guide) 
  
 ### Running in the Cloud
 

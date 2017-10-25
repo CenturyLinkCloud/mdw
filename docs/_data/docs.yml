@@ -13,7 +13,7 @@
 - title: Guides
   docs:
   - guides/mdw-cookbook
-  - guides/SetupGuideForTomcat
+  - guides/tomcat-guide
   - guides/SetupGuideForCloudFoundry
   
 - title: Documentation
