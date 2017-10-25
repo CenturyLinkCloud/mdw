@@ -93,7 +93,7 @@ public class Archive extends Setup {
     /**
      * Command arguments = list of asset specs.
      */
-    @Parameter(names="args", description="pass-thru jgit arguments", variableArity = true)
+    @Parameter(names="args", description="Asset path(s)", variableArity = true)
     public List<String> args = new ArrayList<>();
 
     /**

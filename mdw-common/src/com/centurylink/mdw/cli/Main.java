@@ -52,7 +52,7 @@ public class Main {
         Install install = new Install();
         Run run = new Run();
         Git git = new Git();
-        Archive asset = new Archive(false);
+        Archive archive = new Archive(false);
         Status status = new Status();
         Version version = new Version();
 
@@ -67,7 +67,7 @@ public class Main {
             .addCommand("version", version)
             .addCommand("git", git)
             .addCommand("status", status)
-            .addCommand("asset", asset)
+            .addCommand("archive", archive)
             .build();
 
         cmd.setProgramName("mdw");

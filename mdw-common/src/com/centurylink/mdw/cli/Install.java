@@ -46,6 +46,11 @@ public class Install extends Setup {
         this.projectDir = projectDir;
     }
 
+    @Parameter(names="--webapp", description="Install MDW WAR")
+    private boolean webapp = false;
+    public boolean isWebapp() { return webapp; }
+    public void setWebapp(boolean webapp) { this.webapp = webapp; }
+
     @Parameter(names="--webapps-dir", description="Webapps dir for Tomcat or Jetty installation")
     private File webappsDir;
     public File getWebappsDir() { return webappsDir; }
@@ -59,6 +64,13 @@ public class Install extends Setup {
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
         String mdwVer = new Props(getProjectDir(), this).get(Props.Gradle.MDW_VERSION);
         Download[] downloads = null;
+
+        if (webapp && webappsDir == null) {
+            webappsDir = new File(getProjectDir() + "/deploy/webapps");
+            if (!webappsDir.isDirectory() && !webappsDir.mkdirs())
+                throw new IOException("Unable to create directory: " + webappsDir.getAbsolutePath());
+        }
+
         if (webappsDir != null) {
             // download war from maven releases-url
             // clean out old installs
