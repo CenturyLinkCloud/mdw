@@ -34,18 +34,8 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
 public class Install extends Setup {
 
-    private static final String WEBTOOLS = "com/centurylink/mdw/mdw/5.5.40/mdw-webtools-5.5.40.war";
-
-    private static final long MDW_WAR_SIZE = 50000000L; // roughly
-    private static final long MDW_BOOT_SIZE = 65000000L; // roughly
-
     private File projectDir;
     public File getProjectDir() { return projectDir; }
-
-    @Parameter(names="--webtools", description="Include webtools")
-    private boolean webtools;
-    public boolean isWebtools() { return webtools; }
-    public void setWebtools(boolean webtools) { this.webtools = webtools; }
 
     Install() {
         // cli only
@@ -76,31 +66,13 @@ public class Install extends Setup {
             if (warFile.isFile()) {
                 Files.delete(Paths.get(warFile.getPath()));
             }
-            File webtoolsWar = new File(webappsDir + "/webtools.war");
-            if (webtools) {
-                if (webtoolsWar.isFile()) {
-                    Files.delete(Paths.get(webtoolsWar.getPath()));
-                }
-            }
             File warDir = new File(webappsDir + "/mdw");
             if (warDir.isDirectory()) {
                 new Delete(warDir).run(progressMonitors);
             }
-            if (webtools) {
-                File webtoolsDir = new File(webappsDir + "/webtools");
-                if (webtoolsDir.isDirectory()) {
-                    new Delete(webtoolsDir).run(progressMonitors);
-                }
-            }
             // download from releases-url
             URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw/" + mdwVer + "/mdw-" + mdwVer + ".war");
-            if (webtools) {
-                URL webtoolsUrl = new URL(getReleasesUrl() + "/" + WEBTOOLS);
-                downloads = new Download[]{new Download(url, warFile, MDW_WAR_SIZE), new Download(webtoolsUrl, webtoolsWar)};
-            }
-            else {
-                downloads = new Download[]{new Download(url, warFile, MDW_WAR_SIZE)};
-            }
+            downloads = new Download[]{new Download(url, warFile)};
         }
         else {
             // download spring boot from binaries-url
@@ -151,7 +123,7 @@ public class Install extends Setup {
                 }
             }
             else {
-                downloads = new Download[]{new Download(new URL(getBinariesUrl() + "/download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile, MDW_BOOT_SIZE)};
+                downloads = new Download[]{new Download(new URL(getBinariesUrl() + "/download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile)};
             }
         }
 

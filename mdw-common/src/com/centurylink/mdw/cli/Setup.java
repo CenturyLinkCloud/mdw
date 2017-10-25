@@ -39,8 +39,17 @@ public abstract class Setup implements Operation {
         defaultBasePackages.add("com.centurylink.mdw.testing");
     }
 
+    Setup() {
+      // CLI only
+    }
+
+    Setup(File projectDir) {
+        this.projectDir = projectDir;
+    }
+
+    protected File projectDir;
     public File getProjectDir() {
-        return new File(".");
+        return projectDir == null ? new File(".") : projectDir;
     }
 
     @Parameter(names="--mdw-version", description="MDW Version")
@@ -193,9 +202,6 @@ public abstract class Setup implements Operation {
             if (child.isDirectory())
                 addBasePackages(assetDir, child);
         }
-    }
-
-    protected Setup() {
     }
 
     static final Pattern SUBST_PATTERN = Pattern.compile("\\{\\{(.*?)}}");

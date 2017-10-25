@@ -26,8 +26,8 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
 public class Init extends Setup {
 
-    public Init(String project) {
-        this.project = project;
+    public Init(File projectDir) {
+        super(projectDir);
     }
 
     Init() {
@@ -35,7 +35,7 @@ public class Init extends Setup {
     }
 
     @Parameter(description="<project>", required=true)
-    private String project;
+    private String projectName;
 
     @Parameter(names="--user", description="Dev user")
     private String user = System.getProperty("user.name");
@@ -64,17 +64,14 @@ public class Init extends Setup {
 
     @Override
     public File getProjectDir() {
-        if (project != null)
-            return new File(project);
-        else
-            return super.getProjectDir();
+        return projectDir == null ? new File(projectName) : projectDir;
     }
 
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
-        System.out.println("Initializing " + project + "...");
-        int slashIndex = project.lastIndexOf('/');
+        System.out.println("Initializing " + projectName + "...");
+        int slashIndex = projectName.lastIndexOf('/');
         if (slashIndex > 0)
-            project = project.substring(slashIndex + 1);
+            projectName = projectName.substring(slashIndex + 1);
 
         if (getProjectDir().exists()) {
             if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {
@@ -104,6 +101,7 @@ public class Init extends Setup {
         }).run();
         System.out.println("Writing: ");
         subst(getProjectDir());
+        new File(getProjectDir() + "/src/main/java").mkdirs();
 
         new Update(getProjectDir()).run(progressMonitors);
         return this;

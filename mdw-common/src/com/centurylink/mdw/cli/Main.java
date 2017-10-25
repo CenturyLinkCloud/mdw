@@ -124,7 +124,7 @@ public class Main {
             }
         }
         catch (ParameterException ex) {
-            ex.printStackTrace();
+            // ex.printStackTrace();
             System.err.println(ex.getMessage());
             System.err.println("'mdw help' for usage information");
         }
