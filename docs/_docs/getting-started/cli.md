@@ -83,7 +83,7 @@ title: Command Line Interface
             Default: false
           --user
             Dev user
-            Default: (env user)
+            Default: dxoakes
 
     import      Import assets from Git (HARD RESET!)
       Usage: import [options]
@@ -219,11 +219,11 @@ title: Command Line Interface
           --snapshots
             Whether to include snapshot builds
             Default: false
+          --webapp
+            Install MDW WAR
+            Default: false
           --webapps-dir
             Webapps dir for Tomcat or Jetty installation
-          --webtools
-            Include webtools
-            Default: false
 
     run      Run MDW
       Usage: run [options]
@@ -242,7 +242,7 @@ title: Command Line Interface
       Usage: git [options]
         Options:
           args
-            pass-thru jgit arguments
+            Pass-thru jgit arguments
             Default: []
 
     status      Project status
@@ -288,8 +288,8 @@ title: Command Line Interface
             Whether to include snapshot builds
             Default: false
 
-    asset      Asset ref info (--show for contents)
-      Usage: asset [options]
+    archive      Asset ref info (--show for contents)
+      Usage: archive [options]
         Options:
           --asset-loc
             Asset location
@@ -331,7 +331,7 @@ title: Command Line Interface
             Whether to include snapshot builds
             Default: false
           args
-            pass-thru jgit arguments
+            Asset path(s)
             Default: []
   ```      
 
@@ -342,7 +342,7 @@ title: Command Line Interface
 ### Examples
   - Install mdw.war for Tomcat on Linux
   ```
-  mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.0.06
+  mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.0.08
   ```
   - MDW status
   ```

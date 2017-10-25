@@ -69,11 +69,15 @@ Run MDW on Apache Tomcat.
   Now that you've created a WTP server instance, the Servers view gives you a handy way to start and stop Tomcat.  
   And output is directed to the Eclipse Console view, where you can click on stack traces to open associated source code 
   (including MDW code and your Java assets).
+  
+  **Note:** In config/mdw.properties, if mdw.asset.loc and mdw.git.local.path are relative (eg: "assets", "."), change them to
+    absolute paths (eg: "c:/workspaces/my-mdw/assets", "c:/workspaces/my-mdw").  The startup directory when running Tomcat
+    this way is the Eclipse installation directory.  Relative to that, your assets won't be found by MDW.
   - Start your server by right-clicking on it (or use the icon in the Servers view toolbar).
     The first time you start your server, Tomcat explodes the mdw.war file in your deploy/webapps directory and caches the deployable content.
     This can sometimes take a minute.  With the server running you should see MDW logger output in the Eclipse Console view. 
   
-  Tip: When you upgrade to a new MDW build version in Eclipse, Designer automatically downloads the corresponding mdw.war file into your deploy/webapps directory.
+  **Tip:** When you upgrade to a new MDW build version in Eclipse, Designer automatically downloads the corresponding mdw.war file into your deploy/webapps directory.
   If at any time you want to clean out the MDW deployment and start fresh, you can delete mdw.war and the exploded mdw directory 
   (and for a very thorough cleansing you can even delete the Tomcat cache under deploy/work/Catalina/localhost/mdw).
   Then you can deploy from scratch from Package Explorer view by right-clicking on your workflow project and selecting MDW Update > Update Framework Libraries.
