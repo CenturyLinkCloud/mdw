@@ -26,9 +26,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.databind.type.SimpleType;
 
 import io.swagger.annotations.Info;
 import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.converter.ModelConverters;
+import io.swagger.jackson.ModelResolver;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.License;
@@ -43,6 +48,7 @@ import io.swagger.models.parameters.PathParameter;
 import io.swagger.servlet.ReaderContext;
 import io.swagger.servlet.extensions.ReaderExtension;
 import io.swagger.util.BaseReaderUtils;
+import io.swagger.util.Json;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
 
@@ -56,6 +62,14 @@ public class SwaggerReader {
 
     private SwaggerReader(Swagger swagger) {
         this.swagger = swagger;
+        ModelConverters.getInstance().addConverter(new ModelResolver(Json.mapper()) {
+            protected boolean shouldIgnoreClass(Type type) {
+                if (type instanceof SimpleType && JSONObject.class.equals(((SimpleType)type).getRawClass())) {
+                    return true;
+                }
+                return super.shouldIgnoreClass(type);
+            }
+        });
     }
 
     /**

@@ -19,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.limberest.json.Jsonator;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Replaces {@link com.centurylink.mdw.common.service.Jsonable}
@@ -27,7 +26,6 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public interface Jsonable extends io.limberest.json.Jsonable {
 
-    @ApiModelProperty(hidden=true)
     default JSONObject getJson() throws JSONException {
         return new Jsonator(this).getJson(create());
     };
