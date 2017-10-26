@@ -57,7 +57,7 @@ public class Archive extends Setup {
 
     public static void main(String[] args) throws IOException {
         JCommander cmd = new JCommander();
-        List<String> archiveArgs = new ArrayList<>();;
+        List<String> archiveArgs = new ArrayList<>();
         archiveArgs.add("archive");
         archiveArgs.add("args");
         boolean show = false;
@@ -93,7 +93,7 @@ public class Archive extends Setup {
     /**
      * Command arguments = list of asset specs.
      */
-    @Parameter(names="args", description="Asset path(s)", variableArity = true)
+    @Parameter(names="args", description="Asset spec(s)", variableArity=true)
     public List<String> args = new ArrayList<>();
 
     /**

@@ -317,8 +317,15 @@ public abstract class Setup implements Operation {
      * Override for extended debug info (always calling super.debug()).
      */
     public boolean validate() throws IOException {
-        Path projPath = Paths.get(getProjectDir().getPath()).normalize().toAbsolutePath();
-        Path assetPath = Paths.get(getAssetRoot().getPath()).normalize().toAbsolutePath();
+        String projPath = Paths.get(getProjectDir().getPath()).toAbsolutePath().normalize().toString();
+        String assetPath = Paths.get(getAssetRoot().getPath()).toAbsolutePath().normalize().toString();
+
+        // normalize windows drive letter
+        if (projPath.charAt(1) == ':')
+            projPath = projPath.substring(0, 1).toLowerCase() + projPath.substring(1);
+        if (assetPath.charAt(1) == ':')
+            assetPath = assetPath.substring(0, 1).toLowerCase() + assetPath.substring(1);
+
         if (!assetPath.startsWith(projPath)) {
             System.err.println("Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
             return false;

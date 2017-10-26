@@ -56,7 +56,7 @@ public class Git implements Operation {
     /**
      * Arguments for pass-thru git command.
      */
-    @Parameter(names="args", description="Pass-thru jgit arguments", variableArity = true)
+    @Parameter(names="args", description="Pass-thru jgit arguments", variableArity=true)
     public List<String> args = new ArrayList<>();
 
     // for CLI

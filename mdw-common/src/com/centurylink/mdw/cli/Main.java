@@ -53,6 +53,7 @@ public class Main {
         Run run = new Run();
         Git git = new Git();
         Archive archive = new Archive(false);
+        Test test = new Test();
         Status status = new Status();
         Version version = new Version();
 
@@ -68,6 +69,7 @@ public class Main {
             .addCommand("git", git)
             .addCommand("status", status)
             .addCommand("archive", archive)
+            .addCommand("test", test)
             .build();
 
         cmd.setProgramName("mdw");
@@ -107,6 +109,11 @@ public class Main {
                     checkLoc(run.getProjectDir());
                     op = status;
                 }
+                else if (command.equals("test")) {
+                    checkLoc(run.getProjectDir());
+                    op = test;
+                }
+
 
                 if (op == null) {
                     cmd.usage();
