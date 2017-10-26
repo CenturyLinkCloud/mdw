@@ -84,7 +84,6 @@ public class Main {
                 cmd.usage();
             }
             else {
-                version.run();
                 Operation op = null;
                 if (command.equals("init")) {
                     op = init;
@@ -113,7 +112,9 @@ public class Main {
                     checkLoc(run.getProjectDir());
                     op = test;
                 }
-
+                else if (command.equals("version")) {
+                    op = version;
+                }
 
                 if (op == null) {
                     cmd.usage();
