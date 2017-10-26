@@ -39,6 +39,7 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="test", commandDescription="Run Automated Test(s)", separators="=")
 public class Test extends Setup {
+    private static final String PATH = "/com/centurylink/mdw/testing/AutomatedTests";
 
     @Parameter(names="--include", description="Test case include(s)")
     private String include = "**/*.test,**/*.postman";
@@ -70,8 +71,14 @@ public class Test extends Setup {
     public int getStubPort() { return stubPort; }
     public void setStubPort(int port) { this.stubPort = port; }
 
-    private boolean running;
+    @Parameter(names="--json", description="Print JSON summary to stdout")
+    private boolean json;
+    public boolean isJson() { return json; }
+    public void setJson(boolean json) { this.json = json; }
 
+    /**
+     * TODO: Option for websocket updates instead of polling.
+     */
     @Override
     public Operation run(ProgressMonitor... progressMonitors) throws IOException {
         List<File> caseFiles = findCaseFiles();
@@ -86,15 +93,113 @@ public class Test extends Setup {
                 System.out.println("  " + caseFile);
         }
 
-        String path = "/com/centurylink/mdw/testing/AutomatedTests";
         JSONObject configRequest = getConfigRequest();
-        new Fetch(new URL(getServicesUrl() + path + "/config")).put(configRequest.toString(2));
+        new Fetch(new URL(getServicesUrl() + PATH + "/config")).put(configRequest.toString(2));
 
-        // TODO threading
-        // runTests(caseFiles);
-        JSONObject caseRequest = getCaseRequest(caseFiles);
-        new Fetch(new URL(getServicesUrl() + path + "/exec")).post(caseRequest.toString(2));
+        Map<String,List<String>> pkgTests = new HashMap<>();
+        Map<String,String> statuses = new HashMap<>();
+        for (File caseFile : caseFiles) {
+            String assetPath = getAssetPath(caseFile);
+            String pkg = getPackageName(assetPath);
+            List<String> assets = pkgTests.get(pkg);
+            if (assets == null) {
+                assets = new ArrayList<>();
+                pkgTests.put(pkg, assets);
+            }
+            String name = getAssetName(assetPath);
+            assets.add(name);
+            statuses.put(pkg + "/" + name, null);
+        }
+
+        JSONObject caseRequest = getCaseRequest(pkgTests);
+        boolean done = false;
+        new Fetch(new URL(getServicesUrl() + PATH + "/exec")).post(caseRequest.toString(2));
+        if (!json)
+            System.out.println("Running tests...");
+        long before = System.currentTimeMillis();
+        while (!done) {
+            JSONObject resp = new JSONObject(new Fetch(new URL(getServicesUrl() + PATH)).get());
+            JSONArray pkgs = resp.getJSONArray("packages");
+            for (int i = 0; i < pkgs.length(); i++) {
+                JSONObject pkg = pkgs.getJSONObject(i);
+                JSONArray tests = pkg.getJSONArray("testCases");
+                for (int j = 0; j < tests.length(); j++) {
+                    JSONObject test = tests.getJSONObject(j);
+                    String asset = pkg.getString("name") + "/" + test.getString("name");
+                    if (statuses.containsKey(asset) && test.has("status")) {
+                        String status = test.getString("status");
+                        String oldStatus = statuses.get(asset);
+                        if (oldStatus == null || !oldStatus.equals(status)) {
+                            statuses.put(asset, status);
+                            if (isFinished(status)) {
+                                if (!json) {
+                                    int finished = finished(statuses);
+                                    System.out.println("  " + status + " (" + finished + "/" + statuses.size() + ") - " + asset);
+                                }
+                                if (!isSuccess(status) && test.has("message") && !json) {
+                                    System.out.println("    (" + test.getString("message"));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            done = finished(statuses) == statuses.size();
+            if (done) {
+                printSummary(statuses, System.currentTimeMillis() - before);
+                continue;
+            }
+
+            try {
+                Thread.sleep(500);
+            }
+            catch (InterruptedException ex) {
+                System.err.println("Test execution canceled");
+            }
+        }
         return this;
+    }
+
+    private int finished(Map<String,String> statuses) {
+        int finished = 0;
+        for (String test : statuses.keySet()) {
+            if (isFinished(statuses.get(test))) {
+                finished++;
+            }
+        }
+        return finished;
+    }
+    protected void printSummary(Map<String,String> statuses, long elapsed) {
+        Map<String,Integer> counts = new HashMap<>();
+        for (String status : statuses.values()) {
+            Integer count = counts.get(status);
+            if (count == null) {
+                counts.put(status, 1);
+            }
+            else {
+                counts.put(status, ++count);
+            }
+        }
+        if (json) {
+            JSONObject json = new JSONObject();
+            json.put("URL", getServicesUrl() + PATH);
+            json.put("Total", statuses.size());
+            json.put("Time", elapsed);
+            for (String status : counts.keySet()) {
+                json.put(status, counts.get(status));
+            }
+            System.out.println(json.toString(2));
+        }
+        else {
+            System.out.println("\nSummary (" + getServicesUrl() + PATH + "):");
+            for (String status : counts.keySet()) {
+                System.out.print("  " + status + ": ");
+                for (int i = status.length(); i < 16; i++)
+                    System.out.print(" ");
+                System.out.println(counts.get(status));
+            }
+            System.out.println("  Total:            " + statuses.size() + " (in " + elapsed + " ms)");
+        }
     }
 
     protected List<File> findCaseFiles() throws IOException {
@@ -138,18 +243,7 @@ public class Test extends Setup {
         return false;
     }
 
-    private JSONObject getCaseRequest(List<File> caseFiles) throws IOException {
-        Map<String,List<String>> pkgTests = new HashMap<>();
-        for (File caseFile : caseFiles) {
-            String assetPath = getAssetPath(caseFile);
-            String pkg = getPackageName(assetPath);
-            List<String> assets = pkgTests.get(pkg);
-            if (assets == null) {
-                assets = new ArrayList<>();
-                pkgTests.put(pkg, assets);
-            }
-            assets.add(getAssetName(assetPath));
-        }
+    private JSONObject getCaseRequest(Map<String,List<String>> pkgTests) throws IOException {
         JSONObject json = new JSONObject();
         JSONArray pkgs = new JSONArray();
         json.put("packages", pkgs);
@@ -181,5 +275,14 @@ public class Test extends Setup {
                 json.put("stubPort", stubPort);
         }
         return json;
+    }
+
+    private boolean isFinished(String status) {
+        return "Passed".equals(status) || "Errored".equals(status)
+                || "Failed".equals(status);
+    }
+
+    private boolean isSuccess(String status) {
+        return "Passed".equals(status);
     }
 }
