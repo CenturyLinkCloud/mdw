@@ -1,5 +1,25 @@
 # Change Log
 
+## [v6.0.08](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.08) (2017-10-27)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07...v6.0.08)
+
+**Implemented enhancements:**
+
+- Task UI Integration Fixes [\#239](https://github.com/CenturyLinkCloud/mdw/issues/239)
+- Execute autotests from MDW CLI [\#237](https://github.com/CenturyLinkCloud/mdw/issues/237)
+- DynamicJavaActivity is compiled for only a single version. [\#232](https://github.com/CenturyLinkCloud/mdw/issues/232)
+- Custom report to show Order mean time [\#159](https://github.com/CenturyLinkCloud/mdw/issues/159)
+- Support Tomcat war installation in MDW CLI [\#144](https://github.com/CenturyLinkCloud/mdw/issues/144)
+- In Hub-UI, display process instances that use previous process definition versions. [\#99](https://github.com/CenturyLinkCloud/mdw/issues/99)
+
+**Closed issues:**
+
+- Ugly startup exception when running locally with project created via "mdw init" [\#227](https://github.com/CenturyLinkCloud/mdw/issues/227)
+- RuntimeUI always displays the latest definition of a process [\#209](https://github.com/CenturyLinkCloud/mdw/issues/209)
+- Gradle custom task plugin changes prevent publishing mdw-templates zip artifact [\#184](https://github.com/CenturyLinkCloud/mdw/issues/184)
+- Process updates not reflected after cache refresh [\#118](https://github.com/CenturyLinkCloud/mdw/issues/118)
+- Newly-added user sometimes not reflected in user list [\#26](https://github.com/CenturyLinkCloud/mdw/issues/26)
+
 ## [v6.0.07](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.07) (2017-10-13)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.06...v6.0.07)
 
