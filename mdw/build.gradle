@@ -206,10 +206,18 @@ allprojects {
  * The artifact for this build is mdw-templates (only because each maven artifact
  * needs a build project, and we don't want one especially for templates).
  */
+/**
+ * Ant zip is the workaround to ensure .gitignore is included.
+ */
 task zipTemplates(type: Zip) {
-	// ant zip is the workaround to ensure .gitignore is included
-    ant.zip(destfile: "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip") {
-        fileset(dir: 'templates', defaultexcludes:"no")
+    destinationDir = file("../${mdwOutputDir}")
+    archiveName = "mdw-templates-${mdwVersion}.zip"
+    from "templates"
+    include "**/*"
+    doLast {
+        ant.zip(destfile: "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip") {
+            fileset(dir: 'templates', defaultexcludes: "no")
+        }
     }
 }
 
