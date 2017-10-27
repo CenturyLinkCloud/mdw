@@ -81,5 +81,5 @@
 
 16 - TODO: Publish NPM package 
 
-17 - Run task 1 to 4 and commit the files to start work on post release SNAPSHOT builds
+17 - Run task 1 to 2 and commit the files to start work on post release SNAPSHOT builds
     
