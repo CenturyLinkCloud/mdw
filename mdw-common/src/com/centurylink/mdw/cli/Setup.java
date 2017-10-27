@@ -89,7 +89,7 @@ public abstract class Setup implements Operation {
         Props.DISCOVERY_URL.specified = true;
     }
 
-    @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
+    @Parameter(names="--releases-url", description="MDW releases Maven repo URL")
     private String releasesUrl = "http://repo.maven.apache.org/maven2";
     public String getReleasesUrl() {
         return releasesUrl.endsWith("/") ? releasesUrl.substring(0, releasesUrl.length() - 1) : releasesUrl;
@@ -97,6 +97,16 @@ public abstract class Setup implements Operation {
     public void setReleasesUrl(String url) {
         this.releasesUrl = url;
         Props.Gradle.MAVEN_REPO_URL.specified = true;
+    }
+
+    @Parameter(names="--services-url", description="MDW service base URL")
+    private String servicesUrl = "http://localhost:8080/mdw/services";
+    public String getServicesUrl() {
+        return servicesUrl.endsWith("/") ? servicesUrl.substring(0, servicesUrl.length() - 1) : servicesUrl;
+    }
+    public void setServicesUrl(String url) {
+        this.servicesUrl = url;
+        Props.SERVICES_URL.specified = true;
     }
 
     @Parameter(names="--asset-loc", description="Asset location")
@@ -298,6 +308,15 @@ public abstract class Setup implements Operation {
 
     public String getAssetPath(File file) throws IOException {
         return getRelativePath(getAssetRoot(), file);
+    }
+
+    public String getPackageName(String assetPath) {
+        int lastSlash = assetPath.lastIndexOf('/');
+        return lastSlash > 0 ? assetPath.substring(0, lastSlash).replace('/', '.') : null;
+    }
+    public String getAssetName(String assetPath) {
+        int lastSlash = assetPath.lastIndexOf('/');
+        return lastSlash < assetPath.length() ? assetPath.substring(lastSlash + 1) : assetPath;
     }
 
     public File getAssetRoot() throws IOException {
