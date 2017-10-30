@@ -247,6 +247,7 @@ task archiveAssetZips {
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
             discoveredFiles.add(file)
                 artifacts{
+                 archives file:file
                  assets file:file 
                 }
             }

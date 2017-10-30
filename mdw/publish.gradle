@@ -170,7 +170,13 @@ task uploadAssetsToMavenCentral(type: GradleBuild) {
 }
   
 task publishToMavenCentral(type: GradleBuild) {
-    dependsOn uploadToMavenCentral, uploadAssetsToMavenCentral
+    dependsOn uploadToMavenCentral
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
+}
+
+task publishAssetsToMavenCentral(type: GradleBuild) {
+    dependsOn uploadAssetsToMavenCentral
     if (!mdwVersion.endsWith("-SNAPSHOT"))
         dependsOn closeAndReleaseRepository
 }
