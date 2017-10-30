@@ -142,6 +142,13 @@ task publishToMavenCentral(type: GradleBuild) {
     startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
+task publishAssetsToMavenCentral(type: GradleBuild) {
+    dependsOn javadocs
+    buildFile = "publish.gradle"
+    tasks = ["publishAssetsToMavenCentral"]
+    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
 allprojects {
     group = "com.centurylink.mdw"
     version = "${mdwVersion}"
@@ -247,7 +254,6 @@ task archiveAssetZips {
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
             discoveredFiles.add(file)
                 artifacts{
-                 archives file:file
                  assets file:file 
                 }
             }
