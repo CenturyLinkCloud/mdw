@@ -26,16 +26,15 @@ import org.json.JSONObject;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
@@ -45,12 +44,12 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.service.data.task.TaskDataAccess;
-import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.task.types.TaskList;
+import com.centurylink.mdw.test.TestException;
 import com.centurylink.mdw.util.StringHelper;
 
 public class RegressionTestEventHandler extends ExternalEventHandlerBase {
@@ -264,27 +263,20 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         return createSuccessResponse(null);
     }
 
-    private Long findTaskInstanceId(String taskName, String masterRequestId) throws Exception {
-        int n = taskName.length();
-        int k = 0;
-        if (n > 3 && taskName.charAt(n - 3) == '[' &&
-                Character.isDigit(taskName.charAt(n - 2)) &&
-                taskName.charAt(n - 1)==']') {
-            k = Integer.parseInt(taskName.substring(n - 2, n - 1));
-            taskName = taskName.substring(0, n - 3);
-        }
-        TaskTemplate taskVo = TaskTemplateCache.getTemplateForName(taskName);
-        if (taskVo == null)
-            throw new Exception("No task found for name: '" + taskName + "'");
-        List<Long> tiList = new TaskDataAccess(new DatabaseAccess(null)).findTaskInstance(taskVo.getTaskId(), masterRequestId);
-        if (tiList.size() < k + 1)
-            throw new Exception("Cannot find the task instance with request: " + masterRequestId + " and name: '" + taskName + "'");
-        Long taskInstId;
-        if (k > 0)
-            taskInstId = tiList.get(tiList.size() - k - 1); //Task instance Id is returned in desc order so reverse the order here.
-        else
-            taskInstId = tiList.get(k);
-        return taskInstId;
+    private Long findTaskInstanceId(String taskName, String user, String masterRequestId) throws Exception {
+        Query query = new Query("");
+        query.setFilter("masterRequestId", masterRequestId);
+        query.setFilter("name", taskName);
+        query.setFilter("app", "autotest");
+        query.setDescending(true);
+
+        TaskList taskList = ServiceLocator.getTaskServices().getTasks(query, user);
+        List<TaskInstance> taskInstances = taskList.getTasks();
+        if (taskInstances.isEmpty())
+            throw new TestException("Cannot find task instances: " + query);
+
+        TaskInstance taskInstance = taskInstances.get(0); // latest
+        return taskInstance.getTaskInstanceId();
     }
 
     // handle emulation of task action specified in form data document
@@ -294,7 +286,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         String taskName = getParameter(xmlbean, "TaskName", true);
         String directAction = getParameter(xmlbean, "DirectAction", false);
         String masterRequestId = getParameter(xmlbean, "MasterRequestId", true);
-        Long taskInstId = this.findTaskInstanceId(taskName, masterRequestId);
+        Long taskInstId = findTaskInstanceId(taskName, cuid, masterRequestId);
         List<Parameter> params = xmlbean.getActionRequest().getAction().getParameterList();
         if (params!=null && !params.isEmpty()) {
             TaskInstance taskInst = ServiceLocator.getTaskServices().getInstance(taskInstId);
