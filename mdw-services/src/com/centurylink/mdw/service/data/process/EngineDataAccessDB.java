@@ -577,8 +577,13 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             if (event == null)
                 throw e;  // throw original SQLException
             hasWaiters = true;
-            if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
-                deleteEventInstance(eventName);
+            if (event.getStatus().equals(EventInstance.STATUS_WAITING)) { // Recurring type event - only 1 waiter is allowed
+                deleteEventInstance(eventName); // Cleanup for next time same event is being registered for
+                List<EventWaitInstance> eventWaits = getEventWaitInstances(eventName);
+                if (eventWaits != null && eventWaits.size() > 0) // There is a waiter, so return it
+                    return eventWaits;
+                else // Event wait got removed from event_wait_instance table when waiter's process completed, but not from event_instance - recreate event arrival
+                    return recordEventArrive(eventName, documentId);
             } else if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
                 event.setDocumentId(documentId);
                 consumeEventInstance(event, 0);
