@@ -1,6 +1,6 @@
 {
   "name": "hub-ui",
-  "version": "6.0.08",
+  "version": "6.0.09",
   "description": "mdw6",
   "main": "hub-ui.js",
   "license": "Apache-2.0",
