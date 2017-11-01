@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.util.log;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -26,9 +28,10 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.MdwWebSocketServer;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.soccom.SoccomClient;
-
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.workflow.TransitionStatus;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.soccom.SoccomClient;
 
 public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
@@ -37,9 +40,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     private static final String SENTRY_MARK = "[SENTRY-MARK] ";
 
-    private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([^\\]]+)\\] (.*)";
+    private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)\\.([^\\]]+)\\] (.*)";
 
     private static Pattern pattern = Pattern.compile(MESSAGE_REG_EX, Pattern.DOTALL);
+
+    private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.HH:mm:ss.SSS");
 
     protected static String watcher = null;
 
@@ -82,23 +87,41 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         return watcher != null;
     }
 
-    protected JSONObject buildJSONLogMessage(String message) throws JSONException {
+    protected JSONObject buildJSONLogMessage(String message) throws JSONException, ParseException {
         JSONObject obj = null;
-
         Matcher matcher = pattern.matcher(message);
-
-        if (matcher.matches())
-        {
+        String subtype = null;
+        String msg = null;
+        if (matcher.matches()) {
             obj = new JsonObject();
             obj.put("name", "LogWatcher");
-            obj.put("time", matcher.group(1));
+            String t = matcher.group(1);
+            obj.put("time", dateFormat.parse(t).toInstant());
             obj.put("procId", new Long(matcher.group(2)));
             obj.put("procInstId", new Long(matcher.group(3)));
-            obj.put("subtype", matcher.group(4));
-            obj.put("id", matcher.group(5));
-            obj.put("msg", matcher.group(6));
+            subtype = matcher.group(4);
+            obj.put("subtype", subtype);
+            obj.put("id", new Long(matcher.group(5)));
+            obj.put("instId", new Long(matcher.group(6)));
+            msg = matcher.group(7);
+            obj.put("msg", msg);
         }
-
+        if ("a".equals(subtype) && msg != null) {
+            if (msg.startsWith(WorkStatus.LOGMSG_COMPLETE)) {
+                obj.put("status", WorkStatus.STATUS_COMPLETED);
+            } else if (msg.startsWith(WorkStatus.LOGMSG_START)) {
+                obj.put("status", WorkStatus.STATUS_IN_PROGRESS);
+            } else if (msg.startsWith(WorkStatus.LOGMSG_FAILED)) {
+                obj.put("status", WorkStatus.STATUS_FAILED);
+            } else if (msg.startsWith(WorkStatus.LOGMSG_SUSPEND)) {
+                obj.put("status", WorkStatus.STATUS_WAITING);
+            } else if (msg.startsWith(WorkStatus.LOGMSG_HOLD)) {
+                obj.put("status", WorkStatus.STATUS_HOLD);
+            }
+        }
+        else if ("t".equals(subtype)) {
+            obj.put("status", TransitionStatus.STATUS_COMPLETED);
+        }
         return obj;
     }
 
@@ -110,11 +133,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             try {
                 JSONObject jsonObj = buildJSONLogMessage(message);
 
-                if (jsonObj != null && jsonObj.has("ProcInstId") && jsonObj.has("procId")) {
-                    if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("ProcInstId")))
-                        sendToWebWatcher(jsonObj, jsonObj.getString("ProcInstId"));
-                    else if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("procId")))
-                        sendToWebWatcher(jsonObj, jsonObj.getString("procId"));
+                if (jsonObj != null && jsonObj.has("procInstId") && jsonObj.has("procId")) {
+                    if (MdwWebSocketServer.getInstance().hasInterestedConnections(String.valueOf(jsonObj.get("procInstId"))))
+                        sendToWebWatcher(jsonObj, String.valueOf(jsonObj.get("procInstId")));
+                    else if (MdwWebSocketServer.getInstance().hasInterestedConnections(String.valueOf(jsonObj.get("procId"))))
+                        sendToWebWatcher(jsonObj, String.valueOf(jsonObj.get("procId")));
                 }
             }
             catch (Throwable e) {
@@ -142,7 +165,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     protected void sendToWebWatcher(JSONObject message, String key) throws JSONException {
-        MdwWebSocketServer.getInstance().send(message.toString(2), key);
+        MdwWebSocketServer.getInstance().send(message.toString(), key);
     }
 
 }

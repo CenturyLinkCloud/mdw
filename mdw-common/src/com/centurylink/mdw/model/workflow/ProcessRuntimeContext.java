@@ -187,7 +187,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             elResolver = new CompositeELResolver() {
                 @Override
                 public Object getValue(ELContext elContext, Object base, Object property) {
-                    if (base == null) {
+                    if (base == null || base.equals("")) {
                         elContext.setPropertyResolved(true);
                         return "";  // don't blow up on empty variables
                     }

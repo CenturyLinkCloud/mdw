@@ -120,7 +120,14 @@ task buildDist(type: Exec) {
         commandLine 'grunt', '--no-color'
 }
 
+task esLint(type: Exec) {
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine 'cmd', '/c', 'grunt', '--no-color', 'eslint'
+    else
+        commandLine 'grunt', '--no-color', 'eslint'
+}
 task jsHint(type: Exec) {
+    dependsOn esLint
     if (System.properties["os.name"].startsWith("Windows"))
         commandLine 'cmd', '/c', 'grunt', '--no-color', 'jshint'
     else
