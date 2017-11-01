@@ -31,6 +31,7 @@
   docs:
   - development/built-in-activities
   - development/built-in-variable-types
+  - guides/spring-boot
   - link-to-javadoc
 
 - title: Presentations

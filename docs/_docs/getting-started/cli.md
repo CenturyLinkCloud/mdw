@@ -29,310 +29,77 @@ title: Command Line Interface
 
     init      Initialize an MDW project
       Usage: init [options] <project>
-        Options:
-          --asset-loc
-            Asset location
-            Default: assets
-          --base-asset-packages
-            MDW Base Asset Packages (comma-separated)
-          --cloud-foundry
-            Generate a Cloud Foundry manifest.yml file
-            Default: false
-          --database-password
-            DB Password
-            Default: mdw
-          --database-url
-            JDBC URL (without credentials)
-            Default: jdbc:mariadb://localhost:3308/mdw
-          --database-user
-            DB User
-            Default: mdw
-          --debug
-            Display CLI debug information
-            Default: false
-          --discovery-url
-            Asset Discovery URL
-            Default: https://mdw.useast.appfog.ctl.io/mdw
-          --eclipse
-            Generate Eclipse workspace artifacts
-            Default: true
-          --git-branch
-            Git branch
-            Default: master
-          --git-password
-            Git password
-          --git-remote-url
-            Git repository URL
-            Default: https://github.com/CenturyLinkCloud/mdw-demo.git
-          --git-user
-            Git user
-            Default: anonymous
-          --maven
-            Generate a Maven pom.xml build file
-            Default: false
-          --mdw-version
-            MDW Version
-          --releases-url
-            MDW Releases Maven Repo URL
-            Default: http://repo.maven.apache.org/maven2
-          --snapshots
-            Whether to include snapshot builds
-            Default: false
-          --spring-boot
-            Generate Spring Boot build artifacts (currently only Gradle)
-            Default: false
-          --user
-            Dev user
-            Default: dxoakes
 
     import      Import assets from Git (HARD RESET!)
       Usage: import [options]
-        Options:
-          --asset-loc
-            Asset location
-            Default: assets
-          --base-asset-packages
-            MDW Base Asset Packages (comma-separated)
-          --database-password
-            DB Password
-            Default: mdw
-          --database-url
-            JDBC URL (without credentials)
-            Default: jdbc:mariadb://localhost:3308/mdw
-          --database-user
-            DB User
-            Default: mdw
-          --debug
-            Display CLI debug information
-            Default: false
-          --discovery-url
-            Asset Discovery URL
-            Default: https://mdw.useast.appfog.ctl.io/mdw
-          --force
-            Force overwrite, even on localhost or when branch disagrees
-            Default: false
-          --git-branch
-            Git branch
-            Default: master
-          --git-password
-            Git password
-          --git-remote-url
-            Git repository URL
-            Default: https://github.com/CenturyLinkCloud/mdw-demo.git
-          --git-user
-            Git user
-            Default: anonymous
-          --mdw-version
-            MDW Version
-          --releases-url
-            MDW Releases Maven Repo URL
-            Default: http://repo.maven.apache.org/maven2
-          --snapshots
-            Whether to include snapshot builds
-            Default: false
 
     update      Update MDW assets locally via Discovery
       Usage: update [options]
-        Options:
-          --asset-loc
-            Asset location
-            Default: assets
-          --base-asset-packages
-            MDW Base Asset Packages (comma-separated)
-          --database-password
-            DB Password
-            Default: mdw
-          --database-url
-            JDBC URL (without credentials)
-            Default: jdbc:mariadb://localhost:3308/mdw
-          --database-user
-            DB User
-            Default: mdw
-          --debug
-            Display CLI debug information
-            Default: false
-          --discovery-url
-            Asset Discovery URL
-            Default: https://mdw.useast.appfog.ctl.io/mdw
-          --git-branch
-            Git branch
-            Default: master
-          --git-password
-            Git password
-          --git-remote-url
-            Git repository URL
-            Default: https://github.com/CenturyLinkCloud/mdw-demo.git
-          --git-user
-            Git user
-            Default: anonymous
-          --mdw-version
-            MDW Version
-          --releases-url
-            MDW Releases Maven Repo URL
-            Default: http://repo.maven.apache.org/maven2
-          --snapshots
-            Whether to include snapshot builds
-            Default: false
 
     install      Install MDW
       Usage: install [options]
-        Options:
-          --asset-loc
-            Asset location
-            Default: assets
-          --base-asset-packages
-            MDW Base Asset Packages (comma-separated)
-          --binaries-url
-            MDW Binaries URL
-            Default: https://github.com/CenturyLinkCloud/mdw/releases
-          --database-password
-            DB Password
-            Default: mdw
-          --database-url
-            JDBC URL (without credentials)
-            Default: jdbc:mariadb://localhost:3308/mdw
-          --database-user
-            DB User
-            Default: mdw
-          --debug
-            Display CLI debug information
-            Default: false
-          --discovery-url
-            Asset Discovery URL
-            Default: https://mdw.useast.appfog.ctl.io/mdw
-          --git-branch
-            Git branch
-            Default: master
-          --git-password
-            Git password
-          --git-remote-url
-            Git repository URL
-            Default: https://github.com/CenturyLinkCloud/mdw-demo.git
-          --git-user
-            Git user
-            Default: anonymous
-          --mdw-version
-            MDW Version
-          --releases-url
-            MDW Releases Maven Repo URL
-            Default: http://repo.maven.apache.org/maven2
-          --snapshots
-            Whether to include snapshot builds
-            Default: false
-          --webapp
-            Install MDW WAR
-            Default: false
-          --webapps-dir
-            Webapps dir for Tomcat or Jetty installation
 
     run      Run MDW
       Usage: run [options]
-        Options:
-          --binaries-url
-            MDW Binaries
-            Default: https://github.com/CenturyLinkCloud/mdw/releases
-          --vm-args
-            Java VM Arguments (enclose in quotes)
-            Default: [-Dmdw.runtime.env=dev, -Dmdw.config.location=config]
 
     version      MDW CLI Version
       Usage: version
 
     git      Git commands
-      Usage: git [options]
-        Options:
-          args
-            Pass-thru jgit arguments
-            Default: []
+      Usage: git [args]
 
     status      Project status
       Usage: status [options]
-        Options:
-          --asset-loc
-            Asset location
-            Default: assets
-          --base-asset-packages
-            MDW Base Asset Packages (comma-separated)
-          --database-password
-            DB Password
-            Default: mdw
-          --database-url
-            JDBC URL (without credentials)
-            Default: jdbc:mariadb://localhost:3308/mdw
-          --database-user
-            DB User
-            Default: mdw
-          --debug
-            Display CLI debug information
-            Default: false
-          --discovery-url
-            Asset Discovery URL
-            Default: https://mdw.useast.appfog.ctl.io/mdw
-          --git-branch
-            Git branch
-            Default: master
-          --git-password
-            Git password
-          --git-remote-url
-            Git repository URL
-            Default: https://github.com/CenturyLinkCloud/mdw-demo.git
-          --git-user
-            Git user
-            Default: anonymous
-          --mdw-version
-            MDW Version
-          --releases-url
-            MDW Releases Maven Repo URL
-            Default: http://repo.maven.apache.org/maven2
-          --snapshots
-            Whether to include snapshot builds
-            Default: false
 
     archive      Asset ref info (--show for contents)
       Usage: archive [options]
-        Options:
-          --asset-loc
-            Asset location
-            Default: assets
-          --base-asset-packages
-            MDW Base Asset Packages (comma-separated)
-          --database-password
-            DB Password
-            Default: mdw
-          --database-url
-            JDBC URL (without credentials)
-            Default: jdbc:mariadb://localhost:3308/mdw
-          --database-user
-            DB User
-            Default: mdw
-          --debug
-            Display CLI debug information
-            Default: false
-          --discovery-url
-            Asset Discovery URL
-            Default: https://mdw.useast.appfog.ctl.io/mdw
-          --git-branch
-            Git branch
-            Default: master
-          --git-password
-            Git password
-          --git-remote-url
-            Git repository URL
-            Default: https://github.com/CenturyLinkCloud/mdw-demo.git
-          --git-user
-            Git user
-            Default: anonymous
-          --mdw-version
-            MDW Version
-          --releases-url
-            MDW Releases Maven Repo URL
-            Default: http://repo.maven.apache.org/maven2
-          --snapshots
-            Whether to include snapshot builds
-            Default: false
-          args
-            Asset path(s)
-            Default: []
+      
+    General Options ("mdw help" for command-specific options):
+      --asset-loc
+        Asset location
+        Default: assets
+      --base-asset-packages
+        MDW Base Asset Packages (comma-separated)
+      --database-password
+        DB Password
+        Default: mdw
+      --database-url
+        JDBC URL (without credentials)
+        Default: jdbc:mariadb://localhost:3308/mdw
+      --database-user
+        DB User
+        Default: mdw
+      --debug
+        Display CLI debug information
+        Default: false
+      --discovery-url
+        Asset Discovery URL
+        Default: https://mdw.useast.appfog.ctl.io/mdw
+      --force
+        Force overwrite, even on localhost or when branch disagrees
+        Default: false
+      --git-branch
+        Git branch
+        Default: master
+      --git-password
+        Git password
+      --git-remote-url
+        Git repository URL
+        Default: https://github.com/CenturyLinkCloud/mdw-demo.git
+      --git-user
+        Git user
+        Default: anonymous
+      --mdw-version
+        MDW Version
+      --releases-url
+        MDW releases Maven repo URL
+        Default: http://repo.maven.apache.org/maven2
+      --services-url
+        MDW service base URL
+        Default: http://localhost:8080/mdw/services
+      --snapshots
+        Whether to include snapshot builds
+        Default: false    
   ```      
 
 ### Quick Start
