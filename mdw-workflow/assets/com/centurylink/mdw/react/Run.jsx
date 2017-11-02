@@ -8,7 +8,11 @@ import Workflow from './Workflow.jsx';
 class Run extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { assetPath: window.location.hash.substring(15), values: [] };
+    this.state = { 
+        assetPath: window.location.hash.substring(15),
+        masterRequestId: '',
+        values: [] 
+    };
     this.handleChange = this.handleChange.bind(this);
   }
   

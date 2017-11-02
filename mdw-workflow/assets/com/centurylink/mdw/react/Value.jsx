@@ -83,7 +83,7 @@ class Value extends Component {
     return (
       <div className={classNames('form-group', {'has-error': value.error})}>
         <label className={classNames('control-label', 'col-xs-2', {
-            'mdw-required': value.display && value.display.required})} >
+            'mdw-required': value.display  === 'Required'})} >
           {value.label ? value.label : value.name}
         </label>
         <div className={value.isDocument ? 'col-md-10' : 'col-xs-4'}>
