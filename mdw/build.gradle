@@ -1,8 +1,10 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-configurations { 
-    assets 
+configurations {
+    assets { 
+        extendsFrom archives
+    }
 }
 
 subprojects {
@@ -250,24 +252,36 @@ task buildAll(type: GradleBuild) {
 task archiveAssetZips {
     dependsOn zipAssetPackages
     doLast{
+        signing {
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            sign configurations.assets
+        }
         ext.discoveredFiles = []
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
             discoveredFiles.add(file)
-                artifacts{
-                 assets file:file 
-                }
+            artifacts {
+                assets file:file 
+            }
+        }
+        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.asc').each { file ->
+            artifacts {
+                assets file:file
             }
         }
     }
+}
 
 task configureUploadAssets {
     dependsOn archiveAssetZips
-    doLast{
+    doLast {
         uploadAssets {
             ext.ossrhUsername = System.getProperty("ossrhUsername")
             ext.ossrhPassword = System.getProperty("ossrhPassword")
             repositories {
                 mavenDeployer {
+                    beforeDeployment {
+                        MavenDeployment deployment -> signing.signPom(deployment)
+                    }
                     repository(url: mavenRepoUrl) {
                         authentication(userName: ossrhUsername, password: ossrhPassword)
                     }
