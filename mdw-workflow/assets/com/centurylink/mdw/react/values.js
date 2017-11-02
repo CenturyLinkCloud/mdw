@@ -57,6 +57,7 @@ const values = {
     else {
       value.value = event.currentTarget.value;
     }
+    return valuesArr;
   }
 };
 
