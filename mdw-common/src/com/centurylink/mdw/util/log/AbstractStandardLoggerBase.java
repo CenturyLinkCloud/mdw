@@ -40,7 +40,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     private static final String SENTRY_MARK = "[SENTRY-MARK] ";
 
-    private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)\\.([^\\]]+)\\] (.*)";
+    private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)?\\.([^\\]]+)\\] (.*)";
 
     private static Pattern pattern = Pattern.compile(MESSAGE_REG_EX, Pattern.DOTALL);
 
@@ -69,8 +69,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         sb.append("[(");
         sb.append(type);
         sb.append(")");
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd.HH:mm:ss.SSS");
-        sb.append(df.format(new Date()));
+        sb.append(dateFormat.format(new Date()));
         if (tag!=null) {
             sb.append(" ");
             sb.append(tag);
@@ -122,6 +121,9 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         else if ("t".equals(subtype)) {
             obj.put("status", TransitionStatus.STATUS_COMPLETED);
         }
+        else if ("m".equals(subtype)) {
+
+        }
         return obj;
     }
 
@@ -138,6 +140,10 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
                         sendToWebWatcher(jsonObj, String.valueOf(jsonObj.get("procInstId")));
                     else if (MdwWebSocketServer.getInstance().hasInterestedConnections(String.valueOf(jsonObj.get("procId"))))
                         sendToWebWatcher(jsonObj, String.valueOf(jsonObj.get("procId")));
+                }
+                else if (jsonObj != null && jsonObj.has("masterRequestId")) {
+                    if (MdwWebSocketServer.getInstance().hasInterestedConnections(jsonObj.getString("masterRequestId")))
+                        sendToWebWatcher(jsonObj, jsonObj.getString("masterRequestId"));
                 }
             }
             catch (Throwable e) {

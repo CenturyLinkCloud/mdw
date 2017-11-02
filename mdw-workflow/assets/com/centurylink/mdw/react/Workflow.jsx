@@ -12,7 +12,7 @@ class Workflow extends Component {
   }
   
   componentDidMount() {
-    process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, proc => {
+    process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, this.props.masterRequestId,  proc => {
       implementors.get(this.props.serviceBase, impls => {
         var canvas = document.getElementById('mdw-canvas');
         if (canvas) {

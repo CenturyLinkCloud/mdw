@@ -322,8 +322,8 @@ processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw',
 }]);
 
 processMod.controller('ProcessDefController', 
-    ['$scope', '$routeParams', '$route', '$location', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary', 'ProcessRun',
-    function($scope, $routeParams, $route, $location, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary, ProcessRun) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
+    function($scope, $routeParams, $route, $location, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary) {
       
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
       
@@ -352,43 +352,8 @@ processMod.controller('ProcessDefController',
     }
   };
   
-  $scope.isRun = $route.current.loadedTemplateUrl === 'workflow/run.html';
-  
-  $scope.runProcess = function() {
-    console.log('running process: ' + $scope.run.definitionId);
-    var inValues = {};
-    util.getProperties($scope.run.values).forEach(function(name) {
-      var value = $scope.run.values[name];
-      if (value.value) {
-        if (value.type === 'java.util.Date') {
-          var timezoneAbbr = 'MST'; // TODO
-          value.value = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
-        }    
-        else {
-          value.value = value.value;
-        }
-        inValues[name] = value;
-      }
-    });
-    var toRun = { masterRequestId: $scope.run.masterRequestId, definitionId: $scope.run.definitionId, values: inValues};
-    ProcessRun.run({definitionId: $scope.run.definitionId}, toRun,
-      function(data) {
-        if (data.status && data.status.code !== 0) {
-          mdw.messages = data.status.message;
-        }
-        else {
-          $location.path('/workflow/definitions/' + $scope.process.packageName + '/' + $scope.process.name);
-        }
-      }, 
-      function(error) {
-        mdw.messages = error.data.status.message;
-      }
-    );
-    // TODO: don't wait before going to live view (which doesn't exist yet) -- then we'll remove $location.path navigation above
-  };
-  
   var summary = ProcessSummary.get();
-  if (summary && !$scope.isRun) {
+  if (summary) {
     $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
     $scope.process.definitionId = summary.definitionId;
@@ -400,8 +365,6 @@ processMod.controller('ProcessDefController',
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
         $scope.process.definitionId = defSum.id;
-        if ($scope.isRun)
-          $scope.run = ProcessRun.retrieve({definitionId: $scope.process.definitionId});
         $scope.definitionId = $scope.process.definitionId;
     });
   }
@@ -422,12 +385,5 @@ processMod.factory('ProcessSummary', ['mdw', function(mdw) {
 processMod.factory('ProcessDef', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Workflow/:packageName/:processName/:processVersion', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
-  });
-}]);
-
-processMod.factory('ProcessRun', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/Processes/run/:definitionId', mdw.serviceParams(), {
-    retrieve: { method: 'GET', isArray: false },
-    run: {method: 'POST'}
   });
 }]);

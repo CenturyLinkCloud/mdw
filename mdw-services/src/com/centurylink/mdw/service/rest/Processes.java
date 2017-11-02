@@ -156,22 +156,29 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return new JsonArray(jsonProcesses).getJson();
                     }
                     else if (segOne.equals("run")) {
-                        String defId = getSegment(path, 2);
-                        if (defId == null)
-                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment {subData} (= procDefId)");
-                        try {
-                            Process procDef = workflowServices.getProcessDefinition(Long.parseLong(defId));
-                            if (procDef == null)
-                                throw new ServiceException(ServiceException.NOT_FOUND, "Process not found for definition id: " + defId);
-                            ProcessRun processRun = new ProcessRun();
-                            processRun.setDefinitionId(procDef.getId());
-                            processRun.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
-                            processRun.setValues(procDef.getInputVariables());
-                            return processRun.getJson();
+                        String[] segments = getSegments(path);
+                        if (segments.length != 3 && segments.length != 4)
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment {subData} (procDefId|assetPath)");
+                        Process procDef;
+                        if (segments.length == 3) {
+                            String defId = segments[2];
+                            try {
+                                procDef = workflowServices.getProcessDefinition(Long.parseLong(defId));
+                            }
+                            catch (NumberFormatException nfe) {
+                                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad procDefId: " + defId);
+                            }
                         }
-                        catch (NumberFormatException nfe) {
-                            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad procDefId: " + defId);
+                        else {
+                            procDef = workflowServices.getProcessDefinition(segments[2] + '/' + segments[3], null);
                         }
+                        if (procDef == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + path);
+                        ProcessRun processRun = new ProcessRun();
+                        processRun.setDefinitionId(procDef.getId());
+                        processRun.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
+                        processRun.setValues(procDef.getInputVariables());
+                        return processRun.getJson();
                     }
                     else if (segOne.equals("topThroughput")) {
                         List<ProcessCount> list = workflowServices.getTopThroughputProcesses(query);

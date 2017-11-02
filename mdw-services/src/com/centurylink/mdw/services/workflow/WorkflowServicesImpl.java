@@ -734,10 +734,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (assetPath.endsWith(".proc"))
             processName = processName.substring(0, processName.length() - ".proc".length());
 
-        int version = query.getIntFilter("version");
+        int version = query == null ? 0 : query.getIntFilter("version");
         if (version < 0)
             version = 0;
-        boolean forUpdate = query.getBooleanFilter("forUpdate");
+        boolean forUpdate = query == null ? false : query.getBooleanFilter("forUpdate");
         Process process = ProcessCache.getProcess(processName, version);
         if (forUpdate) {
             // load from file
