@@ -103,7 +103,16 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             String id = matcher.group(5);
             if (id != null)
                 obj.put("id", Long.parseLong(id));
-            obj.put("instId", new Long(matcher.group(6)));
+            String instId = matcher.group(6);
+            if (instId != null) {
+                try {
+                    obj.put("instId", Long.parseLong(instId));
+                }
+                catch (NumberFormatException ex) {
+                    // master request id needn't be numeric
+                    obj.put("instId", instId);
+                }
+            }
             msg = matcher.group(7);
             obj.put("msg", msg);
         }
