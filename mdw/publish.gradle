@@ -63,7 +63,7 @@ task cleanAssetZips(type: Delete) {
 }
 
 task zipAssetPackages {
-    dependsOn cleanAssetZips
+    //dependsOn cleanAssetZips
     description = "Export Asset Packages"
     file("../${mdwAssetOutputDir}").mkdirs()
     // superCats are categorized as the parent package

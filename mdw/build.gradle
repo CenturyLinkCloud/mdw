@@ -258,14 +258,18 @@ task archiveAssetZips {
         }
         ext.discoveredFiles = []
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
-            discoveredFiles.add(file)
+            def filterName = file.name - ".zip"
+            def artifactName = filterName - "-SNAPSHOT"
+            def versionStart = artifactName.lastIndexOf("-")
+            def artifactId = artifactName.substring(0, versionStart)
+            discoveredFiles.add(artifactId)
             artifacts {
-                assets file:file 
+                assets file:file, name:artifactId, type:"zip"
             }
         }
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.asc').each { file ->
             artifacts {
-                assets file:file
+                assets file:file, type:"asc"
             }
         }
     }
@@ -288,13 +292,10 @@ task configureUploadAssets {
                     snapshotRepository(url: mavenSnapshotRepoUrl) {
                         authentication(userName: ossrhUsername, password: ossrhPassword)
                     }
-                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
-                        def filterName = discoveredFile.name - ".zip"
-                        def artifactName = filterName - "-SNAPSHOT"
-                        def versionStart = artifactName.lastIndexOf("-")
-                        def artifactId = artifactName.substring(0, versionStart)
+                    archiveAssetZips.discoveredFiles.each { artifactId ->
+                        def filterName = artifactId
                         addFilter(filterName) { artifact, file ->
-                            file.name == discoveredFile.name
+                            artifact.name == artifactId
                         }
                         pom(filterName).artifactId = artifactId
                         pom(filterName).groupId = "com.centurylink.mdw.assets"
