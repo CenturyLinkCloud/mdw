@@ -1,5 +1,4 @@
 import React, {Component} from '../node/node_modules/react';
-import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import values from '../react/values';
 import Value from './Value.jsx';
@@ -14,6 +13,7 @@ class Run extends Component {
         values: [] 
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
   
   componentDidMount() {
@@ -47,6 +47,51 @@ class Run extends Component {
         masterRequestId: this.state.masterRequestId,
         values: values.update(this.state.values.slice(), event, newValue)
       });
+    }
+  }
+  
+  handleClick(event) {
+    if (event.currentTarget.name === 'run') {
+      if ($mdwAutoTestWebSocketUrl) {
+        var state = this.state; // for access in listeners
+        const socket = new WebSocket($mdwAutoTestWebSocketUrl);
+        socket.addEventListener('open', function(event) {
+          socket.send(state.masterRequestId);
+        });
+        socket.addEventListener('message', function(event) {
+          var message = JSON.parse(event.data);
+          if (message.subtype === 'm') {
+            console.log("RECEIVED: " + JSON.stringify(message, null, 2));
+            this.setState({
+              assetPath: state.assetPath,
+              masterRequestId: state.masterRequestId,
+              values: [],
+              instanceId: state.instanceId,
+              invoked: true,
+            });
+          }
+        });
+        var run = {
+          masterRequestId: this.state.masterRequestId,
+          values: values.toObject(this.state.values)
+        };
+        fetch(new Request($mdwServicesRoot + '/services/Processes/run/' + this.state.assetPath, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(run)
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(run => {
+          this.setState({
+            assetPath: this.state.assetPath,
+            masterRequestId: this.state.masterRequestId,
+            values: this.state.values,
+            instanceId: run.instanceId
+          });
+        });
+      }
     }
   }
   
@@ -84,7 +129,7 @@ class Run extends Component {
             </div>
             <div className="mdw-heading-actions">
               { !this.state.invoked &&
-                <Button className="mdw-btn mdw-action-btn" bsStyle="primary">
+                <Button name="run" className="mdw-btn mdw-action-btn" bsStyle="primary" onClick={this.handleClick}>
                   <Glyphicon glyph="play" />{' Run'}
                 </Button>
               }
@@ -115,7 +160,7 @@ class Run extends Component {
             { this.state.invoked &&
               <div id="mdw-workflow" className="mdw-workflow">
                 <Workflow assetPath={this.state.masterRequestId} 
-                  containerId='mdw-workflow' 
+                  containerId='mdw-workflow' instanceId={this.state.instanceId} masterRequestId={this.state.masterRequestId}
                   hubBase={$mdwHubRoot} serviceBase={$mdwServicesRoot + '/services'} />
               </div>
             }
@@ -126,10 +171,5 @@ class Run extends Component {
     );
   }  
 }
-
-Run.contextTypes = {
-  hubRoot: PropTypes.string,
-  serviceRoot: PropTypes.string  
-};
 
 export default Run;

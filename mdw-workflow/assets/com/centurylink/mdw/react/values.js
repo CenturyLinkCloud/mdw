@@ -43,6 +43,15 @@ const values = {
     });
     return vals;
   },
+  toObject: function(valuesArr) {
+    var vals = {};
+    valuesArr.forEach(value => {
+      if (value.value !== '' && value.display !== 'ReadOnly') {
+        vals[value.name] = value.value;
+      }
+    });
+    return vals;
+  },
   // returns a new copy of the array with the newly-updated value
   update: function(valuesArr, event, newValue) {
     var value = valuesArr.find(val => {

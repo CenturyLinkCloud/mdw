@@ -100,7 +100,9 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             obj.put("procInstId", new Long(matcher.group(3)));
             subtype = matcher.group(4);
             obj.put("subtype", subtype);
-            obj.put("id", new Long(matcher.group(5)));
+            String id = matcher.group(5);
+            if (id != null)
+                obj.put("id", Long.parseLong(id));
             obj.put("instId", new Long(matcher.group(6)));
             msg = matcher.group(7);
             obj.put("msg", msg);
@@ -147,7 +149,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
                 }
             }
             catch (Throwable e) {
-                System.out.println("Exception when building JSON Object to send to web watcher");
+                System.out.println("Exception when building JSON Object to send to web watcher: " + e);
                 e.printStackTrace();
             };
         }

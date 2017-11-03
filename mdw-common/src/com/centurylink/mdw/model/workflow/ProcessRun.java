@@ -52,7 +52,7 @@ public class ProcessRun implements Jsonable {
     public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
 
     /**
-     * Populated after launch.
+     * Populated after launch (for non-service processes).
      */
     private Long instanceId;
     public Long getInstanceId() { return instanceId; }
