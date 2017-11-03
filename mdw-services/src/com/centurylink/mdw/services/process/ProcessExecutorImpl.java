@@ -340,6 +340,11 @@ class ProcessExecutorImpl {
         pi.setVariables(convertParameters(parameters, processVO, pi.getId()));
         for (VariableInstance var : pi.getVariables()) {
             edao.createVariableInstance(var, pi.getId());
+            if (var.isDocument()) {
+                DocumentReference docRef = new DocumentReference(var.getStringValue());
+                updateDocumentInfo(docRef, var.getType(), OwnerType.VARIABLE_INSTANCE, var.getInstanceId(), null, null);
+            }
+
         }
     }
 
