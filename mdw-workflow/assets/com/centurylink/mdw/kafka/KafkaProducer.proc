@@ -1,0 +1,58 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=61,y=160,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=199,ly=226,type=Elbow,xs=125&215,ys=180&180"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=418,y=164,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "true",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "response",
+        "WORK_DISPLAY_INFO": "x=219,y=153,w=100,h=60",
+        "synchronous": "True"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.kafka.KafkaAdapter",
+      "name": "New Kafka Adapter",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=371,ly=184,type=Elbow,xs=323&414,ys=184&184"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=138,h=27"
+  },
+  "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    }
+  }
+}
