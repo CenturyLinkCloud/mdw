@@ -1,0 +1,283 @@
+/**
+ * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.
+ */
+
+package com.centurylink.mdw.kafka;
+
+import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
+
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.listener.ListenerHelper;
+import com.centurylink.mdw.model.listener.Listener;
+
+/**
+ * Dynamic Java workflow asset.
+ */
+public class MDWKafkaListener {
+
+    // Properties outside of kafka consumer
+    public static final String KAFKAPOOL_CLASS_NAME = "className";
+    public static final String HOST_LIST = "bootstrap.servers";
+    public static final String TOPIC_LIST = "topics";
+    private static final String POLL_TIMEOUT = "poll";
+    private static final String USE_THREAD_POOL = "useThreadPool";
+
+    // Kafka consumer properties
+    private static final String AUTO_COMMIT = "enable.auto.commit";
+    private static final String KEY_DESERIALIZER = "key.deserializer";
+    private static final String VALUE_DESERIALIZER = "value.deserializer";
+
+    private List<String> topics;
+    private int poll_timeout;
+    private boolean use_thread_pool;
+    private boolean auto_commit;
+    private String kafkaListenerName;
+    private String hostList;
+    Properties initParameters = null;
+    KafkaConsumer<String, String> consumer = null;
+
+    // STANDALONE private StandaloneLogger logger;
+    /* WITHENGINE */private StandardLogger logger;
+
+    private boolean _terminating;
+    private ThreadPoolProvider thread_pool; // null if processing using the same thread
+
+    public void init(String listenerName, Properties parameters) throws PropertyException {
+
+        try {
+            if (!parameters.containsKey(HOST_LIST))
+                throw new Exception("Missing bootstrap.servers property for Kafka listener");
+        }
+        catch (Exception e) {
+            throw new PropertyException(e.getMessage());
+        }
+
+        // STANDALONE logger = StandaloneLogger.getSingleton();
+        /* WITHENGINE */logger = LoggerUtil.getStandardLogger();
+
+        logger.info("Starting Kafka consumer Listener name = " + listenerName);
+
+        kafkaListenerName = listenerName;
+
+        if (!parameters.containsKey(TOPIC_LIST))
+            topics = Arrays.asList(listenerName);
+        else
+        {
+            String[] topicList = parameters.getProperty(TOPIC_LIST).split(",");
+            if (topicList != null && topicList.length > 0)
+                topics = Arrays.asList(topicList);
+            else
+                topics = Arrays.asList(listenerName);
+        }
+
+     //   initParameters = parameters;
+
+        initParameters = new Properties();
+        for (Object key : parameters.keySet()) {
+            if (!KAFKAPOOL_CLASS_NAME.equals(key) && !USE_THREAD_POOL.equals(key) && TOPIC_LIST.equals(key) && !POLL_TIMEOUT.equals(key))
+                initParameters.put(key, parameters.getProperty((String)key));
+        }
+
+        if (!initParameters.containsKey(AUTO_COMMIT))
+            initParameters.put(AUTO_COMMIT, "true");
+
+        if (!initParameters.containsKey(AUTO_COMMIT))
+            initParameters.put(AUTO_COMMIT, "false");
+
+        if (!initParameters.containsKey(KEY_DESERIALIZER))
+            initParameters.put(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
+
+        if (!initParameters.containsKey(VALUE_DESERIALIZER))
+            initParameters.put(VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
+
+        hostList = initParameters.getProperty(HOST_LIST);
+        auto_commit = getBooleanProperty(initParameters, AUTO_COMMIT, true);
+        poll_timeout = 1000 * getIntegerProperty(parameters, POLL_TIMEOUT, 60);
+        use_thread_pool = getBooleanProperty(parameters, USE_THREAD_POOL, false);
+    }
+
+    private int getIntegerProperty(Properties parameters, String propname, int defval) {
+        String v = parameters.getProperty(propname);
+        if (v == null)
+            return defval;
+        try {
+            return Integer.parseInt(v);
+        }
+        catch (Exception e) {
+            return defval;
+        }
+    }
+
+    private boolean getBooleanProperty(Properties parameters, String propname, boolean defval) {
+        String v = parameters.getProperty(propname);
+        if (defval)
+            return !"false".equalsIgnoreCase(v);
+        else
+            return "true".equalsIgnoreCase(v);
+    }
+
+    public void shutdown() {
+        _terminating = true;
+        consumer.wakeup();
+    }
+
+    public void start() {
+        try {
+            if (StringHelper.isEmpty(hostList))
+                throw new Exception("Empty list of Kafka servers");
+
+            if (topics.isEmpty())
+                throw new Exception("Topics not specified for Kafka listener");
+
+            if (logger.isMdwDebugEnabled())
+            {
+                logger.mdwDebug("Kafka listener=" + kafkaListenerName);
+                logger.mdwDebug("hostList*=" + hostList);
+                logger.mdwDebug("topics*=" + topics);
+            }
+
+            consumer = new KafkaConsumer<>(initParameters);
+            consumer.subscribe(topics);
+
+            _terminating = false;
+            if (!use_thread_pool) {
+                thread_pool = null;
+                while (!_terminating) {
+                    try {
+                        ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
+                        for (ConsumerRecord<String, String> record : records) {
+                            process_message(record);
+                            if (!auto_commit)
+                                consumer.commitSync(Collections.singletonMap(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1)));
+                        }
+                    }
+                    catch (WakeupException e) {
+                        if (!_terminating) throw e;
+                        consumer.close();
+                    }
+                }
+            }
+            else {
+                thread_pool = ApplicationContext.getThreadPoolProvider();
+                ConsumerRecords<String, String> records = null;
+                KafkaRunnable runnable = null;
+                while (!_terminating) {
+
+                    try {
+                        records = consumer.poll(Long.MAX_VALUE);
+
+                        for (ConsumerRecord<String, String> record : records) {
+                            runnable = new KafkaRunnable(record);
+
+                            // Loop while runnable != null, which would mean no thread available to process record
+                            while (runnable != null) {
+                                if (thread_pool.execute(ThreadPoolProvider.WORKER_LISTENER, "MDWKafkaListener", runnable)) {
+                                    runnable = null;
+                                    if (!auto_commit)
+                                        consumer.commitSync(Collections.singletonMap(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1)));
+                                }
+                                else {
+                                    String msg = "MDWKafka listener " + ThreadPoolProvider.WORKER_LISTENER + " has no thread available";
+                                    // make this stand out
+                                    logger.severeException(msg, new Exception(msg));
+                                    logger.info(thread_pool.currentStatus());
+                                    Thread.sleep(poll_timeout);  // Will try to process same request after waking up
+                                }
+                            }
+                        }
+                    }
+                    catch (WakeupException e) {
+                        if (!_terminating) throw e;
+                        consumer.close();
+                    }
+                    catch (InterruptedException e) {
+                        logger.info(this.getClass().getName() + " interrupted.");
+                    }
+                }
+            }
+            consumer.close();
+        }
+        catch (Exception e) {
+            logger.severeException(e.getMessage(), e);
+        }
+        finally {
+            if (consumer != null) consumer.close();
+        }
+    }
+
+    protected void process_message(ConsumerRecord<String, String> record) {
+        try {
+            String message = record.value();
+
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Kafka listener " + kafkaListenerName + " consuming record:");
+                logger.debug("  Topic=" + record.topic());
+                logger.debug("  Key=" + record.key());
+                logger.debug("  Value=" + record.value());
+                logger.debug("  Offset=" + record.offset());
+            }
+
+            Map<String, String> metaInfo = new HashMap<String, String>();
+            /* WITHENGINE */metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_KAFKA);
+            /* WITHENGINE */metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
+            /* WITHENGINE */metaInfo.put(Listener.METAINFO_REQUEST_ID, record.key());
+            /* WITHENGINE */ListenerHelper helper = new ListenerHelper();
+            /* WITHENGINE */String response = helper.processEvent(message, metaInfo);
+
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Kafka listener " + kafkaListenerName + " completed processing of record with key " + record.key() + " on topic " + record.topic());
+                logger.debug("  Response="+ response);
+            }
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+        }
+    }
+
+    protected class KafkaRunnable implements Runnable {
+        private ConsumerRecord<String, String> _record ;
+
+        KafkaRunnable(ConsumerRecord<String, String> record) {
+            _record = record;
+        }
+
+        public void run() {
+            process_message(_record);
+        }
+    }
+
+    private static Properties loadConfig(String configFile) throws Exception {
+        Properties props = new Properties();
+        FileInputStream in = new FileInputStream(configFile);
+        props.load(in);
+        in.close();
+        return props;
+    }
+
+    public static void main(String args[]) throws Exception {
+        MDWKafkaListener kafkaserver = new MDWKafkaListener();
+        Properties config = loadConfig("kafkalistener.config");
+        kafkaserver.init("StandAlone", config);
+        kafkaserver.start();
+    }
+}

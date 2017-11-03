@@ -59,6 +59,7 @@ public interface Listener {
     public static final String METAINFO_PROTOCOL_MQSERIES = "MqSeries";
     public static final String METAINFO_PROTOCOL_EMAIL = "Email";
     public static final String METAINFO_PROTOCOL_INTERNAL = "Internal";    // called directly
+    public static final String METAINFO_PROTOCOL_KAFKA = "Kafka";
 
     public static final String METAINFO_REQUEST_PATH = "RequestPath";
     public static final String METAINFO_RESOURCE_SUBPATH = "ResourceSubPath"; // after any '/' in RequestPath
