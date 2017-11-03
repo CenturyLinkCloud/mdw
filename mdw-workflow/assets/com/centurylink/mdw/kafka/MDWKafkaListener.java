@@ -20,6 +20,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -27,6 +28,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.workflow.Package;
 
 /**
  * Dynamic Java workflow asset.
@@ -41,9 +43,12 @@ public class MDWKafkaListener {
     private static final String USE_THREAD_POOL = "useThreadPool";
 
     // Kafka consumer properties
+    private static final String GROUP_ID = "group.id";
     private static final String AUTO_COMMIT = "enable.auto.commit";
     private static final String KEY_DESERIALIZER = "key.deserializer";
     private static final String VALUE_DESERIALIZER = "value.deserializer";
+
+    private static final String MDW_KAFKA_PKG = "com.centurylink.mdw.kafka";
 
     private List<String> topics;
     private int poll_timeout;
@@ -92,12 +97,14 @@ public class MDWKafkaListener {
 
         initParameters = new Properties();
         for (Object key : parameters.keySet()) {
-            if (!KAFKAPOOL_CLASS_NAME.equals(key) && !USE_THREAD_POOL.equals(key) && TOPIC_LIST.equals(key) && !POLL_TIMEOUT.equals(key))
+            if (!KAFKAPOOL_CLASS_NAME.equals(key) && !USE_THREAD_POOL.equals(key) && !TOPIC_LIST.equals(key) && !POLL_TIMEOUT.equals(key))
                 initParameters.put(key, parameters.getProperty((String)key));
         }
 
-        if (!initParameters.containsKey(AUTO_COMMIT))
-            initParameters.put(AUTO_COMMIT, "true");
+        if (!initParameters.containsKey(GROUP_ID)) {
+            logger.warn("No group.id property specified for Kafka consumer " + kafkaListenerName + ", using \"default\"...");
+            initParameters.put(GROUP_ID, "default");
+        }
 
         if (!initParameters.containsKey(AUTO_COMMIT))
             initParameters.put(AUTO_COMMIT, "false");
@@ -153,6 +160,12 @@ public class MDWKafkaListener {
                 logger.mdwDebug("hostList*=" + hostList);
                 logger.mdwDebug("topics*=" + topics);
             }
+
+            // This is so that all dependent class from kafka-clients jar are found during consumer creation
+            Package pkg = PackageCache.getPackage(MDW_KAFKA_PKG);
+            if (pkg == null)
+                pkg = PackageCache.getPackages().get(0);
+            Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
 
             consumer = new KafkaConsumer<>(initParameters);
             consumer.subscribe(topics);
