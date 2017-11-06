@@ -1,6 +1,5 @@
-KafkaAdapter.java=1
-KafkaProducer.proc=1
-kafka-clients-1.0.0.jar=1
+KafkaAdapter.java=2
+KafkaProducer.proc=2
 MDWKafkaListener.java=1
 MDWKafkaListenerRegistration.java=1
-
+kafka-clients-1.0.0.jar=1

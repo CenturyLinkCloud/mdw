@@ -26,7 +26,13 @@
         "REQUEST_VARIABLE": "request",
         "RESPONSE_VARIABLE": "response",
         "WORK_DISPLAY_INFO": "x=219,y=153,w=100,h=60",
-        "synchronous": "True"
+        "bootstrap_servers": "prop:mdw.kafka.bootstrap_servers",
+        "client_id": "KafkaMDWProducer",
+        "key_serializer": "Long",
+        "override_inbox": "false",
+        "synchronous": "True",
+        "topic": "kafkaTopic",
+        "value_serializer": "String"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.kafka.KafkaAdapter",
@@ -43,7 +49,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=50,y=50,w=138,h=27"
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=133,h=27"
   },
   "variables": {
     "request": {
