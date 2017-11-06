@@ -100,7 +100,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"distributed\": true,\n  \"excludeFormats\": [\"JAVA\"]\n}"
+					"raw": "{\n  \"distributed\": true,\n  \"excludeFormats\": [\"JAVA\", \"PROPERTIES\"]\n}"
 				},
 				"description": ""
 			},

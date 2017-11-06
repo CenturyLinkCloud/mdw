@@ -8,7 +8,8 @@ request:
     {
       "distributed": true,
       "excludeFormats": [
-        "JAVA"
+        "JAVA",
+        "PROPERTIES"
       ]
     }
 response:
