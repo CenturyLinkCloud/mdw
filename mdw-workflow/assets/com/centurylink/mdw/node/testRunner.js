@@ -56,9 +56,9 @@ try {
       else {
         // execute test case 
         var group = limberest.loadGroupSync(testCase.file);
-        var test = group.getTest(item.method, item.name);
+        var request = group.getRequest(item.method, item.name);
         var result = { start: new Date().toISOString() };
-        test.run(opts, vals, (error, response) => {
+        request.run(opts, vals, (error, response) => {
           var itemId = item.method + ':' + item.name;
           setTestResponse(itemId, response);
           if (error) {
@@ -67,7 +67,7 @@ try {
           }
           else {
             if (!opts.caseName) {
-              result = Object.assign(result, test.verifySync(vals));
+              result = Object.assign(result, request.verifySync(vals));
               result.end = new Date().toISOString();
               setTestResult(itemId, result);
             }
