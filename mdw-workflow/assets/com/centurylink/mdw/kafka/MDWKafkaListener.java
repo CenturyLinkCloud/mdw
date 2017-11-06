@@ -37,27 +37,29 @@ public class MDWKafkaListener {
 
     // Properties outside of kafka consumer
     public static final String KAFKAPOOL_CLASS_NAME = "className";
-    public static final String HOST_LIST = "bootstrap.servers";
     public static final String TOPIC_LIST = "topics";
-    private static final String POLL_TIMEOUT = "poll";
-    private static final String USE_THREAD_POOL = "useThreadPool";
+    public static final String POLL_TIMEOUT = "poll";
+    public static final String USE_THREAD_POOL = "useThreadPool";
+    private static final String XML_WRAPPER = "xmlWrapper";
 
     // Kafka consumer properties
-    private static final String GROUP_ID = "group.id";
-    private static final String AUTO_COMMIT = "enable.auto.commit";
-    private static final String KEY_DESERIALIZER = "key.deserializer";
-    private static final String VALUE_DESERIALIZER = "value.deserializer";
+    public static final String GROUP_ID = "group.id";
+    public static final String HOST_LIST = "bootstrap.servers";
+    public static final String AUTO_COMMIT = "enable.auto.commit";
+    public static final String KEY_DESERIALIZER = "key.deserializer";
+    public static final String VALUE_DESERIALIZER = "value.deserializer";
 
     private static final String MDW_KAFKA_PKG = "com.centurylink.mdw.kafka";
 
-    private List<String> topics;
-    private int poll_timeout;
-    private boolean use_thread_pool;
-    private boolean auto_commit;
-    private String kafkaListenerName;
-    private String hostList;
-    Properties initParameters = null;
-    KafkaConsumer<String, String> consumer = null;
+    protected List<String> topics;
+    protected int poll_timeout;
+    protected boolean use_thread_pool;
+    protected boolean auto_commit;
+    protected String kafkaListenerName;
+    protected String hostList;
+    protected Properties initParameters = null;
+    protected String xmlWrapper;
+    protected KafkaConsumer<String, String> consumer = null;
 
     // STANDALONE private StandaloneLogger logger;
     /* WITHENGINE */private StandardLogger logger;
@@ -93,35 +95,36 @@ public class MDWKafkaListener {
                 topics = Arrays.asList(listenerName);
         }
 
-     //   initParameters = parameters;
-
-        initParameters = new Properties();
-        for (Object key : parameters.keySet()) {
-            if (!KAFKAPOOL_CLASS_NAME.equals(key) && !USE_THREAD_POOL.equals(key) && !TOPIC_LIST.equals(key) && !POLL_TIMEOUT.equals(key))
-                initParameters.put(key, parameters.getProperty((String)key));
+        if (!parameters.containsKey(GROUP_ID)) {
+            logger.warn("No group.id property specified for Kafka consumer " + kafkaListenerName + ", using \"" + kafkaListenerName + "\"...");
+            parameters.put(GROUP_ID, kafkaListenerName);
         }
 
-        if (!initParameters.containsKey(GROUP_ID)) {
-            logger.warn("No group.id property specified for Kafka consumer " + kafkaListenerName + ", using \"default\"...");
-            initParameters.put(GROUP_ID, "default");
-        }
+        if (!parameters.containsKey(AUTO_COMMIT))
+            parameters.put(AUTO_COMMIT, "false");
 
-        if (!initParameters.containsKey(AUTO_COMMIT))
-            initParameters.put(AUTO_COMMIT, "false");
+        if (!parameters.containsKey(KEY_DESERIALIZER))
+            parameters.put(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
 
-        if (!initParameters.containsKey(KEY_DESERIALIZER))
-            initParameters.put(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
+        if (!parameters.containsKey(VALUE_DESERIALIZER))
+            parameters.put(VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
 
-        if (!initParameters.containsKey(VALUE_DESERIALIZER))
-            initParameters.put(VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
-
-        hostList = initParameters.getProperty(HOST_LIST);
-        auto_commit = getBooleanProperty(initParameters, AUTO_COMMIT, true);
+        hostList = parameters.getProperty(HOST_LIST);
+        auto_commit = getBooleanProperty(parameters, AUTO_COMMIT, true);
         poll_timeout = 1000 * getIntegerProperty(parameters, POLL_TIMEOUT, 60);
         use_thread_pool = getBooleanProperty(parameters, USE_THREAD_POOL, false);
+        xmlWrapper = parameters.getProperty(XML_WRAPPER);
+
+        initParameters = parameters;
+        // Remove non-Kafka properties
+        initParameters.remove(KAFKAPOOL_CLASS_NAME);
+        initParameters.remove(USE_THREAD_POOL);
+        initParameters.remove(TOPIC_LIST);
+        initParameters.remove(POLL_TIMEOUT);
+        initParameters.remove(XML_WRAPPER);
     }
 
-    private int getIntegerProperty(Properties parameters, String propname, int defval) {
+    protected int getIntegerProperty(Properties parameters, String propname, int defval) {
         String v = parameters.getProperty(propname);
         if (v == null)
             return defval;
@@ -133,7 +136,7 @@ public class MDWKafkaListener {
         }
     }
 
-    private boolean getBooleanProperty(Properties parameters, String propname, boolean defval) {
+    protected boolean getBooleanProperty(Properties parameters, String propname, boolean defval) {
         String v = parameters.getProperty(propname);
         if (defval)
             return !"false".equalsIgnoreCase(v);
@@ -232,13 +235,16 @@ public class MDWKafkaListener {
             logger.severeException(e.getMessage(), e);
         }
         finally {
-            if (consumer != null) consumer.close();
+            if (consumer != null) consumer.close();  // Cleanup consumer resources
+            if (!_terminating) this.start();  // Restart the consumer if a failure occurred, besides instance is shutting down
         }
     }
 
     protected void process_message(ConsumerRecord<String, String> record) {
         try {
             String message = record.value();
+            if (xmlWrapper != null)
+                message = wrapXml(message, xmlWrapper);
 
             if (logger.isDebugEnabled())
             {
@@ -253,6 +259,7 @@ public class MDWKafkaListener {
             /* WITHENGINE */metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_KAFKA);
             /* WITHENGINE */metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
             /* WITHENGINE */metaInfo.put(Listener.METAINFO_REQUEST_ID, record.key());
+            /* WITHENGINE */metaInfo.put("Topic", record.topic());
             /* WITHENGINE */ListenerHelper helper = new ListenerHelper();
             /* WITHENGINE */String response = helper.processEvent(message, metaInfo);
 
@@ -277,6 +284,14 @@ public class MDWKafkaListener {
         public void run() {
             process_message(_record);
         }
+    }
+
+    protected String wrapXml(String data, String wrapper) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<").append(wrapper).append("><![CDATA[");
+        sb.append(data);
+        sb.append("]]></").append(wrapper).append(">");
+        return sb.toString();
     }
 
     private static Properties loadConfig(String configFile) throws Exception {
