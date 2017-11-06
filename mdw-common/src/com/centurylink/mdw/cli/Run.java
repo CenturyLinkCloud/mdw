@@ -59,6 +59,11 @@ public class Run implements Operation {
     public List<String> getVmArgs() { return vmArgs; }
     public void setVmArgs(List<String> args) { this.vmArgs = args; }
 
+    @Parameter(names="--daemon", description="Spawn as a background process")
+    private boolean daemon;
+    public boolean isDaemon() { return daemon; }
+    public void setDaemon(boolean daemon) { this.daemon = daemon; }
+
     public Run run(ProgressMonitor... progressMonitors) throws IOException {
         List<String> cmdLine = new ArrayList<>();
         cmdLine.add(getJava());
