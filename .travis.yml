@@ -6,8 +6,8 @@ before_install:
   - npm --version
 before_script: 
   - cd mdw-hub
+  - npm install
   - bower install
-  - npm install grunt-cli -g
   - cd ../mdw
 script: ./gradlew buildAll
 notifications:
