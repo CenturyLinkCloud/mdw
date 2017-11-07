@@ -1,19 +1,14 @@
 language: java
-jdk:
-  - oraclejdk8
+before_install:
+  - chmod +x ./mdw/gradlew
+  - npm install -g bower
+  - npm install grunt-cli -g
+  - npm --version
 before_script: 
   - cd mdw-hub
   - bower install
   - npm install grunt-cli -g
   - cd ../mdw
-before_install:
-  - chmod +x ./mdw/gradlew
-  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
-  - npm install -g bower
-  - npm install grunt-cli -g
-  - npm --version
-install: 
-  - npm --prefix mdw-hub install mdw-hub
 notifications:
   slack:
     rooms:
