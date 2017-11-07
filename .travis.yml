@@ -9,6 +9,7 @@ before_script:
   - bower install
   - npm install grunt-cli -g
   - cd ../mdw
+script: ./gradlew buildAll
 notifications:
   slack:
     rooms:

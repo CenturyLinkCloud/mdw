@@ -249,6 +249,10 @@ task buildAll(type: GradleBuild) {
     tasks = ["build"]
 }
 
+task test {
+    dependsOn buildAll
+}
+
 task archiveAssetZips {
     dependsOn zipAssetPackages
     doLast{
