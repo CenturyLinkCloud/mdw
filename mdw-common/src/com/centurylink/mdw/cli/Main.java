@@ -51,6 +51,7 @@ public class Main {
         Update update = new Update();
         Install install = new Install();
         Run run = new Run();
+        Stop stop = new Stop();
         Git git = new Git();
         Archive archive = new Archive(false);
         Test test = new Test();
@@ -65,6 +66,7 @@ public class Main {
             .addCommand("update", update)
             .addCommand("install", install)
             .addCommand("run", run)
+            .addCommand("stop", stop)
             .addCommand("version", version)
             .addCommand("git", git)
             .addCommand("status", status)
@@ -103,6 +105,10 @@ public class Main {
                 else if (command.equals("run")) {
                     checkLoc(run.getProjectDir());
                     op = run;
+                }
+                else if (command.equals("stop")) {
+                    checkLoc(run.getProjectDir());
+                    op = stop;
                 }
                 else if (command.equals("status")) {
                     checkLoc(run.getProjectDir());

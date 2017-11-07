@@ -24,11 +24,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.converters.IParameterSplitter;
 
-@Parameters(commandNames="run", commandDescription="Run MDW", separators="=")
+@Parameters(commandNames="run", commandDescription="Run the MDW server", separators="=")
 public class Run implements Operation {
 
     protected static List<String> defaultVmArgs = new ArrayList<>();
@@ -39,6 +42,8 @@ public class Run implements Operation {
 
     private File projectDir;
     public File getProjectDir() { return projectDir; }
+
+    public static final int STARTUP_TIMEOUT_SECS = 120;
 
     Run() {
         // cli use only
@@ -66,10 +71,25 @@ public class Run implements Operation {
 
     public Run run(ProgressMonitor... progressMonitors) throws IOException {
         List<String> cmdLine = new ArrayList<>();
-        cmdLine.add(getJava());
-        cmdLine.add("-jar");
-        cmdLine.addAll(getVmArgs());
-        cmdLine.add(getBootJar());
+        if (daemon) {
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                cmdLine.add(System.getenv("MDW_HOME") + "/bin/mdwd.bat");
+            }
+            cmdLine.addAll(getVmArgs());
+            File logDir = getLogDir();
+            if (logDir == null) {
+                logDir = new File(".");
+                cmdLine.add("-Dmdw.logging.dir=.");
+            }
+            System.out.println("Running MDW daemon with log dir: " + logDir.getAbsolutePath());
+            cmdLine.add(getBootJar());
+        }
+        else {
+            cmdLine.add(getJava());
+            cmdLine.add("-jar");
+            cmdLine.addAll(getVmArgs());
+            cmdLine.add(getBootJar());
+        }
         ProcessBuilder builder = new ProcessBuilder(cmdLine);
         builder.redirectErrorStream(true);
         System.out.println("Starting process:");
@@ -77,44 +97,58 @@ public class Run implements Operation {
             System.out.print(cmd + " ");
         System.out.println("\n");
         Process process = builder.start();
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                try {
-                    String port = "8080";
-                    String ctx = "mdw";
-                    for (String arg : getVmArgs()) {
-                        if (arg.startsWith("-Dmdw.server.port=") || arg.equals("-Dserver.port=")) {
-                            port = arg.substring(arg.indexOf('=') + 1);
-                        }
-                        else if (arg.startsWith("-Dmdw.server.contextPath=") || arg.equals("-Dserver.contextPath=")) {
-                            port = arg.substring(arg.indexOf('=') + 1);
-                            break;
-                        }
+        if (!daemon) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    try {
+                        new Stop().run();
+                        process.waitFor();
                     }
-                    new Fetch(new URL("http://localhost:" + port + "/" + ctx + "/Services/System/exit")).run().getData();
-                    process.waitFor();
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                        process.destroy();
+                    }
                 }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                    process.destroy();
+            });
+            new Thread(new Runnable() {
+                public void run() {
+                    try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
+                        out.lines().forEach(line -> {
+                            System.out.println(line);
+                        });
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-            }
-        });
-        new Thread(new Runnable() {
-            public void run() {
-                try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
-                    out.lines().forEach(line -> {
-                        System.out.println(line);
-                    });
-                }
-                catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }).start();
+            }).start();
+        }
 
         try {
             process.waitFor();
+            if (daemon) {
+                long before = System.currentTimeMillis();
+                boolean available = false;
+                URL url = new URL("http://localhost:" + getServerPort() + "/" + getContextRoot() + "/services/AppSummary");
+                System.out.println("Awaiting mdw services availability at " + url);
+                while (!available) {
+                    if ((System.currentTimeMillis() - before) / 1000 > STARTUP_TIMEOUT_SECS) {
+                        System.err.println("Startup timeout (" + STARTUP_TIMEOUT_SECS + " s) exceeded");
+                        throw new InterruptedException();
+                    }
+                    try {
+                        String response = new Fetch(url).run().getData();
+                        String mdwVersion = new JSONObject(response).getJSONObject("ApplicationSummary").getString("MdwVersion");
+                        System.out.println("\nMDW Version: " + mdwVersion);
+                        available = true;
+                    }
+                    catch (IOException | JSONException ex) {
+                        // unparseable means not available
+                        System.out.print("...");
+                    }
+                    Thread.sleep(3000);
+                }
+            }
         }
         catch (InterruptedException ex) {
             process.destroy();
@@ -132,10 +166,36 @@ public class Run implements Operation {
         return "bin" + File.separator + "mdw-boot-" + mdwVersion + ".jar";
     }
 
+    protected File getLogDir() {
+        for (String arg : getVmArgs()) {
+            if (arg.startsWith("-Dmdw.logging.dir="))
+                return new File(arg.substring(18));
+        }
+        return null;
+    }
+
     static class SpaceParameterSplitter implements IParameterSplitter {
         @Override
         public List<String> split(String value) {
             return Arrays.asList(value.split(" "));
         }
+    }
+
+    protected int getServerPort() {
+        for (String arg : getVmArgs()) {
+            if (arg.startsWith("-Dmdw.server.port=") || arg.equals("-Dserver.port=")) {
+                return Integer.parseInt(arg.substring(arg.indexOf('=') + 1));
+            }
+        }
+        return 8080;
+    }
+
+    protected String getContextRoot() {
+        for (String arg : getVmArgs()) {
+            if (arg.startsWith("-Dmdw.server.contextPath=") || arg.equals("-Dserver.contextPath=")) {
+                return arg.substring(arg.indexOf('=') + 1);
+            }
+        }
+        return "mdw";
     }
 }
