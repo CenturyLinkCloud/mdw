@@ -73,7 +73,10 @@ public class Run implements Operation {
         List<String> cmdLine = new ArrayList<>();
         if (daemon) {
             if (System.getProperty("os.name").startsWith("Windows")) {
-                cmdLine.add(System.getenv("MDW_HOME") + "/bin/mdwd.bat");
+                cmdLine.add(System.getenv("MDW_HOME") + "\\bin\\mdwd.bat");
+            }
+            else {
+                cmdLine.add(System.getenv("MDW_HOME") + "/bin/mdwd");
             }
             cmdLine.addAll(getVmArgs());
             File logDir = getLogDir();
@@ -145,8 +148,8 @@ public class Run implements Operation {
                     catch (IOException | JSONException ex) {
                         // unparseable means not available
                         System.out.print("...");
+                        Thread.sleep(3000);
                     }
-                    Thread.sleep(3000);
                 }
             }
         }

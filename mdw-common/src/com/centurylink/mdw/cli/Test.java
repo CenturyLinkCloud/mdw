@@ -41,12 +41,12 @@ import com.beust.jcommander.Parameters;
 public class Test extends Setup {
     private static final String PATH = "/com/centurylink/mdw/testing/AutomatedTests";
 
-    @Parameter(names="--include", description="Test case include(s)")
+    @Parameter(names="--include", description="Test case include(s).  Comma-delimited glob patterns (relative to asset root).")
     private String include = "**/*.test,**/*.postman";
     public String getInclude() { return include; }
     public void setInclude(String include) { this.include = include; }
 
-    @Parameter(names="--exclude", description="Test case exclude(s)")
+    @Parameter(names="--exclude", description="Test case exclude(s).  Comma-delimited glob patterns (relative to asset root).")
     private String exclude;
     public String getExclude() { return exclude; }
     public void setExclude(String exclude) { this.exclude = exclude; }
@@ -76,6 +76,9 @@ public class Test extends Setup {
     public boolean isJson() { return json; }
     public void setJson(boolean json) { this.json = json; }
 
+    private boolean success = true;
+    public boolean isSuccess() { return success; }
+
     /**
      * TODO: Option for websocket updates instead of polling.
      */
@@ -99,7 +102,7 @@ public class Test extends Setup {
         Map<String,List<String>> pkgTests = new HashMap<>();
         Map<String,String> statuses = new HashMap<>();
         for (File caseFile : caseFiles) {
-            String assetPath = getAssetPath(caseFile);
+            String assetPath = caseFile.getParent().replace('\\', '/').replace('/', '.') + '/' + caseFile.getName();
             String pkg = getPackageName(assetPath);
             List<String> assets = pkgTests.get(pkg);
             if (assets == null) {
@@ -136,8 +139,10 @@ public class Test extends Setup {
                                     int finished = finished(statuses);
                                     System.out.println("  " + status + " (" + finished + "/" + statuses.size() + ") - " + asset);
                                 }
-                                if (!isSuccess(status) && test.has("message") && !json) {
-                                    System.out.println("    (" + test.getString("message"));
+                                if (!isSuccess(status)) {
+                                    this.success = false;
+                                    if (test.has("message") && !json)
+                                        System.out.println("    (" + test.getString("message"));
                                 }
                             }
                         }
@@ -206,10 +211,11 @@ public class Test extends Setup {
         List<File> caseFiles = new ArrayList<>();
         List<PathMatcher> inMatchers = getIncludeMatchers();
         List<PathMatcher> exMatchers = getExcludeMatchers();
-        Files.walkFileTree(Paths.get(getProjectDir().getPath()), new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(Paths.get(getAssetRoot().getPath()), new SimpleFileVisitor<Path>() {
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                if (matches(inMatchers, path) && !matches(exMatchers, path)) {
-                    caseFiles.add(path.toFile());
+                Path p = Paths.get(getAssetPath(path.toFile()));
+                if (matches(inMatchers, p) && !matches(exMatchers, p)) {
+                    caseFiles.add(p.toFile());
                 }
                 return FileVisitResult.CONTINUE;
             }

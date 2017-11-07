@@ -134,6 +134,9 @@ public class Main {
                             return;
                     }
                     op.run(getMonitor());
+                    if (op instanceof Test && !((Test)op).isSuccess()) {
+                        System.exit(-1);  // success visible to build script
+                    }
                 }
             }
         }
