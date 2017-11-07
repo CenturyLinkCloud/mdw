@@ -4,8 +4,10 @@
 
 package com.centurylink.mdw.kafka;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -18,10 +20,15 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
@@ -31,13 +38,18 @@ import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
  */
 @Tracked(LogLevel.TRACE)
 public class KafkaAdapter extends PoolableAdapterBase implements java.io.Serializable {
+
     private static final long serialVersionUID = 1L;
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
     private static final String PROP_TOPIC = "topic";
     private final static String BOOTSTRAP_SERVERS = "bootstrap_servers";
     private final static String CLIENT_ID_CONFIG = "client_id";
     private static final String KEY_SERIALIZER_CLASS_CONFIG = "key_serializer";
     private static final String VALUE_SERIALIZER_CLASS_CONFIG = "value_serializer";
     public static final String MDW_KAFKA_PKG = "com.centurylink.mdw.kafka";
+    private static final String PRODUCER_VARIABLE = "ProducerVariable";
+    private static final String RECORD_VARIABLE = "RecordVariable";
 
     protected KafkaProducer<Long, String> kafkaProducer;
     private String topicName;
@@ -45,6 +57,9 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     private String client_id_config;
     private String key_serializer_class_config;
     private String value_serializer_class_config;
+    private Properties props;
+    private static Map<String, KafkaProducer<Long, String>> producerMap = new ConcurrentHashMap<String, KafkaProducer<Long, String>>();
+
 
     @Override
     public void init(Properties parameters) {
@@ -55,12 +70,24 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         if (pkg == null)
             pkg = PackageCache.getPackages().get(0);
         Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
-        kafkaProducer =  new KafkaProducer<>(parameters);
+        props = parameters;
     }
+
+/*    private Map<String,String> getMap(Properties properties) {
+        if (properties == null)
+            return null;
+
+        Map<String,String> params = new HashMap<String,String>();
+        for (Object name : properties.keySet()) {
+            if (name != null)
+              params.put(name.toString(), properties.getProperty(name.toString()));
+        }
+        return params;
+    }*/
 
     @Override
     public void init() throws ConnectionException, AdapterException {
-        Properties props = new Properties();
+        props = new Properties();
         topicName = getAttribute(PROP_TOPIC, "kafkaTopic", true);
         props.put(PROP_TOPIC, topicName);
 
@@ -89,13 +116,28 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         init(props);
     }
 
+
     @Override
     public Object openConnection() throws ConnectionException, AdapterException {
-        return null;
+        synchronized(producerMap) {
+            if (producerMap.get(bootstrap_servers) == null)
+            {
+                kafkaProducer =  new KafkaProducer<>(props);
+                producerMap.put(bootstrap_servers, kafkaProducer);
+                return kafkaProducer;
+            }
+            else
+                return producerMap.get(bootstrap_servers);
+            }
     }
 
     @Override
     public void closeConnection(Object connection) {
+    }
+
+    public void closeProducer(KafkaProducer<Long, String> producer) {
+        producer.flush();
+        producer.close();
     }
 
     protected ProducerRecord<Long, String> createKafkaMessage(String pRequestString, String pTopicName, long key) {
@@ -109,26 +151,28 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     public String invoke(Object connection, String request, int timeout,
             Map<String, String> headers) throws AdapterException, ConnectionException {
         String requestSent = null;
-        final Producer<Long, String> producer = kafkaProducer;
+        final Producer<Long, String> producer = (KafkaProducer<Long, String>)connection;
 
         try {
             long time = System.currentTimeMillis();
             final ProducerRecord<Long, String> record = createKafkaMessage(request, topicName, 0L);
             RecordMetadata metadata = null;
             if (isSynchronous()) {
+                /* Produce a record and wait for server to reply. Throw an exception if something goes wrong */
                 metadata = producer.send(record).get();
             }
             else
             {
+                /* Produce a record without waiting for server. This includes a callback that will print an error if something goes wrong */
                 final CountDownLatch countDownLatch = new CountDownLatch(100);
                 producer.send(record, (metadataAsync, exception) -> {
                     if (metadataAsync != null) {
                         long elapsedTime = System.currentTimeMillis() - time;
-                        System.out.printf("sent record(key= " + record.key() + " value=" + record.value() + ") " +
+                        logger.debug("sent record(key= " + record.key() + " value=" + record.value() + ") " +
                                 ", meta(partition=" + metadataAsync.partition() + " offset=" + metadataAsync.offset() + ") time=" + elapsedTime + "\n");
 
                     } else {
-                        exception.printStackTrace();
+                        logger.severeException("Exception occured sending the message" + request, exception);
                     }
                     countDownLatch.countDown();
                 });
@@ -138,21 +182,77 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
                     ", meta(partition=" + metadata.partition() + " offset=" + metadata.offset() + ") time=" + elapsedTime + "\n";
         }
         catch (InterruptedException ex){
+            producer.close();
+            producerMap.remove(bootstrap_servers);
             throw new AdapterException(-1, ex.getMessage(), ex);
         }
         catch (ExecutionException ex) {
+            producer.close();
+            producerMap.remove(bootstrap_servers);
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, ex.getMessage(), ex);
         }
         finally {
-            kafkaProducer.flush();
-            kafkaProducer.close();
+            producer.flush();
         }
         return requestSent;
     }
 
+    public Map<String,String> getProducerProps() {
+        try {
+            Map<String,String> properties = null;
+            String producerVar = getAttributeValueSmart(PRODUCER_VARIABLE);
+            if (producerVar != null) {
+                Process processVO = getProcessDefinition();
+                Variable variableVO = processVO.getVariable(producerVar);
+                if (variableVO == null)
+                    throw new ActivityException("Producer variable '" + producerVar + "' is not defined for process " + processVO.getLabel());
+                if (!variableVO.getVariableType().startsWith("java.util.Map"))
+                    throw new ActivityException("Producer variable '" + producerVar + "' must be of type java.util.Map");
+                Object producerObj = getVariableValue(producerVar);
+                if (producerObj != null) {
+                    properties = new HashMap<String,String>();
+                    for (Object key : ((Map<?,?>)producerObj).keySet()) {
+                        properties.put(key.toString(), ((Map<?,?>)producerObj).get(key).toString());
+                    }
+                }
+            }
+            return properties;
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    public Map<String,String> getRecordProps() {
+        try {
+            Map<String,String> properties = null;
+            String producerVar = getAttributeValueSmart(RECORD_VARIABLE);
+            if (producerVar != null) {
+                Process processVO = getProcessDefinition();
+                Variable variableVO = processVO.getVariable(producerVar);
+                if (variableVO == null)
+                    throw new ActivityException("Record variable '" + producerVar + "' is not defined for process " + processVO.getLabel());
+                if (!variableVO.getVariableType().startsWith("java.util.Map"))
+                    throw new ActivityException("Record variable '" + producerVar + "' must be of type java.util.Map");
+                Object producerObj = getVariableValue(producerVar);
+                if (producerObj != null) {
+                    properties = new HashMap<String,String>();
+                    for (Object key : ((Map<?,?>)producerObj).keySet()) {
+                        properties.put(key.toString(), ((Map<?,?>)producerObj).get(key).toString());
+                    }
+                }
+            }
+            return properties;
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
+            return null;
+        }
+    }
+
     @Override
     public boolean ping(int timeout) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -163,7 +263,6 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
 
     @Override
     protected boolean canBeAsynchronous() {
-        // TODO Auto-generated method stub
         return true;
     }
 

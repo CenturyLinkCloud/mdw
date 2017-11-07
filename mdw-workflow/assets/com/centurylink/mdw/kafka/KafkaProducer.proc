@@ -52,6 +52,10 @@
     "WORK_DISPLAY_INFO": "x=50,y=50,w=133,h=27"
   },
   "variables": {
+    "NewVariable": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
     "request": {
       "category": "INPUT",
       "type": "java.lang.String"
