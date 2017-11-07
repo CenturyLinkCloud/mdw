@@ -43,8 +43,6 @@ public class Run implements Operation {
     private File projectDir;
     public File getProjectDir() { return projectDir; }
 
-    public static final int STARTUP_TIMEOUT_SECS = 120;
-
     Run() {
         // cli use only
         this.projectDir = new File(".");
@@ -69,6 +67,11 @@ public class Run implements Operation {
     public boolean isDaemon() { return daemon; }
     public void setDaemon(boolean daemon) { this.daemon = daemon; }
 
+    @Parameter(names="--wait", description="(--daemon mode only) If specified, startup will await service availability for up to this many seconds")
+    private int wait;
+    public int getWait() { return wait; }
+    public void setWait(int timeout) { this.wait = timeout; }
+
     public Run run(ProgressMonitor... progressMonitors) throws IOException {
         List<String> cmdLine = new ArrayList<>();
         if (daemon) {
@@ -82,7 +85,7 @@ public class Run implements Operation {
             File logDir = getLogDir();
             if (logDir == null) {
                 logDir = new File(".");
-                cmdLine.add("-Dmdw.logging.dir=.");
+                cmdLine.add("-Dmdw.log.location=.");
             }
             System.out.println("Running MDW daemon with log dir: " + logDir.getAbsolutePath());
             cmdLine.add(getBootJar());
@@ -129,14 +132,14 @@ public class Run implements Operation {
 
         try {
             process.waitFor();
-            if (daemon) {
+            if (daemon && wait > 0) {
                 long before = System.currentTimeMillis();
                 boolean available = false;
                 URL url = new URL("http://localhost:" + getServerPort() + "/" + getContextRoot() + "/services/AppSummary");
                 System.out.println("Awaiting mdw services availability at " + url);
                 while (!available) {
-                    if ((System.currentTimeMillis() - before) / 1000 > STARTUP_TIMEOUT_SECS) {
-                        System.err.println("Startup timeout (" + STARTUP_TIMEOUT_SECS + " s) exceeded");
+                    if ((System.currentTimeMillis() - before) / 1000 > wait) {
+                        System.err.println("Startup timeout (" + wait + " s) exceeded");
                         throw new InterruptedException();
                     }
                     try {

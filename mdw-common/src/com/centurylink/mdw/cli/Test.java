@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,11 @@ public class Test extends Setup {
     private String exclude;
     public String getExclude() { return exclude; }
     public void setExclude(String exclude) { this.exclude = exclude; }
+
+    @Parameter(names="--ignore", description="Ignore failure for tests identified by these (comma-delimited) asset paths.")
+    private String ignore;
+    public String getIgnore() { return ignore; }
+    public void setIgnore(String ignore) { this.ignore = ignore; }
 
     @Parameter(names="--threads", description="Thread pool size")
     private int threads = 5; // thread pool size
@@ -137,10 +143,15 @@ public class Test extends Setup {
                             if (isFinished(status)) {
                                 if (!json) {
                                     int finished = finished(statuses);
-                                    System.out.println("  " + status + " (" + finished + "/" + statuses.size() + ") - " + asset);
+                                    if (isSuccess(status))
+                                        System.out.print("   ");
+                                    else
+                                        System.out.print("  *");
+                                    System.out.println(status + " (" + finished + "/" + statuses.size() + ") - " + asset);
                                 }
                                 if (!isSuccess(status)) {
-                                    this.success = false;
+                                    if (!isIgnore(asset))
+                                        this.success = false;
                                     if (test.has("message") && !json)
                                         System.out.println("    (" + test.getString("message"));
                                 }
@@ -290,5 +301,16 @@ public class Test extends Setup {
 
     private boolean isSuccess(String status) {
         return "Passed".equals(status);
+    }
+
+    private List<String> ignoreList;
+    private boolean isIgnore(String asset) {
+        if (ignore != null) {
+            if (ignoreList == null) {
+                ignoreList = Arrays.asList(ignore.trim().split("\\s*,\\s*"));
+            }
+            return ignoreList.contains(asset);
+        }
+        return false;
     }
 }

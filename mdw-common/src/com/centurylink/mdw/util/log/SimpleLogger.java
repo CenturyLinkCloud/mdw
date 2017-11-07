@@ -18,18 +18,15 @@ package com.centurylink.mdw.util.log;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 
 public class SimpleLogger extends AbstractStandardLoggerBase implements CacheService {
 
-    private static final long serialVersionUID = 1L;
+    private static final String MDW_LOG_LOCATION = "mdw.log.location";
+
     private static final int WARN_LEVEL = 1;
     private static final int INFO_LEVEL = 2;
     private static final int DEBUG_LEVEL = 3;
@@ -37,46 +34,28 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
     private static final int TRACE_LEVEL = 5;
 
     private static SimpleLogger singleton = null;
-    private static HashMap<String,SimpleLogger> loggers = null;
 
     private int loglevel = INFO_LEVEL;
     private PrintStream logfile = null;
-    private boolean toConsole;
 
     private SimpleLogger() {
-        // get some basic setting first and call refreshCache() later to load options based on property setting
-        toConsole = true;
-    }
-
-    private SimpleLogger(String loggerName) {
-        toConsole = false;
-        String dir = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_DIR);
-        if (dir==null) dir = ".";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String loggerFileName = dir + "/" + loggerName + "_" + sdf.format(new Date()) + ".log";
-        loggerFileName = loggerFileName.replaceAll("%", ApplicationContext.getServerHostPort());
-        try {
-            if (logfile!=null) logfile.close();
-            logfile = new PrintStream(new File(loggerFileName));
-        } catch (FileNotFoundException e) {
-            System.out.println("+++MDW ERROR+++ Cannot open log file " + loggerFileName);
-            logfile = null;
+        String logLoc = System.getProperty(MDW_LOG_LOCATION);
+        if (logLoc != null) {
+            File logDir = new File(logLoc);
+            try {
+                if (!logDir.isDirectory())
+                    throw new FileNotFoundException(MDW_LOG_LOCATION + " is not a directory: " + logDir.getAbsolutePath());
+                logfile = new PrintStream(new File(logDir + "/mdw.log"));
+            }
+            catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     public static SimpleLogger getSingleton() {
         if (singleton==null) singleton = new SimpleLogger();
         return singleton;
-    }
-
-    public static SimpleLogger getLogger(String loggerName) {
-        if (loggers==null) loggers = new HashMap<String,SimpleLogger>();
-        SimpleLogger logger = loggers.get(loggerName);
-        if (logger==null) {
-            logger = new SimpleLogger(loggerName);
-            loggers.put(loggerName, logger);
-        }
-        return logger;
     }
 
     public void clearCache() {
@@ -108,8 +87,8 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
 
     private void logline(char type, String tag, String message) {
         String line = generate_log_line(type, tag, message);
-        if (toConsole) System.out.println(line);
-        if (logfile!=null) {
+        System.out.println(line);
+        if (logfile != null) {
             logfile.println(line);
         }
         sendToWatchers(line);
@@ -117,10 +96,8 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
 
     private void logexception(char type, String tag, String message, Throwable throwable) {
         String line = generate_log_line(type, tag, message);
-        if (toConsole) {
-            System.out.println(line);
-            throwable.printStackTrace(System.out);
-        }
+        System.out.println(line);
+        throwable.printStackTrace(System.out);
         if (logfile!=null) {
             logfile.print(line);
             throwable.printStackTrace(logfile);
@@ -129,36 +106,35 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
     }
 
     public void debug(String logtodisplay) {
-        if (!isDebugEnabled()) return;
-        logline('d', null, logtodisplay);
+        if (isDebugEnabled())
+            logline('d', null, logtodisplay);
     }
 
     public void debugException(String msg, Throwable throwable) {
-        if (!isDebugEnabled()) return;
-        logexception('d', null, msg, throwable);
-
+        if (isDebugEnabled())
+            logexception('d', null, msg, throwable);
     }
 
     public void info(String logtodisplay) {
-        if (!isInfoEnabled()) return;
-        logline('i', null, logtodisplay);
+        if (isInfoEnabled())
+            logline('i', null, logtodisplay);
     }
 
     public void infoException(String logtodisplay, Throwable throwable) {
-        if (!isInfoEnabled()) return;
-        logexception('i', null, logtodisplay, throwable);
+        if (isInfoEnabled())
+            logexception('i', null, logtodisplay, throwable);
     }
 
     public boolean isDebugEnabled() {
-        return loglevel>=DEBUG_LEVEL;
+        return loglevel >= DEBUG_LEVEL;
     }
 
     public boolean isInfoEnabled() {
-        return loglevel>=INFO_LEVEL;
+        return loglevel >= INFO_LEVEL;
     }
 
     public boolean isTraceEnabled() {
-        return loglevel>=TRACE_LEVEL;
+        return loglevel >= TRACE_LEVEL;
     }
 
     public void severe(String logtodisplay) {
@@ -178,13 +154,13 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
     }
 
     public void info(String tag, String message) {
-        if (!isInfoEnabled()) return;
-        logline('i', tag, message);
+        if (isInfoEnabled())
+            logline('i', tag, message);
     }
 
     public void debug(String tag, String message) {
-        if (!isDebugEnabled()) return;
-        logline('d', tag, message);
+        if (isDebugEnabled())
+            logline('d', tag, message);
     }
 
     public void warn(String tag, String message) {
@@ -215,12 +191,12 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
     }
 
     public boolean isMdwDebugEnabled() {
-        return loglevel>=MDW_DEBUG_LEVEL;
+        return loglevel >= MDW_DEBUG_LEVEL;
     }
 
     public void mdwDebug(String message) {
-        if (!isMdwDebugEnabled()) return;
-        logline('m', null, message);
+        if (isMdwDebugEnabled())
+            logline('m', null, message);
     }
 
     public boolean isEnabledFor(LogLevel level) {

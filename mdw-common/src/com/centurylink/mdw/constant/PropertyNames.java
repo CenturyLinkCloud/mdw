@@ -20,7 +20,6 @@ public class PropertyNames {
     // logging
     public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";
     public static final String MDW_LOGGING_FILE = "mdw.logging.file";
-    public static final String MDW_LOGGING_DIR = "mdw.logging.dir";
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher"; // used internally, set by regression tester "<host>:<port>:<timeout>";
     public static final String MDW_LOGGING_WEB_WATCHER = "mdw.logging.web.watcher"; // used for watching using WebSocketServer
     // container service providers

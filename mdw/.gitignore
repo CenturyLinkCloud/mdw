@@ -7,3 +7,4 @@ notes/
 /config/
 local.gradle
 .temp/
+mdw.log
