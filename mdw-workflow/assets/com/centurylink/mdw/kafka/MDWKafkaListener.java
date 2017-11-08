@@ -56,7 +56,7 @@ public class MDWKafkaListener {
     protected boolean use_thread_pool;
     protected boolean auto_commit;
     protected String kafkaListenerName;
-    protected String hostList;
+    protected List<String> hostList;
     protected Properties initParameters = null;
     protected String xmlWrapper;
     protected KafkaConsumer<String, String> consumer = null;
@@ -72,6 +72,13 @@ public class MDWKafkaListener {
         try {
             if (!parameters.containsKey(HOST_LIST))
                 throw new Exception("Missing bootstrap.servers property for Kafka listener");
+            else {
+                String[] hostarray = parameters.getProperty(HOST_LIST).split(",");
+                if (hostarray != null && hostarray.length > 0)
+                    hostList = Arrays.asList(hostarray);
+                else
+                    throw new Exception("Missing value for bootstrap.servers property for Kafka listener");
+            }
         }
         catch (Exception e) {
             throw new PropertyException(e.getMessage());
@@ -101,7 +108,7 @@ public class MDWKafkaListener {
         }
 
         if (!parameters.containsKey(AUTO_COMMIT))
-            parameters.put(AUTO_COMMIT, "false");
+            parameters.put(AUTO_COMMIT, "true");
 
         if (!parameters.containsKey(KEY_DESERIALIZER))
             parameters.put(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
@@ -109,7 +116,7 @@ public class MDWKafkaListener {
         if (!parameters.containsKey(VALUE_DESERIALIZER))
             parameters.put(VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
 
-        hostList = parameters.getProperty(HOST_LIST);
+  //      hostList = parameters.getProperty(HOST_LIST);
         auto_commit = getBooleanProperty(parameters, AUTO_COMMIT, true);
         poll_timeout = 1000 * getIntegerProperty(parameters, POLL_TIMEOUT, 60);
         use_thread_pool = getBooleanProperty(parameters, USE_THREAD_POOL, false);
@@ -151,10 +158,10 @@ public class MDWKafkaListener {
 
     public void start() {
         try {
-            if (StringHelper.isEmpty(hostList))
+            if (hostList == null || hostList.isEmpty())
                 throw new Exception("Empty list of Kafka servers");
 
-            if (topics.isEmpty())
+            if (topics == null || topics.isEmpty())
                 throw new Exception("Topics not specified for Kafka listener");
 
             if (logger.isMdwDebugEnabled())
