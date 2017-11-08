@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,7 +224,7 @@ public class Test extends Setup {
         List<File> caseFiles = new ArrayList<>();
         List<PathMatcher> inMatchers = getIncludeMatchers();
         List<PathMatcher> exMatchers = getExcludeMatchers();
-        Files.walkFileTree(Paths.get(getAssetRoot().getPath()), new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(Paths.get(getAssetRoot().getPath()), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
             public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                 Path p = Paths.get(getAssetPath(path.toFile()));
                 if (matches(inMatchers, p) && !matches(exMatchers, p)) {

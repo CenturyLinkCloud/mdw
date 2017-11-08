@@ -1,15 +1,14 @@
 language: java
 before_install:
-  - chmod +x ./mdw/gradlew
   - npm install -g bower
-  - npm install grunt-cli -g
-  - npm --version
+  - npm install -g grunt-cli
 before_script: 
   - cd mdw-hub
   - npm install
   - bower install
   - cd ../mdw
-script: ./gradlew buildAll
+  - ln -s ../mdw-workflow/assets
+script: ./gradlew test
 notifications:
   slack:
     rooms:

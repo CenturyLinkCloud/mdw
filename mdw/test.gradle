@@ -35,16 +35,24 @@ task stop(type: Exec) {
     }
 }
 
-task allTests(type: Exec) {
-    commandLine getMdwCmd(), 'test', '--stubbing'
+task runTests(type: Exec) {
+    def cmds = [getMdwCmd(), 'test', '--stubbing', '--threads=10']
+    if (project.hasProperty('include'))
+        cmds.add('--include=' + include)
+    if (project.hasProperty('exclude'))
+        cmds.add('--exclude=' + exclude)
+    if (project.hasProperty('ignore'))
+        cmds.add('--ignore=' + ignore)
+    
+    commandLine cmds
     ignoreExitValue true
     doLast {
         testSuccess = (execResult.exitValue == 0)
     }
 }
-task testAll(dependsOn: [start, allTests, stop]) {
+task test(dependsOn: [start, runTests, stop]) {
 }
-allTests.mustRunAfter start
-stop.mustRunAfter allTests
+runTests.mustRunAfter start
+stop.mustRunAfter runTests
 
 // TODO: random tests

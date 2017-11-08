@@ -109,7 +109,7 @@ public abstract class JmsListener  {
                         logger.info(this.getClass().getName() + " interrupted.");
                     }
                     catch (JMSException e) {
-                        if ("org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
+                        if (e.getCause() != null && "org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
                             if (ApplicationContext.isSpringBoot()) // dueling shutdown hooks (spring and activemq) can cause this
                                 logger.severe("Terminating JMS Listener due to Transport Disposed: " + e.getMessage());
                             else
@@ -155,7 +155,7 @@ public abstract class JmsListener  {
                         logger.info(this.getClass().getName() + " interrupted.");
                     }
                     catch (JMSException e) {
-                        if ("org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
+                        if (e.getCause() != null && "org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
                             if (ApplicationContext.isSpringBoot()) // dueling shutdown hooks (spring and activemq) can cause this
                                 logger.severe("Terminating JMS Listener due to Transport Disposed: " + e.getMessage());
                             else
