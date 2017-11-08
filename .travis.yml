@@ -1,6 +1,6 @@
 language: java
 env:
-  - LD_LIBRARY_PATH=../mdw-workflow/assets/com/centurylink/mdw/node
+  - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
   - npm install -g bower
   - npm install -g grunt-cli
@@ -12,7 +12,7 @@ before_script:
   - pwd
 script: ./gradlew test
 after_failure:
-  - cat mdw.log
+  - cat ../testResults/mdw-function-test-results.json
   - cat ../testResults/com.centurylink.mdw.tests.services/admin-apis.log
 notifications:
   slack:
