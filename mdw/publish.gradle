@@ -14,32 +14,6 @@ nexusStaging {
     password = ossrhPassword
 }
 
-repositories {
-    mavenCentral()
-}
-
-configurations {
-    publish
-}
-
-dependencies {
-    publish fileTree(dir: 'libs', include: '*.jar')
-    publish files("../${mdwOutputDir}/mdw-common-${mdwVersion}.jar")
-    publish group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
-    publish group: "org.json", name: "json", version: "20160810"
-    publish group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
-	// limberest
-	publish group: "io.limberest", name: "limberest", version: "1.0.01"
-
-}
-
-task buildBaseConfigs() {
-    doLast {
-        def appConfigXml = file("../mdw-common/src/META-INF/mdw/spring/application-context.xml")
-        file("../${mdwOutputDir}/application-context-${mdwVersion}.xml").bytes = appConfigXml.bytes;
-    }
-}
-
 task updateRestApiDefinition {
     description = "Update RestApiDefinition with Version number"
     
@@ -97,66 +71,6 @@ task zipAssetPackages {
 }
 
 task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAsset")}) {
-}
-
-task checkAllowed() {
-    doLast {
-        assert publishUser != null : "Missing property: publishUser"
-        assert publishPassword != null : "Missing property: publishPassword"
-        // TODO disallow non-snapshot publish except from Jenkins
-    }
-}
-
-task publishBase(type: HttpPut) {
-    dependsOn(checkAllowed, buildBaseConfigs)
-    from "../${mdwOutputDir}/application-context-${mdwVersion}.xml"
-    baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
-    user publishUser
-    password publishPassword
-}
-
-task publishTemplate(type: HttpPut) {
-    dependsOn checkAllowed
-    from "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip"
-    baseUrl "${publishBaseUrl}/mdw-templates/${mdwVersion}"
-    user publishUser
-    password publishPassword
-}
-task publishWar(type: HttpPut) {
-    dependsOn checkAllowed
-    from "../${mdwOutputDir}/mdw-${mdwVersion}.war"
-    baseUrl "${publishBaseUrl}/mdw/${mdwVersion}"
-    withSources true
-    user publishUser
-    password publishPassword
-}
-
-// must be run after build.gradle target buildAll
-task publishJars(type: HttpPut) {
-    dependsOn(checkAllowed)
-    from "../${mdwOutputDir}/mdw-common-${mdwVersion}.jar"
-    from "../${mdwOutputDir}/mdw-services-${mdwVersion}.jar"
-    from "../${mdwOutputDir}/mdw-workflow-${mdwVersion}.jar"
-    groupUrl "${publishBaseUrl}"
-    withSources true
-    user publishUser
-    password publishPassword
-}
-
-// TODO: consider using standard Maven repository structure
-// (especially if we end up rehosting asset discovery to a different repo)
-task publishAssets(type: HttpPut) {
-    dependsOn(checkAllowed, zipAllAssets)
-    from "../${mdwAssetOutputDir}"
-    assetsUrl "${publishBaseUrl}/assets"
-    user publishUser
-    password publishPassword
-}
-
-task publishBuild(dependsOn: [publishBase, publishTemplate, publishJars, publishWar, publishAssets]) {
-    doLast {
-        println "*** MDW build ${mdwVersion} published to ${publishBaseUrl} ***"
-    }
 }
 
 task uploadToMavenCentral(type: GradleBuild) {

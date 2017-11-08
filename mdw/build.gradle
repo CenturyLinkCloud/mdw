@@ -105,19 +105,16 @@ task javadocs(type: Javadoc) {
 task zipAssetPackages(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["zipAllAssets"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task updateRestApiDefinition(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["updateRestApiDefinition"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task updateMdwVerInFiles(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["updateMdwVerInFiles"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task versions {
@@ -141,14 +138,12 @@ task publishToMavenCentral(type: GradleBuild) {
     dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task publishAssetsToMavenCentral(type: GradleBuild) {
     dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishAssetsToMavenCentral"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 allprojects {
@@ -345,12 +340,3 @@ task cleanAll(type: GradleBuild) {
     buildFile = "build.gradle"
     tasks = ["clean"]
 }
-
-// update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
-task updateMDWDemoWorkspace(type: GradleBuild) {
-    buildFile = "local.gradle"
-    tasks = ["updateMDWDemoWorkspace"]
-    startParameter.projectProperties = [deployWarDir: "n/a", tomcatBinDir: "n/a", testServerUrl: "n/a"]
-}
-
-
