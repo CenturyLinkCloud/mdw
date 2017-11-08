@@ -1,4 +1,6 @@
 language: java
+env:
+  - LD_LIBRARY_PATH=../mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
   - npm install -g bower
   - npm install -g grunt-cli
@@ -7,6 +9,7 @@ before_script:
   - npm install
   - bower install
   - cd ../mdw
+  - pwd
 script: ./gradlew test
 after_failure:
   - cat mdw.log
