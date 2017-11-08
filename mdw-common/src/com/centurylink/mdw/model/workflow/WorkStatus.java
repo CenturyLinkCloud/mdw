@@ -15,13 +15,8 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-
-/**
- */
-
 public interface WorkStatus {
 
-    // CONSTANTS ------------------------------------------------------
     public static final Integer STATUS_PENDING_PROCESS = new Integer(1);    // only used by process
     public static final Integer STATUS_IN_PROGRESS = new Integer(2);
     public static final Integer STATUS_FAILED = new Integer(3);

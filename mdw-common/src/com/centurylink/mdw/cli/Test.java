@@ -28,7 +28,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +53,7 @@ public class Test extends Setup {
     public String getExclude() { return exclude; }
     public void setExclude(String exclude) { this.exclude = exclude; }
 
-    @Parameter(names="--ignore", description="Ignore failure for tests identified by these (comma-delimited) asset paths.")
+    @Parameter(names="--ignore", description="Exit code ignores failure for these tests.  Comma-delimited glob patterns (relative to asset root).")
     private String ignore;
     public String getIgnore() { return ignore; }
     public void setIgnore(String ignore) { this.ignore = ignore; }
@@ -92,6 +91,8 @@ public class Test extends Setup {
      */
     @Override
     public Operation run(ProgressMonitor... progressMonitors) throws IOException {
+        if (!json)
+            System.out.println("Finding tests...");
         List<File> caseFiles = findCaseFiles();
         if (caseFiles.isEmpty()) {
             System.out.println("No tests found");
@@ -152,7 +153,14 @@ public class Test extends Setup {
                                     System.out.println(status + " (" + finished + "/" + statuses.size() + ") - " + asset);
                                 }
                                 if (!isSuccess(status)) {
-                                    if (!isIgnore(asset))
+                                    boolean ignoreFailure = false;
+                                    if (ignore != null) {
+                                        int lastSlash = asset.lastIndexOf('/');
+                                        Path assetPath = Paths.get(new File(asset.substring(0, lastSlash).replace('.', '/') + asset.substring(lastSlash)).getPath());
+                                        if (matches(getIgnoreMatchers(), assetPath))
+                                            ignoreFailure = true;
+                                    }
+                                    if (!ignoreFailure)
                                         this.success = false;
                                     if (test.has("message") && !json)
                                         System.out.println("    (" + test.getString("message"));
@@ -224,15 +232,16 @@ public class Test extends Setup {
         List<File> caseFiles = new ArrayList<>();
         List<PathMatcher> inMatchers = getIncludeMatchers();
         List<PathMatcher> exMatchers = getExcludeMatchers();
-        Files.walkFileTree(Paths.get(getAssetRoot().getPath()), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
-            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                Path p = Paths.get(getAssetPath(path.toFile()));
-                if (matches(inMatchers, p) && !matches(exMatchers, p)) {
-                    caseFiles.add(p.toFile());
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        Files.walkFileTree(Paths.get(getAssetRoot().getPath()),
+                EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                        Path p = Paths.get(getAssetPath(path.toFile()));
+                        if (matches(inMatchers, p) && !matches(exMatchers, p)) {
+                            caseFiles.add(p.toFile());
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
         return caseFiles;
     }
 
@@ -249,6 +258,16 @@ public class Test extends Setup {
         if (exclude != null) {
             for (String ex : exclude.trim().split("\\s*,\\s*")) {
                 matchers.add(FileSystems.getDefault().getPathMatcher("glob:" + ex));
+            }
+        }
+        return matchers;
+    }
+
+    List<PathMatcher> getIgnoreMatchers() {
+        List<PathMatcher> matchers = new ArrayList<>();
+        if (ignore != null) {
+            for (String ig : ignore.trim().split("\\s*,\\s*")) {
+                matchers.add(FileSystems.getDefault().getPathMatcher("glob:" + ig));
             }
         }
         return matchers;
@@ -303,16 +322,5 @@ public class Test extends Setup {
 
     private boolean isSuccess(String status) {
         return "Passed".equals(status);
-    }
-
-    private List<String> ignoreList;
-    private boolean isIgnore(String asset) {
-        if (ignore != null) {
-            if (ignoreList == null) {
-                ignoreList = Arrays.asList(ignore.trim().split("\\s*,\\s*"));
-            }
-            return ignoreList.contains(asset);
-        }
-        return false;
     }
 }

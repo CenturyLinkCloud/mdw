@@ -50,6 +50,23 @@
         "Process Design",
         "Task Execution"
       ]            
+    },
+    {
+      "name": "Jack Brojde",
+      "id": "jbrojde",
+      "attributes": {
+        "emailAddress": "jack.brojde@centurylink.com"
+      },      
+      "groups": [
+        "Developers",
+        "Site Admin"
+      ],
+      "roles": [
+        "User Admin",
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ]            
     }   
   ]
 }

@@ -325,7 +325,7 @@ public abstract class Setup implements Operation {
         if (assetRoot.isAbsolute())
             return assetRoot;
         else
-            return new File(getProjectDir() + "/" + getAssetLoc());
+            return new File(getProjectDir() + "/" + assetLoc);
     }
 
     public boolean gitExists() {
