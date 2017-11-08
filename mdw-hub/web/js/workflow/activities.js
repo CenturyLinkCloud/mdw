@@ -243,6 +243,13 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Proc
      });    
    };
    
+   $scope.canAction = function(action) {
+	   if (action == 'Retry' && $scope.activity.status != 'Failed' && $scope.activity.status != 'Completed' && $scope.activity.status != 'Cancelled') 
+		   return false;
+	   else
+		   return true;
+   };
+   
 }]);
 
 activityMod.factory('Activity', ['$resource', 'mdw', function($resource, mdw) {
