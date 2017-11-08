@@ -13,7 +13,7 @@ before_script:
 script: ./gradlew test
 after_failure:
   - cat ../testResults/mdw-function-test-results.json
-  # - cat ../testResults/com.centurylink.mdw.tests.services/admin-apis.log
+  - cat ../testResults/com.centurylink.mdw.tests.services/admin-apis.log
 notifications:
   slack:
     rooms:
