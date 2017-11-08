@@ -296,6 +296,26 @@ public class Test extends Setup {
                     JSONObject tcObj = new JSONObject();
                     tcObj.put("name", caseName);
                     tcs.put(tcObj);
+                    if (caseName.endsWith(".postman")) {
+                        JSONArray items = new JSONArray();
+                        // add items
+                        File caseFile = new File(getAssetRoot() + "/" + pkg.replace('.', '/') + "/" + caseName);
+                        String contents = new String(Files.readAllBytes(Paths.get(caseFile.getPath())));
+                        JSONObject postman = new JSONObject(contents);
+                        JSONArray postmanItems = postman.getJSONArray("item");
+                        for (int i = 0; i < postmanItems.length(); i++) {
+                            JSONObject postmanItem = postmanItems.getJSONObject(i);
+                            JSONObject obj = new JSONObject();
+                            obj.put("name", postmanItem.getString("name"));
+                            JSONObject req = new JSONObject();
+                            req.put("method", postmanItem.getJSONObject("request").getString("method"));
+                            obj.put("request", req);
+                            JSONObject item = new JSONObject();
+                            item.put("object", obj);
+                            items.put(item);
+                        }
+                        tcObj.put("items", items);
+                    }
                 }
                 pkgObj.put("testCases", tcs);
             }
