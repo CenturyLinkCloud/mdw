@@ -37,12 +37,15 @@ task stop(type: Exec) {
 
 task runTests(type: Exec) {
     def cmds = [getMdwCmd(), 'test', '--stubbing', '--threads=10']
-    if (project.hasProperty('include'))
-        cmds.add('--include=' + include)
-    if (project.hasProperty('exclude'))
-        cmds.add('--exclude=' + exclude)
-    if (project.hasProperty('ignore'))
-        cmds.add('--ignore=' + ignore)
+    
+    cmds.add('--include=com/centurylink/mdw/tests/services/admin-apis.postman')
+    
+//    if (project.hasProperty('include'))
+//        cmds.add('--include=' + include)
+//    if (project.hasProperty('exclude'))
+//        cmds.add('--exclude=' + exclude)
+//    if (project.hasProperty('ignore'))
+//        cmds.add('--ignore=' + ignore)
     
     commandLine cmds
     ignoreExitValue true

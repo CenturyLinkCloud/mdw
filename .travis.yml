@@ -8,6 +8,9 @@ before_script:
   - bower install
   - cd ../mdw
 script: ./gradlew test
+after_failure:
+  - cat mdw.log
+  - cat ../testResults/com.centurylink.mdw.tests.services/admin-apis.log
 notifications:
   slack:
     rooms:
