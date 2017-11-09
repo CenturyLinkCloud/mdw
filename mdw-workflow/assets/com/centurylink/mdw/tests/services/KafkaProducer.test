@@ -1,4 +1,4 @@
-package com.centurylink.mdw.kafka
+package com.centurylink.mdw.tests.services
 
 
 start process("KafkaProducer") {
@@ -6,4 +6,4 @@ start process("KafkaProducer") {
 }
 
 wait process
-verify process("com.centurylink.mdw.kafka/KafkaProducer")
+verify process("com.centurylink.mdw.tests.services/KafkaProducer")
