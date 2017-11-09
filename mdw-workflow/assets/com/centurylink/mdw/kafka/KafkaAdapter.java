@@ -8,12 +8,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.LongSerializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -22,8 +26,6 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
@@ -35,7 +37,6 @@ import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
 public class KafkaAdapter extends PoolableAdapterBase implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static final String KAFKA_TOPIC_NAME = "topic";
     private static final String RECORD_KEY = "key";
@@ -83,7 +84,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
             }
             else
                 return producerMap.get(bootstrap_servers);
-            }
+        }
     }
 
     @Override
@@ -95,9 +96,12 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         producer.close();
     }
 
-    protected ProducerRecord<Long, String> createKafkaMessage(String pRequestString) {
+    /*
+     * Object should be based on what is set as KEY_SERIALIZER_CLASS_CONFIG, We are assuming value is of String type
+     */
+    protected ProducerRecord<Object, String> createKafkaMessage(String pRequestString) {
         recordProps = getRecordProps();
-        return  new ProducerRecord<>((String)recordProps.get(KAFKA_TOPIC_NAME), (Integer)recordProps.get(RECORD_PARTITION), (long)recordProps.get(RECORD_KEY), pRequestString);
+        return  new ProducerRecord<>((String)recordProps.get(KAFKA_TOPIC_NAME), (Integer)recordProps.get(RECORD_PARTITION), recordProps.get(RECORD_KEY), pRequestString);
     }
 
     @SuppressWarnings("unchecked")
@@ -105,18 +109,26 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     public String invoke(Object connection, String request, int timeout,
             Map<String, String> headers) throws AdapterException, ConnectionException {
         String requestSent = null;
-        final Producer<Long, String> producer = (KafkaProducer<Long, String>)connection;
+        final Producer<Object, String> producer = (KafkaProducer<Object, String>)connection;
 
         try {
             long time = System.currentTimeMillis();
-            final ProducerRecord<Long, String> record = createKafkaMessage(request);
-
-            /* Produce a record and wait for server to reply. Throw an exception if something goes wrong */
-            RecordMetadata metadata = producer.send(record).get();
-
+            final ProducerRecord<Object, String> record = createKafkaMessage(request);
+            RecordMetadata metadata = null;
+            if (isSynchronous()) {
+                /* Produce a record and wait for server to reply. Throw an exception if something goes wrong */
+                metadata = producer.send(record).get();
+             }
+            else {
+                /* Produce a record without waiting for server. This includes a callback that will print an error if something goes wrong */
+                SendCallback callback = new SendCallback();
+                Future<RecordMetadata> future = producer.send(record, callback);
+                metadata = future.get();
+            }
             long elapsedTime = System.currentTimeMillis() - time;
             requestSent = "sent record(key= " + record.key() + " value=" + record.value() + ") " +
                     ", meta(partition=" + metadata.partition() + " offset=" + metadata.offset() + ") time=" + elapsedTime + "\n";
+
         }
         catch (InterruptedException ex){
             producer.close();
@@ -206,16 +218,26 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         return true;
     }
 
- /*   void runProducerSync(final int sendMessageCount) throws Exception {
-        this.init();
-        final Producer<Long, String> producer = kafkaProducer;
+    private static Producer<Long, String> createProducer() {
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                "localhost:9092,localhost:9093,localhost:9094");
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, "KafkaMDWProducer");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                LongSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class.getName());
+        return new KafkaProducer<>(props);
+    }
+    void runProducerSync(final int sendMessageCount) throws Exception {
+        final Producer<Long, String> producer = createProducer();
         long time = System.currentTimeMillis();
 
         try {
             for (long index = time; index < time + sendMessageCount; index++) {
                 final ProducerRecord<Long, String> record =
-                        new ProducerRecord<>("topic", index,
-                                "Hello MDW Sync" + index);
+                        new ProducerRecord<>("kafkaTopic", index,
+                                "Hello MDW Sync " + index);
 
                 RecordMetadata metadata = producer.send(record).get();
 
@@ -233,32 +255,31 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     }
 
     void runProducerAsync(final int sendMessageCount) throws Exception {
-        this.init();
-        final Producer<Long, String> producer = kafkaProducer;
+        final Producer<Long, String> producer = createProducer();
         long time = System.currentTimeMillis();
-        final CountDownLatch countDownLatch = new CountDownLatch(sendMessageCount);
 
         try {
             for (long index = time; index < time + sendMessageCount; index++) {
                 final ProducerRecord<Long, String> record =
-                        new ProducerRecord<>("topic", index, "Hello MDW Async " + index);
-                producer.send(record, (metadata, exception) -> {
-                    long elapsedTime = System.currentTimeMillis() - time;
-                    if (metadata != null) {
-                        System.out.printf("sent record(key=%s value=%s) " +
-                                "meta(partition=%d, offset=%d) time=%d\n",
-                                record.key(), record.value(), metadata.partition(),
-                                metadata.offset(), elapsedTime);
-                    } else {
-                        exception.printStackTrace();
-                    }
-                    countDownLatch.countDown();
-                });
+                        new ProducerRecord<>("kafkaTopic", index, "Hello MDW Async " + index);
+                SendCallback callback = new SendCallback();
+                producer.send(record, callback);
             }
-            countDownLatch.await(25, TimeUnit.SECONDS);
         }finally {
             producer.flush();
             producer.close();
+        }
+    }
+
+    private static class SendCallback implements Callback {
+        @Override
+        public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+            if (e != null) {
+                logger.severeException("Error while producing message to topic :" + recordMetadata + e.getMessage(), e);
+            } else {
+                String message = String.format("sent message to topic:%s partition:%s  offset:%s", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
+                logger.mdwDebug(message);
+            }
         }
     }
 
@@ -269,5 +290,5 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         } else {
             kafkaAdapter.runProducerAsync(Integer.parseInt(args[0]));
         }
-    }*/
+    }
 }
