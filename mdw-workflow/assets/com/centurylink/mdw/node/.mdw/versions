@@ -2,7 +2,7 @@
 .mdwignore=1
 TestRunner.java=1
 WebpackCache.java=6
-j2v8-4.7.1.jar=1
+j2v8-4.6.0.jar=1
 libstdc++.so.6=1
 node_modules.zip=2
 package.json=5
