@@ -79,10 +79,12 @@ mdw.listener.kafka.AppKafkaListener1.group.id=Topics1and2Group
 mdw.listener.kafka.AppKafkaListener1.xmlWrapper=MyAppKafkaHandler
 ```
 
-The above configuration will create a single Kafka consumer that will listen for 2 topics, auto-commit messages using the consumer's default settings, and use StringDeserializer class provided in the kafka-clients.jar for the Key and Value for all Kafka records it consumes.  The "xmlWrapper" property will wrap all incoming messages into an XML message having a root node of <MyKafkaHandler>, which will allow you to then create/register an External Event that will be used to process all messages whose root nodes are <MyKafkaHandler>.  If you do not specify a "group.id" property, MDW will use a default value matching that of the listener name (i.e. in above example, if the group.id property were missing, the group.id would be "AppKafkaListener1".
+The above configuration will create a single Kafka consumer that will listen for 2 topics, auto-commit messages using the consumer's default settings, and use StringDeserializer class provided in the kafka-clients.jar for the Key and Value for all Kafka records it consumes.  The "xmlWrapper" property will wrap all incoming messages into an XML message having a root node of "<MyKafkaHandler>", which will allow you to then create/register an External Event Handler that will be used to process all messages whose root nodes are "<MyKafkaHandler>".  If you do not specify a "group.id" property, MDW will use a default value matching that of the listener name (i.e. in above example, if the group.id property were missing, the group.id would be "AppKafkaListener1".   If you do not specify the "topics" property, the listener will register to listen for a topic that matches the name of the listener (i.e. in above example, the topic would be "AppKafkaListener1" if the property were missing).
 
 The following are additional properties that will impact how MDW handles the incoming messages:
 
+```
 mdw.listener.kafka.AppKafkaListener1.enable.auto.commit=false  (When set to "false", MDW will commit each message after it is processed, instead of the configured/default time interval for a Kafka Consumer)
 
 mdw.listener.kafka.AppKafkaListener1.useThreadPool=true  (When set to "true", MDW will process each record in a separate thread, instead of using the Listener/Consumer thread to do the processing)
+```
