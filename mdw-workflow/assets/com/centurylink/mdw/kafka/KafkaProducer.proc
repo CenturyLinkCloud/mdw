@@ -30,7 +30,7 @@
         "REQUEST_VARIABLE": "request",
         "RESPONSE_VARIABLE": "response",
         "WORK_DISPLAY_INFO": "x=183,y=153,w=153,h=60",
-        "synchronous": "False"
+        "synchronous": "True"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.kafka.KafkaAdapter",

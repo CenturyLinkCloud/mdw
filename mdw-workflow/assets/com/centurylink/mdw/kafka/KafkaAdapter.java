@@ -127,7 +127,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
             }
             long elapsedTime = System.currentTimeMillis() - time;
             requestSent = "sent record(key=" + record.key() + " value=" + record.value() + ") " +
-                    ", meta(partition=" + metadata.partition() + " offset=" + metadata.offset() + ") time=" + elapsedTime + "\n";
+                    ", meta(partition=" + metadata.partition() + " offset=" + metadata.offset() + ") time=" + elapsedTime;
 
         }
         catch (InterruptedException ex){
@@ -215,7 +215,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
 
     @Override
     protected boolean canBeAsynchronous() {
-        return true;
+        return false;
     }
 
     private static Producer<Object, Object> createProducer() {
