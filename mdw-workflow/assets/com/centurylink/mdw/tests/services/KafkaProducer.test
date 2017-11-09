@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.services
+
+
+start process("KafkaProducer") {
+    variables = [request: "Kafka Producer-Adapter Test"]
+}
+
+wait process
+verify process("com.centurylink.mdw.tests.services/KafkaProducer")

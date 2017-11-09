@@ -34,6 +34,7 @@ permalink: /docs/help/
   <li><a href='notification.html'>Notification Activity</a></li> 
   <li><a href='process.html'>Processes</a></li>
   <li><a href='RestfulAdapter.html'>RESTful Adapter Activity</a></li>
+  <li><a href='KafkaAdapter.html'>Kafka Adapter Activity</a></li>
   <li><a href='scriptActivity.html'>Script Activity</a></li>       
   <li><a href='sqlAdapter.html'>SQL Adapter Activity</a></li>
   <li><a href='synchronization.html'>Synchronization Activity</a></li>

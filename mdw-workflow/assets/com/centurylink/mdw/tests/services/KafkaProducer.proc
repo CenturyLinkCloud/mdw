@@ -1,0 +1,70 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=61,y=160,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=173,ly=214,type=Elbow,xs=125&179,ys=180&180"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=418,y=164,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "true",
+        "Output Documents": "[\"producerProperties\",\"recordProperties\"]",
+        "PostScriptLang": "Groovy",
+        "PreScript": "import java.util.Properties\r\n\r\nimport org.apache.kafka.clients.producer.ProducerConfig\r\nimport org.apache.kafka.common.serialization.LongSerializer\r\nimport org.apache.kafka.common.serialization.StringSerializer\r\n\r\nimport com.centurylink.mdw.config.PropertyUtil\r\nimport com.centurylink.mdw.constant.PropertyNames\r\nimport com.centurylink.mdw.kafka.KafkaAdapter\r\n\r\nProperties producerProps = new Properties();\r\n\r\n//NOTE: coma separated list of server:port ex. localhost:9092,localhost:9093\r\nString server = PropertyUtil.getInstance().getPropertyManager().getProperty(\"mdw.kafka.servers\");\r\nSystem.out.println(\"BOOTSTRAP_SERVERS_CONFIG : \" + server);\r\nproducerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);\r\nproducerProps.put(ProducerConfig.CLIENT_ID_CONFIG, \"KafkaMDWProducer\");\r\nproducerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());\r\nproducerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());\r\nproducerProperties = producerProps;\r\n;\nProperties recordProps = new Properties();\r\nrecordProps.put(KafkaAdapter.KAFKA_TOPIC_NAME, \"kafkaTopic\");\r\nlong key = System.currentTimeMillis();\r\nrecordProps.put(KafkaAdapter.RECORD_KEY, key);\r\nrecordProps.put(KafkaAdapter.RECORD_PARTITION,  0);\r\nrecordProperties = recordProps;",
+        "PreScriptLang": "Groovy",
+        "ProducerRecordVariable": "recordProperties",
+        "ProducerVariable": "producerProperties",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "response",
+        "WORK_DISPLAY_INFO": "x=183,y=153,w=153,h=60",
+        "synchronous": "True"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.kafka.KafkaAdapter",
+      "name": "MDW Kafka Adapter",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=377,ly=184,type=Elbow,xs=340&414,ys=184&184"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=133,h=27"
+  },
+  "variables": {
+    "producerProperties": {
+      "category": "LOCAL",
+      "type": "java.lang.Object"
+    },
+    "recordProperties": {
+      "category": "LOCAL",
+      "type": "java.lang.Object"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

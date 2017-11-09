@@ -112,6 +112,9 @@ public class PropertyNames {
     // this is a group, for multiple MQ listeners
     public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
 
+    // this is a group, for multiple Kafka listeners
+    public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
+
     // this is a group, contains <name>.TimerClass/Schedule
     public static final String MDW_TIMER_TASK = "mdw.timer.task";   // prefix for timer task properties
 
