@@ -47,12 +47,12 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     private static final String PRODUCER_VARIABLE = "ProducerVariable";
     private static final String RECORD_VARIABLE = "ProducerRecordVariable";
 
-    protected KafkaProducer<Long, String> kafkaProducer;
+    protected KafkaProducer<Object, Object> kafkaProducer;
     private String bootstrap_servers;
 
     private Properties producerProps;
     private Properties recordProps;
-    private static Map<String, KafkaProducer<Long, String>> producerMap = new ConcurrentHashMap<String, KafkaProducer<Long, String>>();
+    private static Map<String, KafkaProducer<Object, Object>> producerMap = new ConcurrentHashMap<String, KafkaProducer<Object, Object>>();
 
 
     @Override
@@ -91,7 +91,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     public void closeConnection(Object connection) {
     }
 
-    public void closeProducer(KafkaProducer<Long, String> producer) {
+    public void closeProducer(KafkaProducer<Object, Object> producer) {
         producer.flush();
         producer.close();
     }
@@ -99,7 +99,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     /*
      * Object should be based on what is set as KEY_SERIALIZER_CLASS_CONFIG, We are assuming value is of String type
      */
-    protected ProducerRecord<Object, String> createKafkaMessage(String pRequestString) {
+    protected ProducerRecord<Object, Object> createKafkaMessage(Object pRequestString) {
         recordProps = getRecordProps();
         return  new ProducerRecord<>((String)recordProps.get(KAFKA_TOPIC_NAME), (Integer)recordProps.get(RECORD_PARTITION), recordProps.get(RECORD_KEY), pRequestString);
     }
@@ -109,11 +109,11 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     public String invoke(Object connection, String request, int timeout,
             Map<String, String> headers) throws AdapterException, ConnectionException {
         String requestSent = null;
-        final Producer<Object, String> producer = (KafkaProducer<Object, String>)connection;
+        final Producer<Object, Object> producer = (KafkaProducer<Object, Object>)connection;
 
         try {
             long time = System.currentTimeMillis();
-            final ProducerRecord<Object, String> record = createKafkaMessage(request);
+            final ProducerRecord<Object, Object> record = createKafkaMessage(request);
             RecordMetadata metadata = null;
             if (isSynchronous()) {
                 /* Produce a record and wait for server to reply. Throw an exception if something goes wrong */
@@ -126,7 +126,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
                 metadata = future.get();
             }
             long elapsedTime = System.currentTimeMillis() - time;
-            requestSent = "sent record(key= " + record.key() + " value=" + record.value() + ") " +
+            requestSent = "sent record(key=" + record.key() + " value=" + record.value() + ") " +
                     ", meta(partition=" + metadata.partition() + " offset=" + metadata.offset() + ") time=" + elapsedTime + "\n";
 
         }
@@ -218,7 +218,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         return true;
     }
 
-    private static Producer<Long, String> createProducer() {
+    private static Producer<Object, Object> createProducer() {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 "localhost:9092,localhost:9093,localhost:9094");
@@ -230,12 +230,12 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         return new KafkaProducer<>(props);
     }
     void runProducerSync(final int sendMessageCount) throws Exception {
-        final Producer<Long, String> producer = createProducer();
+        final Producer<Object, Object> producer = createProducer();
         long time = System.currentTimeMillis();
 
         try {
             for (long index = time; index < time + sendMessageCount; index++) {
-                final ProducerRecord<Long, String> record =
+                final ProducerRecord<Object, Object> record =
                         new ProducerRecord<>("kafkaTopic", index,
                                 "Hello MDW Sync " + index);
 
@@ -255,12 +255,12 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     }
 
     void runProducerAsync(final int sendMessageCount) throws Exception {
-        final Producer<Long, String> producer = createProducer();
+        final Producer<Object, Object> producer = createProducer();
         long time = System.currentTimeMillis();
 
         try {
             for (long index = time; index < time + sendMessageCount; index++) {
-                final ProducerRecord<Long, String> record =
+                final ProducerRecord<Object, Object> record =
                         new ProducerRecord<>("kafkaTopic", index, "Hello MDW Async " + index);
                 SendCallback callback = new SendCallback();
                 producer.send(record, callback);
