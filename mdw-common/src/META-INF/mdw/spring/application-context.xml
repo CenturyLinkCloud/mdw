@@ -178,7 +178,7 @@
     brokerName="mdw-activemq"
     useJmx="true"
     schedulerSupport="true"
-    useShutdownHook="true"
+    useShutdownHook="false"
     dataDirectory="../activemq-data">
     <amq:transportConnectors>
       <amq:transportConnector name="tcpConnector" uri="tcp://0.0.0.0:61618?daemon=true" />

@@ -11,7 +11,10 @@ before_script:
   - cd ../mdw
 script: ./gradlew test
 after_failure:
+  - echo "TEST RESULTS"
   - cat ../testResults/mdw-function-test-results.json
+  - echo "SERVER LOG"
+  - cat mdw.log
 #  - cat ../testResults/com.centurylink.mdw.tests.services/admin-apis.log
 notifications:
   slack:

@@ -32,9 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.listener.SessionAwareMessageListener;
 
-import com.centurylink.mdw.constant.SpringConstants;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.MessageProducer;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -45,7 +45,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 public class ExternalEventMessageListener implements SessionAwareMessageListener<Message> {
 
     @Autowired
-    @Qualifier(SpringConstants.MDW_SPRING_MESSAGE_PRODUCER)
+    @Qualifier(SpringAppContext.MDW_SPRING_MESSAGE_PRODUCER)
     private MessageProducer mdwMessageProducer;
 
     public ExternalEventMessageListener() {

@@ -33,7 +33,6 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.constant.SpringConstants;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -120,26 +119,20 @@ public class MdwMain {
             logger.info("Initialize " + ConnectionPoolRegistration.class.getName()) ;
             (new ConnectionPoolRegistration()).onStartup();
 
-            // Spring will inject the listeners below on Tomcat
-            // Check that bean is loaded, otherwise use MDW internal mechanism
-            // This allows us just to switch using the bean definitions in application-context.xml
-            if (!SpringAppContext.getInstance().isBeanDefined(SpringConstants.MDW_SPRING_INTERNAL_EVENT_LISTENER)) {
+            if (MessengerFactory.internalMessageUsingJms()) {
+                internalEventListener = new InternalEventListener(threadPool);
+                internalEventListener.start();
+            }
 
-                if (MessengerFactory.internalMessageUsingJms()) {
-                    internalEventListener = new InternalEventListener(threadPool);
-                    internalEventListener.start();
-                }
+            if (ApplicationContext.getJmsProvider() != null) {
+                intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, threadPool);
+                intraMdwEventListener.start();
 
-                if (ApplicationContext.getJmsProvider() != null) {
-                    intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, threadPool);
-                    intraMdwEventListener.start();
+                externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, threadPool);
+                externalEventListener.start();
 
-                    externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, threadPool);
-                    externalEventListener.start();
-
-                    configurationEventListener = new ConfigurationEventListener();
-                    configurationEventListener.start();
-                }
+                configurationEventListener = new ConfigurationEventListener();
+                configurationEventListener.start();
             }
 
             logger.info("Initialize " + TimerTaskRegistration.class.getName());
@@ -206,6 +199,8 @@ public class MdwMain {
                 configurationEventListener.stop();
             if (externalEventListener != null)
                 externalEventListener.stop();
+            if (intraMdwEventListener != null)
+                intraMdwEventListener.stop();
             if (internalEventListener != null )
                 internalEventListener.stop();
 

@@ -49,6 +49,7 @@ import com.centurylink.mdw.variable.VariableTranslator;
 public class SpringAppContext implements CacheService {
 
     public static final String SPRING_CONTEXT_FILE = "spring/application-context.xml";
+    public static final String MDW_SPRING_MESSAGE_PRODUCER = "messageProducer";
 
     private static final Object pkgContextLock = new Object();
 
