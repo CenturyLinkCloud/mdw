@@ -3,7 +3,6 @@ env:
   - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
   - java -version
-  - ps -ef | grep java  # is process still running?
   - npm install -g bower
   - npm install -g grunt-cli
 before_script: 
