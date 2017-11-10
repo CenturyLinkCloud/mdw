@@ -14,15 +14,17 @@ producerProperties
 recordProperties
 ```
   ![Kafka Variables](kafkaAdapter-ProcessVariables.jpg "Kafka Variables")
+  
 Then you set these variables in design tab as shown below
   ![Kafka Script](kafkaAdapter-design.jpg "Kafka Adapter Design")
+  
 Then you create a pre-script to set all the properties for Producer and Message record to be published as shown below
   ![Kafka Script](kafkaAdapter-script.jpg "Kafka Script")
+  
 Here is the pre-script for the Adapter which sets the properties:
 
 ```
 import java.util.Properties
-
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.LongSerializer
 import org.apache.kafka.common.serialization.StringSerializer
