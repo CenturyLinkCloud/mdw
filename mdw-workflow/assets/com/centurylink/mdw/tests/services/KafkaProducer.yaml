@@ -12,10 +12,10 @@ process: # 12756
     status: Completed
   variable: # 16621
     name: producerProperties
-    value: {key.serializer=org.apache.kafka.common.serialization.LongSerializer, client.id=KafkaMDWProducer, value.serializer=org.apache.kafka.common.serialization.StringSerializer, bootstrap.servers=localhost:9092,localhost:9093,localhost:9094}
+    value: {key.serializer=org.apache.kafka.common.serialization.LongSerializer, client.id=KafkaMDWProducer, value.serializer=org.apache.kafka.common.serialization.StringSerializer, bootstrap.servers=vlddkafkats001.test.intranet:9092,vlddkafkats002.test.intranet:9092,vlddkafkats003.test.intranet:9092}
   variable: # 16622
     name: recordProperties
-    value: {key=${~.*}, topic=kafkaTopic, partition=0}
+    value: {key=${~.*}, topic=testMdwInbound, partition=0}
   variable: # 16620
     name: request
     value: Kafka Producer-Adapter Test
