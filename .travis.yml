@@ -3,6 +3,7 @@ env:
   - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
   - java -version
+  - ps -ef | grep java  # is process still running?
   - npm install -g bower
   - npm install -g grunt-cli
 before_script: 
@@ -13,7 +14,9 @@ before_script:
 script: ./gradlew test
 after_failure:
   - cat ../testResults/mdw-function-test-results.json
+  - cat mdw.log
   - cat ../testResults/com.centurylink.mdw.tests.services/admin-apis.log
+  - sleep 10  # allow travis to unbuffer stdout
 notifications:
   slack:
     rooms:
