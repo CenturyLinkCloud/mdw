@@ -2,18 +2,12 @@
 
 ## Kafka Adapter Activity
 
-The MDW Kafka Adapter Activity provides the ability to send a message on Kafka topic from a workflow process, binding the 
-service Request and Response to process variables. It sends the message synchronously. Kafaka producer is created when first 
-message is sent for the specific bootstrap servers. Every other instance of the Kafka adapter 
-will use the same producer going forward because it is shared to speed up sending the messages. All the properties for 
-producer and Records can be set using process variable of java.lang.Object type. Those needs to be set to Properties type. In the example included in the package you can look at the pre-script on the 
-adapter to see how it can be done. The bootstrap server can be configured in a property file and can be read from there for in
- environment specific way.
+The MDW Kafka Adapter Activity provides the ability to send messages on Kafka topic from a workflow process, binding the service Request and Response to process variables. It sends the message synchronously. Kafaka producer is created when first message is sent for the a specific bootstrap servers list. Every other instance of the Kafka adapter will use the same producer going forward. Producer is shared to speed up sending the messages. All the properties for Producer and Record can be set using process variable of java.lang.Object type. You can assign those properties to a java.util.Properties Object and then assign it defined process variables. In the example included in the com.centurylink.mdw.tests.services package you can look at the pre-script on the adapter of process named KafkaProducer to see how it can be done. The bootstrap server can be configured in a property file and then that value can be read from property file in the pre-script or a Dynamic Java activity so you do not have to update process definitions for each environment.
 
 ## Setup
 
 After importing this package, to enable Kafaka Listener(Consumer) and Adapter(Producer) capability, you can set the Adapter as shown in the pictures below
-First you create process variables (name can be anything but they needs to be of java.lang.Object type)
+First you create two process variables (name can be anything but they needs to be of java.lang.Object type)
 
 ```
 producerProperties
@@ -21,12 +15,9 @@ recordProperties
 ```
   ![Kafka Variables](kafkaAdapter-ProcessVariables.jpg "Kafka Variables")
 Then you set these variables in design tab as shown below
-  
   ![Kafka Script](kafkaAdapter-design.jpg "Kafka Adapter Design")
-
 Then you create a pre-script to set all the properties for Producer and Message record to be published as shown below
   ![Kafka Script](kafkaAdapter-script.jpg "Kafka Script")
-
 Here is the pre-script for the Adapter which sets the properties:
 
 ```
