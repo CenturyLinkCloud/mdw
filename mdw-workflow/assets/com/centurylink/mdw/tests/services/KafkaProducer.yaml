@@ -1,0 +1,24 @@
+process: # 12756
+  name: KafkaProducer
+  instance: 1
+  activity: # 1 "2017-11-09 17:17:39"
+    name: Start
+    status: Completed
+  activity: # 3 "2017-11-09 17:17:39"
+    name: MDW Kafka Adapter
+    status: Completed
+  activity: # 2 "2017-11-09 17:17:39"
+    name: Stop
+    status: Completed
+  variable: # 16621
+    name: producerProperties
+    value: {key.serializer=org.apache.kafka.common.serialization.LongSerializer, client.id=KafkaMDWProducer, value.serializer=org.apache.kafka.common.serialization.StringSerializer, bootstrap.servers=localhost:9092,localhost:9093,localhost:9094}
+  variable: # 16622
+    name: recordProperties
+    value: {key=${~.*}, topic=kafkaTopic, partition=0}
+  variable: # 16620
+    name: request
+    value: Kafka Producer-Adapter Test
+  variable: # 16623
+    name: response
+    value: sent record${~.*}
