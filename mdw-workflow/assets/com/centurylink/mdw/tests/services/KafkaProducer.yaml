@@ -1,24 +1,18 @@
-process: # 12756
+process: # 12764
   name: KafkaProducer
   instance: 1
-  activity: # 1 "2017-11-09 17:17:39"
+  activity: # 1 "2017-11-10 11:18:37"
     name: Start
     status: Completed
-  activity: # 3 "2017-11-09 17:17:39"
-    name: MDW Kafka Adapter
-    status: Completed
-  activity: # 2 "2017-11-09 17:17:39"
-    name: Stop
-    status: Completed
-  variable: # 16621
+  activity: # 3 "2017-11-10 11:18:37"
+    name: Publish Kafka Message
+    status: In Progress
+  variable: # 16652
     name: producerProperties
     value: {key.serializer=org.apache.kafka.common.serialization.LongSerializer, client.id=KafkaMDWProducer, value.serializer=org.apache.kafka.common.serialization.StringSerializer, bootstrap.servers=vlddkafkats001.test.intranet:9092,vlddkafkats002.test.intranet:9092,vlddkafkats003.test.intranet:9092}
-  variable: # 16622
+  variable: # 16653
     name: recordProperties
-    value: {key=${~.*}, topic=testMdwInbound, partition=0}
-  variable: # 16620
+    value: {key=1510337917614, topic=testMdwInbound, partition=0}
+  variable: # 16651
     name: request
     value: Kafka Producer-Adapter Test
-  variable: # 16623
-    name: response
-    value: sent record${~.*}
