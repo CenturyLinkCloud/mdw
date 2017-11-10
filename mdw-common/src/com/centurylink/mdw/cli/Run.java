@@ -138,14 +138,15 @@ public class Run implements Operation {
                 URL url = new URL("http://localhost:" + getServerPort() + "/" + getContextRoot() + "/services/AppSummary");
                 System.out.println("Awaiting mdw services availability at " + url);
                 while (!available) {
-                    if ((System.currentTimeMillis() - before) / 1000 > wait) {
+                    long elapsed = System.currentTimeMillis() - before;
+                    if (elapsed / 1000 > wait) {
                         System.err.println("Startup timeout (" + wait + " s) exceeded");
                         throw new InterruptedException();
                     }
                     try {
                         String response = new Fetch(url).run().getData();
                         String mdwVersion = new JSONObject(response).getJSONObject("ApplicationSummary").getString("MdwVersion");
-                        System.out.println("\nMDW Version: " + mdwVersion);
+                        System.out.println("\nMDW " + mdwVersion + " became available after " + (elapsed/1000) + " s");
                         available = true;
                     }
                     catch (IOException | JSONException ex) {
