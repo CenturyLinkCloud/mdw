@@ -3,7 +3,7 @@
    <description url="http://centurylinkcloud.github.io/mdw/designer/updateSite">
       MDW Plug-In Update Site
    </description>
-   <feature url="features/com.centurylink.mdw.designer.feature_9.1.7.jar" id="com.centurylink.mdw.designer.feature" version="9.1.7">
+   <feature url="features/com.centurylink.mdw.designer.feature_9.1.9.jar" id="com.centurylink.mdw.designer.feature" version="9.1.9">
       <category name="workflowDev"/>
    </feature>
    <category-def name="workflowDev" label="BPM Workflow Design">
