@@ -2,6 +2,7 @@ language: java
 env:
   - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
+  - java -version
   - npm install -g bower
   - npm install -g grunt-cli
 before_script: 
