@@ -22,7 +22,7 @@ task install(type: Copy) {
 
 task start(type: Exec) {
     dependsOn install
-    commandLine getMdwCmd(), 'run', '--daemon', '--wait=300' // travis server can take a long time
+    commandLine getMdwCmd(), 'run', '--daemon', '--wait=60', '--retries=3'
 }
 
 def testSuccess = true

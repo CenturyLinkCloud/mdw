@@ -72,6 +72,15 @@ public class Run implements Operation {
     public int getWait() { return wait; }
     public void setWait(int timeout) { this.wait = timeout; }
 
+    /**
+     * Retries may be necessary because of Gradle flakiness under Docker (i.e. travis-ci).
+     */
+    @Parameter(names="--retries", description="(--daemon mode with --wait) If specified, number of times to retry daemon startup when not becoming available")
+    private int retries;
+    public int getRetries() { return retries; }
+    public void setRetries(int retries) { this.retries = retries; }
+    private int retried;
+
     public Run run(ProgressMonitor... progressMonitors) throws IOException {
         List<String> cmdLine = new ArrayList<>();
         if (daemon) {
@@ -116,22 +125,24 @@ public class Run implements Operation {
                     }
                 }
             });
-            new Thread(new Runnable() {
-                public void run() {
-                    try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
-                        out.lines().forEach(line -> {
-                            System.out.println(line);
-                        });
-                    }
-                    catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }).start();
         }
 
+        new Thread(new Runnable() {
+            public void run() {
+                try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
+                    out.lines().forEach(line -> {
+                        System.out.println(line);
+                    });
+                }
+                catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }).start();
+
         try {
-            process.waitFor();
+            int res = process.waitFor();
+            System.out.println("Process exited with code: " + res);
             if (daemon && wait > 0) {
                 long before = System.currentTimeMillis();
                 boolean available = false;
@@ -140,8 +151,17 @@ public class Run implements Operation {
                 while (!available) {
                     long elapsed = System.currentTimeMillis() - before;
                     if (elapsed / 1000 > wait) {
-                        System.err.println("Startup timeout (" + wait + " s) exceeded");
-                        throw new InterruptedException();
+                        System.out.println("\nStartup timeout (" + wait + " s) exceeded");
+                        if (retried < retries) {
+                            retried++;
+                            process.destroy();
+                            System.out.println("   Retrying (" + retried + ")");
+                            run(progressMonitors);
+                            return this;
+                        }
+                        else {
+                            throw new InterruptedException();
+                        }
                     }
                     try {
                         String response = new Fetch(url).run().getData();
@@ -158,6 +178,7 @@ public class Run implements Operation {
             }
         }
         catch (InterruptedException ex) {
+            System.out.println("Destroying process");
             process.destroy();
         }
 
