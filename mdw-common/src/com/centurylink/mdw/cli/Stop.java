@@ -27,15 +27,6 @@ public class Stop extends Run {
     public Stop run(ProgressMonitor... progressMonitors) throws IOException {
         new Fetch(new URL("http://localhost:" + getServerPort() + "/" + getContextRoot()
                 + "/Services/System/exit")).run().getData();
-        if (!System.getProperty("os.name").startsWith("Windows")) {
-            // without this, process can be left running on linux (why?)
-            try {
-               Thread.sleep(10000);
-            }
-            catch (InterruptedException ex) {
-            }
-
-        }
         return this;
     }
 }
