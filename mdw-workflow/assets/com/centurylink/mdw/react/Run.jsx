@@ -84,12 +84,18 @@ class Run extends Component {
           return response.json();
         })
         .then(run => {
-          this.setState({
-            assetPath: this.state.assetPath,
-            masterRequestId: this.state.masterRequestId,
-            values: this.state.values,
-            instanceId: run.instanceId
-          });
+          if (run.instanceId) {
+            location = $mdwHubRoot + '/#/workflow/processes/' + run.instanceId;
+          }
+          else {
+            // TODO: nav to inst for service proc
+            this.setState({
+              assetPath: this.state.assetPath,
+              masterRequestId: this.state.masterRequestId,
+              values: this.state.values,
+              instanceId: run.instanceId
+            });
+          }
         });
       }
     }

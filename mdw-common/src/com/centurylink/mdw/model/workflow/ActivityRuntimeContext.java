@@ -55,7 +55,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public Long getActivityId() {
-        return getActivity().getActivityId();
+        return getActivity().getId();
     }
 
     public String getActivityLogicalId() {

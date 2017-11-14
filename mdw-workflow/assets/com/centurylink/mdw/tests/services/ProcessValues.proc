@@ -76,11 +76,11 @@
     },
     "jaxbVar": {
       "category": "INPUT",
-      "display": "Required",
       "type": "javax.xml.bind.JAXBElement"
     },
     "jsonUnassigned": {
       "category": "LOCAL",
+      "display": "ReadOnly",
       "type": "org.json.JSONObject"
     },
     "objectVar": {

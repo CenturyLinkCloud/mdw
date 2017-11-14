@@ -379,7 +379,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (var == null && !ProcessRuntimeContext.isExpression(name))
             throw new ServiceException(ServiceException.NOT_FOUND, "No variable defined: " + name);
         String stringVal = null;
-        if (var != null && VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), var.getVariableType())) {
+        if (var != null && VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), var.getType())) {
             VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(name);
             // ensure consistent formatting for doc values
             if (varInst != null && varInst.getStringValue() != null && varInst.getStringValue().startsWith("DOCUMENT:"))
@@ -616,7 +616,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String logicalId = activityInstance.getDefinitionId();
                 Activity actdef = process.getActivityById(logicalId);
                 if (actdef != null) {
-                    activityInstance.setName(actdef.getActivityName().replaceAll("\\r", "").replace('\n', ' '));                }
+                    activityInstance.setName(actdef.getName().replaceAll("\\r", "").replace('\n', ' '));                }
                 else {
                     activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
                 }
@@ -683,7 +683,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String logicalId = ac.getDefinitionId();
                 Activity actdef = process.getActivityById(logicalId);
                 if (actdef != null) {
-                    String actName = actdef.getActivityName().replaceAll("\\r", "").replace('\n', ' ');
+                    String actName = actdef.getName().replaceAll("\\r", "").replace('\n', ' ');
                     ac.setActivityName(actName);
                     ac.setProcessName(actdef.getProcessName()); // in case subproc
                     ac.setName(ac.getProcessName() + ": " + ac.getActivityName());
@@ -791,38 +791,38 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
             if (find == null) {
                 List<Process> processes =  ProcessCache.getAllProcesses();
-                for (Process processVO : processes) {
-                    processVO =  ProcessCache.getProcess(processVO.getProcessId());
-                    List<Activity> activities = processVO.getActivities();
+                for (Process process : processes) {
+                    process =  ProcessCache.getProcess(process.getId());
+                    List<Activity> activities = process.getActivities();
                     for (Activity activityVO : activities) {
-                        if (activityVO.getActivityName() != null && activityVO.getActivityName().startsWith(find))
+                        if (activityVO.getName() != null && activityVO.getName().startsWith(find))
                         {
                             ActivityInstance ai = new ActivityInstance();
-                            ai.setId(activityVO.getActivityId());
-                            ai.setName(activityVO.getActivityName());
+                            ai.setId(activityVO.getId());
+                            ai.setName(activityVO.getName());
                             ai.setDefinitionId(activityVO.getLogicalId());
-                            ai.setProcessId(processVO.getProcessId());
-                            ai.setProcessName(processVO.getProcessName());
-                            ai.setProcessVersion(processVO.getVersionString());
+                            ai.setProcessId(process.getId());
+                            ai.setProcessName(process.getName());
+                            ai.setProcessVersion(process.getVersionString());
                             activityInstanceList.add(ai);
                         }
                     }
                 }
             }
             else {
-                for (Process processVO : ProcessCache.getAllProcesses()) {
-                    processVO =  ProcessCache.getProcess(processVO.getProcessId());
-                    List<Activity> activities = processVO.getActivities();
+                for (Process process : ProcessCache.getAllProcesses()) {
+                    process =  ProcessCache.getProcess(process.getId());
+                    List<Activity> activities = process.getActivities();
                     for (Activity activityVO : activities) {
-                        if (activityVO.getActivityName() != null && activityVO.getActivityName().startsWith(find))
+                        if (activityVO.getName() != null && activityVO.getName().startsWith(find))
                         {
                             ActivityInstance ai = new ActivityInstance();
-                            ai.setId(activityVO.getActivityId());
-                            ai.setName(activityVO.getActivityName());
+                            ai.setId(activityVO.getId());
+                            ai.setName(activityVO.getName());
                             ai.setDefinitionId(activityVO.getLogicalId());
-                            ai.setProcessId(processVO.getProcessId());
-                            ai.setProcessName(processVO.getProcessName());
-                            ai.setProcessVersion(processVO.getVersionString());
+                            ai.setProcessId(process.getId());
+                            ai.setProcessName(process.getName());
+                            ai.setProcessVersion(process.getVersionString());
                             activityInstanceList.add(ai);
                         }
                     }
@@ -936,11 +936,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
             if (resp != null) {
                 Variable var = processVO.getVariable(responseVarName);
                 if (var != null && var.isOutput() && !var.isString()) {
-                    response = VariableTranslator.realToObject(pkg, var.getVariableType(), resp);
+                    response = VariableTranslator.realToObject(pkg, var.getType(), resp);
                 }
             }
             Variable responseHeadersVar = processVO.getVariable("responseHeaders");
-            if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getVariableType().equals("java.util.Map<String,String>")) {
+            if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getType().equals("java.util.Map<String,String>")) {
                 ProcessInstance processInstance = getMasterProcess(masterRequestId);
                 if (processInstance != null) {
                     VariableInstance respHeadersVar = processInstance.getVariable("responseHeaders");
@@ -1032,7 +1032,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Variable var = context.getProcess().getVariable(varName);
         if (var == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process variable not defined: " + varName);
-        String type = var.getVariableType();
+        String type = var.getType();
         if (VariableTranslator.isDocumentReferenceVariable(context.getPackage(), type)) {
             setDocumentValue(context, varName, value);
         }
@@ -1043,7 +1043,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 if (varInst == null) {
                     varInst = new VariableInstance();
                     varInst.setName(varName);
-                    varInst.setVariableId(var.getVariableId());
+                    varInst.setVariableId(var.getId());
                     varInst.setType(type);
                     if (value != null && !value.equals("")) {
                         if (value instanceof String)
@@ -1113,7 +1113,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * and these need to be updated to use this method.
      */
     public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
-        String type = context.getProcess().getVariable(varName).getVariableType();
+        String type = context.getProcess().getVariable(varName).getType();
         EventManager eventMgr = ServiceLocator.getEventManager();
         Long procInstId = context.getProcessInstanceId();
         try {
@@ -1196,24 +1196,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    private Map<String,String> translateParameters(Process processVO, Map<String,Object> parameters) throws ProcessException {
+    private Map<String,String> translateParameters(Process process, Map<String,Object> parameters) throws ProcessException {
         Map<String,String> stringParams = new HashMap<String,String>();
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 Object val = parameters.get(key);
-                Variable vo = processVO.getVariable(key);
+                Variable vo = process.getVariable(key);
                 if (vo == null)
-                  throw new ProcessException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processVO.getId() + ")");
+                  throw new ProcessException("Variable '" + key + "' not found for process: " + process.getName() + " v" + process.getVersionString() + "(id=" + process.getId() + ")");
                 String translated;
                 if (val instanceof String)
                     translated = (String)val;
                 else {
-                    Package pkg = PackageCache.getProcessPackage(processVO.getId());
-                    if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getVariableType())) {
-                      translated = VariableTranslator.realToString(pkg, vo.getVariableType(), val);
+                    Package pkg = PackageCache.getProcessPackage(process.getId());
+                    if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getType())) {
+                      translated = VariableTranslator.realToString(pkg, vo.getType(), val);
                     }
                     else {
-                      translated = VariableTranslator.toString(PackageCache.getProcessPackage(processVO.getId()), vo.getVariableType(), val);
+                      translated = VariableTranslator.toString(PackageCache.getProcessPackage(process.getId()), vo.getType(), val);
                     }
                 }
                 stringParams.put(key, translated);

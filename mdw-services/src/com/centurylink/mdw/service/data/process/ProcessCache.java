@@ -96,15 +96,15 @@ public class ProcessCache implements CacheService {
     }
 
     private void putInCache(Process process, boolean versionZero) {
-        processMap.put(process.getProcessId(), process);
-        List<Process> vl = procNameMap.get(process.getProcessQualifiedName());
+        processMap.put(process.getId(), process);
+        List<Process> vl = procNameMap.get(process.getQualifiedName());
         if (vl == null) {
             vl = new ArrayList<Process>();
-            procNameMap.put(process.getProcessQualifiedName(), vl);
+            procNameMap.put(process.getQualifiedName(), vl);
         }
         vl.add(process);
         if (versionZero)
-            procNameLatest.put(process.getProcessQualifiedName(), process);
+            procNameLatest.put(process.getQualifiedName(), process);
 
         if (process.getPackageName() == null)
             logger.warn("Non-Package Qualified Process Names are DEPRECATED in MDW");
@@ -149,13 +149,13 @@ public class ProcessCache implements CacheService {
             Process match = null;
             for (Process process : getAllProcesses()) {
                 if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getProcessName())) {
+                    if (spec.getName().equals(process.getName())) {
                         if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
                             match = process;
                     }
                 }
                 else
-                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
                         if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
                             match = process;
                     }
@@ -181,13 +181,13 @@ public class ProcessCache implements CacheService {
             List<Process> matches = new ArrayList<>();
             for (Process process : getAllProcesses()) {
                 if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getProcessName())) {
+                    if (spec.getName().equals(process.getName())) {
                         if (process.meetsVersionSpec(spec.getVersion()))
                             matches.add(process);
                     }
                 }
                 else
-                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
                         if (process.meetsVersionSpec(spec.getVersion()))
                             matches.add(process);
                     }
@@ -275,7 +275,7 @@ public class ProcessCache implements CacheService {
             }
             if (proc != null) {
                 // all db attributes are override attributes
-                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getProcessId());
+                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getId());
                 if (attributes != null)
                     proc.applyOverrideAttributes(attributes);
             }

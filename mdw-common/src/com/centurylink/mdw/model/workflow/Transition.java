@@ -40,50 +40,30 @@ public class Transition implements Serializable, Jsonable {
     public static final int STATE_IN_PROGRESS = 1;
     public static final int STATE_INVALID = 2;
 
-    private Long workTransitionId;
-    private Long fromWorkId;
-    private Long toWorkId;
+    private Long id;
+    private Long fromId;
+    private Long toId;
     private Integer eventType;
     private String completionCode;
-    private String validatorClassName;
     private List<Attribute> attributes;
     private Long processId;
-    private List<Long> dependentTransitionIds;
-
 
     public Transition() {
     }
 
-    public Transition(Long pWorkTransId, Long pFromWorkId, Long pToWorkId,
-        Integer pEventType, String pCompletionCode, String pValClassName, List<Attribute> pAttribues){
-        this.workTransitionId = pWorkTransId;
-        this.fromWorkId = pFromWorkId;
-        this.toWorkId = pToWorkId;
-        this.eventType = pEventType;
-        this.validatorClassName = pValClassName;
+    public Transition(Long id, Long fromId, Long toId,
+        Integer eventType, String completionCode, String pValClassName, List<Attribute> pAttribues){
+        this.id = id;
+        this.fromId = fromId;
+        this.toId = toId;
+        this.eventType = eventType;
         this.attributes = pAttribues;
-        this.completionCode = pCompletionCode;
-
+        this.completionCode = completionCode;
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("WorkTransitionVO[");
-        if (attributes == null) {
-            buffer.append("attributes = ").append("null");
-        }
-        else {
-            buffer.append("attributes = ").append(attributes.toString());
-        }
-        buffer.append(" eventType = ").append(eventType);
-        buffer.append(" fromWorkId = ").append(fromWorkId);
-        buffer.append(" toWorkId = ").append(toWorkId);
-        buffer.append(" validatorClassName = ").append(validatorClassName);
-        buffer.append(" workTransitionId = ").append(workTransitionId);
-        buffer.append("]");
-        return buffer.toString();
+        return getJson().toString(2);
     }
-
 
     public List<Attribute> getAttributes() {
         return attributes;
@@ -101,20 +81,20 @@ public class Transition implements Serializable, Jsonable {
         this.eventType = eventType;
     }
 
-    public Long getFromWorkId() {
-        return fromWorkId;
+    public Long getFromId() {
+        return fromId;
     }
 
-    public void setFromWorkId(Long fromWorkId) {
-        this.fromWorkId = fromWorkId;
+    public void setFromId(Long fromId) {
+        this.fromId = fromId;
     }
 
-    public Long getToWorkId() {
-        return toWorkId;
+    public Long getToId() {
+        return toId;
     }
 
-    public void setToWorkId(Long toWorkId) {
-        this.toWorkId = toWorkId;
+    public void setToId(Long toId) {
+        this.toId = toId;
     }
 
     public String getCompletionCode() {
@@ -125,20 +105,12 @@ public class Transition implements Serializable, Jsonable {
         this.completionCode = completionCode;
     }
 
-    public String getValidatorClassName() {
-        return validatorClassName;
+    public Long getId() {
+        return id;
     }
 
-    public void setValidatorClassName(String validatorClassName) {
-        this.validatorClassName = validatorClassName;
-    }
-
-    public Long getWorkTransitionId() {
-        return workTransitionId;
-    }
-
-    public void setWorkTransitionId(Long workTransitionId) {
-        this.workTransitionId = workTransitionId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setProcessId(Long processId){
@@ -149,23 +121,8 @@ public class Transition implements Serializable, Jsonable {
         return this.processId;
     }
 
-    public List<Long> getDependentTransitionIds(){
-        return this.dependentTransitionIds;
-    }
-
-    public void setDependentTransitionIds(List<Long> pIds){
-        this.dependentTransitionIds = pIds;
-    }
-
-    public void addDependentTransitionIdId(Long pId){
-        if (this.dependentTransitionIds==null)
-            this.dependentTransitionIds = new ArrayList<Long>();
-        if (!this.dependentTransitionIds.contains(pId))
-            this.dependentTransitionIds.add(pId);
-    }
-
-    public String getAttribute(String attrname) {
-        return Attribute.findAttribute(attributes, attrname);
+    public String getAttribute(String name) {
+        return Attribute.findAttribute(attributes, name);
     }
 
     /**
@@ -173,17 +130,20 @@ public class Transition implements Serializable, Jsonable {
      * If the value is null, the attribute is removed.
      * If the attribute does not exist and the value is not null, the attribute
      * is created.
-     * @param attrname
+     * @param name
      * @param value
      */
-    public void setAttribute(String attrname, String value) {
-        if (attributes==null) attributes = new ArrayList<Attribute>();
-        Attribute.setAttribute(attributes, attrname, value);
+    public void setAttribute(String name, String value) {
+        if (attributes == null)
+            attributes = new ArrayList<Attribute>();
+        Attribute.setAttribute(attributes, name, value);
     }
 
     public boolean match(Integer eventType, String compCode) {
-        if (!eventType.equals(this.eventType)) return false;
-        if (this.completionCode==null) return compCode==null;
+        if (!eventType.equals(this.eventType))
+            return false;
+        if (this.completionCode == null)
+            return compCode==null;
         return this.completionCode.equals(compCode);
     }
 
@@ -254,8 +214,8 @@ public class Transition implements Serializable, Jsonable {
         String logicalId = json.getString("id");
         if (logicalId.startsWith("Transition"))
             logicalId = "T" + logicalId.substring(10);
-        workTransitionId = Long.valueOf(logicalId.substring(1));
-        this.toWorkId = Long.parseLong(json.getString("to").substring(1));
+        id = Long.valueOf(logicalId.substring(1));
+        this.toId = Long.parseLong(json.getString("to").substring(1));
         if (json.has("resultCode"))
             this.completionCode = json.getString("resultCode");
         if (json.has("event"))
@@ -273,7 +233,7 @@ public class Transition implements Serializable, Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("id", getLogicalId());
-        json.put("to", "A" + toWorkId);
+        json.put("to", "A" + toId);
         if (completionCode != null)
             json.put("resultCode", completionCode);
         if (eventType != null)

@@ -51,9 +51,21 @@
           ]
         },
         {
-          "label": "UI Label",
+          "label": "Label",
           "name": "label",
           "type": "text"
+        },
+        {
+          "label": "Display",
+          "name": "display",
+          "type": "dropdown",
+          "options": [
+            "",
+            "Required",
+            "Optional",
+            "ReadOnly",
+            "Hidden"
+          ]
         },
         {
           "label": "Sequence",

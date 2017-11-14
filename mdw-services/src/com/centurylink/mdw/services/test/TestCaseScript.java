@@ -601,7 +601,7 @@ public abstract class TestCaseScript extends Script {
                 }
 
                 return runtimeContext.getProcess().getName().equals(matchProcess) &&
-                        (runtimeContext.getActivity().getActivityName().equals(matchActivity) ||
+                        (runtimeContext.getActivity().getName().equals(matchActivity) ||
                             runtimeContext.getActivityLogicalId().equals(matchActivity));
             }
         }, completer);

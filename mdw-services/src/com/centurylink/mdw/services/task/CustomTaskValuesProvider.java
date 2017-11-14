@@ -82,7 +82,7 @@ public class CustomTaskValuesProvider implements TaskValuesProvider {
                     throw new ServiceException(400, "Variable not found: " + name);
                 }
                 else {
-                    String type = var.getVariableType();
+                    String type = var.getType();
                     com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), type);
                     if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
                         Object newValue = ((DocumentReferenceTranslator)vt).realToObject(values.get(name));

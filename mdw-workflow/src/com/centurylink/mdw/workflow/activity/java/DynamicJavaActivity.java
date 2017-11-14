@@ -95,15 +95,15 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
             for (Variable varVO: varVOs) {
-                bindings.put(varVO.getVariableName(), getVariableValue(varVO.getVariableName()));
+                bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
             }
 
             Object retObj = getExecutorInstance().execute(bindings);
 
             for (Variable variableVO: varVOs) {
-                String variableName = variableVO.getVariableName();
+                String variableName = variableVO.getName();
                 Object bindValue = bindings.get(variableName);
-                String varType = variableVO.getVariableType();
+                String varType = variableVO.getType();
                 Object value = bindValue;
                 if (varType.equals("java.lang.String") && value != null)
                     value = value.toString();  // convert to string

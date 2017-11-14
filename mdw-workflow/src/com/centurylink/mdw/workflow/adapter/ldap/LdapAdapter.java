@@ -182,10 +182,10 @@ public class LdapAdapter extends AdapterActivityBase {
             for (String varName : bindings.keySet()) {
                 String mappedAttr = bindings.get(varName);
                 Variable varVO = processVO.getVariable(varName);
-                String varType = varVO.getVariableType();
+                String varType = varVO.getType();
 
-                if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varVO.getVariableType())) {
-                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varVO.getVariableType());
+                if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varVO.getType())) {
+                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varVO.getType());
                     if (translator instanceof JsonTranslator) {
                         if (getParameterValue(varName) == null) {
                             userJsonVar = varVO;
@@ -238,7 +238,7 @@ public class LdapAdapter extends AdapterActivityBase {
                     }
                 }
 
-                setParameterValueAsDocument(userJsonVar.getName(), userJsonVar.getVariableType(), user.getJson());
+                setParameterValueAsDocument(userJsonVar.getName(), userJsonVar.getType(), user.getJson());
             }
         }
         catch (ActivityException ex) {

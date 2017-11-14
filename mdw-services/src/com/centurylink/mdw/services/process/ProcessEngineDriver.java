@@ -115,7 +115,7 @@ public class ProcessEngineDriver {
 
     private boolean isRecursiveCall(ProcessInstance originatingInstance,
             Process processVO, Long embeddedProcId) {
-        if (processVO.getProcessId().equals(originatingInstance.getProcessId())) {
+        if (processVO.getId().equals(originatingInstance.getProcessId())) {
             if (originatingInstance.getOwner().equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
                 return embeddedProcId.toString().equals(originatingInstance.getComment());
             } else return false;
@@ -134,21 +134,21 @@ public class ProcessEngineDriver {
       throws ProcessException {
         try {
             if (logger.isInfoEnabled()) {
-                logger.info(logtag(processVO.getProcessId(), processInstVO.getId(),
+                logger.info(logtag(processVO.getId(), processInstVO.getId(),
                     messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), "Inherited Event - type="
                     + eventType + ", compcode=" + messageDoc.getCompletionCode());
             }
             String compCode = messageDoc.getCompletionCode();
             ProcessInstance originatingInstance = processInstVO;
-            Process embeddedHandlerProc = processVO.findEmbeddedProcess(eventType, compCode);
+            Process embeddedHandlerProc = processVO.findSubprocess(eventType, compCode);
             while (embeddedHandlerProc == null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
                 processInstVO = engine.getProcessInstance(processInstVO.getOwnerId());
                 processVO = getProcessDefinition(processInstVO);
-                embeddedHandlerProc = processVO.findEmbeddedProcess(eventType, compCode);
+                embeddedHandlerProc = processVO.findSubprocess(eventType, compCode);
             }
 
             if (embeddedHandlerProc != null) {
-                if (isRecursiveCall(originatingInstance, processVO, embeddedHandlerProc.getProcessId())) {
+                if (isRecursiveCall(originatingInstance, processVO, embeddedHandlerProc.getId())) {
                     logger.warn("Invoking embedded process recursively - not allowed: " + embeddedHandlerProc.getName());
                 }
                 else {
@@ -187,7 +187,7 @@ public class ProcessEngineDriver {
                     }
                     String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
                     ProcessInstance procInst = engine.createProcessInstance(
-                            embeddedHandlerProc.getProcessId(), ownerType, processInstVO.getId(),
+                            embeddedHandlerProc.getId(), ownerType, processInstVO.getId(),
                             secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
                     engine.startProcessInstance(procInst, 0);
                 }
@@ -448,7 +448,7 @@ public class ProcessEngineDriver {
         }
 
         Process processVO = getProcessDefinition(processInstance);
-        List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
+        List<Transition> workTransitionVOs = processVO.getTransitions(event.getWorkId(),
                 EventType.DELAY, event.getCompletionCode());
         if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
             engine.createTransitionInstances(processInstance, workTransitionVOs,
@@ -615,8 +615,8 @@ public class ProcessEngineDriver {
                     handleDelay(engine, event, procInst);
                 } else {
                     Process processVO = getProcessDefinition(procInst);
-                    procInst.setProcessName(processVO.getProcessName());
-                    List<Transition> workTransitionVOs = processVO.getWorkTransitions(event.getWorkId(),
+                    procInst.setProcessName(processVO.getName());
+                    List<Transition> workTransitionVOs = processVO.getTransitions(event.getWorkId(),
                             event.getEventType(), event.getCompletionCode());
                     if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
                         engine.createTransitionInstances(procInst, workTransitionVOs,
@@ -802,7 +802,7 @@ public class ProcessEngineDriver {
             String ownerType, Long ownerId, String masterRequestId, Map<String,String> parameters,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
         Process procdef = getProcessDefinition(processId);
-        Long startActivityId = procdef.getStartActivity().getActivityId();
+        Long startActivityId = procdef.getStartActivity().getId();
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
         ProcessInstance mainProcessInst = engine.createProcessInstance(
@@ -818,7 +818,7 @@ public class ProcessEngineDriver {
             bindRequestHeadersVariable(procdef, headers, engine, mainProcessInst);
         }
         logger.info(logtag(processId, mainProcessInst.getId(), masterRequestId),
-                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessQualifiedName() + "/" + procdef.getVersionString());
+                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(mainProcessInst, WorkStatus.LOGMSG_PROC_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
@@ -857,7 +857,7 @@ public class ProcessEngineDriver {
         Variable requestVO = procdef.getVariable(VariableConstants.REQUEST);
         if (requestVO==null) return;
         int cat = requestVO.getVariableCategory();
-        String vartype = requestVO.getVariableType();
+        String vartype = requestVO.getType();
         if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
             return;
         if (!VariableTranslator.isDocumentReferenceVariable(getPackage(procdef), vartype))
@@ -879,7 +879,7 @@ public class ProcessEngineDriver {
         if (headersVO == null)
             return;
         int cat = headersVO.getVariableCategory();
-        String vartype = headersVO.getVariableType();
+        String vartype = headersVO.getType();
         if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
             return;
         List<VariableInstance> viList = pi.getVariables();
@@ -984,10 +984,10 @@ public class ProcessEngineDriver {
             masterRequestId = genMasterRequestId();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
         ProcessInstance processInst = engine.createProcessInstance(
-                procdef.getProcessId(), ownerType, ownerId, null, null,
+                procdef.getId(), ownerType, ownerId, null, null,
                 masterRequestId, vars);
         logger.info(logtag(processId, processInst.getId(), masterRequestId),
-                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getProcessQualifiedName() + "/" + procdef.getVersionString());
+                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString());
         engine.notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_START);
         if (ownerType.equals(OwnerType.DOCUMENT))
             setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);

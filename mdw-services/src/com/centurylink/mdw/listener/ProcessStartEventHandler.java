@@ -85,7 +85,7 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
         if (requestVO != null && requestVO.getVariableCategory() == 1) {
             params = new HashMap<String,Object>();
 
-            String vartype = requestVO.getVariableType();
+            String vartype = requestVO.getType();
             try {
                 com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vartype);
                 if (translator instanceof DocumentReferenceTranslator) {

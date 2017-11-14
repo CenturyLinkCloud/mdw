@@ -17,14 +17,13 @@ package com.centurylink.mdw.model.workflow;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
 import com.centurylink.mdw.util.JsonUtil;
@@ -32,133 +31,71 @@ import com.centurylink.mdw.util.StringHelper;
 
 public class Activity implements Serializable, Comparable<Activity>, Jsonable {
 
-    private Long activityId;
-    private String activityName;
-    private String activityDescription;
+    private Long id;
+    private String name;
+    private String description;
 
-    private String implementorClassName;
+    private String implementor;
     private List<Attribute> attributes;
-    private Long[] synchronzingIds;
 
     public Activity() {
     }
 
-    public Activity(Long pActId, String pActName, String pDesc, String pActImplClass, List<Attribute> pAttribs){
-        this.activityId = pActId;
-        this.activityName = pActName;
-        this.activityDescription = pDesc;
-        this.implementorClassName = pActImplClass;
-        this.attributes = pAttribs;
+    public Activity(Long id, String name, String description, String implementor, List<Attribute> attributes){
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.implementor = implementor;
+        this.attributes = attributes;
     }
 
-    /**
-     * @return the activityId
-     */
-    public Long getActivityId() {
-        return activityId;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    /**
-     * @param activityId the activityId to set
-     */
-    public void setActivityId(Long activityId) {
-        this.activityId = activityId;
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
-    /**
-     * @return the activityName
-     */
-    public String getActivityName() {
-        return activityName;
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    /**
-     * @param activityName the activityName to set
-     */
-    public void setActivityName(String activityName) {
-        this.activityName = activityName;
-    }
-
-    /**
-     * @return the activityDescription
-     */
-    public String getActivityDescription() {
-        return activityDescription;
-    }
-
-    /**
-     * @param activityDescription the activityName to set
-     */
-    public void setActivityDescription(String activityDescription) {
-        this.activityDescription = activityDescription;
-    }
-
-    /**
-     * @return the attributes
-     */
     public List<Attribute> getAttributes() {
         return attributes;
     }
-
-    /**
-     * @param attributes the attributes to set
-     */
     public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
     }
 
-    public Long[] getSynchronzingIds() {
-        return synchronzingIds;
+    public String getImplementor() {
+        return implementor;
     }
-
-    public void setSynchronzingIds(Long[] pIds) {
-        this.synchronzingIds = pIds;
-    }
-
-    /**
-     * @return the implementorClassName
-     */
-    public String getImplementorClassName() {
-        return implementorClassName;
-    }
-
-    /**
-     * @param implementorClassName the implementorClassName to set
-     */
-    public void setImplementorClassName(String implementorClassName) {
-        this.implementorClassName = implementorClassName;
-    }
-
-    public void addSynchronizationId(Long pId){
-        List<Long> temp = null;
-        if(this.synchronzingIds != null && this.synchronzingIds.length > 0){
-            temp = new ArrayList<Long>(Arrays.asList(this.synchronzingIds));
-            if(temp.contains(pId)){
-                return;
-            }
-        }else{
-           temp = new ArrayList<Long>();
-        }
-        temp.add(pId);
-        this.synchronzingIds = temp.toArray(new Long[temp.size()]);
-    }
-
-    public void deleteSynchronizationId(Long pId){
-        if(this.synchronzingIds == null || this.synchronzingIds.length==0) return;
-        List<Long> temp = new ArrayList<Long>(Arrays.asList(this.synchronzingIds));
-        temp.remove(pId);
-        this.synchronzingIds = temp.toArray(new Long[]{});
+    public void setImplementor(String implementor) {
+        this.implementor = implementor;
     }
 
     /**
      * Method that returns the sla
      */
-    public int getSlaSeconds(){
+    public int getSlaSeconds() {
         String sla = this.getAttribute(WorkAttributeConstant.SLA);
-        if (sla==null || sla.length()==0) return 0;
+        if (sla == null || sla.length() == 0)
+            return 0;
         String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
-        if (StringHelper.isEmpty(unit)) unit = this.getAttribute(WorkAttributeConstant.SLA_UNIT);
-        if (StringHelper.isEmpty(unit)) unit = ServiceLevelAgreement.INTERVAL_HOURS;
+        if (StringHelper.isEmpty(unit))
+            unit = this.getAttribute(WorkAttributeConstant.SLA_UNIT);
+        if (StringHelper.isEmpty(unit))
+            unit = ServiceLevelAgreement.INTERVAL_HOURS;
         return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
 
@@ -169,7 +106,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
     /**
      * method that sets the sla
      */
-    public void setSlaSeconds(int slaSeconds){
+    public void setSlaSeconds(int slaSeconds) {
         String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
         if (StringHelper.isEmpty(unit)) this.getAttribute(WorkAttributeConstant.SLA_UNIT);
         if (StringHelper.isEmpty(unit)) {
@@ -183,33 +120,20 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         setSlaSeconds(sla);
     }
 
-    /**
-     * Returns the value of a process attribute.
-     * @param attrname
-     * @return the value of the attribute, or null if the attribute does not exist
-     */
-    public String getAttribute(String attrname) {
-        return Attribute.findAttribute(attributes, attrname);
+    public String getAttribute(String name) {
+        return Attribute.findAttribute(attributes, name);
     }
 
-    /**
-     * Set the value of a process attribute.
-     * If the value is null, the attribute is removed.
-     * If the attribute does not exist and the value is not null, the attribute
-     * is created.
-     * @param attrname
-     * @param value
-     */
-    public void setAttribute(String attrname, String value) {
-        if (attributes==null) attributes = new ArrayList<Attribute>();
-        Attribute.setAttribute(attributes, attrname, value);
+    public void setAttribute(String name, String value) {
+        if (attributes == null)
+            attributes = new ArrayList<Attribute>();
+        Attribute.setAttribute(attributes, name, value);
     }
 
     public int compareTo(Activity other) {
         if (other == null)
             return 1;
-
-        return this.getActivityName().compareTo(other.getActivityName());
+        return this.getName().compareTo(other.getName());
     }
 
     public String getLogicalId() {
@@ -220,20 +144,15 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         return getAttribute(WorkAttributeConstant.REFERENCE_ID);
     }
 
-    private int sequenceId;
-    public int getSequenceId() { return sequenceId; }
-    public void setSequenceId(int sequenceId) { this.sequenceId = sequenceId; }
-
-
     public Activity(JSONObject json) throws JSONException {
-        setActivityName(json.getString("name"));
+        setName(json.getString("name"));
         String logicalId = json.getString("id");
         if (logicalId.startsWith("Activity"))
             logicalId = "A" + logicalId.substring(8);
-        activityId = Long.valueOf(logicalId.substring(1));
-        setImplementorClassName(json.getString("implementor"));
+        id = Long.valueOf(logicalId.substring(1));
+        setImplementor(json.getString("implementor"));
         if (json.has("description"))
-            setActivityDescription(json.getString("description"));
+            setDescription(json.getString("description"));
         if (json.has("attributes"))
             this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
@@ -241,10 +160,10 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("name", getActivityName());
+        json.put("name", getName());
         json.put("id", getLogicalId());
-        json.put("description", getActivityDescription());
-        json.put("implementor", getImplementorClassName());
+        json.put("description", getDescription());
+        json.put("implementor", getImplementor());
         if (attributes != null && !attributes.isEmpty())
             json.put("attributes", JsonUtil.getAttributesJson(attributes));
         return json;

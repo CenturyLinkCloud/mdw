@@ -305,7 +305,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return activity ID
      */
     protected Long getActivityId() {
-        return this.activityDef.getActivityId();
+        return this.activityDef.getId();
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return name of the activity
      */
     protected String getActivityName() {
-        return this.activityDef.getActivityName();
+        return this.activityDef.getName();
     }
 
     /**
@@ -488,9 +488,9 @@ public abstract class BaseActivity implements GeneralActivity {
         List<Variable> vs = procdef.getVariables();
         String varName;
         for (int i=0; i<vs.size(); i++) {
-            varName = vs.get(i).getVariableName();
+            varName = vs.get(i).getName();
             if (varName.equals(name))
-                return vs.get(i).getVariableType();
+                return vs.get(i).getType();
         }
         return null;
     }
@@ -750,12 +750,12 @@ public abstract class BaseActivity implements GeneralActivity {
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
             for (Variable varVO: varVOs) {
-                Object value = getParameterValue(varVO.getVariableName());
+                Object value = getParameterValue(varVO.getName());
                 if (value instanceof DocumentReference) {
                     DocumentReference docref = (DocumentReference) value;
-                    value = getDocument(docref, varVO.getVariableType());
+                    value = getDocument(docref, varVO.getType());
                 }
-                bindings.put(varVO.getVariableName(), value);
+                bindings.put(varVO.getName(), value);
             }
             bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
             return evaluator.evaluate(expression, bindings);
@@ -782,12 +782,12 @@ public abstract class BaseActivity implements GeneralActivity {
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
             for (Variable varVO: varVOs) {
-                Object value = getParameterValue(varVO.getVariableName());
+                Object value = getParameterValue(varVO.getName());
                 if (value instanceof DocumentReference) {
                     DocumentReference docref = (DocumentReference) value;
-                    value = getDocument(docref, varVO.getVariableType());
+                    value = getDocument(docref, varVO.getType());
                 }
-                addlBinding.put(varVO.getVariableName(), value);
+                addlBinding.put(varVO.getName(), value);
             }
             addlBinding.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
             return evaluator.evaluate(expression, addlBinding);
@@ -1290,7 +1290,7 @@ public abstract class BaseActivity implements GeneralActivity {
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
             for (Variable varVO: varVOs) {
-                bindings.put(varVO.getVariableName(), getVariableValue(varVO.getVariableName()));
+                bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
             }
             bindings.put("runtimeContext", _runtimeContext);
             bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
@@ -1302,9 +1302,9 @@ public abstract class BaseActivity implements GeneralActivity {
             retObj = executor.execute(script, bindings);
 
             for (Variable variableVO: varVOs) {
-                String variableName = variableVO.getVariableName();
+                String variableName = variableVO.getName();
                 Object bindValue = bindings.get(variableName);
-                String varType = variableVO.getVariableType();
+                String varType = variableVO.getType();
                 Object value = bindValue;
                 if (varType.equals("java.lang.String") && value != null)
                     value = value.toString();  // convert to string
@@ -1366,7 +1366,7 @@ public abstract class BaseActivity implements GeneralActivity {
         Variable varVO = getProcessDefinition().getVariable(varName);
         if (varVO == null)
             throw new ActivityException("No such variable defined for process: " + varName);
-        String varType = varVO.getVariableType();
+        String varType = varVO.getType();
         if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varType))
             setParameterValueAsDocument(varName, varType, value);
         else
@@ -1552,8 +1552,8 @@ public abstract class BaseActivity implements GeneralActivity {
             runtimeContext.set(spec, value);
             String rootVar = spec.substring(2, spec.indexOf('.'));
             Variable doc = runtimeContext.getProcess().getVariable(rootVar);
-            String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getVariableType(), runtimeContext.evaluate("#{" + rootVar + "}"));
-            setParameterValueAsDocument(rootVar, doc.getVariableType(), stringValue);
+            String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+            setParameterValueAsDocument(rootVar, doc.getType(), stringValue);
         }
         else {
             setVariableValue(spec, value);

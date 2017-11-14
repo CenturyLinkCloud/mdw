@@ -42,7 +42,7 @@ public class DefaultProcessLaunchHandler extends ExternalEventHandlerBase implem
         if (var == null)
             return StringDocument.class.getName();
         else
-            return var.getVariableType();
+            return var.getType();
     }
 
     public Object initializeRequestDocument(Message request) throws MdwCamelException {

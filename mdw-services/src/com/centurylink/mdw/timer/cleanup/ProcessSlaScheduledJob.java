@@ -83,7 +83,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                     sla = Integer.parseInt(processVO.getAttribute("SLA"));
                     boolean dealyHandlerDefined = false;
                     if (sla > 0) {
-                        List <Process> subProcess = processVO.getSubProcesses();
+                        List <Process> subProcess = processVO.getSubprocesses();
                         for (Process sProcess : subProcess){
                             if(sProcess.getName().contains("Delay Handler")){
                                 dealyHandlerDefined = true;

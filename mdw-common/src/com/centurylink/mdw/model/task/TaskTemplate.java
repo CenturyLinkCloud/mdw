@@ -269,7 +269,7 @@ public class TaskTemplate extends Asset implements Jsonable {
             return false;
         }
         for (Variable vo : variables) {
-            if(vo.getVariableName().equals(pVarName)){
+            if(vo.getName().equals(pVarName)){
                 return true;
             }
         }
@@ -283,7 +283,7 @@ public class TaskTemplate extends Asset implements Jsonable {
     private static Variable findVariable(List<Variable> list, Variable var) {
         if (list==null) return null;
         for (Variable one : list) {
-            if (var.getVariableName().equals(one.getVariableName())) return one;
+            if (var.getName().equals(one.getName())) return one;
         }
         return null;
     }
@@ -303,8 +303,8 @@ public class TaskTemplate extends Asset implements Jsonable {
                 if (var==null) continue;    // remove variables not in process definition
                 if (firstRow) firstRow = false;
                 else sb.append(ROW_DELIMITER);
-                sb.append(var.getVariableName()).append(FIELD_DELIMITER);
-                sb.append(taskVar.getVariableReferredAs()).append(FIELD_DELIMITER);
+                sb.append(var.getName()).append(FIELD_DELIMITER);
+                sb.append(taskVar.getLabel()).append(FIELD_DELIMITER);
                 if (taskVar.getDisplayMode().equals(Variable.DATA_READONLY))
                     sb.append(TaskActivity.VARIABLE_DISPLAY_READONLY);
                 else if (Variable.DATA_OPTIONAL.equals(taskVar.getDisplayMode()))
@@ -318,7 +318,7 @@ public class TaskTemplate extends Asset implements Jsonable {
                 sb.append(FIELD_DELIMITER);
                 sb.append((taskVar.getDescription()==null)?"":taskVar.getDescription());
                 sb.append(FIELD_DELIMITER);
-                sb.append(var.getVariableType());
+                sb.append(var.getType());
             }
         }
         // now add process variables not specified in the task as not-displayed
@@ -327,15 +327,15 @@ public class TaskTemplate extends Asset implements Jsonable {
             if (taskVar!=null) continue;    // already handled above
             if (firstRow) firstRow = false;
             else sb.append(ROW_DELIMITER);
-            sb.append(var.getVariableName()).append(FIELD_DELIMITER);
-            String referredAs = var.getVariableName();
+            sb.append(var.getName()).append(FIELD_DELIMITER);
+            String referredAs = var.getName();
             sb.append(referredAs).append(FIELD_DELIMITER);
             sb.append(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED);
             sb.append(FIELD_DELIMITER);
             sb.append("0");
             sb.append(FIELD_DELIMITER);
             sb.append(FIELD_DELIMITER);
-            sb.append(var.getVariableType());
+            sb.append(var.getType());
         }
         return sb.toString();
     }
@@ -351,9 +351,9 @@ public class TaskTemplate extends Asset implements Jsonable {
         for (String[] one : parsed) {
             if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
             Variable taskVar = new Variable();
-            taskVar.setVariableName(one[0]);
+            taskVar.setName(one[0]);
             Variable var = findVariable(processVariables, taskVar);
-            if (var!=null) taskVar.setVariableType(var.getVariableType());
+            if (var!=null) taskVar.setType(var.getType());
             if (one[3].isEmpty())
                 taskVar.setDisplaySequence(new Integer(0));
             else
@@ -367,12 +367,12 @@ public class TaskTemplate extends Asset implements Jsonable {
             } else {
                 taskVar.setDisplayMode(Variable.DATA_REQUIRED);
             }
-            if (var!=null) taskVar.setVariableId(var.getVariableId());
-            taskVar.setVariableReferredAs(one[1]);
+            if (var!=null) taskVar.setId(var.getId());
+            taskVar.setLabel(one[1]);
             taskVar.setDescription(one[4]);        // reused as index key
-            if (StringHelper.isEmpty(taskVar.getVariableType())) {  // should have been set based on proc var type
-                if (StringHelper.isEmpty(one[5])) taskVar.setVariableType(String.class.getName());
-                else taskVar.setVariableType(one[5]);
+            if (StringHelper.isEmpty(taskVar.getType())) {  // should have been set based on proc var type
+                if (StringHelper.isEmpty(one[5])) taskVar.setType(String.class.getName());
+                else taskVar.setType(one[5]);
             }
             int i, n = variables.size();
             for (i=0; i<n; i++) {
@@ -398,21 +398,21 @@ public class TaskTemplate extends Asset implements Jsonable {
         for (Variable var : processVariables) {
             boolean found = false;
             for (int i=0; !found && i<n; i++) {
-                if (parsed.get(i)[0].equals(var.getVariableName())) {
+                if (parsed.get(i)[0].equals(var.getName())) {
                     found = true;
                     keep[i] = true;
                 }
             }
             if (!found) {
                 String[] newEntry = new String[6];
-                newEntry[0] = var.getVariableName();
-                if (var.getVariableReferredAs()==null)
+                newEntry[0] = var.getName();
+                if (var.getLabel()==null)
                     newEntry[1] = newEntry[0];
-                else newEntry[1] = var.getVariableReferredAs();
+                else newEntry[1] = var.getLabel();
                 newEntry[2] = TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED;
                 newEntry[3] = "0";
                 newEntry[4] = "";
-                newEntry[5] = var.getVariableType();
+                newEntry[5] = var.getType();
                 parsed.add(newEntry);
             }
         }

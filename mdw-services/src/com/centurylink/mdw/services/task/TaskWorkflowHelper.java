@@ -963,7 +963,7 @@ public class TaskWorkflowHelper {
                                 String rootVar = assigneeVarSpec.substring(2, assigneeVarSpec.indexOf('.'));
                                 Variable doc = runtimeContext.getProcess().getVariable(rootVar);
                                 VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(rootVar);
-                                String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getVariableType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+                                String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
                                 if (varInst == null) {
                                     workflowServices.createDocument(runtimeContext, rootVar, stringValue);
                                 }
@@ -1010,7 +1010,7 @@ public class TaskWorkflowHelper {
                         String rootVar = assigneeVarSpec.substring(2, assigneeVarSpec.indexOf('.'));
                         Variable doc = runtimeContext.getProcess().getVariable(rootVar);
                         VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(rootVar);
-                        String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getVariableType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+                        String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
                         if (varInst == null) {
                             workflowServices.createDocument(runtimeContext, rootVar, stringValue);
                         }
@@ -1166,7 +1166,7 @@ public class TaskWorkflowHelper {
                 Process processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
                     processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
-                List<Transition> outgoingWorkTransVOs = processVO.getAllWorkTransitions(activityInstance.getActivityId());
+                List<Transition> outgoingWorkTransVOs = processVO.getAllTransitions(activityInstance.getActivityId());
                 boolean foundNullResultCode = false;
                 for (Transition workTransVO : outgoingWorkTransVOs) {
                     Integer eventType = workTransVO.getEventType();
@@ -1223,7 +1223,7 @@ public class TaskWorkflowHelper {
                 Process processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
                     processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
-                List<Transition> outgoingWorkTransVOs = processVO.getAllWorkTransitions(activityInstance.getActivityId());
+                List<Transition> outgoingWorkTransVOs = processVO.getAllTransitions(activityInstance.getActivityId());
                 for (Transition workTransVO : outgoingWorkTransVOs) {
                     String resultCode = workTransVO.getCompletionCode();
                     if (resultCode != null) {

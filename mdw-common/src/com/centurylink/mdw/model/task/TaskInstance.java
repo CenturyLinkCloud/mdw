@@ -91,23 +91,6 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public TaskInstance(Long id, Long templateId, String name, String masterRequestId, Instant start,
-            Instant end, Instant due, Integer statusCode, Integer stateCode, String comments, String assigneeCuid,
-            String message, String activityName, String categoryCode) {
-        this.taskInstanceId = id;
-        this.templateId = templateId;
-        this.taskName = name;
-        this.masterRequestId = masterRequestId;
-        this.start = start;
-        this.end = end;
-        this.due = due;
-        this.statusCode = statusCode;
-        this.stateCode = stateCode;
-        this.comments = comments;
-        this.assigneeCuid = assigneeCuid;
-        this.categoryCode = categoryCode;
-    }
-
     public TaskInstance() {
     }
 
