@@ -249,7 +249,7 @@ task testAll(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["test"]
     startParameter.projectProperties = [include: '**/*.test',
-exclude: "com/centurylink/mdw/tests/services/KafkaProducer.test,com/centurylink/mdw/tests/workflow/PrePostGroovyScript.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test,com/centurylink/mdw/tests/services/InflightHandling.test,com/centurylink/mdw/tests/services/ServiceAsyncSub1.test,com/centurylink/mdw/tests/services/ServiceAsyncSub2.test,com/centurylink/mdw/tests/cloud/SimpleDynamicJava.test"]
+exclude: "com/centurylink/mdw/tests/services/KafkaProducer.test,com/centurylink/mdw/tests/workflow/PrePostGroovyScript.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test,com/centurylink/mdw/tests/services/InflightHandling.test,com/centurylink/mdw/tests/services/ProcessValuesService.test,com/centurylink/mdw/tests/services/ServiceAsyncSub1.test,com/centurylink/mdw/tests/services/ServiceAsyncSub2.test,com/centurylink/mdw/tests/cloud/SimpleDynamicJava.test"]
 }
 
 task test {

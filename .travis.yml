@@ -14,8 +14,8 @@ before_script:
 script: gradle --no-daemon test
 after_failure:
   - cat ../testResults/mdw-function-test-results.json
-  - cat ../testResults/com.centurylink.mdw.tests.services/ProcessValuesService.log
-  - cat ../testResults/com.centurylink.mdw.tests.services/ProcessValuesService.yaml
+#  - cat ../testResults/com.centurylink.mdw.tests.services/ProcessValuesService.log
+#  - cat ../testResults/com.centurylink.mdw.tests.services/ProcessValuesService.yaml
   - sleep 10s  # allow travis to unbuffer stdout
 notifications:
   slack:
