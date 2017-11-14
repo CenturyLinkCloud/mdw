@@ -482,8 +482,8 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
     protected class VariablesModel extends HashMap<String,Object> {
         private static final long serialVersionUID = 1L;
-        private Process processVO = null;
-        private ProcessInstance procInstVO = null;
+        private Process process = null;
+        private ProcessInstance procInst = null;
         private Long procInstId;
         public VariablesModel(Long procInstId) { this.procInstId = procInstId; }
         @Override
@@ -492,20 +492,20 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             if (result!=null) return result;
             try {
                 EventManager eventMgr = ServiceLocator.getEventManager();
-                if (procInstVO == null || processVO == null) {
-                    procInstVO = eventMgr.getProcessInstance(procInstId);
-                    processVO = ProcessCache.getProcess(procInstVO.getProcessId());
+                if (procInst == null || process == null) {
+                    procInst = eventMgr.getProcessInstance(procInstId);
+                    process = ProcessCache.getProcess(procInst.getProcessId());
                 }
                 Long procInstanceId = procInstId;
                 VariableInstance vi = null;
-                if (procInstVO.isEmbedded()) {
-                    procInstanceId = procInstVO.getOwnerId();
-                    procInstVO = eventMgr.getProcessInstance(procInstanceId);
-                    processVO = ProcessCache.getProcess(procInstVO.getProcessId());
+                if (procInst.isEmbedded()) {
+                    procInstanceId = procInst.getOwnerId();
+                    procInst = eventMgr.getProcessInstance(procInstanceId);
+                    process = ProcessCache.getProcess(procInst.getProcessId());
                 }
 
                 vi = eventMgr.getVariableInstance(procInstanceId, (String)key);
-                Package packageVO = PackageCache.getProcessPackage(processVO.getProcessId());
+                Package packageVO = PackageCache.getProcessPackage(process.getId());
 
                 if (vi!=null) {
                     result = vi.getData();

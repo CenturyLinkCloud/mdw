@@ -313,14 +313,14 @@ public class TestCaseRun implements Runnable {
             List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
-                activityNameMap.put(act.getActivityId(), act.getActivityName());
-                fullActivityNameMap.put(proc.getId() + "-" + act.getActivityId(), act.getActivityName());
+                activityNameMap.put(act.getId(), act.getName());
+                fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
             }
-            if (proc.getSubProcesses() != null) {
-                for (Process subproc : proc.getSubProcesses()) {
+            if (proc.getSubprocesses() != null) {
+                for (Process subproc : proc.getSubprocesses()) {
                     for (Activity act : subproc.getActivities()) {
-                        activityNameMap.put(act.getActivityId(), act.getActivityName());
-                        fullActivityNameMap.put(proc.getId() + "-" + act.getActivityId(), act.getActivityName());
+                        activityNameMap.put(act.getId(), act.getName());
+                        fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
                     }
                 }
             }
@@ -332,20 +332,20 @@ public class TestCaseRun implements Runnable {
                     procInsts = new ArrayList<ProcessInstance>();
                 procInsts.add(procInst);
                 fullProcessInsts.put(proc.getName(), procInsts);
-                if (proc.getSubProcesses() != null) {
+                if (proc.getSubprocesses() != null) {
                     Query q = new Query();
                     q.setFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
                     q.setFilter("ownerId", procInst.getId().toString());
-                    q.setFilter("processId", proc.getProcessId().toString());
+                    q.setFilter("processId", proc.getId().toString());
                     List<ProcessInstance> embeddedProcInstList = workflowServices.getProcesses(q).getProcesses();
                     for (ProcessInstance embeddedProcInst : embeddedProcInstList) {
                         ProcessInstance fullChildInfo = workflowServices.getProcess(embeddedProcInst.getId());
                         String childProcName = "unknown_subproc_name";
-                        for (Process subproc : proc.getSubProcesses()) {
-                            if (subproc.getProcessId().toString().equals(embeddedProcInst.getComment())) {
-                                childProcName = subproc.getProcessName();
-                                if (!childProcName.startsWith(proc.getProcessName()))
-                                    childProcName = proc.getProcessName() + " " + childProcName;
+                        for (Process subproc : proc.getSubprocesses()) {
+                            if (subproc.getId().toString().equals(embeddedProcInst.getComment())) {
+                                childProcName = subproc.getName();
+                                if (!childProcName.startsWith(proc.getName()))
+                                    childProcName = proc.getName() + " " + childProcName;
                                 break;
                             }
                         }
@@ -714,7 +714,7 @@ public class TestCaseRun implements Runnable {
         for (Activity act : proc.getActivities()) {
             String lid = act.getLogicalId();
             if (activityLogicalId.equals(lid)) {
-                return act.getActivityId();
+                return act.getId();
             }
         }
         return null;
@@ -863,7 +863,7 @@ public class TestCaseRun implements Runnable {
                         activityStubResponse.setVariables(responseVariables);
                     }
                     if (isVerbose())
-                        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getProcessQualifiedName() + ":" +
+                        log.println("Stubbing activity " + activityRuntimeContext.getProcess().getQualifiedName() + ":" +
                                 activityRuntimeContext.getActivityLogicalId() + " with result code: " + resultCode);
                     return activityStubResponse;
                 }

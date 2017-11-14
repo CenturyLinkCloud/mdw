@@ -56,18 +56,14 @@ public class Process extends Asset implements Jsonable {
     private List<ExternalEvent> externalEvents;
     private List<Variable> variables;
     private List<Transition> transitions;
-    private List<Process> subProcesses;
+    private List<Process> subprocesses;
     private List<Activity> activities;
     private List<TextNote> textNotes;
     private List<Attribute> attributes;
     private List<ActivityImplementor> implementors;
-    private List<Long> deletedTransitions;  // for designer's use only
-    private String remoteServer;            // for remote server logical name; null for local
 
     public Process() {
         setLanguage(Asset.PROCESS);
-        deletedTransitions = null;
-        remoteServer = null;
     }
 
     public Process(Long id) {
@@ -81,8 +77,6 @@ public class Process extends Asset implements Jsonable {
         this.setName(pPrName);
         this.setComment(pDesc);
         this.externalEvents = externalEvents;
-        deletedTransitions = null;
-        remoteServer = null;
     }
 
     public Process(Process cloneFrom) {
@@ -90,22 +84,21 @@ public class Process extends Asset implements Jsonable {
         setExternalEvents(cloneFrom.getExternalEvents());
         setVariables(cloneFrom.getVariables());
         setTransitions(cloneFrom.getTransitions());
-        setSubProcesses(cloneFrom.getSubProcesses());
+        setSubprocesses(cloneFrom.getSubprocesses());
         setActivities(cloneFrom.getActivities());
         setAttributes(cloneFrom.getAttributes());
         setImplementors(cloneFrom.getImplementors());
         setTextNotes(cloneFrom.getTextNotes());
-        clearDeletedTransitions();
         overrideAttributesApplied = cloneFrom.overrideAttributesApplied();
     }
 
-    public void set(List<Attribute> pAttribs,  List<Variable> pVariables, List<Transition> pWorkTrans,
-                List<Process> pSubProcesses, List<Activity> pActivities){
-        this.activities = pActivities;
-        this.attributes = pAttribs;
-        this.transitions = pWorkTrans;
-        this.variables = pVariables;
-        this.subProcesses = pSubProcesses;
+    public void set(List<Attribute> attributes,  List<Variable> variables, List<Transition> transitions,
+                List<Process> subprocesses, List<Activity> activities){
+        this.activities = activities;
+        this.attributes = attributes;
+        this.transitions = transitions;
+        this.variables = variables;
+        this.subprocesses = subprocesses;
     }
 
     public boolean isService() {
@@ -123,7 +116,7 @@ public class Process extends Asset implements Jsonable {
             return false;
         }
         for(int i=0; i<activities.size(); i++){
-            if(pWorkId.longValue() == activities.get(i).getActivityId().longValue()){
+            if(pWorkId.longValue() == activities.get(i).getId().longValue()){
                 return true;
             }
         }
@@ -133,13 +126,16 @@ public class Process extends Asset implements Jsonable {
     /**
      * returns the process VO identified by the passed in work id
      * It is also possible the sub process is referencing self.
-     * @param pWorkId
+     * @param id
      */
-    public Process getSubProcessVO(Long pWorkId) {
-        if (this.getId().equals(pWorkId)) return this;
-        if(this.subProcesses == null) return null;
-        for (Process ret : subProcesses) {
-            if (ret.getProcessId().equals(pWorkId)) return ret;
+    public Process getSubProcessVO(Long id) {
+        if (this.getId().equals(id))
+            return this;
+        if (this.subprocesses == null)
+            return null;
+        for (Process ret : subprocesses) {
+            if (ret.getId().equals(id))
+                return ret;
         }
         return null;
     }
@@ -154,7 +150,7 @@ public class Process extends Asset implements Jsonable {
             return null;
         }
         for(int i=0; i<activities.size(); i++){
-            if(pWorkId.longValue() == activities.get(i).getActivityId().longValue()){
+            if(pWorkId.longValue() == activities.get(i).getId().longValue()){
                 return activities.get(i);
             }
         }
@@ -172,7 +168,7 @@ public class Process extends Asset implements Jsonable {
             return null;
         }
         for(int i=0; i<transitions.size(); i++){
-            if(pWorkTransId.longValue() == transitions.get(i).getWorkTransitionId().longValue()){
+            if(pWorkTransId.longValue() == transitions.get(i).getId().longValue()){
                 return transitions.get(i);
             }
         }
@@ -197,7 +193,7 @@ public class Process extends Asset implements Jsonable {
     public boolean hasDynamicJavaActivity() {
         if (activities != null) {
             for (Activity activity : activities) {
-                if (activity.getImplementorClassName() != null && activity.getImplementorClassName().endsWith("DynamicJavaActivity"))
+                if (activity.getImplementor() != null && activity.getImplementor().endsWith("DynamicJavaActivity"))
                     return true;
             }
         }
@@ -226,137 +222,60 @@ public class Process extends Asset implements Jsonable {
         this.attributes = attributes;
     }
 
-
-    /**
-     * @return the processId
-     */
-    public Long getProcessId() {
-        return getId();
-    }
-
-    /**
-     * @param processId the processId to set
-     */
-    public void setProcessId(Long processId) {
-        setId(processId);
-    }
-
-    /**
-     * @return the processName
-     */
-    public String getProcessName() {
-        return getName();
-    }
-
-    /**
-     * @return the processName
-     */
-    public String getProcessQualifiedName() {
-        if (StringHelper.isEmpty(getPackageName()))
-                return getName();
-        else
-            return getPackageName() + "/" + getName();
-    }
-
-    /**
-     * @param processName the processName to set
-     */
-    public void setProcessName(String processName) {
-        setName(processName);
-    }
-
-    /**
-     * @return the processDescription
-     */
-    public String getProcessDescription() {
+    public String getDescription() {
         return this.getComment();
     }
-
-    /**
-     * @param processDescription the processDescription to set
-     */
-    public void setProcessDescription(String processDescription) {
-        this.setComment(processDescription);
+    public void setDescription(String description) {
+        this.setComment(description);
     }
 
-    /**
-     * @return the subProcesses
-     */
-    public List<Process> getSubProcesses() {
-        return this.subProcesses;
+    public List<Process> getSubprocesses() {
+        return this.subprocesses;
+    }
+    public void setSubprocesses(List<Process> subprocesses) {
+        this.subprocesses = subprocesses;
     }
 
-    /**
-     * @param subProcesses the subProcesses to set
-     */
-    public void setSubProcesses(List<Process> pSubProcesses) {
-        this.subProcesses = pSubProcesses;
-    }
-
-    /**
-     * @return the transitions
-     */
     public List<Transition> getTransitions() {
         return transitions;
     }
-
-    /**
-     * @param transitions the transitions to set
-     */
     public void setTransitions(List<Transition> transitions) {
         this.transitions = transitions;
     }
 
-    /**
-     * @return the variables
-     */
     public List<Variable> getVariables() {
         return variables;
     }
-
     public Variable getVariable(String varName) {
         for (Variable var : variables) {
-            if (var.getVariableName().equals(varName))
+            if (var.getName().equals(varName))
                 return var;
         }
         return null; // not found
     }
-
     public Variable getVariable(Long id) {
         for (Variable var : variables) {
-            if (var.getVariableId().equals(id))
+            if (var.getId().equals(id))
                 return var;
         }
         return null; // not found
     }
-
-    /**
-     * @param variables the variables to set
-     */
     public void setVariables(List<Variable> variables) {
         this.variables = variables;
     }
-
     public void addLocalVariable(VariableType variableType, String variableName) {
         if (getVariable(variableName) == null) {
             Variable varVO = new Variable();
-            varVO.setVariableName(variableName);
-            varVO.setVariableType(variableType.getVariableType());
+            varVO.setName(variableName);
+            varVO.setType(variableType.getVariableType());
             varVO.setVariableCategory(Variable.CAT_LOCAL);
             variables.add(varVO);
         }
     }
 
-    /**
-     * @return the externalEvents
-     */
     public List<ExternalEvent> getExternalEvents() {
         return this.externalEvents;
     }
-
-    /**
-     * @param externalEvents the external events to set
-     */
     public void setExternalEvents(List<ExternalEvent> externalEvents) {
         this.externalEvents = externalEvents;
     }
@@ -370,73 +289,37 @@ public class Process extends Asset implements Jsonable {
     private ActivityImplementor getImplementor(Activity activity) {
         if (implementors != null) {
             for (ActivityImplementor impl : implementors) {
-                if (impl.getImplementorClassName().equals(activity.getImplementorClassName()))
+                if (impl.getImplementorClassName().equals(activity.getImplementor()))
                     return impl;
             }
         }
         return null;
     }
 
-    public void addSubProcess(Process pSubProc){
-        if(this.subProcesses == null) this.subProcesses = new ArrayList<Process>();
-        this.subProcesses.add(pSubProc);
-    }
-
-    /**
-     * Method that searches for the process at different levels
-     * @param pSubProc
-     */
-     public Process searchSubProcess(Process pSubProc){
-         if(this.equals(pSubProc)) return this;
-         if(this.subProcesses == null)return null;
-         for (Process vo : subProcesses) {
-             Process result = vo.searchSubProcess(pSubProc);
-             if(result != null) return result;
-         }
-         return null;
-    }
-
-    /**
-     * Removes the sub process
-     * @param pSubProc
-     */
-    public void removeSubProcess(Process pSubProc){
-        if(this.equals(pSubProc)) return;
-        if(this.subProcesses == null) return;
-        this.subProcesses.remove(pSubProc);
-    }
-
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Process)) return false;
-        Process pVO = (Process)obj;
-        if (getId().longValue() != pVO.getProcessId().longValue()) return false;
-        if (remoteServer==null) return pVO.remoteServer==null;
-        else return remoteServer.equals(pVO.remoteServer);
-    }
-
-    public boolean equals(Long id, String server) {
-        if (id.longValue()!=getId().longValue()) return false;
-        if (remoteServer==null) return server==null;
-        else return remoteServer.equals(server);
+        if (!(obj instanceof Process))
+            return false;
+        Process p = (Process)obj;
+        return getId().longValue() == p.getId().longValue();
     }
 
     /**
      * Finds one work transition for this process matching the specified parameters
-     * @param fromWorkId
+     * @param fromId
      * @param eventType
      * @param completionCode
      * @return the work transition value object (or null if not found)
      */
-    public Transition getWorkTransition(Long fromWorkId, Integer eventType, String completionCode) {
+    public Transition getTransition(Long fromId, Integer eventType, String completionCode) {
         Transition ret = null;
-        for (Transition workTransitionVO : getTransitions()) {
-            if (workTransitionVO.getFromWorkId().equals(fromWorkId)
-                    && workTransitionVO.match(eventType, completionCode)) {
-                if (ret == null) ret = workTransitionVO;
+        for (Transition transition : getTransitions()) {
+            if (transition.getFromId().equals(fromId)
+                    && transition.match(eventType, completionCode)) {
+                if (ret == null) ret = transition;
                 else {
                     throw new IllegalStateException("Multiple matching work transitions when one expected:\n"
-                            + " processId: " + getProcessId() + " fromWorkId: " + fromWorkId + " eventType: "
+                            + " processId: " + getId() + " fromId: " + fromId + " eventType: "
                             + eventType + "compCode: " + completionCode);
                 }
             }
@@ -458,22 +341,26 @@ public class Process extends Asset implements Jsonable {
         else return EventType.ERROR;
     }
 
-    public Process findEmbeddedProcess(Integer eventType, String completionCode) {
-        if (this.subProcesses==null) return null;
-        for (Process subproc : subProcesses) {
+    public Process findSubprocess(Integer eventType, String completionCode) {
+        if (this.subprocesses == null)
+            return null;
+        for (Process subproc : subprocesses) {
             if (eventType.equals(subproc.getEventType())) {
                 String entrycode = subproc.getAttribute(WorkAttributeConstant.ENTRY_CODE);
                 if (StringHelper.isEmpty(entrycode)) {
-                    if (StringHelper.isEmpty(completionCode)) return subproc;
+                    if (StringHelper.isEmpty(completionCode))
+                        return subproc;
                 } else {
-                    if (entrycode.equals(completionCode)) return subproc;
+                    if (entrycode.equals(completionCode))
+                        return subproc;
                 }
             }
         }
-        for (Process subproc : subProcesses) {
+        for (Process subproc : subprocesses) {
             if (eventType.equals(subproc.getEventType())) {
                 String entrycode = subproc.getAttribute(WorkAttributeConstant.ENTRY_CODE);
-                if (StringHelper.isEmpty(entrycode)) return subproc;
+                if (StringHelper.isEmpty(entrycode))
+                    return subproc;
             }
         }
         return null;
@@ -490,36 +377,39 @@ public class Process extends Asset implements Jsonable {
      * @parame completionCode
      * @return the matching work transition value objects
      */
-    public List<Transition> getWorkTransitions(Long fromWorkId, Integer eventType, String completionCode) {
-        List<Transition> allTransitions = getAllWorkTransitions(fromWorkId);
-        List<Transition> returnSet = getWorkTransitions(allTransitions, eventType, completionCode);
-        if (returnSet.size()>0) return returnSet;
+    public List<Transition> getTransitions(Long fromWorkId, Integer eventType, String completionCode) {
+        List<Transition> allTransitions = getAllTransitions(fromWorkId);
+        List<Transition> returnSet = findTransitions(allTransitions, eventType, completionCode);
+        if (returnSet.size() > 0)
+            return returnSet;
         // look for default transition
         boolean noLabelIsDefault = getTransitionWithNoLabel().equals(TRANSITION_ON_DEFAULT);
-        if (noLabelIsDefault) returnSet = getWorkTransitions(allTransitions, eventType, null);
-        else returnSet = getWorkTransitions(allTransitions, eventType, ActivityResultCodeConstant.RESULT_DEFAULT);
-        if (returnSet.size()>0) return returnSet;
+        if (noLabelIsDefault) returnSet = findTransitions(allTransitions, eventType, null);
+        else returnSet = findTransitions(allTransitions, eventType, ActivityResultCodeConstant.RESULT_DEFAULT);
+        if (returnSet.size() > 0)
+            return returnSet;
         // look for resume transition
         if (eventType.equals(EventType.FINISH)) {
             returnSet = new ArrayList<Transition>();
             for (Transition trans : allTransitions) {
-                if (trans.getEventType().equals(EventType.RESUME)) returnSet.add(trans);
+                if (trans.getEventType().equals(EventType.RESUME))
+                    returnSet.add(trans);
             }
         }
         return returnSet;
     }
 
-    public List<Transition> getAllWorkTransitions(Long fromWorkId) {
+    public List<Transition> getAllTransitions(Long fromWorkId) {
         List<Transition> allTransitions = new ArrayList<Transition>();
         for (Transition workTransitionVO : getTransitions()) {
-            if (workTransitionVO.getFromWorkId().equals(fromWorkId)) {
+            if (workTransitionVO.getFromId().equals(fromWorkId)) {
                 allTransitions.add(workTransitionVO);
             }
         }
         return allTransitions;
     }
 
-    private List<Transition> getWorkTransitions(List<Transition> all,
+    private List<Transition> findTransitions(List<Transition> all,
             Integer eventType, String compcode) {
         List<Transition> set = new ArrayList<Transition>();
         for (Transition trans : all) {
@@ -530,13 +420,13 @@ public class Process extends Asset implements Jsonable {
 
     /**
      * Find a work transition based on its id value
-     * @param workTransitionId
+     * @param id
      * @return the matching transition VO, or null if not found
      */
-    public Transition getWorkTransition(Long workTransitionId) {
-        for (Transition workTransitionVO : getTransitions()) {
-            if (workTransitionVO.getWorkTransitionId().equals(workTransitionId))
-                return workTransitionVO;
+    public Transition getTransition(Long id) {
+        for (Transition transition : getTransitions()) {
+            if (transition.getId().equals(id))
+                return transition;
         }
         return null; // not found
     }
@@ -559,22 +449,9 @@ public class Process extends Asset implements Jsonable {
      * @param value
      */
     public void setAttribute(String attrname, String value) {
-        if (attributes==null) attributes = new ArrayList<Attribute>();
+        if (attributes == null)
+            attributes = new ArrayList<Attribute>();
         Attribute.setAttribute(attributes, attrname, value);
-    }
-
-    public List<Long> getDeletedTransitions() {
-        return deletedTransitions;
-    }
-
-    public void clearDeletedTransitions() {
-        deletedTransitions = null;
-    }
-
-    public void addDeletedTransitions(Long workTransID) {
-        if(null == deletedTransitions)
-            deletedTransitions = new ArrayList<Long>();
-        deletedTransitions.add(workTransID);
     }
 
     public boolean isEmbeddedProcess() {
@@ -589,13 +466,16 @@ public class Process extends Asset implements Jsonable {
     }
 
     public Process findEmbeddedProcess(String type) {
-        if (subProcesses==null) return null;
-        for (Process subproc : subProcesses) {
+        if (subprocesses == null)
+            return null;
+        for (Process subproc : subprocesses) {
             if (ProcessVisibilityConstant.EMBEDDED.equals(
                     subproc.getAttribute(WorkAttributeConstant.PROCESS_VISIBILITY))) {
                 String subtype = subproc.getAttribute(WorkAttributeConstant.EMBEDDED_PROCESS_TYPE);
-                if (subtype==null) subtype = ProcessVisibilityConstant.EMBEDDED_ERROR_PROCESS;
-                if (type.equals(subtype)) return subproc;
+                if (subtype == null)
+                    subtype = ProcessVisibilityConstant.EMBEDDED_ERROR_PROCESS;
+                if (type.equals(subtype))
+                    return subproc;
             }
         }
         return null;
@@ -604,14 +484,14 @@ public class Process extends Asset implements Jsonable {
     public List<Activity> getUpstreamActivities(Long activityId) {
         List<Activity> upstreamActivities = new ArrayList<Activity>();
         for (Transition workTransitionVO : getTransitions()) {
-            if (workTransitionVO.getToWorkId().equals(activityId))
-                upstreamActivities.add(getActivityVO(workTransitionVO.getFromWorkId()));
+            if (workTransitionVO.getToId().equals(activityId))
+                upstreamActivities.add(getActivityVO(workTransitionVO.getFromId()));
         }
-        if (getSubProcesses() != null) {
-            for (Process embeddedSubProc : getSubProcesses()) {
+        if (getSubprocesses() != null) {
+            for (Process embeddedSubProc : getSubprocesses()) {
                 for (Transition workTransitionVO : embeddedSubProc.getTransitions()) {
-                    if (workTransitionVO.getToWorkId().equals(activityId))
-                        upstreamActivities.add(embeddedSubProc.getActivityVO(workTransitionVO.getFromWorkId()));
+                    if (workTransitionVO.getToId().equals(activityId))
+                        upstreamActivities.add(embeddedSubProc.getActivityVO(workTransitionVO.getFromId()));
                 }
             }
         }
@@ -620,7 +500,7 @@ public class Process extends Asset implements Jsonable {
 
     public Activity getActivity(String activityName) {
         for (Activity activityVO : getActivities()) {
-            if (activityVO.getActivityName().equals(activityName))
+            if (activityVO.getName().equals(activityName))
                 return activityVO;
         }
         return null;
@@ -644,7 +524,7 @@ public class Process extends Asset implements Jsonable {
                 return activityVO;
             }
         }
-        for (Process subProc : this.subProcesses) {
+        for (Process subProc : this.subprocesses) {
             for (Activity activityVO : subProc.getActivities()) {
                 if (activityVO.getLogicalId().equals(logicalId)) {
                     activityVO.setProcessName(getName() + ":" + subProc.getName());
@@ -658,20 +538,20 @@ public class Process extends Asset implements Jsonable {
 
     public String getTransitionWithNoLabel() {
         String v = this.getAttribute(WorkAttributeConstant.TRANSITION_WITH_NO_LABEL);
-        return (v==null)?TRANSITION_ON_NULL:v;
+        return (v == null) ? TRANSITION_ON_NULL : v;
     }
 
     public String getProcessType() {
         String v = this.getAttribute(WorkAttributeConstant.PROCESS_VISIBILITY);
-        return (v==null)?ProcessVisibilityConstant.REGULAR:v;
+        return (v == null) ? ProcessVisibilityConstant.REGULAR : v;
     }
 
     public String getLabel() {
-        return getProcessName() + (getVersion() == 0 ? "" : " v" + getVersionString());
+        return getName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
 
     public String getFullLabel() {
-        return getProcessQualifiedName() + (getVersion() == 0 ? "" : " v" + getVersionString());
+        return getQualifiedName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
 
     public static int versionFromString(String v) {
@@ -699,17 +579,18 @@ public class Process extends Asset implements Jsonable {
         for (Transition trans : toDelete) {
             this.transitions.remove(trans);
         }
-        if (this.getSubProcesses()==null) return;
-        for (Process subproc : this.getSubProcesses()) {
-            toDelete.clear();
-            for (Transition trans : subproc.transitions) {
-                Changes changes = new Changes(trans.getAttributes());
-                if (changes.getChangeType()==Changes.DELETE) {
-                    toDelete.add(trans);
+        if (this.getSubprocesses() != null) {
+            for (Process subproc : this.getSubprocesses()) {
+                toDelete.clear();
+                for (Transition trans : subproc.transitions) {
+                    Changes changes = new Changes(trans.getAttributes());
+                    if (changes.getChangeType()==Changes.DELETE) {
+                        toDelete.add(trans);
+                    }
                 }
-            }
-            for (Transition trans : toDelete) {
-                subproc.transitions.remove(trans);
+                for (Transition trans : toDelete) {
+                    subproc.transitions.remove(trans);
+                }
             }
         }
     }
@@ -741,8 +622,8 @@ public class Process extends Asset implements Jsonable {
 
     public List<Activity> getDownstreamActivities(Activity activity) {
         List<Activity> downstreamActivities = new ArrayList<Activity>();
-        for (Transition transition : getAllWorkTransitions(activity.getActivityId()))
-            downstreamActivities.add(getActivityVO(transition.getToWorkId()));
+        for (Transition transition : getAllTransitions(activity.getId()))
+            downstreamActivities.add(getActivityVO(transition.getToId()));
         return downstreamActivities;
     }
 
@@ -758,10 +639,10 @@ public class Process extends Asset implements Jsonable {
                     String attrname = name.substring(colon + 1);
                     Long id = new Long(name.substring(WorkAttributeConstant.OVERRIDE_QUALIFIER.length(), colon));
                     if (name.startsWith(WorkAttributeConstant.OVERRIDE_TRANSITION)) {
-                        Transition wt = getWorkTransition(id);
-                        if (wt == null && getSubProcesses() != null) {
-                            for (Process subproc : getSubProcesses()) {
-                                wt = subproc.getWorkTransition(id);
+                        Transition wt = getTransition(id);
+                        if (wt == null && getSubprocesses() != null) {
+                            for (Process subproc : getSubprocesses()) {
+                                wt = subproc.getTransition(id);
                                 if (wt != null)
                                     break;
                             }
@@ -776,8 +657,8 @@ public class Process extends Asset implements Jsonable {
                     }
                     else {
                         Activity act = getActivityVO(id);
-                        if (act == null && getSubProcesses() != null) {
-                            for (Process subproc : getSubProcesses()) {
+                        if (act == null && getSubprocesses() != null) {
+                            for (Process subproc : getSubprocesses()) {
                                 act = subproc.getActivityVO(id);
                                 if (act != null)
                                     break;
@@ -805,22 +686,22 @@ public class Process extends Asset implements Jsonable {
         }
         if (getActivities() != null) {
             for (Activity activity : getActivities())
-                overrideAttrs.putAll(getSubOverrideAttributes(activity.getAttributes(), OwnerType.ACTIVITY, activity.getActivityId()));
+                overrideAttrs.putAll(getSubOverrideAttributes(activity.getAttributes(), OwnerType.ACTIVITY, activity.getId()));
         }
         if (getTransitions() != null) {
             for (Transition transition : getTransitions())
-                overrideAttrs.putAll(getSubOverrideAttributes(transition.getAttributes(), OwnerType.WORK_TRANSITION, transition.getWorkTransitionId()));
+                overrideAttrs.putAll(getSubOverrideAttributes(transition.getAttributes(), OwnerType.WORK_TRANSITION, transition.getId()));
         }
-        if (getSubProcesses() != null) {
-            for (Process subproc : getSubProcesses()) {
+        if (getSubprocesses() != null) {
+            for (Process subproc : getSubprocesses()) {
                 overrideAttrs.putAll(getSubOverrideAttributes(subproc.getAttributes(), OwnerType.PROCESS, subproc.getId()));
                 if (subproc.getActivities() != null) {
                     for (Activity activity : subproc.getActivities())
-                        overrideAttrs.putAll(getSubOverrideAttributes(activity.getAttributes(), OwnerType.ACTIVITY, activity.getActivityId()));
+                        overrideAttrs.putAll(getSubOverrideAttributes(activity.getAttributes(), OwnerType.ACTIVITY, activity.getId()));
                 }
                 if (subproc.getTransitions() != null) {
                     for (Transition trans : subproc.getTransitions())
-                        overrideAttrs.putAll(getSubOverrideAttributes(trans.getAttributes(), OwnerType.WORK_TRANSITION, trans.getWorkTransitionId()));
+                        overrideAttrs.putAll(getSubOverrideAttributes(trans.getAttributes(), OwnerType.WORK_TRANSITION, trans.getId()));
                 }
             }
         }
@@ -851,8 +732,8 @@ public class Process extends Asset implements Jsonable {
             for (Transition trans : getTransitions())
                 trans.setAttributes(removeEmptyAndOverrideAttrs(trans.getAttributes()));
         }
-        if (getSubProcesses() != null) {
-            for (Process embedded : getSubProcesses())
+        if (getSubprocesses() != null) {
+            for (Process embedded : getSubprocesses())
                 embedded.removeEmptyAndOverrideAttributes();
         }
     }
@@ -886,8 +767,8 @@ public class Process extends Asset implements Jsonable {
             for (Transition trans : getTransitions())
                 trans.setAttributes(removeEmptyAttrs(trans.getAttributes()));
         }
-        if (getSubProcesses() != null) {
-            for (Process embedded : getSubProcesses())
+        if (getSubprocesses() != null) {
+            for (Process embedded : getSubprocesses())
                 embedded.removeEmptyAttributes();
         }
     }
@@ -910,7 +791,7 @@ public class Process extends Asset implements Jsonable {
         Map<String,Value> inputVars = new HashMap<>();
         for (Variable var : getVariables()) {
             if (var.isInput()) {
-                inputVars.put(var.getVariableName(), var.toValue());
+                inputVars.put(var.getName(), var.toValue());
             }
         }
         return inputVars;
@@ -923,7 +804,7 @@ public class Process extends Asset implements Jsonable {
         if (json.has("name"))
             setName(json.getString("name"));
         if (json.has("description"))
-            setProcessDescription(json.getString("description"));
+            setDescription(json.getString("description"));
         if (json.has("attributes")) {
             this.attributes = JsonUtil.getAttributes(json.getJSONObject("attributes"));
         }
@@ -940,13 +821,13 @@ public class Process extends Asset implements Jsonable {
                     JSONArray transitionsJson = activityJson.getJSONArray("transitions");
                     for (int j = 0; j < transitionsJson.length(); j++) {
                         Transition transition = new Transition(transitionsJson.getJSONObject(j));
-                        transition.setFromWorkId(activity.getActivityId());
+                        transition.setFromId(activity.getId());
                         this.transitions.add(transition);
                     }
                 }
             }
         }
-        this.subProcesses = new ArrayList<Process>();
+        this.subprocesses = new ArrayList<Process>();
         if (json.has("subprocesses")) {
             JSONArray subprocsJson = json.getJSONArray("subprocesses");
             for (int i = 0; i < subprocsJson.length(); i++) {
@@ -957,7 +838,7 @@ public class Process extends Asset implements Jsonable {
                     logicalId = "P" + logicalId.substring(10);
                 subproc.setId(Long.valueOf(logicalId.substring(1)));
                 subproc.setAttribute(WorkAttributeConstant.LOGICAL_ID, subprocJson.getString("id"));
-                this.subProcesses.add(subproc);
+                this.subprocesses.add(subproc);
             }
         }
         this.textNotes = new ArrayList<TextNote>();
@@ -972,7 +853,7 @@ public class Process extends Asset implements Jsonable {
             Map<String,JSONObject> objects = JsonUtil.getJsonObjects(variablesJson);
             for (String name : objects.keySet()) {
                 Variable variable = new Variable(objects.get(name));
-                variable.setVariableName(name);
+                variable.setName(name);
                 this.variables.add(variable);
             }
         }
@@ -983,8 +864,8 @@ public class Process extends Asset implements Jsonable {
      */
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        if (getProcessDescription() != null && !getProcessDescription().isEmpty())
-          json.put("description", getProcessDescription());
+        if (getDescription() != null && !getDescription().isEmpty())
+          json.put("description", getDescription());
         if (attributes != null && !attributes.isEmpty()) {
             json.put("attributes", JsonUtil.getAttributesJson(attributes));
         }
@@ -992,13 +873,13 @@ public class Process extends Asset implements Jsonable {
             JSONArray activitiesJson = new JSONArray();
             for (Activity activity : activities) {
                 JSONObject activityJson = activity.getJson();
-                List<Transition> transitions = getAllWorkTransitions(activity.getActivityId());
+                List<Transition> transitions = getAllTransitions(activity.getId());
                 if (transitions != null && !transitions.isEmpty()) {
                     JSONArray transitionsJson = new JSONArray();
                     for (Transition transition : transitions) {
                         JSONObject transitionJson = transition.getJson();
-                        if (transition.getToWorkId() < 0) // newly created
-                            transitionJson.put("to", getActivityVO(transition.getToWorkId()).getLogicalId());
+                        if (transition.getToId() < 0) // newly created
+                            transitionJson.put("to", getActivityVO(transition.getToId()).getLogicalId());
                         transitionsJson.put(transitionJson);
                     }
                     activityJson.put("transitions", transitionsJson);
@@ -1007,9 +888,9 @@ public class Process extends Asset implements Jsonable {
             }
             json.put("activities", activitiesJson);
         }
-        if (subProcesses != null && !subProcesses.isEmpty()) {
+        if (subprocesses != null && !subprocesses.isEmpty()) {
             JSONArray subprocsJson = new JSONArray();
-            for (Process subproc : subProcesses) {
+            for (Process subproc : subprocesses) {
                 JSONObject subprocJson = subproc.getJson();
                 String logicalId = subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID);
                 subprocJson.put("id", logicalId);

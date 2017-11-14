@@ -116,13 +116,13 @@ public class TransformActivity extends ScriptExecutorActivity {
         Variable inputVar = getMainProcessDefinition().getVariable(inputDocument);
         if (inputVar == null)
           throw new ActivityException("Input document variable not found: " + inputDocument);
-        String inputVarName = inputVar.getVariableName();
-        Object inputVarValue = getGPathParamValue(inputVarName, inputVar.getVariableType());
+        String inputVarName = inputVar.getName();
+        Object inputVarValue = getGPathParamValue(inputVarName, inputVar.getType());
         binding.setVariable(inputVarName, inputVarValue);
 
         Variable outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
-        String outputVarName = outputVar.getVariableName();
-        Object outputVarValue = getGPathParamValue(outputVarName, outputVar.getVariableType());
+        String outputVarName = outputVar.getName();
+        Object outputVarValue = getGPathParamValue(outputVarName, outputVar.getType());
         binding.setVariable(outputVarName, outputVarValue);
 
         script.setBinding(binding);
@@ -130,7 +130,7 @@ public class TransformActivity extends ScriptExecutorActivity {
         script.run();
 
         Object groovyVarValue = binding.getVariable(outputVarName);
-        setGPathParamValue(outputVarName, outputVar.getVariableType(), groovyVarValue);
+        setGPathParamValue(outputVarName, outputVar.getType(), groovyVarValue);
     }
 
     private void executeXSLT() throws ActivityException {
@@ -145,8 +145,8 @@ public class TransformActivity extends ScriptExecutorActivity {
         Variable inputVar = getMainProcessDefinition().getVariable(inputDocument);
         if (inputVar == null)
           throw new ActivityException("Input document variable not found: " + inputDocument);
-        String inputVarName = inputVar.getVariableName();
-        String inputVarType = inputVar.getVariableType();
+        String inputVarName = inputVar.getName();
+        String inputVarType = inputVar.getType();
         com.centurylink.mdw.variable.VariableTranslator inTranslator = VariableTranslator.getTranslator(getPackage(), inputVarType);
         if (inTranslator instanceof DocumentReferenceTranslator) {
             DocumentReferenceTranslator docRefTranslator = (DocumentReferenceTranslator) inTranslator;
@@ -158,8 +158,8 @@ public class TransformActivity extends ScriptExecutorActivity {
         }
 
         Variable outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
-        String outputVarName = outputVar.getVariableName();
-        String outputVarType = outputVar.getVariableType();
+        String outputVarName = outputVar.getName();
+        String outputVarType = outputVar.getType();
         com.centurylink.mdw.variable.VariableTranslator outTranslator = VariableTranslator.getTranslator(getPackage(), outputVarType);
         if (!isOutputDocument(outputVarName))
           throw new ActivityException("Output document is not writable: " + outputVarName);

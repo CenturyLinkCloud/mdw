@@ -40,10 +40,10 @@ import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
@@ -103,7 +103,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             return (ProcessExecutionPlanDocument)((XmlObject)binding).changeType(ProcessExecutionPlanDocument.type);
         } else {
             Variable docVar = getProcessDefinition().getVariable(plan_varname);
-            XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), docVar.getVariableType());
+            XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), docVar.getType());
             Document doc = docRefTrans.toDomDocument(binding);
             return ProcessExecutionPlanDocument.Factory.parse(doc, Compatibility.namespaceOptions());
         }
@@ -113,7 +113,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         throws ActivityException {
         String plan_varname = getAttributeValue(EXECUTION_PLAN_VARIABLE);
         DocumentReference docref = (DocumentReference)getParameterValue(plan_varname);
-        String varType = getProcessDefinition().getVariable(plan_varname).getVariableType();
+        String varType = getProcessDefinition().getVariable(plan_varname).getType();
         String str;
         if (Yaml.class.getName().equals(varType))  { // TODO better way that supports other types like JSONObject and Jsonable
             DocumentReferenceTranslator translator = (DocumentReferenceTranslator) VariableTranslator.getTranslator(getPackage(), varType);
@@ -191,17 +191,14 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             throws Exception {
         try {
             // prepare variable bindings
-            Process processVO = getSubProcessVO(piplan.getLogicalProcessName());
-            if (processVO==null) throw new Exception(
-                    "Cannot find process with logical name " + piplan.getLogicalProcessName());
-            List<Variable> childVars = processVO.getVariables();
+            Process process = getSubProcessVO(piplan.getLogicalProcessName());
+            if (process == null)
+                throw new Exception("Cannot find process with logical name " + piplan.getLogicalProcessName());
+            List<Variable> childVars = process.getVariables();
             Map<String,String> parameters = createVariableBinding(childVars, piplan, false);
             // create ProcessInstance and its variable instances
-//            InternalEventVO procStartEvent = InternalEventVO.createProcessStartMessage(processVO.getProcessId(),
-//                    OwnerType.PROCESS_INSTANCE, getProcessInstanceId(), getMasterRequestId(), null,
-//                    OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId());
             ProcessInstance pi = getEngine().createProcessInstance(
-                    processVO.getProcessId(), OwnerType.PROCESS_INSTANCE,
+                    process.getId(), OwnerType.PROCESS_INSTANCE,
                     getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
                     getMasterRequestId(), parameters);
             piplan.setInstanceId(pi.getId().toString());
@@ -244,7 +241,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         for (int k=0; k<childVars.size(); k++) {
             Variable childVar = childVars.get(k);
             if (!allowInput(childVar)) continue;
-            vn = childVar.getVariableName();
+            vn = childVar.getName();
             if (vn.equals(VariableConstants.REQUEST)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
                 v = varinst==null?null:varinst.getStringValue();
@@ -257,7 +254,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             }
             if (v!=null && v.length()>0) {
                 if (passDocumentContent) {
-                    if (VariableTranslator.isDocumentReferenceVariable(childVar.getVariableType())
+                    if (VariableTranslator.isDocumentReferenceVariable(childVar.getType())
                             && v.startsWith("DOCUMENT:")) {
                         v = super.getDocumentContent(new DocumentReference(v));
                     }
@@ -379,18 +376,20 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             String logicalProcName = piplan.getLogicalProcessName();
             try {
                 logger.info("New thread for executing service subprocess in parallel - " + logicalProcName);
-                Process processVO = getSubProcessVO(logicalProcName);
-                if (processVO==null) throw new Exception("Cannot find process with logical name " + logicalProcName);
+                Process process = getSubProcessVO(logicalProcName);
+                if (process == null)
+                    throw new Exception("Cannot find process with logical name " + logicalProcName);
                 engineDriver = new ProcessEngineDriver();
-                List<Variable> childVars = processVO.getVariables();
+                List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
                 Map<String,String> parameters = createVariableBinding(childVars, piplan, perfLevel >= 5); // DHO
-                outParameters = engineDriver.invokeServiceAsSubprocess(processVO.getProcessId(),
+                outParameters = engineDriver.invokeServiceAsSubprocess(process.getId(),
                         getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel);
 
                 procInstId = engineDriver.getMainProcessInstanceId();
             } catch (Exception e) {
-                if (engineDriver!=null) procInstId = engineDriver.getMainProcessInstanceId();
+                if (engineDriver != null)
+                    procInstId = engineDriver.getMainProcessInstanceId();
                 logexception("Failed to execute subprocess in thread - " + logicalProcName, e);
             } finally {
                 logger.info("Thread for executing subprocess in parallel terminates - " + logicalProcName);
@@ -413,10 +412,10 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             Variable var = procdef.getVariable(varname);
             if (var!=null) {
                 Object value0;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(var.getVariableType())) {
+                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(var.getType())) {
                     if (StringHelper.isEmpty(value)) value0 = null;
                     else if (value.startsWith("DOCUMENT:"))
-                        value0 = VariableTranslator.toObject(var.getVariableType(), value);
+                        value0 = VariableTranslator.toObject(var.getType(), value);
                     else {
                         synchronized(outputVariableUpdated) {
                             if (outputVariableUpdated.get(varname))
@@ -424,14 +423,14 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                             else
                                 outputVariableUpdated.put(varname,  Boolean.valueOf(true));
                         }
-                        DocumentReference docref = super.createDocument(var.getVariableType(),
+                        DocumentReference docref = super.createDocument(var.getType(),
                                 value, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                         value0 = new DocumentReference(docref.getDocumentId());
 
                      // check map for variable, not allowed multiple children to update same docs
                     }
                 } else {
-                    value0 = VariableTranslator.toObject(var.getVariableType(), value);
+                    value0 = VariableTranslator.toObject(var.getType(), value);
                 }
                 this.setParameterValue(varname, value0);
             }

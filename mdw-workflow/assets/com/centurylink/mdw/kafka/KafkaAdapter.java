@@ -155,7 +155,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
                 Variable variableVO = processVO.getVariable(producerVar);
                 if (variableVO == null)
                     throw new ActivityException("Producer Config variable '" + producerVar + "' is not defined for process " + processVO.getLabel());
-                if (!variableVO.getVariableType().startsWith("java.util.Map") && !variableVO.getVariableType().startsWith("java.lang.Object"))
+                if (!variableVO.getType().startsWith("java.util.Map") && !variableVO.getType().startsWith("java.lang.Object"))
                     throw new ActivityException("Producer Config variable '" + producerVar + "' must be of type java.util.Map or java.lang.Object");
                 Object producerObj = getVariableValue(producerVar);
                 if (producerObj != null) {
@@ -186,7 +186,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
                 Variable variableVO = processVO.getVariable(recordVar);
                 if (variableVO == null)
                     throw new ActivityException("Record variable '" + recordVar + "' is not defined for process " + processVO.getLabel());
-                if (!variableVO.getVariableType().startsWith("java.lang.Object"))
+                if (!variableVO.getType().startsWith("java.lang.Object"))
                     throw new ActivityException("Record variable '" + recordVar + "' must be of type java.lang.Object");
                 Object recordObj = getVariableValue(recordVar);
                 if (recordObj != null) {

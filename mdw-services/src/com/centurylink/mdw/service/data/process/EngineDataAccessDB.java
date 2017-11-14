@@ -1060,7 +1060,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[1] = pProcInstId;
         args[2] = TransitionStatus.STATUS_COMPLETED;
         for (Transition trans : transitions) {
-            args[0] = trans.getWorkTransitionId();
+            args[0] = trans.getId();
             rs = db.runSelect(sql, args);
             if (rs.next()) trans.setEventType(EventType.FINISH);
             else trans.setEventType(EventType.START);

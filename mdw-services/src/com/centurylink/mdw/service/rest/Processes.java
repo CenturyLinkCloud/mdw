@@ -40,6 +40,7 @@ import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Process;
@@ -314,6 +315,11 @@ public class Processes extends JsonRestService implements JsonExportable {
             if (segments.length > 1 && segments[1].equals("run")) {
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
                 ProcessRun run = new ProcessRun(content);
+                if (run.getMasterRequestId() == null || run.getMasterRequestId().isEmpty())
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing masterRequestId");
+                if (ServiceLocator.getRequestServices().getMasterRequest(run.getMasterRequestId()) != null)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Master request ID: " + run.getMasterRequestId() + " already exists");
+
                 if (segments.length == 3) {
                     String defId = segments[2];
                     try {
@@ -332,6 +338,20 @@ public class Processes extends JsonRestService implements JsonExportable {
                     if (proc == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + procPath);
                     run.setDefinitionId(proc.getId());
+                    String validationError = "";
+                    for (String inputVarName : proc.getInputVariables().keySet()) {
+                        Value inputVar = proc.getInputVariables().get(inputVarName);
+                        Display display = inputVar.getDisplay();
+                        boolean populated = run.getValueNames().contains(inputVarName);
+                        if (display == Display.ReadOnly && populated) {
+                            validationError += (validationError.isEmpty() ? "" : ", ") + "ReadOnly: " + inputVarName;
+                        }
+                        else if (display == Display.Required && !populated) {
+                            validationError += (validationError.isEmpty() ? "" : ", ") + "Required: " + inputVarName;
+                        }
+                    }
+                    if (!validationError.isEmpty())
+                        throw new ServiceException(ServiceException.BAD_REQUEST, validationError);
                     return workflowServices.runProcess(run).getJson();
                 }
                 else {

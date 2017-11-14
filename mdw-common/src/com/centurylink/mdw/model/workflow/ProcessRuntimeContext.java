@@ -244,7 +244,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             valueExpressionMap.put("masterRequestId", new ValueExpressionLiteral(getMasterRequestId(), String.class));
             valueExpressionMap.put("mdwHubUrl", new ValueExpressionLiteral(ApplicationContext.getMdwHubUrl(), String.class));
             valueExpressionMap.put("processInstanceId", new ValueExpressionLiteral(this.getProcessInstanceId(), String.class));
-            valueExpressionMap.put("processName", new ValueExpressionLiteral(this.process.getProcessName(), String.class));
+            valueExpressionMap.put("processName", new ValueExpressionLiteral(this.process.getName(), String.class));
             valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstance, Object.class));
             valueExpressionMap.put("variables", new ValueExpressionLiteral(this.getVariables() , Object.class));
             valueExpressionMap.put("props", new ValueExpressionLiteral(this.getPropertyAccessorMap(), Map.class));
@@ -308,7 +308,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             if (var == null)
                 throw new IllegalArgumentException("Variable not defined: " + key);
             VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator
-                    .getTranslator(getPackage(), var.getVariableType());
+                    .getTranslator(getPackage(), var.getType());
             if (translator instanceof JavaObjectTranslator)
                 return obj.toString();
             if (translator instanceof DocumentReferenceTranslator)
@@ -323,7 +323,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         if (var == null)
             throw new IllegalArgumentException("Variable not defined: " + varName);
         VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator
-                .getTranslator(getPackage(), var.getVariableType());
+                .getTranslator(getPackage(), var.getType());
         if (translator instanceof DocumentReferenceTranslator)
             return ((DocumentReferenceTranslator)translator).realToObject(strVal);
         else

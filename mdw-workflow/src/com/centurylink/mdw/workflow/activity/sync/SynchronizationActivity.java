@@ -130,13 +130,13 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             Map<String,String> idToEscapedName) {
         List<Transition> incomingTransitions = new ArrayList<Transition>();
         for (Transition trans : procdef.getTransitions()) {
-            if (trans.getToWorkId().equals(activityId)) {
+            if (trans.getToId().equals(activityId)) {
                 Transition sync = new Transition();
-                sync.setWorkTransitionId(trans.getWorkTransitionId());
-                Activity act = procdef.getActivityVO(trans.getFromWorkId());
+                sync.setId(trans.getId());
+                Activity act = procdef.getActivityVO(trans.getFromId());
                 String logicalId = act.getLogicalId();
                 // id to escaped name map is for backward compatibility
-                idToEscapedName.put(logicalId, escape(act.getActivityName()));
+                idToEscapedName.put(logicalId, escape(act.getName()));
                 sync.setCompletionCode(logicalId);
                 incomingTransitions.add(sync);
             }

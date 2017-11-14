@@ -765,7 +765,7 @@ public class ListenerHelper {
             throw new DataAccessException(0, "Cannot find process with name "
                     + procname + ", version 0");
 
-        return proc.getProcessId();
+        return proc.getId();
     }
 
     public static boolean isJson(String message) {

@@ -83,14 +83,14 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         }
 
         if (responseVariable != null && VariableTranslator.getTranslator(getPackage(),
-                responseVariable.getVariableType()) instanceof JsonTranslator) {
-            if (Jsonable.class.getName().equals(responseVariable.getVariableType()))
+                responseVariable.getType()) instanceof JsonTranslator) {
+            if (Jsonable.class.getName().equals(responseVariable.getType()))
                 setVariableValue(responseVariable.getName(), response);
-            else if (JSONObject.class.getName().equals(responseVariable.getVariableType()))
+            else if (JSONObject.class.getName().equals(responseVariable.getType()))
                 setVariableValue(responseVariable.getName(), response.getJson());
             else
                 throw new JSONException(
-                        "Unrecognized JSON variable type: " + responseVariable.getVariableType());
+                        "Unrecognized JSON variable type: " + responseVariable.getType());
         }
     }
 
@@ -146,7 +146,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         Long requestId = super.logRequest(message);
         try {
             Variable requestIdVar = getProcessDefinition().getVariable("requestId");
-            if (requestIdVar != null && Long.class.getName().equals(requestIdVar.getVariableType()))
+            if (requestIdVar != null && Long.class.getName().equals(requestIdVar.getType()))
                 setParameterValue("requestId", requestId);
         }
         catch (ActivityException ex) {

@@ -84,7 +84,7 @@ public class ProcessExecutor implements RetryableTransaction {
             label = procVO.getLabel();
             Package pkg = PackageCache.getProcessPackage(processId);
             if (pkg != null && !pkg.isDefaultPackage())
-                label = pkg.getLabel() + "/" + label;
+                label = pkg.getName() + "/" + label;
         }
         TransactionWrapper transaction=null;
         try {

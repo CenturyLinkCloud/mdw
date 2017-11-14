@@ -110,7 +110,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 }
                 else {
                     requestObj = ret;
-                    setParameterValueAsDocument(requestVarName, this.getProcessDefinition().getVariable(requestVarName).getVariableType(), requestObj);
+                    setParameterValueAsDocument(requestVarName, this.getProcessDefinition().getVariable(requestVarName).getType(), requestObj);
                 }
             }
             soapRequest = createSoapRequest(requestObj);

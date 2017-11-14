@@ -50,6 +50,7 @@ import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.TestException;
+import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.StringHelper;
 
 public class RegressionTestEventHandler extends ExternalEventHandlerBase {
@@ -121,18 +122,18 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
          String resp;
          Long eventInstId = new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
          Long processId = getProcessId(processName);
-         Process procVO = getProcessDefinition(processId);
+         Process proc = getProcessDefinition(processId);
          Map<String,Object> params = new HashMap<String,Object>();
          for (Parameter param : xmlbean.getActionRequest().getAction().getParameterList()) {
              if (param.getName().equals("MasterRequestId")) continue;
              if (param.getName().equals("ProcessName")) continue;
              if (param.getName().equals("PerformanceLevel")) continue;
-             Variable var = procVO.getVariable(param.getName());
+             Variable var = proc.getVariable(param.getName());
              if (var!=null) params.put(param.getName(), param.getStringValue());
          }
-         String processType = procVO.getProcessType();
+         String processType = proc.getProcessType();
          if (processType.equals(ProcessVisibilityConstant.SERVICE)) {
-             resp = invokeServiceProcess(procVO.getProcessId(), eventInstId, masterRequestId,
+             resp = invokeServiceProcess(proc.getId(), eventInstId, masterRequestId,
                      message, params, null, performance_level, null);
          } else {
              launchProcess(processId, eventInstId, masterRequestId, params, null);
@@ -306,8 +307,8 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                         if (var==null) {
                             Variable vardef = procdef.getVariable(varname);
                             if (vardef==null) throw new Exception("The variable is not defined: " + varname);
-                            if (vardef.isDocument()) {
-                                Long docid = eventManager.createDocument(vardef.getVariableType(),
+                            if (VariableTranslator.isDocumentReferenceVariable(vardef.getType())) {
+                                Long docid = eventManager.createDocument(vardef.getType(),
                                     OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue(), null);
                                 eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid));
                             } else {

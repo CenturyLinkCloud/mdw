@@ -159,10 +159,10 @@ public class FallbackEventHandler implements ExternalEventHandler {
                         Package pkg = PackageCache.getProcessPackage(procdef.getId());
                         Variable vardef = procdef.getVariable(varName);
                         if (vardef==null) throw new Exception("Variable is not defined for the process");
-                        if (vardef.getVariableType().equals(Object.class.getName()))
+                        if (vardef.getType().equals(Object.class.getName()))
                             varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
-                        if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getVariableType())) {
-                            Long docid = eventMgr.createDocument(vardef.getVariableType(),
+                        if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getType())) {
+                            Long docid = eventMgr.createDocument(vardef.getType(),
                                     OwnerType.PROCESS_INSTANCE, procInst.getId(), varValue, pkg);
                             varinst = eventMgr.setVariableInstance(procInst.getId(), varName,
                                     new DocumentReference(docid));

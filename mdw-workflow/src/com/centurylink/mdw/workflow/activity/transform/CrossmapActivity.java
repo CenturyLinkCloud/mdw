@@ -74,7 +74,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
             if (inputVar == null)
                 throw new ActivityException("Input variable not defined: " + inputAttr);
             com.centurylink.mdw.variable.VariableTranslator inputTrans
-              = VariableTranslator.getTranslator(getPackage(), inputVar.getVariableType());
+              = VariableTranslator.getTranslator(getPackage(), inputVar.getType());
             Object inputObj = getVariableValue(inputAttr);
             if (inputObj == null)
                 throw new ActivityException("Input variable is null: " + inputAttr);
@@ -89,7 +89,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
                 slurper = new JsonSlurper(inputVar.getName(), input.toString());
             }
             else {
-                throw new ActivityException("Unsupported input variable type: " + inputVar.getVariableType());
+                throw new ActivityException("Unsupported input variable type: " + inputVar.getType());
             }
 
             // output
@@ -100,14 +100,14 @@ public class CrossmapActivity extends DefaultActivityImpl {
             if (outputVar == null)
                 throw new ActivityException("Output variable not defined: " + outputVar);
             com.centurylink.mdw.variable.VariableTranslator outputTrans
-                = VariableTranslator.getTranslator(getPackage(), outputVar.getVariableType());
+                = VariableTranslator.getTranslator(getPackage(), outputVar.getType());
             Builder builder;
             if (outputTrans instanceof DomDocumentTranslator)
                 builder = new XmlBuilder(outputVar.getName());
             else if (outputTrans instanceof JsonTranslator)
                 builder = new JsonBuilder(outputVar.getName());
             else
-                throw new ActivityException("Unsupported output variable type: " + outputVar.getVariableType());
+                throw new ActivityException("Unsupported output variable type: " + outputVar.getType());
 
             runScript(mapperScript.getStringContent(), slurper, builder);
 

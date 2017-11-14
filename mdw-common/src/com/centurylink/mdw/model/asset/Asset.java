@@ -504,6 +504,12 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
+    public String getQualifiedName() {
+        if (getPackageName() == null || getPackageName().isEmpty())
+            return getName();
+        else
+            return getPackageName() + "/" + getName();
+    }
 
     public String getRevisionComment() {
         return revisionComment;
