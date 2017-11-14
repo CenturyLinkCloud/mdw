@@ -34,9 +34,7 @@ import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
  * Dynamic Java workflow asset.
  */
 @Tracked(LogLevel.TRACE)
-public class KafkaAdapter extends PoolableAdapterBase implements java.io.Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class KafkaAdapter extends PoolableAdapterBase {
 
     private static final String KAFKA_TOPIC_NAME = "topic";
     private static final String RECORD_KEY = "key";
@@ -59,10 +57,7 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
     public void init(Properties parameters) {
         bootstrap_servers = parameters.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG);
         // This is so that all dependent class from kafka-clients jar are found during consumer creation
-        Package pkg = PackageCache.getPackage(MDW_KAFKA_PKG);
-        if (pkg == null)
-            pkg = PackageCache.getPackages().get(0);
-        Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
+
         producerProps = parameters;
     }
 
@@ -78,8 +73,14 @@ public class KafkaAdapter extends PoolableAdapterBase implements java.io.Seriali
         synchronized(producerMap) {
             if (producerMap.get(bootstrap_servers) == null)
             {
+                Package pkg = PackageCache.getPackage(MDW_KAFKA_PKG);
+                if (pkg == null)
+                    pkg = PackageCache.getPackages().get(0);
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
                 kafkaProducer =  new KafkaProducer<>(producerProps);
                 producerMap.put(bootstrap_servers, kafkaProducer);
+                Thread.currentThread().setContextClassLoader(cl);
                 return kafkaProducer;
             }
             else

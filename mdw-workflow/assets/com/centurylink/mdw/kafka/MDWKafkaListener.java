@@ -16,13 +16,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.container.ThreadPoolProvider;
@@ -175,10 +175,20 @@ public class MDWKafkaListener {
             Package pkg = PackageCache.getPackage(MDW_KAFKA_PKG);
             if (pkg == null)
                 pkg = PackageCache.getPackages().get(0);
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
 
             consumer = new KafkaConsumer<>(initParameters);
             consumer.subscribe(topics);
+
+            // Create a dummy producer on this same thread to prevent IllegalAccessError when sending messages, which was blocking
+            initParameters.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+            initParameters.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+            KafkaProducer<Object, Object> dummyProducer = new KafkaProducer<>(initParameters);
+
+            Thread.currentThread().setContextClassLoader(cl);
+
+            dummyProducer.close();
 
             _terminating = false;
             if (!use_thread_pool) {
