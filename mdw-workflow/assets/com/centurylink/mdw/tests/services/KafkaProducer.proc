@@ -23,7 +23,7 @@
         "DO_LOGGING": "true",
         "Output Documents": "[\"producerProperties\",\"recordProperties\"]",
         "PostScriptLang": "Groovy",
-        "PreScript": "import java.util.Properties\r\n\r\nimport org.apache.kafka.clients.producer.ProducerConfig\r\nimport org.apache.kafka.common.serialization.LongSerializer\r\nimport org.apache.kafka.common.serialization.StringSerializer\r\n\r\nimport com.centurylink.mdw.config.PropertyUtil\r\nimport com.centurylink.mdw.constant.PropertyNames\r\nimport com.centurylink.mdw.kafka.KafkaAdapter\r\n\r\nProperties producerProps = new Properties();\r\n\r\n//NOTE: coma separated list of server:port ex. localhost:9092,localhost:9093\r\nString server = PropertyUtil.getInstance().getPropertyManager().getProperty(\"mdw.kafka.servers\");\r\nSystem.out.println(\"BOOTSTRAP_SERVERS_CONFIG : \" + server);\r\nproducerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);\r\nproducerProps.put(ProducerConfig.CLIENT_ID_CONFIG, \"KafkaMDWProducer\");\r\nproducerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());\r\nproducerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());\r\nproducerProps.put(\"timeout.ms\", \"100\");\r\n\r\nproducerProperties = producerProps;\r\n\nProperties recordProps = new Properties();\r\nrecordProps.put(KafkaAdapter.KAFKA_TOPIC_NAME, \"testMdwInbound\");\r\nString key = \"\" + System.currentTimeMillis();\r\nrecordProps.put(KafkaAdapter.RECORD_KEY, key);\r\nrecordProps.put(KafkaAdapter.RECORD_PARTITION,  0);\r\nrecordProperties = recordProps;",
+        "PreScript": "import org.apache.kafka.clients.producer.ProducerConfig\r\nimport org.apache.kafka.common.serialization.StringSerializer\r\n\r\nimport com.centurylink.mdw.config.PropertyUtil\r\nimport com.centurylink.mdw.kafka.KafkaAdapter\r\n\r\nProperties producerProps = new Properties();\r\n\r\n//NOTE: coma separated list of server:port ex. localhost:9092,localhost:9093\r\nString server = PropertyUtil.getInstance().getPropertyManager().getProperty(\"mdw.kafka.servers\");\r\nSystem.out.println(\"BOOTSTRAP_SERVERS_CONFIG : \" + server);\r\nproducerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);\r\nproducerProps.put(ProducerConfig.CLIENT_ID_CONFIG, \"KafkaMDWProducer\");\r\nproducerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());\r\nproducerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());\r\nproducerProps.put(\"timeout.ms\", \"100\");\r\nproducerProperties = producerProps;\r\n\nProperties recordProps = new Properties();\r\nrecordProps.put(KafkaAdapter.KAFKA_TOPIC_NAME, \"testMdwInbound\");\r\nString key = \"\" + System.currentTimeMillis();\r\nrecordProps.put(KafkaAdapter.RECORD_KEY, key);\r\nrecordProps.put(KafkaAdapter.RECORD_PARTITION,  0);\r\nrecordProperties = recordProps;\r\n\r\n//request=runtimeContext.getMasterRequestId();\r\nprintln \" [\" + request + \"]\"",
         "PreScriptLang": "Groovy",
         "ProducerRecordVariable": "recordProperties",
         "ProducerVariable": "producerProperties",
@@ -45,8 +45,9 @@
     {
       "attributes": {
         "STATUS_AFTER_TIMEOUT": "Cancelled",
-        "WAIT_EVENT_NAMES": "[[\"KafkaMessageReceived\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=393,y=149,w=153,h=65"
+        "WAIT_EVENT_NAMES": "[[\"KafkaMessage-${masterRequestId}\",\"\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=393,y=149,w=153,h=65",
+        "rcvdMsgDocVar": "rcvdKafkaMessage"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
@@ -72,7 +73,7 @@
     },
     "rcvdKafkaMessage": {
       "category": "OUTPUT",
-      "type": "java.lang.Object"
+      "type": "org.apache.xmlbeans.XmlObject"
     },
     "recordProperties": {
       "category": "LOCAL",
