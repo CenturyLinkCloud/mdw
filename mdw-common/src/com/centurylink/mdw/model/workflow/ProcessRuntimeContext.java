@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -307,11 +308,13 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             Variable var = getProcess().getVariable(key);
             if (var == null)
                 throw new IllegalArgumentException("Variable not defined: " + key);
+            if (obj instanceof Date)
+                return ((Date)obj).toInstant().toString();  // dates always resolve to ISO time
             VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator
                     .getTranslator(getPackage(), var.getType());
             if (translator instanceof JavaObjectTranslator)
                 return obj.toString();
-            if (translator instanceof DocumentReferenceTranslator)
+            else if (translator instanceof DocumentReferenceTranslator)
                 return ((DocumentReferenceTranslator)translator).realToString(obj);
             else
                 return translator.toString(obj);

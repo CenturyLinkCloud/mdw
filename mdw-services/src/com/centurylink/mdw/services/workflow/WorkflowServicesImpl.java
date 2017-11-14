@@ -964,11 +964,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params) throws ServiceException {
+        return invokeServiceProcess(process, masterRequestId, ownerType, ownerId, params, null);
+    }
+
+    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
             String masterRequest = params == null ? null : params.get("request");
             return driver.invokeService(process.getId(), ownerType, ownerId, masterRequestId,
-                    masterRequest, params, null, null);
+                    masterRequest, params, null, headers);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -1174,7 +1179,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
         }
         if (proc.isService()) {
-            invokeServiceProcess(proc, masterRequestId, ownerType, ownerId, params);
+            Map<String,String> headers = new HashMap<>();
+            invokeServiceProcess(proc, masterRequestId, ownerType, ownerId, params, headers);
+            String instIdStr = headers.get(Listener.METAINFO_MDW_PROCESS_INSTANCE_ID);
+            if (instIdStr != null)
+                actualRun.setInstanceId(Long.parseLong(instIdStr));
         }
         else {
             Long instanceId = launchProcess(proc, masterRequestId, ownerType, ownerId, params);

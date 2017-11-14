@@ -17,7 +17,8 @@ class Run extends Component {
   }
   
   componentDidMount() {
-    fetch(new Request($mdwServicesRoot + '/services/Processes/run/' + this.state.assetPath, {
+    const path = '/services/Processes/run/' + this.state.assetPath;
+    fetch(new Request($mdwServicesRoot + path, {
       method: 'GET',
       headers: {Accept: 'application/json'}
     }))
@@ -25,10 +26,24 @@ class Run extends Component {
       return response.json();
     })
     .then(run => {
+      const vals = values.toArray(run.values);
+      if (vals) {
+        // populated rememberd values from localStorage
+        const storVals = localStorage.getItem(path + '-values');
+        if (storVals) {
+          const vs = JSON.parse(storVals);
+          vals.forEach(val => {
+            const v = vs[val.name];
+            if (v)
+              val.value = v;
+          });
+        }
+      }
+      
       this.setState({
         assetPath: this.state.assetPath,
         masterRequestId: run.masterRequestId,
-        values: values.toArray(run.values)
+        values: vals
       });
     });
   }
@@ -75,26 +90,36 @@ class Run extends Component {
           masterRequestId: this.state.masterRequestId,
           values: values.toObject(this.state.values)
         };
-        fetch(new Request($mdwServicesRoot + '/services/Processes/run/' + this.state.assetPath, {
+        // store values in localStorage
+        const path = '/services/Processes/run/' + this.state.assetPath;
+        localStorage.setItem(path + '-values', JSON.stringify(run.values));
+        let ok;
+        fetch(new Request($mdwServicesRoot + path, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(run)
         }))
         .then(response => {
+          ok = response.ok; 
           return response.json();
         })
-        .then(run => {
-          if (run.instanceId) {
-            location = $mdwHubRoot + '/#/workflow/processes/' + run.instanceId;
+        .then(json => {
+          if (ok) {
+            $mdwUi.clearMessage();
+            if (json.instanceId) {
+              location = $mdwHubRoot + '/#/workflow/processes/' + json.instanceId;
+            }
+            else {
+              this.setState({
+                assetPath: this.state.assetPath,
+                masterRequestId: this.state.masterRequestId,
+                values: this.state.values,
+                instanceId: json.instanceId
+              });
+            }
           }
           else {
-            // TODO: nav to inst for service proc
-            this.setState({
-              assetPath: this.state.assetPath,
-              masterRequestId: this.state.masterRequestId,
-              values: this.state.values,
-              instanceId: run.instanceId
-            });
+            $mdwUi.showMessage(json.status.message);
           }
         });
       }

@@ -166,6 +166,8 @@ public interface WorkflowServices {
 
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
+    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException;
     /**
      * responseHeaders will be populated from process variable, if any
      */

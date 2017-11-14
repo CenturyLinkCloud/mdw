@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -39,8 +40,10 @@ import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Process;
@@ -316,47 +319,55 @@ public class Processes extends JsonRestService implements JsonExportable {
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
                 ProcessRun run = new ProcessRun(content);
                 if (run.getMasterRequestId() == null || run.getMasterRequestId().isEmpty())
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing masterRequestId");
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing master request id");
                 if (ServiceLocator.getRequestServices().getMasterRequest(run.getMasterRequestId()) != null)
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Master request ID: " + run.getMasterRequestId() + " already exists");
 
+                if (segments.length !=3 && segments.length != 4)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+
+                Process proc;
                 if (segments.length == 3) {
                     String defId = segments[2];
                     try {
                         Long definitionId = Long.parseLong(defId);
                         if (!definitionId.equals(run.getDefinitionId()))
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Path/body mismatch for definitionId: " + definitionId + "/" + run.getDefinitionId());
-                        return workflowServices.runProcess(run).getJson();
+                        proc = ProcessCache.getProcess(definitionId);
+                        if (proc == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + definitionId);
                     }
                     catch (NumberFormatException ex) {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad definitionId: " + defId);
                     }
                 }
-                else if (segments.length == 4) {
+                else {
                     String procPath = segments[2] + "/" + segments[3];
-                    Process proc = ProcessCache.getProcess(procPath, 0);
+                    proc = ProcessCache.getProcess(procPath, 0);
                     if (proc == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + procPath);
-                    run.setDefinitionId(proc.getId());
-                    String validationError = "";
-                    for (String inputVarName : proc.getInputVariables().keySet()) {
-                        Value inputVar = proc.getInputVariables().get(inputVarName);
-                        Display display = inputVar.getDisplay();
-                        boolean populated = run.getValueNames().contains(inputVarName);
-                        if (display == Display.ReadOnly && populated) {
-                            validationError += (validationError.isEmpty() ? "" : ", ") + "ReadOnly: " + inputVarName;
-                        }
-                        else if (display == Display.Required && !populated) {
-                            validationError += (validationError.isEmpty() ? "" : ", ") + "Required: " + inputVarName;
-                        }
+                }
+                run.setDefinitionId(proc.getId());
+                String validationError = "";
+                for (String inputVarName : proc.getInputVariables().keySet()) {
+                    Value inputVar = proc.getInputVariables().get(inputVarName);
+                    Display display = inputVar.getDisplay();
+                    boolean populated = run.getValueNames().contains(inputVarName);
+                    if (display == Display.ReadOnly && populated) {
+                        validationError += (validationError.isEmpty() ? "" : ", ") + "ReadOnly: "
+                                + (inputVar.getLabel() == null ? inputVar.getName() : inputVar.getLabel());
                     }
-                    if (!validationError.isEmpty())
-                        throw new ServiceException(ServiceException.BAD_REQUEST, validationError);
-                    return workflowServices.runProcess(run).getJson();
+                    else if (display == Display.Required && !populated) {
+                        validationError += (validationError.isEmpty() ? "" : ", ") + "Required: "
+                                + (inputVar.getLabel() == null ? inputVar.getName() : inputVar.getLabel());
+                    }
                 }
-                else {
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
-                }
+                if (!validationError.isEmpty())
+                    throw new ServiceException(ServiceException.BAD_REQUEST, validationError);
+                run = workflowServices.runProcess(run);
+                headers.put("Location", ApplicationContext.getServicesUrl() + "/services/Processes/" + run.getInstanceId());
+                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.CREATED.getCode()));
+                return run.getJson();
             }
             else {
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment: run");

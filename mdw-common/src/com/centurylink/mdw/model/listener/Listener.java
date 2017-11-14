@@ -26,6 +26,7 @@ public interface Listener {
     // tomcat makes headers lower-case, so we'll start out that way
     public static final String METAINFO_REQUEST_ID = "request-id";
     public static final String METAINFO_MDW_REQUEST_ID = "mdw-request-id";
+    public static final String METAINFO_MDW_PROCESS_INSTANCE_ID = "mdw-process-instance-id";
     public static final String METAINFO_CORRELATION_ID = "correlation-id";
     public static final String METAINFO_DOCUMENT_ID = "document-id";
 

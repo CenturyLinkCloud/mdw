@@ -36,6 +36,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -740,7 +741,9 @@ public class ProcessEngineDriver {
         ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
                 ownerType, ownerId, masterRequestId, parameters, secondaryOwnerType, secondaryOwnerId, headers);
         boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
-        String resp = completed?engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName):null;
+        if (headers != null)
+            headers.put(Listener.METAINFO_MDW_PROCESS_INSTANCE_ID, mainProcessInst.getId().toString());
+        String resp = completed ? engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName):null;
         long stopMilli = System.currentTimeMillis();
         logger.info("Synchronous process executed in " +
                 ((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
@@ -826,7 +829,7 @@ public class ProcessEngineDriver {
         InternalMessenger msgBroker = engine.getInternalMessenger();
         lastException = null;
         processEvent(engine, event, mainProcessInst);
-        while ((event=msgBroker.getNextMessageFromQueue(engine))!=null) {
+        while ((event=msgBroker.getNextMessageFromQueue(engine)) != null) {
             ProcessInstance procInst = this.findProcessInstance(engine, event);
             processEvent(engine, event, procInst);
         }
