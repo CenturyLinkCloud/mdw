@@ -17,8 +17,27 @@
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">Locate Class</div>
-      </div>      
+      </div>
       <form name="findClassForm" class="form-horizontal mdw-section" ng-submit="findClass(className)" role="form">      
+        <div class="form-group">
+          <label class="control-label col-xs-1">ClassLoader:</label>
+          <div class="col-xs-10">
+            <div class="mdw-inner-addon mdw-right-addon" uib-dropdown style="width:420px;">
+              <input type="text" class="form-control mdw-inline mdw-dropfilter" 
+                value="{{classLoader}}" uib-dropdown-toggle readonly>
+                <i class="glyphicon glyphicon-chevron-down"></i>
+              </input>
+              <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                <li>
+                  <a href="" ng-click="setClassLoader(defaultClassLoader)">{{defaultClassLoader}}</a>
+                </li>
+                <li ng-repeat="package in packageList.packages">
+                  <a href="" ng-click="setClassLoader(package.name)">{{package.name}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <label class="control-label col-xs-1" for="className">Name:</label>
           <div class="col-xs-10">
@@ -39,7 +58,34 @@
             {{classInfo[0].sysInfos[0].value}}
           </div>
         </div>
+      </form>
+    </div>
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Git</div>
       </div>
+      <form name="gitCmdForm" class="form-horizontal mdw-section" ng-submit="runGit(gitCommand)" role="form">      
+        <div class="form-group">
+          <label class="control-label col-xs-1" for="gitCmd">Command:</label>
+          <div class="col-xs-10">
+            <input type="text" id="gitCmd" name="gitCmd" class="form-control" ng-model="gitCommand" placeholder="e.g. 'git status'">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-1"></div>
+          <div class="col-xs-10">
+            <button type="submit" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')">
+              <span class="glyphicon glyphicon-play"></span> Run&nbsp;&nbsp;
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-1"></div>
+          <div class="col-xs-10">
+            <pre class="form-group" style="margin-left:0px;">{{gitCommandOutput}}</pre>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

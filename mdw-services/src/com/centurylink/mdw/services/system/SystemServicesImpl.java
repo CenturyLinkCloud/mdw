@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -39,8 +40,10 @@ import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -66,7 +69,33 @@ public class SystemServicesImpl implements SystemServices {
             String className = query.getFilter("className");
             if (className == null)
                 throw new ServiceException("Missing parameter: className");
-            sysInfoCats.add(findClass(className));
+            String classLoader = query.getFilter("classLoader");
+            if (classLoader == null) {
+                sysInfoCats.add(findClass(className));
+            }
+            else {
+                ClassLoader loader;
+                if (classLoader.equals(ClasspathUtil.class.getClassLoader().getClass().getName()))
+                    loader = ClasspathUtil.class.getClassLoader();
+                else
+                    loader = PackageCache.getPackage(classLoader).getCloudClassLoader();
+                sysInfoCats.add(findClass(className, loader));
+            }
+        }
+        else if (type == SysInfoType.Git) {
+            String cmd = query.getFilter("command");
+            if (cmd == null)
+                throw new ServiceException("Missing parameter: command");
+            List<SysInfo> gitInfo = new ArrayList<>();
+            try {
+                VersionControlGit vc = (VersionControlGit) ServiceLocator.getAssetServices().getVersionControl();
+                vc.git(cmd);
+            }
+            catch (Exception ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            }
+            gitInfo.add(new SysInfo(cmd, cmd));  // TODO actual output
+            sysInfoCats.add(new SysInfoCategory("Git Command Output", gitInfo));
         }
         else if (type == SysInfoType.MBean) {
 
@@ -176,7 +205,7 @@ public class SystemServicesImpl implements SystemServices {
         systemInfos.add(new SysInfo("Free memory", runtime.freeMemory()/1024/1024 + " MB"));
         systemInfos.add(new SysInfo("Total memory", runtime.totalMemory()/1024/1024 + " MB"));
         systemInfos.add(new SysInfo("Available processors", String.valueOf(runtime.availableProcessors())));
-
+        systemInfos.add(new SysInfo("Default ClassLoader", ClasspathUtil.class.getClassLoader().getClass().getName()));
 
         String pathSep = System.getProperty("path.separator");
         String cp = System.getProperty("java.class.path");

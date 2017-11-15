@@ -334,7 +334,10 @@ public class CloudClassLoader extends ClassLoader {
                     if (jarFile == null)
                         jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                     try (JarFile jf = new JarFile(jarFile)) {
-                        if (jf.getEntry(name) != null) {
+                        ZipEntry entry = jf.getEntry(name);
+                        if (entry == null && name.startsWith("/"))
+                            entry = jf.getEntry(name.substring(1));
+                        if (entry != null) {
                             return new URL("jar:file:" + sep + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
                         }
                     }
