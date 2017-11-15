@@ -30,8 +30,8 @@
   
 7 - Update mdw-demo
   - git pull
-  - Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder and update mdwDemoDir
-  - Run the mdw/updateMDWDemoWorkspace task to bring over the latest framework assets and update gradle.properties and manifest file
+  - In framework workspace Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder (update mdwDemoDir based on your local setup)
+  - Run the Gradle task mdw/updateMDWDemoWorkspace to copy latest framework assets, update gradle.properties, manifest file in mdw-demo workspace
   - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
 8 - Deploy and Test
@@ -44,12 +44,15 @@
   - git push origin --tags
    
 10 - Publish using Jenkins (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
-  - To publish on Maven Central repository by using mdw6-publish-maven-central (or -SNAPSHOT) 
+  - Use mdw6-publish-maven-central to publish mdw bineries to Maven Central repository(or -SNAPSHOT) 
+  - Use mdw6-publish-assets-maven-central to publish assets to Maven Central repository(or -SNAPSHOT) 
   - Review console output for errors.
 
 11 - Verify release artifact are published to Maven Central (https://oss.sonatype.org/#stagingRepositories)
   - Formal build:       http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
   - SNAPHOT:            https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
+  - Assets:             http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/
+  - SNAPSHOT Assets:             https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/assets/tests-workflow/
   - Buildpack:          https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
   - Internal buildpack: https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack/tree/master/resources/mdw
 

@@ -340,3 +340,9 @@ task cleanAll(type: GradleBuild) {
     buildFile = "build.gradle"
     tasks = ["clean"]
 }
+
+// update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
+task updateMDWDemo(type: GradleBuild) {
+    buildFile = "local.gradle"
+    tasks = ["updateMDWDemoWorkspace"]
+}

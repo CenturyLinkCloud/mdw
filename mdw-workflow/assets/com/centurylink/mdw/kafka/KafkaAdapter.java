@@ -36,14 +36,12 @@ import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
 @Tracked(LogLevel.TRACE)
 public class KafkaAdapter extends PoolableAdapterBase {
 
-    private static final String KAFKA_TOPIC_NAME = "topic";
-    private static final String RECORD_KEY = "key";
-    private static final String RECORD_PARTITION = "partition";
-
-
+    public static final String KAFKA_TOPIC_NAME = "topic";
+    public static final String RECORD_KEY = "key";
+    public static final String RECORD_PARTITION = "partition";
     public static final String MDW_KAFKA_PKG = "com.centurylink.mdw.kafka";
-    private static final String PRODUCER_VARIABLE = "ProducerVariable";
-    private static final String RECORD_VARIABLE = "ProducerRecordVariable";
+    public static final String PRODUCER_VARIABLE = "ProducerVariable";
+    public static final String RECORD_VARIABLE = "ProducerRecordVariable";
 
     protected KafkaProducer<Object, Object> kafkaProducer;
     private String bootstrap_servers;
@@ -100,8 +98,16 @@ public class KafkaAdapter extends PoolableAdapterBase {
     /*
      * Object should be based on what is set as KEY_SERIALIZER_CLASS_CONFIG, We are assuming value is of String type
      */
-    protected ProducerRecord<Object, Object> createKafkaMessage(Object pRequestString) {
-        recordProps = getRecordProps();
+    protected ProducerRecord<Object, Object> createKafkaMessage(Object pRequestString, Map<String, String> headers) {
+        if (headers == null)
+            recordProps = getRecordProps();
+        else {
+            recordProps = new Properties();
+            recordProps.putAll(headers);
+            String partition = (String)recordProps.get(RECORD_PARTITION);
+            Integer partitionInt = new Integer(partition);
+            recordProps.replace(RECORD_PARTITION, partitionInt);
+        }
         return  new ProducerRecord<>((String)recordProps.get(KAFKA_TOPIC_NAME), (Integer)recordProps.get(RECORD_PARTITION), recordProps.get(RECORD_KEY), pRequestString);
     }
 
@@ -114,7 +120,7 @@ public class KafkaAdapter extends PoolableAdapterBase {
 
         try {
             long time = System.currentTimeMillis();
-            final ProducerRecord<Object, Object> record = createKafkaMessage(request);
+            final ProducerRecord<Object, Object> record = createKafkaMessage(request, headers);
             RecordMetadata metadata = null;
             if (isSynchronous()) {
                 /* Produce a record and wait for server to reply. Throw an exception if something goes wrong */
