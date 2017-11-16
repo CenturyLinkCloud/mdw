@@ -665,7 +665,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             if (StringHelper.isEmpty(preScriptLanguage)) {
                 throw new ActivityException(-1, "Language not defined for the PreScript");
             }
-            Object retObj = executeScript(preScript, preScriptLanguage, null);
+            Object retObj = executeScript(preScript, preScriptLanguage, null, "pre");
             if (retObj != null)
                 return retObj;
         }
@@ -683,7 +683,7 @@ implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
             if (StringHelper.isEmpty(postScriptLanguage)) {
                 throw new ActivityException(-1, "PostScript Language not defined for the PostScript");
             }
-            Object retObj = executeScript(postScript, postScriptLanguage, null);
+            Object retObj = executeScript(postScript, postScriptLanguage, null, "post");
             if (null != retObj) {
                 setReturnCode(retObj.toString());
             }

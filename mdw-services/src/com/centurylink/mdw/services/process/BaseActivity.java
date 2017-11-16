@@ -63,7 +63,6 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.ServiceLocatorException;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -1243,39 +1242,16 @@ public abstract class BaseActivity implements GeneralActivity {
         return timer;
     }
 
-    /**
-     * Returns the TaskManager EJB Ref
-     * @return TaskManager
-     * @throws ServiceLocatorException
-     */
-//    protected TaskManager getTaskManager() throws ServiceLocatorException {
-//        try {
-//            ServiceLocator locator = ServiceLocator.getInstance();
-//            return (TaskManager) locator.getEJB(ServiceConstants.TASK_MANAGER);
-//        }
-//        catch (ServiceLocatorException ex) {
-//            logger.severeException(ex.getMessage(), ex);
-//            throw new ServiceLocatorException(-1, ex.getMessage(), ex);
-//        }
-//    }
-
     protected ProcessExecutor getEngine() {
         return engine;
     }
 
     /**
+     * Executes a script, passing additional bindings to be made available to the script.
      * Script should return a value for the result code if the default (null is not desired).
      *
      * @param script - the script content
      * @param language - built-in support for Groovy, and JavaScript (default is Groovy)
-     */
-    protected Object executeScript(String script, String language, String qualifier) throws ActivityException {
-        return executeScript(script, language, null, null);
-    }
-
-    /**
-     * Executes a script, passing additional bindings to be made available to the script.
-     * @see executeScript(String, String)
      */
     protected Object executeScript(String script, String language, Map<String,Object> addlBindings, String qualifier)
             throws ActivityException {
