@@ -211,7 +211,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 throw new AdapterException("Missing attribute: " + RESPONSE_VARIABLE);
             String responseVarType = getParameterType(responseVarName);
 
-            if (!VariableTranslator.isDocumentReferenceVariable(responseVarType))
+            if (!VariableTranslator.isDocumentReferenceVariable(getPackage(), responseVarType))
                 throw new AdapterException("Response variable must be a DocumentReference: " + responseVarName);
 
             if (responseVarType.equals(StringDocument.class.getName())) {

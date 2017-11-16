@@ -150,7 +150,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
 
         Map<String,Object> addlBindings = getAdditionalScriptBindings();
         addlBindings.put("activity", this);
-        Object retObj = executeScript(script, language, addlBindings);
+        Object retObj = executeScript(script, language, addlBindings, null);
         if (null != retObj) {
             setReturnCode(retObj.toString());
         }

@@ -86,13 +86,13 @@ process: # 10203
             {
               "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
               "file": "ThreadPoolExecutor.java",
-              "line": 617,
+              "line": ${~\\d+},
               "method": "run"
             },
             {
               "class": "java.lang.Thread",
               "file": "Thread.java",
-              "line": 745,
+              "line": ${~\\d+},
               "method": "run"
             },
             {

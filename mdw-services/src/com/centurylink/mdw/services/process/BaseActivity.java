@@ -1269,15 +1269,16 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param script - the script content
      * @param language - built-in support for Groovy, and JavaScript (default is Groovy)
      */
-    protected Object executeScript(String script, String language) throws ActivityException {
-        return executeScript(script, language, null);
+    protected Object executeScript(String script, String language, String qualifier) throws ActivityException {
+        return executeScript(script, language, null, null);
     }
 
     /**
      * Executes a script, passing additional bindings to be made available to the script.
      * @see executeScript(String, String)
      */
-    protected Object executeScript(String script, String language, Map<String,Object> addlBindings) throws ActivityException {
+    protected Object executeScript(String script, String language, Map<String,Object> addlBindings, String qualifier)
+            throws ActivityException {
 
         String temp = getAttributeValue(OUTPUTDOCS);
         outputDocuments = temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]);
@@ -1298,7 +1299,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 bindings.putAll(addlBindings);
             }
 
-            ScriptExecutor executor = getScriptExecutor(language);
+            ScriptExecutor executor = getScriptExecutor(language, qualifier);
             retObj = executor.execute(script, bindings);
 
             for (Variable variableVO: varVOs) {
@@ -1317,7 +1318,7 @@ public abstract class BaseActivity implements GeneralActivity {
         return retObj;
     }
 
-    protected ScriptExecutor getScriptExecutor(String language) throws PropertyException {
+    protected ScriptExecutor getScriptExecutor(String language, String qualifier) throws PropertyException {
         if (language == null)
             throw new NullPointerException("Missing script executor language");
 
@@ -1334,9 +1335,15 @@ public abstract class BaseActivity implements GeneralActivity {
         }
         else
             exeImpl = (ScriptExecutor) ApplicationContext.getClassInstance(exeImplClassName);
-        String name = GroovyNaming.getValidClassName(getProcessDefinition().getLabel() + "_" + getActivityName() + "_" + getActivityId());
-        exeImpl.setName(name);
+        exeImpl.setName(getScriptExecClassName(qualifier));
         return exeImpl;
+    }
+
+    protected String getScriptExecClassName(String qualifier) {
+        String name = getProcessDefinition().getLabel() + "_" + getActivityName() + "_" + getActivityId();
+        if (qualifier != null)
+            name += "_" + qualifier;
+        return GroovyNaming.getValidClassName(name);
     }
 
     /**

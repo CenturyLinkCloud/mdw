@@ -18,8 +18,8 @@ request:
     }
 response:
   status:
-    code: 200
-    message: OK
+    code: 201
+    message: Created
   headers:
     content-type: application/json
     mdw-request-id: '${~[0-9]*}'

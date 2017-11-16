@@ -52,7 +52,7 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
                 throw new  ActivityException("Script content has not been defined");
             }
 
-            Object retObj = executeScript(script, language);
+            Object retObj = executeScript(script, language, null);
 
             if (retObj != null)
                 setReturnCode(retObj.toString());

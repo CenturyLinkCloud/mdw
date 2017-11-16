@@ -195,7 +195,7 @@ public class AccessFilter implements Filter {
             }
 
             if (session.isNew()) {
-                logger.debug("** - new HTTP session from: " + request.getRemoteHost());
+                logger.mdwDebug("** - new HTTP session from: " + request.getRemoteHost());
                 if (sessionTimeoutSecs > 0)
                     session.setMaxInactiveInterval(1800);
             }
