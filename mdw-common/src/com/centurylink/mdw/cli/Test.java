@@ -140,8 +140,7 @@ public class Test extends Setup {
         long before = System.currentTimeMillis();
         File resultsFile = getResultsSummaryFile();
         Path resultsPath = Paths.get(resultsFile.getPath());
-        if (resultsFile.exists())
-            clearResults(resultsPath, statuses);
+        clearResults(resultsPath, statuses);
 
         Path resultsDir = Paths.get(resultsFile.getParentFile().getPath());
         WatchService watcher = FileSystems.getDefault().newWatchService();
@@ -225,26 +224,32 @@ public class Test extends Setup {
     }
 
     protected final void clearResults(Path resultsPath, Map<String,String> statuses) throws IOException {
-        // clear info for cases to be run
-        JSONObject jsonObj = new JSONObject(new String(Files.readAllBytes(resultsPath)));
-        JSONArray pkgs = jsonObj.getJSONArray("packages");
-        for (int i = 0; i < pkgs.length(); i++) {
-            JSONObject pkg = pkgs.getJSONObject(i);
-            JSONArray tests = pkg.getJSONArray("testCases");
-            JSONArray newTests = new JSONArray();
-            for (int j = 0; j < tests.length(); j++) {
-                JSONObject test = tests.getJSONObject(j);
-                String asset = pkg.getString("name") + "/" + test.getString("name");
-                if (statuses.containsKey(asset)) {
-                    JSONObject newTest = new JSONObject();
-                    newTest.put("name", test.getString("name"));
-                    newTests.put(newTest);
+        JSONObject jsonObj;
+        if (resultsPath.toFile().exists()) {
+            // clear info for cases to be run
+            jsonObj = new JSONObject(new String(Files.readAllBytes(resultsPath)));
+            JSONArray pkgs = jsonObj.getJSONArray("packages");
+            for (int i = 0; i < pkgs.length(); i++) {
+                JSONObject pkg = pkgs.getJSONObject(i);
+                JSONArray tests = pkg.getJSONArray("testCases");
+                JSONArray newTests = new JSONArray();
+                for (int j = 0; j < tests.length(); j++) {
+                    JSONObject test = tests.getJSONObject(j);
+                    String asset = pkg.getString("name") + "/" + test.getString("name");
+                    if (statuses.containsKey(asset)) {
+                        JSONObject newTest = new JSONObject();
+                        newTest.put("name", test.getString("name"));
+                        newTests.put(newTest);
+                    }
+                    else {
+                        newTests.put(test);
+                    }
                 }
-                else {
-                    newTests.put(test);
-                }
+                pkg.put("testCases", newTests);
             }
-            pkg.put("testCases", newTests);
+        }
+        else {
+            jsonObj = new JSONObject(); // create blank to avoid parsing issues
         }
         Files.write(resultsPath, jsonObj.toString(2).getBytes());
     }

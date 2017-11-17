@@ -1151,6 +1151,13 @@
 .mdw-push {
 	font-size: 12px;
 }
+.mdw-console {
+	color: #f1f1f1;
+	background-color: black;
+	width: 100%;
+	font-size: 15px;
+  font-family: monospace;
+}
 .mdw-highlight {
   color: #880000;
 }
