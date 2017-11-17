@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -94,28 +93,21 @@ public class Main {
                     op = mport;
                 }
                 else if (command.equals("update")) {
-                    checkLoc(update.getProjectDir());
                     op = update;
                 }
                 else if (command.equals("install")) {
-                    if (install.getWebappsDir() == null)
-                        checkLoc(install.getProjectDir());
                     op = install;
                 }
                 else if (command.equals("run")) {
-                    checkLoc(run.getProjectDir());
                     op = run;
                 }
                 else if (command.equals("stop")) {
-                    checkLoc(run.getProjectDir());
                     op = stop;
                 }
                 else if (command.equals("status")) {
-                    checkLoc(run.getProjectDir());
                     op = status;
                 }
                 else if (command.equals("test")) {
-                    checkLoc(run.getProjectDir());
                     op = test;
                 }
                 else if (command.equals("version")) {
@@ -173,12 +165,5 @@ public class Main {
             else
                 System.out.printf(" --> %3d%%", prog);
         };
-    }
-
-    static void checkLoc(File projectDir) throws ParameterException {
-        File props = new File(projectDir + "/config/mdw.properties");
-        if (!props.isFile()) {
-            throw new ParameterException("Invalid project: " + projectDir.getAbsolutePath());
-        }
     }
 }

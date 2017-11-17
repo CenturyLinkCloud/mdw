@@ -26,16 +26,14 @@ import java.util.Properties;
 
 public class Props {
 
-    private File projectDir;
     private Map<File,Properties> propFiles = new HashMap<>();
     private Setup setup;
 
-    public Props(File projectDir, Setup setup) {
-        this.projectDir = projectDir;
+    public Props(Setup setup) {
         this.setup = setup;
     }
 
-    private static final String MDW = "config/mdw.properties";
+    private static final String MDW = "mdw.properties";
     private static final String GRADLE = "gradle.properties";
 
     public static List<Prop> ALL_PROPS = new ArrayList<>();
@@ -63,6 +61,7 @@ public class Props {
         ALL_PROPS.add(Git.USER);
         ALL_PROPS.add(Git.PASSWORD);
     }
+
     public static class Db {
         public static final Prop URL = new Prop("database-url", MDW, "mdw.database.url");
         public static final Prop USER = new Prop("database-user", MDW, "mdw.database.username");
@@ -77,15 +76,13 @@ public class Props {
     }
 
     public static class Gradle {
-        public static final Prop MDW_VERSION = new Prop("mdw-version", GRADLE, "mdwVersion");
-        public static final Prop SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion");
-        public static final Prop ASSET_LOC = new Prop("asset-loc", GRADLE, "assetLoc");
-        public static final Prop MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl");
+        public static final Prop MDW_VERSION = new Prop("mdw-version", GRADLE, "mdwVersion", true);
+        public static final Prop SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion", true);
+        public static final Prop MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl", true);
     }
     static {
         ALL_PROPS.add(Gradle.MDW_VERSION);
         ALL_PROPS.add(Gradle.SPRING_VERSION);
-        ALL_PROPS.add(Gradle.ASSET_LOC);
         ALL_PROPS.add(Gradle.MAVEN_REPO_URL);
     }
 
@@ -119,7 +116,11 @@ public class Props {
         }
         if (value == null) {
             // read from prop file (if exists)
-            File propFile = new File(projectDir + "/" + prop.getFile());
+            File propFile;
+            if (prop.inProjectDir)
+                propFile = new File(setup.getProjectDir() + "/" + prop.getFile());
+            else
+                propFile = new File(setup.getConfigRoot() + "/" + prop.getFile());
             Properties properties = getProperties(propFile);
             if (properties != null) {
                 value = properties.getProperty(prop.getProperty());

@@ -36,10 +36,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -116,7 +115,7 @@ public class Test extends Setup {
         JSONObject configRequest = getConfigRequest();
         new Fetch(new URL(getServicesUrl() + PATH + "/config")).put(configRequest.toString(2));
 
-        Map<String,List<String>> pkgTests = new HashMap<>();
+        Map<String,List<String>> pkgTests = new LinkedHashMap<>();
         Map<String,String> statuses = new HashMap<>();
         for (File caseFile : caseFiles) {
             String assetPath = caseFile.getParent().replace('\\', '/').replace('/', '.') + '/' + caseFile.getName();
@@ -140,16 +139,20 @@ public class Test extends Setup {
 
         long before = System.currentTimeMillis();
         File resultsFile = getResultsSummaryFile();
-        Path summaryPath = Paths.get(resultsFile.getParentFile().getPath());
+        Path resultsPath = Paths.get(resultsFile.getPath());
+        if (resultsFile.exists())
+            clearResults(resultsPath, statuses);
+
+        Path resultsDir = Paths.get(resultsFile.getParentFile().getPath());
         WatchService watcher = FileSystems.getDefault().newWatchService();
-        summaryPath.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+        resultsDir.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
 
         while (!done) {
             try {
                 WatchKey key = watcher.take();
                 for (WatchEvent<?> event : key.pollEvents()) {
                     if (((Path)event.context()).getFileName().toString().equals(resultsFile.getName())) {
-                        String contents = new String(Files.readAllBytes(Paths.get(resultsFile.getPath())));
+                        String contents = new String(Files.readAllBytes(resultsPath));
                         if (contents.isEmpty())
                             continue; // why does this happen?
                         JSONObject jsonObj = new JSONObject(contents);
@@ -203,9 +206,11 @@ public class Test extends Setup {
             }
             catch (InterruptedException ex) {
                 System.err.println("Test execution canceled");
+                watcher.close();
                 done = true;
             }
         }
+        watcher.close();
         return this;
     }
 
@@ -218,6 +223,32 @@ public class Test extends Setup {
         }
         return finished;
     }
+
+    protected final void clearResults(Path resultsPath, Map<String,String> statuses) throws IOException {
+        // clear info for cases to be run
+        JSONObject jsonObj = new JSONObject(new String(Files.readAllBytes(resultsPath)));
+        JSONArray pkgs = jsonObj.getJSONArray("packages");
+        for (int i = 0; i < pkgs.length(); i++) {
+            JSONObject pkg = pkgs.getJSONObject(i);
+            JSONArray tests = pkg.getJSONArray("testCases");
+            JSONArray newTests = new JSONArray();
+            for (int j = 0; j < tests.length(); j++) {
+                JSONObject test = tests.getJSONObject(j);
+                String asset = pkg.getString("name") + "/" + test.getString("name");
+                if (statuses.containsKey(asset)) {
+                    JSONObject newTest = new JSONObject();
+                    newTest.put("name", test.getString("name"));
+                    newTests.put(newTest);
+                }
+                else {
+                    newTests.put(test);
+                }
+            }
+            pkg.put("testCases", newTests);
+        }
+        Files.write(resultsPath, jsonObj.toString(2).getBytes());
+    }
+
     protected void printSummary(Map<String,String> statuses, long elapsed) {
         Map<String,Integer> counts = new HashMap<>();
         for (String status : statuses.values()) {
@@ -305,12 +336,7 @@ public class Test extends Setup {
     }
 
     private JSONObject getCaseRequest(Map<String,List<String>> pkgTests) throws IOException {
-        JSONObject json = new JSONObject() {
-            @Override // ordered keys makes the tests run in sequence
-            public Set<String> keySet() {
-                return new TreeSet<String>(super.keySet());
-            }
-        };
+        JSONObject json = new JSONObject();
         JSONArray pkgs = new JSONArray();
         json.put("packages", pkgs);
         if (!pkgTests.isEmpty()) {
@@ -373,7 +399,7 @@ public class Test extends Setup {
     }
 
     private File getResultsSummaryFile() throws IOException {
-        Props props = new Props(getProjectDir(), this);
+        Props props = new Props(this);
         String testResultsLoc = props.get("mdw.test.results.location");
         if (testResultsLoc == null)
             testResultsLoc = getGitRoot() + "/testResults";

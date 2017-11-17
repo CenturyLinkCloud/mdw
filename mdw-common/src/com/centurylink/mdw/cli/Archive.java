@@ -107,7 +107,7 @@ public class Archive extends Setup {
             return this;
         }
 
-        Props props = new Props(getProjectDir(), this);
+        Props props = new Props(this);
         VcInfo vcInfo = new VcInfo(getGitRoot(), props);
         DbInfo dbInfo = new DbInfo(props);
         String assetLoc = props.get(Props.ASSET_LOC);

@@ -48,7 +48,7 @@ public class Update extends Setup {
     }
 
     public Update run(ProgressMonitor... progressMonitors) throws IOException {
-        Props props = new Props(getProjectDir(), this);
+        Props props = new Props(this);
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();

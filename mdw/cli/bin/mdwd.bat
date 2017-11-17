@@ -1,2 +1,2 @@
 @echo off
-start java -jar %* %MDW_HOME%\mdw-cli.jar run
+start javaw -jar %* %MDW_HOME%\mdw-cli.jar run

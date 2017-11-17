@@ -109,6 +109,11 @@ public abstract class Setup implements Operation {
         Props.SERVICES_URL.specified = true;
     }
 
+    @Parameter(names="--config-loc", description="Config location (when outside project dir)")
+    private String configLoc;
+    public String getConfigLoc() { return configLoc; }
+    public void setConfigLoc(String configLoc) { }
+
     @Parameter(names="--asset-loc", description="Asset location")
     private String assetLoc = "assets";
     public String getAssetLoc() { return assetLoc; }
@@ -292,6 +297,12 @@ public abstract class Setup implements Operation {
         return nameBuilder.toString();
     }
 
+    public File getConfigRoot() throws IOException {
+        if (configLoc != null)
+            return new File(configLoc);
+        return new File(getProjectDir() + "/config");
+    }
+
     /**
      * Returns 'to' file or dir path relative to 'from' dir.
      * Result always uses forward slashes and has no trailing slash.
@@ -316,7 +327,7 @@ public abstract class Setup implements Operation {
     }
 
     public File getAssetRoot() throws IOException {
-        String assetLoc = new Props(getProjectDir(), this).get(Props.ASSET_LOC, false);
+        String assetLoc = new Props(this).get(Props.ASSET_LOC, false);
         File assetRoot = new File(assetLoc);
         if (assetRoot.isAbsolute())
             return assetRoot;
@@ -325,7 +336,7 @@ public abstract class Setup implements Operation {
     }
 
     public File getGitRoot() throws IOException {
-        Props props = new Props(getProjectDir(), this);
+        Props props = new Props(this);
         String gitLocalPath = props.get("mdw.git.local.path");
         if (gitLocalPath != null)
             return new File(gitLocalPath);
@@ -357,8 +368,18 @@ public abstract class Setup implements Operation {
             System.err.println("Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
             return false;
         }
+
+        // check config
+        if (needsConfig()) {
+            File mdwProps = new File(getConfigRoot() + "/mdw.properties");
+            if (!mdwProps.isFile())
+                throw new IOException("Missing config: " + mdwProps.getAbsolutePath());
+        }
+
         return true;
     }
+
+    protected boolean needsConfig() { return true; }
 
     /**
      * Override for extended debug info (always calling super.debug()).
@@ -366,7 +387,7 @@ public abstract class Setup implements Operation {
     public void debug() throws IOException {
         status();
         System.out.println("CLI Props:");
-        Props props = new Props(getProjectDir(), this);
+        Props props = new Props(this);
         for (Prop prop : Props.ALL_PROPS) {
             System.out.println("  " + prop);
             System.out.println("    = " + props.get(prop, false));
@@ -374,7 +395,8 @@ public abstract class Setup implements Operation {
     }
 
     public void status() throws IOException {
-        System.out.println("Project Dir:\n  " + getProjectDir().getAbsolutePath());
+        System.out.println("Project Dir:\n " + getProjectDir().getAbsolutePath());
+        System.out.println("Config Root:\n " + getConfigRoot());
         System.out.println("Asset Root:\n  " + getAssetRoot());
         System.out.println("Git Root:\n  " + getGitRoot());
     }

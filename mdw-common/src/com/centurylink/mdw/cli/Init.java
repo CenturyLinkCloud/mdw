@@ -107,4 +107,6 @@ public class Init extends Setup {
         new Update(getProjectDir()).run(progressMonitors);
         return this;
     }
+
+    protected boolean needsConfig() { return false; }
 }

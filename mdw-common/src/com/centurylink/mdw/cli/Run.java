@@ -127,18 +127,20 @@ public class Run implements Operation {
             });
         }
 
-        new Thread(new Runnable() {
-            public void run() {
-                try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
-                    out.lines().forEach(line -> {
-                        System.out.println(line);
-                    });
+        if (!daemon || !System.getProperty("os.name").startsWith("Windows")) {  // this blocks on windows
+            new Thread(new Runnable() {
+                public void run() {
+                    try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
+                        out.lines().forEach(line -> {
+                            System.out.println(line);
+                        });
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
-                catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }).start();
+            }).start();
+        }
 
         try {
             int res = process.waitFor();

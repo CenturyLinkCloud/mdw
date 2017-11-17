@@ -32,11 +32,15 @@ public class Prop {
     private String property;
     public String getProperty() { return property; }
 
-
     public Prop(String name, String file, String property) {
+        this(name, file, property, false);
+    }
+
+    public Prop(String name, String file, String property, boolean inProjectDir) {
         this.name = name;
         this.file = file;
         this.property = property;
+        this.inProjectDir = inProjectDir;
     }
 
     /**
@@ -50,5 +54,11 @@ public class Prop {
             s += "*";
         return s;
     }
+
+    /**
+     * Whether the prop file exists in projectDir vs configRoot
+     */
+    boolean inProjectDir;
+
 
 }

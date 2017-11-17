@@ -16,7 +16,6 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -40,8 +39,7 @@ public class Import extends Setup {
     public void setForce(boolean force) { this.force = force; }
 
     public Import run(ProgressMonitor... progressMonitors) throws IOException {
-        File projectDir = getProjectDir();
-        Props props = new Props(projectDir, this);
+        Props props = new Props(this);
         VcInfo vcInfo = new VcInfo(getGitRoot(), props);
 
         if (!isForce()) {
@@ -63,7 +61,7 @@ public class Import extends Setup {
             }
         }
 
-        System.out.println("Importing " + projectDir + "...");
+        System.out.println("Importing " + getProjectDir() + "...");
 
         DbInfo dbInfo = new DbInfo(props);
         Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
@@ -80,4 +78,5 @@ public class Import extends Setup {
         return this;
     }
 
+    protected boolean needsConfig() { return false; }
 }

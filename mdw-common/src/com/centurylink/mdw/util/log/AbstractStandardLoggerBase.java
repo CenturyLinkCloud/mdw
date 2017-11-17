@@ -158,7 +158,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
                 }
             }
             catch (Throwable e) {
-                System.out.println("Exception when building JSON Object to send to web watcher: " + e);
+                System.out.println("Error building log watcher json for: '" + message + "' -> " + e);
                 e.printStackTrace();
             };
         }
