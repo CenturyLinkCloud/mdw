@@ -64,6 +64,7 @@ public class VcInfo {
             dependencies.put("org/eclipse/jgit/org.eclipse.jgit.pgm/4.8.0.201706111038-r/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar", 251079L);
             dependencies.put("org/eclipse/jgit/org.eclipse.jgit.http.apache/4.8.0.201706111038-r/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar", 22168L);
             dependencies.put("org/eclipse/jgit/org.eclipse.jgit.lfs/4.8.0.201706111038-r/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar", 46166L);
+            dependencies.put("org/eclipse/jgit/org.eclipse.jgit.ui/4.8.0.201706111038-r/org.eclipse.jgit.ui-4.8.0.201706111038-r.jar", 28476L);
             dependencies.put("org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L);
             dependencies.put("org/slf4j/slf4j-simple/1.7.25/slf4j-simple-1.7.25.jar", 15257L);
             dependencies.put("com/jcraft/jsch/0.1.54/jsch-0.1.54.jar", 280515L);

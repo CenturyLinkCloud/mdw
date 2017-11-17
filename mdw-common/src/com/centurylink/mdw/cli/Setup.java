@@ -40,7 +40,6 @@ public abstract class Setup implements Operation {
     }
 
     Setup() {
-      // CLI only
     }
 
     Setup(File projectDir) {
@@ -112,7 +111,7 @@ public abstract class Setup implements Operation {
     @Parameter(names="--config-loc", description="Config location (when outside project dir)")
     private String configLoc;
     public String getConfigLoc() { return configLoc; }
-    public void setConfigLoc(String configLoc) { }
+    public void setConfigLoc(String configLoc) { this.configLoc = configLoc; }
 
     @Parameter(names="--asset-loc", description="Asset location")
     private String assetLoc = "assets";

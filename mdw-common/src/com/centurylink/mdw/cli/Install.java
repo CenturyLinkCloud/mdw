@@ -147,4 +147,19 @@ public class Install extends Setup {
         }
         return this;
     }
+
+    @Override
+    public boolean validate() throws IOException {
+        if (!super.validate())
+            return false;
+        if (getMdwVersion() == null) {
+            File gradleProps = new File(getProjectDir() + "/gradle.properties");
+            if (!gradleProps.isFile())
+                System.err.println("Option --mdw-version required or should be readable from: " + gradleProps.getAbsolutePath());
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean needsConfig() { return false; }
 }

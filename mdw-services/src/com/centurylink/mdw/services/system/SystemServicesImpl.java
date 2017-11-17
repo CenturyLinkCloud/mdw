@@ -44,6 +44,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -343,6 +344,7 @@ public class SystemServicesImpl implements SystemServices {
     public String runCliCommand(String command) throws IOException, InterruptedException {
         List<String> cmd = new ArrayList<>();
         cmd.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
+
         cmd.add("-jar");
         String mdwHome = System.getenv("MDW_HOME");
         if (mdwHome == null) {
@@ -357,15 +359,23 @@ public class SystemServicesImpl implements SystemServices {
         }
         cmd.add(cliJar.getAbsolutePath());
 
-        List<String> mdwCmd = Arrays.asList(command.trim().split("\\s+"));
-        for (int i = 0; i < mdwCmd.size(); i++) {
-            if (i > 0 || !"mdw".equals(mdwCmd.get(i)))
-                cmd.add(mdwCmd.get(i));
+        List<String> mdwCmd = new ArrayList<>();
+        mdwCmd.addAll(Arrays.asList(command.trim().split("\\s+")));
+        if (mdwCmd.get(0).equals("mdw"))
+            mdwCmd.remove(0);
+        if (!mdwCmd.isEmpty()) {
+            String first = mdwCmd.get(0);
+            if (first.equals("archive") || first.equals("import") || first.equals("install")
+                    || first.equals("status") || first.equals("test") || first.equals("update")) {
+                mdwCmd.add("--config-loc=" + System.getProperty("mdw.config.location"));
+            }
         }
+
+        cmd.addAll(mdwCmd);
         logger.debug("Running MDW CLI command: '" + String.valueOf(cmd));
 
         ProcessBuilder builder = new ProcessBuilder(cmd);
-        // builder.directory(new File(PropertyManager.getProperty(name)))
+        builder.directory(new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH)));
         builder.redirectErrorStream(true);
         Process process = builder.start();
         ByteArrayOutputStream output = new ByteArrayOutputStream();

@@ -62,15 +62,20 @@ public class Archive extends Setup {
         archiveArgs.add("args");
         boolean show = false;
         boolean debug = false;
+        String configLoc = null;
         for (int i = 1; i < args.length; i++) {
             if (args[i].startsWith("--show"))
                 show = true;
             else if (args[i].startsWith("--debug"))
                 debug = true;
+            else if (args[i].startsWith("--config-loc="))
+                configLoc = args[i].substring(13);
             else
               archiveArgs.add(args[i]);
         }
         Archive archive = new Archive(show);
+        if (configLoc != null)
+            archive.setConfigLoc(configLoc);
         cmd.addCommand("archive", archive);
         cmd.parse(archiveArgs.toArray(new String[0]));
         if (debug)
@@ -112,6 +117,8 @@ public class Archive extends Setup {
         DbInfo dbInfo = new DbInfo(props);
         String assetLoc = props.get(Props.ASSET_LOC);
         Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, getAssetRoot(), dbInfo);
+        if (getConfigLoc() != null)
+            checkpoint.setConfigLoc(getConfigLoc());
         try {
             checkpoint.run(progressMonitors);
             System.out.println("Asset info:");
