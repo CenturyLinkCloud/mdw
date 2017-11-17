@@ -116,7 +116,7 @@ task cliJar(type: Jar) {
             "Main-Class": "com.centurylink.mdw.cli.Main",
             "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar"
               + " ./lib/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar"
-              + " ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/args4j-2.0.15.jar" 
+              + " ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/args4j-2.0.15.jar"
               + " ./lib/httpclient-4.5.3.jar ./lib/httpcore-4.4.7.jar ./lib/commons-logging-1.2.jar ./lib/mariadb-java-client-1.2.2.jar")
     }
     
@@ -152,7 +152,7 @@ jar {
     // avoid confusingly including tomcat spring config(s)
     exclude "META-INF/mdw/spring/**"
     
-    // include needed schmemas within mdw-common
+    // include needed schemas within mdw-common
     from configurations.schemas.asFileTree.files.collect {
         zipTree(it)
     }

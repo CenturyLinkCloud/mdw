@@ -60,32 +60,5 @@
         </div>
       </form>
     </div>
-    <div class="panel panel-default mdw-panel">
-      <div class="panel-heading mdw-heading">
-        <div class="mdw-heading-label">Git</div>
-      </div>
-      <form name="gitCmdForm" class="form-horizontal mdw-section" ng-submit="runGit(gitCommand)" role="form">      
-        <div class="form-group">
-          <label class="control-label col-xs-1" for="gitCmd">Command:</label>
-          <div class="col-xs-10">
-            <input type="text" id="gitCmd" name="gitCmd" class="form-control" ng-model="gitCommand" placeholder="e.g. 'git status'">
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-xs-1"></div>
-          <div class="col-xs-10">
-            <button type="submit" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')">
-              <span class="glyphicon glyphicon-play"></span> Run&nbsp;&nbsp;
-            </button>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-xs-1"></div>
-          <div class="col-xs-10">
-            <pre class="form-group" style="margin-left:0px;">{{gitCommandOutput}}</pre>
-          </div>
-        </div>
-      </form>
-    </div>
   </div>
 </div>

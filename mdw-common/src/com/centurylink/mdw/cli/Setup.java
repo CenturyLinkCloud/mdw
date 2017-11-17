@@ -302,10 +302,6 @@ public abstract class Setup implements Operation {
         return fromPath.relativize(toPath).toString().replace('\\', '/');
     }
 
-    public String getGitPath(File file) {
-        return getRelativePath(getProjectDir(), file);
-    }
-
     public String getAssetPath(File file) throws IOException {
         return getRelativePath(getAssetRoot(), file);
     }
@@ -328,8 +324,20 @@ public abstract class Setup implements Operation {
             return new File(getProjectDir() + "/" + assetLoc);
     }
 
-    public boolean gitExists() {
-        return new File(getProjectDir() + "/.git").isDirectory();
+    public File getGitRoot() throws IOException {
+        Props props = new Props(getProjectDir(), this);
+        String gitLocalPath = props.get("mdw.git.local.path");
+        if (gitLocalPath != null)
+            return new File(gitLocalPath);
+        return getProjectDir();
+    }
+
+    public String getGitPath(File file) throws IOException {
+        return getRelativePath(getGitRoot(), file);
+    }
+
+    public boolean gitExists() throws IOException {
+        return new File(getGitRoot() + "/.git").isDirectory();
     }
 
     /**
@@ -368,5 +376,6 @@ public abstract class Setup implements Operation {
     public void status() throws IOException {
         System.out.println("Project Dir:\n  " + getProjectDir().getAbsolutePath());
         System.out.println("Asset Root:\n  " + getAssetRoot());
+        System.out.println("Git Root:\n  " + getGitRoot());
     }
 }

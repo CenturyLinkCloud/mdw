@@ -101,14 +101,14 @@ public class Archive extends Setup {
      */
     @Override
     public Archive run(ProgressMonitor... progressMonitors) throws IOException {
-        File projectDir = getProjectDir();
+
         if (!gitExists()) {
-            System.err.println("Git not found: " + projectDir + "/.git");
+            System.err.println("Git not found: " + getGitRoot().getAbsolutePath() + "/.git");
             return this;
         }
 
-        Props props = new Props(projectDir, this);
-        VcInfo vcInfo = new VcInfo(projectDir, props);
+        Props props = new Props(getProjectDir(), this);
+        VcInfo vcInfo = new VcInfo(getGitRoot(), props);
         DbInfo dbInfo = new DbInfo(props);
         String assetLoc = props.get(Props.ASSET_LOC);
         Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, getAssetRoot(), dbInfo);

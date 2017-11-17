@@ -43,8 +43,8 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
     $scope.classInfo = System.get({sysInfoType: 'Class', className: className, classLoader: $scope.classLoader});
   };
   
-  $scope.runGit = function(gitCommand) {
-    $scope.gitCommandOutput = System.get({sysInfoType: 'Git', command: gitCommand});
+  $scope.runCli = function(command) {
+    $scope.commandInfo = System.get({sysInfoType: 'CLI', command: command});
   };
 }]);
 

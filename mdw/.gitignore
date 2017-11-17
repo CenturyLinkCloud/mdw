@@ -8,3 +8,4 @@ notes/
 local.gradle
 .temp/
 mdw.log
+/deps.txt

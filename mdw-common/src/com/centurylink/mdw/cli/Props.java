@@ -101,13 +101,17 @@ public class Props {
         return properties;
     }
 
+    public String get(String name) throws IOException {
+        return get(new Prop(null, MDW, name), false);
+    }
+
     public String get(Prop prop) throws IOException {
         return get(prop, true);
     }
 
     public String get(Prop prop, boolean required) throws IOException {
         String value = null;
-        if (prop.specified && setup != null) {
+        if (prop.specified && setup != null && prop.getName() != null) {
             // command-line params take precedence
             Object obj = setup.getValue(prop.getName());
             if (obj != null)
@@ -120,7 +124,7 @@ public class Props {
             if (properties != null) {
                 value = properties.getProperty(prop.getProperty());
             }
-            if (value == null && setup != null) {
+            if (value == null && setup != null && prop.getName() != null) {
                 // fall back to default (non-specified) value
                 Object obj = setup.getValue(prop.getName());
                 if (obj != null)

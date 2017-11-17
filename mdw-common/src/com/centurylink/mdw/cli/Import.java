@@ -42,7 +42,7 @@ public class Import extends Setup {
     public Import run(ProgressMonitor... progressMonitors) throws IOException {
         File projectDir = getProjectDir();
         Props props = new Props(projectDir, this);
-        VcInfo vcInfo = new VcInfo(projectDir, props);
+        VcInfo vcInfo = new VcInfo(getGitRoot(), props);
 
         if (!isForce()) {
             String serviceUrl = props.get(Props.SERVICES_URL, false);

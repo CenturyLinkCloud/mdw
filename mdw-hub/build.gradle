@@ -159,6 +159,9 @@ war {
     from("../mdw-workflow/src") {
         include "META-INF/mdw/**"
     }
+    from("../mdw") {
+        include "cli/mdw-cli.jar"
+    }
     
     webXml = file("web/WEB-INF/web.xml")
     exclude "**/.*ignore";

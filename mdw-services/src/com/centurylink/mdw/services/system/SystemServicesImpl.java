@@ -15,6 +15,13 @@
  */
 package com.centurylink.mdw.services.system;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -40,15 +47,16 @@ import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
-import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class SystemServicesImpl implements SystemServices {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public List<SysInfoCategory> getSysInfoCategories(SysInfoType type, Query query)
     throws ServiceException {
@@ -82,20 +90,19 @@ public class SystemServicesImpl implements SystemServices {
                 sysInfoCats.add(findClass(className, loader));
             }
         }
-        else if (type == SysInfoType.Git) {
+        else if (type == SysInfoType.CLI) {
             String cmd = query.getFilter("command");
             if (cmd == null)
                 throw new ServiceException("Missing parameter: command");
-            List<SysInfo> gitInfo = new ArrayList<>();
+            List<SysInfo> cmdInfo = new ArrayList<>();
             try {
-                VersionControlGit vc = (VersionControlGit) ServiceLocator.getAssetServices().getVersionControl();
-                vc.git(cmd);
+                String output = runCliCommand(cmd);
+                cmdInfo.add(new SysInfo(cmd, output));  // TODO actual output
+                sysInfoCats.add(new SysInfoCategory("CLI Command Output", cmdInfo));
             }
             catch (Exception ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
             }
-            gitInfo.add(new SysInfo(cmd, cmd));  // TODO actual output
-            sysInfoCats.add(new SysInfoCategory("Git Command Output", gitInfo));
         }
         else if (type == SysInfoType.MBean) {
 
@@ -331,5 +338,52 @@ public class SystemServicesImpl implements SystemServices {
         List<SysInfo> classInfo = new ArrayList<>();
         classInfo.add(new SysInfo(className, ClasspathUtil.locate(className)));
         return new SysInfoCategory("Class Info", classInfo);
+    }
+
+    public String runCliCommand(String command) throws IOException, InterruptedException {
+        List<String> cmd = new ArrayList<>();
+        cmd.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
+        cmd.add("-jar");
+        String mdwHome = System.getenv("MDW_HOME");
+        if (mdwHome == null) {
+            mdwHome = ApplicationContext.getTempDirectory() + File.separator + "MDW_HOME";
+        }
+
+        File cliJar = new File(mdwHome + File.separator + "mdw-cli.jar");
+        if (!cliJar.exists()) {
+            if (!cliJar.getParentFile().isDirectory() && !cliJar.getParentFile().mkdirs())
+                throw new IOException("Cannot create dir: " + cliJar.getParentFile().getAbsolutePath());
+            // TODO extract cli jar from war into mdwHome
+        }
+        cmd.add(cliJar.getAbsolutePath());
+
+        List<String> mdwCmd = Arrays.asList(command.trim().split("\\s+"));
+        for (int i = 0; i < mdwCmd.size(); i++) {
+            if (i > 0 || !"mdw".equals(mdwCmd.get(i)))
+                cmd.add(mdwCmd.get(i));
+        }
+        logger.debug("Running MDW CLI command: '" + String.valueOf(cmd));
+
+        ProcessBuilder builder = new ProcessBuilder(cmd);
+        // builder.directory(new File(PropertyManager.getProperty(name)))
+        builder.redirectErrorStream(true);
+        Process process = builder.start();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
+        new Thread(new Runnable() {
+            public void run() {
+                try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
+                    out.lines().forEach(line -> {
+                        writer.println(line);
+                    });
+                }
+                catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }).start();
+        process.waitFor();
+        writer.flush();
+        return new String(output.toByteArray());
     }
 }

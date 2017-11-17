@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.cli;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -26,18 +29,23 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.Parameters;;
 
 @Parameters(commandNames="test", commandDescription="Run Automated Test(s)", separators="=")
 public class Test extends Setup {
@@ -126,61 +134,76 @@ public class Test extends Setup {
         JSONObject caseRequest = getCaseRequest(pkgTests);
         boolean done = false;
         new Fetch(new URL(getServicesUrl() + PATH + "/exec")).post(caseRequest.toString(2));
+
         if (!json)
             System.out.println("Running tests...");
+
         long before = System.currentTimeMillis();
+        File resultsFile = getResultsSummaryFile();
+        Path summaryPath = Paths.get(resultsFile.getParentFile().getPath());
+        WatchService watcher = FileSystems.getDefault().newWatchService();
+        summaryPath.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+
         while (!done) {
-            JSONObject resp = new JSONObject(new Fetch(new URL(getServicesUrl() + PATH)).get());
-            JSONArray pkgs = resp.getJSONArray("packages");
-            for (int i = 0; i < pkgs.length(); i++) {
-                JSONObject pkg = pkgs.getJSONObject(i);
-                JSONArray tests = pkg.getJSONArray("testCases");
-                for (int j = 0; j < tests.length(); j++) {
-                    JSONObject test = tests.getJSONObject(j);
-                    String asset = pkg.getString("name") + "/" + test.getString("name");
-                    if (statuses.containsKey(asset) && test.has("status")) {
-                        String status = test.getString("status");
-                        String oldStatus = statuses.get(asset);
-                        if (oldStatus == null || !oldStatus.equals(status)) {
-                            statuses.put(asset, status);
-                            if (isFinished(status)) {
-                                if (!json) {
-                                    int finished = finished(statuses);
-                                    if (isSuccess(status))
-                                        System.out.print("   ");
-                                    else
-                                        System.out.print("  *");
-                                    System.out.println(status + " (" + finished + "/" + statuses.size() + ") - " + asset);
-                                }
-                                if (!isSuccess(status)) {
-                                    boolean ignoreFailure = false;
-                                    if (ignore != null) {
-                                        int lastSlash = asset.lastIndexOf('/');
-                                        Path assetPath = Paths.get(new File(asset.substring(0, lastSlash).replace('.', '/') + asset.substring(lastSlash)).getPath());
-                                        if (matches(getIgnoreMatchers(), assetPath))
-                                            ignoreFailure = true;
+            try {
+                WatchKey key = watcher.take();
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    if (((Path)event.context()).getFileName().toString().equals(resultsFile.getName())) {
+                        String contents = new String(Files.readAllBytes(Paths.get(resultsFile.getPath())));
+                        if (contents.isEmpty())
+                            continue; // why does this happen?
+                        JSONObject jsonObj = new JSONObject(contents);
+                        JSONArray pkgs = jsonObj.getJSONArray("packages");
+                        for (int i = 0; i < pkgs.length(); i++) {
+                            JSONObject pkg = pkgs.getJSONObject(i);
+                            JSONArray tests = pkg.getJSONArray("testCases");
+                            for (int j = 0; j < tests.length(); j++) {
+                                JSONObject test = tests.getJSONObject(j);
+                                String asset = pkg.getString("name") + "/" + test.getString("name");
+                                if (statuses.containsKey(asset) && test.has("status")) {
+                                    String status = test.getString("status");
+                                    String oldStatus = statuses.get(asset);
+                                    if (oldStatus == null || !oldStatus.equals(status)) {
+                                        statuses.put(asset, status);
+                                        if (isFinished(status)) {
+                                            if (!json) {
+                                                int finished = finished(statuses);
+                                                if (isSuccess(status))
+                                                    System.out.print("   ");
+                                                else
+                                                    System.out.print("  *");
+                                                System.out.println(status + " (" + finished + "/" + statuses.size() + ") - " + asset);
+                                            }
+                                            if (!isSuccess(status)) {
+                                                boolean ignoreFailure = false;
+                                                if (ignore != null) {
+                                                    int lastSlash = asset.lastIndexOf('/');
+                                                    Path assetPath = Paths.get(new File(asset.substring(0, lastSlash).replace('.', '/') + asset.substring(lastSlash)).getPath());
+                                                    if (matches(getIgnoreMatchers(), assetPath))
+                                                        ignoreFailure = true;
+                                                }
+                                                if (!ignoreFailure)
+                                                    this.success = false;
+                                                if (test.has("message") && !json)
+                                                    System.out.println("    (" + test.getString("message"));
+                                            }
+                                        }
                                     }
-                                    if (!ignoreFailure)
-                                        this.success = false;
-                                    if (test.has("message") && !json)
-                                        System.out.println("    (" + test.getString("message"));
                                 }
                             }
                         }
+                        done = finished(statuses) == statuses.size();
+                        if (done) {
+                            printSummary(statuses, System.currentTimeMillis() - before);
+                            continue;
+                        }
                     }
                 }
-            }
-            done = finished(statuses) == statuses.size();
-            if (done) {
-                printSummary(statuses, System.currentTimeMillis() - before);
-                continue;
-            }
-
-            try {
-                Thread.sleep(500);
+                key.reset();
             }
             catch (InterruptedException ex) {
                 System.err.println("Test execution canceled");
+                done = true;
             }
         }
         return this;
@@ -282,7 +305,12 @@ public class Test extends Setup {
     }
 
     private JSONObject getCaseRequest(Map<String,List<String>> pkgTests) throws IOException {
-        JSONObject json = new JSONObject();
+        JSONObject json = new JSONObject() {
+            @Override // ordered keys makes the tests run in sequence
+            public Set<String> keySet() {
+                return new TreeSet<String>(super.keySet());
+            }
+        };
         JSONArray pkgs = new JSONArray();
         json.put("packages", pkgs);
         if (!pkgTests.isEmpty()) {
@@ -342,5 +370,19 @@ public class Test extends Setup {
 
     private boolean isSuccess(String status) {
         return "Passed".equals(status);
+    }
+
+    private File getResultsSummaryFile() throws IOException {
+        Props props = new Props(getProjectDir(), this);
+        String testResultsLoc = props.get("mdw.test.results.location");
+        if (testResultsLoc == null)
+            testResultsLoc = getGitRoot() + "/testResults";
+        File resultsDir = new File(testResultsLoc);
+        if (!resultsDir.isDirectory() && !resultsDir.mkdirs())
+            throw new IOException(resultsDir.getAbsolutePath() + " is not a directory and cannot be created.");
+        String summaryFile = props.get("mdw.function.tests.summary.file");
+        if (summaryFile == null)
+            summaryFile = "mdw-function-test-results.json";
+        return new File(testResultsLoc + "/" + summaryFile);
     }
 }
