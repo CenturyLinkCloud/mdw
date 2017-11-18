@@ -226,6 +226,8 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             Process procdef = getMainProcessDefinition();
             for (String varname : params.keySet()) {
                 String para = getActualParameterVariable(map, varname);
+                if (para == null)
+                    return;
                 Variable var = procdef.getVariable(para);
                 if (var == null)
                     throw new ActivityException("Bound variable: '" + para + "' not found in process definition " + procdef.getLabel());
@@ -259,7 +261,9 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     private String getActualParameterVariable(String map, String parameterName)
             throws ActivityException {
         String v = StringHelper.getMapValue(map, parameterName, ';');
-        if (v==null || v.length()<2 || (v.charAt(0)!='$' && v.charAt(0)!='#'))
+        if (v==null)
+            return null;
+        if (v.length()<2 || (v.charAt(0)!='$' && v.charAt(0)!='#'))
             throw new ActivityException(ERR_OUTPARA + ": " + parameterName);
         for (int i=1; i<v.length(); i++) {
             if (!Character.isLetterOrDigit(v.charAt(i))&& v.charAt(i)!='_')
