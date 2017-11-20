@@ -22,7 +22,7 @@ task install(type: Copy) {
 
 task start(type: Exec) {
     dependsOn install
-    commandLine getMdwCmd(), 'run', '--daemon', '--wait=60', '--retries=3'
+    commandLine getMdwCmd(), 'run', '--daemon', '--wait=90', '--retries=5'
 }
 
 def testSuccess = true
