@@ -106,6 +106,9 @@ title: Command Line Interface
   The [Quick Start](../quick-start/) has step-by-step instructions on how to use the CLI to get
   running quickly with MDW.
   
+### Git Commands
+  MDW supports `mdw git` commands through the [JGit Command API](https://wiki.eclipse.org/JGit/User_Guide#Running_the_JGit_CLI).  
+  
 ### Examples
   - Install mdw.war for Tomcat on Linux
   ```
