@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
@@ -154,7 +155,14 @@ public class Test extends Setup {
                         String contents = new String(Files.readAllBytes(resultsPath));
                         if (contents.isEmpty())
                             continue; // why does this happen?
-                        JSONObject jsonObj = new JSONObject(contents);
+                        JSONObject jsonObj = null;
+                        try {
+                            jsonObj = new JSONObject(contents);
+                        }
+                        catch (JSONException ex) {
+                            // cannot be parsed (why?)
+                            continue;
+                        }
                         JSONArray pkgs = jsonObj.getJSONArray("packages");
                         for (int i = 0; i < pkgs.length(); i++) {
                             JSONObject pkg = pkgs.getJSONObject(i);
