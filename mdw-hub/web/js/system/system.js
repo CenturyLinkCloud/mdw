@@ -46,6 +46,14 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
   $scope.runCli = function(command) {
     $scope.commandInfo = System.get({sysInfoType: 'CLI', command: command});
   };
+  
+  $scope.console = new Console();
+  $scope.cliHelpUrl = mdw.roots.docs + '/getting-started/cli/#usage';
+  
+  $scope.clearConsole = function() {
+    $scope.console.clear();
+  };
+  
 }]);
 
 sysMod.factory('System', ['$resource', 'mdw', function($resource, mdw) {

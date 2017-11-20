@@ -60,6 +60,8 @@ module.exports = function(grunt) {
           SwaggerUIStandalonePreset: false,
           Image: false,
           WebSocket: false,
+          Console: false,
+          fetch: false,
           _:false,
           __dirname: false
         }

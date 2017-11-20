@@ -310,11 +310,6 @@ routesSvc.factory('routes', function() {
         controller: 'SystemController'
       },
       {
-        path: '/system/cli',
-        templateUrl: 'system/cli.html',
-        controller: 'SystemController'
-      },
-      {
         path: '/system/console',
         templateUrl: 'system/console.html',
         controller: 'SystemController'
