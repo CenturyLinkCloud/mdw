@@ -30,7 +30,7 @@ processMod.controller('ProcessesController',
   }
   
   // pseudo-status [Active] means non-final
-  $scope.allStatuses = ['[Active]'].concat(PROCESS_STATUSES);
+  $scope.allStatuses = ['[Active]','[Any]'].concat(PROCESS_STATUSES);
   
   $scope.setSelectedChart=function(selChart) {
 	  $scope.selectedChart= selChart;
