@@ -183,4 +183,5 @@ public interface EngineDataAccess {
 
     int getPerformanceLevel();
 
+    void updateDocumentMongoCollection(Document docvo, String newOwnerType);
 }

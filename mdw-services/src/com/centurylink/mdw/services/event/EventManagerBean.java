@@ -686,8 +686,11 @@ public class EventManagerBean implements EventManager {
             Document docvo = edao.getDocument(docid, false);
             if (documentType != null)
                 docvo.setDocumentType(documentType);
-            if (ownerType != null)
+            if (ownerType != null) {
+                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
+                    edao.updateDocumentMongoCollection(docvo, ownerType);
                 docvo.setOwnerType(ownerType);
+            }
             if (ownerId != null)
                 docvo.setOwnerId(ownerId);
             edao.updateDocumentInfo(docvo);

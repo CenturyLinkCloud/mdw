@@ -1445,4 +1445,22 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws SQLException {
         super.setAttributes0(ownerType, ownerId, attributes);
     }
+
+    protected org.bson.Document deleteMongoDocumentContent(Document doc) {
+        if (hasMongo()) {
+            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(doc.getOwnerType());
+            return collection.findOneAndDelete(eq("_id", doc.getDocumentId()));
+        }
+        return null;
+    }
+
+    public void updateDocumentMongoCollection(Document doc, String newOwnerType) {
+        if (hasMongo()) {
+            org.bson.Document myDoc = deleteMongoDocumentContent(doc);
+            if (myDoc != null) {
+                MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(newOwnerType);
+                collection.insertOne(myDoc);
+            }
+        }
+    }
 }
