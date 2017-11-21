@@ -29,6 +29,7 @@ import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -218,10 +219,20 @@ public abstract class BaseActivity implements GeneralActivity {
             loginfo("Skipping disabled activity: " + getActivityName());
         }
         else {
-            initialize(_runtimeContext);
-            Object ret = execute(_runtimeContext);
-            if (ret != null)
-                setReturnCode(String.valueOf(ret));
+            try {
+                initialize(_runtimeContext);
+                Object ret = execute(_runtimeContext);
+                if (ret != null)
+                    setReturnCode(String.valueOf(ret));
+            }
+            catch (ActivityException ex) {
+                throw ex;
+            }
+            finally
+            {
+            	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+                    ApplicationContext.resetContextClassLoader();
+            }
         }
     }
 

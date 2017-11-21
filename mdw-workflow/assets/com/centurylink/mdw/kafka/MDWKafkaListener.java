@@ -28,7 +28,6 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.Package;
 
 /**
  * Dynamic Java workflow asset.
@@ -172,11 +171,7 @@ public class MDWKafkaListener {
             }
 
             // This is so that all dependent class from kafka-clients jar are found during consumer creation
-            Package pkg = PackageCache.getPackage(MDW_KAFKA_PKG);
-            if (pkg == null)
-                pkg = PackageCache.getPackages().get(0);
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
+            ClassLoader cl = ApplicationContext.setContextCloudClassLoader(PackageCache.getPackage(MDW_KAFKA_PKG));
 
             consumer = new KafkaConsumer<>(initParameters);
             consumer.subscribe(topics);
@@ -186,7 +181,7 @@ public class MDWKafkaListener {
             initParameters.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
             KafkaProducer<Object, Object> dummyProducer = new KafkaProducer<>(initParameters);
 
-            Thread.currentThread().setContextClassLoader(cl);
+            ApplicationContext.resetContextClassLoader(cl);
 
             dummyProducer.close();
 

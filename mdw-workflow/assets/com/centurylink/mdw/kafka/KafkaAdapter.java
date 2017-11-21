@@ -20,11 +20,10 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -71,14 +70,10 @@ public class KafkaAdapter extends PoolableAdapterBase {
         synchronized(producerMap) {
             if (producerMap.get(bootstrap_servers) == null)
             {
-                Package pkg = PackageCache.getPackage(MDW_KAFKA_PKG);
-                if (pkg == null)
-                    pkg = PackageCache.getPackages().get(0);
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
+                ClassLoader cl = ApplicationContext.setContextCloudClassLoader(getPackage());
                 kafkaProducer =  new KafkaProducer<>(producerProps);
                 producerMap.put(bootstrap_servers, kafkaProducer);
-                Thread.currentThread().setContextClassLoader(cl);
+                ApplicationContext.resetContextClassLoader(cl);
                 return kafkaProducer;
             }
             else
