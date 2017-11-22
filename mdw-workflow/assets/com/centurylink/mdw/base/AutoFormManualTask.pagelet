@@ -27,7 +27,7 @@
   </DROPDOWN>
   <TABLE NAME="Notices" MODIFYONLY="true" DEFAULT="$DefaultNotices" SECTION="Notices">
     <TEXT LABEL="Outcome" READONLY="true" VW="150"/>
-    <DROPDOWN LABEL="Template" SOURCE="RuleSets" TYPE="HTML,FACELET,XML" VW="200"/>
+    <DROPDOWN LABEL="Template" SOURCE="RuleSets" TYPE="MARKDOWN,HTML" VW="200"/>
     <DROPDOWN LABEL="Template Version" SOURCE="AssetVersion"/>
     <TEXT LABEL="Notifier Class(es)" VW="350"/>
   </TABLE>

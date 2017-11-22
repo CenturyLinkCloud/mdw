@@ -23,8 +23,6 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
  */
 public abstract class TemplatedNotifier implements TaskNotifier {
 
-    public static final String DEFAULT_NOTIFIER_IMPL = "com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier";
-
     private String template;
     /**
      * @deprecated use {@link #getTemplateSpec()}

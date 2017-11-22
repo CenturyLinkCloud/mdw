@@ -18,7 +18,9 @@ package com.centurylink.mdw.model.user;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -173,6 +175,21 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
             else
                 return Role.VIEW_ONLY;
         }
+    }
+
+    private Map<String,String> attributes;
+    public Map<String,String> getAttributes() { return attributes; }
+    @ApiModelProperty(value="Workgroup attributes, such as group email and slack channel")
+    public void setAttributes(Map<String,String> attributes) { this.attributes = attributes; }
+    public String getAttribute(String name) {
+      if (attributes == null)
+        return null;
+      return attributes.get(name);
+    }
+    public void setAttribute(String name, String value) {
+      if (attributes == null)
+        attributes = new HashMap<String,String>();
+      attributes.put(name, value);
     }
 
     public String toString() {
