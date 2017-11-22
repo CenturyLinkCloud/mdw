@@ -106,7 +106,7 @@ class Action extends Component {
   
   actionPopRootClose() {
     var actionTrigger = this.refs.actionTrigger;
-    var commentTrigger = this.refs[this.action.action + '_commentTrigger'];
+    var commentTrigger = this.action ? this.refs[this.action.action + '_commentTrigger'] : null;
     var assigneeTrigger = this.refs.assigneeTrigger;
     if (actionTrigger.state.show && !assigneeTrigger.state.show && 
         (!commentTrigger || !commentTrigger.state.show)) {

@@ -142,11 +142,19 @@ public class TaskServicesImpl implements TaskServices {
                 if (activityInstanceIds != null && activityInstanceIds.length > 0) {
                     // tasks for activity instance -- special logic applied after retrieving
                     TaskList taskList = getTaskDAO().getTaskInstances(query);
+                    for (TaskInstance taskInstance : taskList.getTasks()) {
+                        TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstance);
+                        taskInstance.setTaskInstanceUrl(helper.getTaskInstanceUrl());
+                    }
                     return filterForActivityInstance(taskList, processInstance, activityInstanceIds);
                 }
             }
 
             TaskList taskList = getTaskDAO().getTaskInstances(query);
+            for (TaskInstance taskInstance : taskList.getTasks()) {
+                TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstance);
+                taskInstance.setTaskInstanceUrl(helper.getTaskInstanceUrl());
+            }
             return taskList;
         }
         catch (ServiceException ex) {
@@ -202,14 +210,6 @@ public class TaskServicesImpl implements TaskServices {
         filteredList.setTotal(taskInstances.size());
         return filteredList;
     };
-
-    public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException {
-        TaskDataAccess taskDao = new TaskDataAccess(new DatabaseAccess(null));
-        List<TaskInstance> tasks = taskDao.getTaskInstancesForProcessInstance(processInstanceId, true);
-        TaskList taskList = new TaskList(TaskList.PROCESS_TASKS, tasks);
-        taskList.setCount(tasks.size());
-        return taskList;
-    }
 
     public void saveTaskTemplate(TaskTemplate taskVO) {
 
@@ -393,7 +393,12 @@ public class TaskServicesImpl implements TaskServices {
 
     public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException {
         try {
-            List<TaskInstance> subtasks = getTaskDAO().getSubTaskInstances(masterTaskInstanceId);
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(masterTaskInstanceId);
+            List<TaskInstance> subtasks = helper.getSubtasks(masterTaskInstanceId);
+            for (TaskInstance subtask : subtasks) {
+                TaskWorkflowHelper subtaskHelper = new TaskWorkflowHelper(subtask);
+                subtask.setTaskInstanceUrl(subtaskHelper.getTaskInstanceUrl());
+            }
             return new TaskList("subtasks", subtasks);
         }
         catch (DataAccessException ex) {
@@ -623,7 +628,7 @@ public class TaskServicesImpl implements TaskServices {
         timer.stopAndLogTiming("");
     }
 
-    private List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
+    public List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
     throws ServiceException, DataAccessException {
         CodeTimer timer = new CodeTimer("getTaskInstancesForProcess()", true);
         List<TaskInstance> daoResults = getTaskDAO().getTaskInstancesForProcessInstance(processInstanceId);

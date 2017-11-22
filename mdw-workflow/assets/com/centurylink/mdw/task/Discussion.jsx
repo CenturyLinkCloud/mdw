@@ -1,13 +1,34 @@
 import React, {Component} from '../node/node_modules/react';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import Heading from './Heading.jsx';
+import UserDate from '../react/UserDate.jsx';
 
 class Discussion extends Component {
     
   constructor(...args) {
     super(...args);
-    this.state = { task: {} };
-  }  
+    this.state = { comments: [] };
+  }
+  
+  componentDidMount() {
+    // TODO fetch discussion comments from service
+    this.setState({
+      comments: [{
+          id: 123456,
+          content: 'Now is the time for all good men to come to the aid of their country.',
+          created: new Date(new Date().getTime() - 24*60*60*1000),
+          createUser: 'Donald Oakes'
+        }, {
+          id: 234567,
+          content: 'This comment has been modified.',
+          created: new Date(new Date().getTime() - 12*60*60*1000),
+          createUser: 'Manoj Agrawal',
+          modified: new Date(new Date().getTime() - 4*60*60*1000),
+          modifyUser: 'Vimala Gubbi Nagaraja'
+        }
+      ]
+    });
+  }
 
   render() {
     return (
@@ -18,11 +39,41 @@ class Discussion extends Component {
           </Button>
         </Heading>
         <div className="mdw-section">
-          TODO: task discussion
+          {this.state.comments.map(comment => {
+              return (
+                <div key={comment.id} className="panel panel-default mdw-panel">
+                  <div className="panel-heading mdw-heading">
+                    <div className="mdw-heading-label">
+                      <span style={{fontWeight:'normal'}}>
+                        created {' '}
+                        <UserDate date={comment.created} />
+                        {' by '} <a href="">{comment.createUser}</a>
+                      </span>
+                      {comment.modified &&
+                        <span style={{fontWeight:'normal',marginLeft:'10px'}}>
+                          (modified {' '}
+                          <UserDate date={comment.modified} />
+                          {' by '} <a href="">{comment.modifyUser})</a>
+                        </span>
+                      }
+                    </div>
+                    <div className="mdw-heading-actions">
+                      <Button className="mdw-btn mdw-action-btn" bsStyle='primary'>
+                        <Glyphicon glyph="pencil" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mdw-section">
+                    {comment.content}
+                  </div>
+                </div>
+              );
+            }
+          )}
         </div>
       </div>
     );
   }
 }
 
-export default Discussion;  
+export default Discussion;

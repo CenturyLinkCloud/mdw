@@ -170,8 +170,11 @@ public abstract class ServiceServlet extends HttpServlet {
                             return;
                     }
                 }
+                else if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + "/Services/Slack")) {
+                    return;
+                }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
-                    // perform http GitGub auth, which populates the auth user header
+                    // perform http GitHub auth, which populates the auth user header
                     if (AuthUtils.authenticate(AuthUtils.GIT_HUB_SECRET_KEY, headers, payload))
                         return;
                 }

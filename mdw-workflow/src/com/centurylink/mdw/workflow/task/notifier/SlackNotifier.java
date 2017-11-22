@@ -53,7 +53,7 @@ public class SlackNotifier extends TemplatedNotifier {
 
     // TODO
     public String getWebhookUrl() {
-        return "https://hooks.slack.com/services/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";
+        return "https://hooks.slack.com/services/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";
     }
 
     // TODO

@@ -123,11 +123,13 @@ diagramMod.factory('Diagram',
                    actInst.statusCode = message.status;
                  }
                  else {
-                   step.instances.push({
+                   var ai = {
                      activityId: message.id,
                      id: message.instId,
                      statusCode: message.status
-                   });
+                   };
+                   step.instances.push(ai);
+                   diagram.instance.activities.push(ai);
                  }
                  step.draw();
                  diagram.scrollIntoView(step);
