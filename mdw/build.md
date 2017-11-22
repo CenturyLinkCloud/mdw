@@ -22,7 +22,7 @@
   - git push origin :refs/tags/v6.0.xx-SNAPSHOT
   - Delete the Draft of SNAPSHOT from GitHub
      
-5 - Commit and push all the above changes to Git.
+5 - Git pull and Commit and push all the above changes to Git.
 
 6 - Perform the Jenkins build (http://lxdenvmtc143.dev.qintra.com:8181/jenkins):
   - MDW6-Build
