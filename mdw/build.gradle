@@ -141,7 +141,6 @@ task publishToMavenCentral(type: GradleBuild) {
 }
 
 task publishAssetsToMavenCentral(type: GradleBuild) {
-    dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishAssetsToMavenCentral"]
 }

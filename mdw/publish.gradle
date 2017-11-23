@@ -97,6 +97,9 @@ task publishAssetsToMavenCentral(type: GradleBuild) {
 
 closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
 
+closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
+
+
 task updatePlugInFile {
       description = "Update plugin file with Version number"
   
