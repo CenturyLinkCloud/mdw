@@ -1,5 +1,24 @@
 # Change Log
 
+## [v6.0.09](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.09) (2017-11-22)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.08...v6.0.09)
+
+**Implemented enhancements:**
+
+- Improve Git status monitoring in MDWHub and during import [\#254](https://github.com/CenturyLinkCloud/mdw/issues/254)
+- REST API for Saving/Pushing Assets without Deploying [\#248](https://github.com/CenturyLinkCloud/mdw/issues/248)
+- Kafka Listener [\#247](https://github.com/CenturyLinkCloud/mdw/issues/247)
+- Kafka Adapter Activity [\#246](https://github.com/CenturyLinkCloud/mdw/issues/246)
+- Provide a filter option to show all processes regardless of status [\#242](https://github.com/CenturyLinkCloud/mdw/issues/242)
+
+**Closed issues:**
+
+- Fix issue of documents changing owner\_type when using MongoDB [\#263](https://github.com/CenturyLinkCloud/mdw/issues/263)
+- Have MDW change the contextClassLoader to be a CloudClassLoader [\#262](https://github.com/CenturyLinkCloud/mdw/issues/262)
+- InvokeSubProcessActivity should not insist on all subproc output vars being bound [\#255](https://github.com/CenturyLinkCloud/mdw/issues/255)
+- Issue when legacy recurring event is unregistered once the process completes [\#245](https://github.com/CenturyLinkCloud/mdw/issues/245)
+- Process Values Autoform Fixes [\#236](https://github.com/CenturyLinkCloud/mdw/issues/236)
+
 ## [v6.0.08](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.08) (2017-10-27)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07...v6.0.08)
 
