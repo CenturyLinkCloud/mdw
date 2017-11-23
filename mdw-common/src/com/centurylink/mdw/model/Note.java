@@ -42,6 +42,11 @@ public class Note implements Serializable, Jsonable, Comparable<Note> {
     public Long getOwnerId() { return ownerId; }
     public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
 
+    private String comment;
+
+    public String getComment() {return comment;}
+    public void setComment(String comment) {this.comment = comment; }
+
     private Date created;
     public Date getCreated() { return created; }
     public void setCreated(Date created) { this.created = created; }

@@ -2,6 +2,8 @@ import React, {Component} from '../node/node_modules/react';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import Heading from './Heading.jsx';
 import UserDate from '../react/UserDate.jsx';
+import values from '../react/values';
+
 
 class Discussion extends Component {
     
@@ -12,6 +14,19 @@ class Discussion extends Component {
   
   componentDidMount() {
     // TODO fetch discussion comments from service
+    fetch(new Request('/mdw/services/Tasks/' + this.props.task.id + '/comments', {
+          method: 'GET',
+          headers: { Accept: 'application/json'}
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(vals => {
+          this.setState({
+              comments: values.toArray(vals)
+          });
+        });
+    /* }
     this.setState({
       comments: [{
           id: 123456,
@@ -27,7 +42,7 @@ class Discussion extends Component {
           modifyUser: 'Vimala Gubbi Nagaraja'
         }
       ]
-    });
+    });*/
   }
 
   render() {
@@ -49,7 +64,7 @@ class Discussion extends Component {
                         <UserDate date={comment.created} />
                         {' by '} <a href="">{comment.createUser}</a>
                       </span>
-                      {comment.modified &&
+                      {comment.modifyUser &&
                         <span style={{fontWeight:'normal',marginLeft:'10px'}}>
                           (modified {' '}
                           <UserDate date={comment.modified} />

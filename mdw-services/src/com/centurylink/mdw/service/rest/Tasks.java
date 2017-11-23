@@ -42,6 +42,7 @@ import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Note;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventLog;
@@ -226,9 +227,10 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     // must be instance id
                     try {
                         Long instanceId = Long.parseLong(segOne);
+                        TaskInstance taskInstance=null;
                         String extra = getSegment(path, 2);
                         if (extra == null) {
-                            TaskInstance taskInstance = taskServices.getInstance(instanceId);
+                            taskInstance = taskServices.getInstance(instanceId);
                             if (taskInstance == null)
                                 throw new ServiceException(HTTP_404_NOT_FOUND, "Task instance not found: " + instanceId);
                             if (taskInstance.isProcessOwned()) {
@@ -245,6 +247,21 @@ public class Tasks extends JsonRestService implements JsonExportable {
                                 valuesJson.put(name, values.get(name).getJson());
                             }
                             return valuesJson;
+                        }
+                        else if (extra.equals("comments")) {
+                            taskInstance = taskServices.getInstance(instanceId);
+                            List<Note> values = ServiceLocator.getCollaborationServices().getNotes(taskInstance.getOwnerType(), taskInstance.getOwnerId());
+                            JSONObject notesJson = new JsonObject();
+                            if(values!=null && values.size() >0){
+                              for (Note note : values) {
+                                  User user = UserGroupCache.getUser(note.getCreateUser());
+                                  if(user!=null && (user.getName())!=null && (!user.getName().isEmpty())){
+                                     note.setCreateUser(user.getName());
+                                  }
+                                  notesJson.put("comments",note.getJson());
+                              }
+                            }
+                            return notesJson;
                         }
                         else if (extra.equals("indexes")) {
                             Map<String,String> indexes = taskServices.getIndexes(instanceId);
