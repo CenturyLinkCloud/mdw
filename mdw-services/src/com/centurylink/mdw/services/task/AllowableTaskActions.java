@@ -213,11 +213,11 @@ public class AllowableTaskActions implements PreloadableCache {
                 }
                 // if 'Work' action is applicable, no dynamic actions unless 'In Progress' status
                 if (!isWorkActionApplicable || runtimeContext.getStatus().equals(TaskStatus.STATUSNAME_IN_PROGRESS)) {
-                    List<TaskAction> dynamicTaskActions = helper.getDynamicActions();
+                    List<TaskAction> dynamicTaskActions = helper.getCustomActions();
                     if (dynamicTaskActions != null) {
                         for (TaskAction dynamicTaskAction : dynamicTaskActions) {
                             if (!filteredActions.contains(dynamicTaskAction)) {
-                                dynamicTaskAction.setDynamic(true);
+                                dynamicTaskAction.setCustom(true);
                                 filteredActions.add(dynamicTaskAction);
                             }
                         }

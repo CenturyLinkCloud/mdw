@@ -1222,17 +1222,17 @@ public class TaskWorkflowHelper {
     }
 
     /**
-     * Gets the dynamic task actions associated with a task instance as determined by
+     * Gets the custom task actions associated with a task instance as determined by
      * the result codes for the possible outgoing work transitions from the associated
      * activity.
      *
      * @param taskInstanceId
      * @return the list of task actions
      */
-    public List<TaskAction> getDynamicActions()
+    public List<TaskAction> getCustomActions()
     throws ServiceException, DataAccessException {
 
-        CodeTimer timer = new CodeTimer("getDynamicActions()", true);
+        CodeTimer timer = new CodeTimer("getCustomActions()", true);
         List<TaskAction> dynamicTaskActions = new ArrayList<TaskAction>();
 
         try {
@@ -1253,7 +1253,7 @@ public class TaskWorkflowHelper {
                         if (eventType.equals(EventType.FINISH) || eventType.equals(EventType.RESUME) || TaskAction.FORWARD.equals(resultCode)) {
                             TaskAction taskAction = new TaskAction();
                             taskAction.setTaskActionName(resultCode);
-                            taskAction.setDynamic(true);
+                            taskAction.setCustom(true);
                             dynamicTaskActions.add(taskAction);
                         }
                     }

@@ -659,4 +659,23 @@ public class TaskServicesImpl implements TaskServices {
         return taskInstance.getGroups();
     }
 
+    public List<TaskAction> getActions(Long instanceId, String userCuid, Query query) throws ServiceException {
+        TaskInstance taskInstance = getInstance(instanceId);
+        if (taskInstance == null) {
+            throw new ServiceException(ServiceException.NOT_FOUND,
+                    "Unable to load runtime context for task instance: " + instanceId);
+        }
+
+        try {
+            TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstance);
+            if (query.getBooleanFilter("custom"))
+                return helper.getCustomActions();
+            else
+                return AllowableTaskActions.getTaskDetailActions(userCuid, helper.getContext());
+        }
+        catch (Exception ex) {
+            throw new ServiceException("Failed to get actions for task instance: " + instanceId, ex);
+        }
+    }
+
 }

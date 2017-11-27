@@ -173,23 +173,23 @@ At the individual level, standard actions are also specified according to the cu
 The UI labels for standard actions can be easily customized by way of the "alias" attribute as illustrated in the TaskActions.xml snippet following the table (where the Complete action is rebranded to the label Finish).
 Also, the default outcome can be overridden by designating the "outcome" attribute which controls the downstream process transition that will be traversed when the action is performed.
 <br/><br/>
-Notice that a particular action can be limited to a subset of possible task types via the &lt;forTask&gt; element (although it may be more advisable in this case to utilize dynamic task actions as described in the next section below).
+Notice that a particular action can be limited to a subset of possible task types via the &lt;forTask&gt; element (although it may be more advisable in this case to utilize custom task actions as described in the next section below).
 
 The standard actions configuration can also control the page in Task Manager where the user will be navigated after performing the action by using the &lt;navigationOutcome&gt; element. 
 <br/><br/>
 See the embedded comments in TaskActions.xml for a more detailed description of how to configure standard task actions.
 
-<h3>Dynamic Actions</h3>
+<h3>Custom Actions</h3>
 
-Dynamic task actions are not globally configured but instead are specified for a particular circumstance as part of the process definition.
+Custom task actions are not globally configured but instead are specified for a particular circumstance as part of the process definition.
 
-Since dynamic actions depend on the process definition and are specific to a particular instance, they are only presented to the user at the Task Detail level.
+Since custom actions depend on the process definition and are specific to a particular instance, they are only presented to the user at the Task Detail level.
 
-The following process definition diagram illustrates how dynamic task actions are used:
+The following process definition diagram illustrates how custom task actions are used:
 <br/><br/>
-<img src="images/dynamicTaskActions.jpg" />
+<img src="images/customTaskActions.jpg" />
 <br/><br/>
-In this example process the left-hand outcome ("Inline") from the script activity illustrates how dynamic task actions are specified for task activities included directly in your main process, while the right-hand outcome ("Exception") illustrates the usage for embedded exception handler subprocesses.
+In this example process the left-hand outcome ("Inline") from the script activity illustrates how custom task actions are specified for task activities included directly in your main process, while the right-hand outcome ("Exception") illustrates the usage for embedded exception handler subprocesses.
 <p/>
 For the Inline case, allowable actions for the "Activity-Created" task instance are governed by the result codes of its outbound transitions.
 
@@ -202,7 +202,7 @@ For the Exception case the semantics are slightly different owing to the fact th
 
 To distinguish the outcomes which are applicable during exception handling, the event type RESUME is specified for task action transitions.
 
-Here if an error is encountered in the "Error Creation" activity, a task instance will be created which on its Task Detail page will include the dynamic action "ActionThree" in the dropdown list.
+Here if an error is encountered in the "Error Creation" activity, a task instance will be created which on its Task Detail page will include the custom action "ActionThree" in the dropdown list.
 
 Also in the Exception case the behavior for the Retry standard action is overridden.  Instead of retrying the "Error Creation" activity, process flow is directed back to the "Set Task Type" script activity.
 

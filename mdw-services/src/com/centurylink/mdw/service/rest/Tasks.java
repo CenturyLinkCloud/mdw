@@ -52,7 +52,6 @@ import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskIndexes;
 import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.user.Role;
@@ -282,17 +281,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
                             return json;
                         }
                         else if (extra.equals("actions")) {
-                            // actions for an individual task based on its
-                            // status and custom outcomes
-                            TaskRuntimeContext runtimeContext = taskServices.getContext(instanceId);
-                            if (runtimeContext == null)
-                                throw new ServiceException(HTTP_404_NOT_FOUND,
-                                        "Unable to load runtime context for task instance: "
-                                                + instanceId);
-                            List<TaskAction> taskActions = AllowableTaskActions
-                                    .getTaskDetailActions(userCuid, runtimeContext);
                             JSONArray jsonTaskActions = new JSONArray();
-                            for (TaskAction taskAction : taskActions) {
+                            for (TaskAction taskAction : taskServices.getActions(instanceId, userCuid, query)) {
                                 jsonTaskActions.put(taskAction.getJson());
                             }
                             return new JsonArray(jsonTaskActions).getJson();
