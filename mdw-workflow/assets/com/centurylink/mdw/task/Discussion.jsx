@@ -9,7 +9,7 @@ class Discussion extends Component {
     
   constructor(...args) {
     super(...args);
-    this.state = { comments: [] };
+    this.state = { comments: [2] };
   }
   
   componentDidMount() {
@@ -44,6 +44,42 @@ class Discussion extends Component {
       ]
     });*/
   }
+  
+  renderComment(comment){
+      return (
+              <div key={comment.id} className="panel panel-default mdw-panel">
+                <div className="panel-heading mdw-heading">
+                  <div className="mdw-heading-label">
+                    <span style={{fontWeight:'normal'}}>
+                      created {' '}
+                      <UserDate date={comment.created} />
+                      {' by '} <a href="">{comment.createUser}</a>
+                    </span>
+                    {comment.modifyUser &&
+                      <span style={{fontWeight:'normal',marginLeft:'10px'}}>
+                        (modified {' '}
+                        <UserDate date={comment.modified} />
+                        {' by '} <a href="">{comment.modifyUser})</a>
+                      </span>
+                    }
+                  </div>
+                  <div className="mdw-heading-actions">
+                    <Button className="mdw-btn mdw-action-btn" bsStyle='primary'>
+                      <Glyphicon glyph="pencil" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="mdw-section">
+                  {comment.content}
+                </div>
+              </div>
+          );
+  }
+  
+  renderComments (comments) {
+      return [comments.map(this.renderComment)];
+    }
+
 
   render() {
     return (
@@ -54,37 +90,7 @@ class Discussion extends Component {
           </Button>
         </Heading>
         <div className="mdw-section">
-          {this.state.comments.map(comment => {
-              return (
-                <div key={comment.id} className="panel panel-default mdw-panel">
-                  <div className="panel-heading mdw-heading">
-                    <div className="mdw-heading-label">
-                      <span style={{fontWeight:'normal'}}>
-                        created {' '}
-                        <UserDate date={comment.created} />
-                        {' by '} <a href="">{comment.createUser}</a>
-                      </span>
-                      {comment.modifyUser &&
-                        <span style={{fontWeight:'normal',marginLeft:'10px'}}>
-                          (modified {' '}
-                          <UserDate date={comment.modified} />
-                          {' by '} <a href="">{comment.modifyUser})</a>
-                        </span>
-                      }
-                    </div>
-                    <div className="mdw-heading-actions">
-                      <Button className="mdw-btn mdw-action-btn" bsStyle='primary'>
-                        <Glyphicon glyph="pencil" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mdw-section">
-                    {comment.content}
-                  </div>
-                </div>
-              );
-            }
-          )}
+            {this.renderComments(this.state.comments)}     
         </div>
       </div>
     );
