@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -70,7 +72,7 @@ public class Slack extends JsonRestService {
 
     @Override
     public List<String> getRoles(String path) {
-        return null; // TODO: temp
+        return Arrays.asList(new String[]{Role.TASK_EXECUTION});
     }
 
     @Override

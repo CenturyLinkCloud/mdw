@@ -171,7 +171,9 @@ public abstract class ServiceServlet extends HttpServlet {
                     }
                 }
                 else if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + "/Services/Slack")) {
-                    return;
+                    // validates Slack token
+                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                        return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
                     // perform http GitHub auth, which populates the auth user header

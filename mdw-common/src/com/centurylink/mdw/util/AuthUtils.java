@@ -15,9 +15,12 @@
  */
 package com.centurylink.mdw.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.LdapAuthenticator;
@@ -36,6 +39,7 @@ public class AuthUtils {
 
     public static final String HTTP_BASIC_AUTHENTICATION = "Basic";
     public static final String GIT_HUB_SECRET_KEY = "GitHub";
+    public static final String SLACK_TOKEN = "MDW_SLACK_TOKEN";
     public static final String OAUTH_AUTHENTICATION = "OAuth";
 
     public static boolean authenticate(String authMethod, Map<String,String> headers) {
@@ -50,6 +54,9 @@ public class AuthUtils {
         }
         else if (authMethod.equals(GIT_HUB_SECRET_KEY)) {
             return authenticateGitHubSecretKey(headers, payload);
+        }
+        else if (authMethod.equals(SLACK_TOKEN)) {
+            return authenticateSlackToken(headers, payload);
         }
         else {
             throw new IllegalArgumentException("Unsupported authentication method: " + authMethod);
@@ -112,6 +119,25 @@ public class AuthUtils {
             return false;
         }
         return false;
+    }
+
+    private static boolean authenticateSlackToken(Map<String,String> headers, String payload) {
+        boolean okay = false;
+        if (payload.startsWith("payload=")) {  // TODO: handle multiple params
+            try {
+                String decodedPayload = URLDecoder.decode(payload.substring(8), "utf-8");
+                JSONObject json = new JSONObject(decodedPayload);
+                okay = json.has("token") && json.getString("token").equals(System.getenv(SLACK_TOKEN));
+                if (okay) {
+                    headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
+                    headers.put(Listener.METAINFO_REQUEST_PAYLOAD, decodedPayload);
+                }
+            }
+            catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException("Apparently utf-8 is out of fashion", ex);
+            }
+        }
+        return okay;
     }
 
     /**

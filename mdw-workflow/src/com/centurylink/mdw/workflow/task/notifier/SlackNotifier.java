@@ -44,7 +44,8 @@ public class SlackNotifier extends TemplatedNotifier {
 
         try {
             HttpHelper helper = new HttpHelper(new URL(getWebhookUrl()));
-            helper.post(getMessage().toString(2));
+            String response = helper.post(getMessage().toString(2));
+            System.out.println("RESPONSE: " + response);
         }
         catch (IOException ex) {
             throw new ObserverException(ex.getMessage(), ex);
@@ -59,11 +60,16 @@ public class SlackNotifier extends TemplatedNotifier {
     // TODO
     public JSONObject getMessage() {
         Asset template = AssetCache.getAsset(getTemplateSpec());
-        String messageText = context.evaluateToString(template.getStringContent());
-        // TODO: parameterization
-        System.out.println("SUBSTITUTED: " + messageText);
-        JSONObject json = new JSONObject();
-        json.put("text", messageText);
+        String message = context.evaluateToString(template.getStringContent());
+        JSONObject json;
+        if (template.getLanguage().equals(Asset.JSON)) {
+            json = new JSONObject(message);
+        }
+        else {
+            json = new JSONObject();
+            json.put("text", message);
+        }
+
         return json;
     }
 
