@@ -77,15 +77,15 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     }
 
     public ProcessInstance getProcessInstanceAll(Long procInstId)
-    throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             ProcessInstance procInstInfo = this.getProcessInstanceBase0(procInstId);
             List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
             String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT," +
-                "    STATUS_MESSAGE,ACTIVITY_ID,COMPCODE" +
-                " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?" +
-                " order by ACTIVITY_INSTANCE_ID";
+                    "    STATUS_MESSAGE,ACTIVITY_ID,COMPCODE" +
+                    " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?" +
+                    " order by ACTIVITY_INSTANCE_ID";
             ResultSet rs = db.runSelect(query, procInstId);
             ActivityInstance actInst;
             while (rs.next()) {
@@ -101,10 +101,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             }
             procInstInfo.setActivities(actInstList);
             List<TransitionInstance> workTransInstanceList
-                = new ArrayList<TransitionInstance>();
+            = new ArrayList<TransitionInstance>();
             query = "select WORK_TRANS_INST_ID,STATUS_CD,START_DT,END_DT,WORK_TRANS_ID" +
-                " from WORK_TRANSITION_INSTANCE" +
-                " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID";
+                    " from WORK_TRANSITION_INSTANCE" +
+                    " where PROCESS_INST_ID=? order by WORK_TRANS_INST_ID";
             rs = db.runSelect(query, procInstId);
             TransitionInstance workTransInstance;
             while (rs.next()) {
@@ -120,7 +120,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             procInstInfo.setTransitions(workTransInstanceList);
             List<VariableInstance> variableDataList = new ArrayList<VariableInstance>();
             query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
-                "from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
+                    "from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
             rs = db.runSelect(query, procInstId);
             while (rs.next()) {
                 VariableInstance data = new VariableInstance();
@@ -203,7 +203,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     @Override
     public ProcessList getProcessInstanceList(Map<String,String> criteria, Map<String,String> variables, int pageIndex, int pageSize, String orderBy)
-    throws DataAccessException {
+            throws DataAccessException {
         ProcessList procList = getProcessInstanceList(criteria, null, variables, pageIndex, pageSize, orderBy);
         for (ProcessInstance process : procList.getItems())
             populateNameVersionStatus(process);
@@ -283,8 +283,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 orderBy = " ORDER BY PROCESS_INSTANCE_ID DESC\n";
 
             String query = "SELECT pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.OWNER_ID, pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.CREATE_DT, r.rule_set_name, pi.MASTER_REQUEST_ID, pi.COMMENTS"
-                            + " FROM PROCESS_INSTANCE pi,  rule_set r WHERE pi.PROCESS_ID=r.RULE_SET_ID "
-                            + " AND SECONDARY_OWNER_ID = " + secondaryOwnerId + " AND pi.OWNER = '" + owner + "' AND SECONDARY_OWNER = '" + secondaryOwner +"'";
+                    + " FROM PROCESS_INSTANCE pi,  rule_set r WHERE pi.PROCESS_ID=r.RULE_SET_ID "
+                    + " AND SECONDARY_OWNER_ID = " + secondaryOwnerId + " AND pi.OWNER = '" + owner + "' AND SECONDARY_OWNER = '" + secondaryOwner +"'";
             query = query + orderBy;
             ResultSet rs = db.runSelect(query, null);
             List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
@@ -316,7 +316,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             int count = 0;
             // TODO rewrite query to avoid iterating
             for (Long processInstanceId : processInstanceIds)
-              count += deleteOneProcessInstance(processInstanceId);
+                count += deleteOneProcessInstance(processInstanceId);
             db.commit();
             return count;
         } catch(Exception e) {
@@ -352,12 +352,12 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     private int deleteOneProcessInstance(Long processInstanceId) throws SQLException {
         int count = 0, n;
         String query = "select ATTRIBUTE_VALUE from ATTRIBUTE where ATTRIBUTE_OWNER='SYSTEM' and ATTRIBUTE_NAME='"
-                    + PropertyNames.MDW_DB_VERSION + "'";
+                + PropertyNames.MDW_DB_VERSION + "'";
         ResultSet rs = db.runSelect(query, null);
 
         query = "select PROCESS_INSTANCE_ID"
-            + " from PROCESS_INSTANCE"
-            + " where OWNER='" + OwnerType.PROCESS_INSTANCE + "' and OWNER_ID=?";
+                + " from PROCESS_INSTANCE"
+                + " where OWNER='" + OwnerType.PROCESS_INSTANCE + "' and OWNER_ID=?";
         rs = db.runSelect(query, processInstanceId);
         List<Long> childProcInstIds = new ArrayList<Long>();
         while (rs.next()) {
@@ -368,8 +368,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
 
         query = "delete from EVENT_WAIT_INSTANCE where WORK_TRANS_INSTANCE_ID in"
-            + " (select wti.WORK_TRANS_INST_ID from WORK_TRANSITION_INSTANCE wti"
-            + " where wti.PROCESS_INST_ID=?)";
+                + " (select wti.WORK_TRANS_INST_ID from WORK_TRANSITION_INSTANCE wti"
+                + " where wti.PROCESS_INST_ID=?)";
         n = db.runUpdate(query, processInstanceId);
         count += n;
 
@@ -383,31 +383,31 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         n = db.runUpdate(query, processInstanceId);
         count += n;
         query = "delete from TASK_INST_INDEX where TASK_INSTANCE_ID in " +
-            " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-            "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-            "'   and TASK_INSTANCE_OWNER_ID=?)";
+                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
+                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
+                "'   and TASK_INSTANCE_OWNER_ID=?)";
         n = db.runUpdate(query, processInstanceId);
         count += n;
         query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID in " +
-            " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-            "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-            "'   and TASK_INSTANCE_OWNER_ID=?)";
+                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
+                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
+                "'   and TASK_INSTANCE_OWNER_ID=?)";
         n = db.runUpdate(query, processInstanceId);
         count += n;
 
         // delete task instances and related
         query = "delete from INSTANCE_NOTE where INSTANCE_NOTE_OWNER='"+
-                    OwnerType.TASK_INSTANCE + "' and INSTANCE_NOTE_OWNER_ID in " +
-                    " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                    "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                    "'   and TASK_INSTANCE_OWNER_ID=?)";
+                OwnerType.TASK_INSTANCE + "' and INSTANCE_NOTE_OWNER_ID in " +
+                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
+                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
+                "'   and TASK_INSTANCE_OWNER_ID=?)";
         n = db.runUpdate(query, processInstanceId);
         count += n;
         query = "delete from ATTACHMENT where ATTACHMENT_OWNER='"+
-                    OwnerType.TASK_INSTANCE + "' and ATTACHMENT_OWNER_ID in " +
-                    " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                    "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                    "'   and TASK_INSTANCE_OWNER_ID=?)";
+                OwnerType.TASK_INSTANCE + "' and ATTACHMENT_OWNER_ID in " +
+                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
+                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
+                "'   and TASK_INSTANCE_OWNER_ID=?)";
         n = db.runUpdate(query, processInstanceId);
         count += n;
 
@@ -444,7 +444,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         if (startIndex != Query.MAX_ALL)
             sqlBuff.append(db.pagingQueryPrefix());
         sqlBuff.append("select pis.process_instance_id, pis.master_request_id, pis.status_cd, pis.start_dt, pis.end_dt, ")
-            .append("pis.owner, pis.owner_id, pis.process_id, '' as process_name, pis.comments");
+        .append("pis.owner, pis.owner_id, pis.process_id, '' as process_name, pis.comments");
         if (variables != null && variables.size() > 0) {
             for (String varName : variables)
                 sqlBuff.append(", ").append(varName.startsWith("DATE:") ? varName.substring(5) : varName);
@@ -477,23 +477,21 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 }
 
                 sqlBuff.append("\n and exists (select vi.variable_inst_id from variable_instance vi")
-                    .append(" where vi.process_inst_id = pi.process_instance_id")
-                    .append(" and vi.variable_name = '" + varName + "'");
+                .append(" where vi.process_inst_id = pi.process_instance_id")
+                .append(" and vi.variable_name = '" + varName + "'");
 
                 if (isDate && variableTypeId != null) {
                     sqlBuff.append(" and vi.VARIABLE_TYPE_ID = " + variableTypeId); // date var type
                     if (db.isMySQL())
-                        sqlBuff.append("\n and (select str_to_date(concat(substr(ivi.VARIABLE_VALUE, 5, 7), substr(ivi.VARIABLE_VALUE, 25)), '%M %D %Y')");
+                        sqlBuff.append("\n and (select concat(substr(ivi.VARIABLE_VALUE, 5, 7), substr(ivi.VARIABLE_VALUE, 25))");
                     else
-                        sqlBuff.append("\n and (select to_date(substr(ivi.VARIABLE_VALUE, 5, 7) || substr(ivi.VARIABLE_VALUE, 25), 'MON DD YYYY')");
+                        sqlBuff.append("\n and (select substr(ivi.VARIABLE_VALUE, 5, 7) || substr(ivi.VARIABLE_VALUE, 25)");
                     sqlBuff.append("\n     from variable_instance ivi  where ivi.variable_type_id = " + variableTypeId);
                     sqlBuff.append("\n     and ivi.variable_inst_id = vi.variable_inst_id");
-                    if (db.isMySQL())
-                        varValue = dateConditionToMySQL(varValue);
-                    sqlBuff.append("\n     and ivi.variable_name = '" + varName + "') "+ varValue + ") ");
+                    sqlBuff.append("\n     and ivi.variable_name = '" + varName + "') = '"+ varValue + "') ");
                 }
                 else {
-                    sqlBuff.append(" and vi.VARIABLE_VALUE " + varValue + ") ");
+                    sqlBuff.append(" and vi.VARIABLE_VALUE = '" + varValue + "') ");
                 }
             }
         }
@@ -545,7 +543,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         pi.setComment(rs.getString("COMMENTS"));
         pi.setSecondaryOwner(rs.getString("SECONDARY_OWNER"));
         if (pi.getSecondaryOwner() != null)
-          pi.setSecondaryOwnerId(rs.getLong("SECONDARY_OWNER_ID"));
+            pi.setSecondaryOwnerId(rs.getLong("SECONDARY_OWNER_ID"));
         populateNameVersionStatus(pi);
         return pi;
     }
