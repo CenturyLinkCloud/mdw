@@ -60,6 +60,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.services.CollaborationServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.UserServices;
@@ -363,7 +364,32 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         throw new ServiceException(HTTP_400_BAD_REQUEST,
                                 "Missing {action} on request path, should be eg: /Tasks/12345/Claim");
                     try {
-                        if (content.has("taskAction")
+
+                        if(segTwo.contains("comments")){
+                            Note note = new Note(content);
+                            String user = note.getCreateUser();
+                            User userVO = ServiceLocator.getUserManager().getUser(user);
+                            if (userVO == null)
+                                throw new ServiceException("User not found: " + user);
+                            CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+                            TaskInstance taskInstance = taskServices.getInstance(taskInstanceId);
+                            note.setOwnerType(taskInstance.getOwnerType());
+                            note.setOwnerId(taskInstance.getOwnerId());
+                            if(taskInstance.getTitle()!=null){
+                                note.setName(taskInstance.getTitle());
+                            }else{
+                                note.setName("");
+                            }
+                            Long id = collabServices.createNote(note);
+                            List<Note> values = ServiceLocator.getCollaborationServices().getNotes(
+                                    taskInstance.getOwnerType(), taskInstance.getOwnerId());
+                            JSONArray notesJson = new JSONArray();
+                            for (Note noteJson : values) {
+                                notesJson.put(noteJson.getJson());
+                            }
+                            return new JsonArray(notesJson).getJson();
+                        }
+                        else if (content.has("taskAction")
                                 && !content.getString("taskAction").equals(segTwo))
                             throw new ServiceException(HTTP_400_BAD_REQUEST,
                                     "Content/path mismatch (action): '"
