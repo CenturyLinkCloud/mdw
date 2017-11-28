@@ -1,24 +1,20 @@
-USE `mdw`; 
 DROP procedure IF EXISTS `mysql_cleanup`;
 DELIMITER $$
-USE `mdw`$$
-CREATE DEFINER=`mdw`@`localhost` PROCEDURE `mysql_cleanup`(IN inputrnum Double , inputdaydiff double, inputeldaydiff double,
-inputprocid double, inputworkstatusids VARCHAR (100) , inputinterval double)
+CREATE PROCEDURE `mysql_cleanup`(IN inputrnum INT , inputdaydiff INT, inputeldaydiff INT,
+inputprocid INT, inputworkstatusids VARCHAR (100) , inputinterval INT)
 BEGIN
 DECLARE dt                 DATETIME(6);
-   DECLARE rnum               DOUBLE;
-   DECLARE daydiff            DOUBLE;
-   DECLARE eldaydiff          DOUBLE;
-   DECLARE procid             DOUBLE           DEFAULT  0;
-   DECLARE purgestatusid      DOUBLE           DEFAULT  32;
+   DECLARE rnum               INT;
+   DECLARE daydiff            INT;
+   DECLARE eldaydiff          INT;
+   DECLARE procid             INT           DEFAULT  0;
+   DECLARE purgestatusid      INT           DEFAULT  32;
    DECLARE workstatusids      VARCHAR (100);
    DECLARE dynsql             VARCHAR (1000);
    DECLARE processidclause    VARCHAR (1000);
    DECLARE workstatusclause   VARCHAR (1000);
    DECLARE table_exist        VARCHAR (100);
-	
- 
- 
+  
  SET rnum := inputrnum;
  SET daydiff := inputdaydiff;
  SET eldaydiff := inputeldaydiff;
@@ -28,11 +24,10 @@ DECLARE dt                 DATETIME(6);
 SET SQL_SAFE_UPDATES = 0;
 SET foreign_key_checks=0;
 
- 
  SELECT SYSDATE()
      INTO dt
      FROM DUAL;
-	SELECT 'test data'; 
+  SELECT 'test data'; 
    SELECT (CONCAT('Start Purging Process -->' , ifnull(dt, '')));
    SELECT (CONCAT('Start Marking Process Instances to Purge:' , ifnull(dt, '')));
  IF workstatusids IS NOT NULL
@@ -54,22 +49,20 @@ SET foreign_key_checks=0;
       , ifnull(purgestatusid, '')
       , ' where end_dt < '
       ,'DATE_SUB(DATE(NOW()), ' 
-      , 'INTERVAL -'
+      , 'INTERVAL '
       , ifnull(daydiff, '')
       , ' DAY ) '
       , ifnull(workstatusclause, '')
       , ifnull(processidclause, '')
       ,'limit ' 
       , rnum);
-     -- , ' and ROWNUM <= '
-   --   , ifnull(rnum, '')); 
       
    SELECT (CONCAT('Dynamic sql is: ' , ifnull(@dynsql, '')));
 
    PREPARE stmt1 FROM @dynsql; 
-	EXECUTE stmt1; 
-	 COMMIT;
-	DEALLOCATE PREPARE stmt1; 
+  EXECUTE stmt1; 
+   COMMIT;
+  DEALLOCATE PREPARE stmt1; 
 
    SELECT SYSDATE()
      INTO dt
@@ -80,17 +73,17 @@ SET foreign_key_checks=0;
 
    -- mdw tables that need to be cleaned up based on date range
    DELETE FROM event_log
-         WHERE create_dt < CURDATE() - eldaydiff ;
-       --  AND ROWNUM <= rnum;
+         WHERE create_dt < CURDATE() - eldaydiff 
+         LIMIT rnum;
 
    SELECT (   CONCAT('Number of rows deleted from EVENT_LOG: ',ROW_COUNT()));
                         
     COMMIT;
-	
+  
    DELETE FROM event_instance
          WHERE create_dt < CURDATE() - eldaydiff 
-         -- AND ROWNUM <= rnum
-         AND  event_name NOT LIKE 'ScheduledJob%';
+         AND  event_name NOT LIKE 'ScheduledJob%'
+     LIMIT rnum;
 
    SELECT (   CONCAT('Number of rows deleted from EVENT_INSTANCE:',ROW_COUNT()));
                         
@@ -111,7 +104,7 @@ SET foreign_key_checks=0;
 
    SELECT(   CONCAT('Number of rows deleted from EVENT_WAIT_INSTANCE: ',ROW_COUNT()));
     
-	COMMIT;                    
+  COMMIT;                    
    
    SELECT SYSDATE()
      INTO dt
@@ -156,28 +149,7 @@ SET foreign_key_checks=0;
      INTO dt
      FROM DUAL;
 
-   SELECT (CONCAT('Start Purging Task Instances and Related:' , ifnull(dt, '')));
-
-   --  delete all the slaInstances that belong to task instances of current process instances
---   DELETE      sla_instance si
---         WHERE si.sla_inst_owner = 'TASK_INSTANCE'
---           AND si.sla_inst_owner_id IN (
---                  SELECT task_instance_id
---                    FROM task_instance ti
---                   WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
---                     AND ti.task_instance_owner_id IN (
---                                               SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
---                                                      process_instance_id
---                                                 FROM process_instance
---                                                WHERE status_cd =
---                                                                 purgestatusid));
--- 
---   DBMS_OUTPUT.SELECT
---               (   'Number of rows deleted from SLA_INSTANCE(TASK_INSTANCE): '
---                || SQL%ROWCOUNT
---               );
--- 
---   
+   SELECT (CONCAT('Start Purging Task Instances and Related:' , ifnull(dt, ''))); 
 
    -- delete all the instance notes for the task instances
    DELETE  from    instance_note
@@ -194,7 +166,7 @@ SET foreign_key_checks=0;
 
    SELECT (   CONCAT('Number of rows deleted from INSTANCE_NOTE: ',ROW_COUNT()));
                     
-					 COMMIT;
+           COMMIT;
   SELECT table_name
      INTO table_exist
      FROM information_schema.tables
@@ -251,7 +223,7 @@ SET foreign_key_checks=0;
      INTO dt
      FROM DUAL;
 
-   SELECT (CONCAT('Start Purging Document Records: ' , ifnull(dt, '')));
+   SELECT (CONCAT('Start Purging Document Content Records: ' , ifnull(dt, '')));
 
    
    --deleting from document_content to avoid the integrity constraint issue
@@ -265,38 +237,36 @@ SET foreign_key_checks=0;
                         WHERE pi.process_instance_id = doc.owner_id
                           AND pi.status_cd = purgestatusid)
                )
-   		 -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 
-            OR (    doc.create_dt <
-                         TO_DATE (TO_CHAR (SYSDATE, 'MM/DD/YYYY'),
-                                  'MM/DD/YYYY'
-                                 )
-                       - daydiff        
+       -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 
+            OR ( doc.create_dt < CURDATE() - daydiff 
                 AND doc.owner_id = 0 
                 AND doc.owner_type IN ('LISTENER_REQUEST', 'USER')
                )
-   		 -- 3. all documents with TASK_INSTANCE as owner
-            OR (    doc.create_dt <
-                         TO_DATE (TO_CHAR (SYSDATE, 'MM/DD/YYYY'),
-                                  'MM/DD/YYYY'
-                                 )
-                       - daydiff             
+       -- 3. all documents with TASK_INSTANCE as owner
+            OR ( doc.create_dt < CURDATE() - daydiff           
                AND doc.owner_id = 0
                 AND doc.owner_type = 'TASK_INSTANCE'
                )
-   		 -- 4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
+       -- 4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
             OR (    doc.owner_type IN ('LISTENER_RESPONSE', 'DOCUMENT')
                 AND NOT EXISTS (SELECT *
                                   FROM document doc2
                                  WHERE doc2.document_id = doc.owner_id)
                ));
+   SELECT
+      (   CONCAT('Number of rows deleted from DOCUMENT Content: ',ROW_COUNT()));
+       
+      COMMIT;
 
-   
-   
-   
+   SELECT SYSDATE()
+     INTO dt
+     FROM DUAL;
+
+   SELECT (CONCAT('Start Purging Document Records: ' , ifnull(dt, '')));
    
    -- delete DOCUMENT 
    DELETE   from doc USING document as doc 
-   		 -- 1. all documents with process instance ID populated
+       -- 1. all documents with process instance ID populated
          WHERE (
           doc.owner_id!= 0 AND doc.OWNER_TYPE = 'PROCESS_INSTANCE' 
                 AND 
@@ -309,21 +279,21 @@ SET foreign_key_checks=0;
                           AND 
                           pi.status_cd = purgestatusid)
                )
-   		 -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 
+       -- 2. all documents with LISTENER_REQUEST/USER as owner type and no process inst ID 
             OR (    doc.create_dt <
                          CURDATE()
                        - daydiff
                AND doc.owner_id  = 0
                 AND doc.owner_type IN ('LISTENER_REQUEST', 'USER')
                )
-   		 -- 3. all documents with TASK_INSTANCE as owner
+       -- 3. all documents with TASK_INSTANCE as owner
             OR (    doc.create_dt <
                          CURDATE()
                        - daydiff 
              AND doc.owner_id  = 0
                 AND doc.owner_type = 'TASK_INSTANCE' 
                )
-   		--  4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
+      --  4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
             OR (    doc.owner_type IN ('LISTENER_RESPONSE', 'DOCUMENT')
                 AND NOT EXISTS (SELECT 1 from(select *
                                   FROM document) doc2
@@ -333,7 +303,7 @@ SET foreign_key_checks=0;
    SELECT
       (   CONCAT('Number of rows deleted from DOCUMENT: ',ROW_COUNT()));
        
-	    COMMIT;
+      COMMIT;
    
    
    SELECT SYSDATE()
@@ -361,4 +331,3 @@ SET foreign_key_checks=0;
 END$$
 
 DELIMITER ;
-

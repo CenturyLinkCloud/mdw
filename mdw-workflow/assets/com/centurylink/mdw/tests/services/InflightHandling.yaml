@@ -1,0 +1,45 @@
+test: InflightHandling
+request:
+  url: 'http://localhost:8080/mdw/Services/Processes/${oldInstId}/values'
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "oldVar": {
+        "display": "Optional",
+        "type": "java.lang.String",
+        "value": "from InflightBefore"
+      }
+    }
+test: InflightHandling
+request:
+  url: 'http://localhost:8080/mdw/Services/Processes/${newInstId}/values'
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "newVar": {
+        "display": "Required",
+        "type": "java.lang.String",
+        "value": "hello I am newVar"
+      },
+      "oldVar": {
+        "display": "Optional",
+        "type": "java.lang.String",
+        "value": "from InflightAfter"
+      }
+    }

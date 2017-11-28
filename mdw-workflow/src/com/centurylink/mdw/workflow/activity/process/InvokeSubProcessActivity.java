@@ -87,7 +87,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         String vn, v;
         for (Variable childVar : childVars) {
             if (!allowInput(childVar)) continue;
-            vn = childVar.getVariableName();
+            vn = childVar.getName();
             v = StringHelper.getMapValue(map, vn, ';');
             if (vn.equals(VariableConstants.REQUEST)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
@@ -132,14 +132,14 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 ownerType = (String) rootProcessOwner[1];
             }
             InternalEvent evMsg = InternalEvent.createProcessStartMessage(
-                    subprocdef.getProcessId(), ownerType,
+                    subprocdef.getId(), ownerType,
                     ownerId, getMasterRequestId(), null,
                     secondaryOwnerType, secondaryOwnerId);
 
             if (engine.isInService()) {  // Current process is Non-service
                 if (subprocIsService && isSynchronousCall()) {
                     ProcessInstance pi = getEngine().createProcessInstance(
-                            subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
+                            subprocdef.getId(), OwnerType.PROCESS_INSTANCE,
                             getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                             getMasterRequestId(), validParams);
 
@@ -147,7 +147,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 }
                 else if (!isSynchronousCall()) {
                     if (engine.getPerformanceLevel() < 5 || !passingByReference) {
-                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId() + "startproc" + subprocdef.getProcessId();
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId() + "startproc" + subprocdef.getId();
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
                     }
@@ -161,13 +161,13 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 if (subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {
                     // Documents exist in DB and so are visible to child
                     ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-                    Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getProcessId(), ownerId, getMasterRequestId(),
+                    Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getId(), ownerId, getMasterRequestId(),
                             validParams, subprocdef.getPerformanceLevel());
                     this.bindVariables(params, true);        // last arg should be true only when perf_level>=9 (DHO:actually 5), but this works
                 }
                 else if (isSynchronousCall() && engine.getPerformanceLevel() >= 9) {  // Documents are cache-only, need to execute in same thread and same engine - ignore child's perf lvl, if any specified
                         ProcessInstance pi = getEngine().createProcessInstance(
-                                subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
+                                subprocdef.getId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                                 getMasterRequestId(), validParams);
 
@@ -177,13 +177,13 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     int perfLevel = subprocdef.getPerformanceLevel();
                     if (isSynchronousCall() && (perfLevel==0 || perfLevel==engine.getPerformanceLevel())) {
                         ProcessInstance pi = getEngine().createProcessInstance(
-                                subprocdef.getProcessId(), OwnerType.PROCESS_INSTANCE,
+                                subprocdef.getId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
                                 getMasterRequestId(), validParams);
                         engine.startProcessInstance(pi, 0);
                     } else {   // Either Async, or mismatch of perf lvls between parent and child - run on new thread and engine
                         String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId()
-                            + "startproc" + subprocdef.getProcessId();
+                            + "startproc" + subprocdef.getId();
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
                     }
@@ -226,22 +226,24 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             Process procdef = getMainProcessDefinition();
             for (String varname : params.keySet()) {
                 String para = getActualParameterVariable(map, varname);
+                if (para == null)
+                    return;
                 Variable var = procdef.getVariable(para);
                 if (var == null)
                     throw new ActivityException("Bound variable: '" + para + "' not found in process definition " + procdef.getLabel());
                 String varvalue = params.get(varname);
                 Object value;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getVariableType())) {
+                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
                     if (StringHelper.isEmpty(varvalue)) value = null;
                     else if (varvalue.startsWith("DOCUMENT:"))
-                        value = VariableTranslator.toObject(var.getVariableType(), varvalue);
+                        value = VariableTranslator.toObject(var.getType(), varvalue);
                     else {
-                        DocumentReference docref = super.createDocument(var.getVariableType(),
+                        DocumentReference docref = super.createDocument(var.getType(),
                                 varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                         value = new DocumentReference(docref.getDocumentId());
                     }
                 } else {
-                    value = VariableTranslator.toObject(var.getVariableType(), varvalue);
+                    value = VariableTranslator.toObject(var.getType(), varvalue);
                 }
                 this.setParameterValue(para, value);
             }
@@ -259,7 +261,9 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     private String getActualParameterVariable(String map, String parameterName)
             throws ActivityException {
         String v = StringHelper.getMapValue(map, parameterName, ';');
-        if (v==null || v.length()<2 || (v.charAt(0)!='$' && v.charAt(0)!='#'))
+        if (v==null)
+            return null;
+        if (v.length()<2 || (v.charAt(0)!='$' && v.charAt(0)!='#'))
             throw new ActivityException(ERR_OUTPARA + ": " + parameterName);
         for (int i=1; i<v.length(); i++) {
             if (!Character.isLetterOrDigit(v.charAt(i))&& v.charAt(i)!='_')

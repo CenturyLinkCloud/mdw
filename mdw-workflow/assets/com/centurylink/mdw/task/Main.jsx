@@ -1,7 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {
-  BrowserRouter as Router, Switch, Route, IndexRoute
+  BrowserRouter as Router, Route
 } from '../node/node_modules/react-router-dom';
 import Nav from './Nav.jsx';
 import Task from './Task.jsx';
@@ -53,7 +53,7 @@ class Main extends Component {
   }
   
   refreshTask(id) {
-    console.log('retrieving task: ' + id);
+    console.log('retrieving task: ' + id);  // eslint-disable-line no-console
     fetch(new Request('/mdw/services/Tasks/' + id, {
       method: 'GET',
       headers: { Accept: 'application/json'}

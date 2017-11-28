@@ -1,12 +1,12 @@
 {
   "dateVar": {
-    "display": "Optional",
+    "display": "Required",
     "label": "Date Var",
     "type": "java.util.Date",
-    "value": "Thu Sep 01 13:52:01 MDT 2016"
+    "value": "2017-11-13T20:15:30Z"
   },
   "docVar": {
-    "display": "Optional",
+    "display": "ReadOnly",
     "type": "org.w3c.dom.Document",
     "value": "<full>\n    <document content=\"xml\"/>\n<\/full>\n"
   },

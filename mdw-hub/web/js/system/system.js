@@ -2,14 +2,25 @@
 
 var sysMod = angular.module('system', ['ngResource', 'mdw']);
 
-sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'WorkflowCache', 'mdw', 'System',
-                                        function($scope, $routeParams, $location, WorkflowCache, mdw, System) {
+sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'WorkflowCache', 'mdw', 'System', 'Assets',
+                                        function($scope, $routeParams, $location, WorkflowCache, mdw, System, Assets) {
 
   $scope.sysInfoType = $routeParams.sysInfoType;
   if (typeof $scope.sysInfoType === 'undefined') {
     $scope.sysInfoType = 'System';
   }
-  $scope.sysInfoCategories = System.get({sysInfoType: $scope.sysInfoType});
+  
+  $scope.sysInfoCategories = System.get({sysInfoType: $scope.sysInfoType}, function() {
+    $scope.defaultClassLoader = $scope.sysInfoCategories.find(function(cat) {
+      return cat.name === 'System Details';
+    }).sysInfos.find(function (sysInfoCat) {
+      return sysInfoCat.name === 'Default ClassLoader';
+    }).value;
+    $scope.classLoader = $scope.defaultClassLoader;
+  });
+  
+  $scope.packageList = Assets.get({});
+  
   $scope.filepanelUrl = mdw.roots.webTools + '/system/filepanel/index.jsf?user=' + $scope.authUser.cuid;
   
   $scope.cacheRefresh = function(refreshType) {
@@ -24,9 +35,25 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
       });
   };
   
-  $scope.findClass = function(className) {
-    $scope.classInfo = System.get({sysInfoType: 'Class', className: className});
+  $scope.setClassLoader = function(classLoader) {
+    $scope.classLoader = classLoader;
   };
+  
+  $scope.findClass = function(className) {
+    $scope.classInfo = System.get({sysInfoType: 'Class', className: className, classLoader: $scope.classLoader});
+  };
+  
+  $scope.runCli = function(command) {
+    $scope.commandInfo = System.get({sysInfoType: 'CLI', command: command});
+  };
+  
+  $scope.console = new Console();
+  $scope.cliHelpUrl = mdw.roots.docs + '/getting-started/cli/#usage';
+  
+  $scope.clearConsole = function() {
+    $scope.console.clear();
+  };
+  
 }]);
 
 sysMod.factory('System', ['$resource', 'mdw', function($resource, mdw) {

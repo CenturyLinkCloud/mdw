@@ -633,6 +633,7 @@
 }
 .mdw-icon-btn {
   font-size: 16px;
+  font-weight: bold;
   position: relative;
   top: 2px;
 }
@@ -1150,6 +1151,13 @@
 }
 .mdw-push {
 	font-size: 12px;
+}
+.mdw-console {
+	color: #f1f1f1;
+	background-color: black;
+	width: 100%;
+	font-size: 15px;
+  font-family: monospace;
 }
 .mdw-highlight {
   color: #880000;

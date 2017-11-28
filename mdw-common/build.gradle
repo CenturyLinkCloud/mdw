@@ -54,14 +54,14 @@ dependencies {
     compile group: "commons-jexl", name: "commons-jexl", version: "1.1"
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "junit", name: "junit", version: "4.8.1"
-    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "3.4.1.201406201815-r"
-    compile group: "com.jcraft", name: "jsch", version: "0.1.51" // for jgit
+    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "4.8.0.201706111038-r"
+    compile(group: "org.eclipse.jgit", name: "org.eclipse.jgit.pgm", version: "4.8.0.201706111038-r") { transitive = false; } // cli-only
+    compile group: "com.jcraft", name: "jsch", version: "0.1.54" // for jgit
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
-//    compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "1.2.2"
     compile group: "el-impl", name: "el-impl", version: "1.0"
     compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
     compile group: "org.yaml", name: "snakeyaml", version: "1.18"
-    compile group: "io.limberest", name: "limberest", version: "1.0.08"
+    compile group: "io.limberest", name: "limberest", version: "1.0.11"
     
     // swagger
     compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"
@@ -113,11 +113,24 @@ task cliJar(type: Jar) {
     manifest {
         attributes("MDW-Version": "${version}",
             "MDW-Build": new Date().format(mdwBuildTimeFormat),
-            "Main-Class": "com.centurylink.mdw.cli.Main")
+            "Main-Class": "com.centurylink.mdw.cli.Main",
+            "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar"
+              + " ./lib/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar"
+              + " ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/args4j-2.0.15.jar"
+              + " ./lib/httpclient-4.5.3.jar ./lib/httpcore-4.4.7.jar ./lib/commons-logging-1.2.jar ./lib/mariadb-java-client-1.2.2.jar"
+              + " ./lib/org.eclipse.jgit.ui-4.8.0.201706111038-r.jar")
     }
     
     from("build/classes") {
         include "com/centurylink/mdw/cli/**/*.class"
+        include "com/centurylink/mdw/dataaccess/AssetRevision.class"
+        include "com/centurylink/mdw/dataaccess/VersionControl.class"
+        include "com/centurylink/mdw/dataaccess/file/VersionControlGit.class"
+        include "com/centurylink/mdw/dataaccess/file/VersionControlGit\$*.class"
+        include "com/centurylink/mdw/dataaccess/file/GitDiffs.class"
+        include "com/centurylink/mdw/dataaccess/file/GitDiffs\$*.class"
+        include "com/centurylink/mdw/dataaccess/AssetRef.class"
+        include "com/centurylink/mdw/model/asset/CommitInfo.class"
     }
     
     from configurations.cli.asFileTree.files.collect {
@@ -140,7 +153,7 @@ jar {
     // avoid confusingly including tomcat spring config(s)
     exclude "META-INF/mdw/spring/**"
     
-    // include needed schmemas within mdw-common
+    // include needed schemas within mdw-common
     from configurations.schemas.asFileTree.files.collect {
         zipTree(it)
     }

@@ -15,6 +15,8 @@ converter.factory('ObjectTableConverter', ['mdw', 'util', function(mdw, util) {
             row.push(prop);
           else if (val[colWidget.name])
             row.push(val[colWidget.name]);
+          else
+            row.push('');
         });
         rows.push(row);
       });

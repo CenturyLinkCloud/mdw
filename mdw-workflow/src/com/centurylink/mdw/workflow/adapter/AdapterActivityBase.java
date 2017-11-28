@@ -656,7 +656,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             if (StringHelper.isEmpty(preScriptLanguage)) {
                 throw new ActivityException(-1, "PreScript Language not defined for the PreScript");
             }
-            Object retObj = executeScript(getPreScript(), preScriptLanguage, getPreScriptBindings(request));
+            Object retObj = executeScript(getPreScript(), preScriptLanguage, getPreScriptBindings(request), "pre");
             Object variableReq = (retObj != null ? retObj : request);
             if (variableReq != null)
                 return variableReq;
@@ -670,7 +670,7 @@ public abstract class AdapterActivityBase extends DefaultActivityImpl implements
             if (StringHelper.isEmpty(postScriptLanguage)) {
                 throw new ActivityException(-1, "PostScript Language not defined for the PostScript");
             }
-            Object retObj = executeScript(getPostScript(), postScriptLanguage, getPostScriptBindings(response));
+            Object retObj = executeScript(getPostScript(), postScriptLanguage, getPostScriptBindings(response), "post");
             if (null != retObj) {
                 setReturnCode(retObj.toString());
             }

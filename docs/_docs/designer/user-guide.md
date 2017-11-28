@@ -13,11 +13,9 @@ title: Designer User Guide
 - If you've cloned an existing mdw project from Git, you'll see should the project in MDW Designer perspective. 
   
 #### How to Use MDW Designer
-If you would like to create a new project from scratch,  refer to one of the following guides:  
-- [MDW Cookbook](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/)
 
-##### 1. Create an MDW-enabled Project
-Chances are you've already got a project, either by cloning it from Git, or by following the [MDW Quickstart](../../getting-started/quick-start).
+##### 1. Create a local MDW Project
+Chances are you've already got a project, either by cloning it from Git, or by following the [MDW Quick Start](../../getting-started/quick-start).
 However, there's also an Eclipse wizard to accomplish the same thing.
 - Open Designer Perspective in Eclipse:
   - From the menus select Window > Open Perspective > Other > MDW Designer.

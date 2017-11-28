@@ -183,7 +183,7 @@ public class EventManagerBean implements EventManager {
         try {
             transaction = edao.startTransaction();
             Process processVO = ProcessCache.getProcess(pProcessId);
-            ProcessInstance pi = new ProcessInstance(pProcessId, processVO.getProcessName());
+            ProcessInstance pi = new ProcessInstance(pProcessId, processVO.getName());
             pi.setOwner(pProcessOwner);
             pi.setOwnerId(pProcessOwnerId);
             pi.setSecondaryOwner(pSecondaryOwner);
@@ -259,16 +259,16 @@ public class EventManagerBean implements EventManager {
                 edao.updateVariableInstance(varInst);
             } else {
                 if (value != null) {
-                    Process processVO = ProcessCache.getProcess(edao.getProcessInstance(procInstId).getProcessId());
-                    Variable variableVO = processVO.getVariable(name);
-                    if (variableVO==null) {
-                        throw new DataAccessException("Variable " + name + " is not defined for process " + processVO.getProcessId());
+                    Process process = ProcessCache.getProcess(edao.getProcessInstance(procInstId).getProcessId());
+                    Variable variable = process.getVariable(name);
+                    if (variable == null) {
+                        throw new DataAccessException("Variable " + name + " is not defined for process " + process.getId());
                     }
 
                     varInst = new VariableInstance();
                     varInst.setName(name);
-                    varInst.setVariableId(variableVO.getVariableId());
-                    varInst.setType(variableVO.getVariableType());
+                    varInst.setVariableId(variable.getId());
+                    varInst.setType(variable.getType());
                     if (value instanceof String) varInst.setStringValue((String)value);
                     else varInst.setData(value);
 
@@ -562,7 +562,7 @@ public class EventManagerBean implements EventManager {
             Process procdef = ProcessCache.getProcess(processName, 0);
             if (procdef==null) return null;
             transaction = edao.startTransaction();
-            return edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
+            return edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
         } catch (SQLException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {
@@ -595,10 +595,10 @@ public class EventManagerBean implements EventManager {
             transaction = edao.startTransaction();
             List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
             List<ProcessInstance> procInstList =
-                edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getProcessId());
+                edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
             if (procInstList.size()==0) return actInstList;
             for (ProcessInstance pi : procInstList) {
-                List<ActivityInstance> actInsts = edao.getActivityInstances(actdef.getActivityId(), pi.getId(), false, false);
+                List<ActivityInstance> actInsts = edao.getActivityInstances(actdef.getId(), pi.getId(), false, false);
                 for (ActivityInstance ai : actInsts) {
                     actInstList.add(ai);
                 }
@@ -686,8 +686,11 @@ public class EventManagerBean implements EventManager {
             Document docvo = edao.getDocument(docid, false);
             if (documentType != null)
                 docvo.setDocumentType(documentType);
-            if (ownerType != null)
+            if (ownerType != null) {
+                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
+                    edao.updateDocumentMongoCollection(docvo, ownerType);
                 docvo.setOwnerType(ownerType);
+            }
             if (ownerId != null)
                 docvo.setOwnerId(ownerId);
             edao.updateDocumentInfo(docvo);

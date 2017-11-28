@@ -16,11 +16,13 @@
 package com.centurylink.mdw.service.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,8 +37,6 @@ import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.startup.StartupException;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("/WorkflowCache")
@@ -63,16 +63,10 @@ public class WorkflowCache extends JsonRestService {
         return Entity.Cache;
     }
 
-    /**
-     * TODO: Handle content values "excludes" and "include" for intelligent refresh.
-     * Then this can be used by Designer.
-     */
     @Override
     @Path("/{cacheName}")
     @ApiOperation(value="Refresh the entire MDW workflow cache, or an individual cache",
         notes="If {cacheName} is present a single cache is refresh, otherwise all caches are refreshed", response=StatusMessage.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="distributed", paramType="body", dataType="boolean")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
 
@@ -80,8 +74,15 @@ public class WorkflowCache extends JsonRestService {
             String singleCacheName = getSegment(path, 1);
 
             if (singleCacheName == null) {
-                // TODO excludes and includes
-                CacheRegistration.getInstance().refreshCaches(null);
+                List<String> excludeFormats = null;
+                if (content.has("excludeFormats")) {
+                    excludeFormats = new ArrayList<>();
+                    JSONArray jsonArr = content.getJSONArray("excludeFormats");
+                    for (int i = 0; i < jsonArr.length(); i++) {
+                        excludeFormats.add(jsonArr.getString(i));
+                    }
+                }
+                CacheRegistration.getInstance().refreshCaches(excludeFormats);
             }
             else {
                 new CacheRegistration().refreshCache(singleCacheName);

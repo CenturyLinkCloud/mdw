@@ -17,8 +17,6 @@ package com.centurylink.mdw.dataaccess;
 
 import java.util.Date;
 
-import com.centurylink.mdw.model.asset.Asset;
-
 public class AssetRevision {
 
     private int version;
@@ -33,7 +31,7 @@ public class AssetRevision {
     }
 
     public AssetRevision(String ver) {
-        this.version = Asset.parseVersion(ver);
+        this.version = parseVersion(ver);
     }
 
     public String getFormattedVersion() {
@@ -56,5 +54,23 @@ public class AssetRevision {
 
     public String getComment() { return comment; }
     public void setComment(String comment) { this.comment = comment; }
+
+    public static int parseVersion(String versionString) throws NumberFormatException {
+        if (versionString == null)
+            return 0;
+        if (versionString.startsWith("v"))
+            versionString = versionString.substring(1);
+        int dot = versionString.indexOf('.');
+        int major, minor;
+        if (dot > 0) {
+            major = Integer.parseInt(versionString.substring(0, dot));
+            minor = Integer.parseInt(versionString.substring(dot + 1));
+        }
+        else {
+            major = 0;
+            minor = Integer.parseInt(versionString);
+        }
+        return major * 1000 + minor;
+    }
 
 }

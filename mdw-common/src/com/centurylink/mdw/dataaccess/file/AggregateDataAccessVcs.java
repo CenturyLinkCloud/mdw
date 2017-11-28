@@ -53,13 +53,24 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
     public List<ProcessCount> getTopThroughputProcessInstances(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("select count(pi.process_id) as ct, pi.process_id\n");
-            sql.append("from (select process_id from process_instance ");
+            sql.append("select pi.ct as ct,ROUND(pi.comTime) as coTi, pi.process_id\n");
+            if (db.isMySQL()){
+                sql.append("from (select process_id ,avg(TIMEDIFF(end_dt,start_dt)* 600) as comTime,count(process_instance_id) as ct  from process_instance ");
+            }else{
+                sql.append("from (");
+                        sql.append("select  process_id,avg(");
+                        sql.append("(extract(hour from end_dt)-extract(hour from start_dt))*3600+");
+                        sql.append("(extract(minute from end_dt)-extract(minute from start_dt))*60+");
+                        sql.append("extract(second from end_dt)-extract(second from start_dt))*1000 as comTime,count(process_instance_id) as ct ");
+                        sql.append("from process_instance ");
+            }
             sql.append(getProcessWhereClause(query));
-            sql.append(") pi\n");
-            sql.append("group by process_id\n");
-            sql.append("order by ct desc\n");
-
+            sql.append(" group by process_id) pi\n");
+            if (query.getBooleanFilter("completionTime")){
+                sql.append("order by pi.comTime desc\n");
+            }else{
+                sql.append("order by ct desc\n");
+            }
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
             List<ProcessCount> list = new ArrayList<ProcessCount>();
@@ -68,6 +79,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             while (rs.next() && (limit == -1 || idx < limit)) {
                 ProcessCount procCount = new ProcessCount(rs.getLong("ct"));
                 procCount.setId(rs.getLong("process_id"));
+                procCount.setMeanCompletionTime(rs.getLong("coTi"));
                 list.add(procCount);
                 idx++;
             }
@@ -103,19 +115,28 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             StringBuilder sql = new StringBuilder();
             if (statusCodes != null)
                 sql.append("select count(pi.status_cd) as ct, pi.st, pi.status_cd\n");
-            else if (processIds != null)
-                sql.append("select count(pi.process_id) as ct, pi.st, pi.process_id\n");
-            else
-                sql.append("select count(pi.st) as ct, pi.st\n");
+            else if (processIds != null){
+                  sql.append("select pi.ct as ct,ROUND(pi.comTime) as coTi, pi.st, pi.process_id\n");
+            }else
+                  sql.append("select pi.ct as ct, pi.st\n");
 
             if (db.isMySQL())
                 sql.append("from (select DATE_FORMAT(start_dt,'%d-%M-%Y') as st");
-            else
-                sql.append("from (select to_char(start_dt,'DD-Mon-yyyy') as st");
+            else{
+                //sql.append("from (select to_char(start_dt,'DD-Mon-yyyy') as st");
+                sql.append("from (select TO_CHAR(min(start_dt), 'DD-Mon-yyyy') as st");
+            }
             if (statusCodes != null)
                 sql.append(", status_cd ");
             else if (processIds != null)
                 sql.append(", process_id ");
+            if (db.isMySQL()){
+               sql.append(",avg(TIMEDIFF(end_dt,start_dt)* 600) as comTime, count(process_instance_id) as ct  ");
+            }else{
+                sql.append(",avg((extract(hour from end_dt)-extract(hour from start_dt))*3600+");
+                sql.append("(extract(minute from end_dt)-extract(minute from start_dt))*60+");
+                sql.append("extract(second from end_dt)-extract(second from start_dt))*1000 as comTime,count(process_instance_id) as ct ");
+            }
             sql.append("  from process_instance\n   ");
             sql.append(getProcessWhereClause(query));
             if (statusCodes != null)
@@ -124,15 +145,26 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("\n   and process_id ").append(getInCondition(processIds));
             sql.append(") pi\n");
 
-            sql.append("group by st");
+            /*
+             sql.append("group by st");
             if (statusCodes != null)
                 sql.append(", status_cd");
             else if (processIds != null)
                 sql.append(", process_id");
-            if (db.isMySQL())
-                sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
-            else
-                sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
+                */
+            if (db.isMySQL()){
+                if (query.getBooleanFilter("completionTime")){
+                  sql.append("\norder by pi.comTime desc\n");
+                }else{
+                  sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
+                }
+            } else{
+                if (query.getBooleanFilter("completionTime")){
+                    sql.append("\norder by pi.comTime desc\n");
+                }else{
+                    sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
+                }
+            }
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
@@ -146,6 +178,9 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     map.put(startDate, processCounts);
                 }
                 ProcessCount processCount = new ProcessCount(rs.getLong("ct"));
+                if (query.getBooleanFilter("completionTime")){
+                   processCount.setMeanCompletionTime(rs.getLong("coTi"));
+                }
                 if (statusCodes != null)
                     processCount.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
                 else if (processIds != null)
@@ -178,9 +213,15 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         else
             where.append("where start_dt >= '" + startStr + "' ");
         where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
+
         if (query.getBooleanFilter("master"))
             where.append(", 'PROCESS_INSTANCE' ");
-        where.append(") ");
+            where.append(") ");
+        if (query.getBooleanFilter("completionTime")){
+
+            where.append(" and end_dt is not null ");
+
+        }
         String status = query.getFilter("status");
         if (status != null)
             where.append("and STATUS_CD = " + WorkStatuses.getCode(status));
@@ -483,7 +524,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     in.append(",");
             }
         }
-        in.append(")");
+        in.append(")  group by process_id ");
         return in.toString();
     }
 

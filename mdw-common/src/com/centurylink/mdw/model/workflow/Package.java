@@ -218,8 +218,8 @@ public class Package implements Serializable, Jsonable {
         if (processes == null)
           return false;
 
-        for (Process processVO : processes) {
-            if (processVO.getProcessId().equals(processId))
+        for (Process process : processes) {
+            if (process.getId().equals(processId))
                 return true;
         }
         return false;
@@ -470,12 +470,12 @@ public class Package implements Serializable, Jsonable {
         // try dynamic java first (preferred in case patch override is needed)
         try {
             ClassLoader parentLoader = getCloudClassLoader();
-            return (GeneralActivity) CompiledJavaCache.getInstance(activity.getImplementorClassName(), parentLoader, this);
+            return (GeneralActivity) CompiledJavaCache.getInstance(activity.getImplementor(), parentLoader, this);
         }
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
-        String implClass = Compatibility.getActivityImplementor(activity.getImplementorClassName());
+        String implClass = Compatibility.getActivityImplementor(activity.getImplementor());
         GeneralActivity injected = SpringAppContext.getInstance().getActivityImplementor(implClass, this);
         if (injected != null)
             return injected;
@@ -504,6 +504,9 @@ public class Package implements Serializable, Jsonable {
     }
 
     public static String formatVersion(int version) {
+        if (version < 0) // Negative version means fake pkg (for when retrieving assets from Git history)
+            return "-" + formatVersion((version * -1));
+
         int major = version/1000;
         int minor = version%1000;
         int point = minor%100;

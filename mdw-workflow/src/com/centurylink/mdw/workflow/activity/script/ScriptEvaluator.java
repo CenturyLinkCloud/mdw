@@ -80,7 +80,7 @@ public class ScriptEvaluator extends AbstractEvaluator  {
 
     protected boolean isBooleanExpression(String language, String expression) throws ActivityException {
         for (Variable varVO: getMainProcessDefinition().getVariables()) {
-            if (Boolean.class.getName().equals(varVO.getVariableType())) {
+            if (Boolean.class.getName().equals(varVO.getType())) {
                 if (JAVA_EL.equals(language)) {
                     if (expression.equals("#{" + varVO.getName() + "}"))
                         return true;

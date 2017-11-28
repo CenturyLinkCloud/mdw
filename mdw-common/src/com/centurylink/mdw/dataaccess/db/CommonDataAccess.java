@@ -905,6 +905,22 @@ public class CommonDataAccess {
         db.runUpdate(query, args);
     }
 
+    public void deleteVariable(VariableInstance variableInstance) throws SQLException {
+        try {
+            db.openConnection();
+            deleteVariable0(variableInstance);
+            db.commit();
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected void deleteVariable0(VariableInstance variableInstance) throws SQLException {
+        String query = "delete from VARIABLE_INSTANCE where VARIABLE_INST_ID=?";
+        db.runUpdate(query, variableInstance.getInstanceId());
+    }
+
     /**
      * Assumes pi.* table prefix.
      */

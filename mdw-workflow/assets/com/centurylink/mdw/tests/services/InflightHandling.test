@@ -1,0 +1,184 @@
+package com.centurylink.mdw.tests.services
+
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+import java.nio.file.Files
+import java.nio.file.Paths
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+
+svcPkg = 'com.centurylink.mdw.tests.services'
+wfPkg = 'com.centurylink.mdw.tests.workflow'
+
+def vals = [
+    'asset-path': wfPkg + '/Inflight.proc'
+]
+
+def opts = [
+    captureResult: false
+]
+
+// cleanup if exists
+def DEL = request(svcPkg + '/asset-apis.postman/DEL:asset') {
+    values = vals;
+    options = opts;
+}
+def response = submit DEL
+if (response.status.code != 404)
+    refreshCache()
+
+// create new
+vals['asset-name'] = 'Inflight.proc'
+def POST = request(svcPkg + '/asset-apis.postman/POST:asset') {
+    values = vals
+    options = opts
+}
+response = submit POST
+assert response.status.code == 200
+
+// get v0.1 def
+vals['asset-path'] = wfPkg + '/InflightBefore.proc'
+def GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
+    values = vals
+    options = opts
+}
+response = submit GET
+assert response.status.code == 200
+
+// update with v0.1 def
+vals['asset-path'] = wfPkg + '/Inflight.proc'
+vals['asset-version'] = '0.1'
+vals['proc-def-json'] = response.body
+def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
+    values = vals
+    options = opts
+}
+response = submit PUT
+assert response.status.code == 200
+
+refreshCache()
+
+def oldProcRun = startProcess('oldOldVar')
+logLine('Inflight v0.1: ' + oldProcRun.masterRequestId + ' (' + oldProcRun.instanceId + ')')
+sleep 5
+
+// get v0.2 def
+vals['asset-path'] = wfPkg + '/InflightAfter.proc'
+GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
+    values = vals
+    options = opts
+}
+response = submit GET
+assert response.status.code == 200
+
+// update with v0.2 def
+vals['asset-path'] = wfPkg + '/Inflight.proc'
+vals['asset-version'] = '0.2'
+vals['proc-def-json'] = response.body
+PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
+    values = vals
+    options = opts
+}
+response = submit PUT
+assert response.status.code == 200
+
+refreshCache() // otherwise v0.1 summary will be retrieved
+
+def newProcRun = startProcess('newOldVar')
+logLine('Inflight v0.2: ' + newProcRun.masterRequestId + ' (' + newProcRun.instanceId + ')')
+sleep 5
+
+// resume old and new process
+notifyProcess(oldProcRun.masterRequestId)
+notifyProcess(newProcRun.masterRequestId)
+sleep 5
+
+cleanup()
+
+// retrieve instance values for verification
+getValues(oldProcRun.instanceId)
+def valuesResponse = getValues(newProcRun.instanceId)
+verify(valuesResponse) {
+  values = [
+      oldInstId: oldProcRun.instanceId,
+      newInstId: newProcRun.instanceId
+  ]
+}
+
+Object startProcess(String oldVar) {
+    def vals = ['process-path': wfPkg + '/Inflight.proc']
+    def GET = request(svcPkg + '/process-apis.postman/GET:summary') {
+        values = vals
+        options = [captureResult: false]
+    }
+    def resp = submit GET
+    assert resp.status.code == 200
+    def sum = new JsonSlurper().parseText(resp.body)
+    vals['process-id'] = sum.id
+    GET = request(svcPkg + '/process-apis.postman/GET:run') {
+        values = vals
+        options = [captureResult: false]
+    }
+    resp = submit GET
+    assert resp.status.code == 200
+    def procRun = new JsonSlurper().parseText(resp.body)
+    procRun.values.oldVar.value = oldVar
+    def procRunJson = JsonOutput.toJson(procRun)
+    vals['proc-run-json'] = procRunJson
+    def POST = request(svcPkg + '/process-apis.postman/POST:run') {
+        values = vals
+        options = [captureResult: false]
+    }
+    resp = submit POST
+    assert resp.status.code == 200
+    return new JsonSlurper().parseText(resp.body)
+}
+
+Object notifyProcess(masterRequestId) {
+    def POST = request(svcPkg + '/process-apis.postman/POST:events/{event-id}') {
+        values = ['event-id': masterRequestId]
+        options = [captureResult: false]
+    }
+    def response = submit POST
+    assert response.status.code == 200
+    return new JsonSlurper().parseText(response.body)
+}
+
+/**
+ * returns response object to be passed to verify()
+ */
+Object getValues(processInstanceId) {
+    def GET = request(svcPkg + '/process-apis.postman/GET:{process-instance-id}/values') {
+        values = ['process-instance-id': processInstanceId]
+        options = [captureResult: true]
+    }
+    def response = submit GET
+    assert response.status.code == 200
+    return response
+}
+
+Object refreshCache() {
+    // refresh the cache (TODO: exclude?)
+    def POST = request(svcPkg + '/asset-apis.postman/POST:refresh') {
+        values = [:]
+        options = [captureResult: false]
+    }
+    def response = submit POST
+    assert response.status.code == 200
+    return new JsonSlurper().parseText(response.body)
+}
+
+/**
+ * Overwrite Inflight.proc with InflightBefore.proc, and change it's version back to 0.1
+ * so that it has the correct asset archive history.
+ */
+void cleanup() {
+    def beforePath = Paths.get(asset(wfPkg + '/InflightBefore.proc').rawFile.path)
+    def inflightPath = Paths.get(asset(wfPkg + '/Inflight.proc').rawFile.path)
+    logLine 'copying from: ' + beforePath + ' to: ' + inflightPath
+    Files.copy(beforePath, inflightPath, REPLACE_EXISTING)
+
+    def versionsFile = new File(inflightPath.parent.toString() + '/.mdw/versions')
+    logLine 'reset version in ' + versionsFile
+    def newVers = versionsFile.text.replace('\nInflight.proc=2', '\nInflight.proc=1')
+    Files.write(Paths.get(versionsFile.path), newVers.getBytes())
+}

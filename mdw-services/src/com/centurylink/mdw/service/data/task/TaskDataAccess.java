@@ -696,6 +696,8 @@ public class TaskDataAccess extends CommonDataAccess {
                     // otherwise master request id
                     where = "where ti.master_request_id like '" + query.getFind() + "%'\n";
                 }
+                if (!db.isMySQL())
+                    where = where + " and ui.user_info_id(+) = ti.task_claim_user_id\n";
             }
             else {
                 where = buildTaskInstanceWhere(query);
@@ -737,7 +739,13 @@ public class TaskDataAccess extends CommonDataAccess {
                             logger.severeException("Cannot find assignee: " + taskInst.getAssigneeCuid(), ex);
                         }
                     }
-                    taskInstances.add(taskInst);
+                    String taskName = query.getFilter("name");
+                    if (taskName != null && taskName.equals(taskInst.getName())) {
+                        taskInstances.add(taskInst);
+                    }
+                    else if (taskName == null) {
+                        taskInstances.add(taskInst);
+                    }
                 }
             }
             TaskList taskList = new TaskList(TaskList.TASKS, taskInstances);

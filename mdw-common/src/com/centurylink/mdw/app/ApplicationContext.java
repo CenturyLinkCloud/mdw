@@ -41,6 +41,7 @@ import javax.management.ObjectName;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PaaSConstants;
@@ -640,6 +641,39 @@ public class ApplicationContext {
 
     public static boolean isFileBasedAssetPersist() {
         return PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) != null;
+    }
+
+    private static ClassLoader defaultClassLoader = ApplicationContext.class.getClassLoader();
+    public static ClassLoader setContextCloudClassLoader() {
+        return setContextCloudClassLoader(null);
+    }
+
+    public static ClassLoader setContextCloudClassLoader(com.centurylink.mdw.model.workflow.Package pkg) {
+        ClassLoader originalCL = null;
+        try {
+            if (pkg == null)
+                pkg = PackageCache.getPackages().get(0);
+
+            if (pkg != null) {
+                originalCL = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
+            }
+        }
+        catch (Throwable ex) {
+            logger.warnException("Problem loading packages or no Packages were found when trying to set ContextClassLoader", ex);
+        }
+        return originalCL;
+    }
+
+    public static void resetContextClassLoader() {
+        resetContextClassLoader(null);
+    }
+
+    public static void resetContextClassLoader(ClassLoader classLoader) {
+        if (classLoader != null)
+            Thread.currentThread().setContextClassLoader(classLoader);
+        else
+            Thread.currentThread().setContextClassLoader(defaultClassLoader);
     }
 
     private static File assetRoot;

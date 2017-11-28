@@ -205,11 +205,10 @@ public class DatabaseAccess {
                 if (pkgList == null || pkgList.size() <= 0)
                     throw new SQLException("MDW asset package containing JDBC driver is required");
 
-                ClassLoader origCL = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(pkgList.get(0).getCloudClassLoader());
+                ClassLoader origCL = ApplicationContext.setContextCloudClassLoader(pkgList.get(0));
                 connection = dataSource.getConnection();
                 loadedDataSources.put(database_name, Boolean.valueOf(true));
-                Thread.currentThread().setContextClassLoader(origCL);
+                ApplicationContext.resetContextClassLoader(origCL);
             }
             else
                 connection = dataSource.getConnection();

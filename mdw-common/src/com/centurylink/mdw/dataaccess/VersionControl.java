@@ -27,4 +27,5 @@ public interface VersionControl {
     public void clearId(File file);
     public void deleteRev(File file) throws IOException;
     public void clear();
+    public boolean exists();
 }

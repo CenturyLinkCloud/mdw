@@ -433,7 +433,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         process.setModifyingUser(assetFile.getRevision().getModUser());
         process.setRevisionComment(assetFile.getRevision().getComment());
         process.setPackageName(pkgDir.getPackageName());
-        process.setPackageVersion(pkgDir.getPackageVersion());
 
         return process;
     }
@@ -444,7 +443,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         List<ActivityImplementor> impls = getActivityImplementors();  // TODO maybe cache these
         for (Activity activity : process.getActivities()) {
             for (ActivityImplementor impl : impls) {
-                if (activity.getImplementorClassName().equals(impl.getImplementorClassName())) {
+                if (activity.getImplementor().equals(impl.getImplementorClassName())) {
                     if (impl.isManualTask()) {
                         if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
                             removeObsoleteTaskActivityAttributes(activity);
@@ -453,11 +452,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 }
             }
         }
-        if (process.getSubProcesses() != null) {
-            for (Process embedded : process.getSubProcesses()) {
+        if (process.getSubprocesses() != null) {
+            for (Process embedded : process.getSubprocesses()) {
                 for (Activity activity : embedded.getActivities()) {
                     for (ActivityImplementor impl : impls) {
-                        if (activity.getImplementorClassName().equals(impl.getImplementorClassName())) {
+                        if (activity.getImplementor().equals(impl.getImplementorClassName())) {
                             if (impl.isManualTask()) {
                                 if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
                                     removeObsoleteTaskActivityAttributes(activity);
@@ -487,7 +486,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         Asset asset = new Asset();
         asset.setId(assetFile.getId());
         asset.setPackageName(pkgDir.getPackageName());
-        asset.setPackageVersion(pkgDir.getPackageVersion());
         asset.setName(assetFile.getName());
         asset.setLanguage(Asset.getFormat(assetFile.getName()));
         asset.setVersion(assetFile.getRevision().getVersion());
@@ -996,7 +994,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             for (Process process : loadProcesses(pkgDir, true)) {
                 for (Activity activity : process.getActivities()) {
-                    String implClass = activity.getImplementorClassName();
+                    String implClass = activity.getImplementor();
                     if (!implClasses.contains(implClass))
                         implClasses.add(implClass);
                 }
@@ -1080,7 +1078,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                             if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
                                 callers.add(procVO);
                         }
-                        for (Process embedded : procVO.getSubProcesses()) {
+                        for (Process embedded : procVO.getSubprocesses()) {
                             for (Activity activity : embedded.getActivities()) {
                                 if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
                                     callers.add(procVO);

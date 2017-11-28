@@ -27,6 +27,7 @@ public interface SystemServices {
         System,
         Thread,
         Class,
+        CLI,
         Caches,
         JMS,
         MBean,

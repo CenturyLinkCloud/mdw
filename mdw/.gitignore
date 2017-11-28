@@ -6,3 +6,6 @@ bin/
 notes/
 /config/
 local.gradle
+.temp/
+mdw.log
+/deps.txt

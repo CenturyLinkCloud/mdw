@@ -9,8 +9,7 @@
                       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-  <!-- The assumption is that the mdw.properties file is used on Tomcat as well as the system property 
-    mdw.config.location -->
+  <!-- The assumption is that the mdw.properties file is used on Tomcat as well as the system property mdw.config.location -->
   <!-- ctx:property-placeholder location="classpath:mdw.properties" /-->
   <!-- Note this id must match the id in the code -->
    <bean
@@ -179,7 +178,7 @@
     brokerName="mdw-activemq"
     useJmx="true"
     schedulerSupport="true"
-    useShutdownHook="true"
+    useShutdownHook="false"
     dataDirectory="../activemq-data">
     <amq:transportConnectors>
       <amq:transportConnector name="tcpConnector" uri="tcp://0.0.0.0:61618?daemon=true" />
@@ -189,7 +188,6 @@
   <!-- connection factory for vm transport -->
   <bean
     id="localConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-    <!-- for ServiceMix add ?marshal=true due to https://issues.apache.org/jira/browse/AMQ-3488 -->
     <property
       name="brokerURL" value="vm://mdw-activemq" />
   </bean>  

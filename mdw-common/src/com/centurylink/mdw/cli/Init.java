@@ -26,8 +26,9 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
 public class Init extends Setup {
 
-    public Init(String project) {
-        this.project = project;
+    public Init(File projectDir) {
+        super(projectDir);
+        project = projectDir.getName();
     }
 
     Init() {
@@ -36,21 +37,6 @@ public class Init extends Setup {
 
     @Parameter(description="<project>", required=true)
     private String project;
-
-    @Parameter(names="--asset-loc", description="Asset location")
-    private String assetLoc = "assets";
-    public String getAssetLoc() { return assetLoc; }
-    public void setAssetLoc(String assetLoc) { this.assetLoc = assetLoc; }
-
-    @Parameter(names="--releases-url", description="MDW Releases Maven Repo URL")
-    private String releasesUrl = "http://repo.maven.apache.org/maven2";
-    public String getReleasesUrl() { return releasesUrl; }
-    public void setReleasesUrl(String url) { this.releasesUrl = url; }
-
-    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
-    private boolean snapshots;
-    public boolean isSnapshots() { return snapshots; }
-    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
 
     @Parameter(names="--user", description="Dev user")
     private String user = System.getProperty("user.name");
@@ -77,51 +63,50 @@ public class Init extends Setup {
     public boolean isSpringBoot() { return springBoot; }
     public void setSpringBoot(boolean springBoot) { this.springBoot = springBoot; }
 
+    @Override
+    public File getProjectDir() {
+        return projectDir == null ? new File(project) : projectDir;
+    }
+
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
         System.out.println("Initializing " + project + "...");
-        projectDir = new File(project);
         int slashIndex = project.lastIndexOf('/');
         if (slashIndex > 0)
             project = project.substring(slashIndex + 1);
 
-        if (projectDir.exists()) {
-            if (!projectDir.isDirectory() || projectDir.list().length > 0)
-                throw new IOException(projectDir + " already exists and is not an empty directory");
+        if (getProjectDir().exists()) {
+            if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {
+                System.err.println(getProjectDir() + " already exists and is not an empty directory");
+                return this;
+            }
         }
         else {
-            if (!projectDir.mkdirs())
-                throw new IOException("Unable to create destination: " + projectDir);
+            if (!getProjectDir().mkdirs())
+                throw new IOException("Unable to create destination: " + getProjectDir());
         }
 
-        if (!releasesUrl.endsWith("/"))
-            releasesUrl += "/";
-
-        if (getMdwVersion() == null) {
-            // find latest non-snapshot
-            URL url = new URL(releasesUrl + "com/centurylink/mdw/mdw-templates/");
-            Crawl crawl = new Crawl(url, snapshots);
-            crawl.run();
-            if (crawl.getReleases().size() == 0)
-                throw new IOException("Unable to locate MDW releases: " + url);
-            setMdwVersion(crawl.getReleases().get(crawl.getReleases().size() - 1));
-        }
+        findMdwVersion();
 
         String templates = "mdw-templates-" + getMdwVersion() + ".zip";
         String templatesUrl;
         if (isSnapshots())
             templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
-        else 
-            templatesUrl = releasesUrl + "com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
+        else
+            templatesUrl = getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/" + getMdwVersion() + "/" + templates;
         System.out.println("Retrieving templates: " + templates);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
-        new Unzip(tempZip, projectDir, false, opt -> {
+        new Unzip(tempZip, getProjectDir(), false, opt -> {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
         System.out.println("Writing: ");
-        subst(projectDir);
+        subst(getProjectDir());
+        new File(getProjectDir() + "/src/main/java").mkdirs();
 
+        new Update(getProjectDir()).run(progressMonitors);
         return this;
     }
+
+    protected boolean needsConfig() { return false; }
 }

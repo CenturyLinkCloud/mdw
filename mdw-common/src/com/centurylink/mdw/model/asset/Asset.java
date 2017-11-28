@@ -145,7 +145,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     private Long ownerId;
     private String ownerType;
     private String packageName;
-    private String packageVersion;
     private String revisionComment;
     private boolean raw;
     private File rawFile;
@@ -174,7 +173,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         }
         this.loadDate = cloneFrom.loadDate;
         this.packageName = cloneFrom.packageName;
-        this.packageVersion = cloneFrom.packageVersion;
         this.revisionComment = cloneFrom.revisionComment;
         this.raw = cloneFrom.raw;
         this.rawFile = cloneFrom.rawFile;
@@ -506,12 +504,11 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
-
-    public String getPackageVersion() {
-        return packageVersion;
-    }
-    public void setPackageVersion(String version) {
-        this.packageVersion = version;
+    public String getQualifiedName() {
+        if (getPackageName() == null || getPackageName().isEmpty())
+            return getName();
+        else
+            return getPackageName() + "/" + getName();
     }
 
     public String getRevisionComment() {

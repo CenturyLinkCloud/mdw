@@ -16,14 +16,17 @@
 package com.centurylink.mdw.model.workflow;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.util.JsonUtil;
+
+import io.swagger.annotations.ApiModelProperty;
 
 public class ProcessRun implements Jsonable {
 
@@ -31,6 +34,7 @@ public class ProcessRun implements Jsonable {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
+    @ApiModelProperty(required=true)
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
     public void setMasterRequestId(String s) { masterRequestId = s; }
@@ -52,7 +56,7 @@ public class ProcessRun implements Jsonable {
     public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
 
     /**
-     * Populated after launch.
+     * Populated after launch (for non-service processes).
      */
     private Long instanceId;
     public Long getInstanceId() { return instanceId; }
@@ -70,9 +74,23 @@ public class ProcessRun implements Jsonable {
             this.definitionId = json.getLong("definitionId");
         if (json.has("values")) {
             this.values = new HashMap<>();
-            Map<String,JSONObject> jsonVals = JsonUtil.getJsonObjects(json.getJSONObject("values"));
-            for (String name : jsonVals.keySet())
-                this.values.put(name, new Value(name, jsonVals.get(name)));
+            JSONObject valuesObj = json.getJSONObject("values");
+            // values json obj can contain string props or Values objects
+            String[] names = JSONObject.getNames(valuesObj);
+            if (names != null) {
+                for (String name : names) {
+                    JSONObject valObject;
+                    String valString = valuesObj.optString(name);
+                    if (valString.isEmpty()) {
+                        valObject = valuesObj.getJSONObject(name);
+                    }
+                    else {
+                        valObject = new JSONObject();
+                        valObject.put("value", valString);
+                    }
+                    this.values.put(name, new Value(name, valObject));
+                }
+            }
         }
         if (json.has("ownerType"))
             this.ownerType = json.getString("ownerType");
@@ -108,5 +126,13 @@ public class ProcessRun implements Jsonable {
 
     public String getJsonName() {
         return "processRun";
+    }
+
+    @ApiModelProperty(hidden=true)
+    public Set<String> getValueNames() {
+        if (values != null)
+            return values.keySet();
+        else
+            return new HashSet<>();
     }
 }

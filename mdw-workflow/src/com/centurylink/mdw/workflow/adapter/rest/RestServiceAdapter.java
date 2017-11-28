@@ -243,7 +243,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 Variable variableVO = processVO.getVariable(headersVar);
                 if (variableVO == null)
                     throw new ActivityException("Headers variable '" + headersVar + "' is not defined for process " + processVO.getLabel());
-                if (!variableVO.getVariableType().startsWith("java.util.Map"))
+                if (!variableVO.getType().startsWith("java.util.Map"))
                     throw new ActivityException("Headers variable '" + headersVar + "' must be of type java.util.Map");
                 Object headersObj = getVariableValue(headersVar);
                 if (headersObj != null) {

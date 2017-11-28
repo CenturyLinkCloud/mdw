@@ -1,20 +1,10 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
 
-configurations { 
-    assets 
-}
-
-task publishMdw(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishBuild"]
-    startParameter.projectProperties = [publishBaseUrl: mdwMavenRepoUrl, publishUser: mdwMavenUser, publishPassword: mdwMavenPassword ]
-}
-
-task publishFormal {
-    dependsOn(publishMdw)
+configurations {
+    assets { 
+        extendsFrom archives
+    }
 }
 
 subprojects {
@@ -46,6 +36,8 @@ subprojects {
     repositories {
         mavenCentral()
     }
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+            tasks.withType(Javadoc).all { enabled = false }
 
     // copy into output dir rather than including directly in jar
     // this works better in local development where deployment happens from build/classes
@@ -75,13 +67,14 @@ subprojects {
 
     task javadocJar(type: Jar) {
         if (!mdwVersion.endsWith("-SNAPSHOT"))
-            enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
 }
 
 task cleanJavadocs(type: Delete) {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     delete "../docs/_docs/javadoc"
 }
 
@@ -97,6 +90,8 @@ allprojects {
 }
 
 task javadocs(type: Javadoc) {
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     dependsOn "cleanJavadocs"
     source subprojects.collect {project -> project.sourceSets.main.java }
     classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
@@ -110,19 +105,16 @@ task javadocs(type: Javadoc) {
 task zipAssetPackages(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["zipAllAssets"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task updateRestApiDefinition(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["updateRestApiDefinition"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task updateMdwVerInFiles(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["updateMdwVerInFiles"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
 }
 
 task versions {
@@ -138,15 +130,19 @@ task deployTomcatMdwDev(type: GradleBuild) {
     buildFile = "deploy.gradle"
     tasks = ["deployMdw"]
     startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
-        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
-        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
+                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
+                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
 task publishToMavenCentral(type: GradleBuild) {
     dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
-    startParameter.projectProperties = [publishBaseUrl: "n/a", publishUser: "n/a", publishPassword: "n/a" ]
+}
+
+task publishAssetsToMavenCentral(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishAssetsToMavenCentral"]
 }
 
 allprojects {
@@ -159,7 +155,7 @@ allprojects {
         signing {
             required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
             sign configurations.archives
-        }
+         }
     }
     else {
         tasks.withType(Javadoc).all { enabled = false }
@@ -213,12 +209,21 @@ allprojects {
  * The artifact for this build is mdw-templates (only because each maven artifact
  * needs a build project, and we don't want one especially for templates).
  */
+/**
+ * Ant zip is the workaround to ensure .gitignore is included.
+ */
 task zipTemplates(type: Zip) {
     destinationDir = file("../${mdwOutputDir}")
     archiveName = "mdw-templates-${mdwVersion}.zip"
     from "templates"
     include "**/*"
+    doLast {
+        ant.zip(destfile: "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip") {
+            fileset(dir: 'templates', defaultexcludes: "no")
+        }
+    }
 }
+
 artifacts {
     archives zipTemplates
 }
@@ -238,14 +243,39 @@ task buildAll(type: GradleBuild) {
     tasks = ["build"]
 }
 
+task testAll(type: GradleBuild) {
+    dependsOn buildAll
+    buildFile = "test.gradle"
+    tasks = ["test"]
+    startParameter.projectProperties = [include: '**/*.test',
+exclude: "com/centurylink/mdw/tests/services/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test,com/centurylink/mdw/tests/services/InflightHandling.test"]
+}
+
+task test {
+    dependsOn testAll
+}
+
 task archiveAssetZips {
     dependsOn zipAssetPackages
     doLast{
+        signing {
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            sign configurations.assets
+        }
         ext.discoveredFiles = []
         fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
-            discoveredFiles.add(file)
+            def filterName = file.name - ".zip"
+            def artifactName = filterName - "-SNAPSHOT"
+            def versionStart = artifactName.lastIndexOf("-")
+            def artifactId = artifactName.substring(0, versionStart)
+            discoveredFiles.add(artifactId)
             artifacts {
-                 assets file:file 
+                assets file:file, name:artifactId, type:"zip"
+            }
+        }
+        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.asc').each { file ->
+            artifacts {
+                assets file:file, type:"asc"
             }
         }
     }
@@ -253,29 +283,49 @@ task archiveAssetZips {
 
 task configureUploadAssets {
     dependsOn archiveAssetZips
-    doLast{
+    doLast {
         uploadAssets {
             ext.ossrhUsername = System.getProperty("ossrhUsername")
             ext.ossrhPassword = System.getProperty("ossrhPassword")
             repositories {
                 mavenDeployer {
+                    beforeDeployment {
+                        MavenDeployment deployment -> signing.signPom(deployment)
+                    }
                     repository(url: mavenRepoUrl) {
                         authentication(userName: ossrhUsername, password: ossrhPassword)
                     }
                     snapshotRepository(url: mavenSnapshotRepoUrl) {
                         authentication(userName: ossrhUsername, password: ossrhPassword)
                     }
-                    archiveAssetZips.discoveredFiles.each { discoveredFile ->
-                        def filterName = discoveredFile.name - ".zip"
-                        def artifactName = filterName - "-SNAPSHOT"
-                        def versionStart = artifactName.lastIndexOf("-")
-                        def artifactId = artifactName.substring(0, versionStart)
+                    archiveAssetZips.discoveredFiles.each { artifactId ->
+                        def filterName = artifactId
                         addFilter(filterName) { artifact, file ->
-                            file.name == discoveredFile.name
+                            artifact.name == artifactId
                         }
                         pom(filterName).artifactId = artifactId
                         pom(filterName).groupId = "com.centurylink.mdw.assets"
-                    }
+                        pom(filterName).name = 'MDW Assets'
+                        pom(filterName).withXml { provider ->
+                            def node = provider.asNode()
+                            node.appendNode('description',
+                                'MDW is a cloud workflow framework')
+                            node.appendNode('url', 'http://centurylinkcloud.github.io/mdw/')
+                            def licenses = node.appendNode('licenses')
+                            def license = licenses.appendNode('license')
+                            license.appendNode('name', 'The Apache License, Version 2.0')
+                            license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                            def developers = node.appendNode('developers')
+                            def developer  = developers.appendNode('developer')
+                            developer.appendNode('id', 'mdwdev')
+                            developer.appendNode('name', 'MDW Development')
+                            developer.appendNode('email', 'mdwdev@centurylink.com')
+                            def scm = node.appendNode('scm')
+                            scm.appendNode('connection', 'scm:git:git://github.com/CenturyLinkCloud/mdw.git')
+                            scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
+                            scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
+                        }
+                    }                    
                 }
             }
         }
@@ -290,49 +340,8 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-/**
- * Eclipse setup, sourceSets and dependencies are convenience configs to enable gradle plugin
- * debugging from Eclipse.  The actual gradle plugin build is controlled by buildSrc/build.gradle.
- */
-eclipse {
-    // associate Gradle API source
-    classpath {
-        file {
-            whenMerged { cp ->
-                cp.entries.each { entry ->
-                    if ((entry in org.gradle.plugins.ide.eclipse.model.AbstractLibrary) && (entry.library.file.name.startsWith('gradle-'))) {
-                        entry.sourcePath = new org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory().fromPath(gradleSrc)
-                    }
-                }
-            }
-        }
-    }
-}
-sourceSets {
-    main {
-        groovy {
-            srcDir "buildSrc/src"
-            include "com/centurylink/mdw/gradle/plugin/**"
-        }
-        resources {
-            srcDirs "buildSrc/src"
-            include "META-INF/**"
-        }
-    }
-}
-repositories {
-    mavenCentral()
-}
-dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile group: "org.springframework.boot", name: "spring-boot-gradle-plugin", version: "1.5.4.RELEASE"
-}
-
 // update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
-task updateMDWDemoWorkspace(type: GradleBuild) {
+task updateMDWDemo(type: GradleBuild) {
     buildFile = "local.gradle"
-    tasks = ["updateManifestFile"]
-    startParameter.projectProperties = [deployWarDir: "n/a", tomcatBinDir: "n/a", testServerUrl: "n/a"]
+    tasks = ["updateMDWDemoWorkspace"]
 }
-

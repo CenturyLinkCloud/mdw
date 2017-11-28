@@ -76,7 +76,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
             throw new DataAccessException(0, "Cannot find process with name "
                     + procname + ", version 0");
 
-        return proc.getProcessId();
+        return proc.getId();
     }
 
     /**
@@ -317,18 +317,18 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     throws EventHandlerException {
         Map<String,String> stringParams = new HashMap<String,String>();
         if (parameters != null) {
-            Process processVO = getProcessDefinition(processId);
+            Process process = getProcessDefinition(processId);
             for (String key : parameters.keySet()) {
                 Object val = parameters.get(key);
-                Variable vo = processVO.getVariable(key);
+                Variable vo = process.getVariable(key);
                 if (vo == null)
-                  throw new EventHandlerException("Variable '" + key + "' not found for process: " + processVO.getProcessName() + " v" + processVO.getVersionString() + "(id=" + processId + ")");
+                  throw new EventHandlerException("Variable '" + key + "' not found for process: " + process.getName() + " v" + process.getVersionString() + "(id=" + processId + ")");
 
                 if (val instanceof String) {
                     stringParams.put(key, (String)val);
                 }
                 else {
-                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vo.getVariableType());
+                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vo.getType());
                     if (translator instanceof DocumentReferenceTranslator) {
                         DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator)translator;
                         String docStr = docTranslator.realToString(val);

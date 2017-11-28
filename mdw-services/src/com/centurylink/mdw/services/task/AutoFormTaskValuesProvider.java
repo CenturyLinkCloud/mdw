@@ -93,7 +93,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                     throw new ServiceException(400, "Variable not found: " + name);
                 }
                 else {
-                    String type = var.getVariableType();
+                    String type = var.getType();
                     com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), type);
                     if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
                         Object newValue = ((DocumentReferenceTranslator)vt).realToObject(values.get(name));
@@ -132,7 +132,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                 else {
                     Variable var = runtimeContext.getProcess().getVariable(name);
                     if (var != null)
-                        value.setType(var.getVariableType());
+                        value.setType(var.getType());
                 }
                 values.add(value);
             }

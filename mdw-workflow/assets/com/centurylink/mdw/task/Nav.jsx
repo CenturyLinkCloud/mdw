@@ -28,7 +28,7 @@ class Nav extends Component {
 }
 
 function NavLink(props, context) {
-  const path = window.location.pathname;
+  var path = window.location.pathname;
   if (!path.startsWith('/'))
     path = '/' + path; // ie 11
   var dest = context.hubRoot + '/tasks/' + props.id;
@@ -48,6 +48,6 @@ function NavLink(props, context) {
 
 Nav.contextTypes = NavLink.contextTypes = {
   hubRoot: PropTypes.string
-} 
+};
 
 export default Nav;  

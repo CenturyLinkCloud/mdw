@@ -87,7 +87,6 @@ public class Workflow extends JsonRestService {
                     json.put("name", p.getName());
                     json.put("package", p.getPackageName());
                     json.put("version", p.getVersionString());
-                    json.put("packageVersion", p.getPackageVersion());
                     return json;
                 }
             }

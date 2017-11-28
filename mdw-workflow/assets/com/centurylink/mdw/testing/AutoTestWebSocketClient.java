@@ -36,7 +36,6 @@ import com.centurylink.mdw.provider.StartupException;
 import com.centurylink.mdw.provider.StartupService;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
-import com.centurylink.mdw.services.test.TestRunner;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.util.HttpHelper;

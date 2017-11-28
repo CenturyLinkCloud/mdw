@@ -19,12 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.workflow.Solution;
-import com.centurylink.mdw.model.workflow.SolutionList;
 import com.centurylink.mdw.model.workflow.Solution.MemberType;
+import com.centurylink.mdw.model.workflow.SolutionList;
 import com.centurylink.mdw.service.data.SolutionsDataAccess;
 import com.centurylink.mdw.services.SolutionServices;
 
@@ -35,8 +37,14 @@ public class SolutionServicesImpl implements SolutionServices {
     }
 
     public SolutionList getSolutions() throws ServiceException {
+            Query query = new Query();
+            return this.getSolutions(query);  //get all solutions SDWF
+    }
+
+    public SolutionList getSolutions(Query query) throws ServiceException {
         try {
-            List<Solution> solutions = getDAO().getSolutions();
+            String solutionId = query.getFind();
+            List<Solution> solutions = getDAO().getSolutions(solutionId);
             SolutionList solutionList = new SolutionList(solutions);
             solutionList.setRetrieveDate(DatabaseAccess.getDbDate());
             solutionList.setTotal(solutions.size());
@@ -124,5 +132,30 @@ public class SolutionServicesImpl implements SolutionServices {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
+    public Map<MemberType,List<Jsonable>> getMembers(Long solutionId) throws ServiceException {
+        try {
+            return getDAO().getMembers(solutionId);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
 
+    public List<Jsonable> getMembers(Long solutionId, MemberType memberType) throws ServiceException {
+        try {
+            return getDAO().getMembers(solutionId, memberType);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
+    public List<Solution> getSolutions(MemberType memberType, String memberId) throws ServiceException {
+        try {
+            return getDAO().getSolutions(memberType, memberId);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
 }

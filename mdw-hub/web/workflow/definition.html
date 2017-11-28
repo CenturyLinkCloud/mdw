@@ -4,11 +4,13 @@
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          <a class="mdw-ghost" ng-href="#/packages/{{processDef.packageName}}">
-            {{process.packageName}}</a>/{{process.name}} {{process.version ? ' v' + process.version : ''}}
+          <a ng-href="#/packages/{{process.packageName}}">
+            {{process.packageName}}</a>
+            /
+          {{process.name}} {{process.version ? ' v' + process.version : ''}}
         </div>
         <div class="mdw-heading-actions">
-          <a ng-if="!process.startPageUrl" ng-href="#/workflow/definitionRun/{{process.packageName}}/{{process.name}}/{{process.version}}" 
+          <a ng-if="!process.startPageUrl" ng-href="#/workflow/run/{{process.packageName}}/{{process.name}}" 
             class="btn btn-primary mdw-btn" title="Run">
             <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
           </a>            
@@ -21,8 +23,8 @@
             <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span>
           </a>            
           <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc" ng-if="authUser.hasRole('Process Design')"
-            class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Edit">
-            <span class="glyphicon glyphicon-pencil"></span>
+            class="btn btn-primary mdw-btn" style="margin-left:5px;margin-right:5px;" title="Edit">
+            <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
           </a>            
         </div>        
       </div>

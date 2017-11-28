@@ -1,0 +1,13 @@
+package com.centurylink.mdw.tests.services
+
+//masterRequestId = "kafka-" + System.currentTimeMillis();
+def message = masterRequestId;
+println "message= [" + message + "]"
+
+start process("KafkaProducer") {
+    variables = [request: message]
+}
+
+sleep 30
+wait process
+verify process("com.centurylink.mdw.tests.services/KafkaProducer")

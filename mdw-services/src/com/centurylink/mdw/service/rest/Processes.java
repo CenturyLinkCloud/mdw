@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -39,7 +40,10 @@ import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.Value.Display;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Process;
@@ -94,6 +98,7 @@ public class Processes extends JsonRestService implements JsonExportable {
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        Query query = getQuery(path, headers);
         try {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
@@ -109,7 +114,8 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
                         else {
                             // all values
-                            Map<String,Value> values = workflowServices.getProcessValues(id);
+                            Map<String,Value> values = workflowServices.getProcessValues(id,
+                                    query.getBooleanFilter("includeEmpty"));
                             JSONObject valuesJson = new JsonObject();
                             for (String name : values.keySet()) {
                                 valuesJson.put(name, values.get(name).getJson());
@@ -126,6 +132,10 @@ public class Processes extends JsonRestService implements JsonExportable {
                         summary.put("version", process.getProcessVersion());
                         summary.put("masterRequestId", process.getMasterRequestId());
                         summary.put("definitionId", process.getProcessId());
+                        Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
+                        if (!latest.getId().equals(process.getProcessId()))
+                            summary.put("archived", true);
+
                         return summary;
                     }
                     else {
@@ -136,7 +146,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                 }
                 catch (NumberFormatException ex) {
                     // path must be special
-                    Query query = getQuery(path, headers);
                     if (segOne.equals("definitions")) {
                         List<Process> processVOs = workflowServices.getProcessDefinitions(query);
                         JSONArray jsonProcesses = new JSONArray();
@@ -151,22 +160,29 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return new JsonArray(jsonProcesses).getJson();
                     }
                     else if (segOne.equals("run")) {
-                        String defId = getSegment(path, 2);
-                        if (defId == null)
-                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment {subData} (= procDefId)");
-                        try {
-                            Process procDef = workflowServices.getProcessDefinition(Long.parseLong(defId));
-                            if (procDef == null)
-                                throw new ServiceException(ServiceException.NOT_FOUND, "Process not found for definition id: " + defId);
-                            ProcessRun processRun = new ProcessRun();
-                            processRun.setDefinitionId(procDef.getId());
-                            processRun.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
-                            processRun.setValues(procDef.getInputVariables());
-                            return processRun.getJson();
+                        String[] segments = getSegments(path);
+                        if (segments.length != 3 && segments.length != 4)
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment {subData} (procDefId|assetPath)");
+                        Process procDef;
+                        if (segments.length == 3) {
+                            String defId = segments[2];
+                            try {
+                                procDef = workflowServices.getProcessDefinition(Long.parseLong(defId));
+                            }
+                            catch (NumberFormatException nfe) {
+                                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad procDefId: " + defId);
+                            }
                         }
-                        catch (NumberFormatException nfe) {
-                            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad procDefId: " + defId);
+                        else {
+                            procDef = workflowServices.getProcessDefinition(segments[2] + '/' + segments[3], null);
                         }
+                        if (procDef == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + path);
+                        ProcessRun processRun = new ProcessRun();
+                        processRun.setDefinitionId(procDef.getId());
+                        processRun.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
+                        processRun.setValues(procDef.getInputVariables());
+                        return processRun.getJson();
                     }
                     else if (segOne.equals("topThroughput")) {
                         List<ProcessCount> list = workflowServices.getTopThroughputProcesses(query);
@@ -215,7 +231,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                 }
             }
             else {
-                Query query = getQuery(path, headers);
                 long triggerId = query.getLongFilter("triggerId");
                 if (triggerId > 0) {
                     // retrieve instance by trigger -- just send summary
@@ -303,29 +318,56 @@ public class Processes extends JsonRestService implements JsonExportable {
             if (segments.length > 1 && segments[1].equals("run")) {
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
                 ProcessRun run = new ProcessRun(content);
+                if (run.getMasterRequestId() == null || run.getMasterRequestId().isEmpty())
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing master request id");
+                if (ServiceLocator.getRequestServices().getMasterRequest(run.getMasterRequestId()) != null)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Master request ID: " + run.getMasterRequestId() + " already exists");
+
+                if (segments.length !=3 && segments.length != 4)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+
+                Process proc;
                 if (segments.length == 3) {
                     String defId = segments[2];
                     try {
                         Long definitionId = Long.parseLong(defId);
                         if (!definitionId.equals(run.getDefinitionId()))
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Path/body mismatch for definitionId: " + definitionId + "/" + run.getDefinitionId());
-                        return workflowServices.runProcess(run).getJson();
+                        proc = ProcessCache.getProcess(definitionId);
+                        if (proc == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + definitionId);
                     }
                     catch (NumberFormatException ex) {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad definitionId: " + defId);
                     }
                 }
-                else if (segments.length == 4) {
+                else {
                     String procPath = segments[2] + "/" + segments[3];
-                    Process proc = ProcessCache.getProcess(procPath, 0);
+                    proc = ProcessCache.getProcess(procPath, 0);
                     if (proc == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + procPath);
-                    run.setDefinitionId(proc.getId());
-                    return workflowServices.runProcess(run).getJson();
                 }
-                else {
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+                run.setDefinitionId(proc.getId());
+                String validationError = "";
+                for (String inputVarName : proc.getInputVariables().keySet()) {
+                    Value inputVar = proc.getInputVariables().get(inputVarName);
+                    Display display = inputVar.getDisplay();
+                    boolean populated = run.getValueNames().contains(inputVarName);
+                    if (display == Display.ReadOnly && populated) {
+                        validationError += (validationError.isEmpty() ? "" : ", ") + "ReadOnly: "
+                                + (inputVar.getLabel() == null ? inputVar.getName() : inputVar.getLabel());
+                    }
+                    else if (display == Display.Required && !populated) {
+                        validationError += (validationError.isEmpty() ? "" : ", ") + "Required: "
+                                + (inputVar.getLabel() == null ? inputVar.getName() : inputVar.getLabel());
+                    }
                 }
+                if (!validationError.isEmpty())
+                    throw new ServiceException(ServiceException.BAD_REQUEST, validationError);
+                run = workflowServices.runProcess(run);
+                headers.put("Location", ApplicationContext.getServicesUrl() + "/services/Processes/" + run.getInstanceId());
+                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.CREATED.getCode()));
+                return run.getJson();
             }
             else {
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment: run");

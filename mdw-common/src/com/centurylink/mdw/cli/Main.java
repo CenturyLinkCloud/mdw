@@ -26,29 +26,58 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+        // this trimming is necessary on linux
+        String[] cmdArgs = new String[args.length];
+        for (int i = 0; i < args.length; i++)
+            cmdArgs[i] = args[i].trim();
+
+        if (cmdArgs.length > 1) {
+            if (cmdArgs[0].equals("git")) {
+                // git pass-through command
+                Git.main(cmdArgs);
+                return;
+            }
+            else if (cmdArgs[0].equals("archive")) {
+                Archive.main(cmdArgs);
+                return;
+            }
+        }
+
         Help help = new Help();
         Main main = new Main();
         Init init = new Init();
+        Import mport = new Import();
         Update update = new Update();
         Install install = new Install();
         Run run = new Run();
+        Stop stop = new Stop();
+        Git git = new Git();
+        Archive archive = new Archive(false);
+        Test test = new Test();
+        Status status = new Status();
         Version version = new Version();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
             .addCommand("help", help)
             .addCommand("init", init)
+            .addCommand("import", mport)
             .addCommand("update", update)
             .addCommand("install", install)
             .addCommand("run", run)
+            .addCommand("stop", stop)
             .addCommand("version", version)
+            .addCommand("git", git)
+            .addCommand("status", status)
+            .addCommand("archive", archive)
+            .addCommand("test", test)
             .build();
 
         cmd.setProgramName("mdw");
 
         try {
-            cmd.parse(args);
-            if (!init.isEclipse() && Arrays.asList(args).contains("--eclipse"))
+            cmd.parse(cmdArgs);
+            if (!init.isEclipse() && Arrays.asList(cmdArgs).contains("--eclipse"))
                 init.setEclipse(true); // needed to support superfluous setting
             String command = cmd.getParsedCommand();
 
@@ -56,25 +85,62 @@ public class Main {
                 cmd.usage();
             }
             else {
-                version.run();
+                Operation op = null;
                 if (command.equals("init")) {
-                    init.run(getMonitor());
-                    new Update(init).run(getMonitor());
+                    op = init;
+                }
+                else if (command.equals("import")) {
+                    op = mport;
                 }
                 else if (command.equals("update")) {
-                    update.run(getMonitor());
+                    op = update;
                 }
                 else if (command.equals("install")) {
-                    install.run(getMonitor());
+                    op = install;
                 }
                 else if (command.equals("run")) {
-                    run.run(getMonitor());
+                    op = run;
+                }
+                else if (command.equals("stop")) {
+                    op = stop;
+                }
+                else if (command.equals("status")) {
+                    op = status;
+                }
+                else if (command.equals("test")) {
+                    op = test;
+                }
+                else if (command.equals("version")) {
+                    op = version;
+                }
+
+                if (op == null) {
+                    cmd.usage();
+                }
+                else {
+                    if (op instanceof Setup) {
+                        Setup setup = (Setup) op;
+                        if (setup.isDebug())
+                            setup.debug();
+                        if (!setup.validate())
+                            return;
+                    }
+                    op.run(getMonitor());
+                    if (op instanceof Test && !((Test)op).isSuccess()) {
+                        System.exit(-1);  // success visible to build script
+                    }
                 }
             }
         }
         catch (ParameterException ex) {
             System.err.println(ex.getMessage());
-            cmd.usage();
+            System.err.println("'mdw help' for usage information");
+            for (String arg : args) {
+                if (arg.equals("--debug")) {
+                    ex.printStackTrace();
+                }
+            }
+            System.exit(-1);
         }
     }
 
@@ -84,9 +150,14 @@ public class Main {
     /**
      * Every call with >= 100% progress will print a new line.
      */
-    private static ProgressMonitor getMonitor() {
+    static ProgressMonitor getMonitor() {
         return prog -> {
-            System.out.print("\b\b\b\b\b\b\b\b\b");
+            if ("\\".equals(System.getProperty("file.separator"))) {
+                System.out.print("\b\b\b\b\b\b\b\b\b");
+            }
+            else {
+                System.out.print("\r         \r");
+            }
             if (prog >= 100)
                 System.out.println(" --> Done");
             else if (prog <= 0) // don't report zero progress since it may indicate unknown

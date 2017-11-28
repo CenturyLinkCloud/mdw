@@ -160,10 +160,10 @@ class ProcessExecutorImpl {
         throws DataAccessException {
         try {
             TransitionInstance transInst = new TransitionInstance();
-            transInst.setTransitionID(transition.getWorkTransitionId());
+            transInst.setTransitionID(transition.getId());
             transInst.setProcessInstanceID(processInstId);
             transInst.setStatusCode(TransitionStatus.STATUS_INITIATED);
-            transInst.setDestinationID(transition.getToWorkId());
+            transInst.setDestinationID(transition.getToId());
             edao.createTransitionInstance(transInst);
             return transInst;
         } catch (SQLException e) {
@@ -178,17 +178,17 @@ class ProcessExecutorImpl {
         Variable variableVO = processVO.getVariable(varname);
         if (variableVO==null) {
             throw new DataAccessException("Variable "
-                    + varname + " is not defined for process " + processVO.getProcessId());
+                    + varname + " is not defined for process " + processVO.getId());
         }
         VariableInstance var = new VariableInstance();
-        var.setName(variableVO.getVariableName());
-        var.setVariableId(variableVO.getVariableId());
-        var.setType(variableVO.getVariableType());
+        var.setName(variableVO.getName());
+        var.setVariableId(variableVO.getId());
+        var.setType(variableVO.getType());
         if (value instanceof String)
             var.setStringValue((String)value);
         else
             var.setData(value);
-        if (pi.isEmbedded() || !pi.getProcessId().equals(processVO.getProcessId()))
+        if (pi.isEmbedded() || !pi.getProcessId().equals(processVO.getId()))
             edao.createVariableInstance(var, pi.getOwnerId());
         else
             edao.createVariableInstance(var, pi.getId());
@@ -256,26 +256,26 @@ class ProcessExecutorImpl {
     }
 
     private List<VariableInstance> convertParameters(Map<String,String> eventParams,
-            Process processVO, Long procInstId) throws ProcessException, DataAccessException {
+            Process process, Long procInstId) throws ProcessException, DataAccessException {
         List<VariableInstance> vars = new ArrayList<VariableInstance>();
         if (eventParams == null || eventParams.isEmpty()) {
             return vars;
         }
-        for (String varname : eventParams.keySet()) {
-            Variable variableVO = processVO.getVariable(varname);
-            if (variableVO==null) {
-                String msg = "there is no variable named " + varname
-                    + " in process with ID " + processVO.getProcessId()
+        for (String varName : eventParams.keySet()) {
+            Variable variable = process.getVariable(varName);
+            if (variable==null) {
+                String msg = "there is no variable named " + varName
+                    + " in process with ID " + process.getId()
                     + " for parameter binding";
                 throw new ProcessException(msg);
             }
             VariableInstance var = new VariableInstance();
-            var.setName(variableVO.getVariableName());
-            var.setVariableId(variableVO.getVariableId());
-            var.setType(variableVO.getVariableType());
-            String value = eventParams.get(varname);
+            var.setName(variable.getName());
+            var.setVariableId(variable.getId());
+            var.setType(variable.getType());
+            String value = eventParams.get(varName);
             if (value!=null && value.length()>0) {
-                if (VariableTranslator.isDocumentReferenceVariable(getPackage(processVO), var.getType())) {
+                if (VariableTranslator.isDocumentReferenceVariable(getPackage(process), var.getType())) {
                     if (value.startsWith("DOCUMENT:")) var.setStringValue(value);
                     else {
                         DocumentReference docref = this.createDocument(var.getType(),
@@ -311,11 +311,11 @@ class ProcessExecutorImpl {
                 ProcessInstance parentPi = getDataAccess().getProcessInstance(ownerId);
                 Process parentProcdef = ProcessCache.getProcess(parentPi.getProcessId());
                 processVO = parentProcdef.getSubProcessVO(processId);
-                pi = new ProcessInstance(parentPi.getProcessId(), processVO.getProcessName());
+                pi = new ProcessInstance(parentPi.getProcessId(), processVO.getName());
                 pi.setComment(processId.toString());
             } else {
                 processVO = ProcessCache.getProcess(processId);
-                pi = new ProcessInstance(processId, processVO.getProcessName());
+                pi = new ProcessInstance(processId, processVO.getName());
             }
             pi.setOwner(ownerType);
             pi.setOwnerId(ownerId);
@@ -326,7 +326,7 @@ class ProcessExecutorImpl {
             if (label != null)
                 pi.setComment(label);
             edao.createProcessInstance(pi);
-//            if (parameters!=null)    // do not check this, as below will initialize variables array
+            // if (parameters!=null)    // do not check this, as below will initialize variables array
             createVariableInstancesFromEventMessage(pi, parameters);
         } catch (SQLException e) {
             throw new DataAccessException(-1, e.getMessage(), e);
@@ -340,6 +340,11 @@ class ProcessExecutorImpl {
         pi.setVariables(convertParameters(parameters, processVO, pi.getId()));
         for (VariableInstance var : pi.getVariables()) {
             edao.createVariableInstance(var, pi.getId());
+            if (var.isDocument()) {
+                DocumentReference docRef = new DocumentReference(var.getStringValue());
+                updateDocumentInfo(docRef, var.getType(), OwnerType.VARIABLE_INSTANCE, var.getInstanceId(), null, null);
+            }
+
         }
     }
 
@@ -349,8 +354,11 @@ class ProcessExecutorImpl {
             Document docvo = edao.getDocument(docref.getDocumentId(), false);
             if (documentType != null)
                 docvo.setDocumentType(documentType);
-            if (ownerType != null)
+            if (ownerType != null) {
+                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
+                    edao.updateDocumentMongoCollection(docvo, ownerType);
                 docvo.setOwnerType(ownerType);
+            }
             if (ownerId != null)
                 docvo.setOwnerId(ownerId);
             if (statusCode != null)
@@ -457,22 +465,22 @@ class ProcessExecutorImpl {
                     // Look for a error transition at this time
                     // In case we find it, raise the error event
                     // Otherwise do not do anything
-                    handleWorkTransitionError(processInstanceVO, transition.getWorkTransitionId(), fromActInstId);
+                    handleWorkTransitionError(processInstanceVO, transition.getId(), fromActInstId);
                 } else {
                     transInst = createTransitionInstance(transition, processInstanceVO.getId());
                     String tag = logtag(processInstanceVO.getProcessId(),
                             processInstanceVO.getId(), transInst);
-                    logger.info(tag, "Transition initiated from " + transition.getFromWorkId() + " to " + transition.getToWorkId());
+                    logger.info(tag, "Transition initiated from " + transition.getFromId() + " to " + transition.getToId());
 
                     InternalEvent jmsmsg;
                     int delay = 0;
                     jmsmsg = InternalEvent.createActivityStartMessage(
-                            transition.getToWorkId(), processInstanceVO.getId(),
+                            transition.getToId(), processInstanceVO.getId(),
                             transInst.getTransitionInstanceID(), processInstanceVO.getMasterRequestId(),
                             transition.getLabel());
                     delay = transition.getTransitionDelay();
                     String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
-                            + "start" + transition.getToWorkId() + "by" + transInst.getTransitionInstanceID();
+                            + "start" + transition.getToId() + "by" + transInst.getTransitionInstanceID();
                     if (delay>0) this.sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
                     else sendInternalEvent(jmsmsg);
                 }
@@ -490,9 +498,9 @@ class ProcessExecutorImpl {
         String retryAttribVal = trans.getAttribute(WorkTransitionAttributeConstant.TRANSITION_RETRY_COUNT);
         int retryCount = retryAttribVal==null?-1:Integer.parseInt(retryAttribVal);
         if (retryCount<0) return false;
-        int count = edao.countTransitionInstances(pProcessInstId, trans.getWorkTransitionId());
+        int count = edao.countTransitionInstances(pProcessInstId, trans.getId());
         if (count>0 && count >= retryCount) {
-            String msg = "Transition " + trans.getWorkTransitionId()
+            String msg = "Transition " + trans.getId()
             + " not made - exceeded allowed retry count of " + retryCount;
             // log as exception since this message is often overlooked
             logger.severeException(msg, new ProcessException(msg));
@@ -505,11 +513,11 @@ class ProcessExecutorImpl {
     {
         edao.setProcessInstanceStatus(processInstVO.getId(), WorkStatus.STATUS_WAITING);
         Process processVO = getMainProcessDefinition(processInstVO);
-        Process embeddedProcdef = processVO.findEmbeddedProcess(EventType.ERROR, null);
+        Process embeddedProcdef = processVO.findSubprocess(EventType.ERROR, null);
         while (embeddedProcdef==null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
             processInstVO = edao.getProcessInstance(processInstVO.getOwnerId());
             processVO = getMainProcessDefinition(processInstVO);
-            embeddedProcdef = processVO.findEmbeddedProcess(EventType.ERROR, null);
+            embeddedProcdef = processVO.findSubprocess(EventType.ERROR, null);
         }
         if (embeddedProcdef == null) {
             logger.warn("Error subprocess does not exist. Transition failed. TransitionId-->"
@@ -517,7 +525,7 @@ class ProcessExecutorImpl {
             return;
         }
         String tag = logtag(processInstVO.getProcessId(),processInstVO.getId(),processInstVO.getMasterRequestId());
-        logger.info(tag, "Transition to error subprocess " + embeddedProcdef.getProcessQualifiedName());
+        logger.info(tag, "Transition to error subprocess " + embeddedProcdef.getQualifiedName());
         String secondaryOwnerType;
         Long secondaryOwnerId;
         if (fromActInstId==null || fromActInstId.longValue()==0L) {
@@ -528,7 +536,7 @@ class ProcessExecutorImpl {
             secondaryOwnerId = fromActInstId;
         }
         String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
-        ProcessInstance procInst = createProcessInstance(embeddedProcdef.getProcessId(),
+        ProcessInstance procInst = createProcessInstance(embeddedProcdef.getId(),
                 ownerType, processInstVO.getId(), secondaryOwnerType, secondaryOwnerId,
                 processInstVO.getMasterRequestId(), null, null);
         startProcessInstance(procInst, 0);
@@ -545,29 +553,29 @@ class ProcessExecutorImpl {
       throws ProcessException {
 
         try {
-            Process processVO = getProcessDefinition(processInstanceVO);
+            Process process = getProcessDefinition(processInstanceVO);
             edao.setProcessInstanceStatus(processInstanceVO.getId(), WorkStatus.STATUS_PENDING_PROCESS);
             // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
             if (logger.isInfoEnabled()) {
                 logger.info(logtag(processInstanceVO.getProcessId(), processInstanceVO.getId(),
                         processInstanceVO.getMasterRequestId()),
-                        WorkStatus.LOGMSG_PROC_START + " - " + processVO.getProcessQualifiedName()
+                        WorkStatus.LOGMSG_PROC_START + " - " + process.getQualifiedName()
                         + (processInstanceVO.isEmbedded() ?
-                                (" (embedded process " + processVO.getProcessId() + ")") :
-                                ("/" + processVO.getVersionString())));
+                                (" (embedded process " + process.getId() + ")") :
+                                ("/" + process.getVersionString())));
             }
             notifyMonitors(processInstanceVO, WorkStatus.LOGMSG_PROC_START);
             // get start activity ID
             Long startActivityId;
             if (processInstanceVO.isEmbedded()) {
                 edao.setProcessInstanceStatus(processInstanceVO.getId(), WorkStatus.STATUS_PENDING_PROCESS);
-                startActivityId = processVO.getStartActivity().getActivityId();
+                startActivityId = process.getStartActivity().getId();
             } else {
-                Activity startActivity = processVO.getStartActivity();
+                Activity startActivity = process.getStartActivity();
                 if (startActivity == null) {
-                    throw new ProcessException("WorkTransition has not been defined for START event! ProcessID = " + processVO.getProcessId());
+                    throw new ProcessException("WorkTransition has not been defined for START event! ProcessID = " + process.getId());
                 }
-                startActivityId = startActivity.getActivityId();
+                startActivityId = startActivity.getId();
             }
             InternalEvent event = InternalEvent.createActivityStartMessage(
                     startActivityId, processInstanceVO.getId(),
@@ -742,7 +750,7 @@ class ProcessExecutorImpl {
                 prepareActivitySub(processVO, actVO, ar.procinst, ar.actinst,
                         workTransInstanceId, event, ar.activity);
                 if (ar.activity==null) {
-                    logger.severe("Failed to load the implementor class or create instance: " + actVO.getImplementorClassName());
+                    logger.severe("Failed to load the implementor class or create instance: " + actVO.getImplementor());
                     ar.startCase = ActivityRuntime.STARTCASE_ERROR_IN_PREPARE;
                 } else {
                     ar.startCase = ActivityRuntime.STARTCASE_NORMAL;
@@ -807,7 +815,7 @@ class ProcessExecutorImpl {
 
         if (logger.isInfoEnabled())
             logger.info(logtag(pi.getProcessId(), pi.getId(), ai.getActivityId(), ai.getId()),
-                    WorkStatus.LOGMSG_START + " - " + actVO.getActivityName());
+                    WorkStatus.LOGMSG_START + " - " + actVO.getName());
 
         if (pWorkTransInstId!=null && pWorkTransInstId.longValue()!=0)
             edao.completeTransitionInstance(pWorkTransInstId, ai.getId());
@@ -823,7 +831,7 @@ class ProcessExecutorImpl {
         Tracked t = implClass.getAnnotation(Tracked.class);
         if (t != null) {
             String logTag = logtag(pi.getProcessId(), pi.getId(), ai.getActivityId(), ai.getId());
-            activityTimer = new TrackingTimer(logTag, actVO.getImplementorClassName(), t.value());
+            activityTimer = new TrackingTimer(logTag, actVO.getImplementor(), t.value());
         }
 
         List<VariableInstance> vars;
@@ -1147,7 +1155,7 @@ class ProcessExecutorImpl {
                     // is custom action (RESUME), transition accordingly
                     TransitionInstance workTransInst = createTransitionInstance(outgoingWorkTransVO, parentInstId);
                     jmsmsg = InternalEvent.createActivityStartMessage(
-                            outgoingWorkTransVO.getToWorkId(), parentInstId,
+                            outgoingWorkTransVO.getToId(), parentInstId,
                               workTransInst.getTransitionInstanceID(), masterRequestId,
                               outgoingWorkTransVO.getLabel());
                     delay = outgoingWorkTransVO.getTransitionDelay();
@@ -1157,7 +1165,7 @@ class ProcessExecutorImpl {
                 }
                 if (delay>0) {
                     String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + parentInstId
-                        + "start" + outgoingWorkTransVO.getToWorkId();
+                        + "start" + outgoingWorkTransVO.getToId();
                     sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
                 } else sendInternalEvent(jmsmsg);
             }
@@ -1243,8 +1251,8 @@ class ProcessExecutorImpl {
         }
         if (!noNotify) sendInternalEvent(retMsg);
         if (logger.isInfoEnabled()) {
-            logger.info(logtag(processVO.getProcessId(), processInst.getId(), processInst.getMasterRequestId()),
-                    (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getProcessQualifiedName()
+            logger.info(logtag(processVO.getId(), processInst.getId(), processInst.getMasterRequestId()),
+                    (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getQualifiedName()
                     + (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
         }
         notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_COMPLETE);
@@ -1263,13 +1271,13 @@ class ProcessExecutorImpl {
             return null;
 
         Process processVO = getProcessDefinition(parentInstance);
-        Transition workTransVO = processVO.getWorkTransition(activityInstance.getActivityId(), EventType.RESUME, taskAction);
+        Transition workTransVO = processVO.getTransition(activityInstance.getActivityId(), EventType.RESUME, taskAction);
         if (workTransVO == null) {
             // try upper case
-            workTransVO = processVO.getWorkTransition(activityInstance.getActivityId(), EventType.RESUME, taskAction.toUpperCase());
+            workTransVO = processVO.getTransition(activityInstance.getActivityId(), EventType.RESUME, taskAction.toUpperCase());
         }
         if (workTransVO == null) {
-            workTransVO = processVO.getWorkTransition(activityInstance.getActivityId(), EventType.FINISH, taskAction);
+            workTransVO = processVO.getTransition(activityInstance.getActivityId(), EventType.FINISH, taskAction);
         }
         return workTransVO;
     }
@@ -1349,7 +1357,7 @@ class ProcessExecutorImpl {
                     event.getCompletionCode(), activityTimer, new ProcessExecutor(this));
             return cntrActivity;
         } catch (Exception e) {
-            logger.severeException("Unable to instantiate implementer " + actVO.getImplementorClassName(), e);
+            logger.severeException("Unable to instantiate implementer " + actVO.getImplementor(), e);
             return null;
         }
         finally {
@@ -1480,15 +1488,15 @@ class ProcessExecutorImpl {
                     || var.getVariableCategory().intValue() == Variable.CAT_INOUT) {
                 VariableInstance vio = getDataAccess()
                         .getVariableInstance(procInstId,
-                                var.getVariableName());
+                                var.getName());
                 if (vio != null) {
                     if (passDocContent && vio.isDocument()) {
                         Document docvo = getDocument((DocumentReference)vio.getData(), false);
                         if (docvo != null)
-                            params.put(var.getVariableName(), docvo.getContent(getPackage(subprocDef)));
+                            params.put(var.getName(), docvo.getContent(getPackage(subprocDef)));
                     }
                     else {
-                        params.put(var.getVariableName(), vio.getStringValue());
+                        params.put(var.getName(), vio.getStringValue());
                     }
                 }
             }
@@ -1924,11 +1932,11 @@ class ProcessExecutorImpl {
                                         throw new ProcessException("Process '" + processVO.getFullLabel() + "' has no such input variable defined: " + varName);
                                     if (processInstance.getVariable(varName) != null)
                                         throw new ProcessException("Process '" + processVO.getFullLabel() + "' input variable already populated: " + varName);
-                                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), varVO.getVariableType())) {
-                                        DocumentReference docRef = createDocument(varVO.getVariableType(), OwnerType.VARIABLE_INSTANCE, new Long(0),
+                                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), varVO.getType())) {
+                                        DocumentReference docRef = createDocument(varVO.getType(), OwnerType.VARIABLE_INSTANCE, new Long(0),
                                                 updated.get(varName));
                                         VariableInstance varInst = createVariableInstance(processInstance, varName, docRef);
-                                        updateDocumentInfo(docRef, processVO.getVariable(varInst.getName()).getVariableType(), OwnerType.VARIABLE_INSTANCE,
+                                        updateDocumentInfo(docRef, processVO.getVariable(varInst.getName()).getType(), OwnerType.VARIABLE_INSTANCE,
                                                 varInst.getInstanceId(), null, null);
                                         processInstance.getVariables().add(varInst);
                                     }

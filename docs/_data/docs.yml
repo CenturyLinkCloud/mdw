@@ -13,12 +13,13 @@
 - title: Guides
   docs:
   - guides/mdw-cookbook
-  - guides/SetupGuideForTomcat
+  - guides/tomcat-guide
   - guides/SetupGuideForCloudFoundry
   
 - title: Documentation
   docs:
   - link-to-javadoc
+  - getting-started/cli
   - help
   
 - title: Designer
@@ -30,6 +31,7 @@
   docs:
   - development/built-in-activities
   - development/built-in-variable-types
+  - guides/spring-boot
   - link-to-javadoc
 
 - title: Presentations

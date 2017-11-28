@@ -71,17 +71,19 @@ public class CloudClassLoader extends ClassLoader {
             jarAssets = new ArrayList<Asset>();
             jarAssets.addAll(newJarAssets);
             // same-package jars go first
-            Collections.sort(jarAssets, new Comparator<Asset>() {
-                public int compare(Asset rs1, Asset rs2) {
-                    String pkgName = mdwPackage.getName();
-                    if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
-                        return -1;
-                    else if (pkgName.equals(rs2.getPackageName()) && !pkgName.equals(rs1.getPackageName()))
-                        return 1;
-                    else
-                        return 0;
-                }
-            });
+            if (this.mdwPackage.getName() != null) {
+                Collections.sort(jarAssets, new Comparator<Asset>() {
+                    public int compare(Asset rs1, Asset rs2) {
+                        String pkgName = mdwPackage.getName();
+                        if (pkgName.equals(rs1.getPackageName()) && !pkgName.equals(rs2.getPackageName()))
+                            return -1;
+                        else if (pkgName.equals(rs2.getPackageName()) && !pkgName.equals(rs1.getPackageName()))
+                            return 1;
+                        else
+                            return 0;
+                    }
+                });
+            }
         }
 
         return jarAssets;
@@ -332,7 +334,10 @@ public class CloudClassLoader extends ClassLoader {
                     if (jarFile == null)
                         jarFile = new File(assetRoot + "/" + jarAsset.getPackageName().replace('.', '/') + "/" + jarAsset.getName());
                     try (JarFile jf = new JarFile(jarFile)) {
-                        if (jf.getEntry(name) != null) {
+                        ZipEntry entry = jf.getEntry(name);
+                        if (entry == null && name.startsWith("/"))
+                            entry = jf.getEntry(name.substring(1));
+                        if (entry != null) {
                             return new URL("jar:file:" + sep + jarFile.getAbsolutePath().replace('\\', '/') + "!/" + name);
                         }
                     }

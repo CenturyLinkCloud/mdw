@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.listener.jms;
 
-import java.io.InterruptedIOException;
-
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -35,29 +33,30 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 public abstract class JmsListener  {
 
-    private Thread demon_thread;
-    private int receive_timeout;
-    private int poll_interval;
-    private boolean _terminating;
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private Thread daemonThread;
+    private int receiveTimeout;
+    private int pollInterval;
+    private boolean terminating;
     private String name;
-    private String queue_name;
-    protected String getQueueName() { return queue_name; }
+    private String queueName;
+    protected String getQueueName() { return queueName; }
 
-    private ThreadPoolProvider thread_pool;        // when thread_pool is null, run in demon_thread itself
+    private ThreadPoolProvider threadPool;  // when threadPool is null, run in daemonThread itself
     private MessageConsumer consumer;
-
 
     /**
      * @param name
-     * @param queue_name
-     * @param thread_pool
+     * @param queueName
+     * @param threadPool
      */
-    public JmsListener(String name, String queue_name, ThreadPoolProvider thread_pool) {
+    public JmsListener(String name, String queueName, ThreadPoolProvider threadPool) {
         this.name = name;
-        this.queue_name = queue_name;
-        this.receive_timeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_JMS_LISTENER_RECEIVE_TIMEOUT, 300);
-        this.poll_interval = PropertyManager.getIntegerProperty(PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL, PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT);
-        this.thread_pool = thread_pool;
+        this.queueName = queueName;
+        this.receiveTimeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_JMS_LISTENER_RECEIVE_TIMEOUT, 300);
+        this.pollInterval = PropertyManager.getIntegerProperty(PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL, PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT);
+        this.threadPool = threadPool;
     }
 
     abstract protected Runnable getProcesser(TextMessage message) throws JMSException;
@@ -66,22 +65,21 @@ public abstract class JmsListener  {
         return message;
     }
 
-    protected void start_in_thread() {
+    protected void startInThread() {
         Connection connection = null;
         Session session = null;
         consumer = null;
-        StandardLogger logger = LoggerUtil.getStandardLogger();
         try {
-            logger.info("JMS listener " + name + " (" + queue_name + ") is listening");
+            logger.info("JMS listener " + name + " (" + queueName + ") is listening");
             JMSServices jmsServices = JMSServices.getInstance();
 
             // ActiveMQ is not able to listen on a topic when connected as a queue
-            if (queue_name.endsWith(".topic") &&
+            if (queueName.endsWith(".topic") &&
               ApplicationContext.getJmsProvider().getClass().getName().equals("com.centurylink.mdw.container.plugin.activemq.ActiveMqJms")) {
                 connection = jmsServices.getTopicConnectionFactory(null).createConnection();
                 connection.start();
                 session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                Destination topic = jmsServices.getTopic(queue_name);
+                Destination topic = jmsServices.getTopic(queueName);
                 consumer = session.createConsumer(topic);
             }
             else {
@@ -89,15 +87,15 @@ public abstract class JmsListener  {
                 connection = connectionFactory.createConnection();
                 connection.start();
                 session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-                Destination queue = jmsServices.getQueue(session, queue_name);
+                Destination queue = jmsServices.getQueue(session, queueName);
                 consumer = session.createConsumer(queue);
             }
 
-            _terminating = false;
-            if (thread_pool == null) {  // This is for ConfigurationEventListener
-                while (!_terminating) {
+            terminating = false;
+            if (threadPool == null) {  // This is for ConfigurationEventListener
+                while (!terminating) {
                     try {
-                        TextMessage message = (TextMessage)consumer.receive(receive_timeout*1000);
+                        TextMessage message = (TextMessage)consumer.receive(receiveTimeout*1000);
                         if (message!=null) {
                             message = filterMessage(message);
                             if (message!=null)
@@ -108,73 +106,49 @@ public abstract class JmsListener  {
                     catch (InterruptedException e) {
                         logger.info(this.getClass().getName() + " interrupted.");
                     }
-                    catch (JMSException e) {
-                        if ("org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
-                            if (ApplicationContext.isSpringBoot()) // dueling shutdown hooks (spring and activemq) can cause this
-                                logger.severe("Terminating JMS Listener due to Transport Disposed: " + e.getMessage());
-                            else
-                                logger.severeException("Terminating JMS Listener due to Transport Disposed", e);
-                            _terminating = true;
-                        }
-                        else {
-                            logger.severeException(e.getMessage(), e);
-                        }
-                    }
-                    catch (Throwable e) {
-                        logger.severeException(e.getMessage(), e);
+                    catch (Throwable th) {
+                        logger.severeException("JMS Listener Error: " + queueName + " (" + JmsListener.this.hashCode() + ")", th);
                     }
                 }
             }
-            else {  // This is for ExternalEventListener and InternalEventListener
+            else {  // this is for ExternalEventListener and InternalEventListener
                 TextMessage message = null;
-                while (!_terminating) {
+                while (!terminating) {
                     try {
                         // If message == null, then we successfully processed previous message, so get next one from queue
                         // If NOT null, then we couldn't process previously received message (no available thread), so try again
                         if (message == null) {
-                            message = (TextMessage)consumer.receive(receive_timeout*1000);
+                            message = (TextMessage)consumer.receive(receiveTimeout*1000);
 
                             if (message!=null)
                                 message = filterMessage(message);
                         }
                         if (message!=null) {
-                            if (thread_pool.execute(name, "JMSListener " + name, getProcesser(message))) {
+                            if (threadPool.execute(name, "JMSListener " + name, getProcesser(message))) {
                                 message.acknowledge();  // commit later after persistence?
                                 message = null;  // Make null so we get next message from queue
                             }
                             else {
-                                String msg = "JMS listener " + name + " (" + queue_name + ") has no thread available";
+                                String msg = "JMS listener " + name + " (" + queueName + ") has no thread available";
                                 // make this stand out
                                 logger.severeException(msg, new Exception(msg));
-                                logger.info(thread_pool.currentStatus());
-                                Thread.sleep(poll_interval*1000);  // Will try to process same message after waking up
+                                logger.info(threadPool.currentStatus());
+                                Thread.sleep(pollInterval*1000);  // Will try to process same message after waking up
                             }
                         }
                     }
                     catch (InterruptedException e) {
                         logger.info(this.getClass().getName() + " interrupted.");
                     }
-                    catch (JMSException e) {
-                        if ("org.apache.activemq.transport.TransportDisposedIOException".equals(e.getCause().getClass().getName())) {
-                            if (ApplicationContext.isSpringBoot()) // dueling shutdown hooks (spring and activemq) can cause this
-                                logger.severe("Terminating JMS Listener due to Transport Disposed: " + e.getMessage());
-                            else
-                                logger.severeException("Terminating JMS Listener due to Transport Disposed", e);
-                            _terminating = true;
-                        }
-                        else {
-                            logger.severeException(e.getMessage(), e);
-                        }
-                    }
-                    catch (Throwable e) {
-                        logger.severeException(e.getMessage(), e);
+                    catch (Throwable th) {
+                        logger.severeException("JMS Listener Error: " + queueName + " (" + JmsListener.this.hashCode() + ")", th);
                     }
                 }
             }
-            logger.info("JMS listener " + name + " (" + queue_name + ") is terminated");
+            logger.info("JMS listener " + name + " (" + queueName + ") is terminated");
         }
-        catch (Exception e) {
-            logger.severeException("JMS listener " + name + " (" + queue_name + ") terminated due to exception " + e.getMessage(), e);
+        catch (Exception ex) {
+            logger.severeException("JMS listener " + name + " (" + queueName + ") terminated due to exception " + ex.getMessage(), ex);
         }
         finally {
             try {
@@ -187,44 +161,37 @@ public abstract class JmsListener  {
                 if (connection != null)
                     connection.close();
             }
-            catch (JMSException e) {
-                if (_terminating && e.getCause() != null && (e.getCause() instanceof InterruptedIOException
-                          || e.getCause().getClass().getName().equals("org.apache.activemq.transport.TransportDisposedIOException"))) {
-                    // ignore errors during shutdown
-                    if (logger.isTraceEnabled())
-                        logger.infoException(e.getMessage(), e);
-                }
-                else {
-                    logger.severeException("JMS listener " + name + " exception during closing resources " + e.getMessage(), e);
-                }
+            catch (JMSException ex) {
+                logger.severeException("JMS listener " + name + " error closing resources " + ex.getMessage(), ex);
             }
         }
     }
 
     public void start() {
-        demon_thread = new Thread() {
+        daemonThread = new Thread() {
             public void run() {
                 this.setName(name);
-                start_in_thread();
+                startInThread();
             }
         };
-        demon_thread.start();
+        daemonThread.start();
     }
 
     public void stop() {
-        _terminating = true;
+        terminating = true;
 
         try {
             if (consumer != null) {
                 consumer.close();
+                logger.info("Closed JMS listener consumer: " + queueName + " (" + JmsListener.this.hashCode() + ")");
                 consumer = null;
             }
         }
         catch (Exception ex) {
-            LoggerUtil.getStandardLogger().severeException(ex.getMessage(), ex);
+            logger.severeException(ex.getMessage(), ex);
         }
 
-        demon_thread.interrupt();
+        daemonThread.interrupt();
     }
 
 }

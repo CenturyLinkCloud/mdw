@@ -21,13 +21,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -92,15 +96,15 @@ public class ProcessCache implements CacheService {
     }
 
     private void putInCache(Process process, boolean versionZero) {
-        processMap.put(process.getProcessId(), process);
-        List<Process> vl = procNameMap.get(process.getProcessQualifiedName());
+        processMap.put(process.getId(), process);
+        List<Process> vl = procNameMap.get(process.getQualifiedName());
         if (vl == null) {
             vl = new ArrayList<Process>();
-            procNameMap.put(process.getProcessQualifiedName(), vl);
+            procNameMap.put(process.getQualifiedName(), vl);
         }
         vl.add(process);
         if (versionZero)
-            procNameLatest.put(process.getProcessQualifiedName(), process);
+            procNameLatest.put(process.getQualifiedName(), process);
 
         if (process.getPackageName() == null)
             logger.warn("Non-Package Qualified Process Names are DEPRECATED in MDW");
@@ -145,13 +149,13 @@ public class ProcessCache implements CacheService {
             Process match = null;
             for (Process process : getAllProcesses()) {
                 if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getProcessName())) {
+                    if (spec.getName().equals(process.getName())) {
                         if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
                             match = process;
                     }
                 }
                 else
-                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
                         if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
                             match = process;
                     }
@@ -177,13 +181,13 @@ public class ProcessCache implements CacheService {
             List<Process> matches = new ArrayList<>();
             for (Process process : getAllProcesses()) {
                 if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getProcessName())) {
+                    if (spec.getName().equals(process.getName())) {
                         if (process.meetsVersionSpec(spec.getVersion()))
                             matches.add(process);
                     }
                 }
                 else
-                    if (spec.getQualifiedName().equals(process.getProcessQualifiedName())) {   // Match using fully qualified process name
+                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
                         if (process.meetsVersionSpec(spec.getVersion()))
                             matches.add(process);
                     }
@@ -233,6 +237,12 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().loadProcess(id, true);
+            // If proc == null, check ASSET_REF DB table and retrieve from git history
+            if (proc == null) {
+                AssetRef assetRef = AssetRefCache.getAssetRef(id);
+                if (assetRef != null)
+                    proc = AssetRefConverter.getProcess(assetRef);
+            }
             if (proc != null) {
                 // all db attributes are override attributes
                 Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, id);
@@ -254,9 +264,18 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().getProcessBase(name, version);
+            if (proc == null) {
+                String refName = name;
+                if (!refName.endsWith(".proc"))
+                    refName += ".proc";
+                refName += " v" + Asset.formatVersion(version);
+                AssetRef assetRef = AssetRefCache.getAssetRef(refName);
+                if (assetRef != null)
+                    proc = AssetRefConverter.getProcess(assetRef);
+            }
             if (proc != null) {
                 // all db attributes are override attributes
-                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getProcessId());
+                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getId());
                 if (attributes != null)
                     proc.applyOverrideAttributes(attributes);
             }

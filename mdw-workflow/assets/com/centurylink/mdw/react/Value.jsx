@@ -1,5 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Glyphicon} from '../node/node_modules/react-bootstrap';
 var classNames = require('../node/node_modules/classnames');
 var DatePicker = require('../node/node_modules/react-bootstrap-date-picker');
 
@@ -27,6 +27,55 @@ class Value extends Component {
     }
   }
   
+  buildException(exceptHolder) {
+    return function(el) {
+      exceptHolder.exceptionMessage += '\tat ' + el.class;
+      if (el.method) {
+        if (el.method.startsWith('<'))
+          el.method = '&lt;' + el.method.substring(1);
+        exceptHolder.exceptionMessage += '.' + el.method;
+      }
+      if (el.file) {
+        exceptHolder.exceptionMessage += '(' + el.file;
+        if (el.line) {
+          exceptHolder.exceptionMessage += ':' + el.line;
+        }
+        exceptHolder.exceptionMessage += ')\n';
+      }
+    };
+  }
+  
+  asException(value) {
+    var except = '';
+    if (value.value) {
+      var activityException = JSON.parse(value.value);
+      if (activityException.activityException)
+        activityException = activityException.activityException;
+      if (activityException) {
+        var ex = activityException;
+        while (ex) {
+          if (ex.throwable)
+            except += ex.throwable + ':';
+          if (ex.code)
+            except += '(code=' + ex.code + '):';
+          if (ex.message)
+            except += ' ' + ex.message;
+          except += '\n';
+          if (ex.stackElements) {
+            var exceptHolder = {};
+            exceptHolder.exceptionMessage = '';
+            ex.stackElements.forEach(this.buildException(exceptHolder));
+            except += exceptHolder.exceptionMessage;
+          }
+          if (ex.cause)
+            except += 'Caused By: ';
+          ex = ex.cause;
+        }
+      }
+    }
+    return except;
+  }
+  
   render() {
     var value = this.props.value;
     var editable = this.props.editable && value.display !== 'ReadOnly';
@@ -34,14 +83,14 @@ class Value extends Component {
     return (
       <div className={classNames('form-group', {'has-error': value.error})}>
         <label className={classNames('control-label', 'col-xs-2', {
-            'mdw-required': value.display && value.display.required})} >
+            'mdw-required': value.display  === 'Required'})} >
           {value.label ? value.label : value.name}
         </label>
         <div className={value.isDocument ? 'col-md-10' : 'col-xs-4'}>
           {value.type === 'java.lang.Exception' &&
             <textarea className="form-control mdw-document-input"  
               id={value.name} name={value.name} rows={value.showLines}
-              readOnly={true} value={$mdwUi.util.asException(value)} />
+              readOnly={true} value={this.asException(value)} />
           }
           {value.isDocument && value.type !== 'java.lang.Exception' &&
             <textarea className="form-control mdw-document-input" 

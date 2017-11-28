@@ -6,7 +6,7 @@ assert hasTestingPackage
 // also requires the MDW workflow package com.centurylink.mdw.testing
 def timerStubMatcher = { Object runtimeContext -> // instance of ActivityRuntimeContext
     return "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity"
-        .equals(runtimeContext.getActivity().getImplementorClassName());
+        .equals(runtimeContext.getActivity().getImplementor());
 }
 
 start process("TestActivityStub") {

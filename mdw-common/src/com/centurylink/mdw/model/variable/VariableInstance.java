@@ -70,7 +70,7 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
         this.data = null;
     }
 
-    public String getStringValue(){
+    public String getStringValue() {
         if (value != null)
             return this.value;
         if (data == null)
@@ -79,19 +79,21 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
         return value;
     }
 
-    public void setData(Object data){
+    public void setData(Object data) {
         this.data = data;
         this.value = null;
     }
 
-    public Object getData(){
-        if (data!=null) return this.data;
-        if (value==null) return null;
+    public Object getData() {
+        if (data != null)
+            return this.data;
+        if (value == null)
+            return null;
         data = VariableTranslator.toObject(type, value);
         return data;
     }
 
-    public void setType(String type){
+    public void setType(String type) {
         this.type = type;
     }
 

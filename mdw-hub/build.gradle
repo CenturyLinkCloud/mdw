@@ -52,6 +52,7 @@ dependencies {
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/drools", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/node", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/mysql", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
  
 	//  Un-comment below if you add the tibco and/or ibmmq package(s) to your workspace's assets
     //providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/tibco", includes: ["*.jar"])
@@ -120,7 +121,14 @@ task buildDist(type: Exec) {
         commandLine 'grunt', '--no-color'
 }
 
+task esLint(type: Exec) {
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine 'cmd', '/c', 'grunt', '--no-color', 'eslint'
+    else
+        commandLine 'grunt', '--no-color', 'eslint'
+}
 task jsHint(type: Exec) {
+    dependsOn esLint
     if (System.properties["os.name"].startsWith("Windows"))
         commandLine 'cmd', '/c', 'grunt', '--no-color', 'jshint'
     else
@@ -150,6 +158,9 @@ war {
     }
     from("../mdw-workflow/src") {
         include "META-INF/mdw/**"
+    }
+    from("../mdw") {
+        include "cli/mdw-cli.jar"
     }
     
     webXml = file("web/WEB-INF/web.xml")

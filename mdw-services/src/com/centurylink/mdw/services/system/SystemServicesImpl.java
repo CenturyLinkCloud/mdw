@@ -15,6 +15,13 @@
  */
 package com.centurylink.mdw.services.system;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -32,10 +39,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -44,8 +53,11 @@ import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class SystemServicesImpl implements SystemServices {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public List<SysInfoCategory> getSysInfoCategories(SysInfoType type, Query query)
     throws ServiceException {
@@ -66,7 +78,32 @@ public class SystemServicesImpl implements SystemServices {
             String className = query.getFilter("className");
             if (className == null)
                 throw new ServiceException("Missing parameter: className");
-            sysInfoCats.add(findClass(className));
+            String classLoader = query.getFilter("classLoader");
+            if (classLoader == null) {
+                sysInfoCats.add(findClass(className));
+            }
+            else {
+                ClassLoader loader;
+                if (classLoader.equals(ClasspathUtil.class.getClassLoader().getClass().getName()))
+                    loader = ClasspathUtil.class.getClassLoader();
+                else
+                    loader = PackageCache.getPackage(classLoader).getCloudClassLoader();
+                sysInfoCats.add(findClass(className, loader));
+            }
+        }
+        else if (type == SysInfoType.CLI) {
+            String cmd = query.getFilter("command");
+            if (cmd == null)
+                throw new ServiceException("Missing parameter: command");
+            List<SysInfo> cmdInfo = new ArrayList<>();
+            try {
+                String output = runCliCommand(cmd);
+                cmdInfo.add(new SysInfo(cmd, output));  // TODO actual output
+                sysInfoCats.add(new SysInfoCategory("CLI Command Output", cmdInfo));
+            }
+            catch (Exception ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
         }
         else if (type == SysInfoType.MBean) {
 
@@ -176,7 +213,7 @@ public class SystemServicesImpl implements SystemServices {
         systemInfos.add(new SysInfo("Free memory", runtime.freeMemory()/1024/1024 + " MB"));
         systemInfos.add(new SysInfo("Total memory", runtime.totalMemory()/1024/1024 + " MB"));
         systemInfos.add(new SysInfo("Available processors", String.valueOf(runtime.availableProcessors())));
-
+        systemInfos.add(new SysInfo("Default ClassLoader", ClasspathUtil.class.getClassLoader().getClass().getName()));
 
         String pathSep = System.getProperty("path.separator");
         String cp = System.getProperty("java.class.path");
@@ -302,5 +339,61 @@ public class SystemServicesImpl implements SystemServices {
         List<SysInfo> classInfo = new ArrayList<>();
         classInfo.add(new SysInfo(className, ClasspathUtil.locate(className)));
         return new SysInfoCategory("Class Info", classInfo);
+    }
+
+    public String runCliCommand(String command) throws IOException, InterruptedException {
+        List<String> cmd = new ArrayList<>();
+        cmd.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
+
+        cmd.add("-jar");
+        String mdwHome = System.getenv("MDW_HOME");
+        if (mdwHome == null) {
+            mdwHome = ApplicationContext.getTempDirectory() + File.separator + "MDW_HOME";
+        }
+
+        File cliJar = new File(mdwHome + File.separator + "mdw-cli.jar");
+        if (!cliJar.exists()) {
+            if (!cliJar.getParentFile().isDirectory() && !cliJar.getParentFile().mkdirs())
+                throw new IOException("Cannot create dir: " + cliJar.getParentFile().getAbsolutePath());
+            // TODO extract cli jar from war into mdwHome
+        }
+        cmd.add(cliJar.getAbsolutePath());
+
+        List<String> mdwCmd = new ArrayList<>();
+        mdwCmd.addAll(Arrays.asList(command.trim().split("\\s+")));
+        if (mdwCmd.get(0).equals("mdw"))
+            mdwCmd.remove(0);
+        if (!mdwCmd.isEmpty()) {
+            String first = mdwCmd.get(0);
+            if (first.equals("archive") || first.equals("import") || first.equals("install")
+                    || first.equals("status") || first.equals("test") || first.equals("update")) {
+                mdwCmd.add("--config-loc=" + System.getProperty("mdw.config.location"));
+            }
+        }
+
+        cmd.addAll(mdwCmd);
+        logger.debug("Running MDW CLI command: '" + String.valueOf(cmd));
+
+        ProcessBuilder builder = new ProcessBuilder(cmd);
+        builder.directory(new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH)));
+        builder.redirectErrorStream(true);
+        Process process = builder.start();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(output));
+        new Thread(new Runnable() {
+            public void run() {
+                try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
+                    out.lines().forEach(line -> {
+                        writer.println(line);
+                    });
+                }
+                catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }).start();
+        process.waitFor();
+        writer.flush();
+        return new String(output.toByteArray());
     }
 }

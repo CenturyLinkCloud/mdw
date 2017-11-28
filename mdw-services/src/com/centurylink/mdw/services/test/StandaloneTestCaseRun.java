@@ -151,14 +151,14 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             List<ProcessInstance> processInstances = processList.getProcesses();
             Map<Long,String> activityNameMap = new HashMap<Long,String>();
             for (Activity act : proc.getActivities()) {
-                activityNameMap.put(act.getActivityId(), act.getActivityName());
-                fullActivityNameMap.put(proc.getId() + "-" + act.getActivityId(), act.getActivityName());
+                activityNameMap.put(act.getId(), act.getName());
+                fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
             }
-            if (proc.getSubProcesses() != null) {
-                for (Process subproc : proc.getSubProcesses()) {
+            if (proc.getSubprocesses() != null) {
+                for (Process subproc : proc.getSubprocesses()) {
                     for (Activity act : subproc.getActivities()) {
-                        activityNameMap.put(act.getActivityId(), act.getActivityName());
-                        fullActivityNameMap.put(proc.getId() + "-" + act.getActivityId(), act.getActivityName());
+                        activityNameMap.put(act.getId(), act.getName());
+                        fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
                     }
                 }
             }
@@ -171,11 +171,11 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                     procInsts = new ArrayList<ProcessInstance>();
                 procInsts.add(procInst);
                 fullProcessInsts.put(proc.getName(), procInsts);
-                if (proc.getSubProcesses() != null) {
+                if (proc.getSubprocesses() != null) {
                     Query q = new Query();
                     q.setFilter("owner", OwnerType.MAIN_PROCESS_INSTANCE);
                     q.setFilter("ownerId", procInst.getId().toString());
-                    q.setFilter("processId", proc.getProcessId().toString());
+                    q.setFilter("processId", proc.getId().toString());
                     List<ProcessInstance> embeddedProcInstList;
                     q.setFilter("app", "autotest");
                     httpHelper = getHttpHelper("GET", "services/Processes?" + q);
@@ -185,11 +185,11 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                         httpHelper = getHttpHelper("GET", "services/Processes/" + embeddedProcInst.getId() + "?app=autotest");
                         ProcessInstance fullChildInfo = new ProcessInstance(new JsonObject(httpHelper.get()));
                         String childProcName = "unknown_subproc_name";
-                        for (Process subproc : proc.getSubProcesses()) {
-                            if (subproc.getProcessId().toString().equals(embeddedProcInst.getComment())) {
-                                childProcName = subproc.getProcessName();
-                                if (!childProcName.startsWith(proc.getProcessName()))
-                                    childProcName = proc.getProcessName() + " " + childProcName;
+                        for (Process subproc : proc.getSubprocesses()) {
+                            if (subproc.getId().toString().equals(embeddedProcInst.getComment())) {
+                                childProcName = subproc.getName();
+                                if (!childProcName.startsWith(proc.getName()))
+                                    childProcName = proc.getName() + " " + childProcName;
                                 break;
                             }
                         }

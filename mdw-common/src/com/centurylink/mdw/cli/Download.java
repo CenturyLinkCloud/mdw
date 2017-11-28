@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Bare min impl to support CLI without dependencies.
@@ -52,7 +53,10 @@ public class Download implements Operation {
     }
 
     public Download run(ProgressMonitor... progressMonitors) throws IOException {
-        try (InputStream urlIn = new BufferedInputStream(from.openStream());
+        URLConnection connection = from.openConnection();
+        if (size == 0 && connection.getContentLength() > 0)
+          size = connection.getContentLength();
+        try (InputStream urlIn = new BufferedInputStream(connection.getInputStream());
                 OutputStream fileOut = new BufferedOutputStream(new FileOutputStream(to))) {
             if (size == 0)
               size = urlIn.available();

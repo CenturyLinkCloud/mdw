@@ -28,8 +28,10 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
@@ -307,6 +309,10 @@ public class ListenerHelper {
             }
             return response.getContent();
         }
+        finally {
+        	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+        		ApplicationContext.resetContextClassLoader();
+        }
 
         // Parse the incoming message
         Object msgdoc = getParsedMessage(request, metaInfo);
@@ -428,6 +434,10 @@ public class ListenerHelper {
                 logger.severeException("Failed to persist response", ex);
             }
             return response.getContent();
+        }
+        finally {
+        	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+                ApplicationContext.resetContextClassLoader();
         }
     }
 
@@ -765,7 +775,7 @@ public class ListenerHelper {
             throw new DataAccessException(0, "Cannot find process with name "
                     + procname + ", version 0");
 
-        return proc.getProcessId();
+        return proc.getId();
     }
 
     public static boolean isJson(String message) {

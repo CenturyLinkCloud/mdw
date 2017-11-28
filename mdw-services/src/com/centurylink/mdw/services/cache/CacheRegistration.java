@@ -194,7 +194,8 @@ public class CacheRegistration implements StartupClass {
     public void refreshCaches(List<String> excludedFormats) throws StartupException {
         try {
             String propmgr = PropertyManager.class.getName();
-            refreshCache(propmgr);
+            if (excludedFormats == null || !excludedFormats.contains("PROPERTIES"))
+                refreshCache(propmgr);
             if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
                 CacheRegistry.getInstance().clearDynamicServices();
             synchronized (allCaches) {

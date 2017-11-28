@@ -20,7 +20,6 @@ public class PropertyNames {
     // logging
     public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";
     public static final String MDW_LOGGING_FILE = "mdw.logging.file";
-    public static final String MDW_LOGGING_DIR = "mdw.logging.dir";
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher"; // used internally, set by regression tester "<host>:<port>:<timeout>";
     public static final String MDW_LOGGING_WEB_WATCHER = "mdw.logging.web.watcher"; // used for watching using WebSocketServer
     // container service providers
@@ -112,6 +111,9 @@ public class PropertyNames {
 
     // this is a group, for multiple MQ listeners
     public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
+
+    // this is a group, for multiple Kafka listeners
+    public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
 
     // this is a group, contains <name>.TimerClass/Schedule
     public static final String MDW_TIMER_TASK = "mdw.timer.task";   // prefix for timer task properties

@@ -1,0 +1,25 @@
+test: 'POST:asset'
+request:
+  url: >-
+    ${base-url}/Assets/${asset-path}
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "name": "${asset-name}"
+    }
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

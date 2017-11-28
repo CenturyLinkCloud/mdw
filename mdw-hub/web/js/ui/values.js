@@ -40,9 +40,9 @@ valuesMod.controller('MdwValuesController', ['$scope', 'mdw', 'util', 'DOCUMENT_
               val.value = new Date(val.value);
             }
             if (val.display && $scope.editable)
-              val.editable = val.display !== 'ReadOnly';
+              val.editable = val.display !== 'ReadOnly' && val.type !== 'java.lang.Object';
             else
-              val.editable = $scope.editable;
+              val.editable = $scope.editable && val.type !== 'java.lang.Object';
             $scope.values.push(val);
           }
         }

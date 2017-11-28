@@ -90,9 +90,9 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         // TODO handle document variables
         Process processVO = getProcessDefinition();
         for (Variable variable : processVO.getVariables()) {
-            Object newValue = values.get(variable.getVariableName());
+            Object newValue = values.get(variable.getName());
             if (newValue != null)
-                setVariableValue(variable.getVariableName(), variable.getVariableType(), newValue);
+                setVariableValue(variable.getName(), variable.getType(), newValue);
         }
     }
 

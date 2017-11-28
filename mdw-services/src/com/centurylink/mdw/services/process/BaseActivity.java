@@ -29,6 +29,7 @@ import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -63,7 +64,6 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.ServiceLocatorException;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -219,10 +219,20 @@ public abstract class BaseActivity implements GeneralActivity {
             loginfo("Skipping disabled activity: " + getActivityName());
         }
         else {
-            initialize(_runtimeContext);
-            Object ret = execute(_runtimeContext);
-            if (ret != null)
-                setReturnCode(String.valueOf(ret));
+            try {
+                initialize(_runtimeContext);
+                Object ret = execute(_runtimeContext);
+                if (ret != null)
+                    setReturnCode(String.valueOf(ret));
+            }
+            catch (ActivityException ex) {
+                throw ex;
+            }
+            finally
+            {
+            	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+                    ApplicationContext.resetContextClassLoader();
+            }
         }
     }
 
@@ -305,7 +315,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return activity ID
      */
     protected Long getActivityId() {
-        return this.activityDef.getActivityId();
+        return this.activityDef.getId();
     }
 
     /**
@@ -313,7 +323,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return name of the activity
      */
     protected String getActivityName() {
-        return this.activityDef.getActivityName();
+        return this.activityDef.getName();
     }
 
     /**
@@ -488,9 +498,9 @@ public abstract class BaseActivity implements GeneralActivity {
         List<Variable> vs = procdef.getVariables();
         String varName;
         for (int i=0; i<vs.size(); i++) {
-            varName = vs.get(i).getVariableName();
+            varName = vs.get(i).getName();
             if (varName.equals(name))
-                return vs.get(i).getVariableType();
+                return vs.get(i).getType();
         }
         return null;
     }
@@ -750,12 +760,12 @@ public abstract class BaseActivity implements GeneralActivity {
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
             for (Variable varVO: varVOs) {
-                Object value = getParameterValue(varVO.getVariableName());
+                Object value = getParameterValue(varVO.getName());
                 if (value instanceof DocumentReference) {
                     DocumentReference docref = (DocumentReference) value;
-                    value = getDocument(docref, varVO.getVariableType());
+                    value = getDocument(docref, varVO.getType());
                 }
-                bindings.put(varVO.getVariableName(), value);
+                bindings.put(varVO.getName(), value);
             }
             bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
             return evaluator.evaluate(expression, bindings);
@@ -782,12 +792,12 @@ public abstract class BaseActivity implements GeneralActivity {
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
             for (Variable varVO: varVOs) {
-                Object value = getParameterValue(varVO.getVariableName());
+                Object value = getParameterValue(varVO.getName());
                 if (value instanceof DocumentReference) {
                     DocumentReference docref = (DocumentReference) value;
-                    value = getDocument(docref, varVO.getVariableType());
+                    value = getDocument(docref, varVO.getType());
                 }
-                addlBinding.put(varVO.getVariableName(), value);
+                addlBinding.put(varVO.getName(), value);
             }
             addlBinding.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
             return evaluator.evaluate(expression, addlBinding);
@@ -1243,41 +1253,19 @@ public abstract class BaseActivity implements GeneralActivity {
         return timer;
     }
 
-    /**
-     * Returns the TaskManager EJB Ref
-     * @return TaskManager
-     * @throws ServiceLocatorException
-     */
-//    protected TaskManager getTaskManager() throws ServiceLocatorException {
-//        try {
-//            ServiceLocator locator = ServiceLocator.getInstance();
-//            return (TaskManager) locator.getEJB(ServiceConstants.TASK_MANAGER);
-//        }
-//        catch (ServiceLocatorException ex) {
-//            logger.severeException(ex.getMessage(), ex);
-//            throw new ServiceLocatorException(-1, ex.getMessage(), ex);
-//        }
-//    }
-
     protected ProcessExecutor getEngine() {
         return engine;
     }
 
     /**
+     * Executes a script, passing additional bindings to be made available to the script.
      * Script should return a value for the result code if the default (null is not desired).
      *
      * @param script - the script content
      * @param language - built-in support for Groovy, and JavaScript (default is Groovy)
      */
-    protected Object executeScript(String script, String language) throws ActivityException {
-        return executeScript(script, language, null);
-    }
-
-    /**
-     * Executes a script, passing additional bindings to be made available to the script.
-     * @see executeScript(String, String)
-     */
-    protected Object executeScript(String script, String language, Map<String,Object> addlBindings) throws ActivityException {
+    protected Object executeScript(String script, String language, Map<String,Object> addlBindings, String qualifier)
+            throws ActivityException {
 
         String temp = getAttributeValue(OUTPUTDOCS);
         outputDocuments = temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]);
@@ -1290,7 +1278,7 @@ public abstract class BaseActivity implements GeneralActivity {
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
             for (Variable varVO: varVOs) {
-                bindings.put(varVO.getVariableName(), getVariableValue(varVO.getVariableName()));
+                bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
             }
             bindings.put("runtimeContext", _runtimeContext);
             bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
@@ -1298,13 +1286,13 @@ public abstract class BaseActivity implements GeneralActivity {
                 bindings.putAll(addlBindings);
             }
 
-            ScriptExecutor executor = getScriptExecutor(language);
+            ScriptExecutor executor = getScriptExecutor(language, qualifier);
             retObj = executor.execute(script, bindings);
 
             for (Variable variableVO: varVOs) {
-                String variableName = variableVO.getVariableName();
+                String variableName = variableVO.getName();
                 Object bindValue = bindings.get(variableName);
-                String varType = variableVO.getVariableType();
+                String varType = variableVO.getType();
                 Object value = bindValue;
                 if (varType.equals("java.lang.String") && value != null)
                     value = value.toString();  // convert to string
@@ -1317,7 +1305,7 @@ public abstract class BaseActivity implements GeneralActivity {
         return retObj;
     }
 
-    protected ScriptExecutor getScriptExecutor(String language) throws PropertyException {
+    protected ScriptExecutor getScriptExecutor(String language, String qualifier) throws PropertyException {
         if (language == null)
             throw new NullPointerException("Missing script executor language");
 
@@ -1334,9 +1322,15 @@ public abstract class BaseActivity implements GeneralActivity {
         }
         else
             exeImpl = (ScriptExecutor) ApplicationContext.getClassInstance(exeImplClassName);
-        String name = GroovyNaming.getValidClassName(getProcessDefinition().getLabel() + "_" + getActivityName() + "_" + getActivityId());
-        exeImpl.setName(name);
+        exeImpl.setName(getScriptExecClassName(qualifier));
         return exeImpl;
+    }
+
+    protected String getScriptExecClassName(String qualifier) {
+        String name = getProcessDefinition().getLabel() + "_" + getActivityName() + "_" + getActivityId();
+        if (qualifier != null)
+            name += "_" + qualifier;
+        return GroovyNaming.getValidClassName(name);
     }
 
     /**
@@ -1366,7 +1360,7 @@ public abstract class BaseActivity implements GeneralActivity {
         Variable varVO = getProcessDefinition().getVariable(varName);
         if (varVO == null)
             throw new ActivityException("No such variable defined for process: " + varName);
-        String varType = varVO.getVariableType();
+        String varType = varVO.getType();
         if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varType))
             setParameterValueAsDocument(varName, varType, value);
         else
@@ -1552,8 +1546,8 @@ public abstract class BaseActivity implements GeneralActivity {
             runtimeContext.set(spec, value);
             String rootVar = spec.substring(2, spec.indexOf('.'));
             Variable doc = runtimeContext.getProcess().getVariable(rootVar);
-            String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getVariableType(), runtimeContext.evaluate("#{" + rootVar + "}"));
-            setParameterValueAsDocument(rootVar, doc.getVariableType(), stringValue);
+            String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+            setParameterValueAsDocument(rootVar, doc.getType(), stringValue);
         }
         else {
             setVariableValue(spec, value);

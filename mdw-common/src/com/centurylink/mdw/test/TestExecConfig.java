@@ -32,6 +32,7 @@ public class TestExecConfig implements Jsonable {
     public static final String MDW_TEST_CREATE_REPLACE = "mdw.test.create.replace";
     public static final String MDW_TEST_PIN_TO_SERVER = "mdw.test.pin.to.server";
     public static final String MDW_TEST_SERVER_URL = "mdw.test.server.url";
+    public static final String MDW_TEST_INCLUDE_POSTMAN_ITEMS = "mdw.test.include.postman.items";
 
     private int threads = 5; // thread pool size
     public int getThreads() { return threads; }
@@ -65,6 +66,10 @@ public class TestExecConfig implements Jsonable {
     public boolean isPinToServer() { return pinToServer; }
     public void setPinToServer(boolean pinToServer) { this.pinToServer = pinToServer; }
 
+    private boolean includePostmanItems = true;
+    public boolean isIncludePostmanItems() { return includePostmanItems; }
+    public void setIncludePostmanItems(boolean includePostmanItems) { this.includePostmanItems = includePostmanItems; }
+
     /**
      * Implies running workflow through REST.
      */
@@ -96,6 +101,8 @@ public class TestExecConfig implements Jsonable {
             this.pinToServer = json.getBoolean("pinToServer");
         if (json.has("serverUrl"))
             this.serverUrl = json.getString("serverUrl");
+        if (json.has("includePostmanItems"))
+            this.includePostmanItems = json.getBoolean("includePostmanItems");
     }
 
     public TestExecConfig(Properties properties) {
@@ -112,6 +119,9 @@ public class TestExecConfig implements Jsonable {
         if (pinToServer != null)
             this.pinToServer = Boolean.parseBoolean(pinToServer);
         this.serverUrl = properties.getProperty(MDW_TEST_SERVER_URL);
+        String includePostman = properties.getProperty(MDW_TEST_INCLUDE_POSTMAN_ITEMS);
+        if (includePostman != null)
+            this.includePostmanItems = Boolean.parseBoolean(includePostman);
     }
 
     public JSONObject getJson() throws JSONException {
@@ -134,6 +144,8 @@ public class TestExecConfig implements Jsonable {
             json.put("pinToServer", pinToServer);
         if (serverUrl != null)
             json.put("serverUrl", serverUrl);
+        if (includePostmanItems)
+            json.put("includePostmanItems", includePostmanItems);
         return json;
     }
 

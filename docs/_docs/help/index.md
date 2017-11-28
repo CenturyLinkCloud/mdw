@@ -34,6 +34,7 @@ permalink: /docs/help/
   <li><a href='notification.html'>Notification Activity</a></li> 
   <li><a href='process.html'>Processes</a></li>
   <li><a href='RestfulAdapter.html'>RESTful Adapter Activity</a></li>
+  <li><a href='KafkaAdapter.html'>Kafka Adapter Activity</a></li>
   <li><a href='scriptActivity.html'>Script Activity</a></li>       
   <li><a href='sqlAdapter.html'>SQL Adapter Activity</a></li>
   <li><a href='synchronization.html'>Synchronization Activity</a></li>
@@ -59,7 +60,7 @@ permalink: /docs/help/
   <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
   <li><a href='listener.html'>Developing Listeners and External Event Handlers</a></li>
   <li><a href='dynamicJava.html'>Dynamic Java</a></li>
-  <li><a href='../javadoc/index.html'>Java Docs</a></li>
+  <li><a href='../javadoc/index.html'>Javadoc</a></li>
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
   <li><a href='scheduledJobs.html'>Scheduled Jobs</a></li>

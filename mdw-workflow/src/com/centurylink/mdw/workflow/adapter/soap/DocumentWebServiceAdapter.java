@@ -65,7 +65,7 @@ public class DocumentWebServiceAdapter extends SoapWebServiceAdapter {
             }
             else {
                 Variable reqVar = getProcessDefinition().getVariable(getAttributeValue(REQUEST_VARIABLE));
-                XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), reqVar.getVariableType());
+                XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), reqVar.getType());
                 requestDoc = docRefTrans.toDomDocument(requestObj);
                 Document copiedDocument = DomHelper.copyDomDocument(requestDoc);
                 soapBody.addDocument(copiedDocument);

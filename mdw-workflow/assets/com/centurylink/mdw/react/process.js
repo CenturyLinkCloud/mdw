@@ -1,10 +1,10 @@
 // Retrieves process def and optionally instance
 const process = {
-  get: function(serviceBase, assetPath, instanceId, callback) {
+  get: function(serviceBase, assetPath, instanceId, masterRequestId, callback) {
     if (assetPath) {
       this.getProcess(serviceBase, assetPath, process => {
-        if (instanceId) {
-          this.getInstance(serviceBase, instanceId, instance => {
+        if (instanceId || masterRequestId) {
+          this.getInstance(serviceBase, instanceId, masterRequestId, instance => {
             process.instance = instance;
             callback(process);
           });
@@ -12,7 +12,17 @@ const process = {
       });
     }
     else if (instanceId) {
-      this.getInstance(serviceBase, instanceId, instance => {
+      this.getInstance(serviceBase, instanceId, null, instance => {
+        var path = instance.packageName + '/' + instance.processName;
+        this.getProcess(serviceBase, path, process => {
+          process.packageName = instance.packageName;
+          process.instance = instance;
+          callback(process);
+        });
+      }); 
+    }
+    else if (masterRequestId) {
+      this.getInstance(serviceBase, null, masterRequestId, instance => {
         var path = instance.packageName + '/' + instance.processName;
         this.getProcess(serviceBase, path, process => {
           process.packageName = instance.packageName;
@@ -35,22 +45,30 @@ const process = {
       callback(process);
     });
   },
-  getInstance: function(serviceBase, instanceId, callback) {
-    fetch(new Request(serviceBase + '/Processes/' + instanceId, {
+  getInstance: function(serviceBase, instanceId, masterRequestId, callback) {
+  var url = serviceBase + '/Processes';
+  if (instanceId)
+    url += '/' + instanceId;
+  else if (masterRequestId)
+    url += '?masterRequestId=' + masterRequestId + '&master=true';
+    fetch(new Request(url, {
       method: 'GET',
       headers: {Accept: 'application/json'}
     }))
     .then(response => {
       return response.json();
     })
-    .then(instance => {
-      if (instance.owner == 'MAIN_PROCESS_INSTANCE') {
-        this.getInstance(serviceBase, instance.ownerId, mainInst => {
+    .then(obj => {
+      if (obj.processInstances) {
+        callback(obj.processInstances[0]);
+      }
+      else if (obj.owner == 'MAIN_PROCESS_INSTANCE') {
+        this.getInstance(serviceBase, obj.ownerId, null, mainInst => {
           callback(mainInst);
         });
       }
       else {
-        callback(instance);
+        callback(obj);
       }
     });
   }

@@ -181,15 +181,15 @@ public class TaskServicesImpl implements TaskServices {
                     for (TransitionInstance transitionInstance : processInstance.getTransitions()) {
                         if (transitionInstance.getTransitionInstanceID().equals(workTransInstId)) {
                             Long transitionId = transitionInstance.getTransitionID();
-                            Transition workTrans = process.getWorkTransition(transitionId);
-                            if (workTrans == null && process.getSubProcesses() != null) {
-                                for (Process subproc : process.getSubProcesses()) {
-                                    workTrans = subproc.getWorkTransition(transitionId);
+                            Transition workTrans = process.getTransition(transitionId);
+                            if (workTrans == null && process.getSubprocesses() != null) {
+                                for (Process subproc : process.getSubprocesses()) {
+                                    workTrans = subproc.getTransition(transitionId);
                                     if (workTrans != null)
                                         break;
                                 }
                             }
-                            if (workTrans.getToWorkId().equals(activityId))
+                            if (workTrans.getToId().equals(activityId))
                                 taskInstances.add(taskInstance);
                         }
                     }

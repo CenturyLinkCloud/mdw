@@ -26,7 +26,7 @@ public class ActivityTraceMonitor extends Monitor implements ActivityMonitor {
     public Map<String,Object> onStart(ActivityRuntimeContext runtimeContext) {
         StringBuffer sb = new StringBuffer();
         sb.append("\nACTIVITY START:\n---------------\n");
-        sb.append("activityName: " + runtimeContext.getActivity().getActivityName()).append("\n");
+        sb.append("activityName: " + runtimeContext.getActivity().getName()).append("\n");
         sb.append("activityInstanceId: " + runtimeContext.getActivityInstanceId()).append("\n");
         runtimeContext.logInfo(sb.toString());
         return null;
@@ -41,7 +41,7 @@ public class ActivityTraceMonitor extends Monitor implements ActivityMonitor {
     public Map<String,Object> onFinish(ActivityRuntimeContext runtimeContext) {
         StringBuffer sb = new StringBuffer();
         sb.append("\nACTIVITY FINISH:\n----------------\n");
-        sb.append("activityName: " + runtimeContext.getActivity().getActivityName()).append("\n");
+        sb.append("activityName: " + runtimeContext.getActivity().getName()).append("\n");
         sb.append("activityInstanceId: " + runtimeContext.getActivityInstanceId()).append("\n");
         sb.append("completionCode: " + runtimeContext.getCompletionCode());
         runtimeContext.logInfo(sb.toString());
@@ -52,7 +52,7 @@ public class ActivityTraceMonitor extends Monitor implements ActivityMonitor {
     public void onError(ActivityRuntimeContext runtimeContext) {
         StringBuffer sb = new StringBuffer();
         sb.append("\nACTIVITY ERROR:\n---------------\n");
-        sb.append("activityName: " + runtimeContext.getActivity().getActivityName());
+        sb.append("activityName: " + runtimeContext.getActivity().getName());
         sb.append("activityInstanceId: " + runtimeContext.getActivityInstanceId()).append("\n");
         sb.append("completionCode: " + runtimeContext.getCompletionCode());
         runtimeContext.logInfo(sb.toString());

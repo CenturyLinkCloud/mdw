@@ -5,7 +5,10 @@
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
           <span class="glyphicon glyphicon-file mdw-item-icon"></span>
-          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}} v{{asset.version}}
+          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> /
+          <a ng-if="process" href="#/workflow/definitions/{{packageName}}/{{assetName}}" mdw-route="#/workflow/definitions/{{packageName}}/{{assetName}}">{{assetName}} v{{asset.version}}</a>
+          <a ng-if="assetName.endsWith('.test')" href="#/tests/{{packageName}}/{{assetName}}">{{assetName}} v{{asset.version}}</a> 
+          <span ng-if="!process && !assetName.endsWith('.test')">{{assetName}} v{{asset.version}}</span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'DIFFERENT'">*</span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'EXTRA'"><sup>+</sup></span>
           <span class="mdw-diff" ng-if="asset.vcsDiff == 'MISSING'"><sup>-</sup></span>

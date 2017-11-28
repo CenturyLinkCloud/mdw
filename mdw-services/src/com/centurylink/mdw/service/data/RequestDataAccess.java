@@ -110,7 +110,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
-            if (query.getMax() != Query.MAX_ALL) {
+            if (query.getMax() != Query.MAX_ALL && listenerRequestIds.size() > 0) {
                 ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, listenerRequestIds), null);
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));

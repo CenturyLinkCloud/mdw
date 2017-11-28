@@ -104,8 +104,8 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
     public Activity getActivity() {
         if (activity == null) {
             activity = new Activity();
-            activity.setActivityId(0L);
-            activity.setActivityName(activityName);
+            activity.setId(0L);
+            activity.setName(activityName);
             List<Attribute> attrs = new ArrayList<Attribute>();
             for (String attrName : getAttributes().keySet())
                 attrs.add(new Attribute(attrName, getAttributes().get(attrName)));

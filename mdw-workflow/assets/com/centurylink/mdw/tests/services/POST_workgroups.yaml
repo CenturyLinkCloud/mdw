@@ -1,6 +1,6 @@
 test: 'POST:workgroups'
 request:
-  url: 'http://localhost:8080/mdw/Services/Workgroups'
+  url: '${base-url}/Workgroups'
   method: POST
   headers:
     Content-Type: application/json
@@ -14,8 +14,8 @@ response:
     code: 201
     message: Created
   headers:
-    mdw-request-id: '${~[0-9]*}'
     content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
   body: |-
     {
       "status": {

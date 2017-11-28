@@ -1,6 +1,6 @@
 test: 'DEL:workgroups/{group-name}'
 request:
-  url: 'http://localhost:8080/mdw/Services/Workgroups/${group-name}'
+  url: '${base-url}/Workgroups/${group-name}'
   method: DELETE
   headers: {}
 response:

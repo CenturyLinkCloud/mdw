@@ -108,7 +108,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                         }
                     }
                     Variable requestVar = procdef.getVariable(VariableConstants.REQUEST);
-                    DocumentReference docRef = createDocument(owner, ownerId, actionRequestDocument, requestVar == null ? null : requestVar.getVariableType());
+                    DocumentReference docRef = createDocument(owner, ownerId, actionRequestDocument, requestVar == null ? null : requestVar.getType());
                     if (synchronous) {
                         return invokeServiceProcess(processId, docRef.getDocumentId(), masterRequestId, msg, processParams, responseVarName, 0);
                     }
@@ -116,13 +116,13 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
                         Map<String,String> params = translateParameters(processId, processParams);
                         ProcessEngineDriver engine = new ProcessEngineDriver();
                         Long procInstId = engine.startProcessFromActivity(processId, activityId, masterRequestId, OwnerType.TESTER, docRef.getDocumentId(), params, null);
-                        return createSuccessResponse("Process '" + procdef.getProcessName() + "' successfully launched (Instance ID=" + procInstId + ")");
+                        return createSuccessResponse("Process '" + procdef.getName() + "' successfully launched (Instance ID=" + procInstId + ")");
                     }
                     else {
                         Map<String,String> params = translateParameters(processId, processParams);
                         ProcessEngineDriver driver = new ProcessEngineDriver();
                         Long procInstId = driver.startProcess(processId, masterRequestId, OwnerType.TESTER, docRef.getDocumentId(), params, null, null, null);
-                        return createSuccessResponse("Process '" + procdef.getProcessName() + "' successfully launched (Instance ID=" + procInstId + ")");
+                        return createSuccessResponse("Process '" + procdef.getName() + "' successfully launched (Instance ID=" + procInstId + ")");
                     }
                 }
                 else {

@@ -24,11 +24,10 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
-import com.centurylink.mdw.translator.VariableTranslator;
 
 public class Variable implements Serializable, Comparable<Variable>, Jsonable {
 
-    public static final String[] VariableCategories =
+    public static final String[] Categories =
         {"Local", "Input", "Output", "Input/Output", "Static"};
     public static final String[] DisplayModes =
         {"Required", "Optional", "Read Only", "Hidden", "Excluded"};
@@ -54,185 +53,85 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
     public static final Integer DATA_HIDDEN =  new Integer(3);
     public static final Integer DATA_EXCLUDED =  new Integer(4);
 
-    private Long variableId;
-    private String variableType;
-    private String variableName;
-    private String variableReferredAs;
-    private Boolean isChecked;
-//    private String valueLocator;
-    private Integer displaySequence;
-    private Integer optionality;
+    private Long id;
+    private String type;
+    private String name;
     private String description;
+    private String label;
+    private Integer displayMode;
+    private Integer displaySequence;
 
     public Variable() {
     }
 
     public Variable(String name, String type) {
-        this.variableId = 0L;
-        this.variableName = name;
-        this.variableType = type;
+        this.id = 0L;
+        this.name = name;
+        this.type = type;
     }
 
-    public Variable(Long pVariableId, String pVariableName, String pVariableType,
-            String pVarRefAs, Integer pDisplayMode, Integer pSeq) {
-        this.variableId = pVariableId;
-        this.variableType = pVariableType;
-        this.variableName = pVariableName;
-        this.isChecked = new Boolean(false);
-        this.variableReferredAs = pVarRefAs;
-        this.optionality = pDisplayMode;
-        this.displaySequence = pSeq;
+    public Variable(Long id, String name, String type,
+            String label, Integer displayMode, Integer displaySequence) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.label = label;
+        this.displayMode = displayMode;
+        this.displaySequence = displaySequence;
     }
 
-    /**
-     * @return returns the VariableId
-     */
-    public Long getVariableId() {
-        return this.variableId;
+    public Long getId() {
+        return this.id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    /**
-     * @param pVariableId The VariableId to set.
-     */
-    public void setVariableId(Long pVariableId) {
-        this.variableId = pVariableId;
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getVariableType() {
-        return variableType;
+    public String getName() {
+        return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setVariableType(String vartype) {
-        this.variableType = vartype;
+    public String getLabel() {
+        return this.label;
+    }
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    /**
-     * @return Returns the VariableName
-     */
-
-    public String getVariableName() {
-        return this.variableName;
-    }
-
-    /**
-     *  @param pVariableName The VariableName to set.
-     */
-
-    public void setVariableName(String pVariableName) {
-        this.variableName = pVariableName;
-    }
-
-    /**
-     * @return Returns the variableReferredAs
-     */
-
-    public String getVariableReferredAs() {
-        return this.variableReferredAs;
-    }
-
-    /**
-     *  @param pVariableName The variableReferredAs to set.
-     */
-
-    public void setVariableReferredAs(String pVariableName) {
-        this.variableReferredAs = pVariableName;
-    }
-
-    /**
-     * @return  Returns  IsChecked
-     */
-    public Boolean getIsChecked() {
-        return this.isChecked;
-    }
-
-    /**
-     *  @param pisChecked The IsChecked to set.
-     */
-    public void setIsChecked(Boolean pIsChecked) {
-        this.isChecked = pIsChecked;
-    }
-
-//    /**
-//     * returns the value Locator
-//     */
-//    public String getValueLocator() {
-//        return this.valueLocator;
-//    }
-//
-//    /**
-//     * Sets the value fetcher
-//     * @param pValueFetcher
-//     */
-//    public void setValueLocator(String pValueLocator) {
-//        this.valueLocator = pValueLocator;
-//    }
-
-    /**
-     *
-     * @return
-     * @author
-     */
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("VariableVO[");
-        buffer.append("isChecked = ").append(isChecked);
-        buffer.append(" variableId = ").append(variableId);
-        buffer.append(" variableName = ").append(variableName);
-        buffer.append(" variableType = ").append(variableType);
-        buffer.append("]");
-        return buffer.toString();
-    }
-
-    /**
-     * @return
-     */
     public Integer getDisplaySequence() {
         return displaySequence;
     }
-
-    /**
-     * @param displaySequence
-     */
     public void setDisplaySequence(Integer displaySequence) {
         this.displaySequence = displaySequence;
     }
 
-    /**
-     * Important note:  for backward compatibility and other historical reasons,
-     * variables stored in relational form (5.0 and prior) uses
-     * two fields in VARIABLE_MAPPING table to control display mode:
-     *     - Read Only:  VARIABLE_DATA_SOURCE is 'workflow'
-     *  - Optional: VARIABLE_DATA_SOURCE is 'task_user', and VARIABLE_DATA_OPT_IND is 1
-     *    - Required: VARIABLE_DATA_SOURCE is 'task_user', and VARIABLE_DATA_OPT_IND is 0
-     *  - Not Displayed: no variable mapping exist
-     * Additionally, display mode is only used for variables mapped to tasks;
-     * for variables mapped to processes, VARIABLE_DATA_OPT_IND is used to store
-     * variable category.
-     *
-     * @return  Returns display mode code
-     */
     public Integer getDisplayMode() {
-        return this.optionality;
+        return this.displayMode;
     }
-
+    public void setDisplayMode(Integer displayMode) {
+        this.displayMode = displayMode;
+    }
     public boolean isRequired() {
         return getDisplayMode().equals(Variable.DATA_REQUIRED);
     }
 
-    /**
-     * See important note in getDisplayMode()
-     * @param displayMode
-     */
-    public void setDisplayMode(Integer displayMode) {
-        this.optionality = displayMode;
-    }
 
     /**
      * See important note in getDisplayMode()
      * @return variable category, a.k.a variable mode (Input/Output/etc)
      */
     public Integer getVariableCategory() {
-        return optionality;
+        return displayMode;
     }
 
     /**
@@ -240,14 +139,14 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
      * @param variableCategory
      */
     public void setVariableCategory(Integer variableCategory) {
-        this.optionality = variableCategory;
+        this.displayMode = variableCategory;
     }
 
     public int compareTo(Variable other) {
         if (other == null)
           return 1;
 
-        return this.getVariableName().compareTo(other.getVariableName());
+        return this.getName().compareTo(other.getName());
     }
 
     public String getDescription() {
@@ -256,10 +155,6 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getName() {
-        return this.variableName;
     }
 
     public boolean isInput() {
@@ -271,11 +166,11 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
     }
 
     public boolean isString() {
-        return String.class.getName().equals(getVariableType()) || StringDocument.class.getName().equals(getVariableType());
+        return String.class.getName().equals(getType()) || StringDocument.class.getName().equals(getType());
     }
 
     public boolean isJavaObject() {
-        return Object.class.getName().equals(getVariableType());
+        return Object.class.getName().equals(getType());
     }
 
     public String getCategory() {
@@ -312,29 +207,31 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
 
     public Value toValue() {
         Value value = new Value(getName());
-        value.setType(getVariableType());
-        if (getDisplayMode() != null)
+        value.setType(getType());
+        if (getDisplay() != null)
+            value.setDisplay(getDisplay());
+        else if (getDisplayMode() != null)
             value.setDisplay(Value.getDisplay(getDisplayMode()));
         if (getDisplaySequence() != null)
             value.setSequence(getDisplaySequence());
-        if (getVariableReferredAs() != null)
-            value.setLabel(getVariableReferredAs());
+        if (getLabel() != null)
+            value.setLabel(getLabel());
         return value;
     }
 
     public Variable(JSONObject json) throws JSONException {
         if (json.has("name"))
-            this.variableName = json.getString("name");
-        this.variableType = json.getString("type");
+            this.name = json.getString("name");
+        this.type = json.getString("type");
         if (json.has("category"))
             this.setVariableCategory(getCategoryCode(json.getString("category")));
         if (json.has("label"))
-            this.variableReferredAs = json.getString("label");
+            this.label = json.getString("label");
         if (json.has("sequence"))
             this.displaySequence = json.getInt("sequence");
         if (json.has("display"))
             this.display = Display.valueOf(json.getString("display"));
-        this.setVariableId(0L);
+        this.setId(0L);
     }
 
     /**
@@ -342,10 +239,10 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
      */
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("type", variableType);
+        json.put("type", type);
         json.put("category", getCategory());
-        if (variableReferredAs != null && !variableReferredAs.isEmpty())
-            json.put("label", variableReferredAs);
+        if (label != null && !label.isEmpty())
+            json.put("label", label);
         if (displaySequence != null && displaySequence > 0)
             json.put("sequence", displaySequence);
         if (display != null)
@@ -357,14 +254,7 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
         return getName();
     }
 
-    @Deprecated
-    public boolean isDocument() {
-        return VariableTranslator.isDocumentReferenceVariable(getVariableType());
+    public String toString() {
+        return getJson().toString(2);
     }
-
-    @Deprecated
-    public boolean isXmlDocument() {
-        return VariableTranslator.isXmlDocumentTranslator(getVariableType());
-    }
-
 }

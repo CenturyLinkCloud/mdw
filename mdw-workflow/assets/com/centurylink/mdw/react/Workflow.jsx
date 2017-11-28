@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import Toolbox from './Toolbox.jsx';
-import Inspector from './Inspector.jsx';
+import Inspector from './Inspector.jsx'; // eslint-disable-line
 import implementors from './implementors';
 import process from './process';
 
@@ -12,7 +12,7 @@ class Workflow extends Component {
   }
   
   componentDidMount() {
-    process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, proc => {
+    process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, this.props.masterRequestId,  proc => {
       implementors.get(this.props.serviceBase, impls => {
         var canvas = document.getElementById('mdw-canvas');
         if (canvas) {
@@ -23,7 +23,7 @@ class Workflow extends Component {
             process: process,
             implementors: this.implementors,
             diagram: diagram
-          })
+          });
           diagram.draw(this.props.animate);
           if (this.props.editable) {
             var toolbox = Toolbox.getToolbox();

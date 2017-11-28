@@ -3,9 +3,9 @@ package com.centurylink.mdw.tests.services
 import org.json.JSONObject
 
 // process-values-service
-// NOTE: requires designer 9.0.0
+
 start process("ProcessValues") {
-    variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "09-01-2016 13:52:01"),
+    variables = [ dateVar: "2017-11-13T20:15:30.00Z",
                   stringVar: "Hello",
                   docVar: "<full>\n  <document content='xml'/>\n</full>",
                   jaxbVar: '''<ProcessJaxb

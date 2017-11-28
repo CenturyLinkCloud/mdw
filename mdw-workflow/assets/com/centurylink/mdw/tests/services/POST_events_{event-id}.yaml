@@ -1,0 +1,24 @@
+test: 'POST:events/{event-id}'
+request:
+  url: '${base-url}/Events/${event-id}'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "id": "${event-id}"
+    }
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

@@ -140,7 +140,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
         // status
         String status = query.getFilter("status");
-        if (status != null) {
+        if (status != null && !status.equals("[Any]")) {
             if (status.equals(WorkStatus.STATUSNAME_ACTIVE)) {
                 sb.append(" and pi.status_cd not in (")
                   .append(WorkStatus.STATUS_COMPLETED)

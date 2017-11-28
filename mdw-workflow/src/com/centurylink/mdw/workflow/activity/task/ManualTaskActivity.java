@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
@@ -79,7 +78,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
     }
 
     protected TaskInstance createTaskInstance(AssetVersionSpec spec, String masterRequestId, Long processInstanceId,
-            Long activityInstanceId, Long transitionId, String title, String comments) throws ServiceException, DataAccessException {
+            Long activityInstanceId, Long transitionId, String title, String comments) throws Exception {
 
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(spec);
         if (taskVO == null)

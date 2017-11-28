@@ -178,10 +178,10 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
         for (Variable var : subprocDef.getVariables()) {
             if (var.getVariableCategory().intValue()==Variable.CAT_OUTPUT
                     || var.getVariableCategory().intValue()==Variable.CAT_INOUT) {
-                VariableInstance vio = getEngine().getVariableInstance(subprocInstId, var.getVariableName());
+                VariableInstance vio = getEngine().getVariableInstance(subprocInstId, var.getName());
                 if (vio!=null) {
                     if (params==null) params = new HashMap<String,String>();
-                    params.put(var.getVariableName(), vio.getStringValue());
+                    params.put(var.getName(), vio.getStringValue());
                 }
             }
         }

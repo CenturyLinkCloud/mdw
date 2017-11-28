@@ -763,4 +763,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
         if (edadb!=null) edadb.stopTransaction(transaction);
     }
 
+    public void updateDocumentMongoCollection(Document doc, String newOwnerType) {
+        if (edadb!=null) edadb.updateDocumentMongoCollection(doc, newOwnerType);
+    }
+
+
 }

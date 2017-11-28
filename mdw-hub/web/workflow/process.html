@@ -4,9 +4,11 @@
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          <a class="mdw-ghost" ng-href="#/packages/{{process.packageName}}">
-            {{process.packageName}}</a>/{{process.name}}
-            <a class="mdw-id" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
+          <a ng-href="#/packages/{{process.packageName}}">
+            {{process.packageName}}</a>
+            /
+          <a ng-href="#/workflow/definitions/{{process.packageName}}/{{process.name}}">{{process.name}}</a>
+          <a class="mdw-id" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
         </div>
         <div class="mdw-heading-actions">
           <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'workflow/legend.html'" 

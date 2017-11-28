@@ -150,7 +150,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
 
         Map<String,Object> addlBindings = getAdditionalScriptBindings();
         addlBindings.put("activity", this);
-        Object retObj = executeScript(script, language, addlBindings);
+        Object retObj = executeScript(script, language, addlBindings, null);
         if (null != retObj) {
             setReturnCode(retObj.toString());
         }
@@ -176,7 +176,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
             for (Variable variableVO : varVOs) {
-              String variableName = variableVO.getVariableName();
+              String variableName = variableVO.getName();
               Object variableValue = getVariableValue(variableName);
               context.put(variableName, variableValue);
             }

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.DynamicJavaImplementor;
 import com.centurylink.mdw.java.JavaExecutor;
@@ -43,6 +44,8 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String JAVA_CODE = "Java";
+
+    private Package tempPkg;
 
     private String javaCode;
     public String getJavaCode() { return javaCode; }
@@ -92,15 +95,15 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<String,Object>();
             for (Variable varVO: varVOs) {
-                bindings.put(varVO.getVariableName(), getVariableValue(varVO.getVariableName()));
+                bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
             }
 
             Object retObj = getExecutorInstance().execute(bindings);
 
             for (Variable variableVO: varVOs) {
-                String variableName = variableVO.getVariableName();
+                String variableName = variableVO.getName();
                 Object bindValue = bindings.get(variableName);
-                String varType = variableVO.getVariableType();
+                String varType = variableVO.getType();
                 Object value = bindValue;
                 if (varType.equals("java.lang.String") && value != null)
                     value = value.toString();  // convert to string
@@ -120,8 +123,24 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     public JavaExecutor getExecutorInstance() throws MdwJavaException {
         if (executorInstance == null) {
             try {
+                tempPkg = getPackage();
+
+                if (tempPkg.isDefaultPackage()) {  // In case in-flight pulled out of Git history
+                    tempPkg = new Package() {
+                        @Override
+                        public String getProperty(String propertyName) {
+                            return PropertyManager.getProperty(propertyName);
+                        }
+                    };
+                    tempPkg.setPackageName(getProcessDefinition().getPackageName());
+                    // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key
+                    tempPkg.setVersion((-1 * getProcessDefinition().getVersion()));
+                }
+
+                setExecutorClassLoader(tempPkg.getCloudClassLoader());
+
                 String className = getClassName();
-                Class<?> clazz = CompiledJavaCache.getClass(getPackage(), className, javaCode);
+                Class<?> clazz = CompiledJavaCache.getClass(getExecutorClassLoader(), tempPkg, className, javaCode);
                 if (clazz == null)
                     throw new ClassNotFoundException(className);
 
@@ -146,8 +165,12 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
      */
     protected String getPackageName() throws ActivityException {
         Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
-        if (pkg.isDefaultPackage())
-            return "";
+        if (pkg.isDefaultPackage()) {
+            if (tempPkg == null || tempPkg.isDefaultPackage())
+                return "";
+            else
+                return JavaNaming.getValidPackageName(tempPkg.getPackageName() + ".");
+        }
         else
             return JavaNaming.getValidPackageName(pkg.getPackageName() + ".");
     }

@@ -21,14 +21,14 @@ permalink: /docs/guides/
       <a href="mdw-cookbook/">MDW Cookbook &rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Setup Guide for Tomcat</h2>
+      <h2>Tomcat Setup Guide</h2>
       <p>
         Deploying on Tomcat
        </p>
-      <a href="SetupGuideForTomcat/">Tomcat Setup Guide&rarr;</a>
+      <a href="tomcat-guide/">Tomcat Setup Guide&rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Setup Guide for Cloud Foundry</h2>
+      <h2>Cloud Foundry Setup Guide</h2>
       <p>Deploying on Cloud Foundry</p>
       <a href="SetupGuideForCloudFoundry/">Cloud Foundry Setup Guide&rarr;</a>
     </div>

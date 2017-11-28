@@ -77,7 +77,7 @@ diagramMod.factory('Diagram',
           diagram.scrollIntoView(highlighted, nonLinkSlice);          
         }
       };
-      s();      
+      s();
     }
     else {
       // draw quickly
@@ -99,12 +99,66 @@ diagramMod.factory('Diagram',
       }
     }
 
-    if (this.instance)
+    if (this.instance) {
       this.applyState(animate, function() {
-      diagram.notes.forEach(function(note) {
-        note.draw();
+        diagram.notes.forEach(function(note) {
+          note.draw();
+        });
+        if ($mdwAutoTestWebSocketUrl) {
+          const socket = new WebSocket($mdwAutoTestWebSocketUrl);
+           socket.addEventListener('open', function(event) {
+             socket.send(diagram.instance.id);
+           });
+           socket.addEventListener('message', function(event) {
+             var message = JSON.parse(event.data);
+             if (message.subtype === 'a') {
+               var step = diagram.getStep('A' + message.id);
+               if (step) {
+                 if (!step.instances)
+                   step.instances = [];
+                 var actInst = step.instances.find(function(inst) {
+                   return inst.id === message.instId;
+                 });
+                 if (actInst) {
+                   actInst.statusCode = message.status;
+                 }
+                 else {
+                   step.instances.push({
+                     activityId: message.id,
+                     id: message.instId,
+                     statusCode: message.status
+                   });
+                 }
+                 step.draw();
+                 diagram.scrollIntoView(step);
+               }
+             }
+             else if (message.subtype === 't') {
+               var link = diagram.getLink('T' + message.id);
+               if (link) {
+                 if (!link.instances)
+                   link.instances = [];
+                 var linkInst = link.instances.find(function(inst) {
+                   return inst.id === message.instId;
+                 });
+                 if (linkInst) {
+                   linkInst.statusCode = message.status;
+                 }
+                 else {
+                   link.instances.push({
+                     transitionId: message.id,
+                     id: message.instId,
+                     statusCode: message.status
+                   });
+                 }
+                 link.draw();
+                 diagram.scrollIntoView(link);
+               }
+             }
+           });
+        }
       });
-    });
+    }
     else {
       diagram.notes.forEach(function(note) {
         note.draw();

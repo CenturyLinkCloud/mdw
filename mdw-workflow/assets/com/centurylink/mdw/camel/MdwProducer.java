@@ -122,8 +122,8 @@ public class MdwProducer extends DefaultProducer {
             Long docId = docRef.getDocumentId();
             request.setHeader(Listener.METAINFO_DOCUMENT_ID, docId.toString());
 
-            Process processVO = launchHandler.getProcess(request);
-            request.setHeader(Listener.METAINFO_PROCESS_NAME, processVO.getProcessName());
+            Process process = launchHandler.getProcess(request);
+            request.setHeader(Listener.METAINFO_PROCESS_NAME, process.getName());
             masterRequestId = launchHandler.getMasterRequestId(request);
             request.setHeader(Listener.METAINFO_MDW_REQUEST_ID, masterRequestId);
 
@@ -133,20 +133,20 @@ public class MdwProducer extends DefaultProducer {
 
             String requestVarName = launchHandler.getRequestVariable();
             if (requestVarName != null) {
-                Variable requestVar = processVO.getVariable(requestVarName);
+                Variable requestVar = process.getVariable(requestVarName);
                 if (requestVar != null) {
-                    if (!VariableTranslator.isDocumentReferenceVariable(pkg, requestVar.getVariableType()))
-                        throw new MdwCamelException("Process variable 'request' for process '" + processVO.getName() + "' must be Document type");
+                    if (!VariableTranslator.isDocumentReferenceVariable(pkg, requestVar.getType()))
+                        throw new MdwCamelException("Process variable 'request' for process '" + process.getName() + "' must be Document type");
                     Integer varCat = requestVar.getVariableCategory();
                     if (varCat.intValue() != Variable.CAT_INPUT && varCat.intValue() != Variable.CAT_INOUT)
-                        throw new MdwCamelException("Process variable 'request' for process '" + processVO.getName() + "' must be Input type");
+                        throw new MdwCamelException("Process variable 'request' for process '" + process.getName() + "' must be Input type");
                     parameters.put(requestVarName, requestDoc);
                 }
             }
 
-            logger.info("Starting MDW process '" + processVO.getLabel() + "' through Camel route.");
+            logger.info("Starting MDW process '" + process.getLabel() + "' through Camel route.");
 
-            return launchHandler.invoke(processVO.getId(), docId, masterRequestId, request, parameters);
+            return launchHandler.invoke(process.getId(), docId, masterRequestId, request, parameters);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

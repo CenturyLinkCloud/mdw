@@ -41,6 +41,10 @@ public class NotFoundServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = (String)request.getAttribute("javax.servlet.forward.servlet_path");
         if (path != null) {
+            if (path.endsWith("/images/tab_sel.png")) {  // hack for nav back from Task UI
+                response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/images/tab_sel.png");
+                return;
+            }
             if (path.indexOf('.') == -1 && path.indexOf('#') == -1) {
                 String redirectPath = path;
                 String[] pathSegs = path.substring(1).split("/");

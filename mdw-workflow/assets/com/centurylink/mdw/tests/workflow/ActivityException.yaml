@@ -38,7 +38,7 @@ process: # 14209
           },
           "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
           "processInstance": {
-            "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow v\\d.\\d.\\d\\d\\/MDWTestSubProcess2 v\\d.\\d}",
+            "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow/MDWTestSubProcess2 v\\d.\\d}",
             "id": ${~\\d*},
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",
@@ -62,7 +62,7 @@ process: # 14209
           {
             "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
             "file": "DynamicJavaActivity.java",
-            "line": 98,
+            "line": 101,
             "method": "execute"
           },
           {

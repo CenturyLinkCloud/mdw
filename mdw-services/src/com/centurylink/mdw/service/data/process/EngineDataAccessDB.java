@@ -577,8 +577,13 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             if (event == null)
                 throw e;  // throw original SQLException
             hasWaiters = true;
-            if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
-                deleteEventInstance(eventName);
+            if (event.getStatus().equals(EventInstance.STATUS_WAITING)) { // Recurring type event - only 1 waiter is allowed
+                deleteEventInstance(eventName); // Cleanup for next time same event is being registered for
+                List<EventWaitInstance> eventWaits = getEventWaitInstances(eventName);
+                if (eventWaits != null && eventWaits.size() > 0) // There is a waiter, so return it
+                    return eventWaits;
+                else // Event wait got removed from event_wait_instance table when waiter's process completed, but not from event_instance - recreate event arrival
+                    return recordEventArrive(eventName, documentId);
             } else if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
                 event.setDocumentId(documentId);
                 consumeEventInstance(event, 0);
@@ -1055,7 +1060,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[1] = pProcInstId;
         args[2] = TransitionStatus.STATUS_COMPLETED;
         for (Transition trans : transitions) {
-            args[0] = trans.getWorkTransitionId();
+            args[0] = trans.getId();
             rs = db.runSelect(sql, args);
             if (rs.next()) trans.setEventType(EventType.FINISH);
             else trans.setEventType(EventType.START);
@@ -1439,5 +1444,23 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws SQLException {
         super.setAttributes0(ownerType, ownerId, attributes);
+    }
+
+    protected org.bson.Document deleteMongoDocumentContent(Document doc) {
+        if (hasMongo()) {
+            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(doc.getOwnerType());
+            return collection.findOneAndDelete(eq("_id", doc.getDocumentId()));
+        }
+        return null;
+    }
+
+    public void updateDocumentMongoCollection(Document doc, String newOwnerType) {
+        if (hasMongo()) {
+            org.bson.Document myDoc = deleteMongoDocumentContent(doc);
+            if (myDoc != null) {
+                MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(newOwnerType);
+                collection.insertOne(myDoc);
+            }
+        }
     }
 }
