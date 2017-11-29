@@ -125,7 +125,7 @@ class Discussion extends Component {
         <Heading task={this.props.task} refreshTask={this.props.refreshTask}>
           <Button className="mdw-btn mdw-action-btn" bsStyle='primary' 
             onClick={this.addNewComment}>
-            <Glyphicon glyph="plus" />{' Newx'}
+            <Glyphicon glyph="plus" />{' New'}
           </Button>
         </Heading>
         <div className="mdw-section">
