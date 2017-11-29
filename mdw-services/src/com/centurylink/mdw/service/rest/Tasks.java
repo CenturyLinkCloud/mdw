@@ -463,6 +463,13 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 ServiceLocator.getTaskServices().updateTask(getAuthUser(headers), taskInstJson);
                 return null;
             }
+            else if (extra.equals("comments")) {
+                Note note = new Note(content);
+                CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
+                collabServices.updateNote(note);
+                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HTTP_200_OK));
+                return note.getJson();
+            }
             else if (extra.equals("values")) {
                 Map<String, String> values = JsonUtil.getMap(content);
                 TaskServices taskServices = ServiceLocator.getTaskServices();
