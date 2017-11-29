@@ -5,11 +5,11 @@ title: Code Format
 
 ### Code Format
 
-1. Java, Groovy, Javascript and JSON:
+1. Java, Groovy, JavaScript and JSON:
      The Eclipse code formatters are version-controlled in .settings/org.eclipse.jdt.core.prefs, so as long as you're up-to-date with Git you should automatically have the correct settings. If you want to use them for another project, you can download and import them from these formatter files:   
      - Java/Groovy: https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/MDWCodeFormatter.xml   
      - Javascript/JSON: https://github.com/CenturyLinkCloud/mdw/blob/master/docs/_docs/code/mdw-javascript-formatter.xml   
-     - Please note that we use **spaces instead of tabs** for indenting all source code.
+     - Please note that we use **spaces instead of tabs** for indenting all source code.  Java and Groovy are indented four spaces, whereas JavaScript and JSON are indented two spaces.
 2. XML, HTML and YAML:  
      These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
      The following screenshots illustrate how to set these:  

@@ -28,8 +28,9 @@ import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.rest.JsonRestService;
 
-public class ProcessInstances implements JsonService {
+public class ProcessInstances extends JsonRestService implements JsonService {
 
     private static List<String> processParams = Arrays.asList(new String[] {
         "processId",
@@ -50,6 +51,12 @@ public class ProcessInstances implements JsonService {
         "endDateTo",
         "endDateto" });
 
+    private static List<String> standardParams = Arrays.asList(new String[] {
+            "pageIndex",
+            "pageSize",
+            "orderBy",
+            "format"});
+
     public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
 
         try {
@@ -62,7 +69,8 @@ public class ProcessInstances implements JsonService {
             }
             else {
                 Map<String,String> criteria = getCriteria(metaInfo);
-                Map<String,String> variables = null; // TODO getVariables(metaInfo);
+                Map<String,String> variables = getParameters(metaInfo);
+                variables = getVariables(variables);
 
                 int pageIndex = metaInfo.get("pageIndex") == null ? 0 : Integer.parseInt((String)metaInfo.get("pageIndex"));
                 int pageSize = metaInfo.get("pageSize") == null ? 0 : Integer.parseInt((String)metaInfo.get("pageSize"));
@@ -79,6 +87,15 @@ public class ProcessInstances implements JsonService {
 
     public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
         return getJson((JSONObject)requestObj, metaInfo);
+    }
+    private Map<String,String> getVariables(Map<String,String> params) {
+        Map<String,String> variables = new HashMap<String,String>();
+        for (String key : params.keySet()) {
+            if (!processParams.contains(key) && !standardParams.contains(key)) {
+                variables.put(key, (String)params.get(key));
+            }
+        }
+        return variables.isEmpty() ? null : variables;
     }
 
     private Map<String,String> getCriteria(Map<String,String> params) {
