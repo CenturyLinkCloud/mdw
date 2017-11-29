@@ -17,8 +17,11 @@ package com.centurylink.mdw.dataaccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
@@ -184,14 +187,25 @@ public class DataAccess {
 
                                 boolean gitAutoPull = "true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL));
                                 if (gitAutoPull) {
-                                    // force checkout all assets
+                                    // force checkout all assets (equivalent to doing an asset import)
                                     File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
                                     ProgressMonitor progressMonitor = new SystemOutProgressMonitor();
-                                    VcsArchiver archiver = new VcsArchiver(ApplicationContext.getAssetRoot(), tempDir, vcGit, progressMonitor);
+                                    VcsArchiver archiver = new VcsArchiver(rootDir, tempDir, vcGit, progressMonitor);
                                     logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
                                     archiver.backup();
                                     vcGit.hardCheckout(branch);
                                     archiver.archive();
+                                }
+                                else if (!ApplicationContext.isDevelopment()){
+                                    // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
+                                    DatabaseAccess db = new DatabaseAccess(null);
+                                    try (Connection conn = db.openConnection()){
+                                        Checkpoint cp = new Checkpoint(rootDir, vcGit, vcGit.getCommit(), conn);
+                                        cp.updateRefs();
+                                    }
+                                    catch (SQLException e) {
+                                        throw new DataAccessException(e.getErrorCode(), e.getMessage());
+                                    }
                                 }
                             }
                         }
