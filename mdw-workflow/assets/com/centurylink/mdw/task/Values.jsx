@@ -19,7 +19,8 @@ class Values extends Component {
   componentDidMount() {
     fetch(new Request('/mdw/services/Tasks/' + this.props.task.id + '/values', {
       method: 'GET',
-      headers: { Accept: 'application/json'}
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();
@@ -49,7 +50,8 @@ class Values extends Component {
     fetch(new Request(this.context.serviceRoot + '/Tasks/' + this.props.task.id + '/values', {
       method: 'PUT',
       headers: { Accept: 'application/json'},
-      body: JSON.stringify(vals)
+      body: JSON.stringify(vals),
+      credentials: 'same-origin'
     }))
     .then(response => {
       ok = response.ok;

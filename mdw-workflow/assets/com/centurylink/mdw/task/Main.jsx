@@ -32,7 +32,8 @@ class Main extends Component {
     fetch(new Request(this.getChildContext().serviceRoot + '/Tasks/' + this.state.task.id, {
       method: 'PUT',
       headers: { Accept: 'application/json'},
-      body: JSON.stringify(updatedTask)
+      body: JSON.stringify(updatedTask),
+      credentials: 'same-origin'
     }))
     .then(response => {
       ok = response.ok;
@@ -56,7 +57,8 @@ class Main extends Component {
     console.log('retrieving task: ' + id);  // eslint-disable-line no-console
     fetch(new Request('/mdw/services/Tasks/' + id, {
       method: 'GET',
-      headers: { Accept: 'application/json'}
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();

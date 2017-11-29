@@ -25,6 +25,10 @@ Run MDW on Apache Tomcat.
   ```
   mdw.runtime.env=<dev/test/prod/etc>
   mdw.config.location=<path_to_config_dir>
+  ```
+  and set the session cookie path in context.xml:
+  ```xml
+  <Context sessionCookiePath="/">
   ``` 
   
 ### Use Eclipse

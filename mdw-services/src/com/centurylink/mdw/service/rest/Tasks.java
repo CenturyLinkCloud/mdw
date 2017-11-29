@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonArray;
@@ -256,7 +257,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                         else if (extra.equals("comments")) {
                             taskInstance = taskServices.getInstance(instanceId);
                             List<Note> values = ServiceLocator.getCollaborationServices().getNotes(
-                                    taskInstance.getOwnerType(), taskInstance.getOwnerId());
+                                    OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId());
                             JSONArray notesJson = new JSONArray();
                             for (Note note : values) {
                                 notesJson.put(note.getJson());
@@ -356,38 +357,29 @@ public class Tasks extends JsonRestService implements JsonExportable {
             }
             else {
                 try {
-                    // handle taskInstanceId as segOne and actual action as
-                    // segTwo
+                    // handle taskInstanceId as segOne and actual action as segTwo
                     long taskInstanceId = Long.parseLong(segOne);
+                    TaskInstance taskInstance = taskServices.getInstance(taskInstanceId);
+                    if (taskInstance == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + taskInstanceId);
                     String segTwo = getSegment(path, 2);
                     if (segTwo == null)
                         throw new ServiceException(HTTP_400_BAD_REQUEST,
-                                "Missing {action} on request path, should be eg: /Tasks/12345/Claim");
+                                "Missing {action} on request path, should be eg: /Tasks/{instanceId}/Claim");
                     try {
-
-                        if(segTwo.contains("comments")){
+                        if (segTwo.equals("comments")) {
                             Note note = new Note(content);
-                            String user = note.getCreateUser();
-                            User userVO = ServiceLocator.getUserManager().getUser(user);
-                            if (userVO == null)
-                                throw new ServiceException("User not found: " + user);
+                            note.setOwnerType(OwnerType.TASK_INSTANCE);
+                            note.setOwnerId(taskInstanceId);
+
+                            // name taken from task if not present
+                            if (note.getName() == null)
+                                note.setName(taskInstance.getTitle() == null ? taskInstance.getName() : taskInstance.getTitle());
+
                             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
-                            TaskInstance taskInstance = taskServices.getInstance(taskInstanceId);
-                            note.setOwnerType(taskInstance.getOwnerType());
-                            note.setOwnerId(taskInstance.getOwnerId());
-                            if(taskInstance.getTitle()!=null){
-                                note.setName(taskInstance.getTitle());
-                            }else{
-                                note.setName("");
-                            }
-                            Long id = collabServices.createNote(note);
-                            List<Note> values = ServiceLocator.getCollaborationServices().getNotes(
-                                    taskInstance.getOwnerType(), taskInstance.getOwnerId());
-                            JSONArray notesJson = new JSONArray();
-                            for (Note noteJson : values) {
-                                notesJson.put(noteJson.getJson());
-                            }
-                            return new JsonArray(notesJson).getJson();
+                            collabServices.createNote(note);
+                            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HTTP_201_CREATED));
+                            return note.getJson();
                         }
                         else if (content.has("taskAction")
                                 && !content.getString("taskAction").equals(segTwo))

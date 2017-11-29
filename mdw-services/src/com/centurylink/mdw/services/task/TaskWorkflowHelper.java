@@ -879,7 +879,7 @@ public class TaskWorkflowHelper {
     public String getTaskInstanceUrl() throws ServiceException {
         // check for custom page
         TaskTemplate template = getTemplate();
-        if (template.isHasCustomPage()) {
+        if (template != null && template.isHasCustomPage()) {
             String assetSpec = template.getCustomPage();
             if (assetSpec.endsWith(".jsx")) {
                 if (template.getCustomPageAssetVersion() != null)

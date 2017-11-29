@@ -21,7 +21,8 @@ class NewSubtask extends Component {
   componentDidMount() {
     fetch(new Request('/mdw/services/Tasks/templates?app=mdw-admin', {
       method: 'GET',
-      headers: { Accept: 'application/json'}
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();
@@ -53,7 +54,8 @@ class NewSubtask extends Component {
     fetch(new Request(this.context.serviceRoot + '/Tasks/create', {
       method: 'POST',
       headers: { Accept: 'application/json'},
-      body: JSON.stringify(createAction)
+      body: JSON.stringify(createAction),
+      credentials: 'same-origin'
     }))
     .then(response => {
       ok = response.ok;
