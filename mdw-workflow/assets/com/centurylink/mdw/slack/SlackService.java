@@ -30,8 +30,6 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import java.lang.System;
-
 /**
  * Slack integration API.
  */
@@ -56,18 +54,37 @@ public class SlackService extends JsonRestService {
      */
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        System.out.println("POST: " + path + ":\n");
-        System.out.println(content.toString(2));
-        System.out.println("HEADERS:\n" + String.valueOf(headers));
-        String response = "{\n" +
-                "  \"response_type\": \"ephemeral\",\n" +
-                "  \"replace_original\": false,\n" +
-                "  \"text\": \"Okay, sounds good.\"\n" +
-                "}";
-        return new JSONObject(response);
+        SlackRequest request = new SlackRequest(content);
+        String userId = getAuthUser(headers);
+        // TODO: ability to map request.getUser() to corresponding MDW user
+        String callbackId = request.getCallbackId();
+        if (callbackId != null) {
+            int hyphen = callbackId.indexOf('-');
+            if (hyphen > 0) {
+                String handlerType = callbackId.substring(0, hyphen);
+                int underscore = callbackId.lastIndexOf('_');
+                if (underscore > hyphen) {
+                    String action = callbackId.substring(hyphen + 1, underscore);
+                    String id = callbackId.substring(underscore + 1);
+                    return runHandler(userId, handlerType, action, id, request);
+                }
+            }
+        }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad or missing callback_id");
     }
 
 
+    JSONObject runHandler(String userId, String type, String action, String id, SlackRequest request) 
+            throws ServiceException {
+        Handler handler = null;
+        if (type.equals("task")) {
+            handler = new TaskHandler();
+        }
+        if (handler == null)
+            throw new ServiceException("Unsupported action: " + action);
+        
+        return handler.handleAction(userId, action, id, request);
+    }
 
 
     @Override

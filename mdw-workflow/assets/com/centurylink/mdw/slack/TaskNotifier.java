@@ -15,13 +15,13 @@
  */
 package com.centurylink.mdw.slack;
 
-import java.io.IOException;
 import java.net.URL;
 
 import org.json.JSONObject;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -47,9 +47,10 @@ public class TaskNotifier extends TemplatedNotifier {
         try {
             HttpHelper helper = new HttpHelper(new URL(getWebhookUrl()));
             String response = helper.post(getMessage().toString(2));
-            System.out.println("RESPONSE: " + response);
+            if (helper.getResponseCode() != 200)
+                throw new ServiceException(helper.getResponseCode(), "Slack notification failed with response:" + response);
         }
-        catch (IOException ex) {
+        catch (Exception ex) {
             throw new ObserverException(ex.getMessage(), ex);
         }
     }

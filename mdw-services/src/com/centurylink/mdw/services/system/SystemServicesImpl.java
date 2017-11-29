@@ -348,7 +348,7 @@ public class SystemServicesImpl implements SystemServices {
         cmd.add("-jar");
         String mdwHome = System.getenv("MDW_HOME");
         if (mdwHome == null) {
-            mdwHome = ApplicationContext.getTempDirectory() + File.separator + "MDW_HOME";
+            mdwHome = ApplicationContext.getTempDirectory() + File.separator + mdwHome;
         }
 
         File cliJar = new File(mdwHome + File.separator + "mdw-cli.jar");
