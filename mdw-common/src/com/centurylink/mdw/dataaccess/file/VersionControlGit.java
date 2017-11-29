@@ -174,6 +174,35 @@ public class VersionControlGit implements VersionControl {
         return id;
     }
 
+    /**
+     * This produces the same hash for a given object that Git 'hash-object' creates
+     */
+    public String getGitId(File input) throws IOException {
+        String hash = "";
+        if (input.isFile()) {
+            FileInputStream fis = null;
+            try {
+                int fileSize = (int)input.length();
+                fis = new FileInputStream(input);
+                byte[] fileBytes = new byte[fileSize];
+                fis.read(fileBytes);
+                //hash = localRepo.newObjectInserter().idFor(Constants.OBJ_BLOB, fileBytes).getName(); // This is slower than below code (even if reusing ObjectInserter instance)
+                String blob = "blob " + fileSize + "\0" + new String(fileBytes);
+                MessageDigest md = MessageDigest.getInstance("SHA-1");
+                byte[] bytes = md.digest(blob.getBytes());
+                hash = byteArrayToHexString(bytes);
+            }
+            catch (Throwable ex) {
+                throw new IOException(ex.getMessage(), ex);
+            }
+            finally {
+                if (fis != null)
+                    fis.close();
+            }
+        }
+        return hash;
+    }
+
     protected long getLongId(ObjectId objectId) {
         String h = objectId.abbreviate(ABBREVIATED_ID_LENGTH).name();
         return Long.parseLong(h, 16);
