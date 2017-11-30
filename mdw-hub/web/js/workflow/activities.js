@@ -15,27 +15,56 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   };
   
   $scope.allStatuses = ACTIVITY_STATUSES;
+  $scope.selectedActivities = [];
 
   $scope.getSelectedActivities = function() {
     return $scope.model.activityList.getSelectedItems();
   };
   
+  $scope.getSelectedActionableActivities = function(selectedRawActivities) {	   
+	  var selectedActivities = [];			  
+	  if (selectedRawActivities) {
+	  selectedRawActivities.forEach(function(activity) {
+		  if ($scope.canAction(activity, $scope.action))
+			  selectedActivities.push(activity);
+		  });
+	  }
+	  return selectedActivities;
+  };
+  
   $scope.confirmAction = function(action) {
     $scope.action = action;
     $scope.closePopover(); // popover should be closed
-    var modalInstance = $uibModal.open({
-      scope: $scope,
-      templateUrl: 'workflow/activityActionConfirm.html',
-      controller: 'ActivitiesController',
-      size: 'sm'
-    });    
+    mdw.messages = "";  // Clear any previous messages
+    var selectedRawActivities = $scope.getSelectedActivities();
+    // Filter out selected activities that are not actionable
+    $scope.selectedActivities = $scope.getSelectedActionableActivities(selectedRawActivities)
+    if ($scope.selectedActivities && $scope.selectedActivities.length > 0) {
+    	var modalInstance = $uibModal.open({
+    	      scope: $scope,
+    	      templateUrl: 'workflow/activityActionConfirm.html',
+    	      controller: 'ActivitiesController',
+    	      size: 'sm'
+    	    });    
+    }
+    else {
+    	if (selectedRawActivities && selectedRawActivities.length > 0) 
+    		mdw.messages = "None of the selected activities can be actioned based on their current status and selected action";   	
+    	else 
+    		mdw.messages = 'Please select Activity(s) to perform action on.';
+    }	
   };
 
   $scope.performActionOnActivities = function(action) {
-    var selectedActivities = $scope.$parent.getSelectedActivities();
-    $scope.closePopover(); // popover should be closed
+    var selectedRawActivities = $scope.$parent.getSelectedActivities();
+    var selectedActivities = $scope.$parent.selectedActivities;
+    $scope.closePopover(); // popover should be closed    
+ 
     if (selectedActivities && selectedActivities.length > 0) {
       console.log('Performing action: ' + $scope.action + ' on ' + selectedActivities.length + ' selected activitie(s)');
+      if (selectedActivities.length !== selectedRawActivities.length) 
+    	  mdw.messages = "Some of the selected activities could not be actioned based on their current status and selected action";
+      
       var instanceIds = [];
       selectedActivities.forEach(function(activity) {
         instanceIds.push(activity.id);
@@ -169,14 +198,22 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   $scope.cancelAction = function(){ 
     $scope.$close();
   };
+  
+  $scope.canAction = function(activity, action) {
+	   if (action == 'Retry' && activity.status != 'Failed' && activity.status != 'Completed' && activity.status != 'Cancelled') 
+		   return false;
+	   else
+		   return true;
+  };
 
   $scope.getSelectedActivitiesMessage = function() {
-    if ($scope.selectedActivities) {
+	var selectedActivities = $scope.$parent.selectedActivities;
+    if (selectedActivities && selectedActivities.length > 0) {        
       var base = 'Do you want to perform the selected action on ';
-      if ($scope.selectedActivities.length == 1)
+      if (selectedActivities.length == 1)
         return base + 'the selected activity?';
       else
-        return base + $scope.selectedActivities.length + ' activities?';
+        return base + selectedActivities.length + ' activities?';
     }
   };
 }]);
