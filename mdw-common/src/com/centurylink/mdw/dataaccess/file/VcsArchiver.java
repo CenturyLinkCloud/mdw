@@ -142,10 +142,12 @@ public class VcsArchiver {
                 throw new IOException("Unable to create archive directory: " + archiveDir.getAbsolutePath());
         }
         List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
+        VersionControlGit vcGit = versionControl instanceof VersionControlGit ? (VersionControlGit)versionControl : null;
         if (!"true".equals(PropertyManager.getProperty("mdw.suppress.asset.version.check"))) {
-            AssetFile flaggedAsset = null;
+            List<AssetFile> flaggedAssets = null;
+            List<AssetFile> conflictingAssets = null;
             PackageDir newPkg = null;
-            // Check for user errors - i.e. older version asset present in newer pkg
+            // Check for user errors - i.e. older version asset present in newer pkg, or same version asset but modified in newer pkg
             progressMonitor.subTask("Checking for asset version inconsistencies");
             versionControl.clear();
             for (File prevPkg : tempPkgDirs) {
@@ -163,19 +165,27 @@ public class VcsArchiver {
                             AssetFile newFile = newPkg.getAssetFile(new File(newPkg + "/" + prevFile.getName()));
                             if (newFile != null && newFile.getRevision().getVersion() > 0) {
                                 AssetRevision prevRev = versionControl.getRevision(prevFile);
+                                // Check for trying to import older version asset than existing
                                 if (prevRev != null && prevRev.getVersion() > newFile.getRevision().getVersion()) {
-                                    flaggedAsset = newFile;
-                                    break;
+                                    if (flaggedAssets == null)
+                                        flaggedAssets = new ArrayList<>();
+                                    flaggedAssets.add(newFile);
+                                }
+                                // Check for trying to import same version asset but differs from existing - Always need to increment asset version if different
+                                else if (vcGit != null && prevRev != null && prevRev.getVersion() == newFile.getRevision().getVersion()) {
+                                    if (!(vcGit.getGitId(prevFile).equals(vcGit.getGitId(newFile)))) {
+                                        if (conflictingAssets == null)
+                                            conflictingAssets = new ArrayList<>();
+                                        conflictingAssets.add(newFile);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                if (flaggedAsset != null)
-                    break;
             }
-            if (flaggedAsset != null) {  // Need to restore previous pkgs and error out on asset import
-                progressMonitor.subTask("Found asset version inconsistencies....restoring from backup");
+            if (flaggedAssets != null || conflictingAssets != null) {  // Need to restore previous pkgs and error out on asset import
+                progressMonitor.subTask("Found asset(s) version inconsistencies....restoring from backup");
                 for (File prevPkg : tempPkgDirs) {
                     File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
                     if (restoreDest.exists())
@@ -191,7 +201,18 @@ public class VcsArchiver {
                         logger.severeException(ex.getMessage(), ex);
                     }
                 }
-                throw new IOException("Failed -- Import would overide asset with older version: " + flaggedAsset.getLogicalFile());
+                String message = "";
+                if (flaggedAssets != null) {
+                    message += "Failed -- Import would replace the following assets with older versions: \n";
+                    for (AssetFile file : flaggedAssets)
+                        message += file.getLogicalFile() + " \n";
+                }
+                if (conflictingAssets != null) {
+                    message += "Failed -- Import would replace the following modified assets with same versions (version needs incrementing): \n";
+                    for (AssetFile file : conflictingAssets)
+                        message += file.getLogicalFile() + " \n";
+                }
+                throw new IOException(message);
             }
             progressMonitor.progress(10);
         }
@@ -214,11 +235,11 @@ public class VcsArchiver {
              // TODO:  Insert assets from pkg into ASSET_REF DB table
             }
         }
-        if (versionControl instanceof VersionControlGit) {
+        if (vcGit != null) {
             progressMonitor.subTask("Adding asset Git references to ASSET_REF table");
             DatabaseAccess db = new DatabaseAccess(null);
             try (Connection conn = db.openConnection()){
-                Checkpoint cp = new Checkpoint(assetDir, versionControl, ((VersionControlGit)versionControl).getCommit(), conn);
+                Checkpoint cp = new Checkpoint(assetDir, versionControl, vcGit.getCommit(), conn);
                 cp.updateRefs();
             }
             catch (SQLException e) {
