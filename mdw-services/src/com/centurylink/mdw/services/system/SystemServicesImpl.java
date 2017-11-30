@@ -26,7 +26,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
@@ -40,6 +42,8 @@ import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cli.Download;
+import com.centurylink.mdw.cli.Unzip;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -348,17 +352,29 @@ public class SystemServicesImpl implements SystemServices {
         cmd.add("-jar");
         String mdwHome = System.getenv("MDW_HOME");
         if (mdwHome == null) {
-            mdwHome = ApplicationContext.getTempDirectory() + File.separator + mdwHome;
+            // fall back to system property
+            mdwHome = System.getProperty("mdw.home");
+            if (mdwHome == null) {
+                mdwHome = ApplicationContext.getTempDirectory() + File.separator + "MDW_HOME";
+                System.setProperty("mdw.home", mdwHome);
+            }
         }
 
         File cliJar = new File(mdwHome + File.separator + "mdw-cli.jar");
         if (!cliJar.exists()) {
             if (!cliJar.getParentFile().isDirectory() && !cliJar.getParentFile().mkdirs())
                 throw new IOException("Cannot create dir: " + cliJar.getParentFile().getAbsolutePath());
-            // TODO extract cli jar from war into mdwHome
+            // grab cli zip from github
+            String v = ApplicationContext.getMdwVersion();
+            URL cliUrl = new URL("https://github.com/CenturyLinkCloud/mdw/releases/download/v" + v + "/mdw-cli-" + v + ".zip");
+            File tempZip = Files.createTempFile("mdw-cli", ".jar").toFile();
+            new Download(cliUrl, tempZip, 210L).run(); // TODO progress via websocket
+            // unzip into MDW_HOME
+            new Unzip(tempZip, cliJar.getParentFile()).run();
         }
         cmd.add(cliJar.getAbsolutePath());
 
+        // running direct command instead of through bat/sh to avoid permissions issues
         List<String> mdwCmd = new ArrayList<>();
         mdwCmd.addAll(Arrays.asList(command.trim().split("\\s+")));
         if (mdwCmd.get(0).equals("mdw"))
