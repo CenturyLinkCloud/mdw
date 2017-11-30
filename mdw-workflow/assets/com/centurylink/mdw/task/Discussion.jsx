@@ -116,7 +116,7 @@ class Discussion extends Component {
       else {
         $mdwUi.showMessage(json.status.message);
       }
-    });      
+    });
   }
 
   render() {

@@ -25,7 +25,7 @@ import com.centurylink.mdw.services.TaskServices;
 public class TaskHandler implements Handler {
 
     @Override
-    public JSONObject handleAction(String userId, String action, String id, SlackRequest request)
+    public JSONObject handleRequest(String userId, String id, SlackRequest request)
             throws ServiceException {
         Long instanceId;
         try {
@@ -34,6 +34,10 @@ public class TaskHandler implements Handler {
         catch (NumberFormatException ex) {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid id: " + id);
         }
+        
+        String action = request.getActions().get(0); // TODO multiples?
+        if (action == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing action");
         
         String assigneeId = null;
         if (action.equalsIgnoreCase(TaskAction.ASSIGN)) {

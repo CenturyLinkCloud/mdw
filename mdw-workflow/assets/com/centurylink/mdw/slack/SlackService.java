@@ -59,31 +59,27 @@ public class SlackService extends JsonRestService {
         // TODO: ability to map request.getUser() to corresponding MDW user
         String callbackId = request.getCallbackId();
         if (callbackId != null) {
-            int hyphen = callbackId.indexOf('-');
-            if (hyphen > 0) {
-                String handlerType = callbackId.substring(0, hyphen);
-                int underscore = callbackId.lastIndexOf('_');
-                if (underscore > hyphen) {
-                    String action = callbackId.substring(hyphen + 1, underscore);
-                    String id = callbackId.substring(underscore + 1);
-                    return runHandler(userId, handlerType, action, id, request);
-                }
+            int underscore = callbackId.lastIndexOf('_');
+            if (underscore > 0) {
+                String handlerType = callbackId.substring(0, underscore);
+                String id = callbackId.substring(underscore + 1);
+                return runHandler(userId, handlerType, id, request);
             }
         }
         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad or missing callback_id");
     }
 
 
-    JSONObject runHandler(String userId, String type, String action, String id, SlackRequest request) 
+    JSONObject runHandler(String userId, String type, String id, SlackRequest request) 
             throws ServiceException {
         Handler handler = null;
         if (type.equals("task")) {
             handler = new TaskHandler();
         }
         if (handler == null)
-            throw new ServiceException("Unsupported action: " + action);
+            throw new ServiceException("Unsupported handler type: " + type);
         
-        return handler.handleAction(userId, action, id, request);
+        return handler.handleRequest(userId, id, request);
     }
 
 

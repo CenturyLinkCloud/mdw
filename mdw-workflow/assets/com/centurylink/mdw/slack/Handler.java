@@ -23,6 +23,6 @@ import com.centurylink.mdw.common.service.ServiceException;
  * Interface for handling incoming slack requests.
  */
 public interface Handler {
-    JSONObject handleAction(String userId, String action, String id, SlackRequest request) 
+    JSONObject handleRequest(String userId, String id, SlackRequest request) 
             throws ServiceException;
 }
