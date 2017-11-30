@@ -38,7 +38,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     mdw.messages = "";  // Clear any previous messages
     var selectedRawActivities = $scope.getSelectedActivities();
     // Filter out selected activities that are not actionable
-    $scope.selectedActivities = $scope.getSelectedActionableActivities(selectedRawActivities)
+    $scope.selectedActivities = $scope.getSelectedActionableActivities(selectedRawActivities);
     if ($scope.selectedActivities && $scope.selectedActivities.length > 0) {
     	var modalInstance = $uibModal.open({
     	      scope: $scope,
