@@ -2,7 +2,6 @@
 
 1 - Edit gradle.properties to set the new build numbers.
     - mdwVersion
-    - mdwDesignerVersion (latest published version)
     
 2 - Run updateMdwVerInFiles task to update following file 
   - mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
