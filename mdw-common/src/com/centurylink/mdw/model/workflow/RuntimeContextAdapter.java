@@ -103,4 +103,9 @@ public class RuntimeContextAdapter implements RuntimeContext {
     public String getMdwVersion() {
         return ApplicationContext.getMdwVersion();
     }
+
+    @Override
+    public String evaluateToString(String expression) {
+        return expression;
+    }
 }

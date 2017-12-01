@@ -100,6 +100,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     }
 
     public String getName() { return getTaskName(); }
+    public String getTitle() { return taskInstance.getTitle(); }
     public Long getInstanceId() { return getTaskInstanceId(); }
     public String getInstanceUrl() { return getTaskInstanceUrl(); }
     public String getMasterRequestId() { return taskInstance.getMasterRequestId(); }

@@ -234,6 +234,11 @@ public class RestServlet extends ServiceServlet {
         }
 
         authenticate(request, metaInfo, requestString);
+        if (metaInfo.containsKey(Listener.METAINFO_REQUEST_PAYLOAD)) {
+            requestString = metaInfo.get(Listener.METAINFO_REQUEST_PAYLOAD);
+            metaInfo.remove(Listener.METAINFO_REQUEST_PAYLOAD);
+        }
+
         Set<String> reqHeaderKeys = new HashSet<String>(metaInfo.keySet());
         String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
         populateResponseHeaders(reqHeaderKeys, metaInfo, response);

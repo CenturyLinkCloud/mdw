@@ -2,7 +2,7 @@
 <!-- Specifies the standard bulk and individual task actions.  The 
      standard actions are applicable regardless of how the process
      is defined.  See the comments under taskDetailActions for
-     information on dynamic actions to extend these configured
+     information on custom actions to extend these configured
      standard actions. -->
 <taskActions
   xmlns="http://mdw.centurylink.com/task"

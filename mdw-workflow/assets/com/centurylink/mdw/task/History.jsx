@@ -12,7 +12,8 @@ class History extends Component {
   componentDidMount() {
     fetch( new Request( '/mdw/services/Tasks/' + this.props.task.id + '/history', {
       method: 'GET',
-      headers: { Accept: 'application/json' }
+      headers: { Accept: 'application/json' },
+      credentials: 'same-origin'
     } ) )
       .then( response => {
         return response.json();

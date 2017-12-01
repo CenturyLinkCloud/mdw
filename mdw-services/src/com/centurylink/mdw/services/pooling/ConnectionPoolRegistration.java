@@ -29,8 +29,7 @@ import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.startup.StartupClass;
-import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -38,19 +37,13 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * Startup class that manages registration of all the caches
  */
 
-public class ConnectionPoolRegistration implements StartupClass, CacheService {
+public class ConnectionPoolRegistration implements StartupService, CacheService {
 
     private static ConnectionPoolRegistration singleton;
 
     private Map<String,AdapterConnectionPool> pools;
 
-    /**
-     * Method that gets invoked when the server comes up
-     * Load all the cache objects when the server starts
-     *
-     * @throws StartupException
-     */
-    public void onStartup() throws StartupException{
+    public void onStartup() {
         singleton = this;
         (new CacheRegistration()).registerCache(ConnectionPoolRegistration.class.getName(), singleton);
         pools = new HashMap<String,AdapterConnectionPool>();

@@ -50,7 +50,7 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
 
     public static final String[] STANDARD_ACTIONS = { CREATE, ASSIGN, CLAIM, RELEASE, CANCEL, COMPLETE, RETRY, FORWARD, ABORT, WORK, SAVE };
 
-    private boolean dynamic;
+    private boolean custom;
     private String taskActionName;
     private Long taskActionId;
     private Role[] userRoles;
@@ -75,8 +75,8 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
     public String getOutcome() { return outcome; }
     public void setOutcome(String s) { this.outcome = s; }
 
-    public boolean isDynamic() { return dynamic; }
-    public void setDynamic(boolean b) { dynamic = b; }
+    public boolean isCustom() { return custom; }
+    public void setCustom(boolean b) { custom = b; }
 
     public List<ForTask> getForTasks() { return forTasks; }
     public void setForTasks(List<ForTask> forTasks) { this.forTasks = forTasks; }
@@ -195,8 +195,8 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
         json.put("action", taskActionName);
         if (alias != null)
             json.put("alias", alias);
-        if (dynamic)
-            json.put("dynamic", true);
+        if (custom)
+            json.put("custom", true);
         if (outcome != null)
             json.put("outcome", outcome);
         if (requireComment)

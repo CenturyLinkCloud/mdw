@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -122,7 +121,7 @@ public class ApplicationContext {
     /**
      * Gets invoked when the server comes up
      */
-    public static void onStartup(String container, Object containerContext) throws StartupException {
+    public static void onStartup(String container, Object containerContext) {
         try {
             startedUp = false;
             logger = LoggerUtil.getStandardLogger();
@@ -712,32 +711,6 @@ public class ApplicationContext {
         return hubOverrideRoot;
     }
 
-    private static int webSocketPort;
-    public static int getWebSocketPort() {
-        if (webSocketPort == 0) {
-            String url = PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL);
-            if (url != null) {
-                try {
-                    int lastColon = url.lastIndexOf(':');
-                    if (lastColon == -1)
-                        throw new MalformedURLException("Cannot find port in websocket URL: " + url);
-                    int slash = url.indexOf('/', lastColon + 1);
-                    if (slash > 0)
-                        webSocketPort = Integer.parseInt(url.substring(lastColon + 1, slash));
-                    else
-                        webSocketPort = Integer.parseInt(url.substring(lastColon + 1));
-                }
-                catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                }
-            }
-            else {
-                webSocketPort = 8282;
-            }
-        }
-        return webSocketPort;
-    }
-
     public static List<URL> getOtherServerUrls(URL thisUrl) throws IOException {
         List<URL> serverUrls = new ArrayList<URL>();
         // Due to different domains for same servers in some environments
@@ -751,5 +724,18 @@ public class ApplicationContext {
                 serverUrls.add(otherUrl);
         }
         return serverUrls;
+    }
+
+    public static String getWebSocketUrl() {
+        String websocketUrl = PropertyManager.getProperty(PropertyNames.MDW_WEBSOCKET_URL);
+        if (websocketUrl == null) {
+            // use default
+            String hubUrl = getMdwHubUrl();
+            if (hubUrl.startsWith("https://"))
+                websocketUrl = "wss://" + hubUrl.substring(8) + "/websocket";
+            else if (hubUrl.startsWith("http://"))
+                websocketUrl = "ws://" + hubUrl.substring(7) + "/websocket";
+        }
+        return websocketUrl;
     }
  }

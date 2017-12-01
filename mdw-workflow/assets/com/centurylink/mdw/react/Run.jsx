@@ -20,7 +20,8 @@ class Run extends Component {
     const path = '/services/Processes/run/' + this.state.assetPath;
     fetch(new Request($mdwServicesRoot + path, {
       method: 'GET',
-      headers: {Accept: 'application/json'}
+      headers: {Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();
@@ -67,9 +68,9 @@ class Run extends Component {
   
   handleClick(event) {
     if (event.currentTarget.name === 'run') {
-      if ($mdwAutoTestWebSocketUrl) {
+      if ($mdwWebSocketUrl) {
         var state = this.state; // for access in listeners
-        const socket = new WebSocket($mdwAutoTestWebSocketUrl);
+        const socket = new WebSocket($mdwWebSocketUrl);
         socket.addEventListener('open', function(event) { // eslint-disable-line no-unused-vars
           socket.send(state.masterRequestId);
         });
@@ -97,7 +98,8 @@ class Run extends Component {
         fetch(new Request($mdwServicesRoot + path, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(run)
+          body: JSON.stringify(run),
+          credentials: 'same-origin'
         }))
         .then(response => {
           ok = response.ok; 

@@ -21,7 +21,9 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.service.data.CollaborationDataAccess;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.CollaborationServices;
 
 public class CollaborationServicesImpl implements CollaborationServices {
@@ -33,7 +35,21 @@ public class CollaborationServicesImpl implements CollaborationServices {
     @Override
     public List<Note> getNotes(String ownerType, Long ownerId) throws ServiceException {
         try {
-          return getDataAccess().getNotes(ownerType, ownerId);
+          List<Note> notes = getDataAccess().getNotes(ownerType, ownerId);
+          for (Note note : notes) {
+              // Populate full user name if found.  We accept non-mdw users (slack, etc)
+              String creator = note.getCreateUser();
+              User mdwUser = UserGroupCache.getUser(creator);
+              if (mdwUser != null)
+                  note.setCreateUser(mdwUser.getName());
+              String modifier = note.getModifyUser();
+              if (modifier != null) {
+                  mdwUser = UserGroupCache.getUser(modifier);
+                  if (mdwUser != null)
+                      note.setModifyUser(mdwUser.getName());
+              }
+          }
+          return notes;
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -42,42 +58,50 @@ public class CollaborationServicesImpl implements CollaborationServices {
 
     @Override
     public Long createNote(Note note) throws ServiceException {
+        if (note.getCreateUser() == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing user");
+        if (note.getOwnerId() == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing owner id");
+        if (note.getOwnerType() == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing owner type");
         try {
-            return getDataAccess().createNote(note.getOwnerType(), note.getOwnerId(), note.getName(), note.getContent(), note.getCreateUser());
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+            Long id = getDataAccess().createNote(note.getOwnerType(), note.getOwnerId(), note.getName(), note.getContent(), note.getCreateUser());
+            note.setId(id);
+            return id;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void updateNote(Note note) throws ServiceException {
         try {
             getDataAccess().updateNote(note.getId(), note.getName(), note.getContent(), note.getModifyUser());
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+        }
+        catch (DataAccessException ex) {
+          throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void deleteNote(Long id, String user) throws ServiceException {
         try {
             getDataAccess().deleteNote(id);
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public List<Attachment> getAttachments(String ownerType, Long ownerId) throws ServiceException {
         try {
             return getDataAccess().getAttachments(ownerType, ownerId);
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -86,29 +110,29 @@ public class CollaborationServicesImpl implements CollaborationServices {
             return getDataAccess().createAttachment(attachment.getOwnerType(),
                     attachment.getOwnerId(), attachment.getName(), attachment.getLocation(),
                     attachment.getContentType(), attachment.getCreateUser());
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void updateAttachment(Attachment attachment) throws ServiceException {
         try {
             getDataAccess().updateAttachment(attachment.getId(), attachment.getLocation(), attachment.getModifyUser());
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void deleteAttachment(Long id, String user) throws ServiceException {
         try {
             getDataAccess().deleteAttachment(id);
-          }
-          catch (DataAccessException ex) {
-              throw new ServiceException(ex.getMessage(), ex);
-          }
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 }

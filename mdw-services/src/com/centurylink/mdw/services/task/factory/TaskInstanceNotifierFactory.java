@@ -108,14 +108,18 @@ public class TaskInstanceNotifierFactory {
      */
     private List<String> parseNoticiesAttr(String noticesAttr, String outcome) {
         List<String> notifiers = new ArrayList<String>();
-        int columnCount = StringHelper.delimiterColumnCount(noticesAttr.substring(0, noticesAttr.indexOf(";")), ",", "\\,")+1;
-        int notifierClassColIndex = columnCount > 3 ? 3 : 2 ;
+        int columnCount = 4;
+        int colon = noticesAttr.indexOf(";");
+        if (colon != -1) {
+            columnCount = StringHelper.delimiterColumnCount(noticesAttr.substring(0, colon), ",", "\\,") + 1;
+        }
+        int notifierClassColIndex = columnCount > 3 ? 3 : 2;
         List<String[]> rows = StringHelper.parseTable(noticesAttr, ',', ';', columnCount);
         for (String[] row : rows) {
             if (!StringHelper.isEmpty(row[1]) && row[0].equals(outcome)) {
-                StringTokenizer st = new StringTokenizer(row[notifierClassColIndex], "# ,;");
+                StringTokenizer st = new StringTokenizer(row[notifierClassColIndex], ",");
                 boolean hasCustomClass = false;
-                String templateVerSpec = columnCount > 3 ? ":"+row[2] : "";
+                String templateVerSpec = columnCount > 3 ? ":" + row[2] : "";
                 while (st.hasMoreTokens()) {
                     String className = st.nextToken();
                     className = getNotifierClassName(className);

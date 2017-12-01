@@ -27,13 +27,12 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.provider.StartupException;
-import com.centurylink.mdw.provider.StartupService;
-import com.centurylink.mdw.startup.StartupClass;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class FileListenerRegistration implements StartupClass, StartupService {
+public class FileListenerRegistration implements StartupService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 

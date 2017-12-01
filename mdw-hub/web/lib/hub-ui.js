@@ -4,4 +4,4 @@ var $mdwServicesRoot = 'mdw';
 var $mdwWebToolsRoot;
 var $mdwVersion = '6.0.01';
 var $mdwBuild;
-var $mdwAutoTestWebSocketUrl;
+var $mdwWebSocketUrl;

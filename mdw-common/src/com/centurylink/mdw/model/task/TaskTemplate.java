@@ -40,7 +40,6 @@ public class TaskTemplate extends Asset implements Jsonable {
 
     private static final char FIELD_DELIMITER = ',';
     private static final char ROW_DELIMITER = ';';
-    public static final String MDW4_TASK_LOGICAL_ID_PREFIX = "MDW4_";
     public static final String AUTOFORM = "Autoform";
 
     private String taskName;
@@ -52,48 +51,6 @@ public class TaskTemplate extends Asset implements Jsonable {
 
     public TaskTemplate() {
         setLanguage(TASK);
-    }
-
-    public TaskTemplate(com.centurylink.mdw.task.TaskTemplate template) {
-        setLanguage(TASK);
-        setLogicalId(template.getLogicalId());
-        if (template.getVersion() != null && !"0".equals(template.getVersion()))
-            setVersion(parseVersion(template.getVersion()));
-        if (template.getAssetName() != null && !template.getAssetName().isEmpty())
-            setName(template.getAssetName());
-        setTaskName(template.getName());
-        setTaskTypeId(TaskType.TASK_TYPE_TEMPLATE);
-        setTaskCategory(template.getCategory());
-        setComment(template.getDescription());
-        if (template.getAttributeList() != null)
-        {
-          for (com.centurylink.mdw.task.Attribute attr : template.getAttributeList())
-              setAttribute(attr.getName(), attr.getStringValue());
-        }
-        String vars = getAttribute(TaskAttributeConstant.VARIABLES);
-        if (vars != null)
-            setVariablesFromString(vars, null);
-        String groups = getAttribute(TaskAttributeConstant.GROUPS);
-        if (groups != null)
-            setUserGroupsFromString(groups);
-    }
-
-    public TaskTemplate(TaskTemplate cloneFrom) {
-        super(cloneFrom);
-        setLanguage(TASK);
-        setLogicalId(cloneFrom.getLogicalId());
-        setTaskName(cloneFrom.getTaskName());
-        setTaskTypeId(cloneFrom.getTaskTypeId());
-        setTaskCategory(cloneFrom.getTaskCategory());
-        setComment(cloneFrom.getComment());
-        setAttributes(cloneFrom.getAttributes());
-        String vars = getAttribute(TaskAttributeConstant.VARIABLES);
-        if (vars != null)
-            setVariablesFromString(vars, null);
-        String groups = getAttribute(TaskAttributeConstant.GROUPS);
-        if (groups != null)
-            setUserGroupsFromString(groups);
-        setVersion(cloneFrom.getVersion());
     }
 
     public Integer getTaskTypeId(){
@@ -292,58 +249,6 @@ public class TaskTemplate extends Asset implements Jsonable {
         setAttribute(TaskAttributeConstant.GROUPS, str);
     }
 
-    public static String getVariablesAsString(List<Variable> processVariables, List<Variable> variables) {
-        if (processVariables==null) return null;
-        StringBuffer sb = new StringBuffer();
-        boolean firstRow = true;
-        // first get variables already specified in the task
-        if (variables!=null) {
-            for (Variable taskVar : variables) {
-                Variable var = findVariable(processVariables, taskVar);
-                if (var==null) continue;    // remove variables not in process definition
-                if (firstRow) firstRow = false;
-                else sb.append(ROW_DELIMITER);
-                sb.append(var.getName()).append(FIELD_DELIMITER);
-                sb.append(taskVar.getLabel()).append(FIELD_DELIMITER);
-                if (taskVar.getDisplayMode().equals(Variable.DATA_READONLY))
-                    sb.append(TaskActivity.VARIABLE_DISPLAY_READONLY);
-                else if (Variable.DATA_OPTIONAL.equals(taskVar.getDisplayMode()))
-                    sb.append(TaskActivity.VARIABLE_DISPLAY_OPTIONAL);
-                else if (Variable.DATA_HIDDEN.equals(taskVar.getDisplayMode()))
-                    sb.append(TaskActivity.VARIABLE_DISPLAY_HIDDEN);
-                else sb.append(TaskActivity.VARIABLE_DISPLAY_REQUIRED);
-                sb.append(FIELD_DELIMITER);
-                if (taskVar.getDisplaySequence()==null) sb.append("0");
-                else sb.append(taskVar.getDisplaySequence().toString());
-                sb.append(FIELD_DELIMITER);
-                sb.append((taskVar.getDescription()==null)?"":taskVar.getDescription());
-                sb.append(FIELD_DELIMITER);
-                sb.append(var.getType());
-            }
-        }
-        // now add process variables not specified in the task as not-displayed
-        for (Variable var : processVariables) {
-            Variable taskVar = findVariable(variables, var);
-            if (taskVar!=null) continue;    // already handled above
-            if (firstRow) firstRow = false;
-            else sb.append(ROW_DELIMITER);
-            sb.append(var.getName()).append(FIELD_DELIMITER);
-            String referredAs = var.getName();
-            sb.append(referredAs).append(FIELD_DELIMITER);
-            sb.append(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED);
-            sb.append(FIELD_DELIMITER);
-            sb.append("0");
-            sb.append(FIELD_DELIMITER);
-            sb.append(FIELD_DELIMITER);
-            sb.append(var.getType());
-        }
-        return sb.toString();
-    }
-
-    public String getVariablesAsString(List<Variable> processVariables) {
-        return getVariablesAsString(processVariables, variables);
-    }
-
     public void setVariablesFromString(String str, List<Variable> processVariables) {
         variables = new ArrayList<Variable>();
         if (str == null) return;
@@ -385,79 +290,6 @@ public class TaskTemplate extends Asset implements Jsonable {
         }
     }
 
-    public void setVariablesFromAttribute() {
-        String str = this.getAttribute(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-        setVariablesFromString(str, null);
-    }
-
-    public static String updateVariableInString(String curString, List<Variable> processVariables) {
-        List<String[]> parsed = StringHelper.parseTable(curString, FIELD_DELIMITER, ROW_DELIMITER, 6);
-        int n = parsed.size();
-        boolean[] keep = new boolean[n];
-        for (int i=0; i<n; i++) keep[i] = parsed.get(i)[0].startsWith("#{") || parsed.get(i)[0].startsWith("${"); // expressions okay
-        for (Variable var : processVariables) {
-            boolean found = false;
-            for (int i=0; !found && i<n; i++) {
-                if (parsed.get(i)[0].equals(var.getName())) {
-                    found = true;
-                    keep[i] = true;
-                }
-            }
-            if (!found) {
-                String[] newEntry = new String[6];
-                newEntry[0] = var.getName();
-                if (var.getLabel()==null)
-                    newEntry[1] = newEntry[0];
-                else newEntry[1] = var.getLabel();
-                newEntry[2] = TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED;
-                newEntry[3] = "0";
-                newEntry[4] = "";
-                newEntry[5] = var.getType();
-                parsed.add(newEntry);
-            }
-        }
-        for (int i=n-1; i>=0; i--) {
-            if (!keep[i]) parsed.remove(i);
-        }
-        StringBuffer sb = new StringBuffer();
-        boolean firstRow = true;
-        for (String[] one : parsed) {
-            if (firstRow) firstRow = false;
-            else sb.append(ROW_DELIMITER);
-            for (int i=0; i<one.length; i++) {
-                if (i>0) sb.append(FIELD_DELIMITER);
-                sb.append(one[i]);
-            }
-        }
-        return sb.toString();
-    }
-
-    public static List<String> TASK_ACTION_OUTCOMES;
-    static {
-        TASK_ACTION_OUTCOMES = new ArrayList<String>();
-        for (Integer statusCode : TaskStatus.allStatusCodes) {
-            TASK_ACTION_OUTCOMES.add(TaskStatuses.getTaskStatuses().get(statusCode));
-        }
-        TASK_ACTION_OUTCOMES.add(TaskStates.getTaskStates().get(TaskState.STATE_ALERT));
-        TASK_ACTION_OUTCOMES.add(TaskStates.getTaskStates().get(TaskState.STATE_JEOPARDY));
-        TASK_ACTION_OUTCOMES.add(TaskAction.FORWARD);
-    }
-
-    public static String getDefaultNotices() {
-        String noticeOutcomes = "";
-        for (String outcome : TASK_ACTION_OUTCOMES) {
-            noticeOutcomes += outcome + ",,,,;";
-        }
-        return noticeOutcomes;
-    }
-    public static String getDefaultCompatibilityNotices() {
-        String noticeOutcomes = "";
-        for (String outcome : TASK_ACTION_OUTCOMES) {
-            noticeOutcomes += outcome + ",,,;";
-        }
-        return noticeOutcomes;
-    }
-
     public int compareTo(TaskTemplate other) {
         return this.getTaskName().compareTo(other.getTaskName());
     }
@@ -467,32 +299,6 @@ public class TaskTemplate extends Asset implements Jsonable {
           return false;
 
         return getTaskId().equals(((TaskTemplate)other).getTaskId());
-    }
-
-    public com.centurylink.mdw.task.TaskTemplate toTemplate() {
-        com.centurylink.mdw.task.TaskTemplate template
-            = com.centurylink.mdw.task.TaskTemplate.Factory.newInstance();
-        template.setLogicalId(getLogicalId());
-        template.setName(getTaskName());
-        if (getTaskCategory() != null)
-            template.setCategory(getTaskCategory());
-        if (getComment() != null)
-            template.setDescription(getComment());
-        if (getVersion() > 0) {
-            template.setVersion(formatVersion(getVersion()));
-            template.setAssetName(getName());
-        }
-
-        if (getAttributes() != null) {
-            for (com.centurylink.mdw.model.attribute.Attribute attrVO : getAttributes()) {
-                if (!"TaskDescription".equals(attrVO.getAttributeName())) {
-                    com.centurylink.mdw.task.Attribute attr = template.addNewAttribute();
-                    attr.setName(attrVO.getAttributeName());
-                    attr.setStringValue(attrVO.getAttributeValue());
-                }
-            }
-        }
-        return template;
     }
 
     public Long getId() {
