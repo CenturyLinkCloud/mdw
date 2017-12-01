@@ -31,7 +31,7 @@
 7 - Update mdw-demo
   - git pull
   - In framework workspace Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder (update mdwDemoDir based on your local setup)
-  - Run the Gradle task mdw/updateMDWDemoWorkspace to copy latest framework assets, update gradle.properties, manifest file in mdw-demo workspace
+  - Run the Gradle task mdw/updateMDWDemo to copy latest framework assets, update gradle.properties, manifest file in mdw-demo workspace
   - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
 8 - Deploy and Test

@@ -29,7 +29,7 @@
         "ProducerVariable": "producerProperties",
         "REQUEST_VARIABLE": "request",
         "RESPONSE_VARIABLE": "response",
-        "WORK_DISPLAY_INFO": "x=182,y=151,w=169,h=65",
+        "WORK_DISPLAY_INFO": "x=182,y=150,w=169,h=65",
         "synchronous": "True"
       },
       "id": "A3",

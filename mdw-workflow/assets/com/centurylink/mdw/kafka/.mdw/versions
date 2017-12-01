@@ -1,4 +1,7 @@
 KafkaAdapter.java=6
+KafkaProducer.proc=5
+KafkaProducer.test=1
+KafkaProducer.yaml=3 Auto-created
 MDWKafkaListener.java=1
 MDWKafkaListenerRegistration.java=1
 kafka-clients-1.0.0.jar=1
