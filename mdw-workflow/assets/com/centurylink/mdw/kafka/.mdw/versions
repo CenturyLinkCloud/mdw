@@ -1,5 +1,5 @@
 KafkaAdapter.java=6
 MDWKafkaListener.java=1
-MDWKafkaListenerRegistration.java=1
+MDWKafkaListenerRegistration.java=2
 kafka-clients-1.0.0.jar=1
 readme.md=2

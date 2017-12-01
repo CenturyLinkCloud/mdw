@@ -104,8 +104,8 @@ diagramMod.factory('Diagram',
         diagram.notes.forEach(function(note) {
           note.draw();
         });
-        if ($mdwAutoTestWebSocketUrl) {
-          const socket = new WebSocket($mdwAutoTestWebSocketUrl);
+        if ($mdwWebSocketUrl && $mdwWebSocketUrl !== '${mdwWebSocketUrl}') {
+          const socket = new WebSocket($mdwWebSocketUrl);
            socket.addEventListener('open', function(event) {
              socket.send(diagram.instance.id);
            });

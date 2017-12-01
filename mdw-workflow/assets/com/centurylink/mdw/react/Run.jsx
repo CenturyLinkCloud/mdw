@@ -68,9 +68,9 @@ class Run extends Component {
   
   handleClick(event) {
     if (event.currentTarget.name === 'run') {
-      if ($mdwAutoTestWebSocketUrl) {
+      if ($mdwWebSocketUrl) {
         var state = this.state; // for access in listeners
-        const socket = new WebSocket($mdwAutoTestWebSocketUrl);
+        const socket = new WebSocket($mdwWebSocketUrl);
         socket.addEventListener('open', function(event) { // eslint-disable-line no-unused-vars
           socket.send(state.masterRequestId);
         });

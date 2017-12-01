@@ -29,7 +29,7 @@ import java.sql.Types;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyGroups;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
@@ -75,15 +75,15 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
         logger.info("methodEntry-->ProcessCleanup.run()");
 
         int processExpirationDays = PropertyManager.getIntegerProperty(
-                PropertyGroups.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 0);
+                PropertyNames.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 0);
         int maxProcesses = PropertyManager.getIntegerProperty(
-                PropertyGroups.PROCESS_CLEANUP + "/MaximumProcessExpiration", 0);
+                PropertyNames.PROCESS_CLEANUP + "/MaximumProcessExpiration", 0);
         int eventExpirationDays = PropertyManager.getIntegerProperty(
-                PropertyGroups.PROCESS_CLEANUP + "/ExternalEventExpirationAgeInDays", 0);
+                PropertyNames.PROCESS_CLEANUP + "/ExternalEventExpirationAgeInDays", 0);
         int commitInterval = PropertyManager
-                .getIntegerProperty(PropertyGroups.PROCESS_CLEANUP + "/CommitInterval", 10000);
+                .getIntegerProperty(PropertyNames.PROCESS_CLEANUP + "/CommitInterval", 10000);
         String cleanupScript = PropertyManager
-                .getProperty(PropertyGroups.PROCESS_CLEANUP + "/RuntimeCleanupScript");
+                .getProperty(PropertyNames.PROCESS_CLEANUP + "/RuntimeCleanupScript");
 
         if (cleanupScript == null) {
             cleanupScript = "Cleanup-Runtime.sql";

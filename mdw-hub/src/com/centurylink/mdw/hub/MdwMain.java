@@ -17,21 +17,13 @@ package com.centurylink.mdw.hub;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.MdwWebSocketServer;
-import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
-import com.centurylink.mdw.constant.PropertyGroups;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -42,14 +34,12 @@ import com.centurylink.mdw.listener.jms.InternalEventListener;
 import com.centurylink.mdw.listener.rmi.RMIListenerImpl;
 import com.centurylink.mdw.listeners.startup.StartupRegistry;
 import com.centurylink.mdw.model.listener.RMIListener;
-import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.provider.StartupService;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
 import com.centurylink.mdw.spring.SpringAppContext;
-import com.centurylink.mdw.startup.StartupClass;
 import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -139,18 +129,12 @@ public class MdwMain {
             logger.info("Initialize " + TimerTaskRegistration.class.getName());
             (new TimerTaskRegistration()).onStartup();
 
-            logger.info("Initialize " + MdwWebSocketServer.class.getName());
-            (new MdwWebSocketServer()).onStartup();
-
-            List<StartupClass> coll = this.getAllStartupClasses(logger);
-            for (StartupClass startupClass : coll) {
-                logger.info("Running startup class " + startupClass.getClass().getName());
-                startupClass.onStartup();
-            }
-            List<StartupService> dynamicStartupServices = StartupRegistry.getInstance().getDynamicStartupServices();
-            for (StartupService dynamicService : dynamicStartupServices) {
-                logger.info("Running dynamic startup service " + dynamicService.getClass().getName());
-                dynamicService.onStartup();
+            List<StartupService> startupServices = StartupRegistry.getInstance().getDynamicStartupServices();
+            for (StartupService startupService : startupServices) {
+                if (startupService.isEnabled()) {
+                    logger.info("Running startup service " + startupService.getClass());
+                    startupService.onStartup();
+                }
             }
             logger.info("MDW initialization completed after " + (System.currentTimeMillis() - before) + " ms");
         }
@@ -168,18 +152,12 @@ public class MdwMain {
         logger.info("MDW shutdown...");
 
         try {
-            Collection<StartupClass> coll = this.getAllStartupClasses(logger);
-            Iterator<StartupClass> it = coll.iterator();
-            while (it.hasNext()) {
-                StartupClass startupClass = (StartupClass) it.next();
-                logger.info("Shutdown startup class " + startupClass.getClass().getName());
-                startupClass.onShutdown();
-            }
-            List<StartupService> dynamicStartupServices = StartupRegistry.getInstance().getDynamicStartupServices();
-            System.out.println(dynamicStartupServices.size()+" dynamic services size in shutdown************" );
-            for (StartupService dynamicService : dynamicStartupServices) {
-                logger.info("Shutdown dynamic startup service " + dynamicService.getClass().getName());
-                dynamicService.onShutdown();
+            List<StartupService> startupServices = StartupRegistry.getInstance().getDynamicStartupServices();
+            for (StartupService startupService : startupServices) {
+                if (startupService.isEnabled()) {
+                    logger.info("Shutdown startup service " + startupService.getClass().getName());
+                    startupService.onShutdown();
+                }
             }
             StartupRegistry.getInstance().clearDynamicServices();
         }
@@ -188,8 +166,6 @@ public class MdwMain {
         }
 
         try {
-            MdwWebSocketServer.getInstance().onShutdown();
-
             (new TimerTaskRegistration()).onShutdown();
 
             logger.info("Shutdown common thread pool");
@@ -204,7 +180,6 @@ public class MdwMain {
                 intraMdwEventListener.stop();
             if (internalEventListener != null )
                 internalEventListener.stop();
-
 
             logger.info("Shutdown " + ConnectionPoolRegistration.class.getName());
             (new ConnectionPoolRegistration()).onShutdown();
@@ -243,45 +218,4 @@ public class MdwMain {
         }
     }
 
-    List<StartupClass> getAllStartupClasses(StandardLogger logger) throws StartupException {
-        List<StartupClass> startupClasses = new ArrayList<StartupClass>();
-
-        Properties props;
-        try {
-            props = PropertyManager.getInstance().getProperties(PropertyGroups.STARTUP_CLASSES);
-        }
-        catch (PropertyException e) {
-            throw new StartupException("Failed to determine startup classes", e);
-        }
-        Iterator<Object> it = props.keySet().iterator();
-        HashMap<String,String> mamp = new HashMap<String,String>();
-        while (it.hasNext()) {
-            String name = (String) it.next();
-            String className = props.getProperty(name).trim();
-            if (className.length() == 0) continue;
-
-            StartupClass instance = null;
-            try {
-                ClassLoader clsloader = Package.getDefaultPackage().getClassLoader();
-                Class<? extends StartupClass> startupClass = clsloader.loadClass(className).asSubclass(StartupClass.class);
-                instance = startupClass.newInstance();
-            }
-            catch (Exception ex) {
-              logger.severeException(ex.getMessage(), ex);
-            }
-            if (instance == null) {
-                logger.info("Failed to load Startup class. ClassName " + className);
-                continue;
-            }
-            mamp.put(className, name);
-            int i, n = startupClasses.size();
-            for (i=0; i<n; i++) {
-                String clsn1 = startupClasses.get(i).getClass().getName();
-                if (name.compareTo(mamp.get(clsn1))<0) break;
-            }
-            if (i<n) startupClasses.add(i, instance);
-            else startupClasses.add(instance);
-        }
-        return startupClasses;
-    }
 }

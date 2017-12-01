@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.provider;
+package com.centurylink.mdw.startup;
 
 import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.startup.StartupClass;
 
 /**
- * Implemented by workflow bundles that perform startup functionality (especially custom listeners).
+ * Registered startup service.
  */
-public interface StartupService extends StartupClass, RegisteredService {
+public interface StartupService extends RegisteredService {
 
-    public boolean isEnabled();
-
-    @Override
     public void onStartup() throws StartupException;
+
+    public void onShutdown();
 }

@@ -20,8 +20,8 @@ import java.sql.SQLException;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.EmbeddedDataAccess;
-import com.centurylink.mdw.provider.StartupException;
-import com.centurylink.mdw.provider.StartupService;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.startup.StartupService;
 
 /**
  * Startup service for embedded db extensions.
