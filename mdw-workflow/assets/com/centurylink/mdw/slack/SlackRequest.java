@@ -26,6 +26,10 @@ import com.centurylink.mdw.model.Jsonable;
 public class SlackRequest implements Jsonable {
     
     public SlackRequest(JSONObject json) {
+        if (json.has("name"))
+            this.name = json.getString("name");
+        if (json.has("value"))
+            this.value = json.getString("value");
         if (json.has("callback_id"))
             this.callbackId = json.getString("callback_id");
         if (json.has("trigger_id"))
@@ -52,15 +56,25 @@ public class SlackRequest implements Jsonable {
             JSONArray actionsArr = json.getJSONArray("actions");
             for (int i = 0; i < actionsArr.length(); i++) {
                 JSONObject actionObj = actionsArr.getJSONObject(i);
-                if (actionObj.has("value"))
-                    this.actions.add(actionObj.getString("value"));
-                else if (actionObj.has("name"))
+                if (actionObj.has("name"))
                     this.actions.add(actionObj.getString("name"));
+                if (actionObj.has("value")) // value is used for user selection
+                    this.value = actionObj.getString("value");
             }
         }
         if (json.has("response_url"))
             this.responseUrl = json.getString("response_url");
             
+    }
+    
+    private String name;
+    public String getName() {
+        return name;
+    }
+    
+    private String value;
+    public String getValue() {
+        return value;
     }
     
     private String callbackId;

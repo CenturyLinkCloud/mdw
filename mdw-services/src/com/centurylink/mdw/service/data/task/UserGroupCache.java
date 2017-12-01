@@ -174,7 +174,8 @@ public class UserGroupCache implements PreloadableCache {
     }
 
     private static boolean isMatch(User user, String prefix) {
-        return (user.getFirst() != null && user.getFirst().toLowerCase().startsWith(prefix))
+        return prefix == null
+                || (user.getFirst() != null && user.getFirst().toLowerCase().startsWith(prefix))
                 || (user.getLast() != null && user.getLast().toLowerCase().startsWith(prefix))
                 || user.getName().toLowerCase().startsWith(prefix) || user.getCuid().toLowerCase().startsWith(prefix);
     }

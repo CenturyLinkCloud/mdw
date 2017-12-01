@@ -231,7 +231,8 @@ public class TestRunner implements Runnable, MasterRequestListener {
      */
     private void updateWebSocket(TestCaseList testCaseList) {
         try {
-            WebSocketMessenger.getInstance().send("AutomatedTests", testCaseList.getJson().toString(2));
+            if (WebSocketMessenger.getInstance() != null)
+                WebSocketMessenger.getInstance().send("AutomatedTests", testCaseList.getJson().toString(2));
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

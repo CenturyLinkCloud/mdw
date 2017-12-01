@@ -36,6 +36,9 @@ public class WebSocketMessenger {
     private Map<String,List<Session>> topicSubscribers = new HashMap<>();
 
     private static WebSocketMessenger instance;
+    /**
+     * @return null until first subscriber
+     */
     public static WebSocketMessenger getInstance() {
         return instance;
     }

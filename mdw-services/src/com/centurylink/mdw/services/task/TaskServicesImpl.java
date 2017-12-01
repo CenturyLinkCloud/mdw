@@ -314,6 +314,8 @@ public class TaskServicesImpl implements TaskServices {
             String destination, boolean notifyEngine) throws ServiceException {
         try {
             TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
+            if (helper.getTaskInstance() == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Task instance not found: " + taskInstanceId);
             User user = UserGroupCache.getUser(userCuid);
             if (user == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + userCuid);
