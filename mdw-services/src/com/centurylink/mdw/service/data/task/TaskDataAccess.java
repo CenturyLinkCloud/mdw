@@ -34,7 +34,6 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskState;
@@ -42,7 +41,6 @@ import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -75,9 +73,6 @@ public class TaskDataAccess extends CommonDataAccess {
 
     private static String TASK_INSTANCE_SELECT;
     private static boolean hasTaskTitleColumn;
-
-    private static String TASK_INSTANCE_FROM =
-        "TASK_INSTANCE ti, USER_INFO ui ";
 
     private String getTaskInstanceSelect() throws SQLException {
         return getTaskInstanceSelect(false);
@@ -165,23 +160,6 @@ public class TaskDataAccess extends CommonDataAccess {
               task.setDescription(template.getComment());
         }
 
-        // check for custom page
-        if (template.isHasCustomPage()) {
-            String assetSpec = template.getCustomPage();
-            if (assetSpec.endsWith(".jsx")) {
-                if (template.getCustomPageAssetVersion() != null)
-                    assetSpec += " v" + template.getCustomPageAssetVersion();
-                AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
-                try {
-                    CustomPageLookup pageLookup = new CustomPageLookup(customPage, task.getTaskInstanceId());
-                    task.setTaskInstanceUrl(pageLookup.getUrl());
-                }
-                catch (Exception ex) {
-                    logger.severeException("Cannot determine custom page URL for task: " + template.getLabel(), ex);
-                }
-            }
-        }
-
         return task;
     }
 
@@ -215,9 +193,9 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     /**
-     * Returns shallow TaskInstanceVOs.
+     * Returns shallow TaskInstances.
      */
-    public List<TaskInstance> getSubTaskInstances(Long masterTaskInstId) throws DataAccessException {
+    public List<TaskInstance> getSubtaskInstances(Long masterTaskInstId) throws DataAccessException {
         try {
             db.openConnection();
             String query = "select " + getTaskInstanceSelect() +
@@ -423,54 +401,6 @@ public class TaskDataAccess extends CommonDataAccess {
             return taskInstances;
         } catch (Exception e) {
             throw new DataAccessException(0, "failed to query task instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     * Returns all the task instances that are clained by the user
-     * @param pTaskInstId
-     * @param pOmitOwner for the process instance
-     * @return the taskInst and associated data
-     * @throws TaskDataException
-     * @throws DataAccessException
-     *
-     */
-    public TaskInstance getTaskInstanceAllInfo(Long pTaskInstId)
-            throws DataAccessException {
-        try {
-            StringBuffer buff = new StringBuffer();
-            db.openConnection();
-            buff.append("select ").append(getTaskInstanceSelect(true));
-            if (db.isMySQL()) {
-                buff.append(" from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id ");
-            } else {
-                buff.append(" from ").append(TASK_INSTANCE_FROM);
-            }
-
-            buff.append(" where ti.task_instance_id = ? ");
-            if (!db.isMySQL()) buff.append("and ui.user_info_id(+) = ti.task_claim_user_id ");
-
-            String query = buff.toString();
-            if(logger.isMdwDebugEnabled()){
-                logger.mdwDebug("getTaskInstanceAllInfo() Query-->"+query) ;
-            }
-            ResultSet rs = db.runSelect(query, pTaskInstId);
-            if (rs.next()) {
-                TaskInstance taskInst = getTaskInstanceSub(rs, true);
-                if (rs.next()) throw new SQLException("Non unique result");
-                TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInst.getTaskId());
-                if (taskVO != null) {
-                    getTaskInstanceAdditionalInfoGeneral(taskInst);
-                } else {
-                    // for invalid instances, just load the groups to allow actioning
-                    getTaskInstanceGroups(taskInst);
-                }
-                return taskInst;
-            } else return null;
-        } catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task instance", e);
         } finally {
             db.closeConnection();
         }

@@ -207,7 +207,7 @@ testingMod.controller('TestsController',
   };  
   
   $scope.acceptUpdates = function() {
-    $scope.dataStream = $websocket(mdw.autoTestWebSocketUrl);
+    $scope.dataStream = $websocket(mdw.webSocketUrl);
     $scope.dataStream.send("AutomatedTests");
     $scope.dataStream.onMessage(function(message) {
       var newTestCaseList = JSON.parse(message.data);
@@ -287,7 +287,7 @@ testingMod.controller('TestsController',
     });
   };
   
-  if (mdw.autoTestWebSocketUrl != '${mdw.autoTestWebSocketUrl}') {
+  if (mdw.webSocketUrl != '${mdw.webSocketUrl}') {
     $scope.acceptUpdates();  // substituted value should be websocket url
   }
   else {

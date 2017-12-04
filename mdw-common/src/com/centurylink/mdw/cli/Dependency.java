@@ -26,6 +26,8 @@ public class Dependency implements Operation {
     public Dependency run(ProgressMonitor... progressMonitors) throws IOException {
         String mdwHome = System.getenv("MDW_HOME");
         if (mdwHome == null)
+            mdwHome = System.getProperty("mdw.home");
+        if (mdwHome == null)
             throw new IOException("Missing environment variable: MDW_HOME");
         File mdwDir = new File(mdwHome);
         if (!mdwDir.isDirectory())

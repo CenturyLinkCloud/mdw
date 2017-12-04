@@ -63,9 +63,9 @@ public class Mdw {
     public String getAuthTokenLoc() { return authTokenLoc; }
     public void setAuthTokenLoc(String authTokenLoc) { this.authTokenLoc = authTokenLoc; }
 
-    private String autoTestWebSocketUrl;
-    public String getAutoTestWebSocketUrl() { return autoTestWebSocketUrl; }
-    public void setAutoTestWebSocketUrl(String url) { this.autoTestWebSocketUrl = url; }
+    private String webSocketUrl;
+    public String getWebSocketUrl() { return webSocketUrl; }
+    public void setWebSocketUrl(String url) { this.webSocketUrl = url; }
 
     private boolean allowAnyAuthenticatedUser;
     public boolean isAllowAnyAuthenticatedUser() { return allowAnyAuthenticatedUser; }

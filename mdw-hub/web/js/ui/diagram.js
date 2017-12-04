@@ -104,8 +104,8 @@ diagramMod.factory('Diagram',
         diagram.notes.forEach(function(note) {
           note.draw();
         });
-        if ($mdwAutoTestWebSocketUrl) {
-          const socket = new WebSocket($mdwAutoTestWebSocketUrl);
+        if ($mdwWebSocketUrl && $mdwWebSocketUrl !== '${mdwWebSocketUrl}') {
+          const socket = new WebSocket($mdwWebSocketUrl);
            socket.addEventListener('open', function(event) {
              socket.send(diagram.instance.id);
            });
@@ -123,11 +123,13 @@ diagramMod.factory('Diagram',
                    actInst.statusCode = message.status;
                  }
                  else {
-                   step.instances.push({
+                   var ai = {
                      activityId: message.id,
                      id: message.instId,
                      statusCode: message.status
-                   });
+                   };
+                   step.instances.push(ai);
+                   diagram.instance.activities.push(ai);
                  }
                  step.draw();
                  diagram.scrollIntoView(step);

@@ -18,7 +18,8 @@ package com.centurylink.mdw.tests.workflow;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Jsonable;
+import com.centurylink.mdw.model.Jsonable;
+
 
 /**
  * JavaBean for testing Jsonable and Yaml variables.

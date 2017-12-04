@@ -25,6 +25,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.EventLog;
+import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -39,8 +40,6 @@ public interface TaskServices {
      */
     public TaskList getTasks(Query query, String cuid) throws ServiceException;
     public TaskList getTasks(Query query) throws ServiceException;
-
-    public TaskList getProcessTasks(Long processInstanceId) throws DataAccessException;
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException;
     public void updateIndexes(Long taskInstanceId, Map<String,String> indexes) throws ServiceException;
@@ -87,6 +86,8 @@ public interface TaskServices {
      */
     public void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException;
 
+    public List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
+            throws ServiceException, DataAccessException;
     public void cancelTaskInstancesForProcess(Long processInstanceId)
             throws ServiceException, DataAccessException;
 
@@ -97,5 +98,12 @@ public interface TaskServices {
 
     public List<String> getGroupsForTaskInstance(TaskInstance taskInstance)
             throws DataAccessException, ServiceException;
+
+    /**
+     * Only allowable task actions based on instance status are returned (defined in mdw-task-actions.xml).
+     * However, if query "custom" filter is true all custom actions are returned regardless of allowable.
+     * TODO: custom actions should always be allowed unless they appear in mdw-task-actions.xml to restrict.
+     */
+    public List<TaskAction> getActions(Long instanceId, String userCuid, Query query) throws ServiceException;
 
 }

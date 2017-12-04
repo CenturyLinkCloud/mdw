@@ -45,7 +45,9 @@ public interface Listener {
     public static final String METAINFO_PACKAGE_NAME = "PackageName";
     public static final String METAINFO_NO_PERSISTENCE = "NoPersistence";
     public static final String METAINFO_NO_META_PERSISTENCE = "NoMetaPersistence";
-    //Custom Error Response
+    public static final String METAINFO_REQUEST_PAYLOAD = "RequestPayload"; // for altering/extracting payload
+
+    // Custom Error Response
     public static final String METAINFO_ERROR_RESPONSE = "ErrorResponse";
     public static final String METAINFO_ERROR_RESPONSE_VALUE = Boolean.TRUE.toString();
 

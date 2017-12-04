@@ -570,7 +570,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - Before we move on, make one last change to "A Bug's Life".  On the Definition property tab of the outbound link from the manual
     task activity, change the Result from blank to "Resolve" like so:<br> 
-    ![dynamic action](../images/dynamic-action.png)<br>
+    ![custom action](../images/custom-action.png)<br>
     Setting the outbound link's result is a convenient way to customize the actions available for a given task.  Now if you resubmit
     and claim the corresponding task, you'll see that "Resolve" replaces "Complete" in MDWHub's task action popover.  By branching into
     two or more outgoing links from a manual task, you can give users the power to drive workflow outcomes through their task actions. 

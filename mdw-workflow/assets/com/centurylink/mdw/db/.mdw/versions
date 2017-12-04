@@ -1,4 +1,4 @@
-DbExtensionsStartup.java=1
+DbExtensionsStartup.java=2
 MariaDBEmbeddedDb.java=12
 add_fkeys.sql=2
 add_user_attribute.sql=1

@@ -10,8 +10,8 @@ import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.StrategyException;
-import com.centurylink.mdw.model.SubTaskExecutionPlan;
-import com.centurylink.mdw.model.Subtask;
+import com.centurylink.mdw.model.task.SubTaskExecutionPlan;
+import com.centurylink.mdw.model.task.Subtask;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.task.SubTaskStrategy;
 

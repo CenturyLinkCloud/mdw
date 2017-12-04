@@ -15,9 +15,7 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -31,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.listener.ListenerHelper;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.util.AuthUtils;
@@ -170,8 +168,13 @@ public abstract class ServiceServlet extends HttpServlet {
                             return;
                     }
                 }
+                else if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + "/Services/com/centurylink/mdw/slack/Slack")) {
+                    // validates Slack token
+                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                        return;
+                }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
-                    // perform http GitGub auth, which populates the auth user header
+                    // perform http GitHub auth, which populates the auth user header
                     if (AuthUtils.authenticate(AuthUtils.GIT_HUB_SECRET_KEY, headers, payload))
                         return;
                 }
@@ -182,13 +185,8 @@ public abstract class ServiceServlet extends HttpServlet {
     }
 
     protected String createErrorResponseMessage(HttpServletRequest request,
-            Map<String, String> metaInfo, ServiceException ex) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        StringBuffer requestBuffer = new StringBuffer();
-        String line;
-        while ((line = reader.readLine()) != null)
-            requestBuffer.append(line).append('\n');
-        return new ListenerHelper().createErrorResponse(requestBuffer.toString(), metaInfo, ex).getContent();
+            Map<String,String> metaInfo, ServiceException ex) throws IOException {
+        return new Status(ex.getCode(), ex.getMessage()).getJson().toString(2);
     }
 
     /**

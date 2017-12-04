@@ -31,15 +31,15 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
-import com.centurylink.mdw.startup.StartupClass;
 import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Registers all the application timers.
  */
-public class TimerTaskRegistration implements StartupClass {
+public class TimerTaskRegistration implements StartupService {
 
     private static final String PROPERTY_TIMER_CLASS = "TimerClass";
     private static final String PROPERTY_SCHEDULE = "Schedule";  // cron expression, e.g. 0 30 14 * * = 2:30pm

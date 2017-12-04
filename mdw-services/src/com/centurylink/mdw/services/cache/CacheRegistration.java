@@ -43,8 +43,8 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.spring.SpringAppContext;
-import com.centurylink.mdw.startup.StartupClass;
 import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -56,7 +56,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * Startup class that manages registration of all the caches
  */
 
-public class CacheRegistration implements StartupClass {
+public class CacheRegistration implements StartupService {
 
     private static final String APPLICATION_CACHE_FILE_NAME = "application-cache.xml";
     // following 2 lines cannot be initialized in onStartup() - too late
@@ -78,14 +78,14 @@ public class CacheRegistration implements StartupClass {
      *
      * @throws StartupException
      */
-    public void onStartup() throws StartupException{
-        try{
+    public void onStartup() {
+        try {
             preloadCache();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             preloadDynamicCache();
             performInitialRequest();
         }
-        catch(Exception ex){
+        catch (Exception ex){
             String message = "Failed to load caches";
             logger.severeException(message, ex);
             throw new StartupException(message, ex);

@@ -118,6 +118,9 @@ public class PropertyNames {
     // this is a group, contains <name>.TimerClass/Schedule
     public static final String MDW_TIMER_TASK = "mdw.timer.task";   // prefix for timer task properties
 
+    // TODO: old-style format
+    public static final String PROCESS_CLEANUP = "MDWFramework.ProcessCleanup";
+
     public static final String UNSCHEDULED_EVENTS_CHECK_DELAY = "mdw.unscheduled.events.check.delay"; // seconds
     public static final String UNSCHEDULED_EVENTS_CHECK_INTERVAL = "mdw.unscheduled.events.check.interval"; // seconds
     public static final String UNSCHEDULED_EVENTS_BATCH_SIZE = "mdw.unscheduled.events.max.batch.size";

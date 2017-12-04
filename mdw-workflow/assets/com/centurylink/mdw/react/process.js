@@ -35,7 +35,8 @@ const process = {
   getProcess: function(serviceBase, assetPath, callback) {
     fetch(new Request(serviceBase + '/Workflow/' + assetPath, {
       method: 'GET',
-      headers: {Accept: 'application/json'}
+      headers: {Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();
@@ -53,7 +54,8 @@ const process = {
     url += '?masterRequestId=' + masterRequestId + '&master=true';
     fetch(new Request(url, {
       method: 'GET',
-      headers: {Accept: 'application/json'}
+      headers: {Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();

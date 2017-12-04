@@ -22,7 +22,7 @@ import java.util.Set;
 import com.centurylink.mdw.common.service.DynamicJavaServiceRegistry;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
-import com.centurylink.mdw.provider.StartupService;
+import com.centurylink.mdw.startup.StartupService;
 
 /**
  * Keeps track of custom startup providers.
@@ -41,11 +41,6 @@ public class StartupRegistry extends ServiceRegistry {
             instance = new StartupRegistry(services);
         }
         return instance;
-    }
-
-    @Override
-    protected boolean isEnabled(RegisteredService service) {
-        return ((StartupService)service).isEnabled();
     }
 
     public List<StartupService> getDynamicStartupServices() {

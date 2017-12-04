@@ -1,4 +1,4 @@
-package com.centurylink.mdw.tests.services
+package com.centurylink.mdw.kafka
 
 //masterRequestId = "kafka-" + System.currentTimeMillis();
 def message = masterRequestId;

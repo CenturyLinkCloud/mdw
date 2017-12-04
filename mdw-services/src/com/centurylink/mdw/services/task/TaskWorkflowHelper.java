@@ -42,6 +42,7 @@ import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
@@ -88,6 +89,7 @@ import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.task.factory.TaskInstanceNotifierFactory;
 import com.centurylink.mdw.services.task.factory.TaskInstanceStrategyFactory;
@@ -217,14 +219,15 @@ public class TaskWorkflowHelper {
             }
         }
 
+        helper.getTaskInstance().setTaskInstanceUrl(helper.getTaskInstanceUrl());
         helper.notifyTaskAction(TaskAction.CREATE, null, null);   // notification/observer/auto-assign
         helper.auditLog("Create", "MDW");
 
         TaskRuntimeContext runtimeContext = helper.getContext();
         helper.setIndexes(runtimeContext);
-        List<SubTask> subTaskList = helper.getSubTaskList(runtimeContext);
-        if (subTaskList != null && !subTaskList.isEmpty())
-            helper.createSubTasks(subTaskList, runtimeContext);
+        List<SubTask> subtasks = helper.getSubtaskList(runtimeContext);
+        if (subtasks != null && !subtasks.isEmpty())
+            helper.createSubtasks(subtasks, runtimeContext);
 
         return ti;
     }
@@ -477,12 +480,12 @@ public class TaskWorkflowHelper {
         auditLog(action, userId, assigneeCuid, comment);
 
         if (isComplete) {
-            // in case subTask
+            // in case subtask
             if (taskInstance.isSubTask()) {
                 Long masterTaskInstId = taskInstance.getMasterTaskInstanceId();
                 boolean allCompleted = true;
-                for (TaskInstance subTask : getSubTasks(masterTaskInstId)) {
-                    if (!subTask.isInFinalStatus()) {
+                for (TaskInstance subtask : getSubtasks(masterTaskInstId)) {
+                    if (!subtask.isInFinalStatus()) {
                         allCompleted = false;
                         break;
                     }
@@ -496,21 +499,21 @@ public class TaskWorkflowHelper {
             }
 
             // in case master task
-            for (TaskInstance subTask : getSubTasks(taskInstance.getTaskInstanceId())) {
-                if (!subTask.isInFinalStatus())
-                    new TaskWorkflowHelper(subTask).cancel();
+            for (TaskInstance subtask : getSubtasks(taskInstance.getTaskInstanceId())) {
+                if (!subtask.isInFinalStatus())
+                    new TaskWorkflowHelper(subtask).cancel();
             }
         }
     }
 
-    List<SubTask> getSubTaskList(TaskRuntimeContext runtimeContext) throws ServiceException {
-        String subTaskStrategyAttr = getTemplate().getAttribute(TaskAttributeConstant.SUBTASK_STRATEGY);
-        if (StringHelper.isEmpty(subTaskStrategyAttr)) {
+    List<SubTask> getSubtaskList(TaskRuntimeContext runtimeContext) throws ServiceException {
+        String subtaskStrategyAttr = getTemplate().getAttribute(TaskAttributeConstant.SUBTASK_STRATEGY);
+        if (StringHelper.isEmpty(subtaskStrategyAttr)) {
             return null;
         }
         else {
             try {
-                SubTaskStrategy strategy = TaskInstanceStrategyFactory.getSubTaskStrategy(subTaskStrategyAttr,
+                SubTaskStrategy strategy = TaskInstanceStrategyFactory.getSubTaskStrategy(subtaskStrategyAttr,
                         OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()) ? taskInstance.getOwnerId() : null);
                 if (strategy instanceof ParameterizedStrategy) {
                     populateStrategyParams((ParameterizedStrategy)strategy, getTemplate(), taskInstance.getOwnerId(), null);
@@ -526,22 +529,22 @@ public class TaskWorkflowHelper {
         }
     }
 
-    void createSubTasks(List<SubTask> subTaskList, TaskRuntimeContext masterTaskContext)
+    void createSubtasks(List<SubTask> subtasks, TaskRuntimeContext masterTaskContext)
             throws ServiceException, DataAccessException {
-        for (SubTask subTask : subTaskList) {
-            TaskTemplate subTaskVo = TaskTemplateCache.getTaskTemplate(subTask.getLogicalId());
-            if (subTaskVo == null)
-                throw new ServiceException("Task Template '" + subTask.getLogicalId() + "' does not exist");
+        for (SubTask subtask : subtasks) {
+            TaskTemplate subtaskTemplate = TaskTemplateCache.getTaskTemplate(subtask.getLogicalId());
+            if (subtaskTemplate == null)
+                throw new ServiceException("Task Template '" + subtask.getLogicalId() + "' does not exist");
 
-            TaskInstance subTaskInstance = createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
+            TaskInstance subtaskInstance = createTaskInstance(subtaskTemplate.getTaskId(), masterTaskContext.getMasterRequestId(),
                     masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null, null);
-            logger.info("SubTask instance created - ID " + subTaskInstance.getTaskInstanceId());
+            logger.info("Subtask instance created - ID " + subtaskInstance.getTaskInstanceId());
             // TODO recursive subtask creation
         }
     }
 
-    private List<TaskInstance> getSubTasks(Long masterTaskInstanceId) throws DataAccessException {
-        return new TaskDataAccess().getSubTaskInstances(masterTaskInstanceId);
+    List<TaskInstance> getSubtasks(Long masterTaskInstanceId) throws DataAccessException {
+        return new TaskDataAccess().getSubtaskInstances(masterTaskInstanceId);
     }
 
     void resume(String action) throws ServiceException {
@@ -874,6 +877,25 @@ public class TaskWorkflowHelper {
     }
 
     public String getTaskInstanceUrl() throws ServiceException {
+        // check for custom page
+        TaskTemplate template = getTemplate();
+        if (template != null && template.isHasCustomPage()) {
+            String assetSpec = template.getCustomPage();
+            if (assetSpec.endsWith(".jsx")) {
+                if (template.getCustomPageAssetVersion() != null)
+                    assetSpec += " v" + template.getCustomPageAssetVersion();
+                AssetVersionSpec customPage = AssetVersionSpec.parse(assetSpec);
+                try {
+                    CustomPageLookup pageLookup = new CustomPageLookup(customPage, taskInstance.getTaskInstanceId());
+                    return pageLookup.getUrl();
+                }
+                catch (Exception ex) {
+                    throw new ServiceException("Cannot determine custom page URL for task: " + template.getLabel(), ex);
+                }
+            }
+        }
+
+        // default url
         String baseUrl = ApplicationContext.getMdwHubUrl();
         if (!baseUrl.endsWith("/"))
           baseUrl += "/";
@@ -1200,17 +1222,17 @@ public class TaskWorkflowHelper {
     }
 
     /**
-     * Gets the dynamic task actions associated with a task instance as determined by
+     * Gets the custom task actions associated with a task instance as determined by
      * the result codes for the possible outgoing work transitions from the associated
      * activity.
      *
      * @param taskInstanceId
      * @return the list of task actions
      */
-    public List<TaskAction> getDynamicActions()
+    public List<TaskAction> getCustomActions()
     throws ServiceException, DataAccessException {
 
-        CodeTimer timer = new CodeTimer("getDynamicActions()", true);
+        CodeTimer timer = new CodeTimer("getCustomActions()", true);
         List<TaskAction> dynamicTaskActions = new ArrayList<TaskAction>();
 
         try {
@@ -1231,7 +1253,7 @@ public class TaskWorkflowHelper {
                         if (eventType.equals(EventType.FINISH) || eventType.equals(EventType.RESUME) || TaskAction.FORWARD.equals(resultCode)) {
                             TaskAction taskAction = new TaskAction();
                             taskAction.setTaskActionName(resultCode);
-                            taskAction.setDynamic(true);
+                            taskAction.setCustom(true);
                             dynamicTaskActions.add(taskAction);
                         }
                     }

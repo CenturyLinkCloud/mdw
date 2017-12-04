@@ -22,7 +22,7 @@
     "$mdwUi": false,
     "$mdwHubRoot": false,
     "$mdwServicesRoot": false,
-    "$mdwAutoTestWebSocketUrl": false,
+    "$mdwWebSocketUrl": false,
     "require": false,
     "location": true
   }

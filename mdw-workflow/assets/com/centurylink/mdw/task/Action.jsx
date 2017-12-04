@@ -30,7 +30,8 @@ class Action extends Component {
     var id = this.props.task.id ? this.props.task.id : window.location.hash.substring(8);
     fetch(new Request(this.context.serviceRoot + '/Tasks/' + id + '/actions', {
       method: 'GET',
-      headers: { Accept: 'application/json'}
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();
@@ -67,7 +68,8 @@ class Action extends Component {
         this.props.task.id + '/' + this.action.action, {
       method: 'POST',
       headers: { Accept: 'application/json'},
-      body: JSON.stringify(userAction)
+      body: JSON.stringify(userAction),
+      credentials: 'same-origin'
     }))
     .then(response => {
       ok = response.ok;
@@ -106,7 +108,7 @@ class Action extends Component {
   
   actionPopRootClose() {
     var actionTrigger = this.refs.actionTrigger;
-    var commentTrigger = this.refs[this.action.action + '_commentTrigger'];
+    var commentTrigger = this.action ? this.refs[this.action.action + '_commentTrigger'] : null;
     var assigneeTrigger = this.refs.assigneeTrigger;
     if (actionTrigger.state.show && !assigneeTrigger.state.show && 
         (!commentTrigger || !commentTrigger.state.show)) {
@@ -117,7 +119,8 @@ class Action extends Component {
   findAssignee(input) {
     fetch(new Request('/mdw/services/Tasks/assignees?find=' + input, {
       method: 'GET',
-      headers: { Accept: 'application/json'}
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
     }))
     .then(response => {
       return response.json();

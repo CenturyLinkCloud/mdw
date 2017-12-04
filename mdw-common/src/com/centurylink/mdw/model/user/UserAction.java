@@ -65,6 +65,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Hold,
         Ping,
         Version,
+        Collaborate,
         Other
     }
 
@@ -107,6 +108,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Value,
         ValueHolder,
         Request,
+        Discussion,
         Other
     }
 
