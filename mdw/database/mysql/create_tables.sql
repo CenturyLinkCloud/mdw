@@ -226,9 +226,9 @@ CREATE TABLE INSTANCE_NOTE
   INSTANCE_NOTE_NAME      VARCHAR(256)    NOT NULL,
   INSTANCE_NOTE_DETAILS   VARCHAR(4000),
   CREATE_DT               DATETIME        NOT NULL,
-  CREATE_USR              VARCHAR(30)     NOT NULL,
+  CREATE_USR              VARCHAR(100)    NOT NULL,
   MOD_DT                  TIMESTAMP,
-  MOD_USR                 VARCHAR(30),
+  MOD_USR                 VARCHAR(100),
   COMMENTS                VARCHAR(1000)
 ) auto_increment=10000;
 

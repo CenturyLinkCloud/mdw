@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.model.Jsonable;
 
 public class SlackRequest implements Jsonable {
-    
+
     public SlackRequest(JSONObject json) {
         if (json.has("name"))
             this.name = json.getString("name");
@@ -51,6 +51,10 @@ public class SlackRequest implements Jsonable {
             if (userObj.has("name"))
                 this.user = userObj.getString("name");
         }
+        if (json.has("message_ts"))
+            this.messageTs = json.getString("message_ts");
+        if (json.has("action_ts"))
+            this.actionTs = json.getString("action_ts");
         if (json.has("actions")) {
             this.actions = new ArrayList<>();
             JSONArray actionsArr = json.getJSONArray("actions");
@@ -58,60 +62,81 @@ public class SlackRequest implements Jsonable {
                 JSONObject actionObj = actionsArr.getJSONObject(i);
                 if (actionObj.has("name"))
                     this.actions.add(actionObj.getString("name"));
-                if (actionObj.has("value")) // value is used for user selection
+                if (actionObj.has("value")) {
+                    // value is used for user selection
                     this.value = actionObj.getString("value");
+                }
+                else if (actionObj.has("selected_options")) {
+                    JSONArray selOptionsArr = actionObj.getJSONArray("selected_options");
+                    if (selOptionsArr.length() != 0) {
+                        // only a single selection for now
+                        JSONObject selOptionObj = selOptionsArr.getJSONObject(0);
+                        if (selOptionObj.has("value"))
+                            this.value = selOptionObj.getString("value");
+                    }
+                }
             }
         }
         if (json.has("response_url"))
             this.responseUrl = json.getString("response_url");
-            
+
     }
-    
+
     private String name;
     public String getName() {
         return name;
     }
-    
+
     private String value;
     public String getValue() {
         return value;
     }
-    
+
     private String callbackId;
     public String getCallbackId() {
         return callbackId;
     }
-    
+
     private String triggerId;
     public String getTriggerId() {
         return triggerId;
     }
-    
+
     private String channel;
     public String getChannel() {
         return channel;
     }
-    
+
     private String team;
-    public String getTeam() { 
+    public String getTeam() {
         return team;
     }
-    
+
     private String type;
     public String getType() {
         return type;
     }
-    
+
     private String user;
     public String getUser() {
         return user;
     }
-    
+
+    private String messageTs;
+    public String getMessageTs() {
+        return messageTs;
+    }
+
+    private String actionTs;
+    public String getActionTs() {
+        return actionTs;
+    }
+
     private List<String> actions;
     public List<String> getActions() {
         return actions;
     }
-    
+
     private String responseUrl;
     public String getResponseUrl() {
         return responseUrl;

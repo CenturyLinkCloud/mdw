@@ -40,8 +40,8 @@ module.exports = {
             use: [nodeLoc + '/node_modules/style-loader', nodeLoc + '/node_modules/css-loader']
           },
           {
-            test: /\.png$/,
-            // allows custom png files in assets (but excluding node/node_modules)
+            test: /\.(png|svg|jpg|gif)$/,
+            // allows custom image files in assets (but excluding node/node_modules)
             include: function(modulePath) {
               var assetRoot = path.resolve(__dirname, '..');
               return modulePath.startsWith(assetRoot) && 

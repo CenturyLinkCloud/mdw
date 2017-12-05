@@ -43,6 +43,7 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         extToContentType.put("json", "application/json");
         extToContentType.put("pagelet", "text/xml");
         extToContentType.put("png", "image/png");
+        extToContentType.put("svg", "image/svg+xml");
         extToContentType.put("rptdesign", "text/xml");
         extToContentType.put("spring", "text/xml");
         extToContentType.put("wsdl", "text/xml");

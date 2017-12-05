@@ -592,7 +592,8 @@ public class TaskServicesImpl implements TaskServices {
             new TaskDataAccess().setTaskInstanceIndices(taskInstanceId, indexes);
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                    "Index error on task " + taskInstanceId + ": " + ex.getMessage(), ex);
         }
     }
 
