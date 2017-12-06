@@ -29,6 +29,8 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Slack integration API.
@@ -36,20 +38,24 @@ import com.centurylink.mdw.services.rest.JsonRestService;
 @Path("/")
 public class SlackService extends JsonRestService {
 
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    
     /**
      * Responds to requests from Slack.
      */
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
+            throws ServiceException, JSONException {
+        logger.debug("Received Slack request (" + path + "): " + headers.get("mdw-request-id"));
         String sub = getSegment(path, 4);
-        if ("event".equals(sub)) {
+        if ("event_callback".equals(sub)) {
             SlackEvent event = new SlackEvent(content);
             EventHandler eventHandler = getEventHandler(event.getType(), event);
-            if (eventHandler == null)
-                throw new ServiceException("Unsupported handler type: " + event.getType());
+            if (eventHandler == null) {
+                throw new ServiceException("Unsupported handler type: " + event.getType()
+                        + (event.getChannel() == null ? "" : (":" + event.getChannel())));
+            }
             return eventHandler.handleEvent(event);
-        }
-        else {
+        } else {
             // action/options request
             SlackRequest request = new SlackRequest(content);
             String userId = getAuthUser(headers);
@@ -60,10 +66,11 @@ public class SlackService extends JsonRestService {
                 if (underscore > 0) {
                     String handlerType = callbackId.substring(0, underscore);
                     String id = callbackId.substring(underscore + 1);
-                    ActionHandler actionHandler = getActionHandler(handlerType, userId, id, request);
+                    ActionHandler actionHandler = getActionHandler(handlerType, userId, id,
+                            request);
                     if (actionHandler == null)
                         throw new ServiceException("Unsupported handler type: " + handlerType);
-                    
+
                     return actionHandler.handleRequest(userId, id, request);
                 }
             }
@@ -78,11 +85,22 @@ public class SlackService extends JsonRestService {
                 obj.put("challenge", event.getChallenge());
                 return obj;
             };
+        } else {
+            String channel = event.getChannel();
+            if ("tasks".equals(channel)) {
+                return new TaskHandler();
+            } else if (channel != null) {
+                // non-tasks channel
+                return evt -> {
+                    return null; // not interested
+                };
+            } else {
+                return null; // unknown event type
+            }
         }
-        return null;
     }
 
-    ActionHandler getActionHandler(String type, String userId, String id, SlackRequest request) 
+    ActionHandler getActionHandler(String type, String userId, String id, SlackRequest request)
             throws ServiceException {
         if ("task".equals(type)) {
             return new TaskHandler();
@@ -90,19 +108,18 @@ public class SlackService extends JsonRestService {
         return null;
     }
 
-
     @Override
     public List<String> getRoles(String path) {
-        return Arrays.asList(new String[]{Role.TASK_EXECUTION});
+        return Arrays.asList(new String[] { Role.TASK_EXECUTION });
     }
 
     @Override
-    protected Action getAction(String path, Object content, Map<String,String> headers) {
+    protected Action getAction(String path, Object content, Map<String, String> headers) {
         return Action.Alert;
     }
 
     @Override
-    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
+    protected Entity getEntity(String path, Object content, Map<String, String> headers) {
         return Entity.Document;
     }
 }

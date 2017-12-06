@@ -217,7 +217,7 @@ public class TaskServicesImpl implements TaskServices {
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException {
         try {
-            return getTaskDAO().getTaskInstIndices(taskInstanceId);
+            return getTaskDAO().getIndexes(taskInstanceId);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

@@ -41,7 +41,7 @@ public class MessageMonitor implements ServiceMonitor {
     @Override
     public Object onRequest(Object request, Map<String,String> headers) throws ServiceException {
         String path = headers.get("RequestPath");
-        if (path != null) {
+        if (path != null && request != null) {  // PUT, POST, DELETE
             Matcher matcher = PATH_PATTERN.matcher(path);
             if (matcher.matches()) {
                 Long instId = new Long(matcher.group(1));
@@ -51,14 +51,12 @@ public class MessageMonitor implements ServiceMonitor {
                 if (slackResponseUrl != null) {
                     JSONObject json = new JSONObject();
                     json.put("response_type", "in_channel");
-                    if (indexes.containsKey("slack:message_ts")) {
-                        json.put("thread_ts", indexes.get("slack:message_ts"));
+                    if (indexes.containsKey("slack:reply_ts")) {
+                        json.put("thread_ts", indexes.get("slack:reply_ts"));
                         json.put("reply_broadcast", true);
                     }
+                    json.put("replace_original", "put".equalsIgnoreCase(headers.get("HttpMethod")));
                     json.put("text", note.getContent());
-                    if ("put".equalsIgnoreCase(headers.get("HttpMethod"))) {
-                        json.put("replace_original", true);
-                    }
                     try {
                         HttpHelper helper = new HttpHelper(new URL(slackResponseUrl));
                         String response = helper.post(json.toString());
