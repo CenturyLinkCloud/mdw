@@ -17,12 +17,21 @@ package com.centurylink.mdw.slack;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Jsonable;
 
-/**
- * Interface for handling incoming slack requests.
- */
-public interface Handler {
-    JSONObject handleRequest(String userId, String id, SlackRequest request) 
-            throws ServiceException;
+public class SlackEvent implements Jsonable {
+    
+    public SlackEvent(JSONObject json) {
+        if (json.has("type"))
+            this.type = json.getString("type");
+        if (json.has("challenge"))
+            this.challenge = json.getString("challenge");
+    }
+    
+    private String type;
+    public String getType() { return type; }
+
+    private String challenge;
+    public String getChallenge() { return challenge; }
+    
 }

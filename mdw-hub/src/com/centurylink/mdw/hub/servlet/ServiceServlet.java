@@ -168,7 +168,7 @@ public abstract class ServiceServlet extends HttpServlet {
                             return;
                     }
                 }
-                else if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + "/Services/com/centurylink/mdw/slack/Slack")) {
+                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/slack")) {
                     // validates Slack token
                     if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;

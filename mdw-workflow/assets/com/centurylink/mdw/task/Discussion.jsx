@@ -134,8 +134,8 @@ class Discussion extends Component {
           {
             this.state.comments.map(comment => {
               return (
-                <Comment key={comment.id ? comment.id : 0} comment={comment} 
-                  editing={false} editable={comment.createUser === $mdwUi.authUser.name}
+                <Comment key={comment.id ? comment.id : 0} comment={comment} editing={false}
+                  editable={comment.createUser === $mdwUi.authUser.name || comment.createUser === $mdwUi.authUser.cuid}
                   actionHandler={this.handleAction} changeHandler={this.handleChange} />
               );
             })

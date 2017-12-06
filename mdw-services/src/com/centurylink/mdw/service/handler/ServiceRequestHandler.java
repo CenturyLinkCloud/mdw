@@ -314,6 +314,10 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                 }
                 // try dynamic based on parent path (HTTP methods only handle resource ID segments)
                 Package pkg = PackageCache.getPackage(pkgName);
+                if (pkg == null) {
+                    // try package name based on all segments: @Path("/")
+                    pkg = PackageCache.getPackage(pkgName + "." + pathSegments[pathSegments.length - 1]);
+                }
                 if (pkg != null) {
                     TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/");
                     if (service != null)

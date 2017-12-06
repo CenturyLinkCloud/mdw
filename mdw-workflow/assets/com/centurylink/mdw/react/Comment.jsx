@@ -11,7 +11,7 @@ function Comment(props) {
           {!props.comment.id &&
             <span>Add a comment</span>
           }
-          {props.comment.name.startsWith('slack') &&
+          {props.comment.name && props.comment.name.startsWith('slack') &&
             <a href="https://slack.com">
               <img src="../../asset/com/centurylink/mdw/slack/slack-hash.png" alt="slack"
                 width={22} height={22} style={{marginRight:'8px'}}/>

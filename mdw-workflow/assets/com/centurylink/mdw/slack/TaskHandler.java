@@ -37,10 +37,10 @@ import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class TaskHandler implements Handler {
+public class TaskHandler implements ActionHandler, EventHandler {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
+    
     @Override
     public JSONObject handleRequest(String userId, String id, SlackRequest request)
             throws ServiceException {
@@ -51,13 +51,13 @@ public class TaskHandler implements Handler {
         catch (NumberFormatException ex) {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid id: " + id);
         }
-
+        
         if (request.getActions() != null) {
             // request is direct action
             String action = request.getActions().get(0); // TODO multiples?
             if (action == null)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Missing action");
-
+            
             String assigneeId = null;
             if (action.equalsIgnoreCase(TaskAction.ASSIGN)) {
                 assigneeId = request.getValue();
@@ -65,9 +65,9 @@ public class TaskHandler implements Handler {
             else if (action.equalsIgnoreCase(TaskAction.CLAIM)) {
                 assigneeId = userId;
             }
-
+            
             String comment = null;
-
+            
             // TODO: TaskActionValidator?
             TaskServices taskServices = ServiceLocator.getTaskServices();
             taskServices.performAction(instanceId, action, userId, assigneeId, comment, null, true);
@@ -85,7 +85,7 @@ public class TaskHandler implements Handler {
             else
                 messageText = "Action: " + action + " performed by " + request.getUser() + ".";
             json.put("text", messageText);
-
+            
             new Thread(new Runnable() {
                 public void run() {
                     Map<String,String> indexes = new HashMap<>();
@@ -136,5 +136,11 @@ public class TaskHandler implements Handler {
             }
             throw new ServiceException(ServiceException.BAD_REQUEST, "Bad options request: " + name);
         }
+    }
+
+    @Override
+    public JSONObject handleEvent(SlackEvent event) throws ServiceException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

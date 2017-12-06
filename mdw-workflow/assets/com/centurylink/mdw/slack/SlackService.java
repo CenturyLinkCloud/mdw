@@ -33,53 +33,61 @@ import com.centurylink.mdw.services.rest.JsonRestService;
 /**
  * Slack integration API.
  */
-@Path("/Slack")
+@Path("/")
 public class SlackService extends JsonRestService {
 
-    @Override
-    public JSONObject get(String path, Map<String,String> headers)
-            throws ServiceException, JSONException {
-        System.out.println("GET: " + path);
-        System.out.println("HEADERS:\n" + String.valueOf(headers));
-        String response = "{\n" +
-                "  \"response_type\": \"ephemeral\",\n" +
-                "  \"replace_original\": false,\n" +
-                "  \"text\": \"Okay, sounds good.\"\n" +
-                "}";
-        return new JSONObject(response);
-    }
-
     /**
-     * Temporary impl for snapshot.
+     * Responds to requests from Slack.
      */
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        SlackRequest request = new SlackRequest(content);
-        String userId = getAuthUser(headers);
-        // TODO: ability to map request.getUser() to corresponding MDW user
-        String callbackId = request.getCallbackId();
-        if (callbackId != null) {
-            int underscore = callbackId.lastIndexOf('_');
-            if (underscore > 0) {
-                String handlerType = callbackId.substring(0, underscore);
-                String id = callbackId.substring(underscore + 1);
-                return runHandler(userId, handlerType, id, request);
-            }
+        String sub = getSegment(path, 4);
+        if ("event".equals(sub)) {
+            SlackEvent event = new SlackEvent(content);
+            EventHandler eventHandler = getEventHandler(event.getType(), event);
+            if (eventHandler == null)
+                throw new ServiceException("Unsupported handler type: " + event.getType());
+            return eventHandler.handleEvent(event);
         }
-        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad or missing callback_id");
+        else {
+            // action/options request
+            SlackRequest request = new SlackRequest(content);
+            String userId = getAuthUser(headers);
+            // TODO: ability to map request.getUser() to corresponding MDW user
+            String callbackId = request.getCallbackId();
+            if (callbackId != null) {
+                int underscore = callbackId.lastIndexOf('_');
+                if (underscore > 0) {
+                    String handlerType = callbackId.substring(0, underscore);
+                    String id = callbackId.substring(underscore + 1);
+                    ActionHandler actionHandler = getActionHandler(handlerType, userId, id, request);
+                    if (actionHandler == null)
+                        throw new ServiceException("Unsupported handler type: " + handlerType);
+                    
+                    return actionHandler.handleRequest(userId, id, request);
+                }
+            }
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad or missing callback_id");
+        }
     }
 
-
-    JSONObject runHandler(String userId, String type, String id, SlackRequest request) 
-            throws ServiceException {
-        Handler handler = null;
-        if (type.equals("task")) {
-            handler = new TaskHandler();
+    EventHandler getEventHandler(String type, SlackEvent event) {
+        if ("url_verification".equals(type)) {
+            return evt -> {
+                JSONObject obj = new JSONObject();
+                obj.put("challenge", event.getChallenge());
+                return obj;
+            };
         }
-        if (handler == null)
-            throw new ServiceException("Unsupported handler type: " + type);
-        
-        return handler.handleRequest(userId, id, request);
+        return null;
+    }
+
+    ActionHandler getActionHandler(String type, String userId, String id, SlackRequest request) 
+            throws ServiceException {
+        if ("task".equals(type)) {
+            return new TaskHandler();
+        }
+        return null;
     }
 
 
