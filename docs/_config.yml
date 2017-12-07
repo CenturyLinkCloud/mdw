@@ -37,7 +37,7 @@ exclude:
   - .gitignore
   
 #exclude:
-#  - .gitignore
-#  - _docs/help
-#  - _docs/javadoc
+  - .gitignore
+  - _docs/help
+  - _docs/javadoc
   
