@@ -224,6 +224,28 @@ public class ListenerHelper {
             if (persistMeta(metaInfo))
                 requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, eeid));
 
+            // log request-id so that it can easily be located
+            if (logger.isDebugEnabled()) {
+                StringBuilder reqMsg = new StringBuilder(">> ");
+                String method = metaInfo.get(Listener.METAINFO_HTTP_METHOD);
+                if (method != null)
+                    reqMsg.append(method).append(" request ");
+                else
+                    reqMsg.append("Request ");
+                if (eeid > 0)
+                    reqMsg.append(eeid).append(" ");
+                String protocol = metaInfo.get(Listener.METAINFO_PROTOCOL);
+                if (protocol != null)
+                    reqMsg.append("over ").append(protocol).append(" ");
+                String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
+                if (path != null)
+                    reqMsg.append("on path '").append(path).append("'");
+                if (eeid > 0)
+                    logger.debug(reqMsg.toString());
+                else
+                    logger.mdwDebug(reqMsg.toString());
+            }
+
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
                 CodeTimer timer = new CodeTimer(monitor.getClass().getSimpleName() + ".onHandle()", true);
                 Object obj = monitor.onHandle(request, metaInfo);
