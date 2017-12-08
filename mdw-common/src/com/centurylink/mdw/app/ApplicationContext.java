@@ -738,4 +738,11 @@ public class ApplicationContext {
         }
         return websocketUrl;
     }
+
+    public static String getAssetsGroupId() {
+        String groupId = PropertyManager.getProperty(PropertyNames.MDW_ASSETS_GROUP_ID);
+        if (groupId == null)
+            return "com.centurylink.mdw.assets";
+        return groupId;
+    }
  }

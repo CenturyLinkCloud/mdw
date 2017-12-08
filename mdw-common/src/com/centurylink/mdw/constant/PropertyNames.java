@@ -207,4 +207,6 @@ public class PropertyNames {
     public static final String MDW_TRANSACTION_RETRY_INTERVAL = "mdw.transaction.retry.interval";
     public static final String MDW_TRANSACTION_RETRY_MAX = "mdw.transaction.retry.max";
 
+    public static final String MDW_ASSETS_GROUP_ID = "mdw.asset.group.id";
+
 }

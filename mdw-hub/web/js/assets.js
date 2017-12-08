@@ -120,12 +120,13 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   };
 
   $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
+  $scope.discoveryType = 'distributed';
   if (!$scope.discoveryUrl)
     $scope.discoveryUrl = mdw.discoveryUrl;
   $scope.discover = function() {
     $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
     $scope.discoveredPkgList = null;
-    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl}, 
+    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl, discoveryType: $scope.discoveryType}, 
       function(data) {
         $scope.discoveryMessage = null;
         $scope.discoveredPkgList = data;
@@ -156,14 +157,21 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
     );    
   };
   
+  $scope.clear = function() {
+	  $scope.discoveredPkgList = null; 
+  };
+  
   $scope.importDiscovered = function() {
     var pkgsObj = { packages: [] };
     
     $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
-      pkgsObj.packages.push(pkg.name);
+    	if ($scope.discoveryType === 'central')
+    		pkgsObj.packages.push(pkg.name+"-"+pkg.version);
+    	else
+    		pkgsObj.packages.push(pkg.name);
     });
     
-    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl}, pkgsObj, 
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, discoveryType: $scope.discoveryType}, pkgsObj, 
       function(data) {
         $scope.discoveryMessage = null;
         // leave cache error logging to the server side
