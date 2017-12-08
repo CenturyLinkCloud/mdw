@@ -45,6 +45,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String IMAGE_JPEG = "IMAGE_JPEG";
     public static final String IMAGE_GIF = "IMAGE_GIF";
     public static final String IMAGE_PNG = "IMAGE_PNG";
+    public static final String IMAGE_SVG = "IMAGE_SVG";
     public static final String CSS = "CSS";
     public static final String JAVASCRIPT = "JAVASCRIPT";
     public static final String JSX = "JSX";
@@ -93,6 +94,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         IMAGE_JPEG,
         IMAGE_GIF,
         IMAGE_PNG,
+        IMAGE_SVG,
         CSS,
         JAVASCRIPT,
         JSX,
@@ -360,6 +362,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             contentTypes.put(IMAGE_GIF, "image/gif");
             contentTypes.put(IMAGE_JPEG, "image/jpeg");
             contentTypes.put(IMAGE_PNG, "image/png");
+            contentTypes.put(IMAGE_SVG, "image/svg+xml");
             contentTypes.put(JAVASCRIPT, "application/javascript");
             contentTypes.put(JSX, "application/javascript");
             contentTypes.put(WEBSCRIPT, "application/javascript");
@@ -673,6 +676,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             extensionToLanguage.put(".jpg", IMAGE_JPEG);
             extensionToLanguage.put(".gif", IMAGE_GIF);
             extensionToLanguage.put(".png", IMAGE_PNG);
+            extensionToLanguage.put(".svg", IMAGE_SVG);
             extensionToLanguage.put(".proc", PROCESS);
             extensionToLanguage.put(".camel", CAMEL_ROUTE);
             extensionToLanguage.put(".test", TEST);

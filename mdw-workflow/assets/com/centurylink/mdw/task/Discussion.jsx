@@ -36,7 +36,7 @@ class Discussion extends Component {
     else {
       const comments = this.state.comments.slice(0);
       if (action === 'edit') {
-        comment.editable = true;
+        comment.editing = true;
       }
       else if (action === 'cancel') {
         // id present means existing rather than new
@@ -49,7 +49,7 @@ class Discussion extends Component {
         else {
           comments.splice(0, 1);
         }
-        comment.editable = false;
+        comment.editing = false;
       }
       else if (action === 'update') {
         if (comment.id && !comment.originalContent) {
@@ -70,6 +70,7 @@ class Discussion extends Component {
     comments.unshift({
       created: new Date().toISOString(),
       content: this.state.content,
+      editing: true,
       editable: true
     });
     this.setState({comments: comments});
@@ -78,6 +79,7 @@ class Discussion extends Component {
   saveComment(comment) {
     
     // remove temp values
+    delete comment.editing;
     delete comment.editable;
     delete comment.originalContent;
     
@@ -132,7 +134,8 @@ class Discussion extends Component {
           {
             this.state.comments.map(comment => {
               return (
-                <Comment key={comment.id ? comment.id : 0} comment={comment} editable={false} 
+                <Comment key={comment.id ? comment.id : 0} comment={comment} editing={false}
+                  editable={comment.createUser === $mdwUi.authUser.name || comment.createUser === $mdwUi.authUser.cuid}
                   actionHandler={this.handleAction} changeHandler={this.handleChange} />
               );
             })

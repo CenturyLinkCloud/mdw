@@ -29,72 +29,97 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Slack integration API.
  */
-@Path("/Slack")
+@Path("/")
 public class SlackService extends JsonRestService {
 
-    @Override
-    public JSONObject get(String path, Map<String,String> headers)
-            throws ServiceException, JSONException {
-        System.out.println("GET: " + path);
-        System.out.println("HEADERS:\n" + String.valueOf(headers));
-        String response = "{\n" +
-                "  \"response_type\": \"ephemeral\",\n" +
-                "  \"replace_original\": false,\n" +
-                "  \"text\": \"Okay, sounds good.\"\n" +
-                "}";
-        return new JSONObject(response);
-    }
-
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    
     /**
-     * Temporary impl for snapshot.
+     * Responds to requests from Slack.
      */
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
-        SlackRequest request = new SlackRequest(content);
-        String userId = getAuthUser(headers);
-        // TODO: ability to map request.getUser() to corresponding MDW user
-        String callbackId = request.getCallbackId();
-        if (callbackId != null) {
-            int underscore = callbackId.lastIndexOf('_');
-            if (underscore > 0) {
-                String handlerType = callbackId.substring(0, underscore);
-                String id = callbackId.substring(underscore + 1);
-                return runHandler(userId, handlerType, id, request);
+            throws ServiceException, JSONException {
+        logger.debug("Received Slack request (" + path + "): " + headers.get("mdw-request-id"));
+        String sub = getSegment(path, 4);
+        if ("event_callback".equals(sub)) {
+            SlackEvent event = new SlackEvent(content);
+            EventHandler eventHandler = getEventHandler(event.getType(), event);
+            if (eventHandler == null) {
+                throw new ServiceException("Unsupported handler type: " + event.getType()
+                        + (event.getChannel() == null ? "" : (":" + event.getChannel())));
+            }
+            return eventHandler.handleEvent(event);
+        } else {
+            // action/options request
+            SlackRequest request = new SlackRequest(content);
+            String userId = getAuthUser(headers);
+            // TODO: ability to map request.getUser() to corresponding MDW user
+            String callbackId = request.getCallbackId();
+            if (callbackId != null) {
+                int underscore = callbackId.lastIndexOf('_');
+                if (underscore > 0) {
+                    String handlerType = callbackId.substring(0, underscore);
+                    String id = callbackId.substring(underscore + 1);
+                    ActionHandler actionHandler = getActionHandler(handlerType, userId, id,
+                            request);
+                    if (actionHandler == null)
+                        throw new ServiceException("Unsupported handler type: " + handlerType);
+
+                    return actionHandler.handleRequest(userId, id, request);
+                }
+            }
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad or missing callback_id");
+        }
+    }
+
+    EventHandler getEventHandler(String type, SlackEvent event) {
+        if ("url_verification".equals(type)) {
+            return evt -> {
+                JSONObject obj = new JSONObject();
+                obj.put("challenge", event.getChallenge());
+                return obj;
+            };
+        } else {
+            String channel = event.getChannel();
+            if ("tasks".equals(channel)) {
+                return new TaskHandler();
+            } else if (channel != null) {
+                // non-tasks channel
+                return evt -> {
+                    return null; // not interested
+                };
+            } else {
+                return null; // unknown event type
             }
         }
-        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad or missing callback_id");
     }
 
-
-    JSONObject runHandler(String userId, String type, String id, SlackRequest request) 
+    ActionHandler getActionHandler(String type, String userId, String id, SlackRequest request)
             throws ServiceException {
-        Handler handler = null;
-        if (type.equals("task")) {
-            handler = new TaskHandler();
+        if ("task".equals(type)) {
+            return new TaskHandler();
         }
-        if (handler == null)
-            throw new ServiceException("Unsupported handler type: " + type);
-        
-        return handler.handleRequest(userId, id, request);
+        return null;
     }
-
 
     @Override
     public List<String> getRoles(String path) {
-        return Arrays.asList(new String[]{Role.TASK_EXECUTION});
+        return Arrays.asList(new String[] { Role.TASK_EXECUTION });
     }
 
     @Override
-    protected Action getAction(String path, Object content, Map<String,String> headers) {
+    protected Action getAction(String path, Object content, Map<String, String> headers) {
         return Action.Alert;
     }
 
     @Override
-    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
+    protected Entity getEntity(String path, Object content, Map<String, String> headers) {
         return Entity.Document;
     }
 }

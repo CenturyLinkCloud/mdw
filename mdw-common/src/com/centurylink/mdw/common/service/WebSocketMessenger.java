@@ -30,8 +30,13 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+
 @ServerEndpoint("/websocket")
 public class WebSocketMessenger {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private Map<String,List<Session>> topicSubscribers = new HashMap<>();
 
@@ -69,7 +74,15 @@ public class WebSocketMessenger {
 
     @OnError
     public void onError(Session session, Throwable t) {
-        t.printStackTrace(); // TODO
+        if (t instanceof IOException && t.getMessage().startsWith(
+                "java.io.IOException: An established connection was aborted")) {
+            // avoid nuisance logging when browser closes connection
+            if (logger.isMdwDebugEnabled())
+                logger.severeException(t.getMessage(), t);
+        }
+        else {
+            logger.severeException(t.getMessage(), t);
+        }
     }
 
     @OnMessage

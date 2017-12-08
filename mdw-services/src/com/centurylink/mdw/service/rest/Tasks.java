@@ -378,6 +378,12 @@ public class Tasks extends JsonRestService implements JsonExportable {
 
                             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
                             collabServices.createNote(note);
+                            Map<String,String> indexes = taskServices.getIndexes(taskInstanceId);
+                            String slackResponseUrl = indexes.get("slack:response_url");
+                            if (slackResponseUrl != null) {
+
+                            }
+
                             headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HTTP_201_CREATED));
                             return note.getJson();
                         }

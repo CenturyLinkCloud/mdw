@@ -564,7 +564,7 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    public Map<String,String> getTaskInstIndices(Long taskInstanceId) throws DataAccessException {
+    public Map<String,String> getIndexes(Long taskInstanceId) throws DataAccessException {
         try {
             Map<String, String> indices = new HashMap<String, String>();
             db.openConnection();
@@ -576,14 +576,11 @@ public class TaskDataAccess extends CommonDataAccess {
             return indices;
         }
         catch (Exception ex) {
-            logger.severeException("Failed to get Task Instance Indices", ex);
-            // throw new DataAccessException(-1, "Failed to get Task Instance
-            // Indices", ex);
+            throw new DataAccessException("Error retrieving indexes for task: " + taskInstanceId, ex);
         }
         finally {
             db.closeConnection();
         }
-        return null;
     }
 
     public TaskList getTaskInstances(Query query) throws DataAccessException {
@@ -835,7 +832,14 @@ public class TaskDataAccess extends CommonDataAccess {
         if ("dueDate".equals(query.getSort()))
             where.append(" and ti.due_date is not null\n");
 
-        // TODO: Indexes, Due Date?, End Date?
+        String index = query.getFilter("index");
+        if (index != null) {
+            int eq = index.indexOf('=');
+            if (eq == -1 || eq == index.length() - 1)
+                throw new DataAccessException("Invalid index criterion: " + index);
+            where.append(" and (select count(*) from task_inst_index tidx where tidx.task_instance_id = ti.task_instance_id and index_key='"
+                    + index.substring(0, eq) + "' and index_value='" + index.substring(eq + 1) + "') > 0\n");
+        }
 
         return where.toString();
     }

@@ -17,8 +17,8 @@
   </li>
 </ul>
 <ul class="nav mdw-nav">
-  <li nav-link="{{context}}/requests">
-    <a href="#/{{context}}/requests">
+  <li nav-link="{{context === 'service' ? 'serviceRequests' : context + '/requests'}}">
+    <a href="#/{{context === 'service' ? 'serviceRequests' : context + '/requests'}}">
       Request List
     </a>
   </li>  

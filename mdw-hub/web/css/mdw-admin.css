@@ -270,6 +270,22 @@
   clear: both;
   border-bottom: none;
 }
+.mdw-comment-panel {
+	border-color: #c0d3eb;
+}
+.mdw-comment-panel .mdw-heading {
+	background-color: white !important;
+	padding-top: 8px;
+	padding-bottom: 7px;
+}
+.mdw-comment-panel .mdw-btn {
+  padding: 3px 6px;
+  font-size: 14px;	
+}
+.mdw-comment-panel .mdw-section {
+	min-height: 60px;
+	border-bottom-color: #c0d3eb;
+}
 .mdw-panel-full-width {
   width: 100%;
   padding-right: 15px;

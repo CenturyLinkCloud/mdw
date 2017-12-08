@@ -51,6 +51,10 @@ public class SlackRequest implements Jsonable {
             if (userObj.has("name"))
                 this.user = userObj.getString("name");
         }
+        if (json.has("message_ts"))
+            this.messageTs = json.getString("message_ts");
+        if (json.has("action_ts"))
+            this.actionTs = json.getString("action_ts");
         if (json.has("actions")) {
             this.actions = new ArrayList<>();
             JSONArray actionsArr = json.getJSONArray("actions");
@@ -58,8 +62,19 @@ public class SlackRequest implements Jsonable {
                 JSONObject actionObj = actionsArr.getJSONObject(i);
                 if (actionObj.has("name"))
                     this.actions.add(actionObj.getString("name"));
-                if (actionObj.has("value")) // value is used for user selection
+                if (actionObj.has("value")) {
+                    // value is used for user selection
                     this.value = actionObj.getString("value");
+                }
+                else if (actionObj.has("selected_options")) {
+                    JSONArray selOptionsArr = actionObj.getJSONArray("selected_options");
+                    if (selOptionsArr.length() != 0) {
+                        // only a single selection for now
+                        JSONObject selOptionObj = selOptionsArr.getJSONObject(0);
+                        if (selOptionObj.has("value"))
+                            this.value = selOptionObj.getString("value");
+                    }
+                }
             }
         }
         if (json.has("response_url"))
@@ -105,6 +120,16 @@ public class SlackRequest implements Jsonable {
     private String user;
     public String getUser() {
         return user;
+    }
+    
+    private String messageTs;
+    public String getMessageTs() {
+        return messageTs;
+    }
+    
+    private String actionTs;
+    public String getActionTs() {
+        return actionTs;
     }
     
     private List<String> actions;

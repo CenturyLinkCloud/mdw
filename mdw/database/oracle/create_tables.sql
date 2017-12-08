@@ -227,9 +227,9 @@ CREATE TABLE INSTANCE_NOTE
   INSTANCE_NOTE_NAME      VARCHAR2(256 BYTE)    NOT NULL,
   INSTANCE_NOTE_DETAILS   VARCHAR2(4000 BYTE),
   CREATE_DT               DATE                  DEFAULT SYSDATE               NOT NULL,
-  CREATE_USR              VARCHAR2(30 BYTE)     DEFAULT USER                  NOT NULL,
+  CREATE_USR              VARCHAR2(100 BYTE)    DEFAULT USER                  NOT NULL,
   MOD_DT                  DATE,
-  MOD_USR                 VARCHAR2(30 BYTE),
+  MOD_USR                 VARCHAR2(100 BYTE),
   COMMENTS                VARCHAR2(1000 BYTE)
 );
 

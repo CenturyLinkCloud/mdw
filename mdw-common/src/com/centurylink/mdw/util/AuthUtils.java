@@ -137,6 +137,13 @@ public class AuthUtils {
                 throw new RuntimeException("Apparently utf-8 is out of fashion", ex);
             }
         }
+        else {
+            // JSON request
+            JSONObject json = new JSONObject(payload);
+            okay = json.has("token") && json.getString("token").equals(System.getenv(SLACK_TOKEN));
+            if (okay)
+                headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
+        }
         return okay;
     }
 
