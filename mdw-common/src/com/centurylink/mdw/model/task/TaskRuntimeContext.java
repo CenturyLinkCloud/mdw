@@ -87,9 +87,6 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public String getTaskInstanceUrl() {
             return this.taskInstance.getTaskInstanceUrl();
     }
-    private String description;
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 
     private String taskActionUrl;
     public String getTaskActionUrl() { return taskActionUrl; }
@@ -111,6 +108,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public Integer getStateCode() { return taskInstance.getStateCode(); }
     public String getStatus() { return TaskStatuses.getTaskStatuses().get(getStatusCode()); }
     public String getComments() { return taskInstance.getComments(); }
+    public String getDescription() { return this.taskTemplate.getComment(); }
     public Long getTaskId() { return taskInstance.getTaskId(); }
     public String getLogicalId() { return getTaskLogicalId(); }
 

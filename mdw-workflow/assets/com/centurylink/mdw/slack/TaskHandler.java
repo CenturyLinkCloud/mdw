@@ -31,8 +31,10 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Note;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserList;
+import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
@@ -43,7 +45,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 public class TaskHandler implements ActionHandler, EventHandler {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    
+
     @Override
     public JSONObject handleRequest(String userId, String id, SlackRequest request)
             throws ServiceException {
@@ -54,13 +56,13 @@ public class TaskHandler implements ActionHandler, EventHandler {
         catch (NumberFormatException ex) {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid id: " + id);
         }
-        
+
         if (request.getActions() != null) {
             // request is direct action
             String action = request.getActions().get(0); // TODO multiples?
             if (action == null)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Missing action");
-            
+
             String assigneeId = null;
             if (action.equalsIgnoreCase(TaskAction.ASSIGN)) {
                 assigneeId = request.getValue();
@@ -68,9 +70,12 @@ public class TaskHandler implements ActionHandler, EventHandler {
             else if (action.equalsIgnoreCase(TaskAction.CLAIM)) {
                 assigneeId = userId;
             }
-            
+
             // TODO: TaskActionValidator?
             TaskServices taskServices = ServiceLocator.getTaskServices();
+
+            // TODO: Retrieve template based on returned task instance.
+            // If template is configured to send slack notices for this action, do not send the default below.
             taskServices.performAction(instanceId, action, userId, assigneeId, null, null, true);
 
             JSONObject json = new JSONObject();
@@ -82,11 +87,11 @@ public class TaskHandler implements ActionHandler, EventHandler {
             }
             String messageText;
             if (assigneeId != null)
-                messageText = "Assigned to " + assigneeId + " by " + request.getUser() + ".";
+                messageText = "*Assigned* to " + assigneeId + " by " + request.getUser() + ".";
             else
-                messageText = "Action: " + action + " performed by " + request.getUser() + ".";
+                messageText = "Action: *" + action + "* performed by " + request.getUser() + ".";
             json.put("text", messageText);
-            
+
             new Thread(() -> {
                 Map<String,String> indexes = new HashMap<>();
                 indexes.put("slack:response_url", request.getResponseUrl());
@@ -142,22 +147,23 @@ public class TaskHandler implements ActionHandler, EventHandler {
      */
     @Override
     public JSONObject handleEvent(SlackEvent event) throws ServiceException {
-        if (event.getThreadTs() != null) {
+        if (event.getThreadTs() != null && event.getUser() != null) {
             new Thread(() -> {
                 try {
                     TaskServices taskServices = ServiceLocator.getTaskServices();
                     Query query = new Query();
-                    query.setFilter("index", "slack:message_ts=" + event.getTs());
+                    query.setFilter("index", "slack:message_ts=" + event.getThreadTs());
                     List<TaskInstance> instances = taskServices.getTasks(query).getTasks();
                     for (TaskInstance instance : instances) {
                         // add a corresponding note
                         Note comment = new Note();
                         comment.setCreated(Date.from(Instant.now()));
-                        comment.setCreateUser(event.getUser());
+                        // TODO: lookup (or cache) users
+                        comment.setCreateUser(event.getUser().equals("U4V5SG5PU") ? "Donald Oakes" : event.getUser());
                         comment.setContent(event.getText());
                         comment.setOwnerType(OwnerType.TASK_INSTANCE);
                         comment.setOwnerId(instance.getTaskInstanceId());
-                        comment.setName("slack_event");
+                        comment.setName("slack_message");
                         ServiceLocator.getCollaborationServices().createNote(comment);
                     }
                 }

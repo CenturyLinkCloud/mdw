@@ -310,7 +310,7 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public void performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
+    public TaskInstance performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
             String destination, boolean notifyEngine) throws ServiceException {
         try {
             TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstanceId);
@@ -327,6 +327,7 @@ public class TaskServicesImpl implements TaskServices {
                 assigneeId = assignee.getId();
             }
             helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
+            return helper.getTaskInstance();
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error doing " + action + " on task " + taskInstanceId, ex);

@@ -29,8 +29,6 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Slack integration API.
@@ -38,16 +36,13 @@ import com.centurylink.mdw.util.log.StandardLogger;
 @Path("/")
 public class SlackService extends JsonRestService {
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    
     /**
      * Responds to requests from Slack.
      */
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        logger.debug("Received Slack request (" + path + "): " + headers.get("mdw-request-id"));
         String sub = getSegment(path, 4);
-        if ("event_callback".equals(sub)) {
+        if ("event".equals(sub)) {
             SlackEvent event = new SlackEvent(content);
             EventHandler eventHandler = getEventHandler(event.getType(), event);
             if (eventHandler == null) {
@@ -85,9 +80,11 @@ public class SlackService extends JsonRestService {
                 obj.put("challenge", event.getChallenge());
                 return obj;
             };
-        } else {
+        } 
+        else {
             String channel = event.getChannel();
-            if ("tasks".equals(channel)) {
+            // TODO translate channel (requires auth): https://api.slack.com/methods/channels.list
+            if ("C85DLE1U7".equals(channel)) {
                 return new TaskHandler();
             } else if (channel != null) {
                 // non-tasks channel

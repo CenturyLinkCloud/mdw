@@ -1203,6 +1203,16 @@
 .mdw-test-item-meth-DEL {
   color: #f44336;
 }
+.mdw-markdown-segment {
+	display: inline;
+}
+.mdw-markdown-segment > p:first-child {
+	display: inline;
+}
+.mdw-emoji {
+	position: relative;
+  top: 5px;
+}
 .panel-heading a {
   font-weight: bold;
   text-decoration: none;
