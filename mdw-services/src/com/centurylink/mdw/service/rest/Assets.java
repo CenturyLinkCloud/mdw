@@ -27,6 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Discover;
+import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -80,6 +82,8 @@ public class Assets extends JsonRestService {
         response=PackageList.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
@@ -87,13 +91,29 @@ public class Assets extends JsonRestService {
             Query query = getQuery(path, headers);
             String discoveryUrl = query.getFilter("discoveryUrl");
             if (discoveryUrl != null) {
-                String url = discoveryUrl + "/services/" + path;
-                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
-                try {
-                    return new JsonObject(helper.get());
+                String discoveryType = query.getFilter("discoveryType");
+                if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
+                    String groupId = query.getFilter("groupId");
+                    try {
+                        Discover discover = new Discover(groupId,
+                                true);
+                        return discover.run().getPackages();
+                    }
+                    catch (JSONException e) {
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                "Invalid response from maven central serach query", e);
+                    }
                 }
-                catch (JSONException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, "Invalid response from: " + discoveryUrl, ex);
+                else {
+                    String url = discoveryUrl + "/services/" + path;
+                    HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
+                    try {
+                        return new JsonObject(helper.get());
+                    }
+                    catch (JSONException ex) {
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                "Invalid response from: " + discoveryUrl, ex);
+                    }
                 }
             }
 
@@ -156,6 +176,8 @@ public class Assets extends JsonRestService {
     @ApiOperation(value="Import discovered asset packages", response=StatusMessage.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", required=true),
+        @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="packages", paramType="body", required=true, dataType="List")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
@@ -163,32 +185,47 @@ public class Assets extends JsonRestService {
         String discoveryUrl = query.getFilter("discoveryUrl");
         if (discoveryUrl == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryUrl");
+        String discoveryType = query.getFilter("discoveryType");
+        if (discoveryType == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryType");
         List<String> pkgs = new JsonArray(content.getJSONArray("packages")).getList();
         Query discQuery = new Query(path);
         discQuery.setArrayFilter("packages", pkgs.toArray(new String[0]));
-
+        File assetRoot = ApplicationContext.getAssetRoot();
         try {
-            // download from discovery server
-            String url = discoveryUrl + "/asset/packages?packages=" + discQuery.getFilter("packages");
-            HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
-            File tempDir = new File(ApplicationContext.getTempDirectory());
-            File tempFile = new File(tempDir + "/pkgDownload_" + StringHelper.filenameDateToString(new Date()) + ".zip");
-            logger.info("Saving package import temporary file: " + tempFile);
-            helper.download(tempFile);
+            // central discovery
+            if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
+                String groupId = query.getFilter("groupId");
+                if (groupId == null)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
+                Import importer = new Import(groupId, pkgs);
+                importer.setAssetLoc(assetRoot.getPath());
+                importer.run();
+            }
+            else {
+                // download from discovery server
+                String url = discoveryUrl + "/asset/packages?packages="
+                        + discQuery.getFilter("packages");
+                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
+                File tempDir = new File(ApplicationContext.getTempDirectory());
+                File tempFile = new File(tempDir + "/pkgDownload_"
+                        + StringHelper.filenameDateToString(new Date()) + ".zip");
+                logger.info("Saving package import temporary file: " + tempFile);
+                helper.download(tempFile);
 
-            // import packages
-            ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-            VersionControl vcs = new VersionControlGit();
-            File assetRoot = ApplicationContext.getAssetRoot();
-            vcs.connect(null, null, null, assetRoot);
-            progressMonitor.start("Archive existing assets");
-            VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
-            archiver.backup();
-            logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-            ZipHelper.unzip(tempFile, assetRoot, null, null, true);
-            archiver.archive(true);
-            progressMonitor.done();
-            tempFile.delete();
+                // import packages
+                ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
+                VersionControl vcs = new VersionControlGit();
+                vcs.connect(null, null, null, assetRoot);
+                progressMonitor.start("Archive existing assets");
+                VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
+                archiver.backup();
+                logger.info("Unzipping " + tempFile + " into: " + assetRoot);
+                ZipHelper.unzip(tempFile, assetRoot, null, null, true);
+                archiver.archive(true);
+                progressMonitor.done();
+                tempFile.delete();
+            }
 
             this.propagatePut(content, headers);
         }

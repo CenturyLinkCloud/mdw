@@ -120,12 +120,17 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   };
 
   $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
+  $scope.discoveryType = 'distributed';
+  $scope.groupId = $cookieStore.get('groupId');
   if (!$scope.discoveryUrl)
     $scope.discoveryUrl = mdw.discoveryUrl;
+  if (!$scope.groupId)
+	$scope.groupId = 'com.centurylink.mdw.assets';
   $scope.discover = function() {
     $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
+    $cookieStore.put('groupId', $scope.groupId);
     $scope.discoveredPkgList = null;
-    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl}, 
+    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, 
       function(data) {
         $scope.discoveryMessage = null;
         $scope.discoveredPkgList = data;
@@ -156,14 +161,21 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
     );    
   };
   
+  $scope.clear = function() {
+	  $scope.discoveredPkgList = null; 
+  };
+  
   $scope.importDiscovered = function() {
     var pkgsObj = { packages: [] };
     
     $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
-      pkgsObj.packages.push(pkg.name);
+    	if ($scope.discoveryType === 'central')
+    		pkgsObj.packages.push(pkg.artifact + "-" + pkg.version);
+    	else
+    		pkgsObj.packages.push(pkg.name);
     });
     
-    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl}, pkgsObj, 
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, pkgsObj, 
       function(data) {
         $scope.discoveryMessage = null;
         // leave cache error logging to the server side
