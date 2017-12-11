@@ -60,7 +60,6 @@ public class TaskNotifier extends TemplatedNotifier {
         return "https://hooks.slack.com/services/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";
     }
 
-    // TODO
     public JSONObject getMessage() {
         Asset template = AssetCache.getAsset(getTemplateSpec());
         String message = context.evaluateToString(template.getStringContent());
@@ -72,7 +71,14 @@ public class TaskNotifier extends TemplatedNotifier {
             json = new JSONObject();
             json.put("text", message);
         }
-
+        String altText = null;
+        if (json.has("text")) {
+            String text = json.getString("text");
+            if (text.length() > 200)
+                altText = text.substring(0, 197) + "...";
+        }
+        if (altText != null)
+            json.put("text", altText);
         return json;
     }
 
