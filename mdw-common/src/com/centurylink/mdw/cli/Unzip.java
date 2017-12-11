@@ -83,7 +83,7 @@ public class Unzip implements Operation {
                 if (outfile.exists() && !overwriteEntry)
                     throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
-                    if (outfile.exists())
+                    if (outfile.exists() && hasFiles(outfile))
                         new Delete(outfile, true).run();
                     Files.createDirectories(Paths.get(outfile.getPath()));
                 }
@@ -109,5 +109,13 @@ public class Unzip implements Operation {
         }
 
         return this;
+    }
+
+    private boolean hasFiles(File dir) {
+        for (File child : dir.listFiles()) {
+            if (child.isFile())
+                return true;
+        }
+        return false;
     }
 }
