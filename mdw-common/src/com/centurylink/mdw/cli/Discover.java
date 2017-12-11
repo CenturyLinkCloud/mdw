@@ -1,5 +1,17 @@
-/**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2017 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.centurylink.mdw.cli;
 
@@ -17,8 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Discover extends Setup {
-
-    private File destDir;
 
     private String groupId;
 
@@ -50,29 +60,16 @@ public class Discover extends Setup {
         return latest;
     }
 
-    private String packaging;
-
-    public String getPackaging() {
-        return artifactId;
-    }
-
-    public Discover(File destDir, String groupId) {
-        this.destDir = destDir;
-        this.groupId = groupId;
-    }
-
     public Discover(String groupId, boolean latest) {
         this.groupId = groupId;
         this.latest = latest;
     }
 
-    public Discover(String groupId, String artifactId, String version, boolean latest,
-            String packaging) {
+    public Discover(String groupId, String artifactId, String version, boolean latest) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
         this.latest = latest;
-        this.packaging = packaging;
     }
 
     public Discover run(ProgressMonitor... progressMonitors) throws IOException {
@@ -90,36 +87,16 @@ public class Discover extends Setup {
                     JSONObject jsonObj = new JSONObject();
                     jsonObj.put("name", artifact.getString("g").replace("assets", "")
                             + artifact.getString("a").replace("-", "."));
-                    jsonObj.put("version", artifact.getString("latestVersion"));
+                    jsonObj.put("artifact", artifact.getString("a"));
+                    if (!latest)
+                        jsonObj.put("version", artifact.getString("v"));
+                    else
+                        jsonObj.put("version", artifact.getString("latestVersion"));
                     array.put(jsonObj);
                 }
             }
         }
         return this;
-    }
-
-    public void importPackages(ProgressMonitor... progressMonitors) throws IOException {
-        String url = "http://search.maven.org/remotecontent?filepath=";
-        for (String pkg : getBaseAssetPackages()) {
-            List<String> pkgs = new ArrayList<>();
-            int index = pkg.indexOf('-');
-            String pakage = pkg.substring(0, index);
-            String ver = pkg.substring(index + 1);
-            pkgs.add(pakage);
-            String qulifier = groupId.replace("assets", "");
-            String artifact = pakage.replace(qulifier, "").replace('.', '-');
-            File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
-            new Download(new URL(url + groupId.replace('.', '/') + "/" + artifact + "/" + ver + "/"
-                    + artifact + "-" + ver + ".zip"), tempZip).run(progressMonitors);
-
-            Archive archive = new Archive(destDir, pkgs);
-            archive.backup();
-            System.out.println("Unzipping into: " + destDir);
-            new Unzip(tempZip, destDir, true).run();
-            archive.archive(true);
-            if (!tempZip.delete())
-                throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
-        }
     }
 
     public String searchArtifacts() throws IOException {
@@ -134,8 +111,6 @@ public class Discover extends Setup {
             query.append("a:").append(artifactId).append("AND");
         if (version != null && !version.isEmpty())
             query.append("v:").append(version).append("AND");
-        if (packaging != null && !packaging.isEmpty())
-            query.append("p:").append(packaging);
         String url = query.toString();
         if (url.endsWith("AND"))
             url = url.substring(0, url.length() - 3);

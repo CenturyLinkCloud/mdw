@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Discover;
+import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -82,6 +83,7 @@ public class Assets extends JsonRestService {
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
         @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
@@ -91,8 +93,9 @@ public class Assets extends JsonRestService {
             if (discoveryUrl != null) {
                 String discoveryType = query.getFilter("discoveryType");
                 if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
+                    String groupId = query.getFilter("groupId");
                     try {
-                        Discover discover = new Discover(ApplicationContext.getAssetsGroupId(),
+                        Discover discover = new Discover(groupId,
                                 true);
                         return discover.run().getPackages();
                     }
@@ -174,6 +177,7 @@ public class Assets extends JsonRestService {
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", required=true),
         @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="packages", paramType="body", required=true, dataType="List")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
@@ -191,9 +195,12 @@ public class Assets extends JsonRestService {
         try {
             // central discovery
             if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
-                Discover discover = new Discover(assetRoot, ApplicationContext.getAssetsGroupId());
-                discover.setBaseAssetPackages(pkgs);
-                discover.importPackages();
+                String groupId = query.getFilter("groupId");
+                if (groupId == null)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
+                Import importer = new Import(groupId, pkgs);
+                importer.setAssetLoc(assetRoot.getPath());
+                importer.run();
             }
             else {
                 // download from discovery server

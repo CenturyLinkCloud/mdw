@@ -46,7 +46,7 @@ public class Main {
         Help help = new Help();
         Main main = new Main();
         Init init = new Init();
-        Import mport = new Import();
+        GitImport gitImport = new GitImport();
         Update update = new Update();
         Install install = new Install();
         Run run = new Run();
@@ -61,7 +61,7 @@ public class Main {
             .addObject(main)
             .addCommand("help", help)
             .addCommand("init", init)
-            .addCommand("import", mport)
+            .addCommand("import", gitImport)
             .addCommand("update", update)
             .addCommand("install", install)
             .addCommand("run", run)
@@ -90,7 +90,7 @@ public class Main {
                     op = init;
                 }
                 else if (command.equals("import")) {
-                    op = mport;
+                    op = gitImport;
                 }
                 else if (command.equals("update")) {
                     op = update;

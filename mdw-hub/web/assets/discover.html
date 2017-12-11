@@ -6,12 +6,16 @@
       <form name="discoveryForm" class="form-horizontal" role="form">
       <div class="form-group mdw-static-group" style="padding:15px 0 0 35px">
           <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="distributed" ng-change='clear()'>Distributed Discovery</label>
-          <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="central" ng-change='discover()'>Central Discovery</label> 
+          <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="central" ng-change='clear()'>Central Discovery</label> 
        </div>
-        <div class="form-group mdw-static-group" style="padding:15px 15px 0 0" ng-if="discoveryType === 'distributed'">
-          <label class="control-label col-xs-2">Discovery URL:</label>
-          <div class="col-md-8">
+        <div class="form-group mdw-static-group" style="padding:15px 15px 0 0">
+          <label class="control-label col-xs-2"  ng-if="discoveryType === 'distributed'">Discovery URL:</label>
+          <label class="control-label col-xs-2"  ng-if="discoveryType === 'central'">Group Id:</label>
+          <div class="col-md-8" ng-if="discoveryType === 'distributed'">
             <input class="form-control col-md-6" type="text" ng-model="discoveryUrl" required>
+          </div>
+          <div class="col-md-8" ng-if="discoveryType === 'central'">
+            <input class="form-control col-md-6" type="text" ng-model="groupId" required>
           </div>
             <button class="btn btn-primary mdw-btn" type="submit" ng-click="discover()" 
               ng-disabled="!authUser.hasRole('Process Design') || !discoveryUrl">
