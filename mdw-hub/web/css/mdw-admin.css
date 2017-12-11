@@ -283,8 +283,14 @@
   font-size: 14px;	
 }
 .mdw-comment-panel .mdw-section {
-	min-height: 60px;
+	min-height: 66px;
 	border-bottom-color: #c0d3eb;
+	line-height: 22px;
+}
+.mdw-comment-panel textarea {
+	width: 100%;
+	line-height: 20px;
+	overflow-y: hidden;
 }
 .mdw-panel-full-width {
   width: 100%;
@@ -582,7 +588,7 @@
   padding-left: 5px;
   overflow: auto;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 14px;  
+  font-size: 14px;
 }
 .mdw-value-name {
   font-style: italic;
@@ -1205,6 +1211,7 @@
 }
 .mdw-markdown-segment {
 	display: inline;
+  white-space: pre-line;	
 }
 .mdw-markdown-segment > p:first-child {
 	display: inline;
@@ -1347,6 +1354,23 @@
 /* avoid flicker for uiModal */
 .modal-open {
   overflow-y: auto;
+}
+.emoji-mart-preview {
+	display: none;
+}
+.emoji-mart-emoji span:hover {
+	cursor: pointer !important;
+}
+.mdw-emoji .emoji-mart-emoji {
+	width: 25px;
+	top: -22px;
+	cursor: default;
+}
+.mdw-emoji .emoji-mart-emoji span {
+	position: absolute;
+}
+.mdw-emoji .emoji-mart-emoji span:hover {
+  cursor: default !important;
 }
 /*
 .line-legend li {

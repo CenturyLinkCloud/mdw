@@ -1,7 +1,9 @@
 import React from '../node/node_modules/react';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Button, Glyphicon, Popover, OverlayTrigger} from '../node/node_modules/react-bootstrap';
 import ReactMarkdown from '../node/node_modules/react-markdown';
-import {Emoji} from '../node/node_modules/emoji-mart';
+import {Emoji, Picker} from '../node/node_modules/emoji-mart';
+import '../node/node_modules/style-loader!./emoji-mart.css';
+
 import UserDate from './UserDate.jsx';
 
 function Comment(props) {
@@ -16,8 +18,6 @@ function Comment(props) {
         segments.push({text: content.substring(last, match.index)});
       }
       segments.push({emoji: match[0]});
-      // matches.push(match.index);
-      // console.log(match.index + ": " + match + ' (' + last + ')');
       last = re.lastIndex;
     }
     if (content && (last < content.length)) {
@@ -31,7 +31,49 @@ function Comment(props) {
     return segments;
   };
   
-  return (
+  let overlayRef;
+  
+  const insertEmoji = emoji => {
+    const ta = document.getElementById('comment-' + props.comment.id + '-textarea');
+    var val = ta.value;
+    if (ta.selectionStart || ta.selectionStart == '0') {
+      var start = ta.selectionStart;
+      var end = ta.selectionEnd;
+      val = val.substring(0, start) + emoji.colons + val.substring(end, val.length);
+    } 
+    else {
+      val += emoji.colons;
+    }
+    props.actionHandler('update', props.comment, val);
+    overlayRef.hide();
+    ta.focus();
+  };
+  
+  const emojiPopover = (
+    <Popover id='emoji-pop'>
+      <div>
+        <Picker onClick={insertEmoji} title="Emojis" emojiSize={22}
+          emojiTooltip={true} />
+      </div>
+    </Popover>
+  );
+
+  var height = 80;
+  const section = document.getElementById('comment-' + props.comment.id + '-section');
+  if (section) {
+    height = section.offsetHeight;
+  }
+  else {
+    const ta = document.getElementById('comment-' + props.comment.id + '-textarea');
+    if (ta) {
+      height = ta.scrollHeight;
+    }
+  }
+  if (height < 80) {
+    height = 80;
+  }
+  
+  return (      
     <div key={props.comment.id} className="panel panel-default mdw-panel mdw-comment-panel">
       <div className="panel-heading mdw-heading">
           <div className="mdw-heading-label">
@@ -70,6 +112,13 @@ function Comment(props) {
                 onClick={() => props.actionHandler('cancel', props.comment)}>
                 Cancel
               </Button>
+              <OverlayTrigger trigger="click" placement="left" overlay={emojiPopover} 
+                rootClose={true} ref={(ol) => { overlayRef = ol; }}>
+                <Button name="emoji" className="mdw-btn mdw-action-btn" 
+                  style={{paddingBottom: "0"}} title="Emoji">
+                  <Emoji emoji=":slightly_smiling_face:" size="18px" />
+                </Button>
+              </OverlayTrigger>
             </span>
           }
           {!props.comment.editing && props.editable &&
@@ -81,18 +130,19 @@ function Comment(props) {
         </div>
       </div>
       {props.comment.editing &&
-        <textarea className="mdw-section" style={{width:'100%'}} 
-          value={props.comment.content} 
-          onChange={event => props.actionHandler('update', props.comment, event.currentTarget.value)}/>
+        <textarea id={'comment-' + props.comment.id + '-textarea'} autoFocus
+          className="mdw-section" style={{height:height + 'px'}} value={props.comment.content}
+          onChange={event => props.actionHandler('update', props.comment, event.currentTarget.value)} />
       }
       {!props.comment.editing &&
-        <div className="mdw-section">
+        <div id={'comment-' + props.comment.id + '-section'} className="mdw-section">
           {
             getSegments(props.comment.content).map((segment, i) => {
               return (
-                <span key={i} className={segment.emoji ? 'mdw-emoji' : ''}>
+                <span key={i} className={segment.emoji ? 'mdw-emoji' : ''} 
+                  title={segment.emoji ? segment.emoji : null}>
                 {segment.emoji &&
-                  <Emoji emoji={segment.emoji} size="24px" />
+                  <Emoji emoji={segment.emoji} size="22px" />
                 }
                 {segment.text &&
                   <ReactMarkdown source={segment.text} className="mdw-markdown-segment" />

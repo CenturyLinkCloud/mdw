@@ -58,7 +58,7 @@ class Discussion extends Component {
         comment.content = content;
         const index = comment.id ? comments.findIndex(cmt => {
           return cmt.id === comment.id;
-        }) : 0;
+        }) : comments.length - 1;
         comments[index] = comment;
       }
       this.setState({ comments: comments });
@@ -67,7 +67,7 @@ class Discussion extends Component {
   
   addNewComment() {
     const comments = this.state.comments.slice(0);
-    comments.unshift({
+    comments.push({
       created: new Date().toISOString(),
       content: this.state.content,
       editing: true,

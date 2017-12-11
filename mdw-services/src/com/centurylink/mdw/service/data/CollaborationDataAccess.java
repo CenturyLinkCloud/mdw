@@ -33,7 +33,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
             String query = "select INSTANCE_NOTE_ID,INSTANCE_NOTE_NAME,INSTANCE_NOTE_DETAILS,"
                     + " CREATE_DT,CREATE_USR,MOD_DT,MOD_USR " + "from INSTANCE_NOTE "
                     + "where INSTANCE_NOTE_OWNER='" + owner + "' and INSTANCE_NOTE_OWNER_ID=? "
-                    + " order by CREATE_DT desc";
+                    + " order by CREATE_DT";
             ResultSet rs = db.runSelect(query, ownerId);
             while (rs.next()) {
                 Note note = new Note();
