@@ -77,7 +77,6 @@ public class TaskCleanup extends RoundRobinScheduledJob {
             if (assetLoc != null) {
                 AssetServices assetServices = ServiceLocator.getAssetServices();
                 VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
-                vc.connect(null, "mdw", null, new File(assetLoc));
                 ProcessLoader loader = new LoaderPersisterVcs("mdw", new File(assetLoc), vc, new MdwBaselineData());
                 taskTemplates = loader.getTaskTemplates();
             }
