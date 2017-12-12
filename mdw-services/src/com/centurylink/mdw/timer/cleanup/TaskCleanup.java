@@ -32,6 +32,8 @@ import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskStatuses;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
+import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -73,7 +75,8 @@ public class TaskCleanup extends RoundRobinScheduledJob {
             List<TaskTemplate> taskTemplates = null;
             String assetLoc = args.getParameter(ARG_ASSET_LOC);
             if (assetLoc != null) {
-                VersionControlGit vc = new VersionControlGit();
+                AssetServices assetServices = ServiceLocator.getAssetServices();
+                VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
                 vc.connect(null, "mdw", null, new File(assetLoc));
                 ProcessLoader loader = new LoaderPersisterVcs("mdw", new File(assetLoc), vc, new MdwBaselineData());
                 taskTemplates = loader.getTaskTemplates();

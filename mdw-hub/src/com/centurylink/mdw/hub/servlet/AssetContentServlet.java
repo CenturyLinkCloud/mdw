@@ -159,7 +159,8 @@ public class AssetContentServlet extends HttpServlet {
                     String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
                     if (branch == null)
                         throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
-                    VersionControlGit vcGit = getFrameworkGit();
+                    AssetServices assetServices = ServiceLocator.getAssetServices();
+                    VersionControlGit vcGit = (VersionControlGit)assetServices.getVersionControl();
                     String gitPath = vcGit.getRelativePath(assetFile);
                     in = vcGit.getRemoteContentStream(branch, gitPath);
                     if (in == null)
@@ -201,7 +202,7 @@ public class AssetContentServlet extends HttpServlet {
         String path = request.getPathInfo().substring(1);
         try {
             LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) DataAccess.getProcessPersister();
-
+            AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
                 if ("packages".equals(path)) {
                     authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip");
@@ -215,8 +216,7 @@ public class AssetContentServlet extends HttpServlet {
                     logger.info("Saving package import temporary file: " + tempFile);
                     FileHelper.writeToFile(request.getInputStream(), tempFile);
                     ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                    VersionControl vcs = new VersionControlGit();
-                    vcs.connect(null, null, null, assetRoot);
+                    VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                     progressMonitor.start("Archive existing assets");
                     VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
                     archiver.backup();
@@ -305,7 +305,6 @@ public class AssetContentServlet extends HttpServlet {
                     verChange = newVer != ver;
                     if (verChange) {
                         String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
-                        AssetServices assetServices = ServiceLocator.getAssetServices();
                         VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
                         AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
                         DatabaseAccess db = new DatabaseAccess(null);
@@ -409,22 +408,4 @@ public class AssetContentServlet extends HttpServlet {
             }
         }
     }
-
-    public static VersionControlGit getFrameworkGit() throws PropertyException, IOException {
-        String gitRoot = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
-        if (gitRoot == null)
-            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_LOCAL_PATH);
-        String gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
-        if (gitRemoteUrl == null)
-            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_REMOTE_URL);
-        String gitBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
-        if (gitBranch == null)
-            throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
-        String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
-        String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
-        VersionControlGit vcGit = new VersionControlGit();
-        vcGit.connect(gitRemoteUrl, user, password, new File(gitRoot));
-        return vcGit;
-    }
-
 }

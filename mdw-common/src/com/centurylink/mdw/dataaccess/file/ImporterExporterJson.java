@@ -63,30 +63,4 @@ public class ImporterExporterJson {
         json.put("packages", packagesJson);
         return json.toString(2);
     }
-
-    /**
-     * TODO: import
-     */
-    public static void main(String[] args) throws Exception {
-
-        if (args.length != 3)
-            throw new IOException("args for package export: <assetRoot> <packageName> <destFile>");
-        File root = new File(args[0]);
-        String packageName = args[1];
-        File outFile = new File(args[2]);
-
-        VersionControlGit versionControl = new VersionControlGit();
-        versionControl.connect(null, null, null, root);
-        LoaderPersisterVcs loader = new LoaderPersisterVcs("mdw", root, versionControl, new MdwBaselineData());
-        Package loaded = loader.loadPackage(loader.getPackage(packageName).getId(), true);
-        List<Package> packages = new ArrayList<Package>();
-        packages.add(loaded);
-        ImporterExporterJson jsonExporter = new ImporterExporterJson();
-        String jsonStr = jsonExporter.exportPackages(packages);
-        if (!outFile.getParentFile().exists() && !outFile.getParentFile().mkdirs())
-            throw new IOException("Cannot create " + outFile.getParent());
-        FileWriter writer = new FileWriter(outFile);
-        writer.write(jsonStr);
-        writer.close();
-    }
 }

@@ -215,8 +215,8 @@ public class Assets extends JsonRestService {
 
                 // import packages
                 ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                VersionControl vcs = new VersionControlGit();
-                vcs.connect(null, null, null, assetRoot);
+                AssetServices assetServices = ServiceLocator.getAssetServices();
+                VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                 progressMonitor.start("Archive existing assets");
                 VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
                 archiver.backup();
