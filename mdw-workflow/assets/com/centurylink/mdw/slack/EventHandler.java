@@ -25,6 +25,6 @@ import com.centurylink.mdw.common.service.ServiceException;
  */
 @FunctionalInterface
 public interface EventHandler {
-    JSONObject handleEvent(SlackEvent event) 
+    JSONObject handleEvent(SlackEvent event)
             throws ServiceException;
 }

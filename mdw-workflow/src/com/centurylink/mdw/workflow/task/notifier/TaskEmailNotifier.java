@@ -60,7 +60,7 @@ import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserException;
 import com.centurylink.mdw.services.UserManager;
-import com.centurylink.mdw.util.MiniEncrypter;
+import com.centurylink.mdw.util.MiniCrypter;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -149,7 +149,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                 // send individual e-mails (not stored)
                 for (Address recip : recipients) {
                     String cuid = recip.toString().substring(0, recip.toString().indexOf('@'));
-                    String userIdentifier = MiniEncrypter.encrypt(cuid);
+                    String userIdentifier = MiniCrypter.encrypt(cuid);
                     taskInstance.setUserIdentifier(userIdentifier);
                     templatedEmail.setRecipients(new Address[]{recip});
                     templatedEmail.setCcRecipients(new Address[0]);
@@ -163,7 +163,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                 if (ccRecipients != null) {
                     for (Address ccRecip : ccRecipients) {
                         String cuid = ccRecip.toString().substring(0, ccRecip.toString().indexOf('@'));
-                        String userIdentifier = MiniEncrypter.encrypt(cuid);
+                        String userIdentifier = MiniCrypter.encrypt(cuid);
                         taskInstance.setUserIdentifier(userIdentifier);
                         templatedEmail.setRecipients(new Address[0]);
                         templatedEmail.setCcRecipients(new Address[]{ccRecip});

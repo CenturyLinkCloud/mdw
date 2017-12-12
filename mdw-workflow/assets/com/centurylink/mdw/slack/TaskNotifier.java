@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -55,9 +57,14 @@ public class TaskNotifier extends TemplatedNotifier {
         }
     }
 
-    // TODO
-    public String getWebhookUrl() {
-        return "https://hooks.slack.com/services/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";
+    /**
+     * TODO: no need if the mdw slack app is installed
+     */
+    public String getWebhookUrl() throws PropertyException {
+        String url = PropertyManager.getProperty("mdw.slack.webhook.url");
+        if (url == null)
+            throw new PropertyException("Missing configuration: mdw.slack.webhook.url");
+        return url;
     }
 
     public JSONObject getMessage() {

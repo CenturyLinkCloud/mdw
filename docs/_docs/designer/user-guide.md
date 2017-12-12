@@ -22,7 +22,7 @@ However, there's also an Eclipse wizard to accomplish the same thing.
 - Launch the Local Project wizard:
 - Right-click inside the blank Process Explorer view and select New > Local Project.  Select the Supported Java Container you will be deploying in, and the type of [Asset Persistence](../../help/assetPersistence.html)  you will use.
   ![workflow](../images/workflow.png "workflow")
-- Click Next, and then enter the settings for your environment. For the password, you can enter `tomcat`.  For details about these settings, refer to the server-specific cookbooks listed above under "Supported Java Containers" section.
+- Click Next, and then enter the settings for your environment. For the password, you can enter `tomcat`.  For details about these settings, refer to the server-specific setup guides listed above under "Supported Java Containers" section.
   ![tomcat setup](../images/tomcatSetting.png "tomcatSetting")
 - Click Next again and enter your database connection info. The depicted info is for the included [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md).  The default password for Embedded DB is `mdw`.<br>
   ![db setup](../images/dbSetting.png "dbSetting")
@@ -100,7 +100,7 @@ However, there's also an Eclipse wizard to accomplish the same thing.
   
   ![alt text](../images/mdwWorkflowProcessRunResult2.png "mdwWorkflowProcessRunResult2")
   
-- Please note that the response has no data, as we did not implement any code to build it.  Details for creating and implementing custom activities, building a response object, etc., please refer to the MDW cookbooks listed above, under section: `How to Use MDW Designer`. 
+- Please note that the response has no data, as we did not implement any code to build it.  Details for creating and implementing custom activities, building a response object, etc., please refer to the MDW guides listed above, under section: `How to Use MDW Designer`. 
 
 - You can also explore any of the existing MDW processes by expanding the existing packages in mdw-demo project from MDW Designer perspective. You can start with the HandleOrder in com.centurylink.mdw.demo.intro package.
  

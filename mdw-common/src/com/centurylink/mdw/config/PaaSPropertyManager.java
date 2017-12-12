@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.MiniEncrypter;
+import com.centurylink.mdw.util.MiniCrypter;
 
 /**
  * Handles environment variables deployed on a Cloud Foundry env
@@ -113,7 +113,7 @@ public class PaaSPropertyManager extends PropertyManager {
         String propName = slash == -1 ? name : name.replace('/', GROUP_SEPARATOR);
         String value = properties.getProperty(propName);
         if (value != null && value.startsWith("###"))
-            value = MiniEncrypter.decrypt(value.substring(3));
+            value = MiniCrypter.decrypt(value.substring(3));
         return value;
     }
 

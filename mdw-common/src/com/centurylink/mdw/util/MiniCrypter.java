@@ -21,7 +21,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public class MiniEncrypter {
+public class MiniCrypter {
 
     private static final String algorithm = "Blowfish";    // or "DES", "DESede"
     private static final String defaultKeyString = "MDWInternal";
@@ -123,14 +123,31 @@ public class MiniEncrypter {
          return sb.toString();
     }
 
-    public static void main(String[] args) throws Exception {
-        String input = "Do you likes this?";
-        System.out.println("Entered: " + input);
-        String key = "MDWInternal";
-        String encrypted = encrypt(input, key);
-        System.out.println("Encrypted: " + encrypted);
-        System.out.println("Recovered: " + decrypt(encrypted, key));
-
+    public static void main(String[] args) {
+        if (args.length == 0 || args.length > 2) {
+            System.err.println("arguments: (d|e) stringToEncrypt/Decrypt");
+        }
+        else {
+            boolean decryptMode = false;
+            String input = args[0];
+            if (args.length == 2)
+            {
+              decryptMode = args[0].equals("d") ? true : false;
+              input = args[1];
+            }
+            if (decryptMode) {
+                String decrypted = MiniCrypter.decrypt(input);
+                System.out.println("decrypted: '" + decrypted + "'");
+                String encrypted = MiniCrypter.encrypt(decrypted);
+                System.out.println("encrypted: '" + encrypted + "'");
+            }
+            else {
+                String encrypted = MiniCrypter.encrypt(input);
+                System.out.println("encrypted: '" + encrypted + "'");
+                String decrypted = MiniCrypter.decrypt(encrypted);
+                System.out.println("decrypted: '" + decrypted + "'");
+            }
+        }
     }
 }
 

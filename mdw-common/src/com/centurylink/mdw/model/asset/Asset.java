@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.util.MiniEncrypter;
+import com.centurylink.mdw.util.MiniCrypter;
 import com.centurylink.mdw.util.file.FileHelper;
 
 public class Asset implements Serializable, Comparable<Asset>, Jsonable {
@@ -319,11 +319,11 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     }
 
     public static byte[] decode(String inputString) {
-        return MiniEncrypter.decodeAlpha(inputString);
+        return MiniCrypter.decodeAlpha(inputString);
     }
 
     public static String encode(byte[] inputBytes) {
-        return MiniEncrypter.encodeAlpha(inputBytes);
+        return MiniCrypter.encodeAlpha(inputBytes);
     }
 
     public byte[] getContent() {

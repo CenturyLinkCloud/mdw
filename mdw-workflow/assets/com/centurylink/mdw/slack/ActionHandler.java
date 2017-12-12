@@ -25,6 +25,6 @@ import com.centurylink.mdw.common.service.ServiceException;
  */
 @FunctionalInterface
 public interface ActionHandler {
-    JSONObject handleRequest(String userId, String id, SlackRequest request) 
+    JSONObject handleRequest(String userId, String id, SlackRequest request)
             throws ServiceException;
 }

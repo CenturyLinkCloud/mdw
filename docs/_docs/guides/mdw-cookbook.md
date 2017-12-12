@@ -27,6 +27,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
      - 3.1 [Build a JSX task page](#31-build-a-jsx-task-page)
      - 3.2 [Create a process start page](#32-create-a-process-start-page)
      - 3.3 [Add a new tab to MDWHub](#33-add-a-new-tab-to-mdwhub)
+     - 3.4 [Introduce collaboration through Slack](#34-introduce-collaboration-through-slack)
   4. [Explore other Features](#4-explore-other-features)
      - 4.1 [Add markdown workflow documentation](#41-add-markdown-workflow-documentation)
      - 4.2 [Unit test an activity using MockRuntimeContext](#42-unit-test-an-activity-using-mockruntimecontext)
@@ -1001,6 +1002,66 @@ is available to clone in its completed state from the [mdw-demo repository](http
     Without indexes, the only way to do this would be to retrieve the runtime data for every single task, which would be terribly expensive.
     When you decide to tackle a requirement of this kind, you can read up on [Task Indexes](../../help/taskIndexes.html) and learn how to
     populate them during the task lifecyle, either through expressions or by implementing a [TaskIndexProvider](../../javadoc/com/centurylink/mdw/observer/task/TaskIndexProvider.html). 
+
+### 3.4 Introduce collaboration through Slack 
+  When workflow is intertwined with manual activities, workgroup users and managers need to stay on top of the tasks they're responsible for.
+  Users can't be expected to continually monitor MDWHub to look for updates on assigned tasks and pending actions.
+  [MDW Mobile](../mdw-mobile) provides a hub-like experience with complete workflow visibility, along with configurable device notifications.
+  Another great option is [Slack](https://slack.com/), which will have particular appeal to teams already using it for workforce communication.
+  In this section we'll explore the ways to integrate Slack into an MDW workflow.
+
+#### Enable Slack notifications
+  The easy way to get started is by configuring a [Slack webhook](https://api.slack.com/incoming-webhooks) for one or more of your workgroup's channels.
+  This gives you simple one-way interaction with friendly Slack messages when any selected outcome occurs.  Notices typically contain a brief 
+  description and a link back to MDWHub's task view.  Later we'll describe how to install the [MDW Slack App](install-the-mdw-slack-app) for more advanced
+  two-way integration.
+  
+  - Using Designer or MDWHub, import the necessary Slack asset package dependency.  In MDWHub, for example, on the Admin tab click the Assets nav link and
+    then Import > Discover and select the `com.centurylink.mdw.slack` package in the discovered list.
+   
+  - Configure an [incoming webhook](https://api.slack.com/incoming-webhooks) as described in the Slack documentation, and add it to mdw.properties:
+    ```
+    mdw.slack.webhook.url=https://hooks.slack.com/services/XXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX
+    ```
+    Then restart your server or refresh its cache.
+  
+#### Create a Slack notice template
+  - In Designer's Process Explorer view, right-click on package `com.centurylink.mdw.demo.bugs` and select New > JSON.  Edit your asset
+    to look something like this:
+    ```
+    {
+      "text": "*<${taskInstanceUrl}|${request.title} \#${taskInstanceId}>*\\n${request.description}"
+    }
+    ```
+    This is a simple template that'll post a message containing the bug's title (linking back to MDWHub), along with its description.
+    Note the ${} expression placeholders that should be familiar to you by now.  These expressions operate on an instance of
+    [TaskRuntimeContext](../../javadoc/com/centurylink/mdw/model/task/TaskRuntimeContext.html), which gives you access to all your process
+    variables (e.g.: ${request.title}) as well as some special values like ${taskInstanceUrl}.
+    
+  - Save the notice template as slackNotice.json. 
+    See the Slack documentation on [message formatting](https://api.slack.com/docs/message-formatting) for more on how you can beautify your messages.
+        
+  - Now let's tell MDW to make use of your notice template.  In Designer, open task asset ResolveBugCustom.task.  Click the Notices tab, 
+    which displays a table of configured notifications per outcome.  In the Template column dropdown for the **Open** outcome, select slackNotice.json.
+    The NotifierClass(es) column should automatically get populated with the appropriate notifier for the asset type you selected.
+    ![task slack notice](../images/task-slack-notice.png)
+    
+    As an aside for future consideration, this is a comma-delimited list where you and also enter your own custom notifier classes which implement the 
+    [TemplatedNotifier](../../javadoc/com/centurylink/mdw/observer/task/TemplatedNotifier.html) interface and carry the @RegisteredService annotation.
+    For now just save with the built-in notifier class for your selected template.
+    
+  - If you haven't already, [install the Slack app](https://slack.com/downloads) or open it's webapp in your browser.  
+    Make sure you've subscribed to the channel where you  targeted the webhook you've configured.  
+    Now run Create Bug, either through MDWHub or by POSTing to its service endpoint.  You should see the corresponding message in Slack.
+    Here's what it looks like in Windows:<br>
+    ![slack task open](../images/slack-task-open.png)
+    
+#### Install the MDW Slack App
+  To get the full benefit of MDW's integration with Slack, you'll want to install the [mdw app]() in your Slack workspace.
+  
+  TODO - "Add to Slack" button, task actions performed from Slack, message threads, task Discussion tab, etc.
+  
+  ![mdw slack interactions](../images/mdw-slack-interactions.png)
   
 #### Put it all together
   At this point we've built enough of the Issues UI to convey the key points around designing a custom UI for MDWHub.  Now is a good time
@@ -1010,6 +1071,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     <https://github.com/CenturyLinkCloud/mdw-demo/blob/master/README.md>
     
   - Run mdw-demo through Eclipse and try out the Bugs functionality we've just developed.
+
   
 ## 4. Explore other Features
 **TODO**
@@ -1022,7 +1084,6 @@ is available to clone in its completed state from the [mdw-demo repository](http
 
 ### 4.4 Designate a package-level error handler
 
-### 4.5 Create a custom chart
     
     
     
