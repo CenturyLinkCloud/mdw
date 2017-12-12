@@ -199,6 +199,7 @@ public class Assets extends JsonRestService {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
                 Import importer = new Import(groupId, pkgs);
                 importer.setAssetLoc(assetRoot.getPath());
+                importer.setForce(true);
                 importer.run();
             }
             else {
