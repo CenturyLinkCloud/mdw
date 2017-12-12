@@ -81,7 +81,7 @@ public abstract class Setup implements Operation {
     public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
-    private String discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+    private String discoveryUrl = "http://repo.maven.apache.org/maven2";
     public String getDiscoveryUrl() { return discoveryUrl; }
     public void setDiscoveryUrl(String url) {
         this.discoveryUrl = url;

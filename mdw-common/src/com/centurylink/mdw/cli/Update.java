@@ -17,10 +17,10 @@ package com.centurylink.mdw.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,31 +47,37 @@ public class Update extends Setup {
         // cli use only
     }
 
-    public Update run(ProgressMonitor... progressMonitors) throws IOException {
+    public Update run(ProgressMonitor... monitors) throws IOException {
         Props props = new Props(this);
+        String discoveryUrl = props.get(Props.DISCOVERY_URL);
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
         }
 
-        List<String> discovered = new ArrayList<>();
-        String discoveryUrl = props.get(Props.DISCOVERY_URL);
-        System.out.println("Discovering assets from: " + discoveryUrl);
-        String assetsJson = new Fetch(new URL(discoveryUrl + "/services/Assets")).run().getData();
-        JSONObject json = new JSONObject(assetsJson);
+        Map<String,String> discovered = new HashMap<>();
+        Discover discover = new Discover();
+        discover.setLatest(true);
+        boolean isMdw = discoveryUrl.endsWith("/services") || discoveryUrl.endsWith("/Services");
+        if (isMdw)
+            discover.discoverMdw(discoveryUrl, monitors);
+        else
+            discover.discoverMaven("com.centurylink.mdw.assets", monitors);
+        JSONObject json = discover.getPackages();
         if (json.has("packages")) {
-            JSONArray pkgArr = json.getJSONArray("packages");
-            for (int i = 0; i < pkgArr.length(); i++) {
-                discovered.add(pkgArr.getJSONObject(i).getString("name"));
-            }
+            JSONArray pkgs = json.getJSONArray("packages");
+            pkgs.forEach(pkg -> {
+                JSONObject pkgJson = (JSONObject)pkg;
+                discovered.put(pkgJson.getString("name"), isMdw ? null : pkgJson.getString("version"));
+            });
         }
 
         List<String> toDownload = new ArrayList<>();
         System.out.println("Import asset packages:");
         for (String pkg : getBaseAssetPackages()) {
-            if (discovered.contains(pkg)) {
+            if (discovered.containsKey(pkg)) {
                 System.out.println("  - " + pkg);
-                toDownload.add(pkg);
+                toDownload.add(isMdw ? pkg : (pkg.substring(pkg.lastIndexOf('.') + 1) + "-" + discovered.get(pkg)));
             }
             else {
                 System.err.println("  - " + pkg + " not found for import");
@@ -82,36 +88,16 @@ public class Update extends Setup {
             System.out.println(" - no packages selected");
         }
         else {
-            importPackages(discoveryUrl, toDownload, progressMonitors);
+            Import mport = new Import();
+            mport.setAssetLoc(getProjectDir() + "/" + getAssetLoc());
+            if (isMdw) {
+                mport.importPackagesFromMdw(discoveryUrl, toDownload, monitors);
+            }
+            else {
+                mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload, monitors);
+            }
         }
 
         return this;
-    }
-
-    protected void importPackages(String discoveryUrl, List<String> packages, ProgressMonitor... monitors) throws IOException {
-
-        // download packages temp zip
-        System.out.println("Downloading packages...");
-
-        File tempZip = Files.createTempFile("mdw-discovery", ".zip").toFile();
-
-        String pkgsParam = "[";
-        for (int i = 0; i < packages.size(); i++) {
-            pkgsParam += packages.get(i);
-            if (i < packages.size() - 1)
-                pkgsParam += ",";
-        }
-        pkgsParam += "]";
-        new Download(new URL(discoveryUrl + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip).run(monitors);
-
-        // import packages
-        File assetDir = getAssetRoot();
-        Archive archive = new Archive(assetDir, packages);
-        archive.backup();
-        System.out.println("Unzipping into: " + assetDir);
-        new Unzip(tempZip, assetDir, true).run();
-        archive.archive(true);
-        if (!tempZip.delete())
-            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
 }

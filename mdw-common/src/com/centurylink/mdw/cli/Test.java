@@ -81,7 +81,7 @@ public class Test extends Setup {
     public boolean isStubbing() { return stubbing; }
     public void setStubbing(boolean stubbing) { this.stubbing = stubbing; }
 
-    @Parameter(names="--stubPort", description="Stub port")
+    @Parameter(names="--stub-port", description="Stub port")
     private int stubPort;
     public int getStubPort() { return stubPort; }
     public void setStubPort(int port) { this.stubPort = port; }

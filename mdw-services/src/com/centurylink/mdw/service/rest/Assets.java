@@ -95,13 +95,12 @@ public class Assets extends JsonRestService {
                 if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
                     String groupId = query.getFilter("groupId");
                     try {
-                        Discover discover = new Discover(groupId,
-                                true);
+                        Discover discover = new Discover(groupId, true);
                         return discover.run().getPackages();
                     }
                     catch (JSONException e) {
                         throw new ServiceException(ServiceException.INTERNAL_ERROR,
-                                "Invalid response from maven central serach query", e);
+                                "Invalid response from maven central search query", e);
                     }
                 }
                 else {

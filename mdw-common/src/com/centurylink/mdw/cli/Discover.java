@@ -16,48 +16,38 @@
 package com.centurylink.mdw.cli;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
+@Parameters(commandNames="discover", commandDescription="Discover asset packages from Maven or MDW", separators="=")
 public class Discover extends Setup {
 
+    @Parameter(names="--groupId", description="Maven group id")
     private String groupId;
-
-    private JSONObject packages;
-
-    public JSONObject getPackages() {
-        return packages;
-    }
-
     public String getGroupId() {
         return groupId;
     }
 
-    private String artifactId;
+    @Parameter(names="--latest", description="Discover only latest asset package versions")
+    private boolean latest = false;
+    public boolean isLatest() { return latest; }
+    public void setLatest(boolean latest) { this.latest = latest; }
 
-    public String getArtifactId() {
-        return artifactId;
+    private JSONObject packages;
+    public JSONObject getPackages() {
+        return packages;
     }
 
-    private String version;
-
-    public String getVersion() {
-        return version;
-    }
-
-    private boolean latest;
-
-    public boolean isLatest() {
-        return latest;
+    Discover() {
+        // cli use
     }
 
     public Discover(String groupId, boolean latest) {
@@ -65,17 +55,20 @@ public class Discover extends Setup {
         this.latest = latest;
     }
 
-    public Discover(String groupId, String artifactId, String version, boolean latest) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
-        this.latest = latest;
+    public Discover run(ProgressMonitor... monitors) throws IOException {
+        if (groupId != null) {
+            discoverMaven(groupId, monitors);
+        }
+        else {
+            discoverMdw(new Props(this).get(Props.DISCOVERY_URL), monitors);
+        }
+        return this;
     }
 
-    public Discover run(ProgressMonitor... progressMonitors) throws IOException {
-        JSONObject json = new JSONObject(searchArtifacts());
+    public void discoverMaven(String groupId, ProgressMonitor... monitors) throws IOException {
+        JSONObject json = new JSONObject(searchArtifacts(groupId));
         packages = new JSONObject();
-        packages.put("assetRoot", "assets");
+        packages.put("assetRoot", getAssetLoc());
         packages.put("packages", new JSONArray());
         if (json.has("response")) {
             JSONObject response = json.getJSONObject("response");
@@ -96,24 +89,26 @@ public class Discover extends Setup {
                 }
             }
         }
-        return this;
     }
 
-    public String searchArtifacts() throws IOException {
+    public void discoverMdw(String url, ProgressMonitor... monitors) throws IOException {
+        System.out.println("Discovering assets from: " + url);
+        String assetsJson = new Fetch(new URL(url + "/services/Assets")).run().getData();
+        this.packages = new JSONObject(assetsJson);
+    }
+
+    protected String searchArtifacts(String groupId) throws IOException {
         StringBuilder query = new StringBuilder(
                 "http://search.maven.org/solrsearch/select?wt=json&rows=50");
         if (!latest)
             query.append("&core=gav");
         query.append("&q=");
-        if (groupId != null && !groupId.isEmpty())
+        if (groupId != null)
             query.append("g:").append(groupId).append("AND");
-        if (artifactId != null && !artifactId.isEmpty())
-            query.append("a:").append(artifactId).append("AND");
-        if (version != null && !version.isEmpty())
-            query.append("v:").append(version).append("AND");
         String url = query.toString();
         if (url.endsWith("AND"))
             url = url.substring(0, url.length() - 3);
+        System.out.println("Discovering assets from: " + url);
 
         URLConnection connection = new URL(url).openConnection();
         BufferedReader bufferedReader = new BufferedReader(
