@@ -104,10 +104,9 @@ public class Discover extends Setup {
             query.append("&core=gav");
         query.append("&q=");
         if (groupId != null)
-            query.append("g:").append(groupId).append("AND");
+            query.append("g:").append(groupId);
         String url = query.toString();
-        if (url.endsWith("AND"))
-            url = url.substring(0, url.length() - 3);
+
         System.out.println("Discovering assets from: " + url);
 
         URLConnection connection = new URL(url).openConnection();
