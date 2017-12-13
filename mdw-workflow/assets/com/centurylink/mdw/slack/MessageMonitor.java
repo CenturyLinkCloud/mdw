@@ -17,6 +17,7 @@ package com.centurylink.mdw.slack;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,31 +42,33 @@ public class MessageMonitor implements ServiceMonitor {
     @Override
     public Object onRequest(Object request, Map<String,String> headers) throws ServiceException {
         String path = headers.get("RequestPath");
-        if (path != null && request != null) {  // PUT, POST, DELETE
+        if (path != null && request != null) {  // only POST currently (TODO: how to handle PUT, DELETE)
             Matcher matcher = PATH_PATTERN.matcher(path);
             if (matcher.matches()) {
                 Long instId = new Long(matcher.group(1));
                 Note note = new Note(new JSONObject(request.toString()));
                 Map<String,String> indexes = ServiceLocator.getTaskServices().getIndexes(instId);
-                String slackResponseUrl = indexes.get("slack:response_url");
-                if (slackResponseUrl != null) {
+                String messageTs = indexes.get("slack:message_ts");
+                if (messageTs != null) {
                     JSONObject json = new JSONObject();
-                    json.put("response_type", "in_channel");
-                    if (indexes.containsKey("slack:message_ts")) {
-                        json.put("thread_ts", indexes.get("slack:message_ts"));
-                        json.put("reply_broadcast", true);
-                    }
-                    // TODO: this updates the very original message, instead set thread_ts to reply ts (probably)
-                    json.put("replace_original", "put".equalsIgnoreCase(headers.get("HttpMethod")));
+                    json.put("thread_ts", indexes.get("slack:message_ts"));
+                    json.put("reply_broadcast", true);
                     String altText = null;
                     if (note.getContent().length() > 200)
                         altText = note.getContent().substring(0, 197) + "...";
                     json.put("text", altText == null ? note.getContent() : altText);
+                    json.put("channel", "C85DLE1U7"); // TODO
+                    json.put("as_user", false);
                     try {
-                        HttpHelper helper = new HttpHelper(new URL(slackResponseUrl));
+                        HttpHelper helper = new HttpHelper(new URL("https://slack.com/api/chat.postMessage"));
+                        Map<String,String> hdrs = new HashMap<>();
+                        hdrs.put("Authorization", "Bearer " + System.getenv("MDW_SLACK_AUTH_TOKEN"));
+                        hdrs.put("Content-Type", "application/json; charset=utf-8");
+                        helper.setHeaders(hdrs);
                         String response = helper.post(json.toString());
-                        if (helper.getResponseCode() != 200)
-                            throw new IOException("Slack notification failed with response:" + response);
+                        JSONObject responseJson = new JSONObject(response);
+                        if (!responseJson.getBoolean("ok"))
+                            throw new IOException("Slack notification failed with response:" + responseJson);
                     }
                     catch (IOException ex) {
                         throw new ServiceException(ex.getMessage(), ex);
@@ -74,11 +77,6 @@ public class MessageMonitor implements ServiceMonitor {
             }
         }
         return null;
-    }
-
-    // TODO
-    public String getWebhookUrl() {
-        return "https://hooks.slack.com/services/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";
     }
 
     @Override
