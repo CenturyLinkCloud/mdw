@@ -151,7 +151,7 @@ war {
         include "META-INF/services/**" 
     }
     from("dist") {
-        exclude "hub-ui/" // exclude module-dist
+        include "**/*"
     }
     from("../mdw-common/src") {
         include "META-INF/mdw/spring/*"
@@ -206,7 +206,7 @@ task springBootJar(type: Jar) {
 
     into("web") {
         from "dist"
-        exclude "hub-ui/" // exclude module-dist
+        include "**/*"
     }
 
     from configurations.springBootLoader.asFileTree.files.collect {

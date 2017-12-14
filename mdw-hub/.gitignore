@@ -4,7 +4,4 @@ node_modules/
 dist/
 .tmp/
 .grunt
-hub-ui*.tgz
-hub-ui.css
-hub-ui.js
 /bin/

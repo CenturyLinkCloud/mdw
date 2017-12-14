@@ -4,9 +4,6 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
 
-  var webpack = require("webpack");
-  var path = require('path');
-  
   grunt.config.init({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
@@ -106,13 +103,6 @@ module.exports = function(grunt) {
         }]
       }
     },
-    ngtemplates: {
-      'mdw': {
-        cwd: 'web',
-        src: 'ui/**/*.html',
-        dest: 'dist/hub-ui/templates.js'
-      }      
-    },
     concat: {
       options: {
         banner: "'use strict';\r\n",
@@ -120,44 +110,6 @@ module.exports = function(grunt) {
           return '// source: ' + filepath + '\r\n' +
             src.replace(/(^|\r\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
           }
-      },
-      'hub-ui': {
-        src: ['web/lib/hub-ui.js', 'web/js/ui/**/*.js', 'web/js/mdw.js', 'web/js/util.js', 'web/js/constants.js', 'dist/hub-ui/templates.js'],
-        dest: 'dist/hub-ui/src.js'
-      }
-    },
-    cssmin: {
-      'hub-ui': {
-        files: {
-          'hub-ui.css': ['web/css/mdw-admin.css']
-        }
-      }
-    },
-    webpack: {
-      'hub-ui': {
-        entry: './dist/hub-ui/src.js',
-        output: {
-          path: __dirname + '/',
-          filename: 'hub-ui.js'
-        },
-        plugins: [
-          // new webpack.optimize.UglifyJsPlugin({minimize: true})
-        ]
-      }
-    },
-    jasmine: {
-      src: 'web/js/**/*.js',
-      options: {
-          specs: 'test/**/*.js',
-          vendor: [
-            'web/bower_components/angular/angular.js',
-            'web/bower_components/angular-resource/angular-resource.js',
-            'web/bower_components/angular-route/angular-route.js',
-            'web/bower_components/angular-animate/angular-animate.js',
-            'web/bower_components/angular-bootstrap/ui-bootstrap.js',
-            'web/lib/ng-infinite-scroll-1.2.0.js',
-            'web/bower_components/angular-mocks/angular-mocks.js'
-          ]          
       }
     },
     eslint: {
@@ -173,9 +125,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('default', ['jshint', 'eslint', 'string-replace', 'copy:dist', 'ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
-  grunt.registerTask('dist', ['jshint', 'string-replace', 'copy:dist', 'ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
-  // hub-ui is just for local dev where dist has already been run -- otherwise use default or dist 
-  grunt.registerTask('hub-ui', ['ngtemplates:mdw', 'concat:hub-ui', 'cssmin:hub-ui', 'webpack:hub-ui']);
-  grunt.registerTask('test', ['jasmine']);
+  grunt.registerTask('default', ['jshint', 'eslint', 'string-replace', 'copy:dist']);
+  grunt.registerTask('dist', ['jshint', 'string-replace', 'copy:dist']);
 };

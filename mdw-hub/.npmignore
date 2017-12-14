@@ -12,4 +12,3 @@ build/
 deploy/
 web/
 dist/
-hub-ui*.tgz
