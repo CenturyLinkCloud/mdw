@@ -22,14 +22,14 @@ import java.util.List;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Attachment;
-import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.Comment;
 
 public class CollaborationDataAccess extends CommonDataAccess {
 
-    public List<Note> getNotes(String owner, Long ownerId) throws DataAccessException {
+    public List<Comment> getNotes(String owner, Long ownerId) throws DataAccessException {
         try {
             db.openConnection();
-            List<Note> notes = new ArrayList<Note>();
+            List<Comment> notes = new ArrayList<Comment>();
             String query = "select * from instance_note"
                     + " where instance_note_owner = ? and INSTANCE_NOTE_OWNER_ID = ?"
                     + " order by create_dt";
@@ -38,7 +38,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
             args[1] = ownerId;
             ResultSet rs = db.runSelect(query, args);
             while (rs.next()) {
-                Note note = new Note();
+                Comment note = new Comment();
                 note.setId(rs.getLong("instance_note_id"));
                 note.setOwnerType(rs.getString("instance_note_owner"));
                 note.setOwnerId(rs.getLong("instance_note_owner_id"));
@@ -60,14 +60,14 @@ public class CollaborationDataAccess extends CommonDataAccess {
         }
     }
 
-    public Note getNote(Long id) throws DataAccessException {
+    public Comment getNote(Long id) throws DataAccessException {
         try {
             db.openConnection();
-            Note note = null;
+            Comment note = null;
             String query = "select * from instance_note where instance_note_id = ?";
             ResultSet rs = db.runSelect(query, id);
             while (rs.next()) {
-                note = new Note();
+                note = new Comment();
                 note.setId(rs.getLong("instance_note_id"));
                 note.setOwnerType(rs.getString("instance_note_owner"));
                 note.setOwnerId(rs.getLong("instance_note_owner_id"));
@@ -123,7 +123,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
     public void deleteNote(Long id) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "delete INSTANCE_NOTE where INSTANCE_NOTE_ID=?";
+            String query = "delete from instance_note where instance_note_id = ?";
             db.runUpdate(query, id);
             db.commit();
         }

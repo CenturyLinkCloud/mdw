@@ -30,7 +30,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -51,7 +51,7 @@ public class Attachments extends JsonRestService {
     @Path("/{id}")
     @ApiOperation(value="Retrieve attachment(s)",
         notes="If id not present, includes all attachment info for the given owner type and ownerId.",
-        response=Note.class, responseContainer="List")
+        response=Comment.class, responseContainer="List")
     @ApiImplicitParams({
         @ApiImplicitParam(name="ownerType", paramType="query", required=true, dataType="string"),
         @ApiImplicitParam(name="ownerId", paramType="query", required=true, dataType="string")})

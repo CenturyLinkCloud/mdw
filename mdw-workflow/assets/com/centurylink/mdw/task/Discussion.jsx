@@ -14,7 +14,7 @@ class Discussion extends Component {
   }
   
   componentDidMount() {
-    fetch(new Request('/mdw/services/Tasks/' + this.props.task.id + '/comments', {
+    fetch(new Request('/mdw/services/Comments?ownerType=TASK_INSTANCE&ownerId=' + this.props.task.id, {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
@@ -32,6 +32,9 @@ class Discussion extends Component {
   handleAction(action, comment, content) {
     if (action === 'save') {
       this.saveComment(comment);
+    }
+    else if (action === 'delete') {
+      this.deleteComment(comment);
     }
     else {
       const comments = this.state.comments.slice(0);
@@ -77,13 +80,14 @@ class Discussion extends Component {
   }
   
   saveComment(comment) {
-    
     // remove temp values
     delete comment.editing;
     delete comment.editable;
     delete comment.originalContent;
+    comment.ownerType = 'TASK_INSTANCE';
+    comment.ownerId = this.props.task.id;
     
-    var url = '/mdw/services/Tasks/' + this.props.task.id + '/comments';
+    var url = '/mdw/services/Comments';
     if (comment.id) {
       // update existing (PUT)
       url += '/' + comment.id;
@@ -121,6 +125,35 @@ class Discussion extends Component {
     });
   }
 
+  deleteComment(comment) {
+    var url = '/mdw/services/Comments/' + comment.id;
+    var ok = false;
+    fetch(new Request(url, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        const comments = this.state.comments.slice(0);
+        const index = comments.findIndex(cmt => {
+          return cmt.id === comment.id;
+        });
+        comments.splice(index, 1);
+        this.setState({
+          comments: comments
+        });
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });
+  }
+  
   render() {
     return (
       <div>

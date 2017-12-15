@@ -24,13 +24,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -51,7 +49,7 @@ public class Comments extends JsonRestService {
     @Path("/{id}")
     @ApiOperation(value="Retrieve comment(s)",
         notes="If id not present, includes all comments for the given owner type and ownerId.",
-        response=Note.class, responseContainer="List")
+        response=Comment.class, responseContainer="List")
     @ApiImplicitParams({
         @ApiImplicitParam(name="ownerType", paramType="query", required=true, dataType="string"),
         @ApiImplicitParam(name="ownerId", paramType="query", required=true, dataType="string")})
@@ -59,7 +57,7 @@ public class Comments extends JsonRestService {
         String id = getSegment(path, 2);
         if (id != null) {
             try {
-                return ServiceLocator.getCollaborationServices().getNote(Long.parseLong(id)).getJson();
+                return ServiceLocator.getCollaborationServices().getComment(Long.parseLong(id)).getJson();
             }
             catch (NumberFormatException ex) {
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid comment id: " + id);
@@ -74,22 +72,22 @@ public class Comments extends JsonRestService {
             if (ownerId == -1)
                 throw new ServiceException("Missing parameter: ownerId");
             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
-            List<Note> comments = collabServices.getNotes(ownerType.toUpperCase(), ownerId);
+            List<Comment> comments = collabServices.getComments(ownerType.toUpperCase(), ownerId);
             JSONArray commentsJson = new JSONArray();
-            for (Note comment : comments)
-                commentsJson.put(comment);
+            for (Comment comment : comments)
+                commentsJson.put(comment.getJson());
             return new JsonArray(commentsJson).getJson();
         }
     }
 
     @Override
-    @ApiOperation(value="Create a comment", response=Note.class)
+    @ApiOperation(value="Create a comment", response=Comment.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="comment", paramType="body", required=true, dataType="com.centurylink.mdw.model.Note")})
+        @ApiImplicitParam(name="comment", paramType="body", required=true, dataType="com.centurylink.mdw.model.Comment")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        Note comment = new Note(content);
-        comment.setId(ServiceLocator.getCollaborationServices().createNote(comment));
+        Comment comment = new Comment(content);
+        comment.setId(ServiceLocator.getCollaborationServices().createComment(comment));
         headers.put(Listener.METAINFO_HTTP_STATUS_CODE, "201");
         return comment.getJson();
     }
@@ -99,11 +97,11 @@ public class Comments extends JsonRestService {
     @Path("/{id}")
     @ApiOperation(value="Update a comment", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="comment", paramType="body", required=true, dataType="com.centurylink.mdw.model.Note"),
+        @ApiImplicitParam(name="comment", paramType="body", required=true, dataType="com.centurylink.mdw.model.Comment"),
         @ApiImplicitParam(name="id", paramType="path", required=true)})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        ServiceLocator.getCollaborationServices().updateNote(new Note(content));
+        ServiceLocator.getCollaborationServices().updateComment(new Comment(content));
         return null;
     }
 
@@ -116,7 +114,7 @@ public class Comments extends JsonRestService {
         if (id == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing comment id: " + path);
         try {
-            ServiceLocator.getCollaborationServices().deleteNote(Long.parseLong(id));
+            ServiceLocator.getCollaborationServices().deleteComment(Long.parseLong(id));
             return null;
         }
         catch (NumberFormatException ex) {
@@ -133,6 +131,6 @@ public class Comments extends JsonRestService {
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
-        return Entity.Note;
+        return Entity.Comment;
     }
 }

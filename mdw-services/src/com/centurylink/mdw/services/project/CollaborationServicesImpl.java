@@ -20,7 +20,7 @@ import java.util.List;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Attachment;
-import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.service.data.CollaborationDataAccess;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
@@ -33,10 +33,10 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public List<Note> getNotes(String ownerType, Long ownerId) throws ServiceException {
+    public List<Comment> getComments(String ownerType, Long ownerId) throws ServiceException {
         try {
-          List<Note> notes = getDataAccess().getNotes(ownerType, ownerId);
-          for (Note note : notes) {
+          List<Comment> notes = getDataAccess().getNotes(ownerType, ownerId);
+          for (Comment note : notes) {
               // Populate full user name if found.  We accept non-mdw users (slack, etc)
               String creator = note.getCreateUser();
               User mdwUser = UserGroupCache.getUser(creator);
@@ -57,9 +57,9 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public Note getNote(Long id) throws ServiceException {
+    public Comment getComment(Long id) throws ServiceException {
         try {
-            Note comment = getDataAccess().getNote(id);
+            Comment comment = getDataAccess().getNote(id);
             if (comment == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Comment not found: " + id);
             return comment;
@@ -70,7 +70,7 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public Long createNote(Note note) throws ServiceException {
+    public Long createComment(Comment note) throws ServiceException {
         if (note.getCreateUser() == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing user");
         if (note.getOwnerId() == null)
@@ -88,7 +88,7 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public void updateNote(Note note) throws ServiceException {
+    public void updateComment(Comment note) throws ServiceException {
         try {
             getDataAccess().updateNote(note.getId(), note.getName(), note.getContent(), note.getModifyUser());
         }
@@ -98,7 +98,7 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public void deleteNote(Long id) throws ServiceException {
+    public void deleteComment(Long id) throws ServiceException {
         try {
             getDataAccess().deleteNote(id);
         }

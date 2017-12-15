@@ -122,10 +122,16 @@ function Comment(props) {
             </span>
           }
           {!props.comment.editing && props.editable &&
-            <Button className="mdw-btn mdw-action-btn"
-              onClick={() => props.actionHandler('edit', props.comment)}>
-              <Glyphicon glyph="pencil" />
-            </Button>
+            <span>
+              <Button className="mdw-btn mdw-action-btn"
+                onClick={() => props.actionHandler('edit', props.comment)}>
+                <Glyphicon glyph="pencil" />
+              </Button>
+              <Button className="mdw-btn mdw-action-btn"
+                onClick={() => props.actionHandler('delete', props.comment)}>
+                <Glyphicon glyph="remove" />
+              </Button>
+            </span>
           }
         </div>
       </div>

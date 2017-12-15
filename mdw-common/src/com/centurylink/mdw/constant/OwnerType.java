@@ -67,4 +67,6 @@ public interface OwnerType {
     public static final String SOLUTION = "SOLUTION";
 
     public static final String PROCESS_RUN = "PROCESS_RUN";
+
+    public static final String COMMENT = "COMMENT";
 }

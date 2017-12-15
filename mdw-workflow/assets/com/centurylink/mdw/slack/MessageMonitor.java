@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.HttpHelper;
@@ -46,7 +46,7 @@ public class MessageMonitor implements ServiceMonitor {
             Matcher matcher = PATH_PATTERN.matcher(path);
             if (matcher.matches()) {
                 Long instId = new Long(matcher.group(1));
-                Note note = new Note(new JSONObject(request.toString()));
+                Comment note = new Comment(new JSONObject(request.toString()));
                 Map<String,String> indexes = ServiceLocator.getTaskServices().getIndexes(instId);
                 String messageTs = indexes.get("slack:message_ts");
                 if (messageTs != null) {

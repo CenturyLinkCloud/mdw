@@ -20,7 +20,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-public class Note implements Serializable, Jsonable, Comparable<Note> {
+public class Comment implements Serializable, Jsonable, Comparable<Comment> {
 
     private Long id;
     public Long getId() { return id; }
@@ -61,14 +61,14 @@ public class Note implements Serializable, Jsonable, Comparable<Note> {
     public String getModifyUser() { return modifyUser; }
     public void setModifyUser(String modifyUser) { this.modifyUser = modifyUser; }
 
-    public Note() {
+    public Comment() {
     }
 
-    public Note(JSONObject json) {
+    public Comment(JSONObject json) {
         bind(json);
     }
 
-    public int compareTo(Note other) {
+    public int compareTo(Comment other) {
         return this.getModified().compareTo(other.getModified());
     }
 }
