@@ -313,7 +313,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             // master req id directory and subdirs
             List<File> dirs = new ArrayList<File>();
 
-            String rootDir = getProperty(PropertyNames.ATTACHMENTS_STORAGE_LOCATION);
+            String rootDir = getProperty(PropertyNames.MDW_ATTACHMENTS_DIR);
             if (!rootDir.endsWith("/"))
                 rootDir += "/";
             File mriDir = new File(rootDir + getMasterRequestId());

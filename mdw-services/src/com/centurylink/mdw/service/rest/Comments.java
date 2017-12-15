@@ -43,14 +43,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("/Attachments")
-@Api("Runtime attachments")
-public class Attachments extends JsonRestService {
+@Path("/Comments")
+@Api("Discussion comments")
+public class Comments extends JsonRestService {
 
     @Override
     @Path("/{id}")
-    @ApiOperation(value="Retrieve attachment(s)",
-        notes="If id not present, includes all attachment info for the given owner type and ownerId.",
+    @ApiOperation(value="Retrieve comment(s)",
+        notes="If id not present, includes all comments for the given owner type and ownerId.",
         response=Note.class, responseContainer="List")
     @ApiImplicitParams({
         @ApiImplicitParam(name="ownerType", paramType="query", required=true, dataType="string"),
@@ -59,10 +59,10 @@ public class Attachments extends JsonRestService {
         String id = getSegment(path, 2);
         if (id != null) {
             try {
-                return ServiceLocator.getCollaborationServices().getAttachment(Long.parseLong(id)).getJson();
+                return ServiceLocator.getCollaborationServices().getNote(Long.parseLong(id)).getJson();
             }
             catch (NumberFormatException ex) {
-                throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid attachment id: " + id);
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid comment id: " + id);
             }
         }
         else {
@@ -74,47 +74,53 @@ public class Attachments extends JsonRestService {
             if (ownerId == -1)
                 throw new ServiceException("Missing parameter: ownerId");
             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
-            List<Attachment> attachments = collabServices.getAttachments(ownerType.toUpperCase(), ownerId);
-            JSONArray attachmentsJson = new JSONArray();
-            for (Attachment attachment : attachments) {
-                JSONObject attachmentJson = attachment.getJson();
-                attachmentJson.put("url", ApplicationContext.getServicesUrl() + "/attach/" + attachment.getId());
-                attachmentsJson.put(attachmentJson);
-            }
-            return new JsonArray(attachmentsJson).getJson();
+            List<Note> comments = collabServices.getNotes(ownerType.toUpperCase(), ownerId);
+            JSONArray commentsJson = new JSONArray();
+            for (Note comment : comments)
+                commentsJson.put(comment);
+            return new JsonArray(commentsJson).getJson();
         }
     }
 
     @Override
-    @ApiOperation(value="Create an attachment", response=Attachment.class,
-        notes="Creates attachment info in the db. Submit to '/attach' to upload actual file.")
+    @ApiOperation(value="Create a comment", response=Note.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="comment", paramType="body", required=true, dataType="com.centurylink.mdw.model.Note")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
-        CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
-        Attachment attachment = new Attachment(content);
-        attachment.setId(collabServices.createAttachment(attachment));
-        String url = ApplicationContext.getServicesUrl() + "/attach/" + attachment.getId();
-        JSONObject json = attachment.getJson();
-        json.put("url", url);
+        Note comment = new Note(content);
+        comment.setId(ServiceLocator.getCollaborationServices().createNote(comment));
         headers.put(Listener.METAINFO_HTTP_STATUS_CODE, "201");
-        return json;
+        return comment.getJson();
+    }
+
+
+    @Override
+    @Path("/{id}")
+    @ApiOperation(value="Update a comment", response=StatusMessage.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name="comment", paramType="body", required=true, dataType="com.centurylink.mdw.model.Note"),
+        @ApiImplicitParam(name="id", paramType="path", required=true)})
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        ServiceLocator.getCollaborationServices().updateNote(new Note(content));
+        return null;
     }
 
     @Override
     @Path("/{id}")
-    @ApiOperation(value="Delete an attachment", response=StatusMessage.class,
-        notes="Deletes attachment from the db. Submit to '/attach' to delete actual file.")
+    @ApiOperation(value="Delete a comment", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
         if (id == null)
-            throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing attachment id: " + path);
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing comment id: " + path);
         try {
-            ServiceLocator.getCollaborationServices().deleteAttachment(Long.parseLong(id));
+            ServiceLocator.getCollaborationServices().deleteNote(Long.parseLong(id));
             return null;
         }
         catch (NumberFormatException ex) {
-            throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid attachment id: " + id);
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid comment id: " + id);
         }
     }
 
@@ -127,6 +133,6 @@ public class Attachments extends JsonRestService {
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
-        return Entity.Attachment;
+        return Entity.Note;
     }
 }

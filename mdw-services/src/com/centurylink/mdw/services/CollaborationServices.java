@@ -24,13 +24,15 @@ import com.centurylink.mdw.model.Note;
 public interface CollaborationServices {
 
     public List<Note> getNotes(String ownerType, Long ownerId) throws ServiceException;
+    public Note getNote(Long id) throws ServiceException;
     public Long createNote(Note note) throws ServiceException;
     public void updateNote(Note note) throws ServiceException;
-    public void deleteNote(Long id, String user) throws ServiceException;
+    public void deleteNote(Long id) throws ServiceException;
 
     public List<Attachment> getAttachments(String ownerType, Long ownerId) throws ServiceException;
+    public Attachment getAttachment(Long id) throws ServiceException;
     public Long createAttachment(Attachment attachment) throws ServiceException;
     public void updateAttachment(Attachment attachment) throws ServiceException;
-    public void deleteAttachment(Long id, String user) throws ServiceException;
+    public void deleteAttachment(Long id) throws ServiceException;
 
 }

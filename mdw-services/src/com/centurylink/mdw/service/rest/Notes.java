@@ -47,30 +47,14 @@ public class Notes extends JsonRestService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
-    public List<String> getRoles(String path) {
-        List<String> roles = super.getRoles(path);
-        roles.add(Role.PROCESS_EXECUTION);
-        return roles;
-    }
-
-    @Override
-    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
-        return Entity.Role;
-    }
-
-    @Override
     @ApiOperation(value="Retrieve instance notes",
         notes="Includes all notes for the given owner type and ownerId.",
         response=Note.class, responseContainer="List")
     @ApiImplicitParams({
-        @ApiImplicitParam(name="user", paramType="query", required=true, dataType="string"),
         @ApiImplicitParam(name="ownerType", paramType="query", required=true, dataType="string"),
         @ApiImplicitParam(name="ownerId", paramType="query", required=true, dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         Map<String,String> parameters = getParameters(headers);
-        String user = parameters.get("user");
-        if (user == null)
-            throw new ServiceException("Missing parameter: user");
         String ownerType = parameters.get("ownerType");
         if (ownerType == null)
             throw new ServiceException("Missing parameter: ownerType");
@@ -83,7 +67,6 @@ public class Notes extends JsonRestService {
             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
             List<Note> notes = collabServices.getNotes(ownerType.toUpperCase(), ownerId);
             Collections.sort(notes);
-            String name = ownerType.toLowerCase() + "Notes";
             return new JSONObject();  // TODO
         }
         catch (Exception ex) {
@@ -167,7 +150,7 @@ public class Notes extends JsonRestService {
 
         try {
             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
-            collabServices.deleteNote(Long.valueOf(noteId), getAuthUser(headers));
+            collabServices.deleteNote(Long.valueOf(noteId));
 
             if (logger.isDebugEnabled())
                 logger.debug("Deleted note id: " + noteId);
@@ -179,20 +162,25 @@ public class Notes extends JsonRestService {
         }
     }
 
-    /**
-     * @param path
-     * @param ownerId
-     * @param contentownerId
-     * @throws ServiceException
-     */
     protected void validateOwnerId(String path, String ownerId,
             long contentownerId) throws ServiceException {
         if (!(Long.valueOf(ownerId).longValue() == contentownerId)) {
             throw new ServiceException(
-                    "Url " + path + " contains a different ownerId from the content "
-                            + contentownerId);
+                    "Url " + path + " contains a different ownerId from the content " + contentownerId);
         }
-
     }
+
+    @Override
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(Role.PROCESS_EXECUTION);
+        return roles;
+    }
+
+    @Override
+    protected Entity getEntity(String path, Object content, Map<String,String> headers) {
+        return Entity.Role;
+    }
+
 
 }

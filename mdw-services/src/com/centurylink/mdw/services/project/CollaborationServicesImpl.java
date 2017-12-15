@@ -57,6 +57,19 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
+    public Note getNote(Long id) throws ServiceException {
+        try {
+            Note comment = getDataAccess().getNote(id);
+            if (comment == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Comment not found: " + id);
+            return comment;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    @Override
     public Long createNote(Note note) throws ServiceException {
         if (note.getCreateUser() == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing user");
@@ -85,7 +98,7 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public void deleteNote(Long id, String user) throws ServiceException {
+    public void deleteNote(Long id) throws ServiceException {
         try {
             getDataAccess().deleteNote(id);
         }
@@ -101,6 +114,19 @@ public class CollaborationServicesImpl implements CollaborationServices {
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Attachment getAttachment(Long id) throws ServiceException {
+        try {
+            Attachment attachment = getDataAccess().getAttachment(id);
+            if (attachment == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Attachment not found: " + id);
+            return attachment;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
@@ -127,7 +153,7 @@ public class CollaborationServicesImpl implements CollaborationServices {
     }
 
     @Override
-    public void deleteAttachment(Long id, String user) throws ServiceException {
+    public void deleteAttachment(Long id) throws ServiceException {
         try {
             getDataAccess().deleteAttachment(id);
         }

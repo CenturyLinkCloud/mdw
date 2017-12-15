@@ -83,42 +83,6 @@ import io.swagger.annotations.ApiOperation;
 public class Tasks extends JsonRestService implements JsonExportable {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    @Override
-    public List<String> getRoles(String path) {
-        List<String> roles = super.getRoles(path);
-        roles.add(Role.TASK_EXECUTION);
-        return roles;
-    }
-
-    /**
-     * @see com.centurylink.mdw.service.action.ActionService#getAuthorizedWorkGroups()
-     */
-    @Override
-    protected List<Workgroup> getRequiredWorkgroups(JSONObject content)
-            throws JSONException, DataAccessException {
-        List<Workgroup> groups = null;
-        if (content.has("workgroups")) {
-            UserServices userServices = ServiceLocator.getUserServices();
-            JSONArray workGrpsJsonArr = content.getJSONArray("workgroups");
-            if (workGrpsJsonArr != null) {
-                groups = new ArrayList<Workgroup>();
-                for (int i = 0; i < workGrpsJsonArr.length(); i++) {
-                    Workgroup workgroup = userServices.getWorkgroup(workGrpsJsonArr.getString(i));
-                    if (workgroup == null)
-                        throw new DataAccessException(
-                                "Workgroup not found: " + workGrpsJsonArr.getString(i));
-                    groups.add(workgroup);
-                }
-            }
-        }
-        return groups;
-    }
-
-    @Override
-    protected Entity getEntity(String path, Object content, Map<String, String> headers) {
-        return Entity.Task;
-    }
-
     /**
      * Retrieve a task or list of tasks, or subData for a task instance.
      */
@@ -126,7 +90,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
     @Path("/{taskInstanceId}/{subData}")
     @ApiOperation(value = "Retrieve a task instance or a page of task instances", notes = "If taskInstanceId is not present, returns a page of task instances. "
             + "If subData is not present, returns task summary info. "
-            + "Options for subData: 'values', 'indexes', 'history', 'actions', 'subtasks', 'topThroughput'", response = Value.class, responseContainer = "List")
+            + "Options for subData: 'values', 'indexes', 'history', 'actions', 'subtasks', 'comments'", response = Value.class, responseContainer = "List")
     public JSONObject get(String path, Map<String, String> headers)
             throws ServiceException, JSONException {
         TaskServices taskServices = ServiceLocator.getTaskServices();
@@ -255,16 +219,14 @@ public class Tasks extends JsonRestService implements JsonExportable {
                             return valuesJson;
                         }
                         else if (extra.equals("comments")) {
-                            taskInstance = taskServices.getInstance(instanceId);
-                            List<Note> values = ServiceLocator.getCollaborationServices().getNotes(
-                                    OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId());
+                            List<Note> notes = ServiceLocator.getCollaborationServices().getNotes(
+                                    OwnerType.TASK_INSTANCE, instanceId);
                             JSONArray notesJson = new JSONArray();
-                            for (Note note : values) {
+                            for (Note note : notes) {
                                 notesJson.put(note.getJson());
                             }
                             return new JsonArray(notesJson).getJson();
                         }
-
                         else if (extra.equals("indexes")) {
                             Map<String, String> indexes = taskServices.getIndexes(instanceId);
                             return JsonUtil.getJson(indexes);
@@ -378,12 +340,6 @@ public class Tasks extends JsonRestService implements JsonExportable {
 
                             CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
                             collabServices.createNote(note);
-                            Map<String,String> indexes = taskServices.getIndexes(taskInstanceId);
-                            String slackResponseUrl = indexes.get("slack:response_url");
-                            if (slackResponseUrl != null) {
-
-                            }
-
                             headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HTTP_201_CREATED));
                             return note.getJson();
                         }
@@ -445,7 +401,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
             @ApiImplicitParam(name = "indexes", paramType = "body", dataType = "com.centurylink.mdw.model.task.TaskIndexes", value = "When {subData}=indexes"),
             @ApiImplicitParam(name = "regEvent", paramType = "body", dataType = "com.centurylink.mdw.model.event.Event", value = "When {subData}=regEvent.  Only the id (event name) field is mandatory in Event object.  Optionally, a completionCode can specified - Default is FINISHED"),
             @ApiImplicitParam(name = "values", paramType = "body", dataType = "java.lang.Object", value = "When {subData}=values. JSON object parseable into a key/value Map.") })
-    public JSONObject put(String path, JSONObject content, Map<String, String> headers)
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String id = getSegment(path, 1);
         if (id == null)
@@ -530,6 +486,41 @@ public class Tasks extends JsonRestService implements JsonExportable {
         catch (ParseException ex) {
             throw new JSONException(ex);
         }
+    }
 
+    @Override
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(Role.TASK_EXECUTION);
+        return roles;
+    }
+
+    /**
+     * @see com.centurylink.mdw.service.action.ActionService#getAuthorizedWorkGroups()
+     */
+    @Override
+    protected List<Workgroup> getRequiredWorkgroups(JSONObject content)
+            throws JSONException, DataAccessException {
+        List<Workgroup> groups = null;
+        if (content.has("workgroups")) {
+            UserServices userServices = ServiceLocator.getUserServices();
+            JSONArray workGrpsJsonArr = content.getJSONArray("workgroups");
+            if (workGrpsJsonArr != null) {
+                groups = new ArrayList<Workgroup>();
+                for (int i = 0; i < workGrpsJsonArr.length(); i++) {
+                    Workgroup workgroup = userServices.getWorkgroup(workGrpsJsonArr.getString(i));
+                    if (workgroup == null)
+                        throw new DataAccessException(
+                                "Workgroup not found: " + workGrpsJsonArr.getString(i));
+                    groups.add(workgroup);
+                }
+            }
+        }
+        return groups;
+    }
+
+    @Override
+    protected Entity getEntity(String path, Object content, Map<String, String> headers) {
+        return Entity.Task;
     }
 }

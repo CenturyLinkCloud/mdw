@@ -30,6 +30,9 @@ public class Note implements Serializable, Jsonable, Comparable<Note> {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
+    /**
+     * May contain markdown and/or emojis.
+     */
     private String content;
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }

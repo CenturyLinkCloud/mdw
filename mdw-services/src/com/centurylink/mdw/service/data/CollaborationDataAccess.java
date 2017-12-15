@@ -30,28 +30,58 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             List<Note> notes = new ArrayList<Note>();
-            String query = "select INSTANCE_NOTE_ID,INSTANCE_NOTE_NAME,INSTANCE_NOTE_DETAILS,"
-                    + " CREATE_DT,CREATE_USR,MOD_DT,MOD_USR " + "from INSTANCE_NOTE "
-                    + "where INSTANCE_NOTE_OWNER='" + owner + "' and INSTANCE_NOTE_OWNER_ID=? "
-                    + " order by CREATE_DT";
-            ResultSet rs = db.runSelect(query, ownerId);
+            String query = "select * from instance_note"
+                    + " where instance_note_owner = ? and INSTANCE_NOTE_OWNER_ID = ?"
+                    + " order by create_dt";
+            Object[] args = new Object[2];
+            args[0] = owner;
+            args[1] = ownerId;
+            ResultSet rs = db.runSelect(query, args);
             while (rs.next()) {
                 Note note = new Note();
-                note.setId(rs.getLong(1));
-                note.setOwnerType(owner);
-                note.setOwnerId(ownerId);
-                note.setName(rs.getString(2));
-                note.setContent(rs.getString(3));
-                note.setCreated(rs.getTimestamp(4));
-                note.setCreateUser(rs.getString(5));
-                note.setModified(rs.getTimestamp(6));
-                note.setModifyUser(rs.getString(7));
+                note.setId(rs.getLong("instance_note_id"));
+                note.setOwnerType(rs.getString("instance_note_owner"));
+                note.setOwnerId(rs.getLong("instance_note_owner_id"));
+                note.setName(rs.getString("instance_note_name"));
+                note.setContent(rs.getString("instance_note_details"));
+                note.setCreated(rs.getTimestamp("create_dt"));
+                note.setCreateUser(rs.getString("create_usr"));
+                note.setModified(rs.getTimestamp("mod_dt"));
+                note.setModifyUser(rs.getString("mod_usr"));
                 notes.add(note);
             }
             return notes;
         }
         catch (Exception ex) {
             throw new DataAccessException("Failed to get notes", ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public Note getNote(Long id) throws DataAccessException {
+        try {
+            db.openConnection();
+            Note note = null;
+            String query = "select * from instance_note where instance_note_id = ?";
+            ResultSet rs = db.runSelect(query, id);
+            while (rs.next()) {
+                note = new Note();
+                note.setId(rs.getLong("instance_note_id"));
+                note.setOwnerType(rs.getString("instance_note_owner"));
+                note.setOwnerId(rs.getLong("instance_note_owner_id"));
+                note.setName(rs.getString("instance_note_name"));
+                note.setContent(rs.getString("instance_note_details"));
+                note.setCreated(rs.getTimestamp("create_dt"));
+                note.setCreateUser(rs.getString("create_usr"));
+                note.setModified(rs.getTimestamp("mod_dt"));
+                note.setModifyUser(rs.getString("mod_usr"));
+            }
+            return note;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to get note " + id, ex);
         }
         finally {
             db.closeConnection();
@@ -162,6 +192,35 @@ public class CollaborationDataAccess extends CommonDataAccess {
         }
     }
 
+    public Attachment getAttachment(Long id) throws DataAccessException {
+        try {
+            db.openConnection();
+            Attachment attachment = null;
+            String query = "select * from attachment where attachment_id=?";
+            ResultSet rs = db.runSelect(query, id);
+            if (rs.next()) {
+                attachment = new Attachment();
+                attachment.setId(rs.getLong("attachment_id"));
+                attachment.setOwnerType(rs.getString("attachment_owner_type"));
+                attachment.setOwnerId(rs.getLong("attachment_owner_id"));
+                attachment.setName(rs.getString("attachment_name"));
+                attachment.setLocation(rs.getString("attachment_location"));
+                attachment.setContentType(rs.getString("attachment_content_type"));
+                attachment.setCreated(rs.getTimestamp("create_dt"));
+                attachment.setCreateUser(rs.getString("create_usr"));
+                attachment.setModified(rs.getTimestamp("mod_dt"));
+                attachment.setModifyUser(rs.getString("mod_usr"));
+            }
+            return attachment;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException("Failed to retrieve attachment " + id, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     public Long createAttachment(String ownerType, Long ownerId,
             String name, String location, String contentType, String user)
             throws DataAccessException {
@@ -199,7 +258,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
     public void deleteAttachment(Long id) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "delete from ATTACHMENT where ATTACHMENT_ID=?";
+            String query = "delete from attachment where attachment_id = ?";
             Object[] args = new Object[1];
             args[1] = id;
             db.runUpdate(query, args);

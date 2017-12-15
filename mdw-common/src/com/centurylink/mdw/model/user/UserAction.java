@@ -66,6 +66,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Ping,
         Version,
         Collaborate,
+        Read,
         Other
     }
 
