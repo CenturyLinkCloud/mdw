@@ -291,6 +291,17 @@
 	width: 100%;
 	line-height: 20px;
 	overflow-y: hidden;
+	margin: 0;
+  padding: 10px;
+  border-top: 0;
+  border-left: 0;
+  border-bottom: 1px dashed #e0e0e0;
+  border-right: 0;  
+}
+.mdw-attach-zone {
+	font-size: 13px;
+	font-style: italic;
+	padding: 2px 10px 10px 10px;
 }
 .mdw-panel-full-width {
   width: 100%;

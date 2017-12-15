@@ -2,6 +2,7 @@ import React from '../node/node_modules/react';
 import {Button, Glyphicon, Popover, OverlayTrigger} from '../node/node_modules/react-bootstrap';
 import ReactMarkdown from '../node/node_modules/react-markdown';
 import {Emoji, Picker} from '../node/node_modules/emoji-mart';
+import Dropzone from '../node/node_modules/react-dropzone';
 import '../node/node_modules/style-loader!./emoji-mart.css';
 
 import UserDate from './UserDate.jsx';
@@ -73,6 +74,19 @@ function Comment(props) {
     height = 80;
   }
   
+  const attachments = [];
+  const handleDrop = files => {
+    files.forEach(file => {
+      console.log("DROP: " + file.name + " -> " + file);
+    });    
+  };
+  
+  let dropzone;
+  const handleFileOpen = event => {
+    dropzone.open();
+    event.preventDefault();
+  };
+  
   return (      
     <div key={props.comment.id} className="panel panel-default mdw-panel mdw-comment-panel">
       <div className="panel-heading mdw-heading">
@@ -136,9 +150,18 @@ function Comment(props) {
         </div>
       </div>
       {props.comment.editing &&
-        <textarea id={'comment-' + props.comment.id + '-textarea'} autoFocus
-          className="mdw-section" style={{height:height + 'px'}} value={props.comment.content}
-          onChange={event => props.actionHandler('update', props.comment, event.currentTarget.value)} />
+        <Dropzone className="mdw-section" style={{padding:'0'}}
+          onDrop={handleDrop} disableClick={true} ref={(dz) => { dropzone = dz; }} >
+          <textarea id={'comment-' + props.comment.id + '-textarea'} autoFocus
+            className="" style={{height:height + 'px'}} value={props.comment.content}
+            onChange={event => props.actionHandler('update', props.comment, event.currentTarget.value)} />
+          <div className="mdw-attach-zone">
+            Drag and drop attachments, or {' '} 
+            <a href="" onClick={handleFileOpen}>
+              select files
+            </a>.
+          </div>
+        </Dropzone>
       }
       {!props.comment.editing &&
         <div id={'comment-' + props.comment.id + '-section'} className="mdw-section">
