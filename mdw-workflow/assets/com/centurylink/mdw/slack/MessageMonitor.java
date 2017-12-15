@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 
@@ -37,16 +35,13 @@ import com.centurylink.mdw.util.HttpHelper;
 @RegisteredService(ServiceMonitor.class)
 public class MessageMonitor implements ServiceMonitor {
 
-    private static Pattern PATH_PATTERN = Pattern.compile("Tasks/([0-9]+)/comments(/)?([0-9]+)?.*");
-
     @Override
     public Object onRequest(Object request, Map<String,String> headers) throws ServiceException {
-        String path = headers.get("RequestPath");
-        if (path != null && request != null) {  // only POST currently (TODO: how to handle PUT, DELETE)
-            Matcher matcher = PATH_PATTERN.matcher(path);
-            if (matcher.matches()) {
-                Long instId = new Long(matcher.group(1));
-                Comment note = new Comment(new JSONObject(request.toString()));
+        // only POST currently (TODO: how to handle PUT, DELETE)
+        if ("Comments".equals(headers.get("RequestPath")) && "POST".equalsIgnoreCase(headers.get("HttpMethod"))) {
+            Comment comment = new Comment(new JSONObject(request.toString()));
+            if ("TASK_INSTANCE".equals(comment.getOwnerType())) {
+                Long instId = comment.getOwnerId();
                 Map<String,String> indexes = ServiceLocator.getTaskServices().getIndexes(instId);
                 String messageTs = indexes.get("slack:message_ts");
                 if (messageTs != null) {
@@ -54,9 +49,9 @@ public class MessageMonitor implements ServiceMonitor {
                     json.put("thread_ts", indexes.get("slack:message_ts"));
                     json.put("reply_broadcast", true);
                     String altText = null;
-                    if (note.getContent().length() > 200)
-                        altText = note.getContent().substring(0, 197) + "...";
-                    json.put("text", altText == null ? note.getContent() : altText);
+                    if (comment.getContent().length() > 200)
+                        altText = comment.getContent().substring(0, 197) + "...";
+                    json.put("text", altText == null ? comment.getContent() : altText);
                     json.put("channel", "C85DLE1U7"); // TODO
                     json.put("as_user", false);
                     try {
