@@ -1,4 +1,5 @@
 import React from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon, Popover, OverlayTrigger} from '../node/node_modules/react-bootstrap';
 import ReactMarkdown from '../node/node_modules/react-markdown';
 import {Emoji, Picker} from '../node/node_modules/emoji-mart';
@@ -7,7 +8,7 @@ import '../node/node_modules/style-loader!./emoji-mart.css';
 
 import UserDate from './UserDate.jsx';
 
-function Comment(props) {
+function Comment(props, context) {
   
   const getSegments = content => {
     const segments = [];
@@ -74,10 +75,70 @@ function Comment(props) {
     height = 80;
   }
   
-  const attachments = [];
+  const insertAttachment = attachment => {
+    const ta = document.getElementById('comment-' + props.comment.id + '-textarea');
+    var val = ta.value;
+    var urlMd = '\n[' + attachment.name + '](' + context.hubRoot + '/attach/' + attachment.location + ')';
+    if (ta.selectionStart || ta.selectionStart == '0') {
+      var start = ta.selectionStart;
+      var end = ta.selectionEnd;
+      val = val.substring(0, start) + urlMd + val.substring(end, val.length);
+    } 
+    else {
+      val += urlMd;
+    }
+    props.actionHandler('update', props.comment, val);
+    ta.focus();
+  };
+  
   const handleDrop = files => {
     files.forEach(file => {
-      console.log("DROP: " + file.name + " -> " + file);
+      const attachment = {
+        ownerType: 'COMMENT',
+        ownerId: props.comment.id,
+        name: file.name,
+        createUser: $mdwUi.authUser.cuid,
+        created: new Date().toISOString()
+      };
+      var ok = false;
+      fetch(context.serviceRoot + '/Attachments', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(attachment),
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        ok = response.ok;
+        return response.json();
+      })
+      .then(json => {
+        if (ok) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            fetch(context.hubRoot + '/attach/' + json.location, { 
+              method: 'POST',
+              body: new Int8Array(reader.result),
+              credentials: 'same-origin'
+            })
+            .then(response => {
+              ok = response.ok;
+              if (ok) {
+                // update markdown
+                insertAttachment(json);
+              }
+              else {
+                $mdwUi.showMessage('Failed upload: ' + response.status);
+              }
+            });
+          };
+          reader.onabort = () => console.log('File read was aborted: ' + file.name); // eslint-disable-line no-console
+          reader.onerror = () => console.log('File read failed: ' + file.name); // eslint-disable-line no-console
+          reader.readAsArrayBuffer(file);      
+        }
+        else {
+          $mdwUi.showMessage(json.status.message);
+        }
+      });
     });    
   };
   
@@ -87,7 +148,7 @@ function Comment(props) {
     event.preventDefault();
   };
   
-  return (      
+  return (
     <div key={props.comment.id} className="panel panel-default mdw-panel mdw-comment-panel">
       <div className="panel-heading mdw-heading">
           <div className="mdw-heading-label">
@@ -185,5 +246,10 @@ function Comment(props) {
     </div>
   );
 }
+
+Comment.contextTypes = {
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string
+};
 
 export default Comment;

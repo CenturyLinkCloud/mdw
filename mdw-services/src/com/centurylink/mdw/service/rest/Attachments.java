@@ -78,7 +78,7 @@ public class Attachments extends JsonRestService {
             JSONArray attachmentsJson = new JSONArray();
             for (Attachment attachment : attachments) {
                 JSONObject attachmentJson = attachment.getJson();
-                attachmentJson.put("url", ApplicationContext.getServicesUrl() + "/attach/" + attachment.getId());
+                attachmentJson.put("url", ApplicationContext.getMdwHubUrl() + "/attach/" + attachment.getLocation());
                 attachmentsJson.put(attachmentJson);
             }
             return new JsonArray(attachmentsJson).getJson();
@@ -93,9 +93,8 @@ public class Attachments extends JsonRestService {
         CollaborationServices collabServices = ServiceLocator.getCollaborationServices();
         Attachment attachment = new Attachment(content);
         attachment.setId(collabServices.createAttachment(attachment));
-        String url = ApplicationContext.getServicesUrl() + "/attach/" + attachment.getId();
         JSONObject json = attachment.getJson();
-        json.put("url", url);
+        json.put("url", ApplicationContext.getMdwHubUrl() + "/attach/" + attachment.getLocation());
         headers.put(Listener.METAINFO_HTTP_STATUS_CODE, "201");
         return json;
     }

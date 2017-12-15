@@ -506,7 +506,18 @@ public class ApplicationContext {
         String tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
         if (tempDir == null)
             tempDir = "mdw/.temp";
+        else if (tempDir.endsWith("/"))
+            tempDir = tempDir.substring(0, tempDir.length() - 1);
         return tempDir;
+    }
+
+    public static String getAttachmentsDirectory() {
+        String attachDir = PropertyManager.getProperty(PropertyNames.MDW_ATTACHMENTS_DIR);
+        if (attachDir == null)
+            attachDir = "mdw/attachments";
+        else if (attachDir.endsWith("/"))
+            attachDir = attachDir.substring(0, attachDir.length() - 1);
+        return attachDir;
     }
 
     public static String getRuntimeEnvironment() {

@@ -84,7 +84,7 @@ public class PropertyNames {
     public static final String MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP = "mdw.internal.event.consume.retry.sleep";
     public static final String MDW_INTERNAL_EVENT_DEV_CLEANUP = "mdw.internal.event.dev.cleanup";
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
-    public static final String MDW_ATTACHMENTS_DIR = "mdw.attachments.storage.loc";
+    public static final String MDW_ATTACHMENTS_DIR = "mdw.attachments.dir";
 
     public static final String APPLICATION_NAME = "mdw.application.name";
     public static final String MDW_WAR_NAME = "mdw.war.name";

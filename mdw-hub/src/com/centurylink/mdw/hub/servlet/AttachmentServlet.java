@@ -32,8 +32,6 @@ import javax.servlet.http.HttpSession;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
@@ -58,9 +56,7 @@ public class AttachmentServlet extends HttpServlet {
     private File attachmentsRoot;
 
     public void init() throws ServletException {
-        String attachDir = PropertyManager.getProperty(PropertyNames.MDW_ATTACHMENTS_DIR);
-        if (attachDir != null)
-            attachmentsRoot = new File(attachDir);
+        attachmentsRoot = new File(ApplicationContext.getAttachmentsDirectory());
     }
 
     @Override
@@ -69,14 +65,15 @@ public class AttachmentServlet extends HttpServlet {
         String path = request.getPathInfo().substring(1);
         try {
             authorize(request.getSession(), Action.Read, Entity.Attachment, path);
-            Attachment attachment = ServiceLocator.getCollaborationServices().getAttachment(Long.parseLong(path));
-            File attachmentFile = new File(attachmentsRoot + "/" + attachment.getLocation());
-            if ("true".equalsIgnoreCase(request.getParameter("download"))) {
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + attachmentFile.getName() + "\"");
-                response.setContentType("application/octet-stream");
+            File attachmentFile = new File(attachmentsRoot + "/" + path);
+            if (!attachmentFile.isFile())
+                throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
+            if (request.getHeader("Accept") != null) {
+                response.setContentType(request.getHeader("Accept"));
             }
             else {
-                response.setContentType(attachment.getContentType());
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + attachmentFile.getName() + "\"");
+                response.setContentType("application/octet-stream");
             }
             try (InputStream in = new FileInputStream(attachmentFile)) {
                 OutputStream out = response.getOutputStream();
@@ -105,8 +102,9 @@ public class AttachmentServlet extends HttpServlet {
         String path = request.getPathInfo().substring(1);
         try {
             authorize(request.getSession(), Action.Create, Entity.Attachment, path);
-            Attachment attachment = ServiceLocator.getCollaborationServices().getAttachment(Long.parseLong(path));
-            File attachmentFile = new File(attachmentsRoot + "/" + attachment.getLocation());
+            File attachmentFile = new File(attachmentsRoot + "/" + path);
+            if (!attachmentFile.getParentFile().exists() && !attachmentFile.getParentFile().mkdirs())
+                throw new IOException("Unable to create directory: " + attachmentFile.getParentFile().getAbsolutePath());
             try (OutputStream out = new FileOutputStream(attachmentFile)) {
                 InputStream in = request.getInputStream();
                 int read = 0;

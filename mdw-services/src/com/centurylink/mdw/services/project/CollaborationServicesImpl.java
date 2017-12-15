@@ -133,6 +133,7 @@ public class CollaborationServicesImpl implements CollaborationServices {
     @Override
     public Long createAttachment(Attachment attachment) throws ServiceException {
         try {
+            attachment.setLocation(attachment.getOwnerType().toLowerCase() + "/" + attachment.getOwnerId() + "/" + attachment.getName());
             return getDataAccess().createAttachment(attachment.getOwnerType(),
                     attachment.getOwnerId(), attachment.getName(), attachment.getLocation(),
                     attachment.getContentType(), attachment.getCreateUser());
@@ -145,7 +146,8 @@ public class CollaborationServicesImpl implements CollaborationServices {
     @Override
     public void updateAttachment(Attachment attachment) throws ServiceException {
         try {
-            getDataAccess().updateAttachment(attachment.getId(), attachment.getLocation(), attachment.getModifyUser());
+            attachment.setLocation(attachment.getOwnerType().toLowerCase() + "/" + attachment.getOwnerId() + "/" + attachment.getName());
+            getDataAccess().updateAttachment(attachment.getId(), attachment.getModifyUser());
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);

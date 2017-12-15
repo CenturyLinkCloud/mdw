@@ -171,7 +171,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
             while (rs.next()) {
                 Attachment attachment = new Attachment();
                 attachment.setId(rs.getLong("attachment_id"));
-                attachment.setOwnerType(rs.getString("attachment_owner_type"));
+                attachment.setOwnerType(rs.getString("attachment_owner"));
                 attachment.setOwnerId(rs.getLong("attachment_owner_id"));
                 attachment.setName(rs.getString("attachment_name"));
                 attachment.setLocation(rs.getString("attachment_location"));
@@ -201,7 +201,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
             if (rs.next()) {
                 attachment = new Attachment();
                 attachment.setId(rs.getLong("attachment_id"));
-                attachment.setOwnerType(rs.getString("attachment_owner_type"));
+                attachment.setOwnerType(rs.getString("attachment_owner"));
                 attachment.setOwnerId(rs.getLong("attachment_owner_id"));
                 attachment.setName(rs.getString("attachment_name"));
                 attachment.setLocation(rs.getString("attachment_location"));
@@ -227,10 +227,10 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             Long id = db.isMySQL() ? null : this.getNextId("ATTACHMENT_ID_SEQ");
-            String query = "insert into ATTACHMENT "
-                    + "(ATTACHMENT_ID,ATTACHMENT_OWNER,ATTACHMENT_OWNER_ID,"
-                    + " ATTACHMENT_NAME,ATTACHMENT_LOCATION,ATTACHMENT_CONTENT_TYPE,"
-                    + " CREATE_DT,CREATE_USR) " + "values (?,?,?,?,?,?,?," + now() + ",?)";
+            String query = "insert into attachment"
+                    + " (attachment_id, attachment_owner, attachment_owner_id,"
+                    + " attachment_name, attachment_location, attachment_content_type,"
+                    + " create_dt, create_usr) " + "values (?,?,?,?,?,?," + now() + ",?)";
             Object[] args = new Object[7];
             args[0] = id;
             args[1] = ownerType;
@@ -273,16 +273,15 @@ public class CollaborationDataAccess extends CommonDataAccess {
         }
     }
 
-    public void updateAttachment(Long id, String location, String user)
+    public void updateAttachment(Long id, String user)
             throws DataAccessException {
         try {
             db.openConnection();
-            String query = "update ATTACHMENT " + "set ATTACHMENT_LOCATION=?,MOD_DT=" + now()
-                    + ",MOD_USR=? " + "where ATTACHMENT_ID=?";
-            Object[] args = new Object[3];
-            args[0] = location;
-            args[1] = user;
-            args[2] = id;
+            String query = "update attachment set mod_dt=" + now()
+                    + ", mod_usr= ? where attachment_id = ?";
+            Object[] args = new Object[2];
+            args[0] = user;
+            args[1] = id;
             db.runUpdate(query, args);
             db.commit();
         }
