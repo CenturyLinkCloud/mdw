@@ -76,7 +76,7 @@ function Comment(props, context) {
   }
   
   const insertAttachment = attachment => {
-    const ta = document.getElementById('comment-' + props.comment.id + '-textarea');
+    const ta = document.getElementById('comment-' + attachment.ownerId + '-textarea');
     var val = ta.value;
     var urlMd = '\n[' + attachment.name + '](' + context.hubRoot + '/attach/' + attachment.location + ')';
     if (ta.selectionStart || ta.selectionStart == '0') {
@@ -91,55 +91,69 @@ function Comment(props, context) {
     ta.focus();
   };
   
+  const uploadAttachment = file => {
+    const attachment = {
+      ownerType: 'COMMENT',
+      ownerId: props.comment.id,
+      name: file.name,
+      createUser: $mdwUi.authUser.cuid,
+      created: new Date().toISOString()
+    };
+    var ok = false;
+    fetch(context.serviceRoot + '/Attachments', { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(attachment),
+      credentials: 'same-origin'
+    })
+    .then(response => {
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          fetch(context.hubRoot + '/attach/' + json.location, { 
+            method: 'POST',
+            body: new Int8Array(reader.result),
+            credentials: 'same-origin'
+          })
+          .then(response => {
+            ok = response.ok;
+            if (ok) {
+              // update markdown
+              insertAttachment(json);
+            }
+            else {
+              $mdwUi.showMessage('Failed upload: ' + response.status);
+            }
+          });
+        };
+        reader.onabort = () => console.log('File read was aborted: ' + file.name); // eslint-disable-line no-console
+        reader.onerror = () => console.log('File read failed: ' + file.name); // eslint-disable-line no-console
+        reader.readAsArrayBuffer(file);
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });
+  };
+  
   const handleDrop = files => {
-    files.forEach(file => {
-      const attachment = {
-        ownerType: 'COMMENT',
-        ownerId: props.comment.id,
-        name: file.name,
-        createUser: $mdwUi.authUser.cuid,
-        created: new Date().toISOString()
-      };
-      var ok = false;
-      fetch(context.serviceRoot + '/Attachments', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(attachment),
-        credentials: 'same-origin'
-      })
-      .then(response => {
-        ok = response.ok;
-        return response.json();
-      })
-      .then(json => {
-        if (ok) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            fetch(context.hubRoot + '/attach/' + json.location, { 
-              method: 'POST',
-              body: new Int8Array(reader.result),
-              credentials: 'same-origin'
-            })
-            .then(response => {
-              ok = response.ok;
-              if (ok) {
-                // update markdown
-                insertAttachment(json);
-              }
-              else {
-                $mdwUi.showMessage('Failed upload: ' + response.status);
-              }
-            });
-          };
-          reader.onabort = () => console.log('File read was aborted: ' + file.name); // eslint-disable-line no-console
-          reader.onerror = () => console.log('File read failed: ' + file.name); // eslint-disable-line no-console
-          reader.readAsArrayBuffer(file);      
-        }
-        else {
-          $mdwUi.showMessage(json.status.message);
-        }
+    if (!props.comment.id) {
+      // save comment first
+      props.actionHandler('save', props.comment, () => {
+        files.forEach(file => {
+          uploadAttachment(file);
+        });
       });
-    });    
+    }
+    else {
+      files.forEach(file => {
+        uploadAttachment(file);
+      });
+    }
   };
   
   let dropzone;

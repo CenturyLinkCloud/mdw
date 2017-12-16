@@ -32,7 +32,7 @@ class Discussion extends Component {
   
   handleAction(action, comment, content) {
     if (action === 'save') {
-      this.saveComment(comment);
+      this.saveComment(comment, content /*actually a callback*/);
     }
     else if (action === 'delete') {
       this.deleteComment(comment);
@@ -51,7 +51,7 @@ class Discussion extends Component {
           }
         }
         else {
-          comments.splice(0, 1);
+          comments.splice(comments.length - 1, 1);
         }
         comment.editing = false;
       }
@@ -80,10 +80,12 @@ class Discussion extends Component {
     this.setState({comments: comments});
   }
   
-  saveComment(comment) {
+  saveComment(comment, callback) {
     // remove temp values
-    delete comment.editing;
-    delete comment.editable;
+    if (!callback) {
+      delete comment.editing;
+      delete comment.editable;
+    }
     delete comment.originalContent;
     comment.ownerType = 'TASK_INSTANCE';
     comment.ownerId = this.props.task.id;
@@ -115,6 +117,9 @@ class Discussion extends Component {
       if (ok) {
         if (!comment.id) {
           comment.id = json.id;
+        }
+        if (callback) {
+          callback();
         }
         this.setState({
           comments: this.state.comments
