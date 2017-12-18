@@ -24,6 +24,7 @@
     "$mdwServicesRoot": false,
     "$mdwWebSocketUrl": false,
     "require": false,
-    "location": true
+    "location": true,
+    "Int8Array": false
   }
 }

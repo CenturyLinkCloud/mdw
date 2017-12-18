@@ -1,4 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import Comment from '../react/Comment.jsx';
 import Heading from './Heading.jsx';
@@ -14,7 +15,7 @@ class Discussion extends Component {
   }
   
   componentDidMount() {
-    fetch(new Request('/mdw/services/Tasks/' + this.props.task.id + '/comments', {
+    fetch(new Request(this.context.serviceRoot + '/Comments?ownerType=TASK_INSTANCE&ownerId=' + this.props.task.id, {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
@@ -31,7 +32,10 @@ class Discussion extends Component {
   
   handleAction(action, comment, content) {
     if (action === 'save') {
-      this.saveComment(comment);
+      this.saveComment(comment, content /*actually a callback*/);
+    }
+    else if (action === 'delete') {
+      this.deleteComment(comment);
     }
     else {
       const comments = this.state.comments.slice(0);
@@ -47,7 +51,7 @@ class Discussion extends Component {
           }
         }
         else {
-          comments.splice(0, 1);
+          comments.splice(comments.length - 1, 1);
         }
         comment.editing = false;
       }
@@ -76,14 +80,17 @@ class Discussion extends Component {
     this.setState({comments: comments});
   }
   
-  saveComment(comment) {
-    
+  saveComment(comment, callback) {
     // remove temp values
-    delete comment.editing;
-    delete comment.editable;
+    if (!callback) {
+      delete comment.editing;
+      delete comment.editable;
+    }
     delete comment.originalContent;
+    comment.ownerType = 'TASK_INSTANCE';
+    comment.ownerId = this.props.task.id;
     
-    var url = '/mdw/services/Tasks/' + this.props.task.id + '/comments';
+    var url = this.context.serviceRoot + '/Comments';
     if (comment.id) {
       // update existing (PUT)
       url += '/' + comment.id;
@@ -111,6 +118,9 @@ class Discussion extends Component {
         if (!comment.id) {
           comment.id = json.id;
         }
+        if (callback) {
+          callback();
+        }
         this.setState({
           comments: this.state.comments
         });
@@ -121,6 +131,35 @@ class Discussion extends Component {
     });
   }
 
+  deleteComment(comment) {
+    var url = this.context.serviceRoot + '/Comments/' + comment.id;
+    var ok = false;
+    fetch(new Request(url, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        const comments = this.state.comments.slice(0);
+        const index = comments.findIndex(cmt => {
+          return cmt.id === comment.id;
+        });
+        comments.splice(index, 1);
+        this.setState({
+          comments: comments
+        });
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });
+  }
+  
   render() {
     return (
       <div>
@@ -145,5 +184,10 @@ class Discussion extends Component {
     );
   }
 }
+
+Discussion.contextTypes = {
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string  
+};
 
 export default Discussion;

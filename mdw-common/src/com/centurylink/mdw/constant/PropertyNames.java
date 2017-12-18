@@ -84,13 +84,13 @@ public class PropertyNames {
     public static final String MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP = "mdw.internal.event.consume.retry.sleep";
     public static final String MDW_INTERNAL_EVENT_DEV_CLEANUP = "mdw.internal.event.dev.cleanup";
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
+    public static final String MDW_ATTACHMENTS_DIR = "mdw.attachments.dir";
 
     public static final String APPLICATION_NAME = "mdw.application.name";
     public static final String MDW_WAR_NAME = "mdw.war.name";
     public static final String MDW_WEB_URL = "mdw.web.url";
     public static final String MDW_SERVICES_URL = "mdw.services.url";
     public static final String ACTIVITY_RESUME_DELAY = "mdw.activity.resume.delay";
-    public static final String ATTACHMENTS_STORAGE_LOCATION = "mdw.attachments.storage.loc";
     public static final String TASK_NOTICE_EMAIL_FROM = "mdw.task.notice.email.from";
     public static final String MDW_DYNAMIC_JAVA_COMPILE_OPTIONS = "mdw.dynamic.java.compile.options";
     public static final String TASK_RESUME_NOTIFY_ENDPOINT = "mdw.task.resume.notify.endpoint";

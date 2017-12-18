@@ -1,12 +1,14 @@
 import React from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Button, Glyphicon, Popover, OverlayTrigger} from '../node/node_modules/react-bootstrap';
 import ReactMarkdown from '../node/node_modules/react-markdown';
 import {Emoji, Picker} from '../node/node_modules/emoji-mart';
+import Dropzone from '../node/node_modules/react-dropzone';
 import '../node/node_modules/style-loader!./emoji-mart.css';
 
 import UserDate from './UserDate.jsx';
 
-function Comment(props) {
+function Comment(props, context) {
   
   const getSegments = content => {
     const segments = [];
@@ -73,7 +75,99 @@ function Comment(props) {
     height = 80;
   }
   
-  return (      
+  const insertAttachment = attachment => {
+    const ta = document.getElementById('comment-' + attachment.ownerId + '-textarea');
+    var val = ta.value;
+    var urlMd = '\n[' + attachment.name + '](' + context.hubRoot + '/attach/' + attachment.location + ')';
+    if (ta.selectionStart || ta.selectionStart == '0') {
+      var start = ta.selectionStart;
+      var end = ta.selectionEnd;
+      val = val.substring(0, start) + urlMd + val.substring(end, val.length);
+    } 
+    else {
+      val += urlMd;
+    }
+    props.actionHandler('update', props.comment, val);
+    ta.focus();
+  };
+  
+  const uploadAttachment = file => {
+    const attachment = {
+      ownerType: 'COMMENT',
+      ownerId: props.comment.id,
+      name: file.name,
+      createUser: $mdwUi.authUser.cuid,
+      created: new Date().toISOString()
+    };
+    var ok = false;
+    const loadingImg = document.getElementById('attachment-loading-img');
+    loadingImg.style.visibility = 'visible';
+    fetch(context.serviceRoot + '/Attachments', { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(attachment),
+      credentials: 'same-origin'
+    })
+    .then(response => {
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          fetch(context.hubRoot + '/attach/' + json.location, { 
+            method: 'POST',
+            body: new Int8Array(reader.result),
+            credentials: 'same-origin'
+          })
+          .then(response => {
+            ok = response.ok;
+            if (ok) {
+              // update markdown
+              insertAttachment(json);
+              loadingImg.style.visibility = 'hidden';
+            }
+            else {
+              $mdwUi.showMessage('Failed upload: ' + response.status);
+              loadingImg.style.visibility = 'hidden';
+            }
+          });
+        };
+        reader.onabort = () => loadingImg.style.visibility = 'hidden';
+        reader.onerror = () => loadingImg.style.visibility = 'hidden';
+        reader.readAsArrayBuffer(file);
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+        loadingImg.style.visibility = 'hidden';
+      }
+    });
+  };
+  
+  const handleDrop = files => {
+    if (!props.comment.id) {
+      // save comment first
+      props.actionHandler('save', props.comment, () => {
+        files.forEach(file => {
+          uploadAttachment(file);
+        });
+      });
+    }
+    else {
+      files.forEach(file => {
+        uploadAttachment(file);
+      });
+    }
+  };
+  
+  let dropzone;
+  const handleFileOpen = event => {
+    dropzone.open();
+    event.preventDefault();
+  };
+  
+  return (
     <div key={props.comment.id} className="panel panel-default mdw-panel mdw-comment-panel">
       <div className="panel-heading mdw-heading">
           <div className="mdw-heading-label">
@@ -122,17 +216,34 @@ function Comment(props) {
             </span>
           }
           {!props.comment.editing && props.editable &&
-            <Button className="mdw-btn mdw-action-btn"
-              onClick={() => props.actionHandler('edit', props.comment)}>
-              <Glyphicon glyph="pencil" />
-            </Button>
+            <span>
+              <Button className="mdw-btn mdw-action-btn"
+                onClick={() => props.actionHandler('edit', props.comment)}>
+                <Glyphicon glyph="pencil" />
+              </Button>
+              <Button className="mdw-btn mdw-action-btn"
+                onClick={() => props.actionHandler('delete', props.comment)}>
+                <Glyphicon glyph="remove" />
+              </Button>
+            </span>
           }
         </div>
       </div>
       {props.comment.editing &&
-        <textarea id={'comment-' + props.comment.id + '-textarea'} autoFocus
-          className="mdw-section" style={{height:height + 'px'}} value={props.comment.content}
-          onChange={event => props.actionHandler('update', props.comment, event.currentTarget.value)} />
+        <Dropzone className="mdw-section" style={{padding:'0'}}
+          onDrop={handleDrop} disableClick={true} ref={(dz) => { dropzone = dz; }} >
+          <textarea id={'comment-' + props.comment.id + '-textarea'} autoFocus
+            className="" style={{height:height + 'px'}} value={props.comment.content}
+            onChange={event => props.actionHandler('update', props.comment, event.currentTarget.value)} />
+          <div className="mdw-attach-zone">
+            Drag and drop attachments, or {' '} 
+            <a href="" onClick={handleFileOpen}>
+              select files
+            </a>.
+            <img id="attachment-loading-img" src={context.hubRoot + '/images/loading.gif'} alt="loading..." 
+              style={{visibility:'hidden'}}></img>
+          </div>
+        </Dropzone>
       }
       {!props.comment.editing &&
         <div id={'comment-' + props.comment.id + '-section'} className="mdw-section">
@@ -156,5 +267,10 @@ function Comment(props) {
     </div>
   );
 }
+
+Comment.contextTypes = {
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string
+};
 
 export default Comment;

@@ -77,5 +77,26 @@ var $mdwUi = {
    },
    clearMessage: function() {
      document.getElementById('mdwMainMessages').innerHTML = '';
-   }
+   },
+   hubLoading: function(loading) {
+     setTimeout(function() {
+       var logo, load;
+       if (loading) {
+         logo = document.getElementById('hub_logo');
+         if (logo)
+           logo.style.display = 'none';
+         load = document.getElementById('hub_loading');
+         if (load)
+           load.style.display = 'inline';
+       }
+       else {
+         load = document.getElementById('hub_loading');
+         if (load)
+           load.style.display = 'none';
+         logo = document.getElementById('hub_logo');
+         if (logo)
+           logo.style.display = 'inline';
+       }
+     }, 0);
+   }   
 };

@@ -31,11 +31,11 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.email.ProcessEmailModel;
@@ -313,10 +313,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             // master req id directory and subdirs
             List<File> dirs = new ArrayList<File>();
 
-            String rootDir = getProperty(PropertyNames.ATTACHMENTS_STORAGE_LOCATION);
-            if (!rootDir.endsWith("/"))
-                rootDir += "/";
-            File mriDir = new File(rootDir + getMasterRequestId());
+            File mriDir = new File(ApplicationContext.getAttachmentsDirectory() + getMasterRequestId());
             if (mriDir.exists() && mriDir.isDirectory()) {
                 dirs.add(mriDir);
                 for (File subFile : mriDir.listFiles()) {

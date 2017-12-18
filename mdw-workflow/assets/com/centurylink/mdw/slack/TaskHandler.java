@@ -28,7 +28,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.Note;
+import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.user.User;
@@ -99,14 +99,14 @@ public class TaskHandler implements ActionHandler, EventHandler {
                 }
                 try {
                     taskServices.updateIndexes(instanceId, indexes);
-                    Note comment = new Note();
+                    Comment comment = new Comment();
                     comment.setCreated(Date.from(Instant.now()));
                     comment.setCreateUser("mdw");
                     comment.setContent(messageText);
                     comment.setOwnerType(OwnerType.TASK_INSTANCE);
                     comment.setOwnerId(instanceId);
                     comment.setName("slack_message");
-                    ServiceLocator.getCollaborationServices().createNote(comment);
+                    ServiceLocator.getCollaborationServices().createComment(comment);
                 }
                 catch(Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
@@ -170,7 +170,7 @@ public class TaskHandler implements ActionHandler, EventHandler {
                     List<TaskInstance> instances = taskServices.getTasks(query).getTasks();
                     for (TaskInstance instance : instances) {
                         // add a corresponding note
-                        Note comment = new Note();
+                        Comment comment = new Comment();
                         comment.setCreated(Date.from(Instant.now()));
                         // TODO: lookup (or cache) users
                         comment.setCreateUser(event.getUser().equals("U4V5SG5PU") ? "Donald Oakes" : event.getUser());
@@ -178,7 +178,7 @@ public class TaskHandler implements ActionHandler, EventHandler {
                         comment.setOwnerType(OwnerType.TASK_INSTANCE);
                         comment.setOwnerId(instance.getTaskInstanceId());
                         comment.setName("slack_message");
-                        ServiceLocator.getCollaborationServices().createNote(comment);
+                        ServiceLocator.getCollaborationServices().createComment(comment);
                     }
                 }
                 catch (Exception ex) {
