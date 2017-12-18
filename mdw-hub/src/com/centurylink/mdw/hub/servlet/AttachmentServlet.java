@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -68,13 +69,15 @@ public class AttachmentServlet extends HttpServlet {
             File attachmentFile = new File(attachmentsRoot + "/" + path);
             if (!attachmentFile.isFile())
                 throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
-            if (request.getHeader("Accept") != null) {
-                response.setContentType(request.getHeader("Accept"));
-            }
-            else {
-                response.setHeader("Content-Disposition", "attachment;filename=\"" + attachmentFile.getName() + "\"");
+            String contentType = Files.probeContentType(attachmentFile.toPath());
+            if (contentType == null) {
                 response.setContentType("application/octet-stream");
             }
+            else {
+                response.setContentType(contentType);
+            }
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + attachmentFile.getName() + "\"");
+
             try (InputStream in = new FileInputStream(attachmentFile)) {
                 OutputStream out = response.getOutputStream();
                 int read = 0;

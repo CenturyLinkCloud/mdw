@@ -100,6 +100,8 @@ function Comment(props, context) {
       created: new Date().toISOString()
     };
     var ok = false;
+    const loadingImg = document.getElementById('attachment-loading-img');
+    loadingImg.style.visibility = 'visible';
     fetch(context.serviceRoot + '/Attachments', { 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -124,18 +126,21 @@ function Comment(props, context) {
             if (ok) {
               // update markdown
               insertAttachment(json);
+              loadingImg.style.visibility = 'hidden';
             }
             else {
               $mdwUi.showMessage('Failed upload: ' + response.status);
+              loadingImg.style.visibility = 'hidden';
             }
           });
         };
-        reader.onabort = () => console.log('File read was aborted: ' + file.name); // eslint-disable-line no-console
-        reader.onerror = () => console.log('File read failed: ' + file.name); // eslint-disable-line no-console
+        reader.onabort = () => loadingImg.style.visibility = 'hidden';
+        reader.onerror = () => loadingImg.style.visibility = 'hidden';
         reader.readAsArrayBuffer(file);
       }
       else {
         $mdwUi.showMessage(json.status.message);
+        loadingImg.style.visibility = 'hidden';
       }
     });
   };
@@ -235,6 +240,8 @@ function Comment(props, context) {
             <a href="" onClick={handleFileOpen}>
               select files
             </a>.
+            <img id="attachment-loading-img" src={context.hubRoot + '/images/loading.gif'} alt="loading..." 
+              style={{visibility:'hidden'}}></img>
           </div>
         </Dropzone>
       }
