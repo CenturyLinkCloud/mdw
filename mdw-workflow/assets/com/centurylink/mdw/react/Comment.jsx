@@ -78,7 +78,8 @@ function Comment(props, context) {
   const insertAttachment = attachment => {
     const ta = document.getElementById('comment-' + attachment.ownerId + '-textarea');
     var val = ta.value;
-    var urlMd = '\n[' + attachment.name + '](' + context.hubRoot + '/attach/' + attachment.location + ')';
+    var url = new URL(context.hubRoot + '/attach/' + attachment.location, location.href);
+    var urlMd = '\n[' + attachment.name + '](' + url.href + ')';
     if (ta.selectionStart || ta.selectionStart == '0') {
       var start = ta.selectionStart;
       var end = ta.selectionEnd;

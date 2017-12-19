@@ -48,10 +48,10 @@ public class MessageMonitor implements ServiceMonitor {
                     JSONObject json = new JSONObject();
                     json.put("thread_ts", indexes.get("slack:message_ts"));
                     json.put("reply_broadcast", true);
-                    String altText = null;
-                    if (comment.getContent().length() > 200)
-                        altText = comment.getContent().substring(0, 197) + "...";
-                    json.put("text", altText == null ? comment.getContent() : altText);
+                    String text = new MarkdownScrubber(comment.getContent()).toSlack();
+                    if (text.length() > 1024)
+                        text = text.substring(0, 1021) + "...";
+                    json.put("text", text);
                     json.put("channel", "C85DLE1U7"); // TODO
                     json.put("as_user", false);
                     try {
