@@ -77,6 +77,9 @@ public class MdwMain {
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
+
+                // automatically update the ASSET_REF table as a safety check
+                DataAccess.updateAssetRefs();
             }
             catch (Exception e) {
                 throw new StartupException("Failed to connect through database connection pool", e);

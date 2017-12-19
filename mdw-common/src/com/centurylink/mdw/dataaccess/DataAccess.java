@@ -196,17 +196,6 @@ public class DataAccess {
                                     vcGit.hardCheckout(branch);
                                     archiver.archive();
                                 }
-                                else if (!ApplicationContext.isDevelopment()){
-                                    // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
-                                    DatabaseAccess db = new DatabaseAccess(null);
-                                    try (Connection conn = db.openConnection()){
-                                        Checkpoint cp = new Checkpoint(rootDir, vcGit, vcGit.getCommit(), conn);
-                                        cp.updateRefs();
-                                    }
-                                    catch (SQLException e) {
-                                        throw new DataAccessException(e.getErrorCode(), e.getMessage());
-                                    }
-                                }
                             }
                         }
                         else {
@@ -229,6 +218,25 @@ public class DataAccess {
             }
         }
         return assetVersionControl;
+    }
+
+    public static void updateAssetRefs() throws DataAccessException {
+        if (assetVersionControl != null && !ApplicationContext.isDevelopment() && !"true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))){
+            // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
+            DatabaseAccess db = new DatabaseAccess(null);
+            File assetLoc = ApplicationContext.getAssetRoot();
+            VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
+            try (Connection conn = db.openConnection()){
+                Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), conn);
+                cp.updateRefs();
+            }
+            catch (SQLException e) {
+                throw new DataAccessException(e.getErrorCode(), e.getMessage());
+            }
+            catch (IOException e) {
+                throw new DataAccessException(e.getMessage());
+            }
+        }
     }
 
     public static BaselineData getBaselineData() throws DataAccessException {
