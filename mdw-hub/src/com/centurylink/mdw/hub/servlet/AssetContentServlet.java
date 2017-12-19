@@ -361,13 +361,10 @@ public class AssetContentServlet extends HttpServlet {
      * Also audit logs (if not distributed propagation).
      */
     private void authorizeForUpdate(HttpSession session, Action action, Entity entity, String includes) throws AuthorizationException, DataAccessException {
-        AuthenticatedUser user;
-        if (ApplicationContext.isServiceApiOpen()) {
+        AuthenticatedUser user  = (AuthenticatedUser)session.getAttribute("authenticatedUser");
+        if (user == null && ApplicationContext.isServiceApiOpen()) {
             String cuid = ApplicationContext.getServiceUser();
             user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
-        }
-        else {
-            user = (AuthenticatedUser)session.getAttribute("authenticatedUser");
         }
 
         if (user == null)

@@ -154,9 +154,10 @@ public class Install extends Setup {
             return false;
         if (getMdwVersion() == null) {
             File gradleProps = new File(getProjectDir() + "/gradle.properties");
-            if (!gradleProps.isFile())
+            if (!gradleProps.isFile()) {
                 System.err.println("Option --mdw-version required or should be readable from: " + gradleProps.getAbsolutePath());
-            return false;
+                return false;
+            }
         }
         return true;
     }

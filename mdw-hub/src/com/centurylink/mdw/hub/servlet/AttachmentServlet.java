@@ -92,6 +92,7 @@ public class AttachmentServlet extends HttpServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
+            response.setStatus(ex.getCode());
         }
         catch (Exception ex) {
             logger.severeException("Attachment request error: " + path, ex);
@@ -122,6 +123,7 @@ public class AttachmentServlet extends HttpServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
+            response.setStatus(ex.getCode());
         }
         catch (Exception ex) {
             logger.severeException("Attachment create request error: " + path, ex);
@@ -145,6 +147,7 @@ public class AttachmentServlet extends HttpServlet {
         }
         catch (ServiceException ex) {
             logger.severeException(ex.getMessage(), ex);
+            response.setStatus(ex.getCode());
         }
         catch (Exception ex) {
             logger.severeException("Attachment delete request error: " + path, ex);
@@ -157,13 +160,10 @@ public class AttachmentServlet extends HttpServlet {
      */
     private void authorize(HttpSession session, Action action, Entity entity, String location)
             throws AuthorizationException, DataAccessException {
-        AuthenticatedUser user;
-        if (ApplicationContext.isServiceApiOpen()) {
+        AuthenticatedUser user  = (AuthenticatedUser)session.getAttribute("authenticatedUser");
+        if (user == null && ApplicationContext.isServiceApiOpen()) {
             String cuid = ApplicationContext.getServiceUser();
             user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
-        }
-        else {
-            user = (AuthenticatedUser)session.getAttribute("authenticatedUser");
         }
 
         if (user == null)

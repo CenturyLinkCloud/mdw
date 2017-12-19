@@ -118,6 +118,7 @@ function Comment(props, context) {
         reader.onload = () => {
           fetch(context.hubRoot + '/attach/' + json.location, { 
             method: 'POST',
+            headers: { 'Content-Type': 'application/octet-stream' }, // needed by PCF
             body: new Int8Array(reader.result),
             credentials: 'same-origin'
           })
