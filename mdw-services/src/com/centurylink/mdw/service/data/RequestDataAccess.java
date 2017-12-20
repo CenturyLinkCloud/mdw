@@ -248,7 +248,7 @@ public class RequestDataAccess extends CommonDataAccess {
                     if (DatabaseAccess.getMongoDb() != null) {
                         CodeTimer timer = new CodeTimer("Load mongodb doc", true);
                         MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(ownerType);
-                        org.bson.Document mongoQuery = new org.bson.Document("_id", id);
+                        org.bson.Document mongoQuery = new org.bson.Document("document_id", id);
                         org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                         if (c != null) {
                             if (c.getBoolean("isJSON", false))
@@ -260,7 +260,7 @@ public class RequestDataAccess extends CommonDataAccess {
                             // Get META
                             if (metaId > 0L) {
                                 mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
-                                mongoQuery = new org.bson.Document("_id", metaId);
+                                mongoQuery = new org.bson.Document("document_id", metaId);
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                                 if (c != null) {
                                     if (c.getBoolean("isJSON", false))
@@ -323,7 +323,7 @@ public class RequestDataAccess extends CommonDataAccess {
                     if (DatabaseAccess.getMongoDb() != null) {
                         CodeTimer timer = new CodeTimer("Load mongodb doc", true);
                         MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(responseOwnerType);
-                        org.bson.Document mongoQuery = new org.bson.Document("_id", request.getResponseId());
+                        org.bson.Document mongoQuery = new org.bson.Document("document_id", request.getResponseId());
                         org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                         if (c != null) {
                             if (c.getBoolean("isJSON", false))
@@ -335,7 +335,7 @@ public class RequestDataAccess extends CommonDataAccess {
                             // Get META
                             if (metaId > 0L) {
                                 mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
-                                mongoQuery = new org.bson.Document("_id", metaId);
+                                mongoQuery = new org.bson.Document("document_id", metaId);
                                 c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                                 if (c != null) {
                                     if (c.getBoolean("isJSON", false))
