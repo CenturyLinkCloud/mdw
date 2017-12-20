@@ -41,7 +41,10 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 
 public class DatabaseAccess {
 
@@ -50,6 +53,7 @@ public class DatabaseAccess {
     private static Long db_time_diff = null;
 
     private static Map<String, Boolean> loadedDataSources = new ConcurrentHashMap<String, Boolean>();
+    private static Map<String, Boolean> collectionDocIdIndexed = new ConcurrentHashMap<String, Boolean>();
 
     private static EmbeddedDataAccess embedded;
     public static EmbeddedDataAccess getEmbedded() { return embedded; }
@@ -91,6 +95,12 @@ public class DatabaseAccess {
             return null;
         else
             return mongoClient.getDatabase("mdw");
+    }
+
+    public static boolean checkForDocIdIndex(String collectionName) {
+        if (collectionDocIdIndexed.get(collectionName) != null)
+            return ((Boolean)collectionDocIdIndexed.get(collectionName)).booleanValue();
+        return false;
     }
 
     /**
@@ -234,8 +244,20 @@ public class DatabaseAccess {
                 options.connectionsPerHost(maxConnections);
 
             mongoClient = new MongoClient(new ServerAddress(mongoHost, mongoPort), options.build());
+
+            for (String name : mongoClient.getDatabase("mdw").listCollectionNames()) {
+                createMongoDocIdIndex(name);
+            }
             LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
         }
+    }
+
+    public static void createMongoDocIdIndex(String collectionName) {
+        IndexOptions indexOptions = new IndexOptions().unique(true).background(true);
+        MongoCollection<org.bson.Document> collection = mongoClient.getDatabase("mdw").getCollection(collectionName);
+        String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
+        LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
+        collectionDocIdIndexed.putIfAbsent(collectionName, Boolean.valueOf(true));
     }
 
     public void commit() throws SQLException {

@@ -329,15 +329,17 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     if (!myJsonDoc.isEmpty()) {
                         if (doc.getContent(pkg).contains(".") || doc.getContent(pkg).contains("$"))
                             myJsonDoc = DatabaseAccess.encodeMongoDoc(myJsonDoc);
-                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("_id", docId).append("isJSON", true); // Plus append _id and isJSON:true field
+                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("document_id", docId).append("isJSON", true); // Plus append _id and isJSON:true field
                     }
                 }
                 catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
             }
             if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON, plus append _id and isJSON:false
-                myDoc = new org.bson.Document("CONTENT", doc.getContent(pkg)).append("_id", docId).append("isJSON", false);
+                myDoc = new org.bson.Document("CONTENT", doc.getContent(pkg)).append("document_id", docId).append("isJSON", false);
 
             collection.insertOne(myDoc);
+            if (!DatabaseAccess.checkForDocIdIndex(doc.getOwnerType()))
+                DatabaseAccess.createMongoDocIdIndex(doc.getOwnerType());
         }
         else {
             // store in DOCUMENT_CONTENT
@@ -375,7 +377,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             }
             if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON plus append isJSON:false
                 myDoc = new org.bson.Document("CONTENT", content).append("isJSON", false);
-            if (collection.findOneAndReplace(eq("_id", documentId), myDoc) != null)
+            if (collection.findOneAndReplace(eq("document_id", documentId), myDoc) != null)
                 inMongo = true;
         }
 
@@ -1449,7 +1451,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     protected org.bson.Document deleteMongoDocumentContent(Document doc) {
         if (hasMongo()) {
             MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(doc.getOwnerType());
-            return collection.findOneAndDelete(eq("_id", doc.getDocumentId()));
+            return collection.findOneAndDelete(eq("document_id", doc.getDocumentId()));
         }
         return null;
     }
