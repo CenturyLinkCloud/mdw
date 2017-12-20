@@ -102,7 +102,7 @@ public class TaskHandler implements ActionHandler, EventHandler {
                     Comment comment = new Comment();
                     comment.setCreated(Date.from(Instant.now()));
                     comment.setCreateUser("mdw");
-                    comment.setContent(messageText);
+                    comment.setContent(new MarkdownScrubber(messageText).toMarkdown());
                     comment.setOwnerType(OwnerType.TASK_INSTANCE);
                     comment.setOwnerId(instanceId);
                     comment.setName("slack_message");
