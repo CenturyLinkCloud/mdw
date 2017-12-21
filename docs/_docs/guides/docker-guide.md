@@ -10,12 +10,24 @@ build:
 docker build -t mdwcore/mdw .
 ```
 
+install:
+```
+docker pull mdwcore/mdw
+```
+
 run:
 ```
-docker run -it --rm -p 8080:8080 -v /home/donald/src/mdw6/:/mdw -e JAVA_OPTS='-Dmdw.runtime.env=dev -Dmdw.config.location=/mdw/mdw/config -Xmx1g' mdwcore/mdw
+docker run -d -it --rm -p 8080:8080 -p 8009:8009 -v /home/ubuntu/workspaces/mdw-demo/:/mdw-demo -e JAVA_OPTS='-Dmdw.runtime.env=dev -Dmdw.config.location=/mdw-demo/config -Xmx1g' mdwcore/mdw
+```
+
+logs:
+```
+docker logs --follow <container_id>
 ```
 
 publish:
 ```
 docker push mdwcore/mdw
 ```
+
+**TODO: tomcat configuration (context.xml, 
