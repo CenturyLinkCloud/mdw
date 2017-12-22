@@ -170,8 +170,6 @@ public class AccessFilter implements Filter {
 
         String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
 
-        System.out.println("(TEMP) PATH: " + path);
-
         try {
             String allowedHost = null;
             if (upstreamHosts != null && !devMode) {

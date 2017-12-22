@@ -498,7 +498,7 @@ public class CommonDataAccess {
             if (DatabaseAccess.getMongoDb() != null) {
                 CodeTimer timer = new CodeTimer("Load mongodb doc", true);
                 MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(vo.getOwnerType());
-                org.bson.Document mongoQuery = new org.bson.Document("_id", vo.getDocumentId());
+                org.bson.Document mongoQuery = new org.bson.Document("document_id", vo.getDocumentId());
                 org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
                 if (c != null) {
                     if (c.getBoolean("isJSON", false))

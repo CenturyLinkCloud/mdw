@@ -1,6 +1,10 @@
 -- script to populate the database with initial user(s) with Site Admin privileges
 insert into user_info 
 (cuid, create_usr, name, create_dt)
+values ('mdwapp', 'mdw6', 'MDW Application', now()); 
+
+insert into user_info 
+(cuid, create_usr, name, create_dt)
 values ('dxoakes', 'mdw6', 'Donald Oakes', now()); 
 
 insert into user_info 
@@ -28,6 +32,11 @@ values ((select user_info_id from user_info where cuid = 'jbrojde' and end_date 
         (select user_group_id from user_group where group_name = 'Site Admin'),'MDW', now());
 
 -- add me to MDW Support group
+insert into user_group_mapping
+(user_info_id, user_group_id,create_usr, create_dt)
+values ((select user_info_id from user_info where cuid = 'mdwapp' and end_date is null), 
+        (select user_group_id from user_group where group_name = 'MDW Support'),'MDW', now());
+
 insert into user_group_mapping
 (user_info_id, user_group_id,create_usr, create_dt)
 values ((select user_info_id from user_info where cuid = 'dxoakes' and end_date is null), 
@@ -80,6 +89,11 @@ values ('USER_GROUP_MAP',
 -- add me to Process Design role for Common group
 insert into user_role_mapping
 (user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
+values ('USER', (select user_info_id from user_info where cuid = 'mdwapp' and end_date is null), 
+        (select user_role_id from user_role where user_role_name = 'Process Design'),'MDW', now());
+
+insert into user_role_mapping
+(user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
 values ('USER', (select user_info_id from user_info where cuid = 'dxoakes' and end_date is null), 
         (select user_role_id from user_role where user_role_name = 'Process Design'),'MDW', now());
 
@@ -94,6 +108,11 @@ values ('USER', (select user_info_id from user_info where cuid = 'jbrojde' and e
         (select user_role_id from user_role where user_role_name = 'Process Design'),'MDW', now());
         
 -- add me to Process Execution role for Common group
+insert into user_role_mapping
+(user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
+values ('USER', (select user_info_id from user_info where cuid = 'mdwapp' and end_date is null), 
+        (select user_role_id from user_role where user_role_name = 'Process Execution'),'MDW', now());
+
 insert into user_role_mapping
 (user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
 values ('USER', (select user_info_id from user_info where cuid = 'dxoakes' and end_date is null), 
