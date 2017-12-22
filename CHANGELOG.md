@@ -1,7 +1,27 @@
 # Change Log
 
+## [v6.0.10](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.10) (2017-12-22)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09...v6.0.10)
+
+**Implemented enhancements:**
+
+- Create new field for document\_id in  MongoDB  [\#277](https://github.com/CenturyLinkCloud/mdw/issues/277)
+- Execute CLI Checkpoint on server startup [\#265](https://github.com/CenturyLinkCloud/mdw/issues/265)
+- Better handling of asset versions to prevent inflight issues caused by failure to increment [\#256](https://github.com/CenturyLinkCloud/mdw/issues/256)
+- Active activities should not be retried [\#251](https://github.com/CenturyLinkCloud/mdw/issues/251)
+- Enhance MySQL and Oracle clean-up scripts [\#244](https://github.com/CenturyLinkCloud/mdw/issues/244)
+- Discover assets from Maven repositories [\#215](https://github.com/CenturyLinkCloud/mdw/issues/215)
+- Task UI JSX Discussion page [\#195](https://github.com/CenturyLinkCloud/mdw/issues/195)
+- Display package configuration in Assets view [\#25](https://github.com/CenturyLinkCloud/mdw/issues/25)
+
+**Closed issues:**
+
+- ASSET\_REF update issue on non-dev embedded db environment [\#276](https://github.com/CenturyLinkCloud/mdw/issues/276)
+- Fix Attachments API and integrate with Slack [\#274](https://github.com/CenturyLinkCloud/mdw/issues/274)
+- Editing a new file in MDW Hub [\#252](https://github.com/CenturyLinkCloud/mdw/issues/252)
+
 ## [v6.0.09](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.09) (2017-11-22)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.08...v6.0.09)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09-SNAPSHOT...v6.0.09)
 
 **Implemented enhancements:**
 
@@ -19,8 +39,11 @@
 - Issue when legacy recurring event is unregistered once the process completes [\#245](https://github.com/CenturyLinkCloud/mdw/issues/245)
 - Process Values Autoform Fixes [\#236](https://github.com/CenturyLinkCloud/mdw/issues/236)
 
+## [v6.0.09-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.09-SNAPSHOT) (2017-10-30)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.08...v6.0.09-SNAPSHOT)
+
 ## [v6.0.08](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.08) (2017-10-27)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07...v6.0.08)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.08-SNAPSHOT...v6.0.08)
 
 **Implemented enhancements:**
 
@@ -39,8 +62,11 @@
 - Process updates not reflected after cache refresh [\#118](https://github.com/CenturyLinkCloud/mdw/issues/118)
 - Newly-added user sometimes not reflected in user list [\#26](https://github.com/CenturyLinkCloud/mdw/issues/26)
 
+## [v6.0.08-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.08-SNAPSHOT) (2017-10-23)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07...v6.0.08-SNAPSHOT)
+
 ## [v6.0.07](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.07) (2017-10-13)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.06...v6.0.07)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07-SNAPSHOT...v6.0.07)
 
 **Implemented enhancements:**
 
@@ -64,11 +90,17 @@
 - Handle incoming JWT token when using Layer 7 Gateway authentication  [\#221](https://github.com/CenturyLinkCloud/mdw/issues/221)
 - Adapters should save a blank request with associated meta for HTTP GET operations [\#219](https://github.com/CenturyLinkCloud/mdw/issues/219)
 - Javadocs are not produced correctly by the MDW build [\#216](https://github.com/CenturyLinkCloud/mdw/issues/216)
+- Suitable error flagging on unsupported subprocess invocations [\#205](https://github.com/CenturyLinkCloud/mdw/issues/205)
+- Stopping InProgress Test Cases when server shuts down [\#83](https://github.com/CenturyLinkCloud/mdw/issues/83)
+
+## [v6.0.07-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.07-SNAPSHOT) (2017-09-14)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.06...v6.0.07-SNAPSHOT)
+
+**Closed issues:**
+
 - Duplicate master request IDs in Workflow tab typeahead [\#213](https://github.com/CenturyLinkCloud/mdw/issues/213)
 - MDW-hub’s variables section for process not renter properly [\#212](https://github.com/CenturyLinkCloud/mdw/issues/212)
-- Suitable error flagging on unsupported subprocess invocations [\#205](https://github.com/CenturyLinkCloud/mdw/issues/205)
 - Cannot Discover assets for import in mdw-hub from repo on 143 server [\#91](https://github.com/CenturyLinkCloud/mdw/issues/91)
-- Stopping InProgress Test Cases when server shuts down [\#83](https://github.com/CenturyLinkCloud/mdw/issues/83)
 
 ## [v6.0.06](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.06) (2017-09-11)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05...v6.0.06)
