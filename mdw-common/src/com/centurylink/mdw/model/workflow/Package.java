@@ -510,7 +510,7 @@ public class Package implements Serializable, Jsonable {
         int major = version/1000;
         int minor = version%1000;
         int point = minor%100;
-        return major + "." + minor/100 + "." + (point > 10 ? point : "0" + point);
+        return major + "." + minor/100 + "." + (point >= 10 ? point : "0" + point);
     }
 
     public static String formatVersionOld(int version) {

@@ -71,7 +71,6 @@ public class SystemServicesImpl implements SystemServices {
             sysInfoCats.add(getSystemInfo());
             sysInfoCats.add(getDbInfo());
             sysInfoCats.add(getSystemProperties());
-            sysInfoCats.add(getEnvironmentVariables());
             sysInfoCats.add(getMdwProperties());
         }
         else if (type == SysInfoType.Thread) {
