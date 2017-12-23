@@ -62,7 +62,7 @@
 13 - Release Notes
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
-  - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token
+  - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
   - Run following command in root of your workspace
   github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
