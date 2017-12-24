@@ -1,0 +1,5 @@
+<ul ng-repeat="navGroup in authUser.getActiveTab().navs" id="{{navGroup.id}}" class="nav mdw-nav">
+  <li ng-repeat="navLink in navGroup.links" nav-link="{{navLink.path}}" full-width="{{navLink['full-width']}}">
+    <a href="{{navLink.href}}" target="{{navLink.target}}">{{navLink.label}}</a></li>
+  </li>
+</ul>

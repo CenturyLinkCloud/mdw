@@ -97,14 +97,6 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   $scope.authUser = theUser;
   $scope.authUser.setActiveTab($location.url());
   
-  $scope.$on("$locationChangeStart", function(event, next, current) {
-    if ($scope.authUser.cuid == 'guest' && !authUser.guestAccessAllowed($location.url())) {
-      document.cookie = 'mdw.redirect=' + encodeURIComponent(window.location.href) + ';path=/';
-      window.location.href = $mdwHubRoot + "/login";
-      event.preventDefault();
-    }
-  });  
-
   // one popover at a time
   $scope.popElem = null;
   $scope.setPopElem = function(elem) {
