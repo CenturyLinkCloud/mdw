@@ -29,13 +29,11 @@ import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.auth.OAuthAuthenticator;
-import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.util.ExpressionUtil;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -45,34 +43,31 @@ public class LoginServlet extends HttpServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final String MDW_MSG_TAG = "<div id=\"mdwAuthError\"></div>";
-    private static final String AUTHENTICATION_FAILED_MSG = "Authentication failed, Invalid credentails";
+    private static final String AUTHENTICATION_FAILED_MSG = "Authentication failed, Invalid credentials";
     private static final String AUTHORIZATION_FAILED_MSG = "User not Authorized";
     private static final String SECURITY_ERR_MSG = "Security Exception occured";
-    private static final String MDW_ERR_CODE = "mdwAuthError";
+    private static final String MDW_AUTH_MSG = "mdwAuthError";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.getSession().removeAttribute("authenticatedUser");
-        String authError = (String) request.getSession().getAttribute(MDW_ERR_CODE);
+        String authError = (String) request.getSession().getAttribute(MDW_AUTH_MSG);
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("ct".equals(authMethod))
-            request.getRequestDispatcher("auth/ctLogin.html").forward(request, response);
-        else if ("af".equals(authMethod)) {
+        if ("ct".equals(authMethod) || ("af".equals(authMethod))){
             if ((authError != null)) {
                 response.setContentType("text/html");
-                request.getSession().removeAttribute(MDW_ERR_CODE);
-                String contents = readContent(request);
+                request.getSession().removeAttribute(MDW_AUTH_MSG);
+                String contents = readContent(request,authMethod);
                 response.getWriter().println("<!-- processed by MDW Login servlet -->");
                 for (String line : contents.split("\\r?\\n")) {
                     String retLine = processLine(line, authError);
                     response.getWriter().println(retLine);
                 }
                 response.getWriter().close();
-            }
-            else
-                request.getRequestDispatcher("auth/afLogin.html").forward(request, response);
-        }
-        else {
+            }else
+              request.getRequestDispatcher("auth/"+authMethod+"Login.html").forward(request, response);
+
+        }else {
             StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,
                     "Unsupported authMethod: " + authMethod);
             response.setStatus(sr.getStatus().getCode());
@@ -109,20 +104,20 @@ public class LoginServlet extends HttpServlet {
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
                     if (ex instanceof AuthenticationException) {
-                        request.getSession().setAttribute(MDW_ERR_CODE, AUTHENTICATION_FAILED_MSG);
+                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
                     }
                     else if (ex instanceof MdwSecurityException
                             && ((MdwSecurityException) ex).getCode() == 401) {
-                        request.getSession().setAttribute(MDW_ERR_CODE, AUTHORIZATION_FAILED_MSG);
+                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHORIZATION_FAILED_MSG);
                     }
                     else {
-                        request.getSession().setAttribute(MDW_ERR_CODE, SECURITY_ERR_MSG);
+                        request.getSession().setAttribute(MDW_AUTH_MSG, SECURITY_ERR_MSG);
                     }
                     response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
                 }
             }
             else {
-                request.getSession().setAttribute(MDW_ERR_CODE, AUTHENTICATION_FAILED_MSG);
+                request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
                 response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
             }
 
@@ -132,21 +127,21 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private String readContent(HttpServletRequest request) throws IOException {
-        String realPath = request.getSession().getServletContext().getRealPath("auth/afLogin.html");
+    private String readContent(HttpServletRequest request,String authMethod) throws IOException {
+        String realPath = request.getSession().getServletContext().getRealPath("auth/"+authMethod+"Login.html");
         String contents;
         try {
             if (realPath == null) {
                 // read from classpath
                 contents = new String(FileHelper.readFromResourceStream(
-                        getClass().getClassLoader().getResourceAsStream("auth/afLogin.html")));
+                        getClass().getClassLoader().getResourceAsStream("auth/"+authMethod+"Login.html")));
             }
             else {
                 if (!new File(realPath).isFile() && getClass().getClassLoader().getResource(
                         "/org/springframework/web/servlet/ResourceServlet.class") != null) {
                     // spring-boot client app
                     try (Scanner scanner = new Scanner(getClass().getClassLoader()
-                            .getResourceAsStream("mdw/auth/afLogin.html"), "utf-8")) {
+                            .getResourceAsStream("mdw/auth/"+authMethod+"Login.html"), "utf-8")) {
                         contents = scanner.useDelimiter("\\Z").next();
                     }
                 }
