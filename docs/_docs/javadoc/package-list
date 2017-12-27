@@ -123,7 +123,6 @@ com.centurylink.mdw.workflow.adapter.jms
 com.centurylink.mdw.workflow.adapter.ldap
 com.centurylink.mdw.workflow.adapter.oauth
 com.centurylink.mdw.workflow.adapter.rest
-com.centurylink.mdw.workflow.adapter.slack
 com.centurylink.mdw.workflow.adapter.soap
 com.centurylink.mdw.workflow.adapter.socket
 com.centurylink.mdw.workflow.task.notifier
