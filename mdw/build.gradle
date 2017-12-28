@@ -86,6 +86,7 @@ task packageSources(type: GradleBuild) {
 allprojects {
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
+        options.noTimestamp = "true"
     }
 }
 

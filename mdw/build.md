@@ -29,7 +29,8 @@
   
 7 - Update mdw-demo
   - git pull
-  - In framework workspace Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder (update mdwDemoDir based on your local setup)
+  - In framework workspace Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder (update mdwDemoDir based on your local setup) 
+  - make sure you have curl.exe in your path
   - Run the Gradle task mdw/updateMDWDemo to copy latest framework assets, update gradle.properties, manifest file in mdw-demo workspace
   - Commit and push to git (manifest.yml and mdw.properties should not be committed)
   
@@ -62,7 +63,7 @@
 13 - Release Notes
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
     `gem install github_changelog_generator`
-  - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token
+  - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
   - Run following command in root of your workspace
   github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
