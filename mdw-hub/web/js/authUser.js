@@ -5,10 +5,10 @@ var userSvc = angular.module('authUser', ['mdw']);
 userSvc.factory('authUser', ['$http', 'mdw', function($http, mdw) {
   
   var fillTabs = function(user) {
-    var navJsonUrl = mdw.roots.hub + '/layout/nav.json';
-    return $http.get(navJsonUrl).then(function(response) {
+    var tabsJsonUrl = mdw.roots.hub + '/js/tabs.json';
+    return $http.get(tabsJsonUrl).then(function(response) {
       user.tabs = [];
-      var allTabs = response.data.tabs;
+      var allTabs = response.data;
       for (var i = 0; i < allTabs.length; i++) {
         var tab = allTabs[i];
         if (!tab.condition || eval(tab.condition)) { // jshint ignore:line
