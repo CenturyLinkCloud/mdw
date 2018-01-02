@@ -149,8 +149,8 @@ task publishAssetsToMavenCentral(type: GradleBuild) {
 allprojects {
     group = "com.centurylink.mdw"
     version = "${mdwVersion}"
-    ext.ossrhUsername = System.getenv("ossrhUsername")
-    ext.ossrhPassword = System.getenv("ossrhPassword")
+    ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
+    ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
 
     if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
         signing {
@@ -286,8 +286,8 @@ task configureUploadAssets {
     dependsOn archiveAssetZips
     doLast {
         uploadAssets {
-            ext.ossrhUsername = System.getenv("ossrhUsername")
-            ext.ossrhPassword = System.getenv("ossrhPassword")
+            ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
+            ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
             repositories {
                 mavenDeployer {
                     beforeDeployment {

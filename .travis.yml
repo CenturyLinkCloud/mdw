@@ -37,8 +37,10 @@ notifications:
     on_success: change
     on_failure: always
 after_success:
+  - cd ../
   - pwd
-  - chmod +x ../before-deploy.sh
-  - chmod +x ../deploy.sh
-  - ../before-deploy.sh
-  - ../deploy.sh
+  - chmod 777 before-deploy.sh
+  - chmod 777 deploy.sh
+  - ls -ltr 
+  - before-deploy.sh
+  - deploy.sh
