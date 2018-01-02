@@ -21,7 +21,7 @@ before_script:
 - npm install
 - bower install
 - cd ../mdw
-script: gradle --no-daemon test
+script: gradle --no-daemon buildAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 - sleep 10s
