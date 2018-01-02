@@ -1,7 +1,9 @@
 #!/bin/bash
-
-set -ev
-if [ "${TRAVIS_BRANCH}" = "master"  &&  "${TRAVIS_PULL_REQUEST}" = "false" ]; then
-    cd mdw;
-    gradle -DPUBLISHING_TO_MAVEN_CENTRAL=true publishAssetsToMavenCentral;
+if [ "${TRAVIS_BRANCH}" = "master" ]; then
+    if [ "${TRAVIS_PULL_REQUEST}" -eq "false" ]; then
+        cd mdw
+        pwd
+        echo "Publishing assets..."
+        gradle -DPUBLISHING_TO_MAVEN_CENTRAL=true publishAssetsToMavenCentral
+    fi
 fi
