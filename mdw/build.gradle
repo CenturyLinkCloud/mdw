@@ -149,8 +149,8 @@ task publishAssetsToMavenCentral(type: GradleBuild) {
 allprojects {
     group = "com.centurylink.mdw"
     version = "${mdwVersion}"
-    ext.ossrhUsername = System.getProperty("ossrhUsername")
-    ext.ossrhPassword = System.getProperty("ossrhPassword")
+    ext.ossrhUsername = System.getenv("ossrhUsername")
+    ext.ossrhPassword = System.getenv("ossrhPassword")
 
     if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
         signing {
@@ -176,11 +176,11 @@ allprojects {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
                 pom.project {
-                    name 'MDW Templates'
+                    name 'MDW framework'
                     groupId 'com.centurylink.mdw'
                     version = mdwVersion
                     packaging = 'zip'
-                    description 'MDW is a cloud workflow framework'
+                    description 'MDW is a microservices based workflow framework'
                     url 'http://centurylinkcloud.github.io/mdw/'
                     scm {
                         connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
@@ -195,9 +195,9 @@ allprojects {
                     }
                     developers {
                         developer {
-                            id 'mdwdev'
-                            name 'MDW Development'
-                            email 'mdwdev@centurylink.com'
+                            id 'mdw.development'
+                            name 'MDW Development Team'
+                            email 'mdw.development@centurylink.com'
                         }
                     }
                 }
@@ -286,8 +286,8 @@ task configureUploadAssets {
     dependsOn archiveAssetZips
     doLast {
         uploadAssets {
-            ext.ossrhUsername = System.getProperty("ossrhUsername")
-            ext.ossrhPassword = System.getProperty("ossrhPassword")
+            ext.ossrhUsername = System.getenv("ossrhUsername")
+            ext.ossrhPassword = System.getenv("ossrhPassword")
             repositories {
                 mavenDeployer {
                     beforeDeployment {
@@ -306,11 +306,11 @@ task configureUploadAssets {
                         }
                         pom(filterName).artifactId = artifactId
                         pom(filterName).groupId = "com.centurylink.mdw.assets"
-                        pom(filterName).name = 'MDW Assets'
+                        pom(filterName).name = 'MDW Core Assets'
                         pom(filterName).withXml { provider ->
                             def node = provider.asNode()
                             node.appendNode('description',
-                                'MDW is a cloud workflow framework')
+                                'MDW is a microservices based workflow framework')
                             node.appendNode('url', 'http://centurylinkcloud.github.io/mdw/')
                             def licenses = node.appendNode('licenses')
                             def license = licenses.appendNode('license')
@@ -318,9 +318,9 @@ task configureUploadAssets {
                             license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
                             def developers = node.appendNode('developers')
                             def developer  = developers.appendNode('developer')
-                            developer.appendNode('id', 'mdwdev')
-                            developer.appendNode('name', 'MDW Development')
-                            developer.appendNode('email', 'mdwdev@centurylink.com')
+                            developer.appendNode('id', 'mdw.development')
+                            developer.appendNode('name', 'MDW Development Team')
+                            developer.appendNode('email', 'mdw.development@centurylink.com')
                             def scm = node.appendNode('scm')
                             scm.appendNode('connection', 'scm:git:git://github.com/CenturyLinkCloud/mdw.git')
                             scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')

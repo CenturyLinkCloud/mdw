@@ -49,9 +49,9 @@
   - Review console output for errors.
 
 11 - Verify release artifact are published to Maven Central (https://oss.sonatype.org/#stagingRepositories)
-  - Formal build:       http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20 min)
+  - Formal build:       http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
   - SNAPHOT:            https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
-  - Assets:             http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/
+  - Assets:             http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (10 min)
   - SNAPSHOT Assets:             https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/assets/tests-workflow/
   - Buildpack:          https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
   - Internal buildpack: https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack/tree/master/resources/mdw
@@ -85,4 +85,5 @@
 16 - TODO: Publish NPM package 
 
 17 - Run task 1,2 & 5 and commit the files to start work on post release SNAPSHOT builds
+   - To publish SNAPSHOT build do 6 and 10 in addition to step 17
     

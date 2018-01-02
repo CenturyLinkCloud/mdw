@@ -1,28 +1,41 @@
 language: java
 env:
+  matrix:
   - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
+  global:
+  - secure: WT7Bo5ceMTZYeuxz7y2im8FQ96zQjV1vDUPx32BIwMSe3NwW8RdTYTxNLReDpKoCtpJOawMVKVbU9g2TSzc6y0Db2tUKo5A0H55kexB0Npgvj65K8nhl8pt+HJZ9g9+ti0cPkL8dGWUIRTrVONKSKN4vYXHJ7Otla3PZAyTdIZX9ELdyaslA+qUzt5j5gKQjtCt+As5vlK0t/fUsKiiuObNk+6N/Z3LHGwyZIGEX2Jphjs9fnOENKSNDC5L4lC8QXogqwcSf5qhq4fW0kzzjvl/qxVSe9jL6nMhIioK5ogbzTpch+GBtdewCa5qtSTeaPC9wLWm9yOpLiqKtoB8t4G96ZkfBPYIb4RiYlRXWshiF9RWZUyesap/IEqR7M1gUIX5FN5b78HJUmFpXYgYOFJnKtXFhXS+94V+wtmViaTlpU+TghODM7gJFVk+wzbDoMh47wFOCRcIU/o8hDaJX9g65r1iGyms1biWfWJ91xKJUpiv0626QFqlf7ntIGw4PrcxD+uwVqLhsAUZor8b0+r8Fw87Pj+j+sW9OACppq1M0AcEh27aQSt/oEw3AgzjoyFu/b3+YGlolyLS2E9Xmf/fA2yDYpnm4u3c5w5uaEIK5Dci6QU/iO/Fct9xWNSdSfPznXwj+tCwPnx0sbcdmCJzDaOPqOQOyt18iWTsOUt4=
+  - # ^^ OSSRH_JIRA_USERNAME
+  - secure: Z9UJnLvcwQjLioDcpnGfRORvDUCtt6Pn1kmt37nIjanwhGQm10phf87nV30tpiSxIgxZW0tj5oZuLernl9PTsoqFkT0kQzCNOYhAR1AFCPMsQ7xvLlZHhvesfZRHDECk4omee+TmlM4VkV5szXly2+Uhg1qGeMHVCJ3bi67FGf4WoUY7jsNa+vLqvble8zhwldgjDrQmeQ+amIb7N3T+1hesHB3PHVX/i18cNfVW4Dn1UZNhIrgLRgQSUB+11GUacrSDlnxz2MOvLI+qm1IyXTOU0+aPDoriKm1Twe1p0aAfVx5cTR7XzSvUfMfzx3+3wkoVQLdv5ePQetPrJjJDe4jncC1wRTIV6ctw428jcYJbiTTIKW+i/r3BEITneoHJTh4B7GSSOxIXt6dXiwWq+dpT3+23Yy9uqEh2ksVxpxb5rLqU62k4Bx1qoQQMVm9DEe58zTtJMCdNF49Qm17AwOk6jGPjYATphh5x4etBPnT30T25RbGH84Vm0MMPaJAqUMHKZe1tyqmwS/Bg/b46nMYkzWSmlZK8s4Bnqq+5fEXULl8dP4P6z7RcpLKdtlAFLfTBJCQwBuUjI56XXxtkyk6NvPEY8tTsRb8S+A6WarrLKMazJRx3/ODS57KznrkanJKdOARBNfB+LP6AG0VK538wyxEXugnODBZx3O6tA1s=
+  - # ^^ OSSRH_JIRA_PASSWORD
+  - secure: XMsiJ6132MRDezjF7+U4/3iw1cfKM0I8mnqlk9eQ10PnjASlU7WxH+jPqYphKZ+GQKda6EuJK/O9yTopdPSNzpWsb81R2y8IvXukWfMZwQ2UQRoUU1vTm+Yi0XCZP2et2ZxF8dUJJ7n4IWMaCyYSXU9mtHzCqc+RgG9Ap0uA3PVyBidZF9v+4UY3zVNniHEqEJokzEi4Vh24GcemGPsIS0tLP9w3uGwrA94RBFo/ZSYbPEIaELBKnEecV1BuSnT+UylzYX6xhb0lYQ5aANWIat/pv0cKSFf2RDLggZhZEdpaycM8Qg0gP7S7FDw7TYxPie9yffDuh5miK4n+QnrcG13qIRpB5+gXKMHD814vBhohcGHvVSqM+Tlaz2miVicVrrGgNezFwxJ9DripptpmrzZbL4qK5usJs9TU520hZJ4dNsGmNiHEx23gIPdgtu4+Aj1WrqmlD6V/5S8BMZ0SO7ATel01hHbsGPY7Cs6QiTtmMLOnVcdXgj+5g1BMHbhpsCrIehr7Po6KngCBCF2RBALHdtSwRH13TAiUMjo7NwLMp3k8kcPFM9009uYp5QTuJwhVZpxPgz7VdRUQkdJPY2t1fk55sxLOpBEPsDtrwc2jMFHZThBEgwWZq2AoVgV113HoADI7WW1VZ366rBrSASiPb4vNqWO9KEYjr0kwva0=
+  - # ^^ GPG_KEY_NAME
+  - secure: EvYMwIIWfg7EDHGT94us6TKu/Wnlh9mo2ytBx3rfmhkFjuwtP4zca3xLuqYL1bL2T7gzOml7yI3+CgJ9VuL2USCZMqF7V7X3nJPHYaTR42nkAzXR4XbA7FdJkIRuRygncas8baaYHXphiHXQEK0MWwjrKNkaPX1i+8wcc275GUP+Ng4Nvi1elsUQTUWAxFoWSJR63K/hoK+5N7RdZHl0BhTXaMagPRtnIPbprhBqL669ZM8xHJ3gY3NESWKdEoPvAAtbY61/+p0zLEeheun3E0PisT9oPMWODSMu/M0GtA5I5OpO8mFZ8XRor9v/5eXyy9PrtWoRNPGL/uWWpKaseNH+BnbFBq4kqAIz7Caen7IszUzSaasQ8UZxCV7PwybTXUPo0JKGNDgYbPOeveGbc592keYFC6+/AukKd3BxuhM9tIlCjbMHuD28MV+WdJk9l2xInY9OYfrTIJCBuY2LdA+w5+Sp2HEQyLowvWjkhpNIwx2Ndhf2WwgcDq4ZYDSyLijxIHirkZWrpE5eSicVqj3pKd8sy7oNQ2pLLn1n7pV9QMjL+IRhgkp6fgG1gx91TGAQFmX4R3zVowbhirIn9X8yjU8MMuzsAa/3Gsp6zDEHVsELqG3L9iCW21zp7p83bmNXPfD3+dFAvRk2LKhDJVR5ASYlHBcGUiUNEcchT2o=
+  - # ^^ GPG_PASSPHRASE
 before_install:
-  - java -version
-  - gradle -version
-  - npm install -g bower
-  - npm install -g grunt-cli
-before_script: 
-  - cd mdw-hub
-  - npm install
-  - bower install
-  - cd ../mdw
+- java -version
+- gradle -version
+- npm install -g bower
+- npm install -g grunt-cli
+before_script:
+- cd mdw-hub
+- npm install
+- bower install
+- cd ../mdw
 script: gradle --no-daemon test
 after_failure:
-  - cat ../testResults/mdw-function-test-results.json
-  - sleep 10s  # allow travis to unbuffer stdout
+- cat ../testResults/mdw-function-test-results.json
+- sleep 10s
 notifications:
   slack:
     rooms:
-      - mdwcore:9WSiZQJitrLtiiU5BO29Or4R#notices
-    on_success: change # default: change
-    on_failure: always # default: always
+    - mdwcore:9WSiZQJitrLtiiU5BO29Or4R#notices
+    on_success: change
+    on_failure: always
   email:
     recipients:
-      - MdwCoreTeam@CenturyLink.com
-    on_success: change # default: change
-    on_failure: always # default: always
+    - MdwCoreTeam@CenturyLink.com
+    on_success: change
+    on_failure: always
+after_success:
+  - ./before-deploy.sh
+  - ./deploy.sh
