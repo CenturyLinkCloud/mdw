@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-if [ "${TRAVIS_BRANCH}" = "master" ] ;
+#!/bin/bash
+if [ 100 -eq 100 ] 
 then
-      echo "Preparing Publishing assets...";
+      echo "Preparing Publishing assets..."
 fi

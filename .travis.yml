@@ -37,10 +37,7 @@ notifications:
     on_success: change
     on_failure: always
 after_success:
-  - bash -c 'echo $BASH_VERSION'
-  - which bash
   - cd ../
-  - pwd
   - chmod 777 before-deploy.sh
   - chmod 777 deploy.sh
   - ./before-deploy.sh
