@@ -10,4 +10,4 @@ start process("KafkaProducer") {
 
 sleep 30
 wait process
-verify process("com.centurylink.mdw.tests.services/KafkaProducer")
+verify process("com.centurylink.mdw.kafka/KafkaProducer")
