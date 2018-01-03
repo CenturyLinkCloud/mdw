@@ -21,7 +21,7 @@ before_script:
 - npm install
 - bower install
 - cd ../mdw
-script: gradle --no-daemon buildAll
+script: echo "gradle --no-daemon buildAll"
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 - sleep 10s
@@ -37,10 +37,12 @@ notifications:
     on_success: change
     on_failure: always
 after_success:
+  - bash -c 'echo $BASH_VERSION'
+  - sh -c 'echo $BASH_VERSION'
   - cd ../
   - pwd
   - chmod 777 before-deploy.sh
   - chmod 777 deploy.sh
   - ls -ltr 
-  - bash ./before-deploy.sh
-  - bash ./deploy.sh
+  - . ./before-deploy.sh
+  - . ./deploy.sh
