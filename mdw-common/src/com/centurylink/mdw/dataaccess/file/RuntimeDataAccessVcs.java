@@ -521,7 +521,9 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         int slash = qualifiedName.indexOf('/');
         String pkg = qualifiedName.substring(0, slash);
         String proc = qualifiedName.substring(slash + 1);
-        return " AND pi.COMMENTS like '" + pkg + " v%/" + proc + " v%'";
+        return " AND (pi.COMMENTS like '" + pkg + " v%/" + proc + " v%'"
+                + " OR pi.COMMENTS like '" + pkg + "/" + proc + " v%')";
+
     }
 
     protected ProcessInstance getProcessInstanceBase0(Long processInstanceId) throws SQLException, DataAccessException {
