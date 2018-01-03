@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "${TRAVIS_BRANCH}" = "master" ] 
+if [ "${TRAVIS_BRANCH}" -eq "master" ] 
 then
     if [ "${TRAVIS_PULL_REQUEST}" -eq "false" ] 
     then
