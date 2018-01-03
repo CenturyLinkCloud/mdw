@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-if [ "${TRAVIS_BRANCH}" -eq "master" ] 
+#!/bin/sh
+if [ "${TRAVIS_BRANCH}" = "master" ] 
 then
-    if [ "${TRAVIS_PULL_REQUEST}" -eq "false" ] 
+    if [ "${TRAVIS_PULL_REQUEST}" = "false" ] 
     then
           cd mdw
           pwd
