@@ -43,6 +43,5 @@ after_success:
   - pwd
   - chmod 777 before-deploy.sh
   - chmod 777 deploy.sh
-  - ls -ltr 
-  - . ./before-deploy.sh
-  - . ./deploy.sh
+  - ./before-deploy.sh
+  - ./deploy.sh
