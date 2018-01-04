@@ -29,7 +29,8 @@ actionsMod.directive('mdwActions', [function() {
     controllerAs: 'mdwActions', 
     link: {
       pre: function(scope, elem, attrs) {
-        scope.wrapWidth = attrs.wrap;
+        var wrap = parseInt(attrs.wrap);
+        scope.wrapWidth = wrap + 'px';
       },
       post: function(scope, elem, attrs) {
       }
