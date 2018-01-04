@@ -66,10 +66,10 @@ public class Update extends Setup {
         JSONObject json = discover.getPackages();
         if (json.has("packages")) {
             JSONArray pkgs = json.getJSONArray("packages");
-            pkgs.forEach(pkg -> {
-                JSONObject pkgJson = (JSONObject)pkg;
+            for (int i = 0; i < pkgs.length(); i++) {
+                JSONObject pkgJson = pkgs.getJSONObject(i);
                 discovered.put(pkgJson.getString("name"), isMdw ? null : pkgJson.getString("version"));
-            });
+            }
         }
 
         List<String> toDownload = new ArrayList<>();

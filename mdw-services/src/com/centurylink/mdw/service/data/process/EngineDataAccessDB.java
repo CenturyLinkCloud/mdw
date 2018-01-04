@@ -371,12 +371,12 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     if (!myJsonDoc.isEmpty())
                         if (content.contains(".") || content.contains("$"))
                             myJsonDoc = DatabaseAccess.encodeMongoDoc(myJsonDoc);
-                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("isJSON", true); // Plus append isJSON:true field
+                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("document_id", documentId).append("isJSON", true); // Plus append isJSON:true field
                 }
                 catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
             }
             if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON plus append isJSON:false
-                myDoc = new org.bson.Document("CONTENT", content).append("isJSON", false);
+                myDoc = new org.bson.Document("CONTENT", content).append("document_id", documentId).append("isJSON", false);
             if (collection.findOneAndReplace(eq("document_id", documentId), myDoc) != null)
                 inMongo = true;
         }
