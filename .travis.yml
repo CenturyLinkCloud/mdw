@@ -1,4 +1,7 @@
 language: java
+branches:
+  only:
+  - master
 env:
   matrix:
   - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
@@ -21,7 +24,7 @@ before_script:
 - npm install
 - bower install
 - cd ../mdw
-script: echo "gradle --no-daemon buildAll"
+script: gradle --no-daemon publishAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 - sleep 10s
@@ -36,9 +39,3 @@ notifications:
     - MdwCoreTeam@CenturyLink.com
     on_success: change
     on_failure: always
-after_success:
-  - cd ../
-  - chmod 777 before-deploy.sh
-  - chmod 777 deploy.sh
-  - ./before-deploy.sh
-  - ./deploy.sh

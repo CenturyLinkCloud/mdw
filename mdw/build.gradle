@@ -135,17 +135,6 @@ task deployTomcatMdwDev(type: GradleBuild) {
                                         testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
-task publishToMavenCentral(type: GradleBuild) {
-    dependsOn javadocs
-    buildFile = "publish.gradle"
-    tasks = ["publishToMavenCentral"]
-}
-
-task publishAssetsToMavenCentral(type: GradleBuild) {
-    buildFile = "publish.gradle"
-    tasks = ["publishAssetsToMavenCentral"]
-}
-
 allprojects {
     group = "com.centurylink.mdw"
     version = "${mdwVersion}"
@@ -228,6 +217,7 @@ task zipTemplates(type: Zip) {
 artifacts {
     archives zipTemplates
 }
+
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -239,6 +229,7 @@ uploadArchives {
 }
 
 task buildAll(type: GradleBuild) {
+    dependsOn packageSources
     dependsOn zipTemplates
     buildFile = "build.gradle"
     tasks = ["build"]
@@ -339,6 +330,12 @@ task cleanAll(type: GradleBuild) {
     dependsOn cleanJavadocs
     buildFile = "build.gradle"
     tasks = ["clean"]
+}
+
+task publishAll(type: GradleBuild) {
+    dependsOn testAll
+    buildFile = "publish.gradle"
+    tasks = ["publishToMavenCentral", "publishAssetsToMavenCentral"]
 }
 
 // update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
