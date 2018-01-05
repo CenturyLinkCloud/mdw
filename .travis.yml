@@ -9,8 +9,8 @@ before_install:
 - gradle -version
 - npm install -g bower
 - npm install -g grunt-cli
-- openssl aes-256-cbc -K $encrypted_729e98813df3_key -iv $encrypted_729e98813df3_iv -in secring.gpg.enc -out secring.gpg -d
 - openssl aes-256-cbc -K $encrypted_729e98813df3_key -iv $encrypted_729e98813df3_iv -in secret.properties.enc -out secret.properties -d
+- openssl aes-256-cbc -K $encrypted_729e98813df3_key -iv $encrypted_729e98813df3_iv -in secring.gpg.enc -out secring.gpg -d
 before_script:
 - cd mdw-hub
 - npm install
