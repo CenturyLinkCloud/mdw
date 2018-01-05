@@ -139,26 +139,35 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             }
             sql.append("  from process_instance\n   ");
             sql.append(getProcessWhereClause(query));
-            if (statusCodes != null)
-                sql.append("\n   and status_cd ").append(getInCondition(statusCodes)).append("group by st, status_cd");
-            else if (processIds != null)
-                sql.append("\n   and process_id ").append(getInCondition(processIds)).append("group by st, process_id");
-            else
-                sql.append("group by st");
+            if (statusCodes != null) {
+                sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
+                if (db.isMySQL())
+                    sql.append("group by st, status_cd");
+                else
+                    sql.append("group by trunc(start_dt), status_cd");
+            }
+            else if (processIds != null) {
+                sql.append("\n   and process_id ").append(getInCondition(processIds));
+                if (db.isMySQL())
+                    sql.append("group by st, process_id");
+                else
+                    sql.append("group by trunc(start_dt), process_id");
+            }
+            else {
+                if (db.isMySQL())
+                    sql.append("group by st");
+                else
+                    sql.append("group by trunc(start_dt)");
+            }
             sql.append(") pi\n");
 
-            if (db.isMySQL()){
-                if (query.getBooleanFilter("completionTime")){
-                  sql.append("\norder by pi.comTime desc\n");
-                }else{
-                  sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
-                }
-            } else{
-                if (query.getBooleanFilter("completionTime")){
-                    sql.append("\norder by pi.comTime desc\n");
-                }else{
+            if (query.getBooleanFilter("completionTime"))
+                sql.append("\norder by pi.comTime desc\n");
+            else {
+                if (db.isMySQL())
+                    sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
+                else
                     sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
-                }
             }
 
             db.openConnection();
