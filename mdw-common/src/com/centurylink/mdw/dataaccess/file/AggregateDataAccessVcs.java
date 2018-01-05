@@ -114,7 +114,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
 
             StringBuilder sql = new StringBuilder();
             if (statusCodes != null)
-                sql.append("select count(pi.status_cd) as ct, pi.st, pi.status_cd\n");
+                sql.append("select pi.ct as ct, pi.st, pi.status_cd\n");
             else if (processIds != null){
                   sql.append("select pi.ct as ct,ROUND(pi.comTime) as coTi, pi.st, pi.process_id\n");
             }else
@@ -140,13 +140,14 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             sql.append("  from process_instance\n   ");
             sql.append(getProcessWhereClause(query));
             if (statusCodes != null)
-                sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
+                sql.append("\n   and status_cd ").append(getInCondition(statusCodes)).append("group by st, status_cd");
             else if (processIds != null)
-                sql.append("\n   and process_id ").append(getInCondition(processIds));
+                sql.append("\n   and process_id ").append(getInCondition(processIds)).append("group by st, process_id");
+            else
+                sql.append("group by st");
             sql.append(") pi\n");
 
-
-             sql.append("group by st");
+            sql.append("group by st");
             if (statusCodes != null)
                 sql.append(", status_cd");
             else if (processIds != null)
