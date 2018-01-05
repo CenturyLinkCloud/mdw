@@ -335,7 +335,13 @@ task cleanAll(type: GradleBuild) {
 task publishAll(type: GradleBuild) {
     dependsOn testAll
     buildFile = "publish.gradle"
-    tasks = ["publishToMavenCentral", "publishAssetsToMavenCentral"]
+    tasks = ["publishToMavenCentral"]
+}
+
+// to be run standalone, after successful publish
+task publishAssets(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["publishAssetsToMavenCentral"]
 }
 
 // update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
