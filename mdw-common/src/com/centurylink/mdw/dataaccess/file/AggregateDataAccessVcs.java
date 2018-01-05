@@ -147,12 +147,6 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("group by st");
             sql.append(") pi\n");
 
-            sql.append("group by st");
-            if (statusCodes != null)
-                sql.append(", status_cd");
-            else if (processIds != null)
-                sql.append(", process_id");
-
             if (db.isMySQL()){
                 if (query.getBooleanFilter("completionTime")){
                   sql.append("\norder by pi.comTime desc\n");
