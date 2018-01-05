@@ -145,13 +145,13 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("\n   and process_id ").append(getInCondition(processIds));
             sql.append(") pi\n");
 
-            /*
+
              sql.append("group by st");
             if (statusCodes != null)
                 sql.append(", status_cd");
             else if (processIds != null)
                 sql.append(", process_id");
-                */
+
             if (db.isMySQL()){
                 if (query.getBooleanFilter("completionTime")){
                   sql.append("\norder by pi.comTime desc\n");
@@ -524,7 +524,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     in.append(",");
             }
         }
-        in.append(")  group by process_id ");
+        in.append(") ");
         return in.toString();
     }
 
