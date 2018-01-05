@@ -30,4 +30,8 @@ publish:
 docker push mdwcore/mdw
 ```
 
+show all images:
+```
+docker image ls
+```
 **TODO: tomcat configuration (context.xml, 
