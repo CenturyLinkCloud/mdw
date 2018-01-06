@@ -1,5 +1,6 @@
 secring.gpg
 secret.properties
+secrets.tar
 .metadata/
 .gradle/
 .recommenders/
