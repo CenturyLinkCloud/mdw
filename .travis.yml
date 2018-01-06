@@ -12,11 +12,11 @@ before_install:
 - npm install -g bower
 - npm install -g grunt-cli
 before_script:
+- cat secret.properties >> mdw/gradle.properties
 - cd mdw-hub
 - npm install
 - bower install
 - cd ../mdw
-- echo secret.properties >> gradle.properties
 script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
