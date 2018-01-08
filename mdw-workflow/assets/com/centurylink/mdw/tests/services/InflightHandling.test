@@ -129,7 +129,7 @@ Object startProcess(String oldVar) {
         options = [captureResult: false]
     }
     resp = submit POST
-    assert resp.status.code == 200
+    assert resp.status.code == 201
     return new JsonSlurper().parseText(resp.body)
 }
 
