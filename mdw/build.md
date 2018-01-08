@@ -11,7 +11,7 @@
   - **/.mdw/package.json
 
 3 - Tag release
-  - git tag -a v6.0.xx -m 'v6.0.xx'
+  - git tag -a v6.0.xx -m 'v6.0.xx [skip ci]'
   - (Formal builds only) Delete SNAPSHOT release and tags
       - git pull
       - git tag -d v6.0.xx-SNAPSHOT 
@@ -45,7 +45,7 @@
   - Run following command in root of your workspace
   github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
-  - git commit CHANGELOG.md -m "Release notes" 
+  - git commit CHANGELOG.md -m "Release notes [skip ci]" 
   - git push (commits and pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, release name should be 6.0.xx, copy the notes from updated CHANGELOG.md
   - Change release status from pre-release to release
