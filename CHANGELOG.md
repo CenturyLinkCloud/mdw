@@ -1,7 +1,25 @@
 # Change Log
 
+## [v6.0.11](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.11) (2018-01-06)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.11-SNAPSHOT...v6.0.11)
+
+**Implemented enhancements:**
+
+- Remove auto generated date stamp in javadoc [\#281](https://github.com/CenturyLinkCloud/mdw/issues/281)
+
+**Closed issues:**
+
+- Recent changes in AggregateDataAccessVcs have broken Requests, Tasks and Activities charts [\#282](https://github.com/CenturyLinkCloud/mdw/issues/282)
+
+## [v6.0.11-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.11-SNAPSHOT) (2017-12-29)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.10...v6.0.11-SNAPSHOT)
+
+**Closed issues:**
+
+- Process instance retrieval by name should handle missing package version in comments [\#283](https://github.com/CenturyLinkCloud/mdw/issues/283)
+
 ## [v6.0.10](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.10) (2017-12-22)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09...v6.0.10)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.10-SNAPSHOT...v6.0.10)
 
 **Implemented enhancements:**
 
@@ -19,6 +37,9 @@
 - ASSET\_REF update issue on non-dev embedded db environment [\#276](https://github.com/CenturyLinkCloud/mdw/issues/276)
 - Fix Attachments API and integrate with Slack [\#274](https://github.com/CenturyLinkCloud/mdw/issues/274)
 - Editing a new file in MDW Hub [\#252](https://github.com/CenturyLinkCloud/mdw/issues/252)
+
+## [v6.0.10-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.10-SNAPSHOT) (2017-11-29)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09...v6.0.10-SNAPSHOT)
 
 ## [v6.0.09](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.09) (2017-11-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09-SNAPSHOT...v6.0.09)
@@ -103,7 +124,7 @@
 - Cannot Discover assets for import in mdw-hub from repo on 143 server [\#91](https://github.com/CenturyLinkCloud/mdw/issues/91)
 
 ## [v6.0.06](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.06) (2017-09-11)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05...v6.0.06)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.06-SNAPSHOT...v6.0.06)
 
 **Implemented enhancements:**
 
@@ -125,8 +146,11 @@
 - Runtime UI can overlook subprocess instances for superseded definitions [\#161](https://github.com/CenturyLinkCloud/mdw/issues/161)
 - Postman autotests fail on Cloud Foundry \(at least AppFog\) [\#154](https://github.com/CenturyLinkCloud/mdw/issues/154)
 
+## [v6.0.06-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.06-SNAPSHOT) (2017-08-12)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05...v6.0.06-SNAPSHOT)
+
 ## [v6.0.05](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05) (2017-08-11)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.04...v6.0.05)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05-SNAPSHOT...v6.0.05)
 
 **Implemented enhancements:**
 
@@ -142,9 +166,7 @@
 - Caching for Swagger annotations scan results [\#131](https://github.com/CenturyLinkCloud/mdw/issues/131)
 - Redesign event waits/publishing paradigm [\#129](https://github.com/CenturyLinkCloud/mdw/issues/129)
 - MDW CLI for quickstart setup [\#124](https://github.com/CenturyLinkCloud/mdw/issues/124)
-- Package-based routing and scalability [\#108](https://github.com/CenturyLinkCloud/mdw/issues/108)
 - MDW deployable as a Spring Boot application [\#100](https://github.com/CenturyLinkCloud/mdw/issues/100)
-- Add sonarqube analysis to our CI builds [\#79](https://github.com/CenturyLinkCloud/mdw/issues/79)
 - Task Event Wait registration service [\#34](https://github.com/CenturyLinkCloud/mdw/issues/34)
 
 **Closed issues:**
@@ -155,6 +177,14 @@
 - Intra-MDW dependencies incorrectly reflected in published .pom artifacts [\#132](https://github.com/CenturyLinkCloud/mdw/issues/132)
 - Cross-VM fix for event processing deadlocks [\#122](https://github.com/CenturyLinkCloud/mdw/issues/122)
 - Tomcat 8.5 status messages always "OK" for REST services [\#113](https://github.com/CenturyLinkCloud/mdw/issues/113)
+
+## [v6.0.05-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05-SNAPSHOT) (2017-06-22)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.04...v6.0.05-SNAPSHOT)
+
+**Implemented enhancements:**
+
+- Package-based routing and scalability [\#108](https://github.com/CenturyLinkCloud/mdw/issues/108)
+- Add sonarqube analysis to our CI builds [\#79](https://github.com/CenturyLinkCloud/mdw/issues/79)
 
 ## [v6.0.04](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.04) (2017-06-19)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.03...v6.0.04)
@@ -187,6 +217,9 @@
 - Swagger and Browser issues [\#57](https://github.com/CenturyLinkCloud/mdw/issues/57)
 
 ## [v6.0.03](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.03) (2017-05-05)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v9.1.5...v6.0.03)
+
+## [v9.1.5](https://github.com/CenturyLinkCloud/mdw/tree/v9.1.5) (2017-05-05)
 **Implemented enhancements:**
 
 - Retain user filter selections on the Workflow tab [\#78](https://github.com/CenturyLinkCloud/mdw/issues/78)
