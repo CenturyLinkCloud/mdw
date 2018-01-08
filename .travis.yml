@@ -18,8 +18,9 @@ before_script:
 - npm install
 - bower install
 - cd ../mdw
+- export  mdwVersion=`cat mdw/gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 - echo " ${TRAVIS_BUILD_DIR} " ${TRAVIS_BUILD_DIR}
-- echo " ${TRAVIS_TAG} " ${TRAVIS_TAG}
+- echo " mdwVersion =" $mdwVersion
 # script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 script: gradle --no-daemon buildAll
 after_failure:
@@ -41,8 +42,8 @@ deploy:
   api_key:
     secure: GEqYvjwbCQq+pElMBmnBnGNJRwEOlZ6QDrQbB6ZMaN8sPlaWHMg3M12CUB/IETBF3pozrv94eIHLmCnKx+QTv9DxSTscckhEM6i/fUUYSqR1ANP4PTu6q/QgTrQj2YqtJa6OKD/C9f3zoHPCNhQsNJ7LkKQLdS47zYnOKGT8XNPDi6JqitpEVPrfsG6VZqABEbQu9heqqOqk/61c6Q8xQkUsreUTwLdgp79hu4hDZLjmnEy3iklNCJiXBEyqRQTvPNzwDtetYuG0KapHPlj1sqV4OLY24I2twqRwzPH2X1/06Ud4hv0EbRAh8OlhnBzh5CGV4XupO9CuYz2yXCjCTCPz2tuAmfSGbQpr8n225rfj1IxU40ZS4qqwebp70D2zw2E4EvCJ4Tyu2BMXnOHZw/ppGwCZ+RdlHtFDDAU30ywgnQ4pvJvhIjbETTLIS69Qt0my3khwCtHXUG95YTbWkJho9UIP1cb5aQ1gTotFTN9mbtnuL0u49LiAYxs6fMWLvucRfsu1liJnONdeIrxyOMlmOFQz3hKy5xqbYED1xYesg97UeiKvLxVv+Y8CFwSBPiitGf5YsPeiJUyN4Hq2P4drFQ5UXfWtxfZoc7rO6Ic+b3dUfVHLblOeMnvUH1MIvjpCWzvsHC45KDouWHBfi8tRR5+9n3N1Quo3qQXyW9s=
   file: 
-    - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-cli-$tag.zip"
-    - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$tag.zip"
+    - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-cli-$mdwVersion.zip"
+    - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$mdwVersion.zip"
   skip_cleanup: true
   on:
     repo: CenturyLinkCloud/mdw
