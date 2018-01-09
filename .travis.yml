@@ -49,3 +49,11 @@ deploy:
     - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$mdwVersion.jar"
   overwrite: true
   skip_cleanup: true
+after_deploy:
+  - git config --local user.name magrawa
+  - git config --local user.email manoj.a.agrawal@gmail.com
+  - pwd
+  - cd docs/_docs/javadoc
+  - git add . *.html
+  - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER"
+  - git push

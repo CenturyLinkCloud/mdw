@@ -10,13 +10,13 @@
   - RestApiDefinition.java
   - **/.mdw/package.json
 
-3 - Tag release
-  - (Formal builds only) Delete SNAPSHOT release and tags
+3 - Clean Tag (Formal builds only)
+  - Delete SNAPSHOT release and tags
       - git pull
       - git tag -d 6.0.xx-SNAPSHOT 
       - Delete the Draft of SNAPSHOT from GitHub:
         https://github.com/CenturyLinkCloud/mdw/releases
-  - git push origin --tags
+      - git push origin --tags
         
 4 - Git pull and Commit and push all the above changes to Git.
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
@@ -70,4 +70,4 @@
    -  Select a space: Prod for formal, and Dev for snapshots
    -  cf push
   
-    
+TODO: Javadocs, buildpack     
