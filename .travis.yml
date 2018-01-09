@@ -39,7 +39,6 @@ notifications:
     on_success: change
     on_failure: always
 before_deploy:
-# Set up git user name and tag this commit
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
