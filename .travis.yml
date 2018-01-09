@@ -22,7 +22,6 @@ before_script:
 - pwd
 - echo " mdwVersion =" $mdwVersion
 - git tag -d v$mdwVersion
-- git tag v$mdwVersion
 - git tag -a v$mdwVersion -m 'v$mdwVersion [skip ci]'
 - git push origin --tags
 
