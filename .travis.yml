@@ -39,10 +39,6 @@ notifications:
     on_success: change
     on_failure: always
 before_deploy:
-  - git config --local user.name magrawa
-  - git config --local user.email manoj.a.agrawal@gmail.com
-  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-  - echo " TRAVIS_TAG =" $TRAVIS_TAG
   - export TRAVIS_TAG=$mdwVersion
   - echo " TRAVIS_TAG =" $TRAVIS_TAG
 deploy:
