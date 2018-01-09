@@ -43,6 +43,8 @@ before_deploy:
   - git config --local user.email manoj.a.agrawal@gmail.com
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
   - echo " TRAVIS_TAG =" $TRAVIS_TAG
+  - export TRAVIS_TAG=$mdwVersion
+  - echo " TRAVIS_TAG =" $TRAVIS_TAG
 deploy:
   provider: releases
   api_key:
@@ -53,5 +55,4 @@ deploy:
   overwrite: true
   skip_cleanup: true
   on:
-    repo: CenturyLinkCloud/mdw
     tags: true
