@@ -114,7 +114,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
 
             StringBuilder sql = new StringBuilder();
             if (statusCodes != null)
-                sql.append("select count(pi.status_cd) as ct, pi.st, pi.status_cd\n");
+                sql.append("select pi.ct as ct, pi.st, pi.status_cd\n");
             else if (processIds != null){
                   sql.append("select pi.ct as ct,ROUND(pi.comTime) as coTi, pi.st, pi.process_id\n");
             }else
@@ -139,31 +139,35 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             }
             sql.append("  from process_instance\n   ");
             sql.append(getProcessWhereClause(query));
-            if (statusCodes != null)
+            if (statusCodes != null) {
                 sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
-            else if (processIds != null)
+                if (db.isMySQL())
+                    sql.append("group by st, status_cd");
+                else
+                    sql.append("group by trunc(start_dt), status_cd");
+            }
+            else if (processIds != null) {
                 sql.append("\n   and process_id ").append(getInCondition(processIds));
+                if (db.isMySQL())
+                    sql.append("group by st, process_id");
+                else
+                    sql.append("group by trunc(start_dt), process_id");
+            }
+            else {
+                if (db.isMySQL())
+                    sql.append("group by st");
+                else
+                    sql.append("group by trunc(start_dt)");
+            }
             sql.append(") pi\n");
 
-            /*
-             sql.append("group by st");
-            if (statusCodes != null)
-                sql.append(", status_cd");
-            else if (processIds != null)
-                sql.append(", process_id");
-                */
-            if (db.isMySQL()){
-                if (query.getBooleanFilter("completionTime")){
-                  sql.append("\norder by pi.comTime desc\n");
-                }else{
-                  sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
-                }
-            } else{
-                if (query.getBooleanFilter("completionTime")){
-                    sql.append("\norder by pi.comTime desc\n");
-                }else{
+            if (query.getBooleanFilter("completionTime"))
+                sql.append("\norder by pi.comTime desc\n");
+            else {
+                if (db.isMySQL())
+                    sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
+                else
                     sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
-                }
             }
 
             db.openConnection();
@@ -524,7 +528,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     in.append(",");
             }
         }
-        in.append(")  group by process_id ");
+        in.append(") ");
         return in.toString();
     }
 

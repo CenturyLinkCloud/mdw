@@ -137,6 +137,9 @@ public class Install extends Setup {
             else {
                 downloads = new Download[]{new Download(new URL(getBinariesUrl() + "/download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile)};
             }
+            if (downloads == null) {
+                throw new FileNotFoundException("Release artifact not found: " + jarFile.getName());
+            }
         }
 
         if (downloads != null) {

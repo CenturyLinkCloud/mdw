@@ -76,17 +76,9 @@ public class ServiceRegistry {
     }
 
     public <T extends RegisteredService> T getDynamicServiceForPath(Package pkg, Class<T> serviceInterface, String resourcePath) {
-        String className = pathToDynamicServiceClass.get(resourcePath);
+        String className = pathToDynamicServiceClass.get(pkg.getName().replace('.',  '/') + resourcePath);
         if (className != null)
             return getDynamicService(pkg, serviceInterface, className);
-        return null;
-    }
-
-    public String getPathForDynamicService(Class<? extends RegisteredService> serviceClass) {
-        for (String path : pathToDynamicServiceClass.keySet()) {
-            if (serviceClass.equals(pathToDynamicServiceClass.get(path)))
-                return path;
-        }
         return null;
     }
 
@@ -162,7 +154,13 @@ public class ServiceRegistry {
 
     public void addDynamicService(String serviceInterface, String className, String path) {
         addDynamicService(serviceInterface, className);
-        pathToDynamicServiceClass.put(path, className);
+        // prefix path with pkg name for full service path
+        String regPath = path;
+        int lastDot = className.lastIndexOf('.');
+        if (lastDot > 0) {
+            regPath = className.substring(0, lastDot).replace('.', '/') + path;
+        }
+        pathToDynamicServiceClass.put(regPath, className);
     }
 
     public void addDynamicServices(String serviceInterface, Set<String> classNames) {

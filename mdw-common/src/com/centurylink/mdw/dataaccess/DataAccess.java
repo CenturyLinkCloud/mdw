@@ -226,15 +226,18 @@ public class DataAccess {
             DatabaseAccess db = new DatabaseAccess(null);
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-            try (Connection conn = db.openConnection()){
-                Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), conn);
-                cp.updateRefs();
+            try (Connection conn = db.openConnection()) {
+                String ref = vcGit.getCommit();
+                if (ref != null) {  // avoid attempting update for local-only resources
+                    Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), conn);
+                    cp.updateRefs();
+                }
             }
             catch (SQLException e) {
-                throw new DataAccessException(e.getErrorCode(), e.getMessage());
+                throw new DataAccessException(e.getErrorCode(), e.getMessage(), e);
             }
             catch (IOException e) {
-                throw new DataAccessException(e.getMessage());
+                throw new DataAccessException(e.getMessage(), e);
             }
         }
     }
