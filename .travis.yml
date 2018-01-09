@@ -21,7 +21,7 @@ before_script:
 - export  mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 - pwd
 - echo " mdwVersion =" $mdwVersion
-- git tag v$mdwVersion
+#- git tag v$mdwVersion
 # script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 script: gradle --no-daemon buildAll
 after_failure:
@@ -48,4 +48,3 @@ deploy:
   skip_cleanup: true
   on:
     repo: CenturyLinkCloud/mdw
-    tags: true
