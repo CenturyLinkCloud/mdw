@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.catalina.Context;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ApplicationContext;
@@ -69,8 +71,19 @@ public class SpringBootApplication {
             contextProp = "/mdw";
         TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory(
                 contextProp, Integer.parseInt(portProp));
+        factory.addContextCustomizers(tomcatContextCustomizer());
         factory.setDocumentRoot(new File(getBootDir() + "/web"));
         return factory;
+    }
+
+    @Bean
+    public TomcatContextCustomizer tomcatContextCustomizer() {
+        return new TomcatContextCustomizer() {
+            @Override
+            public void customize(Context context) {
+                context.addApplicationListener("org.apache.tomcat.websocket.server.WsContextListener");
+            }
+        };
     }
 
     private static File bootDir;
@@ -106,4 +119,9 @@ public class SpringBootApplication {
         }
         return bootDir;
     }
+
+//    @Bean
+//    public ServerEndpointExporter serverEndpointExporter() {
+//        return new ServerEndpointExporter();
+//    }
 }
