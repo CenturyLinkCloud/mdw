@@ -11,10 +11,9 @@
   - **/.mdw/package.json
 
 3 - Tag release
-  - git tag -a v6.0.xx -m 'v6.0.xx [skip ci]'
   - (Formal builds only) Delete SNAPSHOT release and tags
       - git pull
-      - git tag -d v6.0.xx-SNAPSHOT 
+      - git tag -d 6.0.xx-SNAPSHOT 
       - Delete the Draft of SNAPSHOT from GitHub:
         https://github.com/CenturyLinkCloud/mdw/releases
   - git push origin --tags

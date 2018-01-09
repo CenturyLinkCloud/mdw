@@ -22,8 +22,7 @@ before_script:
 - pwd
 - echo " mdwVersion =" $mdwVersion
 
-# script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
-script: gradle --no-daemon buildAll
+script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 - sleep 10s
