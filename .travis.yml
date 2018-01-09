@@ -54,5 +54,3 @@ deploy:
     - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$mdwVersion.jar"
   overwrite: true
   skip_cleanup: true
-  on:
-    tags: true
