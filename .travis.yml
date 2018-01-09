@@ -21,8 +21,7 @@ before_script:
 - export  mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 - pwd
 - echo " mdwVersion =" $mdwVersion
-- git tag -d v$mdwVersion
-- git tag -a v$mdwVersion -m 'v$mdwVersion [skip ci]'
+- git tag -a -f v$mdwVersion -m 'v$mdwVersion [skip ci]'
 - git push origin --tags
 
 # script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
