@@ -21,8 +21,6 @@ before_script:
 - export  mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 - pwd
 - echo " mdwVersion =" $mdwVersion
-- git tag -a -f v$mdwVersion -m 'v$mdwVersion [skip ci]'
-- echo " TRAVIS_TAG =" $TRAVIS_TAG
 
 # script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 script: gradle --no-daemon buildAll
@@ -45,6 +43,7 @@ before_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+  - echo " TRAVIS_TAG =" $TRAVIS_TAG
 deploy:
   provider: releases
   api_key:
