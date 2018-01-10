@@ -57,4 +57,5 @@ after_deploy:
   - ls
   - git add . 
   - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER"
+  - git remote add master https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git > /dev/null 2>&1
   - git push origin HEAD:master
