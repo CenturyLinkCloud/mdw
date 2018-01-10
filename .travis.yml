@@ -22,7 +22,7 @@ before_script:
 - pwd
 - echo " mdwVersion =" $mdwVersion
 
-script: gradle --no-daemon buildAll
+script: gradle --no-daemon buildAll -DPUBLISHING_TO_MAVEN_CENTRAL=true
 #script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
@@ -53,8 +53,8 @@ deploy:
 after_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
-  - pwd
-  - cd docs/_docs/javadoc
-  - git add . *.html
+  - cd ../docs/_docs/javadoc
+  - ls
+  - git add . 
   - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER"
   - git push
