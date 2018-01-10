@@ -51,11 +51,19 @@ deploy:
   overwrite: true
   skip_cleanup: true
 after_deploy:
+  - cd ..
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
-  - git remote add javadoc https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git
-  - cd ..
+  - git clone https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git newDocs
+  - cd newDocs
+  - ls
+  - git rm -rf ./docs/_docs/javadoc
+  - cp -Rf ../docs/_docs/javadoc ./javadoc ./docs/_docs/javadoc
+  - git add -f .
+  - git status
+  - git commit -a -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to docs [skip ci]"
+  - cd ./docs/_docs/javadoc
   - ls -ltr
-  - git add docs
-  - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER [skip ci]"
-  - git push javadoc HEAD:master
+  - cd ../../../../
+  - ls -ltr
+  - git push -fq origin HEAD:master
