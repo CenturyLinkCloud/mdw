@@ -932,8 +932,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
   <link rel="stylesheet" href="/mdw/asset/demo/super-cool.css">
   ```
   
-  - To override tabs, right-click on mdw-hub.js and select New > JSON.  Name the asset tabs.json.
-    This will now shade [MDWHub's tabs.json](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-hub/web/js/tabs.json).
+  - To override tabs and nav links, right-click on mdw-hub.js and select New > JSON.  Name the asset nav.json.
+    This will now shade [MDWHub's nav.json](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-hub/web/js/nav.json).
     Immediately following the tasksTab in the JSON array add something like this:
     ```
     {
@@ -969,9 +969,9 @@ is available to clone in its completed state from the [mdw-demo repository](http
       ]
     }
     ```
-    Here's the [end result on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/mdw-hub/js/tabs.js).
+    Here's the [end result on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/mdw-hub/js/nav.json).
     
-  - Now tabs.json points to a url (*#/issues*) for a route that doesn't exist.  Modify routes.json in the same package:
+  - Now nav.json points to a url (*#/issues*) for a route that doesn't exist.  Modify routes.json in the same package:
     ```json
     [
       {

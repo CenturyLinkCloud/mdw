@@ -5,7 +5,7 @@ var userSvc = angular.module('authUser', ['mdw']);
 userSvc.factory('authUser', ['$http', 'mdw', function($http, mdw) {
   
   var fillTabs = function(user) {
-    var tabsJsonUrl = mdw.roots.hub + '/js/tabs.json';
+    var tabsJsonUrl = mdw.roots.hub + '/js/nav.json';
     return $http.get(tabsJsonUrl).then(function(response) {
       user.tabs = [];
       var allTabs = response.data;
