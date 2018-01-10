@@ -15,7 +15,9 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.auth.OAuthAuthenticator;
@@ -31,25 +34,42 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-@WebServlet(urlPatterns={"/login", "/logout"}, loadOnStartup=1)
+@WebServlet(urlPatterns = { "/login", "/logout" }, loadOnStartup = 1)
 public class LoginServlet extends HttpServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static final String MDW_MSG_TAG = "<div id=\"mdwAuthError\"></div>";
+    private static final String AUTHENTICATION_FAILED_MSG = "Authentication failed, Invalid credentials";
+    private static final String AUTHORIZATION_FAILED_MSG = "User not Authorized";
+    private static final String SECURITY_ERR_MSG = "Security Exception occured";
+    private static final String MDW_AUTH_MSG = "mdwAuthError";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         request.getSession().removeAttribute("authenticatedUser");
+        String authError = (String) request.getSession().getAttribute(MDW_AUTH_MSG);
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("ct".equals(authMethod))
-            request.getRequestDispatcher("auth/ctLogin.html").forward(request, response);
-        else if ("af".equals(authMethod)) {
-            request.getRequestDispatcher("auth/afLogin.html").forward(request, response);
-        }
-        else {
-            StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED, "Unsupported authMethod: " + authMethod);
+        if ("ct".equals(authMethod) || ("af".equals(authMethod))){
+            if ((authError != null)) {
+                response.setContentType("text/html");
+                request.getSession().removeAttribute(MDW_AUTH_MSG);
+                String contents = readContent(request,authMethod);
+                response.getWriter().println("<!-- processed by MDW Login servlet -->");
+                for (String line : contents.split("\\r?\\n")) {
+                    String retLine = processLine(line, authError);
+                    response.getWriter().println(retLine);
+                }
+                response.getWriter().close();
+            }else
+              request.getRequestDispatcher("auth/"+authMethod+"Login.html").forward(request, response);
+
+        }else {
+            StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,
+                    "Unsupported authMethod: " + authMethod);
             response.setStatus(sr.getStatus().getCode());
             response.getWriter().println(sr.getJson().toString(2));
         }
@@ -57,32 +77,97 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         String authMethod = WebAppContext.getMdw().getAuthMethod();
         if ("af".equals(authMethod)) {
             String user = request.getParameter("user");
             String password = request.getParameter("password");
             if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
                 try {
-                    Authenticator authenticator = new OAuthAuthenticator(WebAppContext.getMdw().getAuthTokenLoc());
+                    Authenticator authenticator = new OAuthAuthenticator(
+                            WebAppContext.getMdw().getAuthTokenLoc());
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
                     AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);
                     if (authUser == null) {
-                        if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser())
-                            throw new MdwSecurityException("User not authorized: " + authUser);
+                        if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser()) {
+                            throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(),
+                                    AUTHORIZATION_FAILED_MSG);
+                        }
                     }
-                    request.getSession().setAttribute("authenticatedUser", authUser);
-                    response.sendRedirect(WebAppContext.getMdw().getHubRoot());
+                    else {
+                        request.getSession().setAttribute("authenticatedUser", authUser);
+                        response.sendRedirect(WebAppContext.getMdw().getHubRoot());
+                    }
+
                 }
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
+                    if (ex instanceof AuthenticationException) {
+                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
+                    }
+                    else if (ex instanceof MdwSecurityException
+                            && ((MdwSecurityException) ex).getCode() == 401) {
+                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHORIZATION_FAILED_MSG);
+                    }
+                    else {
+                        request.getSession().setAttribute(MDW_AUTH_MSG, SECURITY_ERR_MSG);
+                    }
                     response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
                 }
             }
+            else {
+                request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
+                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+            }
+
         }
         else {
             super.doPost(request, response);
         }
     }
+
+    private String readContent(HttpServletRequest request,String authMethod) throws IOException {
+        String realPath = request.getSession().getServletContext().getRealPath("auth/"+authMethod+"Login.html");
+        String contents;
+        try {
+            if (realPath == null) {
+                // read from classpath
+                contents = new String(FileHelper.readFromResourceStream(
+                        getClass().getClassLoader().getResourceAsStream("auth/"+authMethod+"Login.html")));
+            }
+            else {
+                if (!new File(realPath).isFile() && getClass().getClassLoader().getResource(
+                        "/org/springframework/web/servlet/ResourceServlet.class") != null) {
+                    // spring-boot client app
+                    try (Scanner scanner = new Scanner(getClass().getClassLoader()
+                            .getResourceAsStream("mdw/auth/"+authMethod+"Login.html"), "utf-8")) {
+                        contents = scanner.useDelimiter("\\Z").next();
+                    }
+                }
+                else {
+                    contents = FileHelper.readFromFile(realPath);
+                }
+            }
+        }
+        catch (IOException ex) {
+            // TODO: logging
+            ex.printStackTrace();
+            throw ex;
+        }
+        return contents;
+    }
+
+    private String processLine(String line, String replacementText) throws IOException {
+        String newLine;
+        if (line.trim().equals(MDW_MSG_TAG)) {
+            newLine = "<div id=\"mdwAuthError\" class=\"mdw_hubMessage\">" + replacementText
+                    + "</div>";
+            return newLine;
+        }
+        else
+            return line;
+
+    }
+
 }
