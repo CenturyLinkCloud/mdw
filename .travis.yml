@@ -57,4 +57,4 @@ after_deploy:
   - ls
   - git add . 
   - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER"
-  - git push
+  - git push origin HEAD:master
