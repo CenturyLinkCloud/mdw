@@ -88,7 +88,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     private BaselineData baselineData;
 
     private VersionControl versionControl;
-    public VersionControl getVersionControl() { return versionControl; }
+    public VersionControl getVersionControl() throws DataAccessException {
+        if (pkgDirs == null)  // Can happen while refreshing PackageCache, which clears the maps in versionControlGit
+                getPackageDirs();  // Once pkgDirs is set again, versionControlGit is ready to use
+
+        return versionControl;
+    }
 
     public LoaderPersisterVcs(String cuid, File directory, VersionControl versionControl, BaselineData baselineData) {
         this.user = cuid;  // TODO
@@ -178,13 +183,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (pkgDirs == null) {
             if (!storageDir.exists() || !storageDir.isDirectory())
                 throw new DataAccessException("Directory does not exist: " + storageDir);
-            pkgDirs = new ArrayList<PackageDir>();
+            List<PackageDir> pkgDirsTemp = new ArrayList<PackageDir>();
             for (File pkgNode : getPkgDirFiles(storageDir, includeArchive, new ArrayList<>())) {
                 PackageDir pkgDir = new PackageDir(storageDir, pkgNode, versionControl);
                 pkgDir.parse();
-                pkgDirs.add(pkgDir);
+                pkgDirsTemp.add(pkgDir);
             }
-            Collections.sort(pkgDirs, pkgDirComparator);
+            Collections.sort(pkgDirsTemp, pkgDirComparator);
+            pkgDirs = pkgDirsTemp;
         }
         return pkgDirs;
     }
@@ -773,7 +779,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     protected PackageDir getPackageDir(Long packageId) throws DataAccessException {
-        File logicalDir = versionControl.getFile(packageId);
+        File logicalDir = getVersionControl().getFile(packageId);
         for (PackageDir pkgDir : getPackageDirs()) {
             if (pkgDir.getLogicalDir().equals(logicalDir))
                 return pkgDir;
@@ -826,7 +832,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public Process loadProcess(Long processId, boolean withSubProcesses) throws DataAccessException {
-        File logicalFile = versionControl.getFile(processId);
+        File logicalFile = getVersionControl().getFile(processId);
         if (logicalFile == null)
             return null; // process not found
         PackageDir pkgDir = getPackageDir(logicalFile);
@@ -905,7 +911,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public Asset getAsset(Long id) throws DataAccessException {
         try {
-            File logicalFile = versionControl.getFile(id);
+            File logicalFile = getVersionControl().getFile(id);
             PackageDir pkgDir = getPackageDir(logicalFile);
             return loadAsset(pkgDir, pkgDir.findAssetFile(logicalFile), true);
         }
@@ -921,7 +927,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         for (Asset asset : getAssets()) {
             if (asset.getName().equals(name) && (asset.getVersion() == version || version == 0)) {
                 try {
-                    File logicalFile = versionControl.getFile(asset.getId());
+                    File logicalFile = getVersionControl().getFile(asset.getId());
                     PackageDir pkgDir = getPackageDir(logicalFile);
                     return loadAsset(pkgDir, pkgDir.findAssetFile(logicalFile), true);
                 }
@@ -1156,7 +1162,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                     }
                     pkgDirs.remove(existingTopLevel);
                     deletePkg(existingTopLevel);
-                    versionControl.clearId(existingTopLevel.getLogicalDir());
+                    getVersionControl().clearId(existingTopLevel.getLogicalDir());
                 }
                 pkgDir = createPackage(packageVO);
             }
@@ -1201,7 +1207,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             pkg.setVersion(newVersion);
             save(pkg, oldPkgDir, false); // at this point package.xml name doesn't match oldPkgDir
             newPkg = renamePkgDir(oldPkgDir, newPkg);
-            versionControl.clearId(oldPkgDir.getLogicalDir());
+            getVersionControl().clearId(oldPkgDir.getLogicalDir());
             PackageDir newPkgDir = new PackageDir(storageDir, newPkg, versionControl);
             newPkgDir.parse();
             // prime the cache with the new pkg
@@ -1221,7 +1227,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             pkgDirs.remove(pkgDir);
             deletePkg(pkgDir);
-            versionControl.clearId(pkgDir.getLogicalDir());
+            getVersionControl().clearId(pkgDir.getLogicalDir());
             return 0; // not used
         }
         catch (IOException ex) {
@@ -1259,7 +1265,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public long renameProcess(Long processId, String newName, int newVersion) throws DataAccessException {
-        File logicalFile = versionControl.getFile(processId);
+        File logicalFile = getVersionControl().getFile(processId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             File existFile = pkgDir.findAssetFile(logicalFile);
@@ -1269,9 +1275,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             save(proc, pkgDir); // update version and name
             File newFile = new File(existFile.getParentFile() + "/" + newName + PROCESS_FILE_EXTENSION);
             delete(existFile);
-            versionControl.clearId(logicalFile);
-            versionControl.deleteRev(existFile);
-            versionControl.setRevision(newFile, getAssetRevision(newVersion, "Renamed from " + existFile));
+            getVersionControl().clearId(logicalFile);
+            getVersionControl().deleteRev(existFile);
+            getVersionControl().setRevision(newFile, getAssetRevision(newVersion, "Renamed from " + existFile));
             // prime the cache
             loadProcess(pkgDir, pkgDir.getAssetFile(newFile), false);
             return proc.getId();
@@ -1289,15 +1295,15 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * may have already been deleted by removeProcessFromPackage()
      */
     public void deleteProcess(Long processId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(processId);
+        File logicalFile = getVersionControl().getFile(processId);
         if (logicalFile != null) {
             PackageDir pkgDir = getPackageDir(logicalFile);
             try {
                 File procFile = pkgDir.findAssetFile(logicalFile);
                 if (procFile.exists()) {
                     delete(procFile);
-                    versionControl.clearId(logicalFile);
-                    versionControl.deleteRev(procFile);
+                    getVersionControl().clearId(logicalFile);
+                    getVersionControl().deleteRev(procFile);
                 }
             }
             catch (IOException ex) {
@@ -1310,14 +1316,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * in move scenario, must be called before removeProcessFromPackage()
      */
     public long addProcessToPackage(Long processId, Long packageId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(processId);
+        File logicalFile = getVersionControl().getFile(processId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             Process process = loadProcess(pkgDir, pkgDir.findAssetFile(logicalFile), true);
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(newPkgDir + "/" + process.getName() + PROCESS_FILE_EXTENSION);
             save(process, newPkgDir);
-            versionControl.setRevision(newFile, getAssetRevision(process.getVersion(), null));
+            getVersionControl().setRevision(newFile, getAssetRevision(process.getVersion(), null));
             return loadProcess(newPkgDir, newPkgDir.getAssetFile(newFile), false).getId(); // prime the cache
         }
         catch (Exception ex) {
@@ -1352,7 +1358,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      */
     public void updateAsset(Asset asset) throws DataAccessException {
         try {
-            versionControl.setRevision(getAssetFile(asset), getAssetRevision(asset));
+            getVersionControl().setRevision(getAssetFile(asset), getAssetRevision(asset));
         }
         catch (IOException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -1364,7 +1370,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      */
     public void updateProcess(Process process) throws DataAccessException {
         try {
-            versionControl.setRevision(getProcessFile(process), getAssetRevision(process));
+            getVersionControl().setRevision(getProcessFile(process), getAssetRevision(process));
         }
         catch (IOException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -1372,16 +1378,16 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public void renameAsset(Asset asset, String newName) throws DataAccessException  {
-        File logicalFile = versionControl.getFile(asset.getId());
+        File logicalFile = getVersionControl().getFile(asset.getId());
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             File oldFile = pkgDir.findAssetFile(logicalFile);
             File newFile = new File(oldFile.getParentFile() + "/" + newName);
             rename(oldFile, newFile);
             asset.setName(newName);
-            versionControl.setRevision(getAssetFile(asset), getAssetRevision(asset));
-            versionControl.clearId(logicalFile);
-            versionControl.setRevision(newFile, getAssetRevision(asset.getVersion(), "Renamed from " + oldFile));
+            getVersionControl().setRevision(getAssetFile(asset), getAssetRevision(asset));
+            getVersionControl().clearId(logicalFile);
+            getVersionControl().setRevision(newFile, getAssetRevision(asset.getVersion(), "Renamed from " + oldFile));
             Asset newAsset = loadAsset(pkgDir, pkgDir.getAssetFile(newFile), false); // prime
             asset.setId(newAsset.getId());
         }
@@ -1394,15 +1400,15 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * may have already been deleted by removeAssetFromPackage()
      */
     public void deleteAsset(Long assetId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(assetId);
+        File logicalFile = getVersionControl().getFile(assetId);
         if (logicalFile != null) {
             PackageDir pkgDir = getPackageDir(logicalFile);
             try {
                 File assetFile = pkgDir.findAssetFile(logicalFile);
                 if (assetFile.exists()) {
                     delete(assetFile);
-                    versionControl.clearId(logicalFile);
-                    versionControl.deleteRev(assetFile);
+                    getVersionControl().clearId(logicalFile);
+                    getVersionControl().deleteRev(assetFile);
                 }
             }
             catch (IOException ex) {
@@ -1415,7 +1421,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * in move scenario, must be called before removeAssetFromPackage()
      */
     public long addAssetToPackage(Long assetId, Long packageId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(assetId);
+        File logicalFile = getVersionControl().getFile(assetId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             AssetFile existFile = pkgDir.findAssetFile(logicalFile);
@@ -1423,7 +1429,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             PackageDir newPkgDir = getPackageDir(packageId);
             File newFile = new File(newPkgDir + "/" + existFile.getName());
             save(asset, newPkgDir);
-            versionControl.setRevision(newFile, getAssetRevision(asset.getVersion(), null));
+            getVersionControl().setRevision(newFile, getAssetRevision(asset.getVersion(), null));
             return loadAsset(newPkgDir, newPkgDir.getAssetFile(newFile), false).getId();
         }
         catch (Exception ex) {
@@ -1461,15 +1467,15 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * may have already been deleted due to removeActivityImplFromPackage
      */
     public void deleteActivityImplementor(Long implementorId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(implementorId);
+        File logicalFile = getVersionControl().getFile(implementorId);
         if (logicalFile != null) {
             PackageDir pkgDir = getPackageDir(logicalFile);
             try {
                 File implFile = pkgDir.findAssetFile(logicalFile);
                 if (implFile.exists()) {
                     delete(implFile);
-                    versionControl.clearId(logicalFile);
-                    versionControl.deleteRev(implFile);
+                    getVersionControl().clearId(logicalFile);
+                    getVersionControl().deleteRev(implFile);
                 }
             }
             catch (IOException ex) {
@@ -1482,7 +1488,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * in move scenario, must be called before removeActivityImplFromPackage()
      */
     public long addActivityImplToPackage(Long activityImplId, Long packageId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(activityImplId);
+        File logicalFile = getVersionControl().getFile(activityImplId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             ActivityImplementor implementor = loadActivityImplementor(pkgDir, pkgDir.findAssetFile(logicalFile));
@@ -1527,15 +1533,15 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * may have already been deleted due to removeExternalEventFromPackage()
      */
     public void deleteExternalEvent(Long eventHandlerId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(eventHandlerId);
+        File logicalFile = getVersionControl().getFile(eventHandlerId);
         if (logicalFile != null) {
             PackageDir pkgDir = getPackageDir(logicalFile);
             try {
                 File evthFile = pkgDir.findAssetFile(logicalFile);
                 if (evthFile.exists()) {
                     delete(evthFile);
-                    versionControl.clearId(logicalFile);
-                    versionControl.deleteRev(evthFile);
+                    getVersionControl().clearId(logicalFile);
+                    getVersionControl().deleteRev(evthFile);
                 }
             }
             catch (IOException ex) {
@@ -1548,7 +1554,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * in move scenario, must be called before removeExternalEventHandlerFromPackage()
      */
     public long addExternalEventToPackage(Long externalEventId, Long packageId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(externalEventId);
+        File logicalFile = getVersionControl().getFile(externalEventId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             ExternalEvent eventHandler = loadExternalEventHandler(pkgDir, pkgDir.findAssetFile(logicalFile));
@@ -1589,15 +1595,15 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * may have already been deleted by removeTaskTemplateFromPackage()
      */
     public void deleteTaskTemplate(Long taskId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(taskId);
+        File logicalFile = getVersionControl().getFile(taskId);
         if (logicalFile != null) {
             PackageDir pkgDir = getPackageDir(logicalFile);
             try {
                 File taskFile = pkgDir.findAssetFile(logicalFile);
                 if (taskFile.exists()) {
                     delete(taskFile);
-                    versionControl.clearId(logicalFile);
-                    versionControl.deleteRev(taskFile);
+                    getVersionControl().clearId(logicalFile);
+                    getVersionControl().deleteRev(taskFile);
                 }
             }
             catch (IOException ex) {
@@ -1614,7 +1620,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      * in move scenario, must be called before removeTaskTemplateFromPackage()
      */
     public long addTaskTemplateToPackage(Long taskId, Long packageId) throws DataAccessException {
-        File logicalFile = versionControl.getFile(taskId);
+        File logicalFile = getVersionControl().getFile(taskId);
         PackageDir pkgDir = getPackageDir(logicalFile);
         try {
             TaskTemplate taskTemplate = loadTaskTemplate(pkgDir, pkgDir.findAssetFile(logicalFile));
