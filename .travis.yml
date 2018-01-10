@@ -53,7 +53,6 @@ deploy:
 after_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
-  - echo "GITHUB_TOKEN=" ${GITHUB_TOKEN}
   - git remote add master https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git
   - cd ../docs/_docs/javadoc
   - ls -ltr
