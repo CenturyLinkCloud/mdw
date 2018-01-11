@@ -53,10 +53,9 @@ deploy:
 after_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
-  - git remote add javadoc https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git
   - cd ..
   - ls -ltr
-  - git add docs
+  - git add docs/_docs/javadoc
+  - git status docs/_docs/javadoc
   - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER [skip ci]"
-  - git status
-  #- git push javadoc HEAD:master
+  - git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git

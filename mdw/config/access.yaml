@@ -29,6 +29,7 @@ authExclusions:
   - '/error'
   - '/offline'
   - '/sysInfo'
+  - '/js/nav.json'  
   - '/images/*'
   - '/css/*'
   - '/doc/*'
