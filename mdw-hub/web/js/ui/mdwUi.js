@@ -73,10 +73,18 @@ var $mdwUi = {
      HIGHLIGHT_COLOR: '#03a9f4'
    },
    showMessage: function(msg) {
-     document.getElementById('mdwMainMessages').innerHTML = msg;
+     // TODO: mobile toast
+     var msgs = document.getElementById('mdwMainMessages');
+     if (msgs)
+       msgs.innerHTML = msg;
+     else
+       console.log('ERROR: ' + msg); // TODO mobile toast
    },
    clearMessage: function() {
-     document.getElementById('mdwMainMessages').innerHTML = '';
+     // TODO: mobile toast
+     var msgs = document.getElementById('mdwMainMessages');
+     if (msgs)
+       msgs.innerHTML = '';
    },
    hubLoading: function(loading) {
      setTimeout(function() {

@@ -51,11 +51,6 @@
   padding: 0px 15px;
   max-width: 250px;
 }
-@media (max-width: 992px) {
-  .mdw-sidebar {
-    width: 100%;
-  }
-}
 .mdw-nav-heading {
   color: #0d47a1;
 }
@@ -1314,9 +1309,8 @@
 }
 @media (max-width: 992px) {
   .col-md-10 {
-    position: static;
-    float: left;
-    width: 100%;
+    float: none;
+    overflow: hidden;
   }
 }
 @-ms-viewport {
