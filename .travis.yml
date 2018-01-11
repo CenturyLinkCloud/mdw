@@ -21,7 +21,8 @@ before_script:
 - export  mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 - pwd
 - echo " mdwVersion =" $mdwVersion
-script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
+#script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
+script: gradle --no-daemon buildAll -DPUBLISHING_TO_MAVEN_CENTRAL=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 - sleep 10s
@@ -56,3 +57,11 @@ after_deploy:
   - git add -A docs/_docs/javadoc
   - git commit -a -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed [skip ci]"
   - git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git HEAD:master
+  # publish new buildpack
+  - git clone --branch=master https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw-buildpack.git > /dev/null
+  - cd mdw-buildpack
+  - cp $TRAVIS_BUILD_DIR/mdw/deploy/app/mdw*.war ./resources/mdw
+  - ls -ltr ./resources/mdw
+  - git add ./resources/mdw
+  - git commit -a -m "Lastest buildpack on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed"
+  - git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw-buildpack.git HEAD:master
