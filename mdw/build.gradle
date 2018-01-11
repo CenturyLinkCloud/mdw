@@ -333,6 +333,7 @@ task publishAll(type: GradleBuild) {
 
 // to be run standalone, after successful publish
 task publishAssets(type: GradleBuild) {
+    dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishAssetsToMavenCentral"]
 }
