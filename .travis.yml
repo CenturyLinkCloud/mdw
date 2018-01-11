@@ -54,8 +54,9 @@ after_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
   - cd ..
+  - git checkout mdw/build.gradle
   - ls -ltr
   - git add docs/_docs/javadoc
   - git status docs/_docs/javadoc
   - git commit -a -m "Updated javadoc $TRAVIS_BUILD_NUMBER [skip ci]"
-  - git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git
+  - git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git HEAD:master
