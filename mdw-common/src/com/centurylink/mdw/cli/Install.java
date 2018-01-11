@@ -83,7 +83,11 @@ public class Install extends Setup {
                 new Delete(warDir).run(progressMonitors);
             }
             // download from releases-url
-            URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw/" + mdwVer + "/mdw-" + mdwVer + ".war");
+            URL url = null;
+            if (isSnapshots())
+                url = new URL("https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw&v=LATEST&p=war");
+            else
+                url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw/" + mdwVer + "/mdw-" + mdwVer + ".war");
             downloads = new Download[]{new Download(url, warFile)};
         }
         else {
