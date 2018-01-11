@@ -6,10 +6,6 @@ routesSvc.factory('routes', function() {
   return {
     def: [
       {
-        path: '/admin-nav', 
-        templateUrl: 'layout/admin-nav.html'
-      },
-      {
         path: '/users', 
         templateUrl: 'users/users.html',
         controller: 'UsersController'
@@ -102,10 +98,6 @@ routesSvc.factory('routes', function() {
       {
         path: '/tasks/:taskInstanceId',
         templateUrl: 'tasks/task.html'
-      },
-      {
-        path: '/workflow-nav', 
-        templateUrl: 'layout/workflow-nav.html'
       },
       {
         path: '/workflow/processes',
@@ -229,10 +221,6 @@ routesSvc.factory('routes', function() {
         path: '/solutions/:solutionId',
         templateUrl: 'solutions/solution.html',
         controller: 'SolutionController'
-      },
-      {
-        path: '/service-nav', 
-        templateUrl: 'layout/service-nav.html'
       },
       {
         path: '/serviceApi',

@@ -932,22 +932,46 @@ is available to clone in its completed state from the [mdw-demo repository](http
   <link rel="stylesheet" href="/mdw/asset/demo/super-cool.css">
   ```
   
-  - To override tabs, right-click on mdw-hub.js and select New > Script.  Name the asset tabs.js and select JavaScript for the language.
-    This will now shade [MDWHub's tabs.js](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-hub/web/js/tabs.js).
-    Start with Hub's version, and insert a new tab in the array after the Tasks tab with an object like this:
+  - To override tabs and nav links, right-click on mdw-hub.js and select New > JSON.  Name the asset nav.json.
+    This will now shade [MDWHub's nav.json](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-hub/web/js/nav.json).
+    Immediately following the tasksTab in the JSON array add something like this:
     ```
-    ...
-      {
-        id: 'issuesTab',
-        label: 'Issues',     
-        url: '#/issues',
-        routes: ['/issues']
-      },
-    ...          
+    {
+      "id": "issuesTab",
+      "label": "Issues",     
+      "url": "#/issues",
+      "routes": ["/issues"],
+      "navs": [
+        {
+          "links": [
+            {
+              "label": "Tasks",
+              "path": "tasks/tasks",
+              "href": "#/tasks"
+            },
+            {
+              "label": "Issues",
+              "path": "demo/issues.html",
+              "href": "#/issues"
+            },
+            {
+              "label": "Fallout",
+              "path": "fallout/*",
+              "href": "#/fallout"
+            },
+            {
+              "label": "Templates",
+              "path": "taskTemplates/*",
+              "href": "#/taskTemplates"
+            }
+          ]
+        }
+      ]
+    }
     ```
-    Here's the [end result on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/mdw-hub/js/tabs.js).
+    Here's the [end result on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/mdw-hub/js/nav.json).
     
-  - Now tabs.js points to a url (*#/issues*) for a route that doesn't exist.  Modify routes.json in the same package:
+  - Now nav.json points to a url (*#/issues*) for a route that doesn't exist.  Modify routes.json in the same package:
     ```json
     [
       {

@@ -1,0 +1,246 @@
+[
+  {
+    "id": "workflowTab",
+    "label": "Workflow",
+    "icon": "workflow.png",
+    "url": "#/workflow/processes",
+    "routes": ["/workflow", "/solutions", "/workflow/processes", "/workflow/definitions"],
+    "navs": [ 
+      {
+        "links": [
+          {
+            "label": "Processes",
+            "path": "workflow/processes",
+            "href": "#/workflow/processes"
+          },
+          {
+            "label": "Requests",
+            "path": "requests/*",
+            "href": "#/workflow/requests"
+          },
+          {
+            "label": "Activities",
+            "path": "workflow/activities",
+            "href": "#/workflow/activities"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "Definitions",
+            "path": "workflow/definitions",
+            "href": "#/workflow/definitions"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "Solutions",
+            "path": "solutions/*",
+            "href": "#/solutions"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dashboardTab",
+    "label": "Dashboard",
+    "icon": "dashboard.png",
+    "url": "#/dashboard/processes",
+    "routes": ["/dashboard/processes", "dashboard/requests", "dashboard/tasks", "/dashboard/activities"],
+    "navs": [
+      {
+        "links": [
+          {
+            "label": "Processes",
+            "path": "dashboard/processes",
+            "href": "#/dashboard/processes"
+          },
+          {
+            "label": "Requests",
+            "path": "dashboard/requests",
+            "href": "#/dashboard/requests"
+          },
+          {
+            "label": "Tasks",
+            "path": "dashboard/tasks",
+            "href": "#/dashboard/tasks"
+          },
+          {
+            "label": "Activities",
+            "path": "dashboard/activities",
+            "href": "#/dashboard/activities"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "serviceTab",
+    "label": "Services",
+    "icon": "services.png",
+    "url": "#/serviceApi",
+    "routes": ["/serviceApi", "/serviceRequests", "/httpHelper"],
+    "navs": [ 
+      {
+        "links": [
+          {
+            "label": "Service APIs",
+            "path": "service/*",
+            "href": "#/serviceApi"
+          },
+          {
+            "label": "Combined",
+            "path": "service/swagger.html?combined",
+            "href": "#/serviceApiCombined"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "Requests",
+            "path": "requests/*",
+            "href": "#/serviceRequests"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tasksTab",
+    "label": "Tasks",
+    "icon": "tasks.png",     
+    "url": "#/tasks",
+    "routes": ["/tasks"],
+    "navs": [
+      {
+        "links": [
+          {
+            "label": "Tasks",
+            "path": "tasks/tasks",
+            "href": "#/tasks"
+          },
+          {
+            "label": "Fallout",
+            "path": "fallout/*",
+            "href": "#/fallout"
+          },
+          {
+            "label": "Templates",
+            "path": "taskTemplates/*",
+            "href": "#/taskTemplates"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "adminTab",
+    "label": "Admin",
+    "icon": "admin.png",
+    "url": "#/users",
+    "routes": ["/users", "/groups", "/roles", "/assets", "/packages", "/asset", "/tests", "/history"],
+    "condition": "user.hasRole('User Admin') || user.hasRole('Process Execution')",
+    "navs": [
+      {
+        "id": "admin-nav",
+        "links": [
+          {
+            "label": "Users",
+            "path": "users/*",
+            "href": "#/users"
+          },
+          {
+            "label": "Workgroups",
+            "path": "groups/*",
+            "href": "#/groups"
+          },
+          {
+            "label": "Roles",
+            "path": "roles/*",
+            "href": "#/roles"
+          }
+        ]
+      },
+      {
+        "id": "asset-nav",
+        "links": [
+          {
+            "label": "Assets",
+            "path": "assets/*",
+            "href": "#/packages",
+            "full-width": "asset-nav"
+          },
+          {
+            "label": "Testing",
+            "path": "testing/*",
+            "href": "#/tests"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "systemTab",
+    "label": "System",
+    "icon": "system.png",
+    "url": "#/system/sysInfo",
+    "routes": ["/system"],
+    "condition": "user.hasRole('Site Admin')",
+    "navs": [
+      {
+        "links": [
+          {
+            "label": "System Info",
+            "path": "system/sysInfo",
+            "href": "#/system/sysInfo/System"
+          },
+          {
+            "label": "Thread Info",
+            "path": "system/threadInfo",
+            "href": "#/system/threadInfo/Thread"
+          },
+          {
+            "label": "Messaging",
+            "path": "system/message",
+            "href": "#/system/message"
+          },
+          {
+            "label": "Tools",
+            "path": "system/tools",
+            "href": "#/system/tools"
+          },
+          {
+            "label": "Console",
+            "path": "system/console",
+            "href": "#/system/console"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "MDW Docs",
+            "path": "system/docs",
+            "href": "http://centurylinkcloud.github.io/mdw/",
+            "target": "_blank"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "FilePanel",
+            "path": "system/filepanel",
+            "href": "{{filepanelUrl}}",
+            "target": "_blank"
+          }
+        ]
+      }
+    ]
+  }
+]
