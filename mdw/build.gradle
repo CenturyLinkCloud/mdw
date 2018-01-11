@@ -36,8 +36,6 @@ subprojects {
     repositories {
         mavenCentral()
     }
-    if (mdwVersion.endsWith("-SNAPSHOT"))
-            tasks.withType(Javadoc).all { enabled = false }
 
     // copy into output dir rather than including directly in jar
     // this works better in local development where deployment happens from build/classes
@@ -66,7 +64,6 @@ subprojects {
     def packaging = 'jar'
 
     task javadocJar(type: Jar) {
-        if (!mdwVersion.endsWith("-SNAPSHOT"))
         enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
@@ -91,15 +88,14 @@ allprojects {
 }
 
 task javadocs(type: Javadoc) {
-    if (!mdwVersion.endsWith("-SNAPSHOT"))
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     dependsOn "cleanJavadocs"
     source subprojects.collect {project -> project.sourceSets.main.java }
     classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
     title = "MDW 6 API JavaDocs"
     maxMemory = "256m"
     options.links "http://docs.oracle.com/javase/8/docs/api/"
-    options.bottom "<i>Copyright &#169; 2017 CenturyLink, Inc.</i>"
+    options.bottom "<i>Copyright &#169; 2018 CenturyLink, Inc.</i>"
     destinationDir = file('../docs/_docs/javadoc')
 }
 
@@ -146,9 +142,6 @@ allprojects {
             required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
             sign configurations.archives
          }
-    }
-    else {
-        tasks.withType(Javadoc).all { enabled = false }
     }
 
     uploadArchives {
