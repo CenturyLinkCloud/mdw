@@ -59,6 +59,7 @@ import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CollectionUtil;
 import com.centurylink.mdw.util.ServiceLocatorException;
+import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -640,6 +641,19 @@ public class ProcessEngineDriver {
             }
         } catch (Throwable ex) {
             logger.severeException("Fatal exception in executeFlow - cannot generate fallout task", ex);
+        }
+        finally {
+            // Check for any non-stopped transactions (i.e. locked "for update" document rows)
+            TransactionUtil transUtil = TransactionUtil.getInstance();
+            if (transUtil.getTransaction() != null) {
+                try {
+                    TransactionWrapper transaction = new TransactionWrapper();
+                    engine.stopTransaction(transaction);  // This will stop transaction and close DB connection
+                }
+                catch (Throwable ex) {
+                    logger.severeException("Fatal exception stopping transaction - cannot close DB connection and stop transaction", ex);
+                }
+            }
         }
     }
 

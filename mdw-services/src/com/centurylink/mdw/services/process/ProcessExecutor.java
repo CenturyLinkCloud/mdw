@@ -709,7 +709,8 @@ public class ProcessExecutor implements RetryableTransaction {
             else
                 throw e;
         } finally {
-            stopTransaction(transaction);
+            if (!forUpdate)  // Do not release the locked "for update" document row
+                stopTransaction(transaction);
         }
     }
 
