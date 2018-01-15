@@ -114,7 +114,8 @@ public class CfLogListener implements StartupService {
         @Override
         public void onMessage(ApplicationLog log) {
             try {
-                Files.write(outputPath, log.getMessage().getBytes(), StandardOpenOption.APPEND);
+                if (log.getSourceName() != null && !log.getSourceName().startsWith("APP/PROC/WEB"))
+                    Files.write(outputPath, log.getMessage().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             }
             catch (IOException ex) {
                 logger.severeException("LogCollector error: " + ex.getMessage(), ex);
