@@ -236,8 +236,7 @@
           {
             "label": "FilePanel",
             "path": "system/filepanel",
-            "href": "{{filepanelUrl}}",
-            "target": "_blank"
+            "href": "#/system/filepanel"
           }
         ]
       }
