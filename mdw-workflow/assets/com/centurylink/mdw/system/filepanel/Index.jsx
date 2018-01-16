@@ -1,7 +1,6 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
-import TreeView from '../../node/node_modules/react-treeview';
-import '../../node/node_modules/style-loader!../../react/react-treeview.css';
+import DirTree from './DirTree.jsx';
 
 class Index extends Component {
   constructor(...args) {
@@ -31,16 +30,7 @@ class Index extends Component {
         {
           this.state.rootDirs.map(dir => {
             return (
-              <TreeView key={dir.path} nodeLabel={dir.path} defaultCollapsed={false}>
-                {
-                  dir.files.map(file => {
-                    const fileLabel = <span className="node">{file.path}</span>;
-                    return (
-                      <div key={file.path} className="info">{file.path}</div>
-                    );
-                  })
-                }
-              </TreeView>
+              <DirTree key={dir.path} dir={dir} />
             );
           })
         }
