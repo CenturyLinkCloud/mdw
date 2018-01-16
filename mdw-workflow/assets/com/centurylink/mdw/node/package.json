@@ -23,6 +23,7 @@
     "react-overlays": "^0.8.0",
     "react-router-dom": "^4.1.2",
     "react-select": "^1.0.0-rc.5",
+    "react-treeview": "^0.4.7",
     "style-loader": "^0.18.2",
     "webpack": "^3.4.0"
   }
