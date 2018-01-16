@@ -164,6 +164,7 @@ public class TaskWorkflowHelper {
         if (taskPkg != null && !taskPkg.isDefaultPackage())
             label = taskPkg.getLabel() + "/" + label;
         Instant due = null;
+        dueInSeconds = dueInSeconds > 0 ? dueInSeconds : task.getSlaSeconds();
         if (dueInSeconds > 0)
             due = Instant.now().plusSeconds(dueInSeconds);
         int pri = 0;
