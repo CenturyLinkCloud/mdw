@@ -1,0 +1,39 @@
+.fp-container {
+  display: flex;
+  height: 100%;
+}
+.fp-left {
+  display: flex;
+  flex-direction: column;
+  font-family: Myriad, Arial, Helvetica, clean, sans-serif;
+  font-size: 13px;
+  border-right: 3px ridge #e7e7e7;
+  width: auto;
+  white-space: nowrap;
+}
+.fp-info {
+  background-color: lightgray;
+  height: 200px;
+}
+.fp-right {
+  display: flex;
+  flex-direction: column;
+  background-color: lightgray;
+  width: 100%
+  /*
+  flex-grow: 1;
+  */
+}
+.fp-dirs {
+  height: 100%;
+}
+.fp-item {
+  width: auto;
+}
+.fp-item:hover {
+  cursor: pointer;
+}
+.fp-file {
+  background-color: #e7e7e7;
+  height: 100%;
+}

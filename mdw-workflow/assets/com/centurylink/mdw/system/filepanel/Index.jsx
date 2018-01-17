@@ -1,11 +1,18 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
 import DirTree from './DirTree.jsx';
+import '../../node/node_modules/style-loader!./filepanel.css';
+
+// adjust mdw-main layout
+let main = document.getElementById('mdw-main');
+main.style.display = 'flex';
+main.style.padding = '0';
 
 class Index extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { rootDirs: [] };
+    this.state = { rootDirs: [], selected: {} };
+    this.handleSelect = this.handleSelect.bind(this);
   }
   
   componentDidMount() {
@@ -24,16 +31,34 @@ class Index extends Component {
     });
   }
   
+  handleSelect(selection) {
+    console.log("SELECTION: " + JSON.stringify(selection));
+  }
+  
   render() {
     return (
-      <div>
-        {
-          this.state.rootDirs.map(dir => {
-            return (
-              <DirTree key={dir.path} dir={dir} />
-            );
-          })
-        }
+      <div className="fp-container">
+        <div className="fp-left">
+          <div className="fp-dirs">
+            {
+              this.state.rootDirs.map(dir => {
+                return (
+                  <DirTree key={dir.path} dir={dir} onSelect={this.handleSelect} />
+                );
+              })
+            }
+          </div>
+          <div className="fp-info">
+            INFO<br/>
+            selected:<br/>{this.state.selected.path} 
+          </div>
+        </div>
+        <div className="fp-right">
+          <div>toolbar</div>
+          <div className="fp-file">
+            file contents
+          </div>
+        </div>
       </div>
     );
   }
