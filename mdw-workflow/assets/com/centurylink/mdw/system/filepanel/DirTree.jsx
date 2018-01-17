@@ -1,5 +1,6 @@
 import React from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
+import {Glyphicon} from '../../node/node_modules/react-bootstrap';
 import TreeView from '../../node/node_modules/react-treeview';
 import '../../node/node_modules/style-loader!../../react/react-treeview.css';
 
@@ -11,7 +12,14 @@ function DirTree(props, context) {
       }
   };
   
-  const dirLabel = <span className="fp-item" tabIndex={props.dir.tabIndex}>{props.root ? props.dir.path : props.dir.name}</span>;
+  const dirLabel = (
+    <span 
+      className="fp-item" 
+      tabIndex={props.dir.tabIndex}
+      onClick={event => props.onSelect(props.dir)}>
+      <Glyphicon glyph="folder-open" className="fp-item-icon" />
+      {props.root ? props.dir.path : props.dir.name}
+    </span>);
   return (
     <TreeView 
       key={props.dir.path} 
@@ -24,9 +32,7 @@ function DirTree(props, context) {
               key={dir.name}
               className="fp-item"
               dir={dir} 
-              onSelect={props.onSelect} 
-              onClick={event => props.onSelect(dir)}
-              tabIndex={dir.tabIndex}/>
+              onSelect={props.onSelect} />
           );
         })
       }
@@ -34,9 +40,15 @@ function DirTree(props, context) {
         props.dir.files.map(file => {
           return (
             <div 
-              key={file.name} 
-              onClick={event => props.onSelect(file)}>
-              <span className="fp-item" tabIndex={file.tabIndex}>{file.name}</span>
+              style={{marginTop: '2px'}} // should match tree-view-item margin-top
+              key={file.name}>
+              <span
+                className="fp-item"
+                tabIndex={file.tabIndex}
+                onClick={event => props.onSelect(file)}>
+                <Glyphicon glyph="file" className="fp-item-icon" />
+                {file.name}
+              </span>
             </div>
           );
         })

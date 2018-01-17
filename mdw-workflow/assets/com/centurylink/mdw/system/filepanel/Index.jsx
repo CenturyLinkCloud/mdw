@@ -35,6 +35,7 @@ class Index extends Component {
           if (dir.files) {
             dir.files.forEach(file => {
               file.tabIndex = tabIndex++;
+              file.isFile = true;
             });
           }
         });
@@ -49,7 +50,37 @@ class Index extends Component {
   }
   
   handleSelect(selection) {
-    console.log("SELECTION: " + JSON.stringify(selection));
+    selection.info = '';
+    if (selection.isFile) {
+      selection.info += selection.path.substring(0, selection.path.length - selection.name.length);
+      selection.info += '\n' + selection.name;
+    }
+    else {
+      selection.info += selection.path;
+    }
+    
+    selection.info += '\n';
+    
+    if (selection.size) {
+      var kb = (selection.size / 1024);
+      if (kb > 100) {
+        kb = Math.round(kb);
+      }
+      else if (kb > 10) {
+        kb = Math.round(kb * 10)/10;
+      }
+      else {
+        kb = Math.round(kb * 100)/100;
+      }
+      selection.info += kb + ' kb ';
+    }
+    if (selection.modified) {
+      selection.info += new Date(selection.modified).toLocaleString();
+    }
+    this.setState({
+      rootDirs: this.state.rootDirs,
+      selected: selection
+    });
   }
   
   render() {
@@ -69,9 +100,21 @@ class Index extends Component {
               })
             }
           </div>
-          <div className="fp-info">
-            INFO<br/>
-            selected:<br/>{this.state.selected.path} 
+          <div className="fp-footer">
+            <div className="fp-info">
+              {this.state.selected &&
+                <div>{this.state.selected.info}</div>
+              }
+            </div>
+            <div className="fp-grep">
+              <div>
+                <input type="text" placeholder="Pattern" />
+              </div>
+              <div>
+                <input type="text" placeholder="Files" />
+                <button value="grep">Grep</button>
+              </div>
+            </div>
           </div>
         </div>
         <div className="fp-right">

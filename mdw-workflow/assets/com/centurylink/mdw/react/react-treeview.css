@@ -5,11 +5,13 @@
 
 .tree-view_item {
   /* immediate child of .tree-view, for styling convenience */
+  margin-top: 2px;
 }
 
 /* style for the children nodes container */
 .tree-view_children {
-  margin-left: 16px;
+  margin-left: 32px;
+  margin-bottom: 1px;
 }
 
 .tree-view_children-collapsed {
@@ -18,23 +20,26 @@
 
 .tree-view_arrow {
   cursor: pointer;
-  margin-right: 6px;
+  margin-right: 2px;
   display: inline-block;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  color: gray;
+  font-size: 12px;
 }
 
 .tree-view_arrow:after {
-  content: '▾';
+  content: "\25BC";
 }
 
 /* rotate the triangle to close it */
 .tree-view_arrow-collapsed {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  transform: rotate(-90deg);
+	font-size: 12px;
+}
+
+.tree-view_arrow-collapsed:after {
+	content: "\25BA";
 }
  
