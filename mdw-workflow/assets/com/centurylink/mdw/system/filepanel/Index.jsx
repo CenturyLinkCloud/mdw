@@ -1,6 +1,7 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
 import DirTree from './DirTree.jsx';
+import FileView from './FileView.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
 // adjust mdw-main layout
@@ -77,6 +78,7 @@ class Index extends Component {
     if (selection.modified) {
       selection.info += new Date(selection.modified).toLocaleString();
     }
+    
     this.setState({
       rootDirs: this.state.rootDirs,
       selected: selection
@@ -120,7 +122,7 @@ class Index extends Component {
         <div className="fp-right">
           <div>toolbar</div>
           <div className="fp-file">
-            file contents
+            <FileView item={this.state.selected} />
           </div>
         </div>
       </div>
