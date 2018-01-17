@@ -11,7 +11,7 @@ function DirTree(props, context) {
       }
   };
   
-  const dirLabel = <span className="fp-item">{props.dir.path}</span>;
+  const dirLabel = <span className="fp-item" tabIndex={props.dir.tabIndex}>{props.root ? props.dir.path : props.dir.name}</span>;
   return (
     <TreeView 
       key={props.dir.path} 
@@ -21,11 +21,12 @@ function DirTree(props, context) {
         props.dir.dirs.map(dir => {
           return (
             <DirTree 
-              key={dir.path}
+              key={dir.name}
               className="fp-item"
               dir={dir} 
               onSelect={props.onSelect} 
-              onClick={event => props.onSelect(dir)} />
+              onClick={event => props.onSelect(dir)}
+              tabIndex={dir.tabIndex}/>
           );
         })
       }
@@ -33,9 +34,9 @@ function DirTree(props, context) {
         props.dir.files.map(file => {
           return (
             <div 
-              key={file.path} 
+              key={file.name} 
               onClick={event => props.onSelect(file)}>
-              <span className="fp-item">{file.path}</span>
+              <span className="fp-item" tabIndex={file.tabIndex}>{file.name}</span>
             </div>
           );
         })

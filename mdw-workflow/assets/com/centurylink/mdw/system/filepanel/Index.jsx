@@ -25,6 +25,23 @@ class Index extends Component {
       return response.json();
     })
     .then(json => {
+      var tabIndex = 100;
+      let assignTabIndexes = dirs => {
+        dirs.forEach(dir => {
+          dir.tabIndex = tabIndex++;
+          if (dir.dirs) {
+            assignTabIndexes(dir.dirs);
+          }
+          if (dir.files) {
+            dir.files.forEach(file => {
+              file.tabIndex = tabIndex++;
+            });
+          }
+        });
+      };
+      if (json.dirs) {
+        assignTabIndexes(json.dirs);
+      }
       this.setState({
         rootDirs: json.dirs
       });
@@ -43,7 +60,11 @@ class Index extends Component {
             {
               this.state.rootDirs.map(dir => {
                 return (
-                  <DirTree key={dir.path} dir={dir} onSelect={this.handleSelect} />
+                  <DirTree 
+                    key={dir.path} 
+                    dir={dir}
+                    onSelect={this.handleSelect}
+                    root={true} />
                 );
               })
             }

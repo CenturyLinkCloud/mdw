@@ -15,7 +15,11 @@
  */
 package com.centurylink.mdw.model.system;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,26 +28,78 @@ import com.centurylink.mdw.model.Jsonable;
 
 public class FileInfo implements Jsonable {
 
-    /**
-     * Relative to root path.
-     */
+    private String name;
+    public String getName() { return name; }
+
     private String path;
     public String getPath() { return path; }
 
     private boolean binary;
     public boolean isBinary() { return binary; }
 
-    public FileInfo(String path, boolean binary) throws IOException {
-        this.path = path;
-        this.binary = binary;
+    private Instant modified;
+    public Instant getModified() { return modified; }
+
+    private long size;
+    public long getSize() { return size; }
+
+    public FileInfo(File file) throws IOException {
+        if (!file.isFile())
+            throw new FileNotFoundException("File not found: " + file.getAbsolutePath());
+        this.name = file.getName();
+        this.path = file.getPath().replace('\\', '/');
+        this.binary = isBinary(file);
+        this.modified = Instant.ofEpochMilli(file.lastModified());
+        this.size = file.length();
     }
 
     @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JSONObject();
+        json.put("name", name);
         json.put("path", path);
         if (binary)
             json.put("binary", true);
+        if (modified != null)
+            json.put("modified", modified.toString());
+        if (size > 0)
+            json.put("size", size);
         return json;
     }
+
+    /**
+     * TODO: validate
+     */
+    public static boolean isBinary(File f) throws IOException {
+        FileInputStream in = new FileInputStream(f);
+        int size = in.available();
+        if (size > 1024)
+            size = 1024;
+        byte[] data = new byte[size];
+        in.read(data);
+        in.close();
+
+        int ascii = 0;
+        int other = 0;
+
+        for (int i = 0; i < data.length; i++) {
+            byte b = data[i];
+            if (b < 0x09)
+                return true;
+
+            if (b == 0x09 || b == 0x0A || b == 0x0C || b == 0x0D )
+                ascii++;
+            else if (b >= 0x20 &&  b <= 0x7E)
+                ascii++;
+            else
+                other++;
+        }
+
+        if (other == 0)
+            return false;
+
+        return 100 * other / (ascii + other) > 95;
+    }
+
+
 }

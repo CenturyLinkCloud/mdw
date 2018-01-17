@@ -81,7 +81,7 @@ public class FilePanelService extends JsonRestService {
             File file = new File(rootDir);
             if (file.isDirectory()) {
                 try {
-                    dirs.add(new Dir(file, file, excludes));
+                    dirs.add(new Dir(file, excludes));
                 }
                 catch (IOException ex) {
                     logger.severeException(ex.getMessage(), ex);
