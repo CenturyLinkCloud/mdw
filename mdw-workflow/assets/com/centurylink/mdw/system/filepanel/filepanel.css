@@ -64,6 +64,8 @@
   height: 100%;
   background-color: #e7e7e7;
   padding: 3px;
+  font-family: monospace;
+  font-size: 13px;
 }
 .fp-file-view {
   background-color: #e7e7e7;

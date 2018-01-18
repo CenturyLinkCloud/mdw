@@ -17,6 +17,9 @@ package com.centurylink.mdw.system.filepanel;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,34 +52,50 @@ public class FilePanelService extends JsonRestService {
 
         String[] segments = getSegments(path);
         if (segments.length == 5) {
-            // root dirs
-            List<Dir> dirs = getFilePanelDirs();
-            JSONObject json = new JSONObject();
-            JSONArray dirsArr = new JSONArray();
-            for (Dir dir : dirs)
-                dirsArr.put(dir.getJson());
-            json.put("dirs", dirsArr);
-            return json;
-        }
-        else if (segments.length == 6) {
-            // file view
-            File file = new File(segments[5]);
-            if (!file.isFile())
-                throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + segments[5]);
-            try {
-                Query query = new Query(path, headers);
-                if (query.getBooleanFilter("download")) {
-                    // TODO file download
+            Query query = new Query(path, headers);
+            if (query.getFilter("path") != null) {
+                java.nio.file.Path p = Paths.get(query.getFilter("path"));
+                try {
+                    if (!include(p) || exclude(p))
+                        throw new ServiceException(ServiceException.FORBIDDEN, "Forbidden");
+                    File file = p.toFile();
+                    if (query.getBooleanFilter("download")) {
+                        // TODO file download
+                        return new JSONObject();
+                    }
+                    else if (query.getFilter("grep") != null) {
+                        // TODO grep
+                        return new JSONObject();
+                    }
+                    else {
+                        if (file.isFile()) {
+                            // file view
+                            FileInfo fileInfo = new FileInfo(file);
+                            FileView fileView = new FileView(fileInfo, query);
+                            return fileView.getJson();
+                        }
+                        else if (file.isDirectory()) {
+                            // TODO dir view
+                            return new JSONObject();
+                        }
+                        else {
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + segments[5]);
+                        }
+                    }
                 }
-                else {
-                    FileInfo fileInfo = new FileInfo(file);
-                    FileView fileView = new FileView(fileInfo, query);
-
+                catch (IOException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
                 }
-                return new JSONObject();
             }
-            catch (IOException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            else {
+                // root dirs
+                List<Dir> dirs = getFilePanelDirs();
+                JSONObject json = new JSONObject();
+                JSONArray dirsArr = new JSONArray();
+                for (Dir dir : dirs)
+                    dirsArr.put(dir.getJson());
+                json.put("dirs", dirsArr);
+                return json;
             }
         }
         else {
@@ -85,21 +104,12 @@ public class FilePanelService extends JsonRestService {
     }
 
     private List<Dir> getFilePanelDirs() throws ServiceException {
-        String rootDirs = PropertyManager.getProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
-        if (rootDirs == null)
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing property: " + PropertyNames.FILEPANEL_ROOT_DIRS);
-        String[] excludes = null;
-        String excludePatterns = PropertyManager.getProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
-        if (excludePatterns != null) {
-            excludes = excludePatterns.trim().split("\\s*,\\s*");
-        }
-
         List<Dir> dirs = new ArrayList<>();
-        for (String rootDir : rootDirs.trim().split("\\s*,\\s*")) {
-            File file = new File(rootDir);
+        for (java.nio.file.Path path : getRootPaths()) {
+            File file = path.toFile();
             if (file.isDirectory()) {
                 try {
-                    dirs.add(new Dir(file, excludes));
+                    dirs.add(new Dir(file, getExcludes()));
                 }
                 catch (IOException ex) {
                     logger.severeException(ex.getMessage(), ex);
@@ -109,4 +119,53 @@ public class FilePanelService extends JsonRestService {
         return dirs;
     }
 
+    private static List<java.nio.file.Path> rootPaths;
+    private static List<java.nio.file.Path> getRootPaths() throws ServiceException {
+        if (rootPaths == null) {
+            String rootDirsProp = PropertyManager.getProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
+            if (rootDirsProp == null)
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing property: " + PropertyNames.FILEPANEL_ROOT_DIRS);
+            rootPaths = new ArrayList<>();
+            for (String dir : rootDirsProp.trim().split("\\s*,\\s*")) {
+                rootPaths.add(Paths.get(new File(dir).getPath()));
+            }
+        }
+        return rootPaths;
+    }
+
+    private static List<PathMatcher> excludes;
+    public static List<PathMatcher> getExcludes() {
+        if (excludes == null) {
+            excludes = new ArrayList<>();
+            String excludePatterns = PropertyManager.getProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
+            if (excludePatterns != null) {
+                for (String excludePattern : excludePatterns.trim().split("\\s*,\\s*")) {
+                    excludes.add(FileSystems.getDefault().getPathMatcher("glob:" + excludePattern));
+                }
+            }
+        }
+        return excludes;
+    }
+
+    /**
+     * Checks for matching exclude patterns.
+     */
+    private static boolean exclude(java.nio.file.Path path) {
+        for (PathMatcher matcher : getExcludes()) {
+            if (matcher.matches(path))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether subpath of a designated root dir.
+     */
+    private static boolean include(java.nio.file.Path path) throws ServiceException {
+        for (java.nio.file.Path rootPath : getRootPaths()) {
+            if (path.startsWith(rootPath))
+                return true;
+        }
+        return false;
+    }
 }

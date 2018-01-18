@@ -127,7 +127,7 @@ class Index extends Component {
         <div className="fp-right">
           <div style={{height:'50px'}}>toolbar</div>
           <div className="fp-file">
-            <FileView item={this.state.selected} />
+            <FileView item={this.state.selected} onSelect={this.handleSelect} />
           </div>
         </div>
       </div>

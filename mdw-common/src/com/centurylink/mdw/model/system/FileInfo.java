@@ -43,6 +43,10 @@ public class FileInfo implements Jsonable {
     private long size;
     public long getSize() { return size; }
 
+    private int lineCount = -1; // unknown
+    public int getLineCount() { return lineCount; }
+    public void setLineCount(int count) { this.lineCount = count; }
+
     public FileInfo(File file) throws IOException {
         if (!file.isFile())
             throw new FileNotFoundException("File not found: " + file.getAbsolutePath());
@@ -64,6 +68,8 @@ public class FileInfo implements Jsonable {
             json.put("modified", modified.toString());
         if (size > 0)
             json.put("size", size);
+        if (lineCount >= 0)
+            json.put("lineCount", lineCount);
         return json;
     }
 

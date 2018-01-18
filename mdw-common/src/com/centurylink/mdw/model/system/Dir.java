@@ -18,7 +18,6 @@ package com.centurylink.mdw.model.system;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
@@ -55,21 +54,9 @@ public class Dir implements Jsonable {
         this(file, (List<PathMatcher>)null);
     }
 
-    public Dir(File file, String[] excludePatterns) throws IOException {
+    public Dir(File file, List<PathMatcher> excludeMatchers) throws IOException {
         if (!file.isDirectory())
             throw new FileNotFoundException("Directory not found: " + file.getAbsolutePath());
-        this.name = file.getName();
-        this.path = file.getPath().replace('\\', '/');
-        if (excludePatterns != null) {
-            excludeMatchers = new ArrayList<>();
-            for (String excludePattern : excludePatterns)
-                excludeMatchers.add(FileSystems.getDefault().getPathMatcher("glob:" + excludePattern));
-        }
-        this.modified = Instant.ofEpochMilli(file.lastModified());
-        fill();
-    }
-
-    public Dir(File file, List<PathMatcher> excludeMatchers) throws IOException {
         this.name = file.getName();
         this.path = file.getPath().replace('\\', '/');
         this.excludeMatchers = excludeMatchers;

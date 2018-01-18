@@ -15,9 +15,23 @@
  */
 package com.centurylink.mdw.system.filepanel;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.system.FileInfo;
 
@@ -32,16 +46,123 @@ public class FileView implements Jsonable {
     private Query query;
     public Query getQuery() { return query; }
 
-    public FileView(FileInfo info, Query query) {
+    private int lineIndex;
+    private StringBuilder lineBuffer;
+    private int bufferLines;
+
+    public FileView(FileInfo info, Query query) throws IOException {
         this.info = info;
         this.query = query;
-    }
+        lineIndex = query.getIntFilter("lineIndex");
+        if (lineIndex == -1)
+            lineIndex = 0;
+        bufferLines = query.getIntFilter("bufferLines");
+        if (bufferLines == -1)
+            bufferLines = 1000;
 
+        lineBuffer = new StringBuilder();  // TODO: presize?
+
+        Path path = Paths.get(info.getPath());
+        if (info.isBinary()) {
+            lineBuffer.append("Binary file: " + info.getName());
+        }
+        else {
+//            // old-fashioned
+//            File file = path.toFile();
+//            int count = 0;
+//            try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
+//                while (reader.readLine() != null) {}
+//                count = reader.getLineNumber();
+//            }
+//            info.setLineCount(count);
+//
+//            try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
+//                int firstLine = getBufferFirstLine() + 1;
+//                int lastLine = getBufferLastLine() + 1;
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    if (reader.getLineNumber() >= firstLine
+//                         && reader.getLineNumber() <= lastLine) {
+//                        lineBuffer.append(applyMask(line)).append("\n");
+//                    }
+//                }
+//                info.setLineCount(reader.getLineNumber());
+//            }
+
+
+            // streams
+            try (Stream<String> stream = Files.lines(path)) {
+                info.setLineCount((int)stream.count());
+                int firstLine = getBufferFirstLine() + 1;
+                int lastLine = getBufferLastLine() + 1;
+                try (Stream<String> stream2 = Files.lines(path)) {
+                    stream2.skip(firstLine).limit(lastLine - firstLine).forEachOrdered(line -> {
+                        lineBuffer.append(applyMask(line)).append("\n");
+                    });
+                }
+            }
+            catch (UncheckedIOException ex) {
+                throw ex.getCause();
+            }
+        }
+    }
 
     public JSONObject getJson() {
         JSONObject json = new JSONObject();
         json.put("info", info.getJson());
+        json.put("lines", lineBuffer.toString());
         return json;
+    }
+
+    public int getBufferFirstLine()
+    {
+      int firstLine = lineIndex - bufferLines/2;
+
+      if (lineIndex + bufferLines/2 > info.getLineCount() - 1)
+        firstLine = info.getLineCount() - bufferLines - 1;
+      if (firstLine < 0)
+        firstLine = 0;
+
+      return firstLine;
+    }
+
+    public int getBufferLastLine()
+    {
+      int lastLine = getBufferFirstLine() + bufferLines;
+      if (lastLine > info.getLineCount() - 1)
+        lastLine = info.getLineCount() - 1;
+      if (lastLine < 0)
+        lastLine = 0;
+
+      return lastLine;
+    }
+
+    private String applyMask(String line) {
+        for (String masked : getMaskedLines()) {
+            if (line.startsWith(masked)) {
+                int lineLen = line.length();
+                line = line.substring(0, masked.length());
+                for (int i = 0; i < lineLen - masked.length(); i++)
+                  line += "*";
+            }
+        }
+        return line;
+    }
+
+    private static List<String> maskedLines;
+    private static List<String> getMaskedLines() {
+        if (maskedLines == null) {
+            maskedLines = new ArrayList<>();
+            maskedLines.add("mdw.database.password=");
+            maskedLines.add("LDAP-AppPassword=");
+            String maskedLinesProp = PropertyManager.getProperty(PropertyNames.FILEPANEL_MASKED_LINES);
+            if (maskedLinesProp != null) {
+                for (String maskedLine : maskedLinesProp.trim().split("\\s*,\\s*")) {
+                    maskedLines.add(maskedLine);
+                }
+            }
+        }
+        return maskedLines;
     }
 
 

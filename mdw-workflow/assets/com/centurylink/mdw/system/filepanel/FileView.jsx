@@ -6,7 +6,7 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 class FileView extends Component {
   constructor(...args) {
     super(...args);
-    this.state = {item: {}}
+    this.state = {item: {}, lines: ''}
   }
   
   componentDidMount() {
@@ -14,19 +14,35 @@ class FileView extends Component {
   }
   
   componentWillReceiveProps(props) {
-    this.setState({
-      item: props.item
-    });
+    // retrieve fileView
+    // call back to handleSelect
+    if (props.item.path) { 
+      console.log("ITEM: " + JSON.stringify(props.item, null, 2));
+      let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel?';
+      url += 'path=' + encodeURIComponent(props.item.path);  // TODO lineIndex param
+      fetch(new Request(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json'},
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        // TODO handleSelect without refresh
+        this.setState({
+          item: json.info,
+          lines: json.lines ? json.lines : ''
+        });
+      });
+    }
   } 
   
   render() {
-    var content = '<hello>';
-    for (var i = 0; i < 100; i++)
-      content += '\n' + JSON.stringify(this.state.item, null, 2)
     return (
         <Scrollbars 
           className="fp-file-view">
-          {content}
+          {this.state.lines}
         </Scrollbars>
     );
   }
