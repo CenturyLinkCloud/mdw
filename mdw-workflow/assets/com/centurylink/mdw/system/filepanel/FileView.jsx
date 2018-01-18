@@ -20,7 +20,7 @@ class FileView extends Component {
   } 
   
   render() {
-    var content = '';
+    var content = '<hello>';
     for (var i = 0; i < 100; i++)
       content += '\n' + JSON.stringify(this.state.item, null, 2)
     return (

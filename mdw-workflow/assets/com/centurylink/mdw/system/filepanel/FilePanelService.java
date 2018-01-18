@@ -27,10 +27,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.system.Dir;
+import com.centurylink.mdw.model.system.FileInfo;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -41,7 +43,7 @@ public class FilePanelService extends JsonRestService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
-    @Path("/{file}")
+    @Path("/{filePath}")
     public JSONObject get(String path, Map<String,String> headers)
             throws ServiceException, JSONException {
 
@@ -57,8 +59,25 @@ public class FilePanelService extends JsonRestService {
             return json;
         }
         else if (segments.length == 6) {
-            // file info
-            return new JSONObject();
+            // file view
+            File file = new File(segments[5]);
+            if (!file.isFile())
+                throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + segments[5]);
+            try {
+                Query query = new Query(path, headers);
+                if (query.getBooleanFilter("download")) {
+                    // TODO file download
+                }
+                else {
+                    FileInfo fileInfo = new FileInfo(file);
+                    FileView fileView = new FileView(fileInfo, query);
+
+                }
+                return new JSONObject();
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            }
         }
         else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
@@ -66,7 +85,6 @@ public class FilePanelService extends JsonRestService {
     }
 
     private List<Dir> getFilePanelDirs() throws ServiceException {
-
         String rootDirs = PropertyManager.getProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
         if (rootDirs == null)
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing property: " + PropertyNames.FILEPANEL_ROOT_DIRS);
@@ -88,7 +106,6 @@ public class FilePanelService extends JsonRestService {
                 }
             }
         }
-
         return dirs;
     }
 
