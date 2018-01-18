@@ -162,7 +162,7 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   
   $scope.isFilePanel = function() {
     return $location.url().startsWith('/system/filepanel');
-  }
+  };
   
   $scope.isFullWidth = function() {
     return $scope.fullWidth;
