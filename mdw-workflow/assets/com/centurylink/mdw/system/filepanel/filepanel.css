@@ -63,7 +63,6 @@
 .fp-file {
   height: 100%;
   background-color: #e7e7e7;
-  padding: 3px;
   font-family: monospace;
   font-size: 13px;
 }
@@ -71,4 +70,29 @@
   background-color: #e7e7e7;
   white-space: pre;
   height: calc(100% - 10px);
+}
+.fp-line-numbers {
+  color: #9E9E9E;
+  background-color: #EEEEEE;
+  float: left;
+  text-align: right;
+  border-right: 1px solid #bdbdbd;
+  padding: 3px;
+  margin-right: 3px;
+}
+.fp-file-content {
+  padding: 3px;
+}
+.fp-toolbar {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  min-height: 50px;
+  border-bottom: 1px solid #bdbdbd;
+  padding: 5px 10px;
+}
+.fp-options input[type="checkbox"] {
+  position: relative;
+  top: 2px;
+  margin-right: 3px;
 }

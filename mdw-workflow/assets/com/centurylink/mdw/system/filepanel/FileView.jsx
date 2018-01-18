@@ -18,7 +18,6 @@ class FileView extends Component {
     // retrieve fileView
     // call back to handleSelect
     if (props.item.path) { 
-      console.log("ITEM: " + JSON.stringify(props.item, null, 2));
       let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel?';
       url += 'path=' + encodeURIComponent(props.item.path);  // TODO lineIndex param
       fetch(new Request(url, {
@@ -45,11 +44,44 @@ class FileView extends Component {
   }
   
   render() {
+    var lineIndex = 0;
+    var bufferLines = 1000;
+    var l = this.state.lines.replace(/\n$/, '').split(/\n/).length;
+    if (l < bufferLines) {
+      bufferLines = l;
+    }
+    
+    var lineNumbers = null;
+    if (this.state.lines.length > 0) {
+      var options = localStorage.getItem('filepanel-options');
+      if (options) {
+        options = JSON.parse(options);
+        if (options.lineNumbers) {
+          lineNumbers = '';
+          for (let i = lineIndex + 1; i < bufferLines + 1; i++) {
+            lineNumbers += i;
+            if (i < bufferLines)
+              lineNumbers += '\n';
+          }
+        }
+        console.log("options: " + JSON.stringify(options, null, 2));
+      }
+    }
+    
     return (
         <Scrollbars 
           className="fp-file-view"
           onScrollFrame={this.handleScroll}>
-          {this.state.lines}
+          <div>
+            {lineNumbers &&
+              <div className="fp-line-numbers">
+                {lineNumbers}
+              </div>
+            }
+            <div className="fp-file-content">
+              {this.state.lines}
+            </div>
+          </div>
         </Scrollbars>
     );
   }

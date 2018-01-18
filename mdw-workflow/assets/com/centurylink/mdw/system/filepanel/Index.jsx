@@ -2,6 +2,7 @@ import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
 import DirTree from './DirTree.jsx';
 import FileView from './FileView.jsx';
+import Toolbar from './Toolbar.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
 // adjust mdw-main layout
@@ -20,6 +21,7 @@ class Index extends Component {
     this.state = { rootDirs: [], selected: {}};
     this.handleSelect = this.handleSelect.bind(this);
     this.handleInfo = this.handleInfo.bind(this);
+    this.handleOptions = this.handleOptions.bind(this);
   }
   
   componentDidMount() {
@@ -95,6 +97,14 @@ class Index extends Component {
       document.getElementById('fp-info').innerHTML = info;
   }
   
+  handleOptions(options) {
+    localStorage.setItem('filepanel-options', JSON.stringify(options));
+    this.setState({
+      rootDirs: this.state.rootDirs,
+      selected: this.state.selected
+    });
+  }
+  
   render() {
     return (
       <div className="fp-container">
@@ -130,7 +140,9 @@ class Index extends Component {
           </div>
         </div>
         <div className="fp-right">
-          <div style={{height:'50px'}}>toolbar</div>
+          <div className="fp-toolbar">
+            <Toolbar onOptions={this.handleOptions} />
+          </div>
           <div className="fp-file">
             <FileView 
               item={this.state.selected} 
