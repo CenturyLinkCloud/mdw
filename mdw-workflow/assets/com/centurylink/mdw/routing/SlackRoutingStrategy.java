@@ -76,8 +76,6 @@ public class SlackRoutingStrategy extends AbstractRoutingStrategy {
                     return null;
                 }
                 String instance = array[1].substring(0, array[1].indexOf("/"));
-                message.remove("token");
-                request = message.toString();
                 return buildURL(headers, instance);
             }
         }
