@@ -31,6 +31,7 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -74,8 +75,8 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         // Do not route requests for cache refreshes so ALL instances perform the refresh
         if ("WorkflowCache".equalsIgnoreCase(headers.get(Listener.METAINFO_REQUEST_PATH)) ||
             "GitVcs".equalsIgnoreCase(headers.get(Listener.METAINFO_REQUEST_PATH)) ||
-            (request.toString().length() < 200 && request.toString().contains("ActionRequest") &&
-            request.toString().contains("RefreshCache")) ) {
+            (request != null && (request.toString().length() < 200 && request.toString().contains("ActionRequest") &&
+            request.toString().contains("RefreshCache"))) ) {
             return null;
         }
 
@@ -140,8 +141,18 @@ public class RoutingServiceMonitor implements ServiceMonitor {
     protected URL getRoutingStrategyDestination(Object request, Map<String,String> headers) {
         for (RequestRoutingStrategy routingStrategy : MdwServiceRegistry.getInstance().getRequestRoutingStrategies()) {
             URL destination = routingStrategy.getDestination(request, headers);
-            if (destination != null)
-                return destination;
+            if (destination != null) {
+            	// Only return a destination if it is not itself (identical call) - Avoid infinite loop
+                int queryIdx = destination.toString().indexOf("?");
+                String origRequestUrl = headers.get(Listener.METAINFO_REQUEST_URL);
+                if (queryIdx > 0 && !StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING))) {
+                    origRequestUrl = origRequestUrl + "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
+                    if (!destination.toString().equals(origRequestUrl))
+                        return destination;
+                }
+                else if (!destination.toString().equals(origRequestUrl))
+                    return destination;
+            }
         }
         return null;
     }

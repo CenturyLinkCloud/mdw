@@ -169,8 +169,10 @@ public abstract class ServiceServlet extends HttpServlet {
                     }
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/slack")) {
-                    // validates Slack token
-                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                    // validates Slack token unless request is coming from our AppFog prod instance
+                    if ("mdw.useast.appfog.ctl.io".equals(request.getRemoteHost()) ||
+                        "mdw.useast.appfog.ctl.io".equals(headers.get(Listener.METAINFO_REMOTE_HOST)) ||
+                        AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {

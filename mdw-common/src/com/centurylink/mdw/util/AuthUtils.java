@@ -129,8 +129,9 @@ public class AuthUtils {
                 JSONObject json = new JSONObject(decodedPayload);
                 okay = json.has("token") && json.getString("token").equals(System.getenv(SLACK_TOKEN));
                 if (okay) {
+                    json.remove("token");
                     headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
-                    headers.put(Listener.METAINFO_REQUEST_PAYLOAD, decodedPayload);
+                    headers.put(Listener.METAINFO_REQUEST_PAYLOAD, json.toString());
                 }
             }
             catch (UnsupportedEncodingException ex) {
@@ -141,8 +142,11 @@ public class AuthUtils {
             // JSON request
             JSONObject json = new JSONObject(payload);
             okay = json.has("token") && json.getString("token").equals(System.getenv(SLACK_TOKEN));
-            if (okay)
+            if (okay) {
+                json.remove("token");
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
+                headers.put(Listener.METAINFO_REQUEST_PAYLOAD, json.toString());
+            }
         }
         return okay;
     }
