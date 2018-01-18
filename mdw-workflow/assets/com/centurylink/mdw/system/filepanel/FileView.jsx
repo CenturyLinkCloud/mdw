@@ -6,7 +6,8 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 class FileView extends Component {
   constructor(...args) {
     super(...args);
-    this.state = {item: {}, lines: ''}
+    this.state = {item: {}, lines: ''};
+    this.handleScroll = this.handleScroll.bind(this);    
   }
   
   componentDidMount() {
@@ -34,14 +35,20 @@ class FileView extends Component {
           item: json.info,
           lines: json.lines ? json.lines : ''
         });
+        this.props.onInfo(json.info);
       });
     }
-  } 
+  }
+  
+  handleScroll(values) {
+    console.log("SCROLL: " + JSON.stringify(values, null, 2));
+  }
   
   render() {
     return (
         <Scrollbars 
-          className="fp-file-view">
+          className="fp-file-view"
+          onScrollFrame={this.handleScroll}>
           {this.state.lines}
         </Scrollbars>
     );

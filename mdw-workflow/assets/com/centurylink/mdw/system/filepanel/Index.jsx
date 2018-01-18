@@ -17,8 +17,9 @@ document.getElementsByTagName("html")[0].style.height = '100%';
 class Index extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { rootDirs: [], selected: {} };
+    this.state = { rootDirs: [], selected: {}};
     this.handleSelect = this.handleSelect.bind(this);
+    this.handleInfo = this.handleInfo.bind(this);
   }
   
   componentDidMount() {
@@ -56,38 +57,42 @@ class Index extends Component {
   }
   
   handleSelect(selection) {
-    selection.info = '';
-    if (selection.isFile) {
-      selection.info += selection.path.substring(0, selection.path.length - selection.name.length);
-      selection.info += '\n' + selection.name;
-    }
-    else {
-      selection.info += selection.path;
-    }
-    
-    selection.info += '\n';
-    
-    if (selection.size) {
-      var kb = (selection.size / 1024);
-      if (kb > 100) {
-        kb = Math.round(kb);
-      }
-      else if (kb > 10) {
-        kb = Math.round(kb * 10)/10;
-      }
-      else {
-        kb = Math.round(kb * 100)/100;
-      }
-      selection.info += kb + ' kb ';
-    }
-    if (selection.modified) {
-      selection.info += new Date(selection.modified).toLocaleString();
-    }
-    
+    this.handleInfo(selection);
     this.setState({
       rootDirs: this.state.rootDirs,
       selected: selection
     });
+  }
+  
+  handleInfo(item) {
+      let info = '';
+      if (item.isFile) {
+        info += item.path.substring(0, item.path.length - item.name.length);
+        info += '\n' + item.name;
+      }
+      else {
+          info += item.path;
+      }
+      
+      info += '\n';
+      
+      if (item.size) {
+        var kb = (item.size / 1024);
+        if (kb > 100) {
+          kb = Math.round(kb);
+        }
+        else if (kb > 10) {
+          kb = Math.round(kb * 10)/10;
+        }
+        else {
+          kb = Math.round(kb * 100)/100;
+        }
+        info += kb + ' kb ';
+      }
+      if (item.modified) {
+          info += new Date(item.modified).toLocaleString();
+      }
+      document.getElementById('fp-info').innerHTML = info;
   }
   
   render() {
@@ -110,7 +115,7 @@ class Index extends Component {
           <div className="fp-footer">
             <div className="fp-info">
               {this.state.selected &&
-                <div>{this.state.selected.info}</div>
+                <div id="fp-info"></div>
               }
             </div>
             <div className="fp-grep">
@@ -127,7 +132,9 @@ class Index extends Component {
         <div className="fp-right">
           <div style={{height:'50px'}}>toolbar</div>
           <div className="fp-file">
-            <FileView item={this.state.selected} onSelect={this.handleSelect} />
+            <FileView 
+              item={this.state.selected} 
+              onInfo={this.handleInfo} />
           </div>
         </div>
       </div>

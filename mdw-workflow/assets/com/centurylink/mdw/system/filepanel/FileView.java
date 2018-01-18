@@ -15,10 +15,7 @@
  */
 package com.centurylink.mdw.system.filepanel;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,10 +90,10 @@ public class FileView implements Jsonable {
             // streams
             try (Stream<String> stream = Files.lines(path)) {
                 info.setLineCount((int)stream.count());
-                int firstLine = getBufferFirstLine() + 1;
-                int lastLine = getBufferLastLine() + 1;
+                int firstLine = getBufferFirstLine();
+                int lastLine = getBufferLastLine();
                 try (Stream<String> stream2 = Files.lines(path)) {
-                    stream2.skip(firstLine).limit(lastLine - firstLine).forEachOrdered(line -> {
+                    stream2.skip(firstLine).limit(lastLine - firstLine + 1).forEachOrdered(line -> {
                         lineBuffer.append(applyMask(line)).append("\n");
                     });
                 }
@@ -109,7 +106,9 @@ public class FileView implements Jsonable {
 
     public JSONObject getJson() {
         JSONObject json = new JSONObject();
-        json.put("info", info.getJson());
+        JSONObject infoJson = info.getJson();
+        infoJson.put("isFile", true);
+        json.put("info", infoJson);
         json.put("lines", lineBuffer.toString());
         return json;
     }
