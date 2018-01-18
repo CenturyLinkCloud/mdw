@@ -682,4 +682,11 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
+    public void updateTaskInstanceState(Long taskInstId, boolean isAlert)
+            throws DataAccessException, ServiceException {
+        TaskInstance taskInstance = getInstance(taskInstId);
+        TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInstance);
+        helper.updateState(isAlert);
+    }
+
 }

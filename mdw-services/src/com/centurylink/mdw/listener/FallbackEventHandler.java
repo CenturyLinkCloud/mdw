@@ -41,6 +41,7 @@ import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
+import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
@@ -51,6 +52,7 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
@@ -258,7 +260,18 @@ public class FallbackEventHandler implements ExternalEventHandler {
                 logger.severeException(e.getMessage(), e);
                 response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();
             }
-        } else {
+        } else if (rootNodeName.equals("_mdw_task_sla")) {
+            try {
+                TaskServices taskServices = ServiceLocator.getTaskServices();
+                String taskInstId = XmlPath.evaluate(msgdoc, "/_mdw_task_sla/task_instance_id");
+                String isAlert = XmlPath.evaluate(msgdoc, "/_mdw_task_sla/is_alert");
+                taskServices.updateTaskInstanceState(Long.valueOf(taskInstId), Boolean.valueOf(isAlert));
+            } catch (Exception e) {
+                logger.severeException("Failed to change task state", e);
+                response = "ERROR: " + e.getMessage();
+            }
+            response = "OK";
+        }else {
             response = "ERROR: unknown internal message " + rootNodeName;
         }
         return response;

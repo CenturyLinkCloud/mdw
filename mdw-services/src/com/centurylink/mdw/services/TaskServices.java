@@ -106,4 +106,7 @@ public interface TaskServices {
      */
     public List<TaskAction> getActions(Long instanceId, String userCuid, Query query) throws ServiceException;
 
+    public void updateTaskInstanceState(Long taskInstId, boolean isAlert)
+            throws DataAccessException, ServiceException;
+
 }
