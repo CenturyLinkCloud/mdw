@@ -106,6 +106,6 @@
   <div id="mdw-header" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/header.html'"></div>
   <div id="mdw-tabs" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/tabs.html'"></div>
   <div id="mdw-main" ng-class="{content: true, container: true, 'mdw-content': !isFullView(), 'mdw-mobile-content': isFullView(), 'mdw-full-width': isFullWidth()}" ng-view></div>
-  <div id="mdw-footer" ng-if="!isFullView()" ng-include="'layout/footer.html'"></div>
+  <div id="mdw-footer" ng-if="!isFullView() && !isFilePanel()" ng-include="'layout/footer.html'"></div>
 </body>
 </html>

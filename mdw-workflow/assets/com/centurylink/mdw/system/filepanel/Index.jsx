@@ -6,8 +6,13 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 
 // adjust mdw-main layout
 let main = document.getElementById('mdw-main');
-main.style.display = 'flex';
 main.style.padding = '0';
+main.style.height = 'calc(100% - 135px)';
+main.style.minHeight = null;
+document.body.style.height = '100%';
+document.body.style.overflowX = 'hidden';
+document.body.style.overflowY = 'hidden';
+document.getElementsByTagName("html")[0].style.height = '100%';
 
 class Index extends Component {
   constructor(...args) {
@@ -120,7 +125,7 @@ class Index extends Component {
           </div>
         </div>
         <div className="fp-right">
-          <div>toolbar</div>
+          <div style={{height:'50px'}}>toolbar</div>
           <div className="fp-file">
             <FileView item={this.state.selected} />
           </div>
