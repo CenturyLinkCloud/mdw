@@ -1,0 +1,60 @@
+<div
+  class="form-group"
+  ng-repeat="newAttr in attributes">
+  <label
+    class="control-label col-xs-2"
+    for="{{newAttr.name}}">{{newAttr.name}}:</label>
+  <div class="col-xs-8">
+    <input
+      type="text"
+      ng-model='newAttr.value'
+      id='newAttrValue-{{$index}}'
+      maxlength="256"
+      class="form-control" />
+  </div>
+  <button
+    class="btn btn-danger mdw-btn"
+    type="button"
+    ng-click="del($index)">Delete</button>
+</div>
+<div class="panel panel-default mdw-panel">
+  <div class="panel-heading mdw-heading">
+    <div class="mdw-heading-label">Add New Attributes</div>
+  </div>
+  <div class="form-horizontal mdw-section">
+    <div class="form-group mdw-static-group">
+      <label
+        class="control-label col-xs-1 mdw-required"
+        for="{{attribute.name}}">Name:</label>
+      <div class="col-xs-4">
+        <input
+          id='newAttr-Name'
+          type="text"
+          ng-model="attribute.name"
+          class="form-control"
+          maxlength="256" />
+      </div>
+      <label
+        class="control-label col-xs-1 mdw-required"
+        for="{{attribute.value}}">Value:</label>
+      <div class="col-xs-4">
+        <input
+          id='newAttr-Value'
+          type="text"
+          ng-model="attribute.value"
+          class="form-control"
+          maxlength="256" />
+      </div>
+      <div>
+        <button
+          class="btn btn-primary mdw-btn"
+          type="button"
+          ng-click="addAttribute()">
+          <span class="glyphicon glyphicon-add"></span> Add
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<br />
+<!-- pre>{{attributes|json}}</pre -->
