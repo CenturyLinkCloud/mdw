@@ -79,7 +79,8 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   
   $scope.save = function() {
     console.log('creating user: ' + $scope.user.cuid);
-    
+    document.getElementById("newAttr-Name").disabled = true;
+    document.getElementById("newAttr-Value").disabled = true;
     Users.create({cuid: $scope.user.cuid}, $scope.user,
       function(data) {
         if (data.status.code !== 0) {
@@ -270,6 +271,27 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
     function() {
       $scope.userName = $scope.user.name;
     });
+  
+  $scope.attributes = [];
+  $scope.attribute = {
+	      name: '', 
+	      value: ''
+	  };
+  $scope.addAttribute = function () {
+	  var newAttribute = $scope.attribute;
+      $scope.attributes.push(newAttribute);
+      $scope.attribute = {
+    	      name: '', 
+    	      value: ''
+    	  };
+  }
+  $scope.del = function(i){
+	    $scope.attributes.splice(i,1);
+	  }
+  $scope.save = function() {
+	    document.getElementById("newAttr-Name").disabled = true;
+	    document.getElementById("newAttr-Value").disabled = true;
+  }
 }]);
 
 userMod.factory('Users', ['$resource', 'mdw', function($resource, mdw) {
