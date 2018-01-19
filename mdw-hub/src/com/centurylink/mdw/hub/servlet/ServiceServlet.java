@@ -180,9 +180,17 @@ public abstract class ServiceServlet extends HttpServlet {
                             for (String key : headers.keySet())
                                 logger.mdwDebug(key + ": " + headers.get(key) + "\n");
                     }
-                    if ("mdw.useast.appfog.ctl.io".equals(request.getRemoteHost()) ||
-                        "mdw.useast.appfog.ctl.io".equals(headers.get(Listener.METAINFO_REMOTE_HOST)) ||
-                        AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                    InetAddress appFogProd = null;
+                    InetAddress remote = null;
+                    try {
+                        remote = InetAddress.getByName(request.getRemoteHost());
+                        appFogProd = InetAddress.getByName("mdw.useast.appfog.ctl.io");
+                    }
+                    catch (UnknownHostException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    if ((remote != null && remote.equals(appFogProd)) || AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
