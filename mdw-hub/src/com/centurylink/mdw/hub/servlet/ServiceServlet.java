@@ -193,7 +193,7 @@ public abstract class ServiceServlet extends HttpServlet {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    if ((appFogProd != null && appFogProd.contains(remote)) || AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload) || (appFogProd != null && appFogProd.contains(remote)))
                         return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
