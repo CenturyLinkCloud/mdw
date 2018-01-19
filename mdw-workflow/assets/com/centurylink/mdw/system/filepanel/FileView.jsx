@@ -7,7 +7,7 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 class FileView extends Component {
   constructor(...args) {
     super(...args);
-    this.state = {item: {}, buffer: {}};
+    this.state = {item: {}, buffer: {}, lineIndex: 0};
     this.handleScroll = this.handleScroll.bind(this);
     this.handleOptions = this.handleOptions.bind(this);
   }
@@ -24,8 +24,9 @@ class FileView extends Component {
         lines: ''
       });
       
-      let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel?';
-      url += 'path=' + encodeURIComponent(props.item.path);  // TODO lineIndex param
+      let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
+      url += '?path=' + encodeURIComponent(props.item.path);
+      url += '&lineIndex=' + this.state.lineIndex;
       fetch(new Request(url, {
         method: 'GET',
         headers: { Accept: 'application/json'},
@@ -52,13 +53,14 @@ class FileView extends Component {
     localStorage.setItem('filepanel-options', JSON.stringify(options));
     this.setState({
       item: this.state.item,
-      lines: this.state.lines
+      lines: this.state.lines,
+      lineIndex: this.state.lineIndex
     });
   }
   
   render() {
-    var lineIndex = 0;
-    var bufferSize = 1000;  // TODO: options
+    var bufferSize = 100;  // TODO: options
+    var refetchThreshold = 10; // TODO: options
     
     var lineNumbers = null;
     if (this.state.buffer.length && this.state.item.isFile && !this.state.item.binary) {
@@ -67,7 +69,7 @@ class FileView extends Component {
         options = JSON.parse(options);
         if (options.lineNumbers) {
           lineNumbers = '';
-          for (let i = lineIndex + 1; i < this.state.buffer.length + 1; i++) {
+          for (let i = this.state.lineIndex + 1; i < this.state.buffer.length + 1; i++) {
             lineNumbers += i;
             if (i < this.state.buffer.length)
               lineNumbers += '\n';
@@ -79,7 +81,7 @@ class FileView extends Component {
     return (
       <div className="fp-file-view">
         <Toolbar
-          line={lineIndex + 1}
+          line={this.state.lineIndex + 1}
           item={this.state.item}
           onOptions={this.handleOptions} />
         {this.state.item.isFile &&

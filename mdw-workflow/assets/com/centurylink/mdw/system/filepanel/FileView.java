@@ -56,7 +56,7 @@ public class FileView implements Jsonable {
         lineIndex = query.getIntFilter("lineIndex");
         if (lineIndex == -1)
             lineIndex = 0;
-        bufferSize = query.getIntFilter("bufferLines");
+        bufferSize = query.getIntFilter("bufferSize");
         if (bufferSize == -1)
             bufferSize = 1000;
 
@@ -96,8 +96,9 @@ public class FileView implements Jsonable {
                 info.setLineCount((int)stream.count());
                 bufferStart = getBufferFirstLine();
                 bufferEnd = getBufferLastLine();
+                int limit = bufferEnd - bufferStart;
                 try (Stream<String> stream2 = Files.lines(path)) {
-                    stream2.skip(bufferStart).limit(bufferEnd - bufferStart + 1).forEachOrdered(line -> {
+                    stream2.skip(bufferStart).limit(limit).forEachOrdered(line -> {
                         lineBuffer.append(applyMask(line)).append("\n");
                         bufferLength++;
                     });
