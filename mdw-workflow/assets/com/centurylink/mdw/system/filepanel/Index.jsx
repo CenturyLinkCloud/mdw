@@ -71,7 +71,7 @@ class Index extends Component {
         info += '\n' + item.name;
       }
       else {
-          info += item.path;
+        info += item.path;
       }
       
       info += '\n';
@@ -90,7 +90,7 @@ class Index extends Component {
         info += kb + ' kb ';
       }
       if (item.modified) {
-          info += new Date(item.modified).toLocaleString();
+        info += new Date(item.modified).toLocaleString();
       }
       document.getElementById('fp-info').innerHTML = info;
   }

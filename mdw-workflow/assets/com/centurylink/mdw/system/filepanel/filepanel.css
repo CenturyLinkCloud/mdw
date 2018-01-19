@@ -61,15 +61,17 @@
 	margin-top: 2px;
 }
 .fp-file {
-  height: 100%;
+  height: calc(100% - 50px);
   background-color: #e7e7e7;
   font-family: monospace;
   font-size: 13px;
 }
 .fp-file-view {
+  height: 100%;
+}
+.fp-file-scroll {
   background-color: #e7e7e7;
   white-space: pre;
-  height: calc(100% - 10px);
 }
 .fp-line-numbers {
   color: #9E9E9E;
@@ -102,5 +104,8 @@
   border-style: inset;
   border-width: thin;
   white-space: nowrap;
+  background-color: #eeeeee;
+}
+.fp-search {
   background-color: #eeeeee;
 }

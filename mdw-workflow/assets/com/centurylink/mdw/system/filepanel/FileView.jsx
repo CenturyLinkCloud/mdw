@@ -17,8 +17,13 @@ class FileView extends Component {
   
   componentWillReceiveProps(props) {
     // retrieve fileView
-    // call back to handleSelect
-    if (props.item.path) { 
+    if (props.item.path) {
+      // clear while loading
+      this.setState({
+        item: props.item,
+        lines: ''
+      });
+      
       let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel?';
       url += 'path=' + encodeURIComponent(props.item.path);  // TODO lineIndex param
       fetch(new Request(url, {
@@ -61,7 +66,7 @@ class FileView extends Component {
     }
     
     var lineNumbers = null;
-    if (this.state.lines.length > 0) {
+    if (this.state.lines.length > 0 && !this.state.item.binary) {
       var options = localStorage.getItem('filepanel-options');
       if (options) {
         options = JSON.parse(options);
@@ -78,25 +83,25 @@ class FileView extends Component {
     }
     
     return (
-        <div style={{height:'100%'}}>
-          <Toolbar onOptions={this.handleOptions} />
-          <div className="fp-file">
-            <Scrollbars 
-              className="fp-file-view"
-              onScrollFrame={this.handleScroll}>
-              <div>
-                {lineNumbers &&
-                  <div className="fp-line-numbers">
-                    {lineNumbers}
-                  </div>
-                }
-                <div className="fp-file-content">
-                  {this.state.lines}
+      <div className="fp-file-view">
+        <Toolbar onOptions={this.handleOptions} />
+        <div className="fp-file">
+          <Scrollbars 
+            className="fp-file-scroll"
+            onScrollFrame={this.handleScroll}>
+            <div>
+              {lineNumbers &&
+                <div className="fp-line-numbers">
+                  {lineNumbers}
                 </div>
+              }
+              <div className="fp-file-content">
+                {this.state.lines}
               </div>
-            </Scrollbars>
-          </div>
+            </div>
+          </Scrollbars>
         </div>
+      </div>
     );
   }
 }
