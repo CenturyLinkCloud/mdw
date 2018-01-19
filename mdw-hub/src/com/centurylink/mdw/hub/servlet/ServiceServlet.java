@@ -16,8 +16,10 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -174,7 +176,13 @@ public abstract class ServiceServlet extends HttpServlet {
                     // validates Slack token unless request is coming from our AppFog prod instance
                     StandardLogger logger = LoggerUtil.getStandardLogger();
                     if (logger.isMdwDebugEnabled()) {
-                        logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost() + "\nHeaders remote host: " + headers.get(Listener.METAINFO_REMOTE_HOST));
+                        try {
+                            logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost() + "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
+                        }
+                        catch (UnknownHostException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                     }
                     if ("mdw.useast.appfog.ctl.io".equals(request.getRemoteHost()) ||
                         "mdw.useast.appfog.ctl.io".equals(headers.get(Listener.METAINFO_REMOTE_HOST)) ||
