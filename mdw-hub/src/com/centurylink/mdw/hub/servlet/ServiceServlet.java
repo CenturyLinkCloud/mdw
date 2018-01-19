@@ -16,12 +16,15 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -180,17 +183,17 @@ public abstract class ServiceServlet extends HttpServlet {
                             for (String key : headers.keySet())
                                 logger.mdwDebug(key + ": " + headers.get(key) + "\n");
                     }
-                    InetAddress appFogProd = null;
+                    List<InetAddress> appFogProd = null;
                     InetAddress remote = null;
                     try {
                         remote = InetAddress.getByName(request.getRemoteHost());
-                        appFogProd = InetAddress.getByName("mdw.useast.appfog.ctl.io");
+                        appFogProd = Arrays.asList(InetAddress.getAllByName("mdw.useast.appfog.ctl.io"));
                     }
                     catch (UnknownHostException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    if ((remote != null && remote.equals(appFogProd)) || AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                    if ((appFogProd != null && appFogProd.contains(remote)) || AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
