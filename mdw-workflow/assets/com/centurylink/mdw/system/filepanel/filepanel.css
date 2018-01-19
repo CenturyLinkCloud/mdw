@@ -85,6 +85,7 @@
 }
 .fp-toolbar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   height: 50px;
   min-height: 50px;
@@ -95,4 +96,11 @@
   position: relative;
   top: 2px;
   margin-right: 3px;
+}
+.fp-line-info {
+  font-size: 8pt;
+  border-style: inset;
+  border-width: thin;
+  white-space: nowrap;
+  background-color: #eeeeee;
 }

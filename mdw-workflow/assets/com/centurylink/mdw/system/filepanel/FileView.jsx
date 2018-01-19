@@ -1,17 +1,18 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
 import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
+import Toolbar from './Toolbar.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
 class FileView extends Component {
   constructor(...args) {
     super(...args);
     this.state = {item: {}, lines: ''};
-    this.handleScroll = this.handleScroll.bind(this);    
+    this.handleScroll = this.handleScroll.bind(this);
+    this.handleOptions = this.handleOptions.bind(this);
   }
   
   componentDidMount() {
-    console.log("item: " + this.props.item.path);
   }
   
   componentWillReceiveProps(props) {
@@ -43,6 +44,14 @@ class FileView extends Component {
     console.log("SCROLL: " + JSON.stringify(values, null, 2));
   }
   
+  handleOptions(options) {
+    localStorage.setItem('filepanel-options', JSON.stringify(options));
+    this.setState({
+      item: this.state.item,
+      lines: this.state.lines
+    });
+  }
+  
   render() {
     var lineIndex = 0;
     var bufferLines = 1000;
@@ -69,20 +78,25 @@ class FileView extends Component {
     }
     
     return (
-        <Scrollbars 
-          className="fp-file-view"
-          onScrollFrame={this.handleScroll}>
-          <div>
-            {lineNumbers &&
-              <div className="fp-line-numbers">
-                {lineNumbers}
+        <div style={{height:'100%'}}>
+          <Toolbar onOptions={this.handleOptions} />
+          <div className="fp-file">
+            <Scrollbars 
+              className="fp-file-view"
+              onScrollFrame={this.handleScroll}>
+              <div>
+                {lineNumbers &&
+                  <div className="fp-line-numbers">
+                    {lineNumbers}
+                  </div>
+                }
+                <div className="fp-file-content">
+                  {this.state.lines}
+                </div>
               </div>
-            }
-            <div className="fp-file-content">
-              {this.state.lines}
-            </div>
+            </Scrollbars>
           </div>
-        </Scrollbars>
+        </div>
     );
   }
 }

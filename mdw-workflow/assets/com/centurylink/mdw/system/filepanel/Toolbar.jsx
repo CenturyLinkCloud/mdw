@@ -32,11 +32,14 @@ function Toolbar(props, context) {
   );
   
   return (
-    <div>
+    <div className="fp-toolbar">
       <div>
         <OverlayTrigger trigger="click" placement="right" overlay={optionsPopover} rootClose={true}>
           <Button>Options</Button>
         </OverlayTrigger>          
+      </div>
+      <div className="fp-line-info">
+        1 / 1000
       </div>
     </div>
   );
