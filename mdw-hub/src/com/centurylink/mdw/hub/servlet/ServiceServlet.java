@@ -183,18 +183,23 @@ public abstract class ServiceServlet extends HttpServlet {
                             for (String key : headers.keySet())
                                 logger.mdwDebug(key + ": " + headers.get(key) + "\n");
                     }
-                    List<InetAddress> appFogProd = null;
-                    InetAddress remote = null;
-                    try {
-                        remote = InetAddress.getByName(request.getRemoteHost());
-                        appFogProd = Arrays.asList(InetAddress.getAllByName("mdw.useast.appfog.ctl.io"));
-                    }
-                    catch (UnknownHostException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload) || (appFogProd != null && appFogProd.contains(remote)))
+
+                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
+                    else {
+                        List<InetAddress> appFogProd = null;
+                        InetAddress remote = null;
+                        try {
+                            remote = InetAddress.getByName(request.getRemoteHost());
+                            appFogProd = Arrays.asList(InetAddress.getAllByName("mdw.useast.appfog.ctl.io"));
+                        }
+                        catch (UnknownHostException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        if (appFogProd != null && appFogProd.contains(remote))
+                            headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
+                    }
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
                     // perform http GitHub auth, which populates the auth user header
