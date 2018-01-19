@@ -45,7 +45,10 @@ public class FileView implements Jsonable {
 
     private int lineIndex;
     private StringBuilder lineBuffer;
-    private int bufferLines;
+    private int bufferSize;   // buffer size (TODO: options)
+    private int bufferLength;  // actual number of lines in buffer
+    private int bufferStart;
+    private int bufferEnd;
 
     public FileView(FileInfo info, Query query) throws IOException {
         this.info = info;
@@ -53,11 +56,12 @@ public class FileView implements Jsonable {
         lineIndex = query.getIntFilter("lineIndex");
         if (lineIndex == -1)
             lineIndex = 0;
-        bufferLines = query.getIntFilter("bufferLines");
-        if (bufferLines == -1)
-            bufferLines = 1000;
+        bufferSize = query.getIntFilter("bufferLines");
+        if (bufferSize == -1)
+            bufferSize = 1000;
 
         lineBuffer = new StringBuilder();  // TODO: presize?
+        bufferLength = 0;
 
         Path path = Paths.get(info.getPath());
         if (info.isBinary()) {
@@ -90,11 +94,12 @@ public class FileView implements Jsonable {
             // streams
             try (Stream<String> stream = Files.lines(path)) {
                 info.setLineCount((int)stream.count());
-                int firstLine = getBufferFirstLine();
-                int lastLine = getBufferLastLine();
+                bufferStart = getBufferFirstLine();
+                bufferEnd = getBufferLastLine();
                 try (Stream<String> stream2 = Files.lines(path)) {
-                    stream2.skip(firstLine).limit(lastLine - firstLine + 1).forEachOrdered(line -> {
+                    stream2.skip(bufferStart).limit(bufferEnd - bufferStart + 1).forEachOrdered(line -> {
                         lineBuffer.append(applyMask(line)).append("\n");
+                        bufferLength++;
                     });
                 }
             }
@@ -109,16 +114,21 @@ public class FileView implements Jsonable {
         JSONObject infoJson = info.getJson();
         infoJson.put("isFile", true);
         json.put("info", infoJson);
-        json.put("lines", lineBuffer.toString());
+        JSONObject bufferJson = new JSONObject();
+        bufferJson.put("lines", lineBuffer.toString());
+        bufferJson.put("length", bufferLength);
+        bufferJson.put("start", bufferStart);
+        bufferJson.put("end", bufferEnd);
+        json.put("buffer", bufferJson);
         return json;
     }
 
     public int getBufferFirstLine()
     {
-      int firstLine = lineIndex - bufferLines/2;
+      int firstLine = lineIndex - bufferSize/2;
 
-      if (lineIndex + bufferLines/2 > info.getLineCount() - 1)
-        firstLine = info.getLineCount() - bufferLines - 1;
+      if (lineIndex + bufferSize/2 > info.getLineCount() - 1)
+        firstLine = info.getLineCount() - bufferSize - 1;
       if (firstLine < 0)
         firstLine = 0;
 
@@ -127,7 +137,7 @@ public class FileView implements Jsonable {
 
     public int getBufferLastLine()
     {
-      int lastLine = getBufferFirstLine() + bufferLines;
+      int lastLine = getBufferFirstLine() + bufferSize;
       if (lastLine > info.getLineCount() - 1)
         lastLine = info.getLineCount() - 1;
       if (lastLine < 0)

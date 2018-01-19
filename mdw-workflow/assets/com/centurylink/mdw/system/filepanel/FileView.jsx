@@ -7,7 +7,7 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 class FileView extends Component {
   constructor(...args) {
     super(...args);
-    this.state = {item: {}, lines: ''};
+    this.state = {item: {}, buffer: {}};
     this.handleScroll = this.handleScroll.bind(this);
     this.handleOptions = this.handleOptions.bind(this);
   }
@@ -35,10 +35,9 @@ class FileView extends Component {
         return response.json();
       })
       .then(json => {
-        // TODO handleSelect without refresh
         this.setState({
           item: json.info,
-          lines: json.lines ? json.lines : ''
+          buffer: json.buffer
         });
         this.props.onInfo(json.info);
       });
@@ -59,48 +58,48 @@ class FileView extends Component {
   
   render() {
     var lineIndex = 0;
-    var bufferLines = 1000;
-    var l = this.state.lines.replace(/\n$/, '').split(/\n/).length;
-    if (l < bufferLines) {
-      bufferLines = l;
-    }
+    var bufferSize = 1000;  // TODO: options
     
     var lineNumbers = null;
-    if (this.state.lines.length > 0 && !this.state.item.binary) {
+    if (this.state.buffer.length && this.state.item.isFile && !this.state.item.binary) {
       var options = localStorage.getItem('filepanel-options');
       if (options) {
         options = JSON.parse(options);
         if (options.lineNumbers) {
           lineNumbers = '';
-          for (let i = lineIndex + 1; i < bufferLines + 1; i++) {
+          for (let i = lineIndex + 1; i < this.state.buffer.length + 1; i++) {
             lineNumbers += i;
-            if (i < bufferLines)
+            if (i < this.state.buffer.length)
               lineNumbers += '\n';
           }
         }
-        console.log("options: " + JSON.stringify(options, null, 2));
       }
     }
     
     return (
       <div className="fp-file-view">
-        <Toolbar onOptions={this.handleOptions} />
-        <div className="fp-file">
-          <Scrollbars 
-            className="fp-file-scroll"
-            onScrollFrame={this.handleScroll}>
-            <div>
-              {lineNumbers &&
-                <div className="fp-line-numbers">
-                  {lineNumbers}
+        <Toolbar
+          line={lineIndex + 1}
+          item={this.state.item}
+          onOptions={this.handleOptions} />
+        {this.state.item.isFile &&
+          <div className="fp-file">
+            <Scrollbars 
+              className="fp-file-scroll"
+              onScrollFrame={this.handleScroll}>
+              <div>
+                {lineNumbers &&
+                  <div className="fp-line-numbers">
+                    {lineNumbers}
+                  </div>
+                }
+                <div className="fp-file-content">
+                  {this.state.buffer.lines}
                 </div>
-              }
-              <div className="fp-file-content">
-                {this.state.lines}
               </div>
-            </div>
-          </Scrollbars>
-        </div>
+            </Scrollbars>
+          </div>
+        }
       </div>
     );
   }

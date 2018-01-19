@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -303,6 +303,11 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
           <a href="../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)</code>
 <div class="block">Update a task instance.</div>
 </td>
+</tr>
+<tr id="i29" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#updateTaskInstanceState-java.lang.Long-boolean-">updateTaskInstanceState</a></span>(java.lang.Long&nbsp;taskInstId,
+                       boolean&nbsp;isAlert)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -830,7 +835,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <a name="getActions-java.lang.Long-java.lang.String-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getActions</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a>&gt;&nbsp;getActions(java.lang.Long&nbsp;instanceId,
@@ -845,6 +850,25 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getActions-java.lang.Long-java.lang.String-com.centurylink.mdw.common.service.Query-">getActions</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="updateTaskInstanceState-java.lang.Long-boolean-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>updateTaskInstanceState</h4>
+<pre>public&nbsp;void&nbsp;updateTaskInstanceState(java.lang.Long&nbsp;taskInstId,
+                                    boolean&nbsp;isAlert)
+                             throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
+                                    <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#updateTaskInstanceState-java.lang.Long-boolean-">updateTaskInstanceState</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>

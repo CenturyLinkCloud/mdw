@@ -1,11 +1,11 @@
 CfLogListener.java=1
 DirTree.jsx=1
 FilePanelService.java=1
-FileView.java=1
-FileView.jsx=2
+FileView.java=2
+FileView.jsx=3
 Index.jsx=6
 Search.jsx=2
-Toolbar.jsx=1
+Toolbar.jsx=2
 cloudfoundry-client-lib-1.1.3.jar=1
 filepanel.css=1
 filepanel.png=1

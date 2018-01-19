@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -259,6 +259,11 @@ var activeTableTab = "activeTableTab";
           <a href="../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)</code>
 <div class="block">Update a task instance.</div>
 </td>
+</tr>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/TaskServices.html#updateTaskInstanceState-java.lang.Long-boolean-">updateTaskInstanceState</a></span>(java.lang.Long&nbsp;taskInstId,
+                       boolean&nbsp;isAlert)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -670,7 +675,7 @@ var activeTableTab = "activeTableTab";
 <a name="getActions-java.lang.Long-java.lang.String-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getActions</h4>
 <pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a>&gt;&nbsp;getActions(java.lang.Long&nbsp;instanceId,
@@ -682,6 +687,23 @@ var activeTableTab = "activeTableTab";
  TODO: custom actions should always be allowed unless they appear in mdw-task-actions.xml to restrict.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="updateTaskInstanceState-java.lang.Long-boolean-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>updateTaskInstanceState</h4>
+<pre>void&nbsp;updateTaskInstanceState(java.lang.Long&nbsp;taskInstId,
+                             boolean&nbsp;isAlert)
+                      throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
+                             <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>

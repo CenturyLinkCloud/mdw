@@ -36,11 +36,13 @@ function Toolbar(props, context) {
       <div>
         <OverlayTrigger trigger="click" placement="right" overlay={optionsPopover} rootClose={true}>
           <Button>Options</Button>
-        </OverlayTrigger>          
+        </OverlayTrigger>
       </div>
-      <div className="fp-line-info">
-        1 / 1000
-      </div>
+      {props.item && props.item.isFile && !props.item.binary && props.item.lineCount &&
+        <div className="fp-line-info">
+          {props.line + ' / ' + props.item.lineCount}
+        </div>
+      }
     </div>
   );
 }

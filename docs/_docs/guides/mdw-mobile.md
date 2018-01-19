@@ -15,6 +15,8 @@ MDW Mobile is coming soon to the App Store and Google Play.  In the meantime fol
     `adb install mdw-debug.apk`
 
 ### iOS
-  - Find out your iOS device ID as described here:
-    <https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingProfiles/MaintainingProfiles.html#//apple_ref/doc/uid/TP40012582-CH30-SW46>
-  - Send an email to <mdwcoreteam@centurylink.com> requesting your device be registered. 
+  - Find out your iOS device ID as described in 
+    [Apple developer documentation](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingProfiles/MaintainingProfiles.html#//apple_ref/doc/uid/TP40012582-CH30-SW46)
+  - Send an email to <mdwcoreteam@centurylink.com> requesting your device be registered.
+  - When notified, download mdw.ipa from [Releases]().
+  - Install on your device through [Apple Configurator 2](https://help.apple.com/xcode/mac/current/#/devade83d1d7?sub=dev87a955931), or through iTunes.  

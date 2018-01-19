@@ -1,5 +1,5 @@
 {
-  "attributes": {"ExclusionRoutingList": {"ExclusionRoutingList": "AppSummary,SystemInfo,AuthenticatedUser,Packages,Assets,GitVcs"}},
+  "attributes": {"ExclusionRoutingList": "AppSummary,SystemInfo,AuthenticatedUser,Packages,Assets,GitVcs,Users"},
   "name": "com.centurylink.mdw.routing",
   "schemaVersion": "6.0",
   "version": "6.0.12"

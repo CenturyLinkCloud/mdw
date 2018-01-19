@@ -10,7 +10,7 @@ permalink: /docs/help/
 </ul>
 <h3>Web Services</h3>
 <ul>
-  <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/MDW Cookbook/'>mdw-cookbook</a></li>
+  <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/'>MDW Cookbook</a></li>
   <li><a href='http://centurylinkcloud.github.io/mdw/docs/guides/SOAPService/'>SOAP Web Service</a></li>
 </ul>
 

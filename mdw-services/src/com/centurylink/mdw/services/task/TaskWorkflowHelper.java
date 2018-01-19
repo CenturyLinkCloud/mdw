@@ -164,6 +164,7 @@ public class TaskWorkflowHelper {
         if (taskPkg != null && !taskPkg.isDefaultPackage())
             label = taskPkg.getLabel() + "/" + label;
         Instant due = null;
+        dueInSeconds = dueInSeconds > 0 ? dueInSeconds : task.getSlaSeconds();
         if (dueInSeconds > 0)
             due = Instant.now().plusSeconds(dueInSeconds);
         int pri = 0;
@@ -1307,6 +1308,31 @@ public class TaskWorkflowHelper {
         }
         catch (DataAccessException ex) {
             throw new ServiceException("Failed to create audit log: " + userAction, ex);
+        }
+    }
+
+    public void updateState(boolean isAlert) throws DataAccessException {
+        if (isAlert) {
+            if (taskInstance.getStateCode().equals(TaskState.STATE_OPEN)) {
+                Map<String, Object> changes = new HashMap<>();
+                changes.put("TASK_INSTANCE_STATE", TaskState.STATE_ALERT);
+                new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes,
+                        false);
+                if (taskInstance.getDue() != null) {
+                    scheduleTaskSlaEvent(Date.from(taskInstance.getDue()), 0, false);
+                }
+                sendNotification("UPDATE", TaskState.getTaskStateName(TaskState.STATE_ALERT));
+            }
+        }
+        else {
+            if (taskInstance.getStateCode().equals(TaskState.STATE_OPEN)
+                    || taskInstance.getStateCode().equals(TaskState.STATE_ALERT)) {
+                Map<String, Object> changes = new HashMap<>();
+                changes.put("TASK_INSTANCE_STATE", TaskState.STATE_JEOPARDY);
+                new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes,
+                        false);
+                sendNotification("UPDATE", TaskState.getTaskStateName(TaskState.STATE_JEOPARDY));
+            }
         }
     }
 }
