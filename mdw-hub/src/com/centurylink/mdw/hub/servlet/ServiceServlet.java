@@ -176,13 +176,9 @@ public abstract class ServiceServlet extends HttpServlet {
                     // validates Slack token unless request is coming from our AppFog prod instance
                     StandardLogger logger = LoggerUtil.getStandardLogger();
                     if (logger.isMdwDebugEnabled()) {
-                        try {
-                            logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost() + "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
-                        }
-                        catch (UnknownHostException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
+                            logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost()); //+ "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
+                            for (String key : headers.keySet())
+                                logger.mdwDebug(key + ": " + headers.get(key) + "\n");
                     }
                     if ("mdw.useast.appfog.ctl.io".equals(request.getRemoteHost()) ||
                         "mdw.useast.appfog.ctl.io".equals(headers.get(Listener.METAINFO_REMOTE_HOST)) ||
