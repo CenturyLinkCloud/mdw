@@ -39,8 +39,13 @@ function Toolbar(props, context) {
         </OverlayTrigger>
       </div>
       {props.item && props.item.isFile && !props.item.binary && props.item.lineCount &&
-        <div className="fp-line-info">
-          {props.line + ' / ' + props.item.lineCount}
+        <div style={{display:'flex'}}>
+          <div className="fp-line-info">
+            {props.line + ' / ' + props.item.lineCount}
+          </div>
+          <Button className="fp-icon-btn">
+            <Glyphicon glyph="step-forward" style={{transform:'rotate(90deg)'}}/>
+          </Button>
         </div>
       }
     </div>

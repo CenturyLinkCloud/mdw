@@ -20,6 +20,7 @@ function DirTree(props, context) {
       <Glyphicon glyph="folder-open" className="fp-item-icon" />
       {props.root ? props.dir.path : props.dir.name}
     </span>);
+  const selPath = props.selected ? props.selected.path : null;
   return (
     <TreeView 
       key={props.dir.path} 
@@ -30,9 +31,10 @@ function DirTree(props, context) {
           return (
             <DirTree 
               key={dir.name}
-              className="fp-item"
+              className={'fp-item' + (selPath === dir.path ? ' fp-selected' : '')}
               dir={dir} 
-              onSelect={props.onSelect} />
+              onSelect={props.onSelect} 
+              selected={props.selected} />
           );
         })
       }
@@ -43,10 +45,10 @@ function DirTree(props, context) {
               style={{marginTop: '2px'}} // should match tree-view-item margin-top
               key={file.name}>
               <span
-                className="fp-item"
+                className={'fp-item' + (selPath === file.path ? ' fp-selected' : '')}
                 tabIndex={file.tabIndex}
                 onClick={event => props.onSelect(file)}>
-                <Glyphicon glyph="file" className="fp-item-icon" />
+                <Glyphicon glyph="file" className="fp-item-icon" style={{paddingRight:'4px'}} />
                 {file.name}
               </span>
             </div>

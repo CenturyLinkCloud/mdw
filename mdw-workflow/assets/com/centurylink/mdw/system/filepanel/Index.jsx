@@ -107,7 +107,8 @@ class Index extends Component {
                     key={dir.path} 
                     dir={dir}
                     onSelect={this.handleSelect}
-                    root={true} />
+                    root={true} 
+                    selected={this.state.selected} />
                 );
               })
             }

@@ -1,6 +1,6 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
-import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
+import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
 import Toolbar from './Toolbar.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
@@ -58,20 +58,21 @@ class FileView extends Component {
       this.setState({
         item: json.info,
         buffer: json.buffer,
-        lineIndex: this.state.lineIndex
+        lineIndex: this.state.lineIndex ? this.state.lineIndex : 0
       });
       this.props.onInfo(json.info);
     });
   }
   
   handleScroll(values) {
-    let lineIndex = Math.round(values.scrollTop * this.state.buffer.length / values.scrollHeight);
+    let lineIndex = Math.round(values.scrollTop * this.state.item.lineCount / values.scrollHeight);
+    
     this.setState({
       item: this.state.item,
       lines: this.state.lines,
       lineIndex: lineIndex
     });
-    console.log("SCROLL: " + JSON.stringify(values, null, 2));
+    // console.log("SCROLL: " + JSON.stringify(values, null, 2));
   }
   
   handleOptions(options) {
@@ -85,6 +86,7 @@ class FileView extends Component {
   }
   
   render() {
+    
     var lineNumbers = null;
     if (this.state.buffer.length && this.state.item.isFile && !this.state.item.binary) {
       if (this.options.lineNumbers) {
@@ -94,7 +96,6 @@ class FileView extends Component {
           if (i < this.state.buffer.length)
             lineNumbers += '\n';
         }
-//        console.log("LINE_NUMS: " + lineNumbers);
       }
     }
     
@@ -132,7 +133,7 @@ FileView.contextTypes = {
   serviceRoot: PropTypes.string
 };
 
-FileView.BUFFER_SIZE = 1000;
-FileView.FETCH_THRESHOLD = 100;
+FileView.BUFFER_SIZE = 100;
+FileView.FETCH_THRESHOLD = 10;
 
 export default FileView; 
