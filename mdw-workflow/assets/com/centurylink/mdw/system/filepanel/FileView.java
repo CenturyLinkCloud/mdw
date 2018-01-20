@@ -48,7 +48,9 @@ public class FileView implements Jsonable {
     private int bufferSize;   // buffer size (TODO: options)
     private int bufferLength;  // actual number of lines in buffer
     private int bufferStart;
-    private int bufferEnd;
+
+    private int lineCount;
+//    private int bufferEnd;
 
     public FileView(FileInfo info, Query query) throws IOException {
         this.info = info;
@@ -92,17 +94,38 @@ public class FileView implements Jsonable {
 
 
             // streams
+//            try (Stream<String> stream = Files.lines(path)) {
+//                info.setLineCount((int)stream.count());
+//                bufferStart = getBufferFirstLine();
+//                bufferEnd = getBufferLastLine();
+//                int limit = bufferEnd - bufferStart;
+//                try (Stream<String> stream2 = Files.lines(path)) {
+//                    stream2.skip(bufferStart).limit(limit).forEachOrdered(line -> {
+//                        lineBuffer.append(applyMask(line)).append("\n");
+//                        bufferLength++;
+//                    });
+//                }
+//            }
+//            catch (UncheckedIOException ex) {
+//                throw ex.getCause();
+//            }
+
+            // one-pass
             try (Stream<String> stream = Files.lines(path)) {
-                info.setLineCount((int)stream.count());
-                bufferStart = getBufferFirstLine();
-                bufferEnd = getBufferLastLine();
-                int limit = bufferEnd - bufferStart;
-                try (Stream<String> stream2 = Files.lines(path)) {
-                    stream2.skip(bufferStart).limit(limit).forEachOrdered(line -> {
+                if (lineIndex > 0) {
+                    bufferStart = lineIndex - bufferSize/2;
+                    if (bufferStart < 0)
+                        bufferStart = 0;
+                }
+                lineCount = bufferStart;
+                stream.skip(bufferStart).forEachOrdered(line -> {
+                    if (bufferLength < bufferSize) {
                         lineBuffer.append(applyMask(line)).append("\n");
                         bufferLength++;
-                    });
-                }
+                    }
+                    lineCount++;
+                });
+                info.setLineCount(lineCount);
             }
             catch (UncheckedIOException ex) {
                 throw ex.getCause();
@@ -119,7 +142,7 @@ public class FileView implements Jsonable {
         bufferJson.put("lines", lineBuffer.toString());
         bufferJson.put("length", bufferLength);
         bufferJson.put("start", bufferStart);
-        bufferJson.put("end", bufferEnd);
+//        bufferJson.put("end", bufferEnd);
         json.put("buffer", bufferJson);
         return json;
     }
