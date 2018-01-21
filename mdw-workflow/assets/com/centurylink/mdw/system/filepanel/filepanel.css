@@ -40,6 +40,7 @@
 }
 .fp-dirs {
   height: 100%;
+  overflow-y: auto;
 }
 .fp-item {
   width: auto;

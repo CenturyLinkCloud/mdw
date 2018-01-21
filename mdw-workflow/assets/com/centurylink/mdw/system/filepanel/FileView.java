@@ -142,32 +142,8 @@ public class FileView implements Jsonable {
         bufferJson.put("lines", lineBuffer.toString());
         bufferJson.put("length", bufferLength);
         bufferJson.put("start", bufferStart);
-//        bufferJson.put("end", bufferEnd);
         json.put("buffer", bufferJson);
         return json;
-    }
-
-    public int getBufferFirstLine()
-    {
-      int firstLine = lineIndex - bufferSize/2;
-
-      if (lineIndex + bufferSize/2 > info.getLineCount() - 1)
-        firstLine = info.getLineCount() - bufferSize - 1;
-      if (firstLine < 0)
-        firstLine = 0;
-
-      return firstLine;
-    }
-
-    public int getBufferLastLine()
-    {
-      int lastLine = getBufferFirstLine() + bufferSize;
-      if (lastLine > info.getLineCount() - 1)
-        lastLine = info.getLineCount() - 1;
-      if (lastLine < 0)
-        lastLine = 0;
-
-      return lastLine;
     }
 
     private String applyMask(String line) {

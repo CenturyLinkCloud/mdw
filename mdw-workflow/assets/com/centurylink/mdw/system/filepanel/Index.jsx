@@ -8,7 +8,7 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 let main = document.getElementById('mdw-main');
 main.style.padding = '0';
 main.style.height = 'calc(100% - 135px)';
-main.style.minHeight = null;
+main.style.minHeight = '400px';
 document.body.style.height = '100%';
 document.body.style.overflowX = 'hidden';
 document.body.style.overflowY = 'hidden';
