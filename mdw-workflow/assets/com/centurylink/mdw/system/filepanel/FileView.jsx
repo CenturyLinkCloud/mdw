@@ -30,7 +30,8 @@ class FileView extends Component {
     this.needsPostBuffer = this.needsPostBuffer.bind(this);
     this.getLineNumbers = this.getLineNumbers.bind(this);
     this.getScale = this.getScale.bind(this);
-    this.getVerticalOffset = this.getVerticalOffset.bind(this);
+    this.handleVerticalTrackClick = this.handleVerticalTrackClick.bind(this);
+    this.handleVerticalDrag = this.handleVerticalDrag.bind(this);
   }
   
   componentDidMount() {
@@ -162,19 +163,32 @@ class FileView extends Component {
     return lineNumbers;
   }
   
-  getVerticalOffset(offset) {
+  handleVerticalTrackClick(event) {
     if (this.scrollbars) {
-      const values = this.scrollbars.getValues();
-//      const st = (values.scrollHeight / (this.state.item.lineCount * this.getScale())) * (offset * this.state.item.lineCount / values.clientHeight - this.state.buffer.start);
+//      const values = this.scrollbars.getValues();
+//      this.specifiedLineIndex = Math.round(((offset + FileView.THUMB_SIZE/2) / values.clientHeight) * this.state.item.lineCount);
+//      if (this.specifiedLineIndex < 0) {
+//        this.specifiedLineIndex = 0;
+//      }
       
+      const {target, clientY} = event;
+      const {top: targetTop} = target.getBoundingClientRect();
+      var offset = Math.abs(targetTop - clientY) - FileView.THUMB_SIZE/2;
+      const values = this.scrollbars.getValues();
       this.specifiedLineIndex = Math.round(((offset + FileView.THUMB_SIZE/2) / values.clientHeight) * this.state.item.lineCount);
       if (this.specifiedLineIndex < 0) {
         this.specifiedLineIndex = 0;
       }
-      console.log("NEW LINE INDEX: " + this.specifiedLineIndex);
-      
-      return offset;
+      const { scrollHeight, clientHeight } = this.scrollbars.view;
+      const trackClientHeight = this.scrollbars.trackVertical.clientHeight;
+      const { paddingTop, paddingBottom } = getComputedStyle(this.scrollbars.trackVertical);
+      const trackHeight = trackClientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
+      this.scrollbars.view.scrollTop = offset / (trackHeight - FileView.THUMB_SIZE) * (scrollHeight - clientHeight);
     }
+  }
+  
+  handleVerticalDrag(event) {
+    
   }
   
   getScale() {
@@ -188,9 +202,9 @@ class FileView extends Component {
   render() {
     const lineNumbers = this.getLineNumbers();
     
-    var thumbVerticalY = 0;
+    var thumbVerticalTop = 0;
     if (this.lineIndex > 0) {
-      thumbVerticalY = this.lineIndex / this.state.item.lineCount;
+      thumbVerticalTop = this.lineIndex / this.state.item.lineCount;
     }
     
     return (
@@ -205,8 +219,9 @@ class FileView extends Component {
               className="fp-file-scroll"
               thumbSize={FileView.THUMB_SIZE}
               onScrollFrame={this.handleScroll}
-              getVerticalOffset={this.getVerticalOffset}
-              thumbVerticalY={thumbVerticalY}>
+              onVerticalTrackClick={this.handleVerticalTrackClick}
+              onVerticalDrag={this.handleVerticalDrag}
+              thumbVerticalTop={thumbVerticalTop}>
               <div>
                 {lineNumbers &&
                   <div id="fp-line-numbers" className="fp-line-numbers">
