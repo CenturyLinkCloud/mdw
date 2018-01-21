@@ -138,9 +138,10 @@ class FileView extends Component {
     if (this.state.buffer.length && this.state.item.isFile && !this.state.item.binary) {
       if (this.options.lineNumbers) {
         lineNumbers = '';
-        for (let i = this.state.buffer.start + 1; i < this.state.buffer.length + 1; i++) {
+        const endIdx = this.state.buffer.length + this.state.buffer.start;
+        for (let i = this.state.buffer.start + 1; i < endIdx + 1; i++) {
           lineNumbers += i;
-          if (i < this.state.buffer.length)
+          if (i < endIdx)
             lineNumbers += '\n';
         }
       }
