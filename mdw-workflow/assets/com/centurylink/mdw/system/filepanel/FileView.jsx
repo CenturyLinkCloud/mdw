@@ -17,14 +17,12 @@ class FileView extends Component {
     // default options
     this.options.bufferSize = FileView.BUFFER_SIZE;  // TODO: options
     this.options.fetchThreshold = FileView.FETCH_THRESHOLD; // TODO: options
-    this.options.waitThreshold = FileView.WAIT_THRESHOLD; // TODO: options
     
     this.state = {item: {}, buffer: {length: 0}};
     this.lineIndex = 0;  // not kept in state
     this.retrieving = false;
     
     this.fetchLines = this.fetchLines.bind(this);
-    this.handleScrollEvent = this.handleScrollEvent.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.handleOptions = this.handleOptions.bind(this);
   }
@@ -62,22 +60,33 @@ class FileView extends Component {
     })
     .then(json => {
       this.lineIndex = this.lineIndex ? this.lineIndex : 0;
+      
       this.setState({
         item: json.info,
         buffer: json.buffer
       });
+      
+      // adjust for newly-retrieved lines
+      if (this.scrollbars && this.lineIndex) {
+        const st = (this.lineIndex - json.buffer.start) * this.scrollbars.view.scrollHeight / (json.info.lineCount * this.getScale());
+        this.scrollbars.view.scrollTop = st;
+      }
+      
       this.props.onInfo(json.info);
       this.retrieving = false;
     });
   }
 
-  handleScrollEvent(event) {
-    console.log("EVENT");
-  }
-  
   handleScroll(values) {
-    console.log("FRAME");
-    this.lineIndex = Math.round(values.scrollTop * this.state.item.lineCount * this.getScale() / values.scrollHeight);
+    this.lineIndex = Math.round(values.scrollTop * this.state.item.lineCount * this.getScale() / values.scrollHeight) + this.state.buffer.start;
+    
+    if (this.retrieving) {
+      this.setState({
+        item: this.state.item,
+        lines: this.state.lines
+      });
+      return;
+    }
     
     // approaching threshold
     if (!this.retrieving) {
@@ -88,7 +97,6 @@ class FileView extends Component {
           this.fetchLines(this.props);
       }
       else {
-        console.log("STATE1");
         this.setState({
           item: this.state.item,
           lines: this.state.lines
@@ -96,14 +104,12 @@ class FileView extends Component {
       }
     }
     else {
-      console.log("STATE2");
       this.setState({
         item: this.state.item,
         lines: this.state.lines
       });
     }
-
-    console.log("SCROLL: " + JSON.stringify(values, null, 2));
+    // console.log("SCROLL: " + JSON.stringify(values, null, 2));    
   }
   
   needsPreBuffer(threshold) {
@@ -147,7 +153,6 @@ class FileView extends Component {
     if (this.state.item.lineCount > this.state.buffer.length) {
       scale = this.state.buffer.length / this.state.item.lineCount;
     }
-    console.log("SCALE: " + scale);
     return scale;
   }
   
@@ -156,15 +161,14 @@ class FileView extends Component {
     
     return (
       <div className="fp-file-view">
-        <Toolbar
+        <Toolbar 
           line={this.lineIndex + 1}
           item={this.state.item}
           onOptions={this.handleOptions} />
         {this.state.item.isFile &&
           <div className="fp-file">
-            <Scrollbars 
+            <Scrollbars ref={sb => { this.scrollbars = sb; }}
               className="fp-file-scroll"
-              onScroll={this.handleScrollEvent}
               onScrollFrame={this.handleScroll}
               verticalScale={this.getScale()}>
               <div>
@@ -192,6 +196,5 @@ FileView.contextTypes = {
 
 FileView.BUFFER_SIZE = 500;
 FileView.FETCH_THRESHOLD = 200;
-FileView.WAIT_THRESHOLD = 100; // stop scrolling until available
 
 export default FileView; 
