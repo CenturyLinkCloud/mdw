@@ -50,7 +50,6 @@ public class FileView implements Jsonable {
     private int bufferStart;
 
     private int lineCount;
-//    private int bufferEnd;
 
     public FileView(FileInfo info, Query query) throws IOException {
         this.info = info;
