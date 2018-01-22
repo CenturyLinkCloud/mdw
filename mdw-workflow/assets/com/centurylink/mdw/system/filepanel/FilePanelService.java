@@ -34,6 +34,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.system.Dir;
 import com.centurylink.mdw.model.system.FileInfo;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -60,7 +61,14 @@ public class FilePanelService extends JsonRestService {
                         throw new ServiceException(ServiceException.FORBIDDEN, "Forbidden");
                     File file = p.toFile();
                     if (query.getBooleanFilter("download")) {
-                        // TODO file download
+                        if (!file.isFile())
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
+                        headers.put(Listener.METAINFO_DOWNLOAD_FORMAT, Listener.DOWNLOAD_FORMAT_FILE);
+                        headers.put(Listener.METAINFO_DOWNLOAD_FILE, file.getPath());
+                        return null;
+                    }
+                    else if (query.getFilter("search") != null) {
+                        // TODO grep
                         return new JSONObject();
                     }
                     else if (query.getFilter("grep") != null) {
@@ -79,7 +87,7 @@ public class FilePanelService extends JsonRestService {
                             return new JSONObject();
                         }
                         else {
-                            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + segments[5]);
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
                         }
                     }
                 }

@@ -83,6 +83,8 @@ public interface Listener {
     public static final String DOWNLOAD_FORMAT_JSON = "json";
     public static final String DOWNLOAD_FORMAT_XML = "xml";
     public static final String DOWNLOAD_FORMAT_TEXT = "text";
+    public static final String DOWNLOAD_FORMAT_FILE = "file";
+    public static final String METAINFO_DOWNLOAD_FILE = "download-file";
     public static final String METAINFO_ZIP_CONTENT = "ZipContent";
     public static final String METAINFO_REQUEST_URL = "RequestURL";
     public static final String METAINFO_REQUEST_QUERY_STRING = "RequestQueryString";

@@ -55,7 +55,7 @@ function Toolbar(props, context) {
                     <Glyphicon glyph="refresh" />
                   </Button>
                 }
-                <Button className="fp-icon-btn" name="refresh" title="Download" onClick={handleClick}>
+                <Button className="fp-icon-btn" name="download" title="Download" onClick={handleClick}>
                  <Glyphicon glyph="download-alt" />
                 </Button>
                 {!props.item.binary &&

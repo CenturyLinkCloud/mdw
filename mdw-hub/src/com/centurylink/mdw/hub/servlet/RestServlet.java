@@ -16,7 +16,10 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -86,9 +89,23 @@ public class RestServlet extends ServiceServlet {
                         || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT)) {
                     response.getOutputStream().write(responseString.getBytes());
                 }
+                else if (downloadFormat.equals(Listener.DOWNLOAD_FORMAT_FILE)) {
+                    String f = metaInfo.get(Listener.METAINFO_DOWNLOAD_FILE);
+                    if (f == null)
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing meta");
+                    File file = new File(f);
+                    if (!file.isFile())
+                        throw new ServiceException(ServiceException.NOT_FOUND, "File not found: " + file.getAbsolutePath());
+                    response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
+                    try (InputStream in = new FileInputStream(file)) {
+                        int read = 0;
+                        byte[] bytes = new byte[8192];
+                        while ((read = in.read(bytes)) != -1)
+                            response.getOutputStream().write(bytes, 0, read);
+                    }
+                }
                 else {
-                    // for binary content string response will have been Base64
-                    // encoded
+                    // for binary content string response will have been Base64 encoded
                     response.getOutputStream()
                             .write(Base64.decodeBase64(responseString.getBytes()));
                 }

@@ -51,6 +51,32 @@ class FileView extends Component {
     }
   }
   
+  handleOptions(options) {
+    this.options = options;
+    localStorage.setItem('filepanel-options', JSON.stringify(options));
+    this.setState({
+      item: this.state.item,
+      lines: this.state.lines
+    });
+  }
+  
+  handleAction(action) {
+    console.log("ACTION: " + action);
+    if (action === 'refresh') {
+      this.lineIndex = 0;
+      this.setViewScrollTop(0);
+      this.fetchLines(this.props);
+    }
+    else if (action === 'download') {
+      location = this.context.serviceRoot + 
+          '/com/centurylink/mdw/system/filepanel?path=' + 
+          encodeURIComponent(this.props.item.path) + '&download=true';
+    }
+    else if (action === 'scrollToEnd') {
+      this.setViewScrollTop(1);
+    }
+  }
+  
   fetchLines(props) {
     this.retrieving = true;
     let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
@@ -135,30 +161,6 @@ class FileView extends Component {
     const bufferEnd = this.state.buffer.start + this.state.buffer.length;
     const postBuf = bufferEnd - this.lineIndex;
     return postBuf < this.options.fetchThreshold && bufferEnd < this.state.item.lineCount;
-  }
-  
-  handleOptions(options) {
-    this.options = options;
-    localStorage.setItem('filepanel-options', JSON.stringify(options));
-    this.setState({
-      item: this.state.item,
-      lines: this.state.lines
-    });
-  }
-  
-  handleAction(action) {
-    console.log("ACTION: " + action);
-    if (action === 'refresh') {
-      this.lineIndex = 0;
-      this.setViewScrollTop(0);
-      this.fetchLines(this.props);
-    }
-    else if (action === 'download') {
-      
-    }
-    else if (action === 'scrollToEnd') {
-      this.setViewScrollTop(1);
-    }
   }
   
   getLineNumbers() {
