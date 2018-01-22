@@ -26,6 +26,7 @@ class FileView extends Component {
     this.fetchLines = this.fetchLines.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.handleOptions = this.handleOptions.bind(this);
+    this.handleAction = this.handleAction.bind(this);
     this.needsPreBuffer = this.needsPreBuffer.bind(this);
     this.needsPostBuffer = this.needsPostBuffer.bind(this);
     this.getLineNumbers = this.getLineNumbers.bind(this);
@@ -107,7 +108,7 @@ class FileView extends Component {
         this.fetchLines(this.props);
       }
       else if (this.needsPostBuffer()) {
-          this.fetchLines(this.props);
+        this.fetchLines(this.props);
       }
       else {
         this.setState({
@@ -122,7 +123,6 @@ class FileView extends Component {
         lines: this.state.lines
       });
     }
-    // console.log("SCROLL: " + JSON.stringify(values, null, 2));    
   }
   
   needsPreBuffer() {
@@ -143,6 +143,21 @@ class FileView extends Component {
       item: this.state.item,
       lines: this.state.lines
     });
+  }
+  
+  handleAction(action) {
+    console.log("ACTION: " + action);
+    if (action === 'refresh') {
+      this.lineIndex = 0;
+      this.setViewScrollTop(0);
+      this.fetchLines(this.props);
+    }
+    else if (action === 'download') {
+      
+    }
+    else if (action === 'scrollToEnd') {
+      this.setViewScrollTop(1);
+    }
   }
   
   getLineNumbers() {
@@ -239,7 +254,8 @@ class FileView extends Component {
         <Toolbar 
           line={this.lineIndex + 1}
           item={this.state.item}
-          onOptions={this.handleOptions} />
+          onOptions={this.handleOptions}
+          onAction={this.handleAction} />
         {this.state.item.isFile &&
           <div className="fp-file">
             <Scrollbars ref={sb => { this.scrollbars = sb; }}

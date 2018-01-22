@@ -21,6 +21,10 @@ function Toolbar(props, context) {
     }
   };
   
+  const handleClick = event => {
+    props.onAction(event.currentTarget.name);
+  }
+  
   const optionsPopover = (
     <Popover id="options-pop">
       <div className="fp-options">
@@ -47,11 +51,11 @@ function Toolbar(props, context) {
               <Search />
               <div style={{display:'flex'}}>
                 {!props.item.binary &&
-                  <Button className="fp-icon-btn">
+                  <Button className="fp-icon-btn" name="refresh" title="Refresh" onClick={handleClick}>
                     <Glyphicon glyph="refresh" />
                   </Button>
                 }
-                <Button className="fp-icon-btn">
+                <Button className="fp-icon-btn" name="refresh" title="Download" onClick={handleClick}>
                  <Glyphicon glyph="download-alt" />
                 </Button>
                 {!props.item.binary &&
@@ -72,7 +76,7 @@ function Toolbar(props, context) {
           <div className="fp-line-info">
             {props.line + ' / ' + props.item.lineCount}
           </div>
-          <Button className="fp-icon-btn">
+          <Button className="fp-icon-btn" name="scrollToEnd" title="Scroll to End" onClick={handleClick}>
             <Glyphicon glyph="step-forward" style={{transform:'rotate(90deg)'}}/>
           </Button>
         </div>
