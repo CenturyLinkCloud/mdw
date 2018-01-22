@@ -1,6 +1,7 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
-import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
+import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
+// import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
 import Toolbar from './Toolbar.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
