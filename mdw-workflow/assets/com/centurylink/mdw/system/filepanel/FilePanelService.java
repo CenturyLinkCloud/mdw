@@ -83,8 +83,10 @@ public class FilePanelService extends JsonRestService {
                             return fileView.getJson();
                         }
                         else if (file.isDirectory()) {
-                            // TODO dir view
-                            return new JSONObject();
+                            Dir dir = new Dir(file, getExcludes(), true);
+                            JSONObject json = new JSONObject();
+                            json.put("info", dir.getJson());
+                            return json;
                         }
                         else {
                             throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
@@ -117,7 +119,7 @@ public class FilePanelService extends JsonRestService {
             File file = path.toFile();
             if (file.isDirectory()) {
                 try {
-                    dirs.add(new Dir(file, getExcludes()));
+                    dirs.add(new Dir(file, getExcludes(), false));
                 }
                 catch (IOException ex) {
                     logger.severeException(ex.getMessage(), ex);

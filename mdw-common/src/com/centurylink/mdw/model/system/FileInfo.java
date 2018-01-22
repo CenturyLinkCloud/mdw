@@ -19,6 +19,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.UserPrincipal;
 import java.time.Instant;
 
 import org.json.JSONException;
@@ -47,7 +55,26 @@ public class FileInfo implements Jsonable {
     public int getLineCount() { return lineCount; }
     public void setLineCount(int count) { this.lineCount = count; }
 
+    /**
+     * Details include permissions and ownership.
+     */
+    private boolean details;
+    public boolean isDetails() { return details; }
+
+    private String permissions;
+    public String getPermissions() { return permissions; }
+
+    private String owner;
+    public String getOwner() { return owner; }
+
+    private String group;
+    public String getGroup() { return group; }
+
     public FileInfo(File file) throws IOException {
+        this(file, false);
+    }
+
+    public FileInfo(File file, boolean details) throws IOException {
         if (!file.isFile())
             throw new FileNotFoundException("File not found: " + file.getAbsolutePath());
         this.name = file.getName();
@@ -55,6 +82,20 @@ public class FileInfo implements Jsonable {
         this.binary = isBinary(file);
         this.modified = Instant.ofEpochMilli(file.lastModified());
         this.size = file.length();
+        if (details)
+            addDetails();
+    }
+
+    private void addDetails() throws IOException {
+        if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+            Path path = Paths.get(this.path);
+            PosixFileAttributes attrs = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
+            permissions = String.format("%s%n", PosixFilePermissions.toString(attrs.permissions()));
+            UserPrincipal ownerPrincipal = attrs.owner();
+            owner = ownerPrincipal.toString();
+            UserPrincipal groupPrincipal = attrs.group();
+            group = groupPrincipal.toString();
+        }
     }
 
     @Override
@@ -70,6 +111,12 @@ public class FileInfo implements Jsonable {
             json.put("size", size);
         if (lineCount >= 0)
             json.put("lineCount", lineCount);
+        if (permissions != null)
+            json.put("permissions", permissions);
+        if (owner != null)
+            json.put("owner", owner);
+        if (group != null)
+            json.put("group", group);
         return json;
     }
 

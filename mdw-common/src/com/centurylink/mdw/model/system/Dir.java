@@ -18,9 +18,15 @@ package com.centurylink.mdw.model.system;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.UserPrincipal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,30 +56,79 @@ public class Dir implements Jsonable {
     private Instant modified;
     public Instant getModified() { return modified; }
 
-    public Dir(File file) throws IOException {
-        this(file, (List<PathMatcher>)null);
-    }
+    /**
+     * Details include permissions, ownership and size (but not on Windows).
+     */
+    private boolean details;
+    public boolean isDetails() { return details; }
 
-    public Dir(File file, List<PathMatcher> excludeMatchers) throws IOException {
+    private String permissions;
+    public String getPermissions() { return permissions; }
+
+    private String owner;
+    public String getOwner() { return owner; }
+
+    private String group;
+    public String getGroup() { return group; }
+
+    private long size;
+    public long getSize() { return size; }
+
+    public Dir(File file, List<PathMatcher> excludeMatchers, boolean details) throws IOException {
         if (!file.isDirectory())
             throw new FileNotFoundException("Directory not found: " + file.getAbsolutePath());
         this.name = file.getName();
         this.path = file.getPath().replace('\\', '/');
         this.excludeMatchers = excludeMatchers;
         this.modified = Instant.ofEpochMilli(file.lastModified());
+        this.details = details;
+        if (details)
+            addDetails();
         fill();
+    }
+
+    /**
+     * Non-recursive constructor.
+     */
+    public Dir(File file) throws IOException {
+        if (!file.isDirectory())
+            throw new FileNotFoundException("Directory not found: " + file.getAbsolutePath());
+        this.name = file.getName();
+        this.path = file.getPath().replace('\\', '/');
+        this.modified = Instant.ofEpochMilli(file.lastModified());
     }
 
     private void fill() throws IOException {
         for (File f : new File(path).listFiles()) {
             if (excludeMatchers == null || !matches(excludeMatchers, Paths.get(f.getPath()))) {
                 if (f.isDirectory()) {
-                    dirs.add(new Dir(f, excludeMatchers));
+                    if (details) {
+                        Dir dir = new Dir(f);
+                        dir.addDetails();
+                        dirs.add(dir);
+                    }
+                    else {
+                        // dir tree (recursive)
+                        dirs.add(new Dir(f, excludeMatchers, details));
+                    }
                 }
                 else {
-                    files.add(new FileInfo(f));
+                    files.add(new FileInfo(f, details));
                 }
             }
+        }
+    }
+
+    private void addDetails() throws IOException {
+        if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+            Path path = Paths.get(this.path);
+            PosixFileAttributes attrs = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
+            permissions = String.format("%s%n", PosixFilePermissions.toString(attrs.permissions()));
+            UserPrincipal ownerPrincipal = attrs.owner();
+            owner = ownerPrincipal.toString();
+            UserPrincipal groupPrincipal = attrs.group();
+            group = groupPrincipal.toString();
+            size = path.toFile().length();
         }
     }
 
@@ -98,6 +153,14 @@ public class Dir implements Jsonable {
         }
         if (modified != null)
             json.put("modified", modified.toString());
+        if (size > 0)
+            json.put("size", size);
+        if (permissions != null)
+            json.put("permissions", permissions);
+        if (owner != null)
+            json.put("owner", owner);
+        if (group != null)
+            json.put("group", group);
         return json;
     }
 

@@ -66,18 +66,22 @@
 .fp-item-file {
 	margin-top: 2px;
 }
+.fp-view {
+  height: 100%;
+}
 .fp-file {
   height: calc(100% - 50px);
   background-color: #e7e7e7;
   font-family: monospace;
   font-size: 13px;
 }
-.fp-file-view {
-  height: 100%;
-}
-.fp-file-scroll {
-  background-color: #e7e7e7;
+.fp-scroll {
   white-space: pre;
+}
+.fp-dir {
+  height: 100%;
+  font-family: monospace;
+  font-size: 13px;
 }
 .fp-line-numbers {
   color: #9E9E9E;
@@ -88,7 +92,7 @@
   padding: 3px;
   margin-right: 3px;
 }
-.fp-file-content {
+.fp-content {
   padding: 3px;
   line-height: 1.3;
 }

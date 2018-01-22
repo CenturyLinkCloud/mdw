@@ -3,6 +3,7 @@ import PropTypes from '../../node/node_modules/prop-types';
 import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
 // import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
 import Toolbar from './Toolbar.jsx';
+import DirListing from './DirListing.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
 class FileView extends Component {
@@ -24,7 +25,7 @@ class FileView extends Component {
     this.retrieving = false;
     this.specifiedLineIndex = null; // transient value when click track or drag thumb
     
-    this.fetchLines = this.fetchLines.bind(this);
+    this.doFetch = this.doFetch.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.handleOptions = this.handleOptions.bind(this);
     this.handleAction = this.handleAction.bind(this);
@@ -47,7 +48,7 @@ class FileView extends Component {
         item: props.item,
         buffer: {length: 0}
       });
-      this.fetchLines(props);
+      this.doFetch(props);
     }
   }
   
@@ -65,7 +66,7 @@ class FileView extends Component {
     if (action === 'refresh') {
       this.lineIndex = 0;
       this.setViewScrollTop(0);
-      this.fetchLines(this.props);
+      this.doFetch(this.props);
     }
     else if (action === 'download') {
       location = this.context.serviceRoot + 
@@ -77,13 +78,15 @@ class FileView extends Component {
     }
   }
   
-  fetchLines(props) {
+  doFetch(props) {
     this.retrieving = true;
     let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
     url += '?path=' + encodeURIComponent(props.item.path);
-    url += '&lineIndex=' + this.lineIndex;
-    if (this.options.bufferSize) {
-      url += '&bufferSize=' + this.options.bufferSize;
+    if (props.item.isFile) {
+      url += '&lineIndex=' + this.lineIndex;
+      if (this.options.bufferSize) {
+        url += '&bufferSize=' + this.options.bufferSize;
+      }
     }
     fetch(new Request(url, {
       method: 'GET',
@@ -96,15 +99,23 @@ class FileView extends Component {
     .then(json => {
       this.lineIndex = this.lineIndex ? this.lineIndex : 0;
       
-      this.setState({
-        item: json.info,
-        buffer: json.buffer
-      });
-      
-      // adjust for newly-retrieved lines
-      if (this.scrollbars && this.lineIndex) {
-        const st = (this.lineIndex - json.buffer.start) * this.scrollbars.view.scrollHeight / (json.info.lineCount * this.getScale());
-        this.scrollbars.view.scrollTop = st;
+      if (json.info.isFile) {
+        this.setState({
+          item: json.info,
+          buffer: json.buffer
+        });
+        
+        // adjust for newly-retrieved lines
+        if (this.scrollbars && this.lineIndex) {
+          const st = (this.lineIndex - json.buffer.start) * this.scrollbars.view.scrollHeight / (json.info.lineCount * this.getScale());
+          this.scrollbars.view.scrollTop = st;
+        }
+      }
+      else {
+        // dir listing
+        this.setState({
+          item: json.info
+        })
       }
       
       this.props.onInfo(json.info);
@@ -132,10 +143,10 @@ class FileView extends Component {
     // approaching threshold
     if (!this.retrieving) {
       if (this.needsPreBuffer()) {
-        this.fetchLines(this.props);
+        this.doFetch(this.props);
       }
       else if (this.needsPostBuffer()) {
-        this.fetchLines(this.props);
+        this.doFetch(this.props);
       }
       else {
         this.setState({
@@ -253,16 +264,18 @@ class FileView extends Component {
     }
     
     return (
-      <div className="fp-file-view">
-        <Toolbar 
-          line={this.lineIndex + 1}
-          item={this.state.item}
-          onOptions={this.handleOptions}
-          onAction={this.handleAction} />
+      <div className="fp-view">
+        {this.state.item.isFile &&
+          <Toolbar 
+            line={this.lineIndex + 1}
+            item={this.state.item}
+            onOptions={this.handleOptions}
+            onAction={this.handleAction} />
+        }
         {this.state.item.isFile &&
           <div className="fp-file">
             <Scrollbars ref={sb => { this.scrollbars = sb; }}
-              className="fp-file-scroll"
+              className="fp-scroll"
               thumbSize={FileView.THUMB_SIZE}
               onScrollFrame={this.handleScroll}
               onVerticalTrackClick={this.handleVerticalTrackClick}
@@ -274,11 +287,16 @@ class FileView extends Component {
                     {lineNumbers}
                   </div>
                 }
-                <div id="fp-file-content" className="fp-file-content">
+                <div id="fp-file-content" className="fp-content">
                   {this.state.buffer.lines}
                 </div>
               </div>
             </Scrollbars>
+          </div>
+        }
+        {!this.state.item.isFile && this.state.item.path &&
+          <div className="fp-dir">
+            <DirListing item={this.state.item} />
           </div>
         }
       </div>
