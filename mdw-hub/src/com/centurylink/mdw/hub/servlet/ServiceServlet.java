@@ -16,12 +16,15 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -176,18 +179,27 @@ public abstract class ServiceServlet extends HttpServlet {
                     // validates Slack token unless request is coming from our AppFog prod instance
                     StandardLogger logger = LoggerUtil.getStandardLogger();
                     if (logger.isMdwDebugEnabled()) {
+                            logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost()); //+ "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
+                            for (String key : headers.keySet())
+                                logger.mdwDebug(key + ": " + headers.get(key) + "\n");
+                    }
+
+                    if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
+                        return;
+                    else {
+                        List<InetAddress> appFogProd = null;
+                        InetAddress remote = null;
                         try {
-                            logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost() + "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
+                            remote = InetAddress.getByName(request.getRemoteHost());
+                            appFogProd = Arrays.asList(InetAddress.getAllByName("mdw.useast.appfog.ctl.io"));
                         }
                         catch (UnknownHostException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
+                        if (appFogProd != null && appFogProd.contains(remote))
+                            headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
                     }
-                    if ("mdw.useast.appfog.ctl.io".equals(request.getRemoteHost()) ||
-                        "mdw.useast.appfog.ctl.io".equals(headers.get(Listener.METAINFO_REMOTE_HOST)) ||
-                        AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
-                        return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
                     // perform http GitHub auth, which populates the auth user header
