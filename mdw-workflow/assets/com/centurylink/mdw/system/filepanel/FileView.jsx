@@ -171,21 +171,36 @@ class FileView extends Component {
   
   handleVerticalTrackClick(event) {
     if (this.scrollbars) {
-      const values = this.scrollbars.getValues();
       const {target, clientY} = event;
       const {top: targetTop} = target.getBoundingClientRect();
       var y = clientY - targetTop;
-      var frac = y / this.scrollbars.trackVertical.clientHeight; 
-      this.specifiedLineIndex = Math.round(frac * (this.state.item.lineCount - this.getClientLines()));
-      if (this.specifiedLineIndex < 0) {
-        this.specifiedLineIndex = 0;
-      }
-      this.scrollbars.view.scrollTop = Math.round((this.specifiedLineIndex - this.state.buffer.start) * values.scrollHeight / (this.state.item.lineCount * this.getScale()));
+      var frac = y / this.scrollbars.trackVertical.clientHeight;
+      this.setViewScrollTop(frac);
     }
   }
   
   handleVerticalDrag(event) {
-    
+    const { clientY } = event;
+    const { top: trackTop } = this.scrollbars.trackVertical.getBoundingClientRect();
+    const clickPosition = FileView.THUMB_SIZE - this.scrollbars.prevPageY;
+    var y = clientY - trackTop - clickPosition;
+    var frac = y / this.scrollbars.trackVertical.clientHeight;
+    if (frac < 0) {
+      frac = 0;
+    }
+    else if (frac > 1) {
+      frac = 1;
+    }
+    this.setViewScrollTop(frac);
+  }
+  
+  setViewScrollTop(fraction) {
+    this.specifiedLineIndex = Math.round(fraction * (this.state.item.lineCount - this.getClientLines()));
+    if (this.specifiedLineIndex < 0) {
+      this.specifiedLineIndex = 0;
+    }
+    const scrollHeight = this.scrollbars.view.scrollHeight;
+    this.scrollbars.view.scrollTop = Math.round((this.specifiedLineIndex - this.state.buffer.start) * scrollHeight / (this.state.item.lineCount * this.getScale()));
   }
   
   getScale() {
