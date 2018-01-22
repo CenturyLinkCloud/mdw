@@ -265,7 +265,7 @@ public class ApplicationContext {
                 // unravel cloud deployment host name
                 String localIp = new String(InetAddress.getLocalHost().getHostAddress());
                 for (String hostPort : getCompleteServerList()) {
-                    String host = hostPort.substring(0, hostPort.indexOf(':'));
+                    String host = hostPort.indexOf(':') < 0 ? hostPort : hostPort.substring(0, hostPort.indexOf(':'));
                     if (host.equals("localhost")) {
                         serverHost = host;
                     }
@@ -273,6 +273,10 @@ public class ApplicationContext {
                         // encourage fully-qualified domain names
                         Exception ex = new UnknownHostException("Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
                         logger.severeException(ex.getMessage(), ex);
+                    }
+                    if (hostPort.equals(host)) {
+                        // We need the port specified, even if it's just port 80
+                        logger.severe("Specify the port for each instance (use 80 if default port) in " + PropertyNames.MDW_SERVER_LIST);
                     }
                     for (InetAddress address : InetAddress.getAllByName(host)) {
                         if (address.getHostAddress().equals(localIp)) {
@@ -727,11 +731,13 @@ public class ApplicationContext {
         // Due to different domains for same servers in some environments
         // (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
         String thisHost = thisUrl.getHost().indexOf(".") > 0 ? thisUrl.getHost().substring(0, thisUrl.getHost().indexOf(".")) : thisUrl.getHost();
+        int thisPort = thisUrl.getPort() == 80 || thisUrl.getPort() == 443 ? -1 : thisUrl.getPort();
         for (String serverHost : ApplicationContext.getCompleteServerList()) {
             String serviceUrl = "http://" + serverHost + thisUrl.getPath();
             URL otherUrl = new URL(serviceUrl);
             String otherHost = otherUrl.getHost().indexOf(".") > 0 ? otherUrl.getHost().substring(0, otherUrl.getHost().indexOf(".")) : otherUrl.getHost();
-            if (!(thisHost.equalsIgnoreCase(otherHost)) || thisUrl.getPort() != otherUrl.getPort())
+            int otherPort = otherUrl.getPort() == 80 || otherUrl.getPort() == 443 ? -1 : otherUrl.getPort();
+            if (!(thisHost.equalsIgnoreCase(otherHost)) || thisPort != otherPort)
                 serverUrls.add(otherUrl);
         }
         return serverUrls;

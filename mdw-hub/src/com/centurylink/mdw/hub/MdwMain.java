@@ -78,14 +78,14 @@ public class MdwMain {
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
 
+                logger.refreshCache();    // now update based on properties loaded from database
+
                 // automatically update the ASSET_REF table as a safety check
                 DataAccess.updateAssetRefs();
             }
             catch (Exception e) {
                 throw new StartupException("Failed to connect through database connection pool", e);
             }
-
-            logger.refreshCache();    // now update based on properties loaded from database
 
             String v = PropertyManager.getProperty(PropertyNames.MDW_DB_VERSION_SUPPORTED);
             if (v!=null) DataAccess.supportedSchemaVersion = Integer.parseInt(v);

@@ -221,6 +221,7 @@ public class DataAccess {
     }
 
     public static void updateAssetRefs() throws DataAccessException {
+        StandardLogger logger = LoggerUtil.getStandardLogger();
         if (assetVersionControl != null && !ApplicationContext.isDevelopment() && !"true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))){
             // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
             DatabaseAccess db = new DatabaseAccess(null);
@@ -229,9 +230,12 @@ public class DataAccess {
             try (Connection conn = db.openConnection()) {
                 String ref = vcGit.getCommit();
                 if (ref != null) {  // avoid attempting update for local-only resources
+                    logger.debug("Auto-populating ASSET_REF table...");
                     Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), conn);
                     cp.updateRefs();
                 }
+                else
+                    logger.debug("ASSET_REF table not auto-populated during startup due to null git commit");
             }
             catch (SQLException e) {
                 throw new DataAccessException(e.getErrorCode(), e.getMessage(), e);
@@ -239,6 +243,13 @@ public class DataAccess {
             catch (IOException e) {
                 throw new DataAccessException(e.getMessage(), e);
             }
+        }
+        else {
+            String message = "";
+            if (assetVersionControl == null) message = " AssetVersionControl is null";
+            if (ApplicationContext.isDevelopment()) message = message.length() == 0 ? " mdw.runtime.env=dev" : ", mdw.runtime.env=dev";
+            if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " mdw.git.auto.pull=true" : ", mdw.git.auto.pull=true";
+            logger.debug("ASSET_REF table not auto-populated during startup due to: " + message);
         }
     }
 
