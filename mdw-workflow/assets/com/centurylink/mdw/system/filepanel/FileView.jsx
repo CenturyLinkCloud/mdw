@@ -191,7 +191,9 @@ class FileView extends Component {
     else if (frac > 1) {
       frac = 1;
     }
-    this.setViewScrollTop(frac);
+    if (!this.retrieving) {
+      this.setViewScrollTop(frac);
+    }
   }
   
   setViewScrollTop(fraction) {
