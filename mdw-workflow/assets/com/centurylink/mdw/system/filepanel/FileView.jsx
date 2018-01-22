@@ -93,8 +93,6 @@ class FileView extends Component {
       this.lineIndex = Math.round(values.scrollTop * this.state.item.lineCount * this.getScale() / values.scrollHeight) + this.state.buffer.start;
     }
     
-    console.log("CALC LINE INDEX: " + this.lineIndex);
-    
     if (this.retrieving) {
       this.setState({
         item: this.state.item,
@@ -149,14 +147,22 @@ class FileView extends Component {
   
   getLineNumbers() {
     var lineNumbers = null;
-    if (this.state.buffer.length && this.state.item.isFile && !this.state.item.binary) {
-      if (this.options.lineNumbers) {
-        lineNumbers = '';
-        const endIdx = this.state.buffer.length + this.state.buffer.start;
-        for (let i = this.state.buffer.start + 1; i < endIdx + 1; i++) {
-          lineNumbers += i;
-          if (i < endIdx)
-            lineNumbers += '\n';
+    if (this.scrollbars) {
+      if (this.state.buffer.length && this.state.item.isFile && !this.state.item.binary) {
+        if (this.options.lineNumbers) {
+          lineNumbers = '';
+          const endIdx = this.state.buffer.length + this.state.buffer.start;
+          for (let i = this.state.buffer.start + 1; i < endIdx + 1; i++) {
+            lineNumbers += i;
+            if (i < endIdx)
+              lineNumbers += '\n';
+          }
+          const clientLines = this.getClientLines();
+          if (endIdx < clientLines) {
+            for (let i = endIdx; i < clientLines + 1; i++) {
+              lineNumbers += '\n';
+            }
+          }
         }
       }
     }
@@ -165,25 +171,16 @@ class FileView extends Component {
   
   handleVerticalTrackClick(event) {
     if (this.scrollbars) {
-//      const values = this.scrollbars.getValues();
-//      this.specifiedLineIndex = Math.round(((offset + FileView.THUMB_SIZE/2) / values.clientHeight) * this.state.item.lineCount);
-//      if (this.specifiedLineIndex < 0) {
-//        this.specifiedLineIndex = 0;
-//      }
-      
+      const values = this.scrollbars.getValues();
       const {target, clientY} = event;
       const {top: targetTop} = target.getBoundingClientRect();
-      var offset = Math.abs(targetTop - clientY) - FileView.THUMB_SIZE/2;
-      const values = this.scrollbars.getValues();
-      this.specifiedLineIndex = Math.round(((offset + FileView.THUMB_SIZE/2) / values.clientHeight) * this.state.item.lineCount);
+      var y = clientY - targetTop;
+      var frac = y / this.scrollbars.trackVertical.clientHeight; 
+      this.specifiedLineIndex = Math.round(frac * (this.state.item.lineCount - this.getClientLines()));
       if (this.specifiedLineIndex < 0) {
         this.specifiedLineIndex = 0;
       }
-      const { scrollHeight, clientHeight } = this.scrollbars.view;
-      const trackClientHeight = this.scrollbars.trackVertical.clientHeight;
-      const { paddingTop, paddingBottom } = getComputedStyle(this.scrollbars.trackVertical);
-      const trackHeight = trackClientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
-      this.scrollbars.view.scrollTop = offset / (trackHeight - FileView.THUMB_SIZE) * (scrollHeight - clientHeight);
+      this.scrollbars.view.scrollTop = Math.round((this.specifiedLineIndex - this.state.buffer.start) * values.scrollHeight / (this.state.item.lineCount * this.getScale()));
     }
   }
   
@@ -199,12 +196,25 @@ class FileView extends Component {
     return scale;
   }
   
+  getClientLines() {
+    if (this.scrollbars) {
+      const lineHeight = FileView.FONT_SIZE * FileView.LINE_HEIGHT;
+      return this.scrollbars.view.clientHeight / lineHeight + 1; // TODO: why off by one?
+    }
+  }
+  
   render() {
-    const lineNumbers = this.getLineNumbers();
-    
-    var thumbVerticalTop = 0;
-    if (this.lineIndex > 0) {
-      thumbVerticalTop = this.lineIndex / this.state.item.lineCount;
+    var lineNumbers = this.getLineNumbers();
+
+    if (this.scrollbars) {
+      var thumbVerticalY = 0;
+      if (this.lineIndex > 0) {
+        const values = this.scrollbars.getValues();
+  
+        const trackVerticalHeight = this.getInnerHeight(this.scrollbars.trackVertical);
+        const frac = this.lineIndex / (this.state.item.lineCount - this.getClientLines());
+        thumbVerticalY = frac * (trackVerticalHeight - FileView.THUMB_SIZE);
+      }
     }
     
     return (
@@ -221,7 +231,7 @@ class FileView extends Component {
               onScrollFrame={this.handleScroll}
               onVerticalTrackClick={this.handleVerticalTrackClick}
               onVerticalDrag={this.handleVerticalDrag}
-              thumbVerticalTop={thumbVerticalTop}>
+              thumbVerticalY={thumbVerticalY}>
               <div>
                 {lineNumbers &&
                   <div id="fp-line-numbers" className="fp-line-numbers">
@@ -238,6 +248,12 @@ class FileView extends Component {
       </div>
     );
   }
+
+  getInnerHeight(el) {
+    const { clientHeight } = el;
+    const { paddingTop, paddingBottom } = getComputedStyle(el);
+    return clientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
+  }
 }
 
 FileView.contextTypes = {
@@ -248,5 +264,8 @@ FileView.contextTypes = {
 FileView.BUFFER_SIZE = 500;
 FileView.FETCH_THRESHOLD = 200;
 FileView.THUMB_SIZE = 30;
+// must match css
+FileView.FONT_SIZE = 13;
+FileView.LINE_HEIGHT = 1.3;
 
 export default FileView; 
