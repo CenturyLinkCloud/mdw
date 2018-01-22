@@ -90,7 +90,7 @@ public class FileInfo implements Jsonable {
         if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
             Path path = Paths.get(this.path);
             PosixFileAttributes attrs = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
-            permissions = String.format("%s%n", PosixFilePermissions.toString(attrs.permissions()));
+            permissions = PosixFilePermissions.toString(attrs.permissions());
             UserPrincipal ownerPrincipal = attrs.owner();
             owner = ownerPrincipal.toString();
             UserPrincipal groupPrincipal = attrs.group();

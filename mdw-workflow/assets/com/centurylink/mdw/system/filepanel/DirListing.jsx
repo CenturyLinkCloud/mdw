@@ -26,9 +26,26 @@ function DirListing(props) {
     
     var sizes = [];
     var longestSize = 0;
-    items.forEach(item=> {
+    var longestNumLinks = 0;
+    var longestOwner = 0;
+    var longestGroup = 0;
+    items.forEach(item => {
       var size = item.size ? item.size.toString() : '';
-      if (!dirItem.permissions) {
+      if (dirItem.permissions) {
+        if (item.numLinks) {
+          var numLinks = item.numLinks.toString();
+          if (numLinks.length > longestNumLinks) {
+            longestNumLinks = numLinks.length;
+          }
+        }
+        if (item.owner && item.owner.length > longestOwner) {
+          longestOwner = item.owner.length;
+        }
+        if (item.group && item.group.length > longestGroup) {
+          longestGroup = item.group.length;
+        }
+      }
+      else {
         // windows size format contains commas
         size = size.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
@@ -38,14 +55,28 @@ function DirListing(props) {
       sizes.push(size);
     });
     
-    console.log("SIZES: " + JSON.stringify(sizes, null, 2));
-    
     var lines = [];
+    var now = new Date();
     items.forEach((item, i) => {
       const mod = new Date(item.modified);
       if (dirItem.permissions) {
         // linux-style
-        
+        var line = (item.isFile ? '-' : 'd') + item.permissions + ' ';
+        var numLinks = item.numLinks ? item.numLinks.toString() : (item.isFile ? '1' : '');
+        line += numLinks.padStart(longestNumLinks) + ' ';
+        line += (item.owner ? item.owner : '').padEnd(longestOwner) + ' ';
+        line += (item.group ? item.group : '').padEnd(longestGroup) + ' ';
+        line += sizes[i].padStart(longestSize) + ' ';
+        line += DirListing.MONTHS[mod.getMonth()] + ' ';
+        line += mod.getDate().toString().padStart(2) + ' ';
+        if (mod.getFullYear() === now.getFullYear()) {
+          line += mod.getHours().toString().padStart(2, '0') + ':' 
+          line += mod.getMinutes().toString().padStart(2, '0') + ' ';
+        }
+        else {
+          line += ' ' + mod.getFullYear() + ' ';
+        }
+        line += item.name;
       }
       else {
         // non-posix (windows)
@@ -82,5 +113,7 @@ function DirListing(props) {
     </Scrollbars>
   );
 }
-  
+
+DirListing.MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export default DirListing;

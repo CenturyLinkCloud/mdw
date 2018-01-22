@@ -56,6 +56,9 @@ public class Dir implements Jsonable {
     private Instant modified;
     public Instant getModified() { return modified; }
 
+    private int numLinks;
+    public int getNumLinks() { return numLinks; }
+
     /**
      * Details include permissions, ownership and size (but not on Windows).
      */
@@ -123,12 +126,13 @@ public class Dir implements Jsonable {
         if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
             Path path = Paths.get(this.path);
             PosixFileAttributes attrs = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
-            permissions = String.format("%s%n", PosixFilePermissions.toString(attrs.permissions()));
+            permissions = PosixFilePermissions.toString(attrs.permissions());
             UserPrincipal ownerPrincipal = attrs.owner();
             owner = ownerPrincipal.toString();
             UserPrincipal groupPrincipal = attrs.group();
             group = groupPrincipal.toString();
             size = path.toFile().length();
+            numLinks = path.toFile().list().length + 2;
         }
     }
 
@@ -161,6 +165,8 @@ public class Dir implements Jsonable {
             json.put("owner", owner);
         if (group != null)
             json.put("group", group);
+        if (numLinks > 0)
+            json.put("numLinks", numLinks);
         return json;
     }
 
