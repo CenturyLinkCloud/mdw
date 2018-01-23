@@ -160,6 +160,10 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
     return $location.url().startsWith('/edit/');
   };
   
+  $scope.isFilePanel = function() {
+    return $location.url().startsWith('/system/filepanel');
+  };
+  
   $scope.isFullWidth = function() {
     return $scope.fullWidth;
   };

@@ -93,7 +93,7 @@ public class SlackEvent implements Jsonable {
 
     private String text;
     public String getText() { return text; }
-    
+
     /**
      * When callbackId is present, this means that the event
      * relates to a message-initiated user action.
@@ -102,6 +102,6 @@ public class SlackEvent implements Jsonable {
     public String getCallbackId() {
         return callbackId;
     }
-    
+
 
 }

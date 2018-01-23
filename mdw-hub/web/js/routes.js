@@ -306,6 +306,10 @@ routesSvc.factory('routes', function() {
         path: '/system/message',
         templateUrl: 'system/message.html',
         controller: 'MessageController'
+      },
+      {
+        path: '/system/filepanel',
+        templateUrl: 'system/filepanel.html'
       }
    ]
   };

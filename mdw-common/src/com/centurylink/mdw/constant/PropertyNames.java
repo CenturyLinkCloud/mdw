@@ -76,9 +76,7 @@ public class PropertyNames {
     public static final String DOCS_URL = "mdw.docs.url";
     public static final String DISCOVERY_URL = "mdw.discovery.url";
     public static final String FILEPANEL_ROOT_DIRS = "mdw.filepanel.root.dirs";
-    public static final String FILEPANEL_CONFIG_DIRS = "mdw.filepanel.config.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "mdw.filepanel.exclude.patterns";
-    public static final String FILEPANEL_BINARY_PATTERNS = "mdw.filepanel.binary.patterns";
     public static final String FILEPANEL_MASKED_LINES = "mdw.filepanel.masked.lines";
     public static final String MDW_PROCESS_LAUNCH_DELAY = "mdw.process.launch.delay";
     public static final String MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP = "mdw.internal.event.consume.retry.sleep";

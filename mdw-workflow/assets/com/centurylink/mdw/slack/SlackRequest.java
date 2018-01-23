@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.model.Jsonable;
 
 public class SlackRequest implements Jsonable {
-    
+
     public SlackRequest(JSONObject json) {
         if (json.has("name"))
             this.name = json.getString("name");
@@ -79,64 +79,64 @@ public class SlackRequest implements Jsonable {
         }
         if (json.has("response_url"))
             this.responseUrl = json.getString("response_url");
-            
+
     }
-    
+
     private String name;
     public String getName() {
         return name;
     }
-    
+
     private String value;
     public String getValue() {
         return value;
     }
-    
+
     private String callbackId;
     public String getCallbackId() {
         return callbackId;
     }
-    
+
     private String triggerId;
     public String getTriggerId() {
         return triggerId;
     }
-    
+
     private String channel;
     public String getChannel() {
         return channel;
     }
-    
+
     private String team;
-    public String getTeam() { 
+    public String getTeam() {
         return team;
     }
-    
+
     private String type;
     public String getType() {
         return type;
     }
-    
+
     private String user;
     public String getUser() {
         return user;
     }
-    
+
     private String messageTs;
     public String getMessageTs() {
         return messageTs;
     }
-    
+
     private String actionTs;
     public String getActionTs() {
         return actionTs;
     }
-    
+
     private List<String> actions;
     public List<String> getActions() {
         return actions;
     }
-    
+
     private String responseUrl;
     public String getResponseUrl() {
         return responseUrl;

@@ -40,6 +40,7 @@ dependencies {
     compile fileTree(dir: "assets/com/centurylink/mdw/camel", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/node", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/system/filepanel", includes: ["*.jar"])
     compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
     
     compile group: "org.apache.velocity", name: "velocity", version: "1.7"
