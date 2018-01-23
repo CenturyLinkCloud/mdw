@@ -12,10 +12,7 @@ groupMod.controller('GroupsController', ['$scope', '$location', 'Workgroups',
   $scope.create = false;
   $scope.setCreate = function(create) {
     $scope.create = create;
-    $scope.workgroup = { 
-    		name: '', // blank name helps w/applying error styles
-    		attributes: {}
-    };
+    $scope.workgroup = { name: '' }; // blank name helps w/applying error styles
   };
   
   $scope.cancel = function() {
@@ -165,25 +162,6 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
   
   
   $scope.workgroup = Workgroups.get({name: $routeParams.groupName});
-  $scope.attribute = {
-	      name: '', 
-	      value: ''
-	  };
-	  $scope.addAttribute = function () {
-		    if ($scope.workgroup.attributes === undefined) {
-		    	$scope.workgroup.attributes = {};
-		    }
-
-		  $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value
-		  
-		  $scope.attribute = {
-		      name: '', 
-		      value: ''
-		  };
-	  }
-	  $scope.del = function(i){
-		  delete  $scope.workgroup.attributes[i];
-	  }
 }]);
 
 groupMod.factory('Workgroups', ['$resource', 'mdw', function($resource, mdw) {
@@ -196,11 +174,6 @@ groupMod.factory('Workgroups', ['$resource', 'mdw', function($resource, mdw) {
       destWorkgroup.name = srcWorkgroup.name;
       destWorkgroup.description = srcWorkgroup.description;
       destWorkgroup.parent = srcWorkgroup.parent;
-      destWorkgroup.attributes = {};
-      for (var attr in srcWorkgroup.attributes) {
-        if (srcWorkgroup.attributes.hasOwnProperty(attr))
-        	destWorkgroup.attributes[attr] = srcWorkgroup.attributes[attr];
-      }
       return destWorkgroup;
     }
   });
