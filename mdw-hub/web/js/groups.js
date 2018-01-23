@@ -174,16 +174,16 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
 		    	$scope.workgroup.attributes = {};
 		    }
 
-		  $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value
+		  $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value;
 		  
 		  $scope.attribute = {
 		      name: '', 
 		      value: ''
 		  };
-	  }
+	  };
 	  $scope.del = function(i){
 		  delete  $scope.workgroup.attributes[i];
-	  }
+	  };
 }]);
 
 groupMod.factory('Workgroups', ['$resource', 'mdw', function($resource, mdw) {

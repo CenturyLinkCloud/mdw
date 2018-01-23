@@ -275,16 +275,16 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
       value: ''
   };
   $scope.addAttribute = function () {
-	  $scope.user.attributes[$scope.attribute.name] = $scope.attribute.value
+	  $scope.user.attributes[$scope.attribute.name] = $scope.attribute.value;
 	  
 	  $scope.attribute = {
 	      name: '', 
 	      value: ''
 	  };
-  }
+  };
   $scope.del = function(i){
 	  delete  $scope.user.attributes[i];
-  }
+  };
 }]);
 
 userMod.factory('Users', ['$resource', 'mdw', function($resource, mdw) {
