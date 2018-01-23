@@ -67,6 +67,16 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
             description = json.getString("description");
         if (json.has("parent"))
             parentGroup = json.getString("parent");
+        if (json.has("attributes")) {
+            JSONObject attrs = json.getJSONObject("attributes");
+            attributes = new HashMap<String,String>();
+            String[] attrNames = JSONObject.getNames(attrs);
+            if (attrNames != null) {
+                for (int i = 0; i < attrNames.length; i++) {
+                    attributes.put(attrNames[i], attrs.getString(attrNames[i]));
+                }
+            }
+        }
         if (json.has("users")) {
             JSONArray usrs = json.getJSONArray("users");
             users = new User[usrs.length()];
@@ -221,6 +231,14 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
                 usersJson.put(user.getJson());
             }
             json.put("users", usersJson);
+        }
+        if (attributes != null) {
+            JSONObject attrsJson = create();
+            for (String attr : attributes.keySet()) {
+                String value = attributes.get(attr);
+                attrsJson.put(attr, value == null ? "" : value);
+            }
+            json.put("attributes", attrsJson);
         }
         return json;
     }

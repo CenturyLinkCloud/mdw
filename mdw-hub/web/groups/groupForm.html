@@ -20,6 +20,20 @@
       </select>
     </div>
   </div>
+  
+  <div class="form-group" ng-repeat="(attrName, attrVal) in workgroup.attributes">
+    <label class="control-label col-xs-2" for="{{attrName}}">{{attrName}}:</label>
+    <div class="col-xs-6">
+      <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="workgroup.attributes[attrName]">
+    </div>
+    <button
+    class="btn btn-danger mdw-btn"
+    type="button"
+    ng-click="del(attrName)">Delete</button>
+  </div>
+  
+  <div ng-if="edit" ng-include="'groups/groupAttributes.html'"></div>
+  
   <div class="mdw-form-footer">
     <div class="col-xs-2"></div>
     <div class="mdw-message">{{workgroup.message}}</div>
