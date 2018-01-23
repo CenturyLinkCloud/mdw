@@ -177,37 +177,41 @@ public class Checkpoint extends Setup {
      */
     public void updateRefs() throws SQLException, IOException {
         List<AssetRef> refs = getCurrentRefs();
-        String select = "select name, ref from asset_ref where definition_id = ?";
-        try (Connection conn = getDbConnection();
-                PreparedStatement stmt = conn.prepareStatement(select)) {
-            for (AssetRef ref : refs) {
-                stmt.setLong(1, ref.getDefinitionId());
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        String name = rs.getString("name");
-                        if (!ref.getName().equals(name)) {
-                            throw new IOException("Unexpected name for id=" + ref.getDefinitionId()
-                                    + " (expected '" + ref.getName() + "', found '" + name + "'");
-                        }
-                        String oldRef = rs.getString("ref");
-                        if (!oldRef.equals(ref.getRef())) {
-                            String update = "update asset_ref set ref = ? where definition_id = ?";
-                            try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
-                                updateStmt.setString(1, ref.getRef());
-                                updateStmt.setLong(2, ref.getDefinitionId());
-                                updateStmt.executeUpdate();
-                                conn.commit();
+        if (refs == null || refs.isEmpty())
+            System.out.println("Skipping ASSET_REF table insert/update due to empty current assets");
+        else {
+            String select = "select name, ref from asset_ref where definition_id = ?";
+            try (Connection conn = getDbConnection();
+                    PreparedStatement stmt = conn.prepareStatement(select)) {
+                for (AssetRef ref : refs) {
+                    stmt.setLong(1, ref.getDefinitionId());
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            String name = rs.getString("name");
+                            if (!ref.getName().equals(name)) {
+                                throw new IOException("Unexpected name for id=" + ref.getDefinitionId()
+                                + " (expected '" + ref.getName() + "', found '" + name + "'");
+                            }
+                            String oldRef = rs.getString("ref");
+                            if (!oldRef.equals(ref.getRef())) {
+                                String update = "update asset_ref set ref = ? where definition_id = ?";
+                                try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
+                                    updateStmt.setString(1, ref.getRef());
+                                    updateStmt.setLong(2, ref.getDefinitionId());
+                                    updateStmt.executeUpdate();
+                                    conn.commit();
+                                }
                             }
                         }
-                    }
-                    else {
-                        String insert = "insert into asset_ref (definition_id, name, ref) values (?, ?, ?)";
-                        try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
-                            insertStmt.setLong(1, ref.getDefinitionId());
-                            insertStmt.setString(2, ref.getName());
-                            insertStmt.setString(3, ref.getRef());
-                            insertStmt.executeUpdate();
-                            conn.commit();
+                        else {
+                            String insert = "insert into asset_ref (definition_id, name, ref) values (?, ?, ?)";
+                            try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
+                                insertStmt.setLong(1, ref.getDefinitionId());
+                                insertStmt.setString(2, ref.getName());
+                                insertStmt.setString(3, ref.getRef());
+                                insertStmt.executeUpdate();
+                                conn.commit();
+                            }
                         }
                     }
                 }

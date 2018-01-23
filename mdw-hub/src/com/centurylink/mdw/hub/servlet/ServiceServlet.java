@@ -197,8 +197,10 @@ public abstract class ServiceServlet extends HttpServlet {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                        if (appFogProd != null && appFogProd.contains(remote))
+                        if (appFogProd != null && appFogProd.contains(remote)) {
                             headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
+                            return;
+                        }
                     }
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {

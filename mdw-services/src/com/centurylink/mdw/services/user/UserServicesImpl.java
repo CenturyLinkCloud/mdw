@@ -143,11 +143,13 @@ public class UserServicesImpl implements UserServices {
 
     public void createWorkgroup(Workgroup workgroup) throws DataAccessException {
         workgroup.setId(getUserDAO().saveGroup(workgroup));
+        getUserDAO().updateGroupAttributes(workgroup.getId(), workgroup.getAttributes());
         UserGroupCache.set(workgroup);
     }
 
     public void updateWorkgroup(Workgroup workgroup) throws DataAccessException {
         getUserDAO().saveGroup(workgroup);
+        getUserDAO().updateGroupAttributes(workgroup.getId(), workgroup.getAttributes());
         UserGroupCache.set(workgroup);
     }
 
