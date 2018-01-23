@@ -188,7 +188,7 @@ class FileView extends Component {
           }
           const clientLines = this.getClientLines();
           if (endIdx < clientLines) {
-            for (let i = endIdx; i < clientLines + 1; i++) {
+            for (let i = endIdx; i < clientLines - 1; i++) {
               lineNumbers += '\n';
             }
           }
@@ -280,7 +280,9 @@ class FileView extends Component {
               onScrollFrame={this.handleScroll}
               onVerticalTrackClick={this.handleVerticalTrackClick}
               onVerticalDrag={this.handleVerticalDrag}
-              thumbVerticalY={thumbVerticalY}>
+              thumbVerticalY={thumbVerticalY}
+              hideTracksWhenNotNeeded={true}
+              universal={true}>
               <div>
                 {lineNumbers &&
                   <div id="fp-line-numbers" className="fp-line-numbers">
