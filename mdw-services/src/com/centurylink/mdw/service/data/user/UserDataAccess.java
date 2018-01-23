@@ -268,7 +268,6 @@ public class UserDataAccess extends UserDataAccessDb {
                     if (rs.next())
                         group.setParentGroup(rs.getString(1));
                 }
-                loadAttributesForGroup(group);
                 return group;
             }
             else {
@@ -300,7 +299,6 @@ public class UserDataAccess extends UserDataAccessDb {
                         group.setParentGroup(rs.getString(1));
                 }
                 group.setEndDate(rs.getString(4));
-                loadAttributesForGroup(group);
                 return group;
             }
             else
@@ -568,9 +566,6 @@ public class UserDataAccess extends UserDataAccessDb {
             // delete group-role mapping (backward compatibility code)
             query = "delete from USER_ROLE_MAPPING where USER_ROLE_MAPPING_OWNER='USER_GROUP'"
                     + " and USER_ROLE_MAPPING_OWNER_ID=?";
-            db.runUpdate(query, groupId);
-            // delete group attributes
-            query = "delete from ATTRIBUTE where ATTRIBUTE_OWNER='" + OwnerType.USER_GROUP + "' and ATTRIBUTE_OWNER_ID=?";
             db.runUpdate(query, groupId);
             // end-date the group itself
             query = "update USER_GROUP set END_DATE=" + now() + " where USER_GROUP_ID=?";
@@ -1010,37 +1005,6 @@ public class UserDataAccess extends UserDataAccessDb {
             db.rollback();
             throw new DataAccessException(-1,
                     "Failed to update user attributes for userId: " + userId, ex);
-        }
-        finally {
-            db.closeConnection();
-        }
-    }
-
-    public void updateGroupAttributes(Long groupId, Map<String, String> attributes)
-            throws DataAccessException {
-        try {
-            db.openConnection();
-
-            String deleteQuery = "delete from ATTRIBUTE where " + " ATTRIBUTE_OWNER='"
-                    + OwnerType.USER_GROUP
-                    + "' and ATTRIBUTE_OWNER_ID=? ";
-            db.runUpdate(deleteQuery, groupId);
-
-            if (attributes != null && !attributes.isEmpty()) {
-                List<Attribute> attrs = new ArrayList<Attribute>();
-                for (String name : attributes.keySet()) {
-                    String value = attributes.get(name);
-                    if (value != null && !value.isEmpty())
-                        attrs.add(new Attribute(name, value));
-                }
-                addAttributes0(OwnerType.USER_GROUP, groupId, attrs);
-            }
-            db.commit();
-        }
-        catch (Exception ex) {
-            db.rollback();
-            throw new DataAccessException(-1,
-                    "Failed to update user attributes for userId: " + groupId, ex);
         }
         finally {
             db.closeConnection();

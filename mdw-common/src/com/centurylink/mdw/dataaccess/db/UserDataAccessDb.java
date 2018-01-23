@@ -154,23 +154,13 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
     }
 
     protected void loadAttributesForUser(User user) throws SQLException, CachingException {
-        // load attributes for user
+        // load groups
         String sql = "select attribute_name, attribute_value from attribute " +
             "where attribute_owner = 'USER' " +
             "and attribute_owner_id = ? ";
         ResultSet rs = db.runSelect(sql, user.getId());
         while (rs.next())
             user.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
-    }
-
-    protected void loadAttributesForGroup(Workgroup group) throws SQLException, CachingException {
-        // load attributes for workgroup
-        String sql = "select attribute_name, attribute_value from attribute " +
-            "where attribute_owner = '" + OwnerType.USER_GROUP + "' " +
-            "and attribute_owner_id = ? ";
-        ResultSet rs = db.runSelect(sql, group.getId());
-        while (rs.next())
-            group.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
     }
 
     public List<Workgroup> getAllGroups(boolean includeDeleted) throws DataAccessException {
@@ -190,7 +180,6 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
                 long pid = rs.getLong(4);
                 if (pid>0L) group.setParentGroup(Long.toString(pid));
                 group.setEndDate(rs.getString(5));
-                loadAttributesForGroup(group);
                 nameMap.put(groupId, groupName);
                 groups.add(group);
             }
