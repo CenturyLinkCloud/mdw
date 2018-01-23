@@ -23,36 +23,43 @@ class Index extends Component {
   }
   
   componentDidMount() {
+    var ok = false;
     fetch(new Request(this.getChildContext().serviceRoot + '/com/centurylink/mdw/system/filepanel', {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
     }))
     .then(response => {
+      ok = response.ok;
       return response.json();
     })
     .then(json => {
-      var tabIndex = 100;
-      let assignTabIndexes = dirs => {
-        dirs.forEach(dir => {
-          dir.tabIndex = tabIndex++;
-          if (dir.dirs) {
-            assignTabIndexes(dir.dirs);
-          }
-          if (dir.files) {
-            dir.files.forEach(file => {
-              file.tabIndex = tabIndex++;
-              file.isFile = true;
-            });
-          }
+      if (ok) {
+        var tabIndex = 100;
+        let assignTabIndexes = dirs => {
+          dirs.forEach(dir => {
+            dir.tabIndex = tabIndex++;
+            if (dir.dirs) {
+              assignTabIndexes(dir.dirs);
+            }
+            if (dir.files) {
+              dir.files.forEach(file => {
+                file.tabIndex = tabIndex++;
+                file.isFile = true;
+              });
+            }
+          });
+        };
+        if (json.dirs) {
+          assignTabIndexes(json.dirs);
+        }
+        this.setState({
+          rootDirs: json.dirs
         });
-      };
-      if (json.dirs) {
-        assignTabIndexes(json.dirs);
       }
-      this.setState({
-        rootDirs: json.dirs
-      });
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
     });
   }
   
@@ -100,7 +107,7 @@ class Index extends Component {
       <div className="fp-container">
         <div className="fp-left">
           <div className="fp-dirs">
-            {
+            {this.state.rootDirs &&
               this.state.rootDirs.map(dir => {
                 return (
                   <DirTree 
