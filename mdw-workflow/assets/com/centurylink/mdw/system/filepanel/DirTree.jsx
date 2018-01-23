@@ -26,7 +26,7 @@ function DirTree(props, context) {
     <TreeView 
       key={props.dir.path} 
       nodeLabel={dirLabel}
-      defaultCollapsed={false}>
+      defaultCollapsed={!props.dir.dirs}>
       {props.dir.dirs &&
         props.dir.dirs.map(dir => {
           return (
