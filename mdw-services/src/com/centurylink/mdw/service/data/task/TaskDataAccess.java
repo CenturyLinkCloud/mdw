@@ -460,11 +460,11 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             // delete existing indices
-            String query = "delete from TASK_INST_INDEX where TASK_INSTANCE_ID=?";
+            String query = "delete from INSTANCE_INDEX where INSTANCE_ID=? and OWNER_TYPE='TASK_INSTANCE'";
             // insert new ones
             db.runUpdate(query, taskInstId);
-            query = "insert into TASK_INST_INDEX " +
-                "(TASK_INSTANCE_ID,INDEX_KEY,INDEX_VALUE,CREATE_DT) values (?,?,?,"+now()+")";
+            query = "insert into INSTANCE_INDEX " +
+                "(INSTANCE_ID,OWNER_TYPE,INDEX_KEY,INDEX_VALUE,CREATE_DT) values (?,'TASK_INSTANCE',?,?,"+now()+")";
             db.prepareStatement(query);
             Object[] args = new Object[3];
             args[0] = taskInstId;
@@ -543,8 +543,9 @@ public class TaskDataAccess extends CommonDataAccess {
             taskInst.setVariables(indices);;
             buff.setLength(0);
             buff.append("select INDEX_KEY,INDEX_VALUE ");
-            buff.append("from TASK_INST_INDEX ");
-            buff.append("where TASK_INSTANCE_ID=?");
+            buff.append("from INSTANCE_INDEX ");
+            buff.append("where INSTANCE_ID=? ");
+            buff.append("and OWNER_TYPE='TASK_INSTANCE'");
             String indexKey, indexValue;
             query = buff.toString();
             rs = db.runSelect(query, taskInst.getTaskInstanceId());
@@ -568,7 +569,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             Map<String, String> indices = new HashMap<String, String>();
             db.openConnection();
-            String sql = "select tii.index_key,tii.index_value from task_inst_index tii where tii.task_instance_id = ?";
+            String sql = "select tii.index_key,tii.index_value from instance_index tii where tii.instance_id = ? and tii.owner_type='TASK_INSTANCE'";
             ResultSet rs = db.runSelect(sql, taskInstanceId);
             while (rs.next()) {
                 indices.put(rs.getString(1), rs.getString(2));
@@ -837,7 +838,7 @@ public class TaskDataAccess extends CommonDataAccess {
             int eq = index.indexOf('=');
             if (eq == -1 || eq == index.length() - 1)
                 throw new DataAccessException("Invalid index criterion: " + index);
-            where.append(" and (select count(*) from task_inst_index tidx where tidx.task_instance_id = ti.task_instance_id and index_key='"
+            where.append(" and (select count(*) from instance_index tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
                     + index.substring(0, eq) + "' and index_value='" + index.substring(eq + 1) + "') > 0\n");
         }
 

@@ -222,14 +222,14 @@ BEGIN
    SELECT table_name
      INTO table_exist
      FROM all_tables
-    WHERE table_name = 'TASK_INST_INDEX';
+    WHERE table_name = 'INSTANCE_INDEX';
     
    IF table_exist IS NOT NULL
    THEN
    
    -- delete all task instance indices
-      DELETE      task_inst_index
-         WHERE task_instance_id IN (
+      DELETE      instance_index
+         WHERE owner_type='TASK_INSTANCE' and instance_id IN (
                   SELECT task_instance_id
                     FROM task_instance ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
@@ -239,7 +239,7 @@ BEGIN
                                                  FROM process_instance
                                                 WHERE status_cd =
                                                                  purgestatusid));
-      DBMS_OUTPUT.put_line (   'Number of rows deleted from TASK_INST_INDEX: '
+      DBMS_OUTPUT.put_line (   'Number of rows deleted from INSTANCE_INDEX: '
                          || SQL%ROWCOUNT
                         );
       COMMIT;

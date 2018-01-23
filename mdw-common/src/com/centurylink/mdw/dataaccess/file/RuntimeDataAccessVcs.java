@@ -382,7 +382,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         query = "delete from VARIABLE_INSTANCE where PROCESS_INST_ID=?";
         n = db.runUpdate(query, processInstanceId);
         count += n;
-        query = "delete from TASK_INST_INDEX where TASK_INSTANCE_ID in " +
+        query = "delete from INSTANCE_INDEX where OWNER_TYPE='TASK_INSTANCE' and INSTANCE_ID in " +
                 " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
                 "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
                 "'   and TASK_INSTANCE_OWNER_ID=?)";

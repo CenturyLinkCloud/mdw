@@ -17,7 +17,7 @@ permalink: /docs/db/MdwDatabaseTables/
 | PROCESS_INSTANCE | Runtime | Runtime storage for Process Instance high-level info. |
 | TASK_INSTANCE | Runtime | Runtime instance of a manual Task. |
 | TASK_INST_GRP_MAPP | Runtime | Join table between TASK_INSTANCE and USER_GROUP. |
-| TASK_INST_INDEX | Runtime | Queryable runtime state info for Task Instances. |
+| INSTANCE_INDEX | Runtime | Queryable runtime state info for Instances (i.e. Task Instances, etc.). |
 | USER_GROUP | Runtime | Workgroups (defined by users via TaskManager). |
 | USER_GROUP_MAPPING | Runtime | Join table for USER_INFO to USER_GROUPS. |
 | USER_INFO | Runtime | High-level User information. |

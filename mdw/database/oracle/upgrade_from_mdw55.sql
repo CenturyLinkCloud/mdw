@@ -65,6 +65,59 @@ INSERT INTO DOCUMENT_CONTENT (DOCUMENT_ID, CONTENT) SELECT DOCUMENT_ID, CONTENT 
 
 -- ALTER TABLE DOCUMENT DROP COLUMN CONTENT;
 
+
+CREATE TABLE INSTANCE_INDEX (
+  INSTANCE_ID      	NUMBER(38)  NOT NULL,
+  OWNER_TYPE		VARCHAR2(30 BYTE) NOT NULL,
+  INDEX_KEY         VARCHAR2(64) NOT NULL,
+  INDEX_VALUE       VARCHAR2(256) NOT NULL,
+  CREATE_DT     DATE DEFAULT SYSDATE NOT NULL
+);
+
+ALTER TABLE INSTANCE_INDEX ADD (
+  CONSTRAINT INSTANCE_INDEX_PK
+  PRIMARY KEY (INSTANCE_ID,OWNER_TYPE,INDEX_KEY)
+  USING INDEX);
+  
+CREATE INDEX INSTANCEIDX_IDXKEY_FK
+ON INSTANCE_INDEX (INDEX_KEY);
+
+-- move (or copy from TASK_INST_INDEX to INSTANCE_INDEX)
+INSERT INTO INSTANCE_INDEX (INSTANCE_ID, OWNER_TYPE, INDEX_KEY, INDEX_VALUE, CREATE_DT) SELECT TASK_INSTANCE_ID, 'TASK_INSTANCE', INDEX_KEY, INDEX_VALUE, CREATE_DT FROM TASK_INST_INDEX;
+
+-- If the above statement fails due to very large number of rows, perform the below statement multiple times until all rows have been copied
+
+-- INSERT INTO INSTANCE_INDEX (INSTANCE_ID, OWNER_TYPE, INDEX_KEY, INDEX_VALUE, CREATE_DT) SELECT TASK_INSTANCE_ID, 'TASK_INSTANCE', INDEX_KEY, INDEX_VALUE, CREATE_DT FROM TASK_INST_INDEX AS d
+-- JOIN (SELECT COALESCE(MAX(INSTANCE_ID), 0) AS offset FROM INSTANCE_INDEX) AS dc
+-- ON  d.TASK_INSTANCE_ID > dc.offset
+-- ORDER BY d.TASK_INSTANCE_ID LIMIT 100000;
+
+-- Alternatively, do the below to create stored procedure to repeat statement above automatically.  
+-- This works as is when using Quantum plugin in Eclipse.
+-- If using native mySQL client shell, remove the '\' before each ';' and add a statement to change delimeter before and after the code block
+-- "delimiter ;;" (before) and "delimiter ;" (after) and then add the extra ; (so you have ;; at end of each line)
+
+-- DROP PROCEDURE IF EXISTS copyTaskIndexes;  
+-- CREATE PROCEDURE copyTaskIndexes(p1 INT)  
+-- BEGIN  
+-- DECLARE d_count INT\;  
+-- DECLARE dc_count INT DEFAULT 0\;  
+-- SELECT COUNT(TASK_INSTANCE_ID) INTO d_count FROM TASK_INST_INDEX\;  
+-- REPEAT  
+-- INSERT INTO INSTANCE_INDEX (INSTANCE_ID, OWNER_TYPE, INDEX_KEY, INDEX_VALUE, CREATE_DT) SELECT TASK_INSTANCE_ID, 'TASK_INSTANCE', INDEX_KEY, INDEX_VALUE, CREATE_DT FROM TASK_INST_INDEX AS d   
+-- JOIN (SELECT COALESCE(MAX(INSTANCE_ID), 0) AS offset FROM INSTANCE_INDEX) AS dc   
+-- ON d.TASK_INSTANCE_ID > dc.offset   
+-- ORDER BY d.TASK_INSTANCE_ID LIMIT p1\;
+-- SELECT COUNT(INSTANCE_ID) INTO dc_count FROM INSTANCE_INDEX\;
+-- UNTIL dc_count >= d_count END REPEAT\;
+-- END;       
+-- CALL copyTaskIndexes(100000);
+
+-- iff the copy was successful, drop the TASK_INST_INDEX table as a manual step.   
+-- Make sure you validate row counts from both tables BEFORE dropping the TASK_INST_INDEX table
+
+-- DROP TABLE TASK_INST_INDEX;
+
 -- solutions
 CREATE TABLE SOLUTION
 (

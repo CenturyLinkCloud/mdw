@@ -211,7 +211,7 @@ SET foreign_key_checks=0;
   SELECT table_name
      INTO table_exist
      FROM information_schema.tables
-    WHERE table_name = 'TASK_INST_INDEX';
+    WHERE table_name = 'INSTANCE_INDEX';
     
    IF table_exist IS NOT NULL
    THEN
@@ -220,8 +220,8 @@ SET foreign_key_checks=0;
      SET row_count = 0;
 	   REPEAT
 	   	 COMMIT;
-	     DELETE  from    task_inst_index
-         WHERE task_instance_id IN (
+	     DELETE  from    instance_index
+         WHERE owner_type='TASK_INSTANCE' and instance_id IN (
                   SELECT task_instance_id
                     FROM task_instance ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
@@ -234,7 +234,7 @@ SET foreign_key_checks=0;
         LIMIT commitcnt;
         SET row_count = row_count + ROW_COUNT();
      UNTIL ROW_COUNT() < 1 END REPEAT;                                                                  
-		 SELECT ( CONCAT('Number of rows deleted from TASK_INST_INDEX:', row_count));             
+		 SELECT ( CONCAT('Number of rows deleted from INSTANCE_INDEX:', row_count));             
 		 COMMIT;
       
    -- delete all task instance group mappings
