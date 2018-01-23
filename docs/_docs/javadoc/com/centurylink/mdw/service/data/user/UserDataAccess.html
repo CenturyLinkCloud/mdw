@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -291,33 +291,38 @@ extends <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAcc
 </tr>
 <tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateGroupAttributes-java.lang.Long-java.util.Map-">updateGroupAttributes</a></span>(java.lang.Long&nbsp;groupId,
+                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;attributes)</code>&nbsp;</td>
+</tr>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateGroupsForUser-java.lang.Long-java.lang.String:A-">updateGroupsForUser</a></span>(java.lang.Long&nbsp;userId,
                    java.lang.String[]&nbsp;groups)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateRolesForUser-java.lang.Long-java.lang.Long-java.lang.String:A-">updateRolesForUser</a></span>(java.lang.Long&nbsp;userId,
                   java.lang.Long&nbsp;groupId,
                   java.lang.String[]&nbsp;roles)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateUserAttributes-java.lang.Long-java.util.Map-">updateUserAttributes</a></span>(java.lang.Long&nbsp;userId,
                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;attributes)</code>
 <div class="block">Ignores non-public attributes (those that contain a ':').</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateUserPreferences-java.lang.Long-java.util.Map-">updateUserPreferences</a></span>(java.lang.Long&nbsp;userId,
                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;preferences)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateUsersForGroup-java.lang.Long-java.lang.Long:A-">updateUsersForGroup</a></span>(java.lang.Long&nbsp;groupId,
                    java.lang.Long[]&nbsp;users)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/user/UserDataAccess.html#updateUsersForGroup-java.lang.Long-java.lang.String:A-">updateUsersForGroup</a></span>(java.lang.Long&nbsp;groupId,
                    java.lang.String[]&nbsp;users)</code>&nbsp;</td>
@@ -328,7 +333,7 @@ extends <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAcc
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.dataaccess.db.<a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html" title="class in com.centurylink.mdw.dataaccess.db">UserDataAccessDb</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#auditLogUserAction-com.centurylink.mdw.model.user.UserAction-">auditLogUserAction</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#createUserInfoFromResultSet-java.sql.ResultSet-">createUserInfoFromResultSet</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getAllGroups-boolean-">getAllGroups</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getPrivilegesForUser-java.lang.String-">getPrivilegesForUser</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getRoleNames--">getRoleNames</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getUser-java.lang.String-">getUser</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#loadAttributesForUser-com.centurylink.mdw.model.user.User-">loadAttributesForUser</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#loadGroupsRolesForUser-com.centurylink.mdw.model.user.User-">loadGroupsRolesForUser</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#auditLogUserAction-com.centurylink.mdw.model.user.UserAction-">auditLogUserAction</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#createUserInfoFromResultSet-java.sql.ResultSet-">createUserInfoFromResultSet</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getAllGroups-boolean-">getAllGroups</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getPrivilegesForUser-java.lang.String-">getPrivilegesForUser</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getRoleNames--">getRoleNames</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#getUser-java.lang.String-">getUser</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#loadAttributesForGroup-com.centurylink.mdw.model.user.Workgroup-">loadAttributesForGroup</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#loadAttributesForUser-com.centurylink.mdw.model.user.User-">loadAttributesForUser</a>, <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAccessDb.html#loadGroupsRolesForUser-com.centurylink.mdw.model.user.User-">loadGroupsRolesForUser</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.dataaccess.db.CommonDataAccess">
@@ -815,6 +820,21 @@ extends <a href="../../../../../../com/centurylink/mdw/dataaccess/db/UserDataAcc
                                  java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;attributes)
                           throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Ignores non-public attributes (those that contain a ':').</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="updateGroupAttributes-java.lang.Long-java.util.Map-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateGroupAttributes</h4>
+<pre>public&nbsp;void&nbsp;updateGroupAttributes(java.lang.Long&nbsp;groupId,
+                                  java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;attributes)
+                           throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
