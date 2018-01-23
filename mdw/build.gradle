@@ -228,12 +228,18 @@ task buildAll(type: GradleBuild) {
     tasks = ["build"]
 }
 
+// TODO: still builds mdw-services and mdw-workflow javadocs
+task buildDev(type: GradleBuild) {
+	buildFile = "build.gradle"
+	tasks = ["build"]
+}
+
 task testAll(type: GradleBuild) {
     dependsOn buildAll
     buildFile = "test.gradle"
     tasks = ["test"]
     startParameter.projectProperties = [include: '**/*.test',
-exclude: "com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test,com/centurylink/mdw/tests/services/InflightHandling.test"]
+exclude: "com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test"]
 }
 
 task test {
