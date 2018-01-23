@@ -28,6 +28,15 @@
             <p class="form-control-static mdw-static">{{workgroup.parent}}</p>
           </div>
         </div>
+      </div>
+      <div ng-if="!edit && !confirm" class="form-horizontal mdw-section">
+        <div class="form-group mdw-static-group" ng-repeat="(attrName, attrVal) in workgroup.attributes" 
+          ng-if="attrName.indexOf(':') < 0 && attrVal.length > 0">
+          <label class="control-label col-xs-2">{{attrName}}:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{attrVal}}</p>
+          </div>
+        </div>
       </div>      
       <div ng-if="edit" ng-include="'groups/groupForm.html'">
       </div>

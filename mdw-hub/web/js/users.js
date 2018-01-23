@@ -79,7 +79,6 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   
   $scope.save = function() {
     console.log('creating user: ' + $scope.user.cuid);
-    
     Users.create({cuid: $scope.user.cuid}, $scope.user,
       function(data) {
         if (data.status.code !== 0) {
@@ -270,6 +269,22 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
     function() {
       $scope.userName = $scope.user.name;
     });
+  
+  $scope.attribute = {
+      name: '', 
+      value: ''
+  };
+  $scope.addAttribute = function () {
+	  $scope.user.attributes[$scope.attribute.name] = $scope.attribute.value
+	  
+	  $scope.attribute = {
+	      name: '', 
+	      value: ''
+	  };
+  }
+  $scope.del = function(i){
+	  delete  $scope.user.attributes[i];
+  }
 }]);
 
 userMod.factory('Users', ['$resource', 'mdw', function($resource, mdw) {
