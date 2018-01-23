@@ -9,16 +9,8 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 class FileView extends Component {
   constructor(...args) {
     super(...args);
-    let optsStr = localStorage.getItem('filepanel-options');
-    if (optsStr) {
-      this.options = JSON.parse(optsStr);
-    }
-    else {
-      this.options = {};
-    }
-    // default options
-    this.options.bufferSize = FileView.BUFFER_SIZE;  // TODO: options
-    this.options.fetchThreshold = FileView.FETCH_THRESHOLD; // TODO: options
+
+    this.options = Toolbar.getOptions();
     
     this.state = {item: {}, buffer: {length: 0}};
     this.lineIndex = 0;  // not kept in state
@@ -54,7 +46,6 @@ class FileView extends Component {
   
   handleOptions(options) {
     this.options = options;
-    localStorage.setItem('filepanel-options', JSON.stringify(options));
     this.setState({
       item: this.state.item,
       lines: this.state.lines
@@ -62,7 +53,6 @@ class FileView extends Component {
   }
   
   handleAction(action) {
-    console.log("ACTION: " + action);
     if (action === 'refresh') {
       this.lineIndex = 0;
       this.setViewScrollTop(0);
@@ -323,8 +313,6 @@ FileView.contextTypes = {
   serviceRoot: PropTypes.string
 };
 
-FileView.BUFFER_SIZE = 500;
-FileView.FETCH_THRESHOLD = 200;
 FileView.THUMB_SIZE = 30;
 // must match css
 FileView.FONT_SIZE = 13;
