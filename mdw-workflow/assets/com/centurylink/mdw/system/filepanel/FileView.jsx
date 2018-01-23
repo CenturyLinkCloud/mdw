@@ -48,11 +48,11 @@ class FileView extends Component {
     this.options = options;
     this.setState({
       item: this.state.item,
-      lines: this.state.lines
+      buffer: this.state.buffer
     });
   }
   
-  handleAction(action) {
+  handleAction(action, params) {
     if (action === 'refresh') {
       this.lineIndex = 0;
       this.setViewScrollTop(0);
@@ -67,10 +67,12 @@ class FileView extends Component {
       this.setViewScrollTop(1);
     }
     else if (action === 'searchForward') {
-      alert('Search is coming in mdw 6.0.12');
+      console.log("searchForward: " + JSON.stringify(params));
+      const idx = this.state.buffer.lines.indexOf(params.search, params.start);
+      console.log("IDX: " + idx);
     }
     else if (action === 'searchBackward') {
-      alert('Search is coming in mdw 6.0.12');
+      console.log("searchBackward: " + JSON.stringify(params));
     }
   }
   
@@ -131,7 +133,7 @@ class FileView extends Component {
     if (this.retrieving) {
       this.setState({
         item: this.state.item,
-        lines: this.state.lines
+        buffer: this.state.buffer
       });
       return;
     }
@@ -147,14 +149,14 @@ class FileView extends Component {
       else {
         this.setState({
           item: this.state.item,
-          lines: this.state.lines
+          buffer: this.state.buffer
         });
       }
     }
     else {
       this.setState({
         item: this.state.item,
-        lines: this.state.lines
+        buffer: this.state.buffer
       });
     }
   }
