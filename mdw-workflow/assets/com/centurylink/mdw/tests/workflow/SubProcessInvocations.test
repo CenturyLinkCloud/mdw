@@ -3,63 +3,63 @@ package com.centurylink.mdw.tests.workflow
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "ServiceWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "ServiceWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "ServiceWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "ServiceWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "ServiceNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "ServiceNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "RegularWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "RegularWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "RegularNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "RegularNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "ServiceWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "ServiceWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "ServiceNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "ServiceNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "RegularWithDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "RegularWithDocsAsync"]
 }
@@ -67,7 +67,7 @@ start process("SubProcessInvocationsFromServiceCache") {
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "RegularNoDocsAsync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "RegularNoDocsAsync"]
 }
@@ -75,63 +75,63 @@ sleep 4
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "ServiceWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "ServiceWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "ServiceNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "ServiceNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "RegularWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "RegularWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegular") {
     variables = [processCase: "RegularNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromRegularCache") {
     variables = [processCase: "RegularNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "ServiceWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "ServiceWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "ServiceNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "ServiceNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "RegularWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "RegularWithDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromServiceCache") {
     variables = [processCase: "RegularNoDocsSync"]
 }
-sleep 2
+sleep 5
 start process("SubProcessInvocationsFromService") {
     variables = [processCase: "RegularNoDocsSync"]
 }
