@@ -32,6 +32,15 @@
 .fp-grep input {
 	margin: 3px;
 	width: calc(100% - 60px);
+	border: 1px solid gray;
+	border-radius: 3px;
+	padding: 2px 3px;
+	margin-right: 5px;
+}
+.fp-grep button {
+  border: 1px solid gray;
+  border-radius: 3px;
+  padding: 2px 5px;  
 }
 .fp-right {
   display: flex;
@@ -111,7 +120,7 @@
   font-weight: normal;
 }
 .fp-toolbar button {
-	padding: 4px 8px;
+  padding: 2px 4px;
   color: #607d8b;
   font-weight: bold;	
 }
@@ -138,5 +147,15 @@
   height: 16px;
 }
 .fp-search {
-  background-color: #eeeeee;
+  margin-right: 30px;
+  margin-left: 20px;
+}
+.fp-search input {
+  margin: 3px;
+  width: 175px;
+  height: 25px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  padding: 2px 3px;
+  padding-bottom: 4px;  
 }

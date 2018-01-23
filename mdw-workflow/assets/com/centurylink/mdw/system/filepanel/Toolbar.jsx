@@ -4,7 +4,7 @@ import {Popover, OverlayTrigger, Button, Glyphicon} from '../../node/node_module
 import Search from './Search.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
-function Toolbar(props, context) {
+function Toolbar(props) {
 
   var options = localStorage.getItem('filepanel-options');
   if (options) {
@@ -47,24 +47,24 @@ function Toolbar(props, context) {
         </div>
         <div>
           {isFile &&
-            <div >
-              <Search />
-              <div style={{display:'flex'}}>
+            <div style={{display:'flex'}}>
+              <Search onAction={props.onAction}/>
+              <div style={{paddingTop:'3px', marginLeft:'20px'}}>
                 {!props.item.binary &&
                   <Button className="fp-icon-btn" name="refresh" title="Refresh" onClick={handleClick}>
                     <Glyphicon glyph="refresh" />
                   </Button>
                 }
                 <Button className="fp-icon-btn" name="download" title="Download" onClick={handleClick}>
-                 <Glyphicon glyph="download-alt" />
+                  <Glyphicon glyph="download-alt" />
                 </Button>
                 {!props.item.binary &&
-                  <div>
+                  <span>
                     <label>
                       <input name="tailMode" type="checkbox" onChange={handleChange} checked={options.tailMode} />
                       Tail Mode
                     </label>
-                  </div>
+                  </span>
                 }
               </div>
             </div>
@@ -76,7 +76,7 @@ function Toolbar(props, context) {
           <div className="fp-line-info">
             {props.line + ' / ' + props.item.lineCount}
           </div>
-          <Button className="fp-icon-btn" name="scrollToEnd" title="Scroll to End" onClick={handleClick}>
+          <Button className="fp-icon-btn" name="scrollToEnd" style={{marginTop:'2px'}} title="Scroll to End" onClick={handleClick}>
             <Glyphicon glyph="step-forward" style={{transform:'rotate(90deg)'}}/>
           </Button>
         </div>
@@ -85,9 +85,4 @@ function Toolbar(props, context) {
   );
 }
   
-Toolbar.contextTypes = {
-  hubRoot: PropTypes.string,
-  serviceRoot: PropTypes.string
-};
-
 export default Toolbar;

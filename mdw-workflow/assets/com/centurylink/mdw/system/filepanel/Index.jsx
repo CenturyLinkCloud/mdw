@@ -125,7 +125,7 @@ class Index extends Component {
               </div>
               <div>
                 <input type="text" placeholder="Files" />
-                <button value="grep">Grep</button>
+                <button value="grep" onClick={event => alert('Grep is coming in mdw 6.0.12')}>Grep</button>
               </div>
             </div>
           </div>

@@ -76,6 +76,12 @@ class FileView extends Component {
     else if (action === 'scrollToEnd') {
       this.setViewScrollTop(1);
     }
+    else if (action === 'searchForward') {
+      alert('Search is coming in mdw 6.0.12');
+    }
+    else if (action === 'searchBackward') {
+      alert('Search is coming in mdw 6.0.12');
+    }
   }
   
   doFetch(props) {
