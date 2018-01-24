@@ -333,12 +333,25 @@ class FileView extends Component {
         }
         if (idx >= 0) {
           // found next match in buffer
-          search.start = this.state.search.results[idx].index;
+          const res = this.state.search.results[idx];
+          search.start = res.index;
           this.setState({
             item: this.state.item,
             buffer: this.state.buffer,
             search: search
           });
+          var resElem = document.getElementById('res-' + res.index);
+          if (typeof resElem.scrollIntoViewIfNeeded === 'function') {
+            resElem.scrollIntoViewIfNeeded({behavior: 'instant', block: 'center', inline: 'center'});
+          }
+          else {
+            try {
+              resElem.scrollIntoView({behavior: 'instant', block: 'center', inline: 'center'});
+            }
+            catch (err) {
+              resElem.scrollIntoView();
+            }
+          }
         }
         else {
           // TODO: fetch
