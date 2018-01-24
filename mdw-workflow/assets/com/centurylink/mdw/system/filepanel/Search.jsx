@@ -11,10 +11,12 @@ class Search extends Component {
   }
 
   handleClick(event) {
-    this.props.onAction(event.currentTarget.name, {
-      'search': this.state.search, 
-      'start': this.state.start
-    });
+    const params = {
+      'find': this.state.search
+    };
+    if (event.currentTarget.name === 'backward')
+      params.backward = true;
+    this.props.onAction('search', params);
   }
   
   handleChange(event) {
@@ -34,7 +36,7 @@ class Search extends Component {
             placeholder="Search" 
             value={this.state.search}
             onChange={this.handleChange} />
-          <Button name="searchBackward" 
+          <Button name="backward" 
             className="fp-icon-btn"
             style={{marginLeft:'0'}}
             title="Backward"
@@ -42,7 +44,7 @@ class Search extends Component {
             onClick={this.handleClick}>
             <Glyphicon glyph="chevron-up" />
           </Button>
-          <Button name="searchForward" 
+          <Button name="forward" 
             className="fp-icon-btn"
             style={{marginLeft:'3px'}}
             title="Forward"

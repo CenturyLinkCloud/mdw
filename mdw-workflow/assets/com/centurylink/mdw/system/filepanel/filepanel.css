@@ -165,3 +165,6 @@
   padding: 2px 3px;
   padding-bottom: 4px;  
 }
+.fp-current {
+	background-color: green;
+}

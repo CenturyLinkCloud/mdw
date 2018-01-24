@@ -12,7 +12,7 @@ class FileView extends Component {
 
     this.options = Toolbar.getOptions();
     
-    this.state = {item: {}, buffer: {length: 0}};
+    this.state = {item: {}, buffer: {length: 0}, search: {start: 0, results: []}};
     this.lineIndex = 0;  // not kept in state
     this.retrieving = false;
     this.specifiedLineIndex = null; // transient value when click track or drag thumb
@@ -38,7 +38,8 @@ class FileView extends Component {
       this.lineIndex = 0;
       this.setState({
         item: props.item,
-        buffer: {length: 0}
+        buffer: {length: 0},
+        search: {start: 0, results: []}
       });
       this.doFetch(props);
     }
@@ -48,7 +49,8 @@ class FileView extends Component {
     this.options = options;
     this.setState({
       item: this.state.item,
-      buffer: this.state.buffer
+      buffer: this.state.buffer,
+      search: this.state.search
     });
   }
   
@@ -66,13 +68,9 @@ class FileView extends Component {
     else if (action === 'scrollToEnd') {
       this.setViewScrollTop(1);
     }
-    else if (action === 'searchForward') {
-      console.log("searchForward: " + JSON.stringify(params));
-      const idx = this.state.buffer.lines.indexOf(params.search, params.start);
-      console.log("IDX: " + idx);
-    }
-    else if (action === 'searchBackward') {
-      console.log("searchBackward: " + JSON.stringify(params));
+    else if (action === 'search') {
+      var search = Object.assign({}, this.state.search, params);
+      this.search(search);
     }
     else if (action === 'tailMode') {
       alert('Tail Mode is coming in mdw build 6.0.12');
@@ -103,7 +101,8 @@ class FileView extends Component {
       if (json.info.isFile) {
         this.setState({
           item: json.info,
-          buffer: json.buffer
+          buffer: json.buffer,
+          search: {start: this.lineIndex, results: []}
         });
         
         // adjust for newly-retrieved lines
@@ -136,7 +135,8 @@ class FileView extends Component {
     if (this.retrieving) {
       this.setState({
         item: this.state.item,
-        buffer: this.state.buffer
+        buffer: this.state.buffer,
+        search: this.state.search
       });
       return;
     }
@@ -152,14 +152,16 @@ class FileView extends Component {
       else {
         this.setState({
           item: this.state.item,
-          buffer: this.state.buffer
+          buffer: this.state.buffer,
+          search: this.state.search
         });
       }
     }
     else {
       this.setState({
         item: this.state.item,
-        buffer: this.state.buffer
+        buffer: this.state.buffer,
+        search: this.state.search
       });
     }
   }
@@ -232,7 +234,8 @@ class FileView extends Component {
       this.specifiedLineIndex = 0;
     }
     const scrollHeight = this.scrollbars.view.scrollHeight;
-    this.scrollbars.view.scrollTop = Math.round((this.specifiedLineIndex - this.state.buffer.start) * scrollHeight / (this.state.item.lineCount * this.getScale()));
+    this.scrollbars.view.scrollTop = 
+      Math.round((this.specifiedLineIndex - this.state.buffer.start) * scrollHeight / (this.state.item.lineCount * this.getScale()));
   }
   
   getScale() {
@@ -250,6 +253,47 @@ class FileView extends Component {
     }
   }
   
+  search(search) {
+    search.results = [];
+    if (this.state.buffer.length > 0) {
+      var start = this.state.search.start, idx;
+      var str = this.state.buffer.lines.toLowerCase();
+      var find = search.find.toLowerCase();
+      var first = true;
+      while ((idx = str.indexOf(find, start)) > -1) {
+        if (idx > start) {
+          search.results.push({
+            text: this.state.buffer.lines.substring(start, idx)
+          });
+          if (first) {
+            search.results[search.results.length-1].first = true;
+            first = false;
+          }
+        }
+        start = idx + find.length;
+        search.results.push({
+          index: idx,
+          found: this.state.buffer.lines.substring(idx, start) 
+        });
+      }
+      if (start < this.state.buffer.lines.length) {
+        search.results.push({
+          text: this.state.buffer.lines.substring(start)
+        });
+      }
+    }
+    if (!search.results.length && this.state.buffer.lineCount > this.state.buffer.start + this.state.buffer.length) {
+      // TODO fetch
+    }
+    else {
+      this.setState({
+        item: this.state.item,
+        buffer: this.state.buffer,
+        search: search
+      });
+    }
+  }
+  
   render() {
     var lineNumbers = this.getLineNumbers();
 
@@ -257,7 +301,6 @@ class FileView extends Component {
       var thumbVerticalY = 0;
       if (this.lineIndex > 0) {
         const values = this.scrollbars.getValues();
-  
         const trackVerticalHeight = this.getInnerHeight(this.scrollbars.trackVertical);
         const frac = this.lineIndex / (this.state.item.lineCount - this.getClientLines());
         thumbVerticalY = frac * (trackVerticalHeight - FileView.THUMB_SIZE);
@@ -270,6 +313,7 @@ class FileView extends Component {
           <Toolbar 
             line={this.lineIndex + 1}
             item={this.state.item}
+            searchResults={this.state.search.results}
             onOptions={this.handleOptions}
             onAction={this.handleAction} />
         }
@@ -290,9 +334,29 @@ class FileView extends Component {
                     {lineNumbers}
                   </div>
                 }
-                <div id="fp-file-content" className="fp-content">
-                  {this.state.buffer.lines}
-                </div>
+                {this.state.search.results.length == 0 &&
+                  <div id="fp-file-content" className="fp-content">
+                    {this.state.buffer.lines}
+                  </div>
+                }
+                {this.state.search.results.length > 0 &&
+                  <div id="fp-file-content" className="fp-content">
+                    {
+                      this.state.search.results.map((res, i) => {
+                        return (
+                          <span key={i}>
+                            {res.text &&
+                              <span>{res.text}</span>
+                            }
+                            {res.found &&
+                              <mark id={'res-' + res.index} className={res.first ? 'fp-current' : ''}>{res.found}</mark>
+                            }
+                          </span>
+                        );
+                      })
+                    }
+                  </div>
+                }
               </div>
             </Scrollbars>
           </div>
