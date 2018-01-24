@@ -74,6 +74,9 @@ class FileView extends Component {
     else if (action === 'searchBackward') {
       console.log("searchBackward: " + JSON.stringify(params));
     }
+    else if (action === 'tailMode') {
+      alert('Tail Mode is coming in mdw build 6.0.12');
+    }
   }
   
   doFetch(props) {

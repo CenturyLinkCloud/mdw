@@ -28,17 +28,22 @@ function Toolbar(props) {
   var options = Toolbar.getOptions();
   
   const handleChange = event => {
-    if (event.currentTarget.name === 'lineNumbers') {
-      options.lineNumbers = event.currentTarget.checked;
+    if (event.currentTarget.name === 'tailMode') {
+      props.onAction('tailMode');
     }
-    else if (event.currentTarget.name === 'bufferSize') {
-      options.bufferSize = event.currentTarget.value;
+    else {
+      if (event.currentTarget.name === 'lineNumbers') {
+        options.lineNumbers = event.currentTarget.checked;
+      }
+      else if (event.currentTarget.name === 'bufferSize') {
+        options.bufferSize = event.currentTarget.value;
+      }
+      else if (event.currentTarget.name === 'fetchThreshold') {
+        options.fetchThreshold = event.currentTarget.value;
+      }
+      localStorage.setItem('filepanel-options', JSON.stringify(options));
+      props.onOptions(options);
     }
-    else if (event.currentTarget.name === 'fetchThreshold') {
-      options.fetchThreshold = event.currentTarget.value;
-    }
-    localStorage.setItem('filepanel-options', JSON.stringify(options));
-    props.onOptions(options);
   };
   
   const handleClick = event => {
@@ -117,7 +122,7 @@ function Toolbar(props) {
                     <label>
                       <input name="tailMode" 
                         type="checkbox" 
-                        checked={options.tailMode}
+                        checked={props.tailMode}
                         onChange={handleChange} />
                       Tail Mode
                     </label>
