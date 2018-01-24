@@ -39,7 +39,7 @@ class FileView extends Component {
       this.setState({
         item: props.item,
         buffer: {length: 0},
-        search: {results: []}
+        search: {find: this.state.search.find, results: []}
       });
       this.doFetch(props);
     }
@@ -67,6 +67,10 @@ class FileView extends Component {
     }
     else if (action === 'scrollToEnd') {
       this.setViewScrollTop(1);
+    }
+    else if (action === 'find') {
+      var search = Object.assign({}, this.state.search, params);
+      this.find(search);
     }
     else if (action === 'search') {
       var search = Object.assign({}, this.state.search, params);
@@ -102,13 +106,18 @@ class FileView extends Component {
         this.setState({
           item: json.info,
           buffer: json.buffer,
-          search: {results: []}
+          search: {find: this.state.search.find, results: []}
         });
         
         // adjust for newly-retrieved lines
         if (this.scrollbars && this.lineIndex) {
           const st = (this.lineIndex - json.buffer.start) * this.scrollbars.view.scrollHeight / (json.info.lineCount * this.getScale());
           this.scrollbars.view.scrollTop = st;
+        }
+        
+        // find search pattern if present
+        if (this.state.search.find) {
+          this.find({find: this.state.search.find});
         }
       }
       else {
@@ -253,8 +262,46 @@ class FileView extends Component {
     }
   }
   
-  search(search) {
+  // finds and highlights (no scroll or 
+  find(search) {
     search.results = [];
+    if (this.state.buffer.length > 0) {
+      // begin is beginning of buffer lines
+      var begin = 0;
+      var idx;
+      var str = this.state.buffer.lines.toLowerCase();
+      var find = search.find.toLowerCase();
+      while ((idx = str.indexOf(find, begin)) > -1) {
+        if (idx > begin) {
+          search.results.push({
+            text: this.state.buffer.lines.substring(begin, idx)
+          });
+        }
+        begin = idx + find.length;
+        search.results.push({
+          index: idx,
+          found: this.state.buffer.lines.substring(idx, begin)
+        });
+      }
+      
+      if (begin < this.state.buffer.lines.length) {
+        search.results.push({
+          text: this.state.buffer.lines.substring(begin)
+        });
+      }
+
+      this.setState({
+        item: this.state.item,
+        buffer: this.state.buffer,
+        search: search
+      });
+    }    
+  }
+  
+  // go to next match (assumes find has been executed)
+  // TODO: scroll into view
+  // TODO: not found in buffer
+  search(search) {
     if (this.state.buffer.length > 0) {
       // start is current search char index
       var start = this.state.search.start;
@@ -268,45 +315,35 @@ class FileView extends Component {
           }
         }
       }
-      // begin is beginning of buffer lines
-      var begin = 0;
-      var idx;
-      var str = this.state.buffer.lines.toLowerCase();
-      var find = search.find.toLowerCase();
-      var current;
-      while ((idx = str.indexOf(find, begin)) > -1) {
-        if (idx > begin) {
-          search.results.push({
-            text: this.state.buffer.lines.substring(begin, idx)
+      if (this.state.search.results) {
+        var idx = -1;
+        for (let i = 0; i < this.state.search.results.length; i++) {
+          const result = this.state.search.results[i];
+          if (search.backward) {
+            if (start > result.index) {
+              idx = i;
+            }
+          }
+          else {
+            if (start < result.index) {
+              idx = i;
+              break;
+            }
+          }
+        }
+        if (idx >= 0) {
+          // found next match in buffer
+          search.start = this.state.search.results[idx].index;
+          this.setState({
+            item: this.state.item,
+            buffer: this.state.buffer,
+            search: search
           });
         }
-        begin = idx + find.length;
-        if (!current && (!start || start < idx)) {
-          current = idx;
+        else {
+          // TODO: fetch
         }
-        search.results.push({
-          index: idx,
-          found: this.state.buffer.lines.substring(idx, begin)
-        });
       }
-      search.start = current;
-      if (begin < this.state.buffer.lines.length) {
-        search.results.push({
-          text: this.state.buffer.lines.substring(begin)
-        });
-      }
-    }
-    
-    // console.log("RESULTS: " + JSON.stringify(search.results, null, 2));
-    if (!search.results.length && this.state.buffer.lineCount > this.state.buffer.start + this.state.buffer.length) {
-      // TODO fetch
-    }
-    else {
-      this.setState({
-        item: this.state.item,
-        buffer: this.state.buffer,
-        search: search
-      });
     }
   }
   

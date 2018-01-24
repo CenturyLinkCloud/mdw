@@ -13,18 +13,21 @@ class Search extends Component {
 
   handleClick(event) {
     const params = {
-      'find': this.state.search
+      'find': this.state.search,
+      'backward': event.currentTarget.name === 'backward'
     };
-    if (event.currentTarget.name === 'backward')
-      params.backward = true;
     this.props.onAction('search', params);
   }
   
   handleChange(event) {
     if (event.currentTarget.name === 'search') {
+      const find = event.currentTarget.value;
       this.setState({
-        search: event.currentTarget.value
+        search: find
       });
+      if (find) {
+        this.props.onAction('find', {find: find});
+      }
     }
   }
   
