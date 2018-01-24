@@ -60,6 +60,10 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
       $scope.uneditedWorkgroup = Workgroups.shallowCopy({}, $scope.workgroup);
   };
 
+  $scope.setAdvance = function(advance) {
+	    $scope.advance = advance;
+  };
+	  
   $scope.confirm = false;
   $scope.setConfirm = function(confirm) {
     $scope.confirm = confirm;
@@ -70,6 +74,7 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
     if ($scope.edit)
       $scope.workgroup = Workgroups.shallowCopy($scope.workgroup, $scope.uneditedWorkgroup);
     $scope.setEdit(false);
+    $scope.setAdvance(false);
     $scope.setConfirm(false);
   };
   
@@ -88,6 +93,7 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
         else {
           $scope.groupName = $scope.workgroup.name;
           $scope.setEdit(false);
+          $scope.setAdvance(false);
         }
       }, 
       function(error) {

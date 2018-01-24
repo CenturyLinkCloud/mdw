@@ -116,6 +116,9 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
       $scope.uneditedUser = Users.shallowCopy({}, $scope.user);
   };
   
+  $scope.setAdvance = function(advance) {
+	    $scope.advance = advance;
+  };
   $scope.confirm = false;
   $scope.setConfirm = function(confirm) {
     $scope.confirm = confirm;
@@ -126,6 +129,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
     if ($scope.edit)
       $scope.user = Users.shallowCopy($scope.user, $scope.uneditedUser);
     $scope.setEdit(false);
+    $scope.setAdvance(false);
     $scope.setConfirm(false);
   };
   
@@ -148,6 +152,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
         else {
           $scope.userName = $scope.user.name;
           $scope.setEdit(false);
+          $scope.setAdvance(false);
         }
       }, 
       function(error) {
