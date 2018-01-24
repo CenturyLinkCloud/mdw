@@ -7,7 +7,8 @@ class Search extends Component {
     super(...args);
     this.state = { search: '', start: 0 };
     this.handleClick = this.handleClick.bind(this);    
-    this.handleChange = this.handleChange.bind(this);    
+    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   handleClick(event) {
@@ -27,6 +28,12 @@ class Search extends Component {
     }
   }
   
+  handleKeyPress(event) {
+    if (event.currentTarget.name === 'search' && event.key === 'Enter') {
+      this.props.onAction('search', {find: this.state.search});
+    }
+  }
+  
   render() {
     return (
       <div className="fp-search">
@@ -35,7 +42,8 @@ class Search extends Component {
             type="text" 
             placeholder="Search" 
             value={this.state.search}
-            onChange={this.handleChange} />
+            onChange={this.handleChange}
+            onKeyPress={this.handleKeyPress}/>
           <Button name="backward" 
             className="fp-icon-btn"
             style={{marginLeft:'0'}}

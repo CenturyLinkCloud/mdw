@@ -12,7 +12,7 @@ class FileView extends Component {
 
     this.options = Toolbar.getOptions();
     
-    this.state = {item: {}, buffer: {length: 0}, search: {start: 0, results: []}};
+    this.state = {item: {}, buffer: {length: 0}, search: {results: []}};
     this.lineIndex = 0;  // not kept in state
     this.retrieving = false;
     this.specifiedLineIndex = null; // transient value when click track or drag thumb
@@ -39,7 +39,7 @@ class FileView extends Component {
       this.setState({
         item: props.item,
         buffer: {length: 0},
-        search: {start: 0, results: []}
+        search: {results: []}
       });
       this.doFetch(props);
     }
@@ -102,7 +102,7 @@ class FileView extends Component {
         this.setState({
           item: json.info,
           buffer: json.buffer,
-          search: {start: this.lineIndex, results: []}
+          search: {results: []}
         });
         
         // adjust for newly-retrieved lines
@@ -256,32 +256,48 @@ class FileView extends Component {
   search(search) {
     search.results = [];
     if (this.state.buffer.length > 0) {
-      var start = this.state.search.start, idx;
-      var str = this.state.buffer.lines.toLowerCase();
-      var find = search.find.toLowerCase();
-      var first = true;
-      while ((idx = str.indexOf(find, start)) > -1) {
-        if (idx > start) {
-          search.results.push({
-            text: this.state.buffer.lines.substring(start, idx)
-          });
-          if (first) {
-            search.results[search.results.length-1].first = true;
-            first = false;
+      // start is current search char index
+      var start = this.state.search.start;
+      if (!start) {
+        // start at beginning of top line
+        start = 0;
+        if (this.lineIndex && this.state.buffer.lines) {
+          const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
+          for (let i = this.state.buffer.start; i < this.lineIndex; i++) {
+            start += bufferLines[i].length + 1;
           }
         }
-        start = idx + find.length;
+      }
+      // begin is beginning of buffer lines
+      var begin = 0;
+      var idx;
+      var str = this.state.buffer.lines.toLowerCase();
+      var find = search.find.toLowerCase();
+      var current;
+      while ((idx = str.indexOf(find, begin)) > -1) {
+        if (idx > begin) {
+          search.results.push({
+            text: this.state.buffer.lines.substring(begin, idx)
+          });
+        }
+        begin = idx + find.length;
+        if (!current && (!start || start < idx)) {
+          current = idx;
+        }
         search.results.push({
           index: idx,
-          found: this.state.buffer.lines.substring(idx, start) 
+          found: this.state.buffer.lines.substring(idx, begin)
         });
       }
-      if (start < this.state.buffer.lines.length) {
+      search.start = current;
+      if (begin < this.state.buffer.lines.length) {
         search.results.push({
-          text: this.state.buffer.lines.substring(start)
+          text: this.state.buffer.lines.substring(begin)
         });
       }
     }
+    
+    // console.log("RESULTS: " + JSON.stringify(search.results, null, 2));
     if (!search.results.length && this.state.buffer.lineCount > this.state.buffer.start + this.state.buffer.length) {
       // TODO fetch
     }
@@ -349,7 +365,7 @@ class FileView extends Component {
                               <span>{res.text}</span>
                             }
                             {res.found &&
-                              <mark id={'res-' + res.index} className={res.first ? 'fp-current' : ''}>{res.found}</mark>
+                              <span id={'res-' + res.index} className={this.state.search.start === res.index ? 'fp-current' : 'fp-mark'}>{res.found}</span>
                             }
                           </span>
                         );

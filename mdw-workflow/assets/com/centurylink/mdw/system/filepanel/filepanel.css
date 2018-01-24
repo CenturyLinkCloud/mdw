@@ -165,6 +165,9 @@
   padding: 2px 3px;
   padding-bottom: 4px;  
 }
+.fp-mark {
+  background-color: yellow;
+}
 .fp-current {
-	background-color: green;
+	background-color: #00ff00;
 }
