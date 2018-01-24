@@ -155,13 +155,15 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
 
     protected void loadAttributesForUser(User user) throws SQLException, CachingException {
         // load attributes for user
-        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute as att1  " +
-                "where att1.attribute_owner = '" + OwnerType.USER + "' and att1.attribute_owner_id  = ?" +
-                    " UNION DISTINCT " +
-                "select DISTINCT att2.attribute_name, '' from attribute as att2 " +
-                "where att2.attribute_owner = '" + OwnerType.USER + "' and att2.attribute_owner_id  != ?";
+        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute att1  " +
+                " where att1.attribute_owner = '" + OwnerType.USER + "' and att1.attribute_owner_id  = ?" +
+                " UNION DISTINCT " +
+                " select DISTINCT att2.attribute_name, '' from attribute att2 " +
+                " where att2.attribute_owner = '" + OwnerType.USER + "' and att2.attribute_owner_id  != ? " +
+                " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
+                " where att3.attribute_owner = '" + OwnerType.USER + "' and att3.attribute_Owner_id  = ? )";
 
-        ResultSet rs = db.runSelect(sql, new Object[]{user.getId(), user.getId()});
+        ResultSet rs = db.runSelect(sql, new Object[]{user.getId(), user.getId(), user.getId()});
         while (rs.next())
             user.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
     }
@@ -169,12 +171,14 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
     protected void loadAttributesForGroup(Workgroup group) throws SQLException, CachingException {
         // load attributes for workgroup
         String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute as att1  " +
-            "where att1.attribute_owner = '" + OwnerType.USER_GROUP + "' and att1.attribute_owner_id  = ?" +
-                " UNION DISTINCT " +
-            "select DISTINCT att2.attribute_name, '' from attribute as att2 " +
-            "where att2.attribute_owner = '" + OwnerType.USER_GROUP + "' and att2.attribute_owner_id  != ?";
+            " where att1.attribute_owner = '" + OwnerType.USER_GROUP + "' and att1.attribute_owner_id  = ?" +
+            " UNION DISTINCT " +
+            " select DISTINCT att2.attribute_name, '' from attribute as att2 " +
+            " where att2.attribute_owner = '" + OwnerType.USER_GROUP + "' and att2.attribute_owner_id  != ?" +
+            " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
+            " where att3.attribute_owner = '" + OwnerType.USER_GROUP + "' and att3.attribute_Owner_id  = ? )";
 
-        ResultSet rs = db.runSelect(sql, new Object[]{group.getId(), group.getId()});
+        ResultSet rs = db.runSelect(sql, new Object[]{group.getId(), group.getId(), group.getId()});
         while (rs.next())
             group.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
     }
