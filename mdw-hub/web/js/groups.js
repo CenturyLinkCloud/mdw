@@ -14,7 +14,7 @@ groupMod.controller('GroupsController', ['$scope', '$location', 'Workgroups',
     $scope.create = create;
     $scope.workgroup = { 
     		name: '', // blank name helps w/applying error styles
-    		attributes: {}
+    		attributes: {'Slack Channel': ''}
     };
   };
   
@@ -46,8 +46,8 @@ groupMod.controller('GroupsController', ['$scope', '$location', 'Workgroups',
   };
 }]);
 
-groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '$http', 'mdw', 'Workgroups', 
-                                        function($scope, $routeParams, $location, $http, mdw, Workgroups) {
+groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '$http', 'mdw', 'uiUtil', 'Workgroups', 
+                                        function($scope, $routeParams, $location, $http, mdw, uiUtil, Workgroups) {
   $scope.getGroupList = function() {
     return Workgroups.groupList;
   };
@@ -175,21 +175,27 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
 	      name: '', 
 	      value: ''
 	  };
-	  $scope.addAttribute = function () {
-		    if ($scope.workgroup.attributes === undefined) {
-		    	$scope.workgroup.attributes = {};
-		    }
+  $scope.addAttribute = function () {
+	    if ($scope.workgroup.attributes === undefined) {
+	    	$scope.workgroup.attributes = {};
+	    }
 
-		  $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value;
-		  
-		  $scope.attribute = {
-		      name: '', 
-		      value: ''
-		  };
+	  $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value;
+	  
+	  $scope.attribute = {
+	      name: '', 
+	      value: ''
 	  };
-	  $scope.del = function(i){
-		  delete  $scope.workgroup.attributes[i];
-	  };
+  };
+  $scope.del = function(attrName){
+		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+			if (res) {
+				delete  $scope.workgroup.attributes[attrName];
+			   console.log('deleted attribute ' + attrName);
+			}
+		});
+  };
 }]);
 
 groupMod.factory('Workgroups', ['$resource', 'mdw', function($resource, mdw) {

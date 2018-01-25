@@ -98,8 +98,8 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   
 }]);
 
-userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Users', 'Workgroups', 'Workroles',
-                                      function($scope, $routeParams, $location, Users, Workgroups, Workroles) {
+userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Users', 'uiUtil', 'Workgroups', 'Workroles',
+                                      function($scope, $routeParams, $location, Users, uiUtil, Workgroups, Workroles) {
   // need the workgroup list cached
   if (!Workgroups.groupList)
     Workgroups.groupList = Workgroups.get();
@@ -287,8 +287,14 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
 	      value: ''
 	  };
   };
-  $scope.del = function(i){
-	  delete  $scope.user.attributes[i];
+  $scope.del = function(attrName){
+		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+			if (res) {
+				delete  $scope.user.attributes[attrName];
+			   console.log('deleted attribute ' + attrName);
+			}
+		});
   };
 }]);
 

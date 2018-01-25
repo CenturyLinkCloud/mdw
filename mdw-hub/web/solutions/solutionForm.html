@@ -29,7 +29,7 @@
     <div class="col-xs-2"></div>
     <div class="mdw-message">{{solution.message}}</div>
     <div class="mdw-buttons">
-      <button class="btn btn-info mdw-btn mdw-advanced-btn" type="button">Advanced...</button>
+      <button class="btn btn-info mdw-btn mdw-advanced-btn" type="button" ng-click="setAdvance(true)">Advanced...</button>
       <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!isSaveEnabled()">Save</button>
       <button class="btn mdw-btn mdw-cancel-btn" type="reset" ng-click="cancel()">Cancel</button>
     </div>

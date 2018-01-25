@@ -19,9 +19,7 @@
       <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="user.attributes[attrName]">
     </div>
     <button ng-if="authUser.hasRole('Site Admin') && attrName.indexOf('Email Address') < 0 ? attrName.indexOf('Phone Number') < 0 : false"
-    class="btn btn-danger mdw-btn"
-    type="button"
-    ng-click="del(attrName)">Delete</button>
+      class="btn btn-danger mdw-btn" type="button" ng-click="del(attrName)">Delete</button>
   </div>
   
   <div ng-if="edit && advance" ng-include="'users/userAttributes.html'"></div>
