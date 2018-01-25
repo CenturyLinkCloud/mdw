@@ -5,15 +5,19 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 class Search extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { search: '', start: 0 };
+    this.state = { search: '' };
     this.handleClick = this.handleClick.bind(this);    
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   handleClick(event) {
+    const isClear =event.currentTarget.className === 'fp-clear';
+    if (isClear) {
+      this.setState({search: ''});
+    }
     const params = {
-      'find': this.state.search,
+      'find': isClear ? {search: ''} : this.state.search,
       'backward': event.currentTarget.name === 'backward'
     };
     this.props.onAction('search', params);
@@ -47,6 +51,9 @@ class Search extends Component {
             value={this.state.search}
             onChange={this.handleChange}
             onKeyPress={this.handleKeyPress}/>
+          <span name='clear' 
+            className='fp-clear' 
+            onClick={this.handleClick}>×</span>        
           <Button name="backward" 
             className="fp-icon-btn"
             style={{marginLeft:'0'}}

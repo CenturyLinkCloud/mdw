@@ -74,11 +74,21 @@ class FileView extends Component {
     }
     else if (action === 'search') {
       var search = Object.assign({}, this.state.search, params);
-      this.search(search);
+      if (search.find.search) {
+        this.search(search);
+      }
+      else { // clear
+        this.setState({
+          item: this.state.item,
+          buffer: this.state.buffer,
+          search: {results: []}
+        });
+      }
     }
     else if (action === 'tailMode') {
       alert('Tail Mode is coming in mdw build 6.0.12');
     }
+    console.log('action: ' + action + ' (' + JSON.stringify(params) + ')');
   }
   
   doFetch(props) {
