@@ -20,6 +20,8 @@ public class EnvironmentVariables {
     // OAUTH
     public static final String MDW_OAUTH_TOKEN_LOCATION = "MDW_OAUTH_TOKEN_LOCATION";
 
-
+    // MDW Cloud Router
+    public static final String MDW_CLOUD_ROUTER = "mdw.useast.appfog.ctl.io";
+    public static final String MDW_CLOUD_ROUTER_URL = "https://mdw.useast.appfog.ctl.io/mdw/services/routing";
 
 }

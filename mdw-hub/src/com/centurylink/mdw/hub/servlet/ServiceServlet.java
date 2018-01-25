@@ -16,7 +16,6 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.constant.EnvironmentVariables;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
@@ -191,7 +191,7 @@ public abstract class ServiceServlet extends HttpServlet {
                         InetAddress remote = null;
                         try {
                             remote = InetAddress.getByName(request.getRemoteHost());
-                            appFogProd = Arrays.asList(InetAddress.getAllByName("mdw.useast.appfog.ctl.io"));
+                            appFogProd = Arrays.asList(InetAddress.getAllByName(EnvironmentVariables.MDW_CLOUD_ROUTER));
                         }
                         catch (UnknownHostException e) {
                             // TODO Auto-generated catch block
@@ -202,6 +202,11 @@ public abstract class ServiceServlet extends HttpServlet {
                             return;
                         }
                     }
+                }
+                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/routing")) {
+                    // Validates request is coming from application with valid MDW APP Token - For routing services
+                    if (AuthUtils.authenticate(AuthUtils.MDW_APP_TOKEN, headers, payload))
+                        return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
                     // perform http GitHub auth, which populates the auth user header

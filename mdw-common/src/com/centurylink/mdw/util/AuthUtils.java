@@ -17,6 +17,10 @@ package com.centurylink.mdw.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
@@ -29,6 +33,7 @@ import com.centurylink.mdw.auth.OAuthAuthenticator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.AuthConstants;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -41,6 +46,10 @@ public class AuthUtils {
     public static final String GIT_HUB_SECRET_KEY = "GitHub";
     public static final String SLACK_TOKEN = "MDW_SLACK_TOKEN";
     public static final String OAUTH_AUTHENTICATION = "OAuth";
+    public static final String MDW_APP_TOKEN = "MDW_APP_TOKEN";
+
+    private static volatile Map<String,String> mdwAppTokenMap = null;
+    private static final Object lock = new Object();
 
     public static boolean authenticate(String authMethod, Map<String,String> headers) {
         return authenticate(authMethod, headers, null);
@@ -57,6 +66,9 @@ public class AuthUtils {
         }
         else if (authMethod.equals(SLACK_TOKEN)) {
             return authenticateSlackToken(headers, payload);
+        }
+        else if (authMethod.equals(MDW_APP_TOKEN)) {
+            return authenticateMdwAppToken(headers, payload);
         }
         else {
             throw new IllegalArgumentException("Unsupported authentication method: " + authMethod);
@@ -147,6 +159,50 @@ public class AuthUtils {
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
                 headers.put(Listener.METAINFO_REQUEST_PAYLOAD, json.toString());
             }
+        }
+        return okay;
+    }
+
+    private static boolean authenticateMdwAppToken(Map<String, String> headers, String payload) {
+        boolean okay = false;
+        if (mdwAppTokenMap == null) {
+            synchronized(lock) {
+                Map<String,String> tempMap = mdwAppTokenMap;
+                if (tempMap == null) {
+                    tempMap = new HashMap<String, String>();
+                    DatabaseAccess db = new DatabaseAccess(null);
+                    try (Connection conn = db.openConnection()) {
+                        String select = "select name, value from values where owner_type='CLOUD' and owner_id='MDW_APP_TOKEN'";
+                        ResultSet rs = db.runSelect(select, null);
+                        while (rs.next()) {
+                            tempMap.put(rs.getString("value"), rs.getString("name"));
+                        }
+                    }
+                    catch (SQLException e) {
+                        logger.severeException("Failed to retreive MDW Application Tokens", e);
+                        return false;
+                    }
+                }
+                mdwAppTokenMap = tempMap;
+            }
+        }
+        else if (mdwAppTokenMap.isEmpty())  // No MDW Application Tokens stored in this instance's DB
+            return false;
+
+        try {
+            // JSON request
+            JSONObject json = new JSONObject(payload);
+            okay = json.has("mdwAppToken") && mdwAppTokenMap.get(json.getString("mdwAppToken")) != null;
+            if (okay) {
+                logger.info("Request authenticated using MDW Application Token for " + mdwAppTokenMap.get(json.getString("mdwAppToken")));
+                json.remove("mdwAppToken");
+                headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
+                headers.put(Listener.METAINFO_REQUEST_PAYLOAD, json.toString());
+                headers.put(Listener.METAINFO_CLOUD_ROUTING, URLDecoder.decode(headers.get("serviceDestination"), "utf-8"));
+            }
+        }
+        catch (Exception e) {
+            logger.severeException("Exception processing incoming Cloud Routing message", e);
         }
         return okay;
     }

@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.routing;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -143,8 +144,27 @@ public class RoutingServiceMonitor implements ServiceMonitor {
             URL destination = routingStrategy.getDestination(request, headers);
             if (destination != null) {
             	// Only return a destination if it is not itself (identical call) - Avoid infinite loop
-                int queryIdx = destination.toString().indexOf("?");
-                String origRequestUrl = headers.get(Listener.METAINFO_REQUEST_URL);
+         //       int queryIdx = destination.toString().indexOf("?");
+            	URL origRequestUrl = null;
+                try {
+                    origRequestUrl = new URL(headers.get(Listener.METAINFO_REQUEST_URL));
+                }
+                catch (MalformedURLException e) {
+                	logger.severeException("Malformed original RequestURL", e);
+                }
+                String origHost = origRequestUrl.getHost().indexOf(".") > 0 ? origRequestUrl.getHost().substring(0, origRequestUrl.getHost().indexOf(".")) : origRequestUrl.getHost();
+                int origPort = origRequestUrl.getPort() == 80 || origRequestUrl.getPort() == 443 ? -1 : origRequestUrl.getPort();
+                String origQuery = headers.get(Listener.METAINFO_REQUEST_QUERY_STRING) == null ? "" : headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
+                String newHost = destination.getHost().indexOf(".") > 0 ? destination.getHost().substring(0, destination.getHost().indexOf(".")) : destination.getHost();
+                int newPort = destination.getPort() == 80 || destination.getPort() == 443 ? -1 : destination.getPort();
+                String newQuery = destination.getQuery() == null ? "" : destination.getQuery();
+
+                if (!newHost.equalsIgnoreCase(origHost) || !(newPort == origPort) || !newQuery.equalsIgnoreCase(origQuery) || !origRequestUrl.getPath().equals(destination.getPath()))
+                    return destination;
+                
+        /*        if (origRequestUrl.lastIndexOf(":") < 8 && destination.toString().lastIndexOf(":") > 7) {
+                	origRequestUrl = origRequestUrl.substring(0, origRequestUrl.indexOf("/", 9)) + ":" + origRequestUrl.substring(origRequestUrl.indexOf("/", 9));
+                }
                 if (queryIdx > 0 && !StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING))) {
                     origRequestUrl = origRequestUrl + "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
                     if (!destination.toString().equals(origRequestUrl))
@@ -152,6 +172,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
                 }
                 else if (!destination.toString().equals(origRequestUrl))
                     return destination;
+                    */
             }
         }
         return null;
@@ -160,7 +181,8 @@ public class RoutingServiceMonitor implements ServiceMonitor {
     protected boolean isRoutingEnabled() {
         return PropertyManager.getBooleanProperty(PropertyNames.MDW_ROUTING_REQUESTS_ENABLED, false) &&
                !ApplicationContext.getRoutingServerList().isEmpty() &&
-               ApplicationContext.getRoutingServerList().contains(ApplicationContext.getServerHostPort()) &&
+               (ApplicationContext.getRoutingServerList().contains(ApplicationContext.getServerHostPort()) ||
+            	 (ApplicationContext.isPaaS() && ApplicationContext.getRoutingServerList().contains(ApplicationContext.getMasterServer()))) &&
                !ApplicationContext.getServerList().isEmpty();
     }
 }
