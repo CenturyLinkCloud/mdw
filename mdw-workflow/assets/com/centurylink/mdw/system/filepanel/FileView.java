@@ -76,8 +76,11 @@ public class FileView implements Jsonable {
 
             search = query.getFilter("search");
             if (search != null) {
-                // find lineIndex of first match
-                lineIndex = searchIndex = search(lineIndex, query.getBooleanFilter("backward"));
+                // find index of first match (search from next line after current lineIndex)
+                int searchIndex = query.getIntFilter("searchIndex");
+                if (searchIndex == -1)
+                    searchIndex = 0;
+                lineIndex = this.searchIndex = search(searchIndex, query.getBooleanFilter("backward"));
             }
 
             // one-pass forward
@@ -107,21 +110,21 @@ public class FileView implements Jsonable {
     /**
      * Search pass locates line index of first match.
      */
-    private int search(int start, boolean backward) throws IOException {
+    private int search(int startLine, boolean backward) throws IOException {
         search = search.toLowerCase();
         try (Stream<String> stream = Files.lines(path)) {
             if (backward) {
-                int idx = searchTo(start - 1, true);
+                int idx = searchTo(startLine - 1, true);
                 if (idx < 0) {
-                    idx = searchFrom(start, true);
+                    idx = searchFrom(startLine, true);
                 }
                 return idx;
             }
             else {
-                int idx = searchFrom(start);
+                int idx = searchFrom(startLine);
                 if (idx < 0) {
                     // wrap search
-                    idx = searchTo(start - 1);
+                    idx = searchTo(startLine - 1);
                 }
                 return idx;
             }
@@ -133,13 +136,13 @@ public class FileView implements Jsonable {
 
     private int searchIndex;
     private int lastIndex;
-    private int searchFrom(int start) throws IOException {
-        return searchFrom(start, false);
+    private int searchFrom(int startLine) throws IOException {
+        return searchFrom(startLine, false);
     }
-    private int searchFrom(int start, boolean findLast) throws IOException {
+    private int searchFrom(int startLine, boolean findLast) throws IOException {
         searchIndex = lastIndex = -1;
         try (Stream<String> stream = Files.lines(path)) {
-            Stream<String> s = stream.skip(start).filter(line -> {
+            Stream<String> s = stream.skip(startLine).filter(line -> {
                 searchIndex++;
                 boolean found = line.toLowerCase().indexOf(search) >= 0;
                 if (found && findLast)
@@ -151,15 +154,15 @@ public class FileView implements Jsonable {
                 return lastIndex;
             }
             else {
-                return s.findFirst().isPresent() ? searchIndex + start : -1;
+                return s.findFirst().isPresent() ? searchIndex + startLine : -1;
             }
         }
     }
 
-    private int searchTo(int end) throws IOException {
-        return searchTo(end, false);
+    private int searchTo(int endLine) throws IOException {
+        return searchTo(endLine, false);
     }
-    private int searchTo(int end, boolean findLast) throws IOException {
+    private int searchTo(int endLine, boolean findLast) throws IOException {
         searchIndex = lastIndex = -1;
         try (Stream<String> stream = Files.lines(path)) {
             Stream<String> s = stream.limit(lineIndex).filter(line -> {

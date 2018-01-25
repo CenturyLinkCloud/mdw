@@ -88,10 +88,9 @@ class FileView extends Component {
     else if (action === 'tailMode') {
       alert('Tail Mode is coming in mdw build 6.0.12');
     }
-    console.log('action: ' + action + ' (' + JSON.stringify(params) + ')');
   }
   
-  doFetch(props) {
+  doFetch(props, params) {
     this.retrieving = true;
     let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
     url += '?path=' + encodeURIComponent(props.item.path);
@@ -99,6 +98,9 @@ class FileView extends Component {
       url += '&lineIndex=' + this.lineIndex;
       if (this.options.bufferSize) {
         url += '&bufferSize=' + this.options.bufferSize;
+      }
+      if (params) {
+        url += '&' + params;
       }
     }
     fetch(new Request(url, {
@@ -128,6 +130,13 @@ class FileView extends Component {
         // find search pattern if present
         if (this.state.search.find) {
           this.find({find: this.state.search.find});
+          if (json.info.searchIndex > 0) {
+            if (json.info.searchIndex < this.lineIndex) {
+              // TODO: wrapped
+            }
+            this.lineIndex = json.info.searchIndex;
+            this.search(this.state.search);
+          }
         }
       }
       else {
@@ -312,16 +321,17 @@ class FileView extends Component {
   // TODO: not found in buffer
   search(search) {
     if (this.state.buffer.length > 0) {
-      // start is current search char index
+      // start is current search char index within buffer
       var start = this.state.search.start;
       if (!start) {
         // start at beginning of top line
         start = 0;
         if (this.lineIndex && this.state.buffer.lines) {
           const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
-          for (let i = this.state.buffer.start; i < this.lineIndex; i++) {
+          for (let i = 0; i < this.lineIndex - this.state.buffer.start; i++) {
             start += bufferLines[i].length + 1;
           }
+          start--; // why?
         }
       }
       if (this.state.search.results) {
@@ -363,8 +373,9 @@ class FileView extends Component {
           }
         }
         else {
-          // TODO: fetch
-          console.log("NOT FOUND IN BUFFER...");
+          // server search from end of buffer
+          const searchIndex = this.state.buffer.start + this.state.buffer.length;
+          this.doFetch(this.props, 'search=' + search.find + '&searchIndex=' + searchIndex);
         }
       }
     }
