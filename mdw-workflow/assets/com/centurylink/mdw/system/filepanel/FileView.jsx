@@ -299,7 +299,6 @@ class FileView extends Component {
   }
   
   // go to next match (assumes find has been executed)
-  // TODO: scroll into view
   // TODO: not found in buffer
   search(search) {
     if (this.state.buffer.length > 0) {
@@ -355,6 +354,7 @@ class FileView extends Component {
         }
         else {
           // TODO: fetch
+          console.log("NOT FOUND IN BUFFER...");
         }
       }
     }

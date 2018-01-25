@@ -67,10 +67,6 @@ public class FilePanelService extends JsonRestService {
                         headers.put(Listener.METAINFO_DOWNLOAD_FILE, file.getPath());
                         return null;
                     }
-                    else if (query.getFilter("search") != null) {
-                        // TODO grep
-                        return new JSONObject();
-                    }
                     else if (query.getFilter("grep") != null) {
                         // TODO grep
                         return new JSONObject();

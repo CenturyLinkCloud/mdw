@@ -101,7 +101,9 @@ function Toolbar(props) {
         <div>
           {isFile &&
             <div style={{display:'flex'}}>
-              <Search onAction={props.onAction}/>
+              {!props.item.binary &&
+                <Search onAction={props.onAction}/>
+              }
               <div style={{paddingTop:'3px', marginLeft:'20px'}}>
                 {!props.item.binary &&
                   <Button name="refresh" 
