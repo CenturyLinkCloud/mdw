@@ -12,7 +12,7 @@ class Search extends Component {
   }
 
   handleClick(event) {
-    const isClear =event.currentTarget.className === 'fp-clear';
+    const isClear = event.currentTarget.className === 'fp-clear';
     if (isClear) {
       this.setState({search: ''});
     }
@@ -29,8 +29,18 @@ class Search extends Component {
       this.setState({
         search: find
       });
-      if (find) {
-        this.props.onAction('find', {find: find, start: undefined});
+      if (this.props.options.searchWhileTyping) {
+        if (find) {
+          if (find.length >= this.props.options.searchMinLength) {
+            this.props.onAction('find', {find: find, start: undefined});
+          }
+          else {
+            this.props.onAction('search', {find: {search: ''}});
+          }
+        }
+        else {
+          this.props.onAction('search', {find: {search: ''}});
+        }
       }
     }
   }

@@ -39,11 +39,17 @@ class FileView extends Component {
       this.setState({
         item: props.item,
         buffer: {length: 0},
-        search: {find: this.state.search.find, results: [], message: null}
+        search: {results: [], message: null}
       });
       this.doFetch(props);
     }
   }
+  
+  componentDidUpdate() {
+    if (this.beforeRender) {
+      console.log('Render time: ' + (Date.now() - this.beforeRender) + ' ms');
+    }
+  }  
   
   handleOptions(options) {
     this.options = options;
@@ -75,7 +81,13 @@ class FileView extends Component {
     else if (action === 'search') {
       var search = Object.assign({}, this.state.search, params, {message: null});
       if (search.find.search) {
-        this.search(search);
+        if (this.options.searchWhileTyping) {
+          // find() was already run
+          this.search(search);
+        }
+        else {
+          this.find(search, () => this.search(search));
+        }
       }
       else { // clear
         this.setState({
@@ -187,29 +199,24 @@ class FileView extends Component {
       });
       return;
     }
-    
-    // approaching threshold
-    if (!this.retrieving) {
-      if (this.needsPreBuffer()) {
-        this.doFetch(this.props);
-      }
-      else if (this.needsPostBuffer()) {
-        this.doFetch(this.props);
-      }
-      else {
-        this.setState({
-          item: this.state.item,
-          buffer: this.state.buffer,
-          search: this.state.search
-        });
-      }
-    }
     else {
-      this.setState({
-        item: this.state.item,
-        buffer: this.state.buffer,
-        search: this.state.search
-      });
+      // approaching threshold?
+      if (!this.retrieving) {
+        if (this.needsPreBuffer()) {
+          this.doFetch(this.props);
+        }
+        else if (this.needsPostBuffer()) {
+          this.doFetch(this.props);
+        }
+        else {
+          console.log("SEARCH: " + JSON.stringify(this.state.search, null, 2));
+          this.setState({
+            item: this.state.item,
+            buffer: this.state.buffer,
+            search: this.state.search
+          });
+        }
+      }
     }
   }
   
@@ -301,7 +308,7 @@ class FileView extends Component {
   }
   
   // finds and highlights (no scroll or 
-  find(search) {
+  find(search, callback) {
     search.results = [];
     if (this.state.buffer.length > 0) {
       // begin is beginning of buffer lines
@@ -332,7 +339,7 @@ class FileView extends Component {
         item: this.state.item,
         buffer: this.state.buffer,
         search: search
-      });
+      }, callback);
     }    
   }
   
@@ -424,6 +431,9 @@ class FileView extends Component {
   }
   
   render() {
+    // uncomment for render timing
+    // this.beforeRender = Date.now();
+    
     var lineNumbers = this.getLineNumbers();
 
     if (this.scrollbars) {

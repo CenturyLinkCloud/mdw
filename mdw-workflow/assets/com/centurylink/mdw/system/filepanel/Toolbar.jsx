@@ -6,6 +6,7 @@ import '../../node/node_modules/style-loader!./filepanel.css';
 
 Toolbar.BUFFER_SIZE = 500;
 Toolbar.FETCH_THRESHOLD = 200;
+Toolbar.SEARCH_MIN_LENGTH = 3;
 
 Toolbar.getOptions = () => {
   var options = {};
@@ -19,6 +20,9 @@ Toolbar.getOptions = () => {
   }
   if (!options.fetchThreshold) {
     options.fetchThreshold = Toolbar.FETCH_THRESHOLD;
+  }
+  if (!options.searchMinLength) {
+    options.searchMinLength = Toolbar.SEARCH_MIN_LENGTH;
   }
   return options;
 };
@@ -40,6 +44,12 @@ function Toolbar(props) {
       }
       else if (event.currentTarget.name === 'fetchThreshold') {
         options.fetchThreshold = event.currentTarget.value;
+      }
+      else if (event.currentTarget.name === 'searchWhileTyping') {
+        options.searchWhileTyping = event.currentTarget.checked;
+      }
+      else if (event.currentTarget.name === 'searchMinLength') {
+        options.searchMinLength = event.currentTarget.value;
       }
       localStorage.setItem('filepanel-options', JSON.stringify(options));
       props.onOptions(options);
@@ -82,6 +92,26 @@ function Toolbar(props) {
               onChange={handleChange} />
           </label>
         </div>
+        <div>
+          <label>
+            <input name="searchWhileTyping" 
+              type="checkbox" 
+              checked={Toolbar.getOptions().searchWhileTyping} 
+              onChange={handleChange} />
+            Search While Typing
+          </label>
+        </div>
+        <div>
+          <label style={{paddingLeft:'5px'}}>
+            Minimum Characters:
+            <input name="searchMinLength" 
+              type="number" 
+              step="1" min="1" max="10"
+              disabled={!Toolbar.getOptions().searchWhileTyping}
+              value={Toolbar.getOptions().searchWhileTyping ? Toolbar.getOptions().searchMinLength : ''}
+              onChange={handleChange} />
+          </label>
+        </div>
       </div>
     </Popover>
   );
@@ -102,7 +132,10 @@ function Toolbar(props) {
           {isFile &&
             <div style={{display:'flex'}}>
               {!props.item.binary &&
-                <Search onAction={props.onAction} message={props.searchMessage} />
+                <Search 
+                  options={Toolbar.getOptions()} 
+                  onAction={props.onAction} 
+                  message={props.searchMessage} />
               }
               <div style={{paddingTop:'3px'}}>
                 {!props.item.binary &&
