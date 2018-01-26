@@ -164,7 +164,13 @@ public class AuthUtils {
     }
 
     private static boolean authenticateMdwAppToken(Map<String, String> headers, String payload) {
+        // If routing is not enabled, do not authenticate this way
+        if (!PropertyManager.getBooleanProperty(PropertyNames.MDW_ROUTING_REQUESTS_ENABLED, false))
+            return false;
+
         boolean okay = false;
+
+        // If first call, retrieve app tokens from DB
         if (mdwAppTokenMap == null) {
             synchronized(lock) {
                 Map<String,String> tempMap = mdwAppTokenMap;
@@ -172,7 +178,7 @@ public class AuthUtils {
                     tempMap = new HashMap<String, String>();
                     DatabaseAccess db = new DatabaseAccess(null);
                     try (Connection conn = db.openConnection()) {
-                        String select = "select name, value from values where owner_type='CLOUD' and owner_id='MDW_APP_TOKEN'";
+                        String select = "select name, value from value where owner_type='CLOUD' and owner_id='MDW_APP_TOKEN'";
                         ResultSet rs = db.runSelect(select, null);
                         while (rs.next()) {
                             tempMap.put(rs.getString("value"), rs.getString("name"));
