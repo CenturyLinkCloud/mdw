@@ -30,7 +30,7 @@ class Search extends Component {
         search: find
       });
       if (find) {
-        this.props.onAction('find', {find: find});
+        this.props.onAction('find', {find: find, start: undefined});
       }
     }
   }

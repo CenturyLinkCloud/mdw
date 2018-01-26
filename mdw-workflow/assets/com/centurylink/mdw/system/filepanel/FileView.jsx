@@ -342,39 +342,45 @@ class FileView extends Component {
     if (this.state.buffer.length > 0) {
       // start is current search char index within buffer
       var start = this.state.search.start;
+      if (!search.backward) {
+        if (typeof(start) === 'undefined' && this.state.buffer.start === 0) {
+          start = -1; // allow to find at very beginning of file
+        }
+      }
       if (!start) {
         // start at beginning of top line or end of bottom line (for backward)
         start = 0;
         if (this.lineIndex && this.state.buffer.lines) {
           const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
           var stop = this.lineIndex - this.state.buffer.start;
+          console.log('stop: ' + stop);
           if (search.backward) {
-            stop += this.getClientLines();
-            if (stop > this.state.buffer.start + this.state.buffer.length) {
-              stop = this.state.buffer.start + this.state.buffer.length;
+            stop += Math.round(this.getClientLines());
+            if (stop > this.state.buffer.length) {
+              stop = this.state.buffer.length;
             }
           }
           for (let i = 0; i < stop; i++) {
             start += bufferLines[i].length + 1;
           }
-          if (!search.backward) {
-            start--; // why?
-          }
         }
       }
+      
       if (this.state.search.results) {
         var idx = -1;
         for (let i = 0; i < this.state.search.results.length; i++) {
           const result = this.state.search.results[i];
-          if (search.backward) {
-            if (start > result.index) {
-              idx = i;
+          if (result.found) {
+            if (search.backward) {
+              if (start > result.index) {
+                idx = i;
+              }
             }
-          }
-          else {
-            if (start < result.index) {
-              idx = i;
-              break;
+            else {
+              if (start < result.index) {
+                idx = i;
+                break;
+              }
             }
           }
         }
@@ -429,8 +435,6 @@ class FileView extends Component {
         thumbVerticalY = frac * (trackVerticalHeight - FileView.THUMB_SIZE);
       }
     }
-    
-    console.log('this.state.search.message' + this.state.search.message);
     
     return (
       <div className="fp-view">
