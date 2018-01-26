@@ -103,6 +103,6 @@ public interface Listener {
     public static final String CONTENT_TYPE_ZIP = "application/zip";
     public static final String CONTENT_TYPE_DOWNLOAD = "application/octet-stream";
 
-    public static final String METAINFO_CLOUD_ROUTING = "CloudRouting";
-    public static final String METAINFO_MDW_APP_TOKEN = "MdwAppToken";
+    public static final String METAINFO_CLOUD_ROUTING = "cloud-routing";
+    public static final String METAINFO_MDW_APP_TOKEN = "mdw-app-token";
 }
