@@ -191,6 +191,10 @@ class FileView extends Component {
       this.lineIndex = Math.round(values.scrollTop * this.state.item.lineCount * this.getScale() / values.scrollHeight) + this.state.buffer.start;
     }
     
+    // reset search start
+    this.search();
+    console.log("SEARCH: " + JSON.stringify(this.state.search, null, 2));
+    
     if (this.retrieving) {
       this.setState({
         item: this.state.item,
@@ -209,7 +213,6 @@ class FileView extends Component {
           this.doFetch(this.props);
         }
         else {
-          console.log("SEARCH: " + JSON.stringify(this.state.search, null, 2));
           this.setState({
             item: this.state.item,
             buffer: this.state.buffer,
@@ -343,14 +346,16 @@ class FileView extends Component {
     }    
   }
   
-  // go to next match (assumes find has been executed)
-  // if not found in buffer, fetch from server
+  // Go to next match (assumes find has been executed).
+  // If not found in buffer, fetch from server.
+  // When called without parameter, simply sets new search start
   search(search) {
     if (this.state.buffer.length > 0) {
       // start is current search char index within buffer
-      var start = this.state.search.start;
-      if (!search.backward) {
-        if (typeof(start) === 'undefined' && this.state.buffer.start === 0) {
+      var start = search ? this.state.search.start : undefined;
+      var backward = search && search.backward;
+      if (!backward) {
+        if (typeof(start) === 'undefined' && this.lineIndex === 0) {
           start = -1; // allow to find at very beginning of file
         }
       }
@@ -360,8 +365,7 @@ class FileView extends Component {
         if (this.lineIndex && this.state.buffer.lines) {
           const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
           var stop = this.lineIndex - this.state.buffer.start;
-          console.log('stop: ' + stop);
-          if (search.backward) {
+          if (backward) {
             stop += Math.round(this.getClientLines());
             if (stop > this.state.buffer.length) {
               stop = this.state.buffer.length;
@@ -371,6 +375,10 @@ class FileView extends Component {
             start += bufferLines[i].length + 1;
           }
         }
+      }
+      if (!search) {
+        this.state.search.start = start - 1;
+        return;
       }
       
       if (this.state.search.results) {
