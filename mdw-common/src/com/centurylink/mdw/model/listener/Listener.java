@@ -104,4 +104,5 @@ public interface Listener {
     public static final String CONTENT_TYPE_DOWNLOAD = "application/octet-stream";
 
     public static final String METAINFO_CLOUD_ROUTING = "CloudRouting";
+    public static final String METAINFO_MDW_APP_TOKEN = "MdwAppToken";
 }

@@ -196,15 +196,10 @@ public class AuthUtils {
             return false;
 
         try {
-            // JSON request
-            JSONObject json = new JSONObject(payload);
-            okay = json.has("mdwAppToken") && mdwAppTokenMap.get(json.getString("mdwAppToken")) != null;
+            okay = headers.get(Listener.METAINFO_MDW_APP_TOKEN) != null && mdwAppTokenMap.get(headers.get(Listener.METAINFO_MDW_APP_TOKEN)) != null;
             if (okay) {
-                logger.info("Request authenticated using MDW Application Token for " + mdwAppTokenMap.get(json.getString("mdwAppToken")));
-                json.remove("mdwAppToken");
+                logger.info("Request authenticated using MDW Application Token for " + mdwAppTokenMap.get(headers.remove(Listener.METAINFO_MDW_APP_TOKEN)));
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
-                headers.put(Listener.METAINFO_REQUEST_PAYLOAD, json.toString());
-                headers.put(Listener.METAINFO_CLOUD_ROUTING, URLDecoder.decode(headers.get("serviceDestination"), "utf-8"));
             }
         }
         catch (Exception e) {

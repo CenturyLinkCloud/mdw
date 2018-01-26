@@ -205,7 +205,7 @@ public abstract class ServiceServlet extends HttpServlet {
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/routing")) {
                     // Validates request is coming from application with valid MDW APP Token - For routing services
-                    if (AuthUtils.authenticate(AuthUtils.MDW_APP_TOKEN, headers, payload))
+                    if (AuthUtils.authenticate(AuthUtils.MDW_APP_TOKEN, headers))
                         return;
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
