@@ -80,7 +80,9 @@ public class FileView implements Jsonable {
                 int searchIndex = query.getIntFilter("searchIndex");
                 if (searchIndex == -1)
                     searchIndex = 0;
-                lineIndex = this.searchIndex = search(searchIndex, query.getBooleanFilter("backward"));
+                this.searchIndex = search(searchIndex, query.getBooleanFilter("backward"));
+                if (this.searchIndex >= 0)
+                    this.lineIndex = this.searchIndex;
             }
 
             // one-pass forward
@@ -114,10 +116,11 @@ public class FileView implements Jsonable {
         search = search.toLowerCase();
         try (Stream<String> stream = Files.lines(path)) {
             if (backward) {
-                int idx = searchTo(startLine - 1, true);
-                if (idx < 0) {
+                int idx = -1;
+                if (startLine > 0)
+                    idx = searchTo(startLine - 1, true);
+                if (idx < 0)
                     idx = searchFrom(startLine, true);
-                }
                 return idx;
             }
             else {
@@ -165,7 +168,7 @@ public class FileView implements Jsonable {
     private int searchTo(int endLine, boolean findLast) throws IOException {
         searchIndex = lastIndex = -1;
         try (Stream<String> stream = Files.lines(path)) {
-            Stream<String> s = stream.limit(lineIndex).filter(line -> {
+            Stream<String> s = stream.limit(endLine).filter(line -> {
                 searchIndex++;
                 boolean found = line.toLowerCase().indexOf(search) >= 0;
                 if (found && findLast)

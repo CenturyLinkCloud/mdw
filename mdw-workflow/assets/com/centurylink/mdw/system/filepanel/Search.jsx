@@ -70,6 +70,9 @@ class Search extends Component {
             onClick={this.handleClick}>
             <Glyphicon glyph="chevron-down" />
           </Button>
+          <span className="fp-search-msg">
+            {this.props.message}
+          </span>
         </div>
       </div>
     )

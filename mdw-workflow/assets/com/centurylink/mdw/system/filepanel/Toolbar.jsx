@@ -95,16 +95,16 @@ function Toolbar(props) {
             placement="right" 
             overlay={optionsPopover} 
             rootClose={true}>
-            <Button style={{marginRight:'20px'}}>Options</Button>
+            <Button>Options</Button>
           </OverlayTrigger>
         </div>
         <div>
           {isFile &&
             <div style={{display:'flex'}}>
               {!props.item.binary &&
-                <Search onAction={props.onAction}/>
+                <Search onAction={props.onAction} message={props.searchMessage} />
               }
-              <div style={{paddingTop:'3px', marginLeft:'20px'}}>
+              <div style={{paddingTop:'3px'}}>
                 {!props.item.binary &&
                   <Button name="refresh" 
                     className="fp-icon-btn" 

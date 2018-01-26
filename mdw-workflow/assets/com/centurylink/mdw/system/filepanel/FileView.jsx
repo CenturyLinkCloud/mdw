@@ -12,7 +12,7 @@ class FileView extends Component {
 
     this.options = Toolbar.getOptions();
     
-    this.state = {item: {}, buffer: {length: 0}, search: {results: []}};
+    this.state = {item: {}, buffer: {length: 0}, search: {results: [], message: null}};
     this.lineIndex = 0;  // not kept in state
     this.retrieving = false;
     this.specifiedLineIndex = null; // transient value when click track or drag thumb
@@ -39,7 +39,7 @@ class FileView extends Component {
       this.setState({
         item: props.item,
         buffer: {length: 0},
-        search: {find: this.state.search.find, results: []}
+        search: {find: this.state.search.find, results: [], message: null}
       });
       this.doFetch(props);
     }
@@ -69,11 +69,11 @@ class FileView extends Component {
       this.setViewScrollTop(1);
     }
     else if (action === 'find') {
-      var search = Object.assign({}, this.state.search, params);
+      var search = Object.assign({}, this.state.search, params, {message: null});
       this.find(search);
     }
     else if (action === 'search') {
-      var search = Object.assign({}, this.state.search, params);
+      var search = Object.assign({}, this.state.search, params, {message: null});
       if (search.find.search) {
         this.search(search);
       }
@@ -81,7 +81,7 @@ class FileView extends Component {
         this.setState({
           item: this.state.item,
           buffer: this.state.buffer,
-          search: {results: []}
+          search: {results: [], message: null}
         });
       }
     }
@@ -113,12 +113,11 @@ class FileView extends Component {
     })
     .then(json => {
       this.lineIndex = this.lineIndex ? this.lineIndex : 0;
-      
       if (json.info.isFile) {
         this.setState({
           item: json.info,
           buffer: json.buffer,
-          search: {find: this.state.search.find, results: []}
+          search: {find: this.state.search.find, results: [], message: null, backward: this.state.search.backward}
         });
         
         // adjust for newly-retrieved lines
@@ -129,12 +128,32 @@ class FileView extends Component {
         
         // find search pattern if present
         if (this.state.search.find) {
-          this.find({find: this.state.search.find});
-          if (json.info.searchIndex > 0) {
-            if (json.info.searchIndex < this.lineIndex) {
-              // TODO: wrapped
+          this.find({find: this.state.search.find, backward: this.state.search.backward});
+          var searchIndex = json.info.searchIndex;
+          if (searchIndex === -1) {
+            this.state.search.message = 'Not found';
+            this.setState({
+              item: this.state.item,
+              buffer: this.state.buffer,
+              search: this.state.search
+            });
+            
+          }
+          else {
+            if (this.state.search.backward) {
+              if (searchIndex >= this.lineIndex) {
+                this.state.search.message = 'Wrapped';
+              } 
             }
-            this.lineIndex = json.info.searchIndex;
+            else {
+              if (searchIndex <= this.lineIndex) {
+                this.state.search.message = 'Wrapped';
+              }
+            }
+            if (this.lineIndex + this.getClientLines() < searchIndex || this.lineIndex > searchIndex) {
+              // make lineIndex visible after service search 
+              this.lineIndex = searchIndex;
+            }
             this.search(this.state.search);
           }
         }
@@ -318,20 +337,29 @@ class FileView extends Component {
   }
   
   // go to next match (assumes find has been executed)
-  // TODO: not found in buffer
+  // if not found in buffer, fetch from server
   search(search) {
     if (this.state.buffer.length > 0) {
       // start is current search char index within buffer
       var start = this.state.search.start;
       if (!start) {
-        // start at beginning of top line
+        // start at beginning of top line or end of bottom line (for backward)
         start = 0;
         if (this.lineIndex && this.state.buffer.lines) {
           const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
-          for (let i = 0; i < this.lineIndex - this.state.buffer.start; i++) {
+          var stop = this.lineIndex - this.state.buffer.start;
+          if (search.backward) {
+            stop += this.getClientLines();
+            if (stop > this.state.buffer.start + this.state.buffer.length) {
+              stop = this.state.buffer.start + this.state.buffer.length;
+            }
+          }
+          for (let i = 0; i < stop; i++) {
             start += bufferLines[i].length + 1;
           }
-          start--; // why?
+          if (!search.backward) {
+            start--; // why?
+          }
         }
       }
       if (this.state.search.results) {
@@ -373,9 +401,17 @@ class FileView extends Component {
           }
         }
         else {
-          // server search from end of buffer
-          const searchIndex = this.state.buffer.start + this.state.buffer.length;
-          this.doFetch(this.props, 'search=' + search.find + '&searchIndex=' + searchIndex);
+          // server search from edge of buffer
+          this.state.search.backward = search.backward;
+          var searchIndex = this.state.buffer.start;
+          if (!search.backward) {
+            searchIndex += this.state.buffer.length; 
+          }
+          var params = 'search=' + search.find + '&searchIndex=' + searchIndex;
+          if (search.backward) {
+            params += '&backward=true';
+          }
+          this.doFetch(this.props, params);
         }
       }
     }
@@ -394,13 +430,15 @@ class FileView extends Component {
       }
     }
     
+    console.log('this.state.search.message' + this.state.search.message);
+    
     return (
       <div className="fp-view">
         {this.state.item.isFile &&
           <Toolbar 
             line={this.lineIndex + 1}
             item={this.state.item}
-            searchResults={this.state.search.results}
+            searchMessage={this.state.search.message}
             onOptions={this.handleOptions}
             onAction={this.handleAction} />
         }

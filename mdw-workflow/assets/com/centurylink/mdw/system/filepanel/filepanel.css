@@ -153,8 +153,8 @@
   height: 16px;
 }
 .fp-search {
-  margin-right: 30px;
   margin-left: 20px;
+  width: 350px;
 }
 .fp-search input {
   margin: 3px;
@@ -166,6 +166,11 @@
   padding-bottom: 4px;
   margin-right: 0; 
 }
+.fp-search-msg {
+	margin-left: 5px;
+  color: #d0021b;
+  font-size: 13px;
+}
 .fp-clear {
   position: relative;
   top: 1px;
@@ -176,7 +181,7 @@
   cursor: pointer;
 }
 .fp-clear:hover {
-  color: #D0021B;
+  color: #d0021b;
 }
 .fp-mark {
   background-color: yellow;
