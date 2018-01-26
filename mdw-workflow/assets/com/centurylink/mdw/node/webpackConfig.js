@@ -57,7 +57,13 @@ module.exports = {
             ]
           } 
         ]
-      }
+      },
+      plugins: input.devMode ? [] : [
+        // uncomment for prod build
+        new (require('webpack')).DefinePlugin({
+          'process.env.NODE_ENV': JSON.stringify('production')
+        })        
+      ]
     }
   },
   bareStats: {
