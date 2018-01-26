@@ -366,11 +366,11 @@ public class User implements Serializable, Comparable<User>, Jsonable {
     public String getEmail() {
         String email = getAttribute(EMAIL_ADDRESS);
         if (email == null)
-            email = getAttribute(EMAIL_ADDRESS);
+            email = getAttribute(OLD_EMAIL_ADDRESS);
         return email;
     }
     public void setEmail(String s) {
-        setAttribute(OLD_EMAIL_ADDRESS, s);
+        setAttribute(EMAIL_ADDRESS, s);
     }
 
     @ApiModelProperty(hidden=true)

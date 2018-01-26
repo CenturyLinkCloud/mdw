@@ -1,35 +1,41 @@
 <form name="solutionForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
   <div class="form-group" ng-class="{'has-error': solution.id === undefined}">
     <label class="control-label col-xs-2 mdw-required" for="solutionId">ID:</label>
-    <div class="col-xs-4">
+    <div class="col-xs-6">
       <input type="text" id="solutionId" name="id" class="form-control" ng-model="solution.id" required maxlength="100"
         focus-me="create !== undefined" ng-readonly="create === undefined" ng-blur="solution.id = solution.id === '' ? undefined : solution.id">
     </div>
   </div>
   <div class="form-group" ng-class="{'has-error': solution.name === undefined}">
     <label class="control-label col-xs-2 mdw-required" for="solutionName">Name:</label>
-    <div class="col-xs-10">
+    <div class="col-xs-6">
       <input type="text" id="solutionName" name="name" class="form-control" ng-model="solution.name" required focus-me="create === undefined"
         ng-blur="solution.name = solution.name === '' ? undefined : solution.name">
     </div>
   </div>
   <div class="form-group">
     <label class="control-label col-xs-2" for="solutionDescrip">Description:</label>
-    <div class="col-xs-10">
+    <div class="col-xs-6">
       <textarea id="solutionDescrip" class="form-control" rows="4" maxlength="1000" ng-model="solution.description"></textarea>
     </div>
   </div>
   <div class="form-group" ng-repeat="(valName, valValue) in solution.values" ng-if="valName.indexOf(':') < 0">
     <label class="control-label col-xs-2" for="{{valName}}">{{valName}}:</label>
-    <div class="col-xs-10">
+    <div class="col-xs-6">
       <input type="text" ng-attr-id="{{valName}}" ng-attr-name="{{valName}}" class="form-control" ng-model="solution.values[valName]">
     </div>
+    <button ng-if="authUser.hasRole('Site Admin')"
+      class="btn btn-danger mdw-btn" type="button" ng-click="del(valName)">Delete</button>
   </div>
+  
+  <div ng-if="edit && advance" ng-include="'solutions/solAttributes.html'"></div>
+  
+  
   <div class="mdw-form-footer">
     <div class="col-xs-2"></div>
     <div class="mdw-message">{{solution.message}}</div>
     <div class="mdw-buttons">
-      <button class="btn btn-info mdw-btn mdw-advanced-btn" type="button">Advanced...</button>
+      <button class="btn btn-info mdw-btn mdw-advanced-btn" type="button" ng-click="setAdvance(true)">Advanced...</button>
       <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!isSaveEnabled()">Save</button>
       <button class="btn mdw-btn mdw-cancel-btn" type="reset" ng-click="cancel()">Cancel</button>
     </div>

@@ -252,6 +252,7 @@ public class UserDataAccess extends UserDataAccessDb {
 
     public Workgroup getGroup(String groupName) throws DataAccessException {
         try {
+            Workgroup group = null;
             db.openConnection();
             String sql = "select USER_GROUP_ID, COMMENTS, PARENT_GROUP_ID, END_DATE "
                     + " from USER_GROUP where GROUP_NAME=? and END_DATE is null";
@@ -259,7 +260,7 @@ public class UserDataAccess extends UserDataAccessDb {
             if (rs.next()) {
                 Long id = rs.getLong(1);
                 String comments = rs.getString(2);
-                Workgroup group = new Workgroup(id, groupName, comments);
+                group = new Workgroup(id, groupName, comments);
                 long pid = rs.getLong(3);
                 group.setEndDate(rs.getString(4));
                 if (pid > 0L) {
@@ -268,12 +269,10 @@ public class UserDataAccess extends UserDataAccessDb {
                     if (rs.next())
                         group.setParentGroup(rs.getString(1));
                 }
+            }
+            if (group != null)
                 loadAttributesForGroup(group);
-                return group;
-            }
-            else {
-                return null;
-            }
+            return group;
         }
         catch (Exception ex) {
             throw new DataAccessException(-1, "Failed to get user group", ex);
@@ -285,6 +284,7 @@ public class UserDataAccess extends UserDataAccessDb {
 
     public Workgroup getGroup(Long groupId) throws DataAccessException {
         try {
+            Workgroup group = null;
             db.openConnection();
             String sql = "select GROUP_NAME, COMMENTS, PARENT_GROUP_ID, END_DATE "
                     + " from USER_GROUP where USER_GROUP_ID=?";
@@ -292,7 +292,7 @@ public class UserDataAccess extends UserDataAccessDb {
             if (rs.next()) {
                 String groupName = rs.getString(1);
                 String comments = rs.getString(2);
-                Workgroup group = new Workgroup(groupId, groupName, comments);
+                group = new Workgroup(groupId, groupName, comments);
                 long pid = rs.getLong(3);
                 if (pid > 0L) {
                     rs = db.runSelect(sql, pid);
@@ -300,11 +300,10 @@ public class UserDataAccess extends UserDataAccessDb {
                         group.setParentGroup(rs.getString(1));
                 }
                 group.setEndDate(rs.getString(4));
-                loadAttributesForGroup(group);
-                return group;
             }
-            else
-                return null;
+            if (group != null)
+                loadAttributesForGroup(group);
+            return group;
         }
         catch (Exception ex) {
             throw new DataAccessException(-1, "Failed to get user group", ex);
