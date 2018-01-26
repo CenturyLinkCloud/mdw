@@ -98,8 +98,8 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   
 }]);
 
-userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Users', 'Workgroups', 'Workroles',
-                                      function($scope, $routeParams, $location, Users, Workgroups, Workroles) {
+userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Users', 'uiUtil', 'Workgroups', 'Workroles',
+                                      function($scope, $routeParams, $location, Users, uiUtil, Workgroups, Workroles) {
   // need the workgroup list cached
   if (!Workgroups.groupList)
     Workgroups.groupList = Workgroups.get();
@@ -116,6 +116,9 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
       $scope.uneditedUser = Users.shallowCopy({}, $scope.user);
   };
   
+  $scope.setAdvance = function(advance) {
+	    $scope.advance = advance;
+  };
   $scope.confirm = false;
   $scope.setConfirm = function(confirm) {
     $scope.confirm = confirm;
@@ -126,6 +129,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
     if ($scope.edit)
       $scope.user = Users.shallowCopy($scope.user, $scope.uneditedUser);
     $scope.setEdit(false);
+    $scope.setAdvance(false);
     $scope.setConfirm(false);
   };
   
@@ -148,6 +152,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
         else {
           $scope.userName = $scope.user.name;
           $scope.setEdit(false);
+          $scope.setAdvance(false);
         }
       }, 
       function(error) {
@@ -282,8 +287,14 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
 	      value: ''
 	  };
   };
-  $scope.del = function(i){
-	  delete  $scope.user.attributes[i];
+  $scope.del = function(attrName){
+		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+			if (res) {
+				delete  $scope.user.attributes[attrName];
+			   console.log('deleted attribute ' + attrName);
+			}
+		});
   };
 }]);
 

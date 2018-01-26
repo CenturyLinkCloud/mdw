@@ -35,6 +35,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable {
 
     public static final boolean DEFAULT_ALL_ROLES = false;
+    public static final String SLACK_CHANNEL = "Slack Channel";
 
     /**
      * Site admin group is the parent/ancester group for all other groups.
@@ -257,4 +258,13 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
     }
 
     public String getJsonName() { return "Group"; }
+
+    @ApiModelProperty(hidden=true)
+    public String getSlackChennel() {
+        String chennel = getAttribute(SLACK_CHANNEL);
+        return chennel;
+    }
+    public void setSlackChennel(String s) {
+        setAttribute(SLACK_CHANNEL, s);
+    }
 }

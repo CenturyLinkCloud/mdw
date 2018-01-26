@@ -324,7 +324,10 @@ public class UserGroupCache implements PreloadableCache {
     private Workgroup loadWorkgroup(String name) throws CachingException {
         try {
             UserManager userManager = ServiceLocator.getUserManager();
-            return userManager.getUserGroup(name, false);
+            Workgroup group = userManager.getUserGroup(name, false);
+            if (group.getAttribute(Workgroup.SLACK_CHANNEL) == null)
+                group.setAttribute(Workgroup.SLACK_CHANNEL, "");
+            return group;
         }
         catch (Exception ex) {
             throw new CachingException(ex.getMessage(), ex);

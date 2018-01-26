@@ -99,8 +99,8 @@ solutionMod.controller('SolutionsController', ['$scope', '$http', '$location', '
   
 }]);
 
-solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$location', '$http', 'mdw', 'Solutions',
-                                              function($scope, $routeParams, $location, $http, mdw, Solutions) {
+solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$location', '$http', 'mdw', 'uiUtil', 'Solutions',
+                                              function($scope, $routeParams, $location, $http, mdw, uiUtil, Solutions) {
   $scope.solutionId = $routeParams.solutionId;
   $scope.edit = false;
   $scope.setEdit = function(edit) {
@@ -298,7 +298,34 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
 	          $scope.solution.message = error.data.status.message;
 	        });
   };
-  
+  $scope.setAdvance = function(advance) {
+	    $scope.advance = advance;
+  };
+  $scope.attribute = {
+	      name: '', 
+	      value: ''
+	  };
+  $scope.addAttribute = function () {
+	    if ($scope.solution.values === undefined) {
+	    	$scope.solution.values = {};
+	    }
+
+	  $scope.solution.values[$scope.attribute.name] = $scope.attribute.value;
+	  
+	  $scope.attribute = {
+	      name: '', 
+	      value: ''
+	  };
+  };
+  $scope.del = function(attrName){
+		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+			if (res) {
+				delete  $scope.solution.values[attrName];
+			   console.log('deleted attribute ' + attrName);
+			}
+		});
+  };  
 }]);
 
 solutionMod.factory('Solutions', ['$resource', 'mdw', function($resource, mdw) {
