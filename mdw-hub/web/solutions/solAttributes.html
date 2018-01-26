@@ -1,0 +1,43 @@
+<div class="panel panel-default mdw-panel">
+  <div class="panel-heading mdw-heading">
+    <div class="mdw-heading-label">Add New Attribute</div>
+  </div>
+  <div class="form-horizontal mdw-section">
+    <div class="form-group mdw-static-group">
+      <label
+        class="control-label col-xs-2 mdw-required"
+        for="{{attribute.name}}">Name:</label>
+      <div class="col-xs-6">
+        <input
+          id='newAttr-Name'
+          type="text"
+          ng-model="attribute.name"
+          class="form-control"
+          maxlength="256" />
+      </div>
+    </div>
+    <div class="form-group mdw-static-group">
+      <label
+        class="control-label col-xs-2 mdw-required"
+        for="{{attribute.value}}">Value:</label>
+      <div class="col-xs-6">
+        <input
+          id='newAttr-Value'
+          type="text"
+          ng-model="attribute.value"
+          class="form-control"
+          maxlength="256" />
+      </div>
+      <div>
+        <button
+          class="btn btn-primary mdw-btn"
+          type="button"
+          ng-click="addAttribute()">
+          <span class="glyphicon glyphicon-add"></span> Add
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<br />
+<!-- pre>{{solution.attributes|json}}</pre  -->
