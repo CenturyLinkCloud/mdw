@@ -49,19 +49,19 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
      */
     public User getUser(String userName) throws DataAccessException {
         try {
+            User user = null;
             db.openConnection();
             String sql = "select " + USER_SELECT_FIELDS + " from USER_INFO u where lower(u.CUID)=?";
                sql += " and END_DATE is null";
              ResultSet rs = db.runSelect(sql, userName.toLowerCase());
              if (rs.next()) {
-                 User user = createUserInfoFromResultSet(rs);
+                 user = createUserInfoFromResultSet(rs);
+             }
+             if (user != null) {
                  loadGroupsRolesForUser(user);
                  loadAttributesForUser(user);
-                 return user;
              }
-             else {
-                 return null;
-             }
+             return user;
         } catch(Exception ex){
             throw new DataAccessException(-1, "Failed to get user: " + userName, ex);
         } finally {
@@ -200,11 +200,11 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
                 long pid = rs.getLong(4);
                 if (pid>0L) group.setParentGroup(Long.toString(pid));
                 group.setEndDate(rs.getString(5));
-                loadAttributesForGroup(group);
                 nameMap.put(groupId, groupName);
                 groups.add(group);
             }
             for (Workgroup group : groups) {
+                loadAttributesForGroup(group);
                 if (group.getParentGroup()!=null) {
                     Long pid = new Long(group.getParentGroup());
                     group.setParentGroup(nameMap.get(pid));
