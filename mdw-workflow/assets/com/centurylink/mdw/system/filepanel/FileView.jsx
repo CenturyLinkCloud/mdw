@@ -49,7 +49,7 @@ class FileView extends Component {
     if (this.beforeRender) {
       console.log('Render time: ' + (Date.now() - this.beforeRender) + ' ms');
     }
-  }  
+  }
   
   handleOptions(options) {
     this.options = options;
@@ -104,6 +104,7 @@ class FileView extends Component {
   
   doFetch(props, params) {
     this.retrieving = true;
+    $mdwUi.hubLoading(true);
     let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
     url += '?path=' + encodeURIComponent(props.item.path);
     if (props.item.isFile) {
@@ -121,6 +122,7 @@ class FileView extends Component {
       credentials: 'same-origin'
     }))
     .then(response => {
+      $mdwUi.hubLoading(false);
       return response.json();
     })
     .then(json => {
@@ -191,9 +193,7 @@ class FileView extends Component {
       this.lineIndex = Math.round(values.scrollTop * this.state.item.lineCount * this.getScale() / values.scrollHeight) + this.state.buffer.start;
     }
     
-    // reset search start
-    this.search();
-    console.log("SEARCH: " + JSON.stringify(this.state.search, null, 2));
+    // TODO: reset search start
     
     if (this.retrieving) {
       this.setState({
@@ -348,7 +348,6 @@ class FileView extends Component {
   
   // Go to next match (assumes find has been executed).
   // If not found in buffer, fetch from server.
-  // When called without parameter, simply sets new search start
   search(search) {
     if (this.state.buffer.length > 0) {
       // start is current search char index within buffer
@@ -375,10 +374,6 @@ class FileView extends Component {
             start += bufferLines[i].length + 1;
           }
         }
-      }
-      if (!search) {
-        this.state.search.start = start - 1;
-        return;
       }
       
       if (this.state.search.results) {
@@ -441,7 +436,7 @@ class FileView extends Component {
   render() {
     // uncomment for render timing
     // this.beforeRender = Date.now();
-    
+
     var lineNumbers = this.getLineNumbers();
 
     if (this.scrollbars) {

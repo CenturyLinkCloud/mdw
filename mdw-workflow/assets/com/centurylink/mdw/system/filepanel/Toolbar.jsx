@@ -98,7 +98,7 @@ function Toolbar(props) {
               type="checkbox" 
               checked={Toolbar.getOptions().searchWhileTyping} 
               onChange={handleChange} />
-            Search While Typing
+            Match While Typing
           </label>
         </div>
         <div>

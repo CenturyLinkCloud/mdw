@@ -23,6 +23,7 @@ class Index extends Component {
   }
   
   componentDidMount() {
+    $mdwUi.clearMessage();
     var ok = false;
     fetch(new Request(this.getChildContext().serviceRoot + '/com/centurylink/mdw/system/filepanel', {
       method: 'GET',
