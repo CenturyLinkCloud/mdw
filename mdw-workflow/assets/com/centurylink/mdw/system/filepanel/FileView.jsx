@@ -144,31 +144,37 @@ class FileView extends Component {
         if (this.state.search.find) {
           this.find({find: this.state.search.find, backward: this.state.search.backward});
           var searchIndex = json.info.searchIndex;
-          if (searchIndex === -1) {
-            this.state.search.message = 'Not found';
-            this.setState({
-              item: this.state.item,
-              buffer: this.state.buffer,
-              search: this.state.search
-            });
-            
-          }
-          else {
-            if (this.state.search.backward) {
-              if (searchIndex >= this.lineIndex) {
-                this.state.search.message = 'Wrapped';
-              } 
+          if (typeof(searchIndex) !== 'undefined') {
+            if (searchIndex === -1) {
+              this.state.search.message = 'Not found';
+              this.setState({
+                item: this.state.item,
+                buffer: this.state.buffer,
+                search: this.state.search
+              });
+              
             }
             else {
-              if (searchIndex <= this.lineIndex) {
-                this.state.search.message = 'Wrapped';
+              if (this.state.search.backward) {
+                if (searchIndex >= this.lineIndex) {
+                  this.state.search.message = 'Wrapped';
+                } 
               }
+              else {
+                if (searchIndex <= this.lineIndex) {
+                  this.state.search.message = 'Wrapped';
+                }
+              }
+              if (this.lineIndex + this.getClientLines() < searchIndex || this.lineIndex > searchIndex) {
+                // make lineIndex visible after service search 
+                this.lineIndex = searchIndex;
+              }
+              this.search(this.state.search);
             }
-            if (this.lineIndex + this.getClientLines() < searchIndex || this.lineIndex > searchIndex) {
-              // make lineIndex visible after service search 
-              this.lineIndex = searchIndex;
-            }
-            this.search(this.state.search);
+          }
+          else if (typeof(this.rememberedSearchStart) !== 'undefined') {
+            // may have scrolled for buffering after scroll due to search
+            this.search(Object.assign(this.state.search), {start: this.rememberedSearchStart})
           }
         }
       }
@@ -185,6 +191,7 @@ class FileView extends Component {
   }
 
   handleScroll(values) {
+    console.log("handleScroll(" + this.rememberedSearchStart + ")");
     if (this.specifiedLineIndex !== null) {
       this.lineIndex = this.specifiedLineIndex;
       this.specifiedLineIndex = null;
@@ -193,7 +200,13 @@ class FileView extends Component {
       this.lineIndex = Math.round(values.scrollTop * this.state.item.lineCount * this.getScale() / values.scrollHeight) + this.state.buffer.start;
     }
     
-    // TODO: reset search start
+    // unset search start so it'll be recalculated based on current scroll position
+    delete this.state.search.start;
+    const rememberedSearchStart = this.rememberedSearchStart;
+    if (this.rememberedSearchStart !== 'undefined') {
+      this.state.search.start = this.rememberedSearchStart;
+      delete this.rememberedSearchStart;
+    }    
     
     if (this.retrieving) {
       this.setState({
@@ -207,9 +220,11 @@ class FileView extends Component {
       // approaching threshold?
       if (!this.retrieving) {
         if (this.needsPreBuffer()) {
+          this.rememberedSearchStart = rememberedSearchStart;
           this.doFetch(this.props);
         }
         else if (this.needsPostBuffer()) {
+          this.rememberedSearchStart = rememberedSearchStart;
           this.doFetch(this.props);
         }
         else {
@@ -346,25 +361,42 @@ class FileView extends Component {
     }    
   }
   
+  scrollSearchResultIntoView(search, result) {
+    this.rememberedSearchStart = search.start; // remember search start
+    
+    var elem = document.getElementById('res-' + result.index);
+    if (typeof elem.scrollIntoViewIfNeeded === 'function') {
+      elem.scrollIntoViewIfNeeded({behavior: 'instant', block: 'center', inline: 'center'});
+    }
+    else {
+      try {
+        elem.scrollIntoView({behavior: 'instant', block: 'center', inline: 'center'});
+      }
+      catch (err) {
+        elem.scrollIntoView();
+      }
+    }
+    
+    this.setState({
+      item: this.state.item,
+      buffer: this.state.buffer,
+      search: search
+    });
+  }
+  
   // Go to next match (assumes find has been executed).
   // If not found in buffer, fetch from server.
   search(search) {
     if (this.state.buffer.length > 0) {
       // start is current search char index within buffer
-      var start = search ? this.state.search.start : undefined;
-      var backward = search && search.backward;
-      if (!backward) {
-        if (typeof(start) === 'undefined' && this.lineIndex === 0) {
-          start = -1; // allow to find at very beginning of file
-        }
-      }
-      if (!start) {
+      var start = this.state.search.start;
+      if (typeof(start) === 'undefined') {
         // start at beginning of top line or end of bottom line (for backward)
-        start = 0;
+        start = -1;
         if (this.lineIndex && this.state.buffer.lines) {
           const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
           var stop = this.lineIndex - this.state.buffer.start;
-          if (backward) {
+          if (search.backward) {
             stop += Math.round(this.getClientLines());
             if (stop > this.state.buffer.length) {
               stop = this.state.buffer.length;
@@ -372,6 +404,9 @@ class FileView extends Component {
           }
           for (let i = 0; i < stop; i++) {
             start += bufferLines[i].length + 1;
+          }
+          if (search.backward) {
+            search++;
           }
         }
       }
@@ -398,23 +433,7 @@ class FileView extends Component {
           // found next match in buffer
           const res = this.state.search.results[idx];
           search.start = res.index;
-          this.setState({
-            item: this.state.item,
-            buffer: this.state.buffer,
-            search: search
-          });
-          var resElem = document.getElementById('res-' + res.index);
-          if (typeof resElem.scrollIntoViewIfNeeded === 'function') {
-            resElem.scrollIntoViewIfNeeded({behavior: 'instant', block: 'center', inline: 'center'});
-          }
-          else {
-            try {
-              resElem.scrollIntoView({behavior: 'instant', block: 'center', inline: 'center'});
-            }
-            catch (err) {
-              resElem.scrollIntoView();
-            }
-          }
+          this.scrollSearchResultIntoView(search, res);
         }
         else {
           // server search from edge of buffer
@@ -438,7 +457,7 @@ class FileView extends Component {
     // this.beforeRender = Date.now();
 
     var lineNumbers = this.getLineNumbers();
-
+    
     if (this.scrollbars) {
       var thumbVerticalY = 0;
       if (this.lineIndex > 0) {

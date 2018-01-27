@@ -42,6 +42,9 @@ class Search extends Component {
           this.props.onAction('search', {find: {search: ''}});
         }
       }
+      else {
+        this.props.onAction('search', {find: {search: ''}});
+      }
     }
   }
   
