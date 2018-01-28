@@ -149,7 +149,7 @@ public class FileView implements Jsonable {
                 searchIndex++;
                 boolean found = line.toLowerCase().indexOf(search) >= 0;
                 if (found && findLast)
-                    lastIndex = searchIndex;
+                    lastIndex = searchIndex + startLine;
                 return found;
             });
             if (findLast) {

@@ -63,6 +63,7 @@ class FileView extends Component {
   handleAction(action, params) {
     if (action === 'refresh') {
       this.lineIndex = 0;
+      delete this.rememberedScrollStart;
       this.setViewScrollTop(0);
       this.doFetch(this.props);
     }
@@ -72,6 +73,7 @@ class FileView extends Component {
           encodeURIComponent(this.props.item.path) + '&download=true';
     }
     else if (action === 'scrollToEnd') {
+      delete this.rememberedScrollStart;
       this.setViewScrollTop(1);
     }
     else if (action === 'find') {
@@ -127,6 +129,10 @@ class FileView extends Component {
     })
     .then(json => {
       this.lineIndex = this.lineIndex ? this.lineIndex : 0;
+      var prevSearchIndex = this.state.buffer.start;
+      if (!this.state.search.backward) {
+        prevSearchIndex += this.state.buffer.length; 
+      }
       if (json.info.isFile) {
         this.setState({
           item: json.info,
@@ -156,12 +162,12 @@ class FileView extends Component {
             }
             else {
               if (this.state.search.backward) {
-                if (searchIndex >= this.lineIndex) {
+                if (searchIndex >= prevSearchIndex - 1) {
                   this.state.search.message = 'Wrapped';
                 } 
               }
               else {
-                if (searchIndex <= this.lineIndex) {
+                if (searchIndex <= prevSearchIndex) {
                   this.state.search.message = 'Wrapped';
                 }
               }
@@ -191,7 +197,6 @@ class FileView extends Component {
   }
 
   handleScroll(values) {
-    console.log("handleScroll(" + this.rememberedSearchStart + ")");
     if (this.specifiedLineIndex !== null) {
       this.lineIndex = this.specifiedLineIndex;
       this.specifiedLineIndex = null;
@@ -321,7 +326,7 @@ class FileView extends Component {
   getClientLines() {
     if (this.scrollbars) {
       const lineHeight = FileView.FONT_SIZE * FileView.LINE_HEIGHT;
-      return this.scrollbars.view.clientHeight / lineHeight + 1; // TODO: why off by one?
+      return (this.scrollbars.view.offsetHeight - 6) / lineHeight;
     }
   }
   
@@ -361,29 +366,6 @@ class FileView extends Component {
     }    
   }
   
-  scrollSearchResultIntoView(search, result) {
-    this.rememberedSearchStart = search.start; // remember search start
-    
-    var elem = document.getElementById('res-' + result.index);
-    if (typeof elem.scrollIntoViewIfNeeded === 'function') {
-      elem.scrollIntoViewIfNeeded({behavior: 'instant', block: 'center', inline: 'center'});
-    }
-    else {
-      try {
-        elem.scrollIntoView({behavior: 'instant', block: 'center', inline: 'center'});
-      }
-      catch (err) {
-        elem.scrollIntoView();
-      }
-    }
-    
-    this.setState({
-      item: this.state.item,
-      buffer: this.state.buffer,
-      search: search
-    });
-  }
-  
   // Go to next match (assumes find has been executed).
   // If not found in buffer, fetch from server.
   search(search) {
@@ -393,11 +375,11 @@ class FileView extends Component {
       if (typeof(start) === 'undefined') {
         // start at beginning of top line or end of bottom line (for backward)
         start = -1;
-        if (this.lineIndex && this.state.buffer.lines) {
+        if (this.state.buffer.lines) {
           const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
           var stop = this.lineIndex - this.state.buffer.start;
           if (search.backward) {
-            stop += Math.round(this.getClientLines());
+            stop += this.getClientLines() + 1;
             if (stop > this.state.buffer.length) {
               stop = this.state.buffer.length;
             }
@@ -406,7 +388,7 @@ class FileView extends Component {
             start += bufferLines[i].length + 1;
           }
           if (search.backward) {
-            search++;
+            start++;
           }
         }
       }
@@ -450,6 +432,29 @@ class FileView extends Component {
         }
       }
     }
+  }
+  
+  scrollSearchResultIntoView(search, result) {
+    this.rememberedSearchStart = search.start; // remember search start
+    
+    var elem = document.getElementById('res-' + result.index);
+    if (typeof elem.scrollIntoViewIfNeeded === 'function') {
+      elem.scrollIntoViewIfNeeded({behavior: 'instant', block: 'center', inline: 'center'});
+    }
+    else {
+      try {
+        elem.scrollIntoView({behavior: 'instant', block: 'center', inline: 'center'});
+      }
+      catch (err) {
+        elem.scrollIntoView();
+      }
+    }
+    
+    this.setState({
+      item: this.state.item,
+      buffer: this.state.buffer,
+      search: search
+    });
   }
   
   render() {
