@@ -27,39 +27,17 @@ mdwMod.factory('mdw', function() {
       };
     },    
     hubLoading: function(loading) {
-      // TODO: figure out a more angular way
-      var isIe = (navigator.userAgent.indexOf('MSIE') >= 0 || navigator.userAgent.indexOf('Trident') >= 0);
       setTimeout(function() {
-        var logo, load;
+        var logo;
         if (loading) {
-          if (isIe) {
-            logo = document.getElementById('hub_logo');
-            if (logo)
-              logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_loading.gif';
-          }
-          else {
-            logo = document.getElementById('hub_logo');
-            if (logo)
-              logo.style.display = 'none';
-            load = document.getElementById('hub_loading');
-            if (load)
-              load.style.display = 'inline';
-          }
+          logo = document.getElementById('hub_logo');
+          if (logo)
+            logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_loading.gif';
         }
         else {
-          if (isIe) {
-            logo = document.getElementById('hub_logo');
-            if (logo)
-              logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_logo.png';
-          }
-          else {
-            load = document.getElementById('hub_loading');
-            if (load)
-              load.style.display = 'none';
-            logo = document.getElementById('hub_logo');
-            if (logo)
-              logo.style.display = 'inline';
-          }
+          logo = document.getElementById('hub_logo');
+          if (logo)
+            logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_logo.png';
         }
       }, 0);
     }

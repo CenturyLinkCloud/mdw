@@ -88,22 +88,16 @@ var $mdwUi = {
    },
    hubLoading: function(loading) {
      setTimeout(function() {
-       var logo, load;
+       var logo;
        if (loading) {
          logo = document.getElementById('hub_logo');
          if (logo)
-           logo.style.display = 'none';
-         load = document.getElementById('hub_loading');
-         if (load)
-           load.style.display = 'inline';
+           logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_loading.gif';
        }
        else {
-         load = document.getElementById('hub_loading');
-         if (load)
-           load.style.display = 'none';
          logo = document.getElementById('hub_logo');
          if (logo)
-           logo.style.display = 'inline';
+           logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_logo.png';
        }
      }, 0);
    }   

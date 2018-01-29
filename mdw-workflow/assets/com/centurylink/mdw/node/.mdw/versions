@@ -10,5 +10,5 @@ parser.js=3
 readme.md=1
 test.js=1
 testRunner.js=8
-webpackConfig.js=4
-webpackRunner.js=3
+webpackConfig.js=6
+webpackRunner.js=4

@@ -43,73 +43,49 @@ public class FileView implements Jsonable {
     private Query query;
     public Query getQuery() { return query; }
 
+    private Path path;
+
     private int lineIndex;
     private StringBuilder lineBuffer;
     private int bufferSize;   // buffer size (TODO: options)
     private int bufferLength;  // actual number of lines in buffer
     private int bufferStart;
 
+    private String search;
+
     private int lineCount;
 
     public FileView(FileInfo info, Query query) throws IOException {
         this.info = info;
         this.query = query;
-        lineIndex = query.getIntFilter("lineIndex");
-        if (lineIndex == -1)
-            lineIndex = 0;
-        bufferSize = query.getIntFilter("bufferSize");
-        if (bufferSize == -1)
-            bufferSize = 1000;
 
-        lineBuffer = new StringBuilder();  // TODO: presize?
-        bufferLength = 0;
-
-        Path path = Paths.get(info.getPath());
         if (info.isBinary()) {
             lineBuffer.append("Binary file: " + info.getName());
         }
         else {
-//            // old-fashioned
-//            File file = path.toFile();
-//            int count = 0;
-//            try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
-//                while (reader.readLine() != null) {}
-//                count = reader.getLineNumber();
-//            }
-//            info.setLineCount(count);
-//
-//            try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
-//                int firstLine = getBufferFirstLine() + 1;
-//                int lastLine = getBufferLastLine() + 1;
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    if (reader.getLineNumber() >= firstLine
-//                         && reader.getLineNumber() <= lastLine) {
-//                        lineBuffer.append(applyMask(line)).append("\n");
-//                    }
-//                }
-//                info.setLineCount(reader.getLineNumber());
-//            }
+            path = Paths.get(info.getPath());
+            lineIndex = query.getIntFilter("lineIndex");
+            if (lineIndex == -1)
+                lineIndex = 0;
+            bufferSize = query.getIntFilter("bufferSize");
+            if (bufferSize == -1)
+                bufferSize = 1000;
 
+            lineBuffer = new StringBuilder();  // TODO: presize?
+            bufferLength = 0;
 
-            // streams
-//            try (Stream<String> stream = Files.lines(path)) {
-//                info.setLineCount((int)stream.count());
-//                bufferStart = getBufferFirstLine();
-//                bufferEnd = getBufferLastLine();
-//                int limit = bufferEnd - bufferStart;
-//                try (Stream<String> stream2 = Files.lines(path)) {
-//                    stream2.skip(bufferStart).limit(limit).forEachOrdered(line -> {
-//                        lineBuffer.append(applyMask(line)).append("\n");
-//                        bufferLength++;
-//                    });
-//                }
-//            }
-//            catch (UncheckedIOException ex) {
-//                throw ex.getCause();
-//            }
+            search = query.getFilter("search");
+            if (search != null) {
+                // find index of first match (search from next line after current lineIndex)
+                int searchIndex = query.getIntFilter("searchIndex");
+                if (searchIndex == -1)
+                    searchIndex = 0;
+                this.searchIndex = search(searchIndex, query.getBooleanFilter("backward"));
+                if (this.searchIndex >= 0)
+                    this.lineIndex = this.searchIndex;
+            }
 
-            // one-pass
+            // one-pass forward
             try (Stream<String> stream = Files.lines(path)) {
                 if (lineIndex > 0) {
                     bufferStart = lineIndex - bufferSize/2;
@@ -132,10 +108,87 @@ public class FileView implements Jsonable {
         }
     }
 
+
+    /**
+     * Search pass locates line index of first match.
+     */
+    private int search(int startLine, boolean backward) throws IOException {
+        search = search.toLowerCase();
+        try (Stream<String> stream = Files.lines(path)) {
+            if (backward) {
+                int idx = -1;
+                if (startLine > 0)
+                    idx = searchTo(startLine - 1, true);
+                if (idx < 0)
+                    idx = searchFrom(startLine, true);
+                return idx;
+            }
+            else {
+                int idx = searchFrom(startLine);
+                if (idx < 0) {
+                    // wrap search
+                    idx = searchTo(startLine - 1);
+                }
+                return idx;
+            }
+        }
+        catch (UncheckedIOException ex) {
+            throw ex.getCause();
+        }
+    }
+
+    private int searchIndex;
+    private int lastIndex;
+    private int searchFrom(int startLine) throws IOException {
+        return searchFrom(startLine, false);
+    }
+    private int searchFrom(int startLine, boolean findLast) throws IOException {
+        searchIndex = lastIndex = -1;
+        try (Stream<String> stream = Files.lines(path)) {
+            Stream<String> s = stream.skip(startLine).filter(line -> {
+                searchIndex++;
+                boolean found = line.toLowerCase().indexOf(search) >= 0;
+                if (found && findLast)
+                    lastIndex = searchIndex + startLine;
+                return found;
+            });
+            if (findLast) {
+                s.forEachOrdered(l -> {});
+                return lastIndex;
+            }
+            else {
+                return s.findFirst().isPresent() ? searchIndex + startLine : -1;
+            }
+        }
+    }
+
+    private int searchTo(int endLine) throws IOException {
+        return searchTo(endLine, false);
+    }
+    private int searchTo(int endLine, boolean findLast) throws IOException {
+        searchIndex = lastIndex = -1;
+        try (Stream<String> stream = Files.lines(path)) {
+            Stream<String> s = stream.limit(endLine).filter(line -> {
+                searchIndex++;
+                boolean found = line.toLowerCase().indexOf(search) >= 0;
+                if (found && findLast)
+                    lastIndex = searchIndex;
+                return found;
+            });
+            if (findLast) {
+                s.forEachOrdered(l -> {});
+                return lastIndex;
+            }
+            return s.findFirst().isPresent() ? searchIndex : -1;
+        }
+    }
+
     public JSONObject getJson() {
         JSONObject json = new JSONObject();
         JSONObject infoJson = info.getJson();
         infoJson.put("isFile", true);
+        if (search != null)
+            infoJson.put("searchIndex", searchIndex);
         json.put("info", infoJson);
         JSONObject bufferJson = new JSONObject();
         bufferJson.put("lines", lineBuffer.toString());

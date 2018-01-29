@@ -9,10 +9,8 @@ let main = document.getElementById('mdw-main');
 main.style.padding = '0';
 main.style.height = 'calc(100% - 135px)';
 main.style.minHeight = '400px';
-document.body.style.height = '100%';
 document.body.style.overflowX = 'hidden';
 document.body.style.overflowY = 'hidden';
-document.getElementsByTagName("html")[0].style.height = '100%';
 
 class Index extends Component {
   constructor(...args) {
@@ -23,6 +21,7 @@ class Index extends Component {
   }
   
   componentDidMount() {
+    $mdwUi.clearMessage();
     var ok = false;
     fetch(new Request(this.getChildContext().serviceRoot + '/com/centurylink/mdw/system/filepanel', {
       method: 'GET',

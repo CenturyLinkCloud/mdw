@@ -21,6 +21,7 @@ try {
   var webpackConfig = require('./webpackConfig');
 
   var input = getInput();
+  console.log('webpackRunner devMode: ' + input.devMode);
   if (input.debug)
     console.log('input: ' + JSON.stringify(input, null, 2));
   

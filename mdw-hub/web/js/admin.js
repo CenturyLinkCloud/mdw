@@ -243,7 +243,18 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
     restrict: 'A',
     link: function link(scope, elem, attrs) {
       var url = attrs.tabLink;
+      
       elem.bind('click', function() {
+        var main = document.getElementById('mdw-main');
+        if (main && main.style.padding == '0') {
+          // navigating from full-screen (eg: filepanel)
+          main.style.padding = '20px';
+          main.style.height = '';
+          main.style.minHeight = '600px';
+          document.body.style.overflowX = 'visible';
+          document.body.style.overflowY = 'visible';
+        }
+        
         if (url.startsWith('#')) {
           getAuthUser(scope).setActiveTab(url);
           $location.path(url.substring(1));
