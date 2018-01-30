@@ -16,6 +16,7 @@
 package com.centurylink.mdw.services.cache;
 
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -336,16 +337,23 @@ public class CacheRegistration implements StartupService {
         return orderedCaches;
     }
 
-    // After all caches have been loaded or refreshed (startup or a cache refresh request), call this method to eliminate "first request" performance penalty
-    // No need to wait for response
+    /**
+     * After all caches have been loaded or refreshed (startup or a cache refresh request),
+     * call this method to eliminate "first request" performance penalty.
+     */
     public static void performInitialRequest() {
         try {
             logger.info("Performing initial request...");
-            HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getLocalServiceUrl() + "/Services/SystemInfo?type=threadDumpCount&format=text"));
+            HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getLocalServiceUrl() + "/services/AppSummary"));
             helper.setConnectTimeout(1000);
             helper.setReadTimeout(1000);
             helper.get();
         }
-        catch(Exception ex) {}
+        catch (SocketTimeoutException ex) {
+            // no need to wait for response
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
