@@ -32,7 +32,6 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -161,7 +160,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
 
                 if (!newHost.equalsIgnoreCase(origHost) || !(newPort == origPort) || !newQuery.equalsIgnoreCase(origQuery) || !origRequestUrl.getPath().equals(destination.getPath()))
                     return destination;
-                
+
         /*        if (origRequestUrl.lastIndexOf(":") < 8 && destination.toString().lastIndexOf(":") > 7) {
                 	origRequestUrl = origRequestUrl.substring(0, origRequestUrl.indexOf("/", 9)) + ":" + origRequestUrl.substring(origRequestUrl.indexOf("/", 9));
                 }
