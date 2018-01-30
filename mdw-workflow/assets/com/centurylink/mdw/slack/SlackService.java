@@ -60,7 +60,7 @@ public class SlackService extends JsonRestService {
                 int underscore = callbackId.lastIndexOf('_');
                 if (underscore > 0) {
                     String handlerType = callbackId.substring(0, underscore);
-                    String id = callbackId.substring(underscore + 1);
+                    String id = callbackId.substring(callbackId.lastIndexOf('/') + 1);
                     ActionHandler actionHandler = getActionHandler(handlerType, userId, id,
                             request);
                     if (actionHandler == null)

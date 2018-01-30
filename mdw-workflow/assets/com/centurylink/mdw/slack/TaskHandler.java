@@ -147,8 +147,8 @@ public class TaskHandler implements ActionHandler, EventHandler {
      */
     @Override
     public JSONObject handleEvent(SlackEvent event) throws ServiceException {
-        if (event.getCallbackId() != null && event.getCallbackId().indexOf('_') > 0 && event.getTs() != null) {
-            Long instanceId = Long.parseLong(event.getCallbackId().substring(event.getCallbackId().lastIndexOf('_') + 1));
+        if (event.getCallbackId() != null && event.getCallbackId().indexOf('_') > 0 && event.getCallbackId().indexOf('/') > 0 && event.getTs() != null) {
+            Long instanceId = Long.parseLong(event.getCallbackId().substring(event.getCallbackId().lastIndexOf('/') + 1));
             new Thread(() -> {
                 Map<String,String> indexes = new HashMap<>();
                 logger.debug("Saving slack:message_ts=" + event.getTs() + " for task " + instanceId);

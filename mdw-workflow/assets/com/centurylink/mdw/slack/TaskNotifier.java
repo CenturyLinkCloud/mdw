@@ -16,6 +16,8 @@
 package com.centurylink.mdw.slack;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -24,7 +26,9 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.EnvironmentVariables;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.observer.ObserverException;
@@ -47,7 +51,11 @@ public class TaskNotifier extends TemplatedNotifier {
         this.context = context;
 
         try {
-            HttpHelper helper = new HttpHelper(new URL(getWebhookUrl()));
+        	Map<String,String> hdrs = new HashMap<>();
+        	hdrs.put(Listener.METAINFO_CLOUD_ROUTING, "SlackWebHook");
+        	hdrs.put(Listener.METAINFO_MDW_APP_TOKEN, System.getenv("MDW_APP_TOKEN"));   // Add the application specific MDW provided token
+            HttpHelper helper = new HttpHelper(new URL(EnvironmentVariables.MDW_CLOUD_ROUTER_URL + "/slack"));
+            helper.setHeaders(hdrs);         
             String response = helper.post(getMessage().toString(2));
             if (helper.getResponseCode() != 200)
                 throw new ServiceException(helper.getResponseCode(), "Slack notification failed with response:" + response);
