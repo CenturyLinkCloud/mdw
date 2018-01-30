@@ -177,13 +177,6 @@ public abstract class ServiceServlet extends HttpServlet {
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/slack")) {
                     // validates Slack token unless request is coming from our AppFog prod instance
-                    StandardLogger logger = LoggerUtil.getStandardLogger();
-                    if (logger.isMdwDebugEnabled()) {
-                            logger.mdwDebug("Slack request\nRequest remote host: " + request.getRemoteHost()); //+ "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
-                            for (String key : headers.keySet())
-                                logger.mdwDebug(key + ": " + headers.get(key) + "\n");
-                    }
-
                     if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
                     else {
@@ -205,12 +198,6 @@ public abstract class ServiceServlet extends HttpServlet {
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/routing")) {
                     // Validates request is coming from application with valid MDW APP Token - For routing services
-                    StandardLogger logger = LoggerUtil.getStandardLogger();
-                    if (logger.isMdwDebugEnabled()) {
-                            logger.mdwDebug("MDW Cloud Routing request\nRequest remote host: " + request.getRemoteHost()); //+ "\nINET remote host: " + InetAddress.getByName(request.getRemoteHost()).getHostName());
-                            for (String key : headers.keySet())
-                                logger.mdwDebug(key + ": " + headers.get(key) + "\n");
-                    }
                     if (AuthUtils.authenticate(AuthUtils.MDW_APP_TOKEN, headers))
                         return;
                 }

@@ -170,8 +170,6 @@ public class AuthUtils {
 
         boolean okay = false;
 
-        logger.mdwDebug("Routing is enabled...");
-
         // If first call, retrieve app tokens from DB
         if (mdwAppTokenMap == null) {
             synchronized(lock) {
@@ -197,11 +195,10 @@ public class AuthUtils {
         else if (mdwAppTokenMap.isEmpty())  // No MDW Application Tokens stored in this instance's DB
             return false;
 
-        logger.mdwDebug("MDWAppTokenMap:" + mdwAppTokenMap.toString());
         try {
             okay = headers.get(Listener.METAINFO_MDW_APP_TOKEN) != null && mdwAppTokenMap.get(headers.get(Listener.METAINFO_MDW_APP_TOKEN)) != null;
             if (okay) {
-                logger.info("Request authenticated using MDW Application Token for " + mdwAppTokenMap.get(headers.remove(Listener.METAINFO_MDW_APP_TOKEN)));
+                logger.debug("Request authenticated using MDW Application Token for " + mdwAppTokenMap.get(headers.remove(Listener.METAINFO_MDW_APP_TOKEN)));
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp"); // TODO: honor serviceUser in access.yaml
             }
         }
