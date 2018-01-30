@@ -21,6 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,8 @@ public class FilePanelService extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
+    private static Map<String,TailWatcher> tailWatchers = new HashMap<>();
+
     @Override
     @Path("/{filePath}")
     public JSONObject get(String path, Map<String,String> headers)
@@ -65,6 +68,32 @@ public class FilePanelService extends JsonRestService {
                             throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
                         headers.put(Listener.METAINFO_DOWNLOAD_FORMAT, Listener.DOWNLOAD_FORMAT_FILE);
                         headers.put(Listener.METAINFO_DOWNLOAD_FILE, file.getPath());
+                        return null;
+                    }
+                    else if (query.getFilter("tail") != null) {
+                        boolean tailOn = query.getBooleanFilter("tail");
+                        String absPath = p.toAbsolutePath().toString();
+                        TailWatcher watcher;
+                        synchronized(tailWatchers) {
+                            watcher = tailWatchers.get(absPath);
+                            if (tailOn) {
+                                if (watcher == null) {
+                                    watcher = new TailWatcher(p, query.getIntFilter("lastLine"));
+                                    tailWatchers.put(absPath, watcher);
+                                    watcher.watch();
+                                }
+                                else {
+                                    watcher.refCount++;
+                                }
+                            }
+                            else {
+                                watcher.refCount--;
+                                if (watcher.refCount < 1) {
+                                    watcher.done = true;
+                                    tailWatchers.remove(absPath);
+                                }
+                            }
+                        }
                         return null;
                     }
                     else if (query.getFilter("grep") != null) {

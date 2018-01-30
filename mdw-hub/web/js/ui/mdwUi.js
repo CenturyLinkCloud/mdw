@@ -100,5 +100,10 @@ var $mdwUi = {
            logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_logo.png';
        }
      }, 0);
-   }   
+   },
+   getWebSocketUrl: function() {
+     if ($mdwWebSocketUrl && $mdwWebSocketUrl !== '${mdwWebSocketUrl}') {
+       return $mdwWebSocketUrl;
+     }
+   }
 };

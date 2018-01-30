@@ -100,7 +100,7 @@ class FileView extends Component {
       }
     }
     else if (action === 'tailMode') {
-      alert('Tail Mode is coming in mdw build 6.0.12');
+      this.toggleTail();
     }
   }
   
@@ -455,6 +455,39 @@ class FileView extends Component {
       buffer: this.state.buffer,
       search: search
     });
+  }
+  
+  toggleTail() {
+    const webSocketUrl = $mdwUi.getWebSocketUrl();
+    if (webSocketUrl) {
+      this.tail = !this.tail;
+      this.retrieving = true;
+      $mdwUi.hubLoading(true);
+      let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
+      url += '?path=' + encodeURIComponent(this.props.item.path);
+      url += '&lastLine=' + this.state.buffer.start + this.state.buffer.length;
+      url += '&tail=' + this.tail;
+      fetch(new Request(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json'},
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        $mdwUi.hubLoading(false);
+        return response.json();
+      })
+      .then(json => {
+        if (this.tail) {
+          console.log("TAIL: " + webSocketUrl);
+//          const socket = new WebSocket(webSocketUrl);
+//           socket.addEventListener('open', function(event) {
+//             socket.send(diagram.instance.id);
+//           });
+//           socket.addEventListener('message', function(event) {
+//           });
+        }
+      });
+    }
   }
   
   render() {

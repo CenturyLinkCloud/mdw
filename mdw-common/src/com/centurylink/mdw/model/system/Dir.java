@@ -45,6 +45,9 @@ public class Dir implements Jsonable {
     private String path;
     public String getPath() { return path; }
 
+    private String absolutePath;
+    public String getAbsolutePath() { return absolutePath; }
+
     private List<Dir> dirs = new ArrayList<>();
     public List<Dir> getDirs() { return dirs; }
 
@@ -123,8 +126,9 @@ public class Dir implements Jsonable {
     }
 
     private void addDetails() throws IOException {
+        Path path = Paths.get(this.path);
+        this.absolutePath = path.toAbsolutePath().toString();
         if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
-            Path path = Paths.get(this.path);
             PosixFileAttributes attrs = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
             permissions = PosixFilePermissions.toString(attrs.permissions());
             UserPrincipal ownerPrincipal = attrs.owner();
@@ -141,6 +145,9 @@ public class Dir implements Jsonable {
         JSONObject json = new JSONObject();
         json.put("name", name);
         json.put("path", path);
+        if (absolutePath != null) {
+            json.put("absolutePath", absolutePath);
+        }
         if (!dirs.isEmpty()) {
             JSONArray dirsArr = new JSONArray();
             for (Dir d : this.dirs) {
