@@ -287,7 +287,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE from document_content where document_id IN (
+     DELETE d1 from document_content d1 JOIN document_content d2 USING (document_id) 
+     WHERE d2.document_id IN (
       SELECT document_id FROM document doc
        -- 1. all documents with process instance ID populated
        WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN')  
@@ -298,19 +299,39 @@ SET foreign_key_checks=0;
                         WHERE pi.process_instance_id = doc.owner_id
                           AND pi.status_cd = purgestatusid)
                )
-   		 -- 2. all documents with owner type as *_META 
-            OR ( doc.create_dt < DATE_SUB(CURDATE(), INTERVAL daydiff DAY)  
-                AND doc.owner_type IN ('LISTENER_REQUEST_META', 'LISTENER_RESPONSE_META', 'VARIABLE_INSTANCE')
+           -- 2. all documents with owner type of VARIABLE_INSTANCE where row in VARIABLE_INSTANCE table has been deleted
+            OR ( doc_owner_id != 0 AND doc.OWNER_TYPE = 'VARIABLE_INSTANCE'
+            	AND NOT EXISTS (
+            				SELECT variable_instance_id
+            				FROM variable_instance
+            				WHERE variable_instance_id = doc.owner_id)
                )
-       -- 3. all documents with LISTENER_REQUEST/USER/TASK_INSTANCE as owner type and no process inst ID 
+           -- 3. all documents with owner type of TASK_INSTANCE where row in TASK_INSTANCE table has been deleted
+            OR ( doc_owner_id != 0 AND doc.OWNER_TYPE = 'TASK_INSTANCE'
+            	AND NOT EXISTS (
+            				SELECT task_instance_id
+            				FROM task_instance
+            				WHERE task_instance_id = doc.owner_id)
+               )   
+           -- 4. all documents with owner type of ACTIVITY_INSTANCE/ADAPTER_REQUEST/ADAPTER_RESPONSE/INTERNAL_EVENT where row 
+           --		in ACTIVITY_INSTANCE table has been deleted
+            OR ( doc_owner_id != 0 AND doc.OWNER_TYPE IN('ACTIVITY_INSTANCE','ADAPTER_REQUEST','ADAPTER_RESPONSE','INTERNAL_EVENT')
+            	AND NOT EXISTS (
+            				SELECT activity_instance_id
+            				FROM activity_instance
+            				WHERE activity_instance_id = doc.owner_id)
+               )    
+       	   -- 4. all documents with LISTENER_REQUEST/USER/TASK_INSTANCE/LISTENER_REQUEST_META/LISTENER_RESPONSE/VARIABLE_INSTANCE/INTERNAL_EVENT
+       	   --    as owner type and no owner id meeting DATE criteria 
             OR ( doc.create_dt < DATE_SUB(CURDATE(), INTERVAL daydiff DAY)  
                 AND doc.owner_id = 0 
-                AND doc.owner_type IN ('LISTENER_REQUEST', 'USER', 'TASK_INSTANCE')
+                AND doc.owner_type IN ('LISTENER_REQUEST', 'USER', 'TASK_INSTANCE','LISTENER_REQUEST_META','LISTENER_RESPONSE','VARIABLE_INSTANCE','INTERNAL_EVENT')
                )
-       -- 4. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
-            OR (    doc.owner_type IN ('LISTENER_RESPONSE', 'DOCUMENT')
-                AND NOT EXISTS (SELECT *
-                                  FROM document doc2
+       -- 4. all documents with LISTENER_REQUEST/LISTENER_RESPONSE/DOCUMENT/*_META as owner type and owner is deleted
+            OR ( doc.owner_id != 0 AND doc.owner_type IN 
+            	('LISTENER_REQUEST','LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
+                AND NOT EXISTS (SELECT document_id
+                                  FROM document_content doc2
                                  WHERE doc2.document_id = doc.owner_id)
                )
              )
@@ -332,37 +353,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE from document 
-   		 -- 1. all documents with process instance ID populated
-         WHERE (
-          document.owner_id!= 0 AND document.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN')
-                AND 
-               EXISTS (
-                       SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
-                              process_instance_id
-                         FROM process_instance pi
-                         WHERE
-                         pi.process_instance_id = document.owner_id    
-                          AND 
-                          pi.status_cd = purgestatusid)
-               )
-   		 -- 2. all documents with LISTENER_REQUEST/USER/'TASK_INSTANCE' as owner type and no process inst ID 
-            OR (    document.create_dt < DATE_SUB(CURDATE(), INTERVAL daydiff DAY)
-               AND document.owner_id  = 0
-                AND document.owner_type IN ('LISTENER_REQUEST', 'USER', 'TASK_INSTANCE')
-               )
-   		 -- 3. all documents with LISTENER_RESPONSE/DOCUMENT as owner and owner is deleted
-            OR (    document.owner_type IN ('LISTENER_RESPONSE', 'DOCUMENT')
-                AND NOT EXISTS (SELECT 1 from(select *
-                      FROM document) doc2
-                      WHERE doc2.document_id = document.owner_id)
-              )
-       -- 4. all documents that are not in document_context table
-            AND NOT EXISTS
-               (
-                    SELECT * FROM DOCUMENT_CONTENT doccon
-                        WHERE doccon.document_id = doc.document_id
-               )   
+   	 DELETE D1 from DOCUMENT D1 left outer join DOCUMENT_CONTENT D2 using (DOCUMENT_ID) 
+		WHERE D2.DOCUMENT_ID is null
       LIMIT commitcnt;
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;           
