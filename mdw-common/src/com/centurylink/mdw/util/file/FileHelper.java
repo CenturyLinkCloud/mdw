@@ -310,10 +310,7 @@ public final class FileHelper {
     }
 
     public static InputStream openConfigurationFile(String filename) throws FileNotFoundException {
-        return openConfigurationFile(filename, FileHelper.class.getClassLoader(), true);
-    }
-    public static InputStream openConfigurationFile(String filepath, ClassLoader classLoader) throws FileNotFoundException {
-        return openConfigurationFile(filepath, classLoader, true);
+        return openConfigurationFile(filename, FileHelper.class.getClassLoader());
     }
 
     /**
@@ -325,18 +322,8 @@ public final class FileHelper {
      * @return Input steam of the file
      * @throws FileNotFoundException if the file is not found
      */
-    public static InputStream openConfigurationFile(String filepath, ClassLoader classLoader, boolean useMDWConfigLocation) throws FileNotFoundException {
-        String configDir = null;
-        if (useMDWConfigLocation) {
-            configDir = System.getProperty(PropertyManager.MDW_CONFIG_LOCATION);
-        }
-        File file;
-        if (configDir == null)
-            file = new File(filepath);
-        else if (configDir.endsWith("/"))
-            file = new File(configDir + filepath);
-        else
-            file = new File(configDir + "/" + filepath);
+    public static InputStream openConfigurationFile(String filepath, ClassLoader classLoader) throws FileNotFoundException {
+        File file = getConfigurationFile(filepath);
         if (file.exists()) {
             logger.info("Located configuration file: " + file.getAbsolutePath());
             return new FileInputStream(file);
@@ -361,6 +348,16 @@ public final class FileHelper {
                 throw new FileNotFoundException(filepath);  // give up
         }
         return is;
+    }
+
+    public static File getConfigurationFile(String filepath) {
+        String configDir = System.getProperty(PropertyManager.MDW_CONFIG_LOCATION);
+        if (configDir == null)
+            return new File(filepath);
+        else if (configDir.endsWith("/"))
+            return new File(configDir + filepath);
+        else
+            return new File(configDir + "/" + filepath);
     }
 
     public static final String BUNDLE_CLASSPATH_BASE = "META-INF/mdw";
@@ -395,23 +392,18 @@ public final class FileHelper {
         return classLoader.getResourceAsStream(path);
     }
 
-    public static String readConfig(String filepath) throws IOException {
-        return readConfig(filepath, true);
-    }
-
     /**
      * @param springContextFile
-     * @param useMDWConfigLocation - whether to check for externally located files
      * @return
      * @throws IOException
      */
-    public static String readConfig(String filepath, boolean useMDWConfigLocation) throws IOException {
+    public static String readConfig(String filepath) throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         InputStream inStream = null;
 
         try
         {
-          inStream = openConfigurationFile(filepath, Thread.currentThread().getContextClassLoader(), useMDWConfigLocation);
+          inStream = openConfigurationFile(filepath, Thread.currentThread().getContextClassLoader());
           byte[] buffer = new byte[2048];
           while (true)
           {

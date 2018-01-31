@@ -23,6 +23,7 @@ import java.util.HashMap;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
@@ -81,8 +82,8 @@ public class InternalMessengerRest extends InternalMessenger {
     }
 
     public void broadcastMessage(String msg) throws ProcessException {
-        for (String hostport : ApplicationContext.getServerList()) {
-            String serviceUrl = "http://" + hostport + serviceContext + "/Services/REST";
+        for (Server server : ApplicationContext.getServerList().getServers()) {
+            String serviceUrl = "http://" + server + serviceContext + "/Services/REST";
             try {
                 HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl));
                 HashMap<String,String> headers = new HashMap<String,String>();
@@ -91,7 +92,7 @@ public class InternalMessengerRest extends InternalMessenger {
                 httpHelper.post(msg);
             } catch (Exception e) {
                 StandardLogger logger = LoggerUtil.getStandardLogger();
-                logger.severeException("Failed to broadcast to server " + hostport, e);
+                logger.severeException("Failed to broadcast to server " + server, e);
             }
         }
     }

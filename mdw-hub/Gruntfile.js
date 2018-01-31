@@ -27,7 +27,6 @@ module.exports = function(grunt) {
           confirm: false,
           $mdwHubRoot: false,
           $mdwServicesRoot: false,
-          $mdwWebToolsRoot: false,
           $mdwDocsRoot: false,
           $mdwHubUser: false,
           $mdwVersion: false,

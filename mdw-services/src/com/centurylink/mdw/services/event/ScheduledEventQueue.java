@@ -295,7 +295,7 @@ public class ScheduledEventQueue implements CacheService {
             JSONObject json = new JsonObject();
             json.put("ACTION", "INVALIDATE_EVENT");
             json.put("EVENT_NAME", eventName);
-            json.put("FROM", ApplicationContext.getServerHostPort());
+            json.put("FROM", ApplicationContext.getServer().toString());
             InternalMessenger messenger = MessengerFactory.newInternalMessenger();
             messenger.broadcastMessage(json.toString());
         } catch (Exception e) {

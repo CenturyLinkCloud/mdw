@@ -63,7 +63,7 @@ public class BroadcastHelper  {
             }
         } else if (action.equals("INVALIDATE_EVENT")) {
             String eventName = json.getString("EVENT_NAME");
-            String thisServer = ApplicationContext.getServerHostPort();
+            String thisServer = ApplicationContext.getServer().toString();
             String fromServer = json.getString("FROM");
             if (!thisServer.equals(fromServer)) {
                 ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();

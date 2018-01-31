@@ -17,6 +17,8 @@ package com.centurylink.mdw.yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +27,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
-import com.centurylink.mdw.util.file.FileHelper;
-
 @SuppressWarnings("rawtypes")
 public class YamlLoader {
 
@@ -34,7 +34,7 @@ public class YamlLoader {
     public Object getTop() { return top; }
 
     public YamlLoader(File file) throws IOException {
-        this(new String(FileHelper.read(file)));
+        this(new String(Files.readAllBytes(Paths.get(file.getPath()))));
     }
 
     public YamlLoader(String yamlStr) throws IOException {

@@ -23,11 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.MiniCrypter;
 
-public class DefaultPropertyManager extends PropertyManager {
+public class JavaPropertyManager extends PropertyManager {
 
     protected Properties properties = new Properties();
     private String mainPropertyFileName;
@@ -37,15 +36,10 @@ public class DefaultPropertyManager extends PropertyManager {
      * This method loads mdw.properties, application.properties and any property file defined for {@link #APP_CONFIG_NAME}
      * The property mdw.application.config.name takes property file names seperated by , without the .properties extension
      */
-    public DefaultPropertyManager() throws StartupException {
+    public JavaPropertyManager() throws StartupException {
         mainPropertyFileName = getMainPropertyFileName();
         if (mainPropertyFileName == null) {
-            if ("standalone".equals(ApplicationContext.getRuntimeEnvironment())) {
-                return; // no props load
-            }
-            else {
-                throw new StartupException("Cannot find mdw.properties");
-            }
+            throw new StartupException("Cannot find mdw.properties");
         }
 
         loadPropertiesFromFile(null, mainPropertyFileName, true, true);
@@ -125,19 +119,6 @@ public class DefaultPropertyManager extends PropertyManager {
             properties.clear();
             properties.putAll(tempProperties);
         }
-    }
-
-    /**
-     * Returns the handle to the property based on the passed in GroupName and the property Name
-     * @param group
-     * @param name
-     * @return Value defined for the property as String
-     */
-    public String getStringProperty(String group, String name) {
-        if (group != null)
-            return this.getStringProperty(group + "/" + name);
-        else
-            return this.getStringProperty(name);
     }
 
      /**

@@ -21,8 +21,6 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
   
   $scope.packageList = Assets.get({});
   
-  $scope.filepanelUrl = mdw.roots.webTools + '/system/filepanel/index.jsf?user=' + $scope.authUser.cuid;
-  
   $scope.cacheRefresh = function(refreshType) {
     $scope.refreshMessage = '';
       // leave cache error logging to the server side

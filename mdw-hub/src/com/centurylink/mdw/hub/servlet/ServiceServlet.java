@@ -38,8 +38,6 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.util.AuthUtils;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Base class for HTTP protocol service handling.

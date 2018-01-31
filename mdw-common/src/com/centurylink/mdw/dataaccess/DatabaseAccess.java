@@ -173,7 +173,7 @@ public class DatabaseAccess {
      */
     private static boolean isEmbeddedDb(String jdbcUrl) {
         String dbprop = PropertyManager.getProperty(PropertyNames.MDW_DB_EMBEDDED_HOST_PORT);
-        return (jdbcUrl.contains("localhost") || (dbprop != null && jdbcUrl.contains(ApplicationContext.getServerHost()) && ApplicationContext.getServerHostPort().equalsIgnoreCase(dbprop)));
+        return (jdbcUrl.contains("localhost") || (dbprop != null && jdbcUrl.contains(ApplicationContext.getServerHost()) && ApplicationContext.getServer().toString().equalsIgnoreCase(dbprop)));
     }
 
     private static synchronized void checkAndStartEmbeddedDb() throws SQLException {

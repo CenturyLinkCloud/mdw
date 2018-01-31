@@ -158,11 +158,11 @@ public class FilePanelService extends JsonRestService {
     private static List<java.nio.file.Path> rootPaths;
     private static List<java.nio.file.Path> getRootPaths() throws ServiceException {
         if (rootPaths == null) {
-            String rootDirsProp = PropertyManager.getProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
-            if (rootDirsProp == null)
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing property: " + PropertyNames.FILEPANEL_ROOT_DIRS);
+            List<String> rootDirs = PropertyManager.getListProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
+            if (rootDirs == null)
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing config: " + PropertyNames.FILEPANEL_ROOT_DIRS);
             rootPaths = new ArrayList<>();
-            for (String dir : rootDirsProp.trim().split("\\s*,\\s*")) {
+            for (String dir : rootDirs) {
                 rootPaths.add(Paths.get(new File(dir).getPath()));
             }
         }
@@ -173,9 +173,9 @@ public class FilePanelService extends JsonRestService {
     public static List<PathMatcher> getExcludes() {
         if (excludes == null) {
             excludes = new ArrayList<>();
-            String excludePatterns = PropertyManager.getProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
+            List<String> excludePatterns = PropertyManager.getListProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
             if (excludePatterns != null) {
-                for (String excludePattern : excludePatterns.trim().split("\\s*,\\s*")) {
+                for (String excludePattern : excludePatterns) {
                     excludes.add(FileSystems.getDefault().getPathMatcher("glob:" + excludePattern));
                 }
             }

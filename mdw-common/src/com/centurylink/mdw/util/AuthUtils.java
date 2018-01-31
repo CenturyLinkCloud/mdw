@@ -259,13 +259,21 @@ public class AuthUtils {
     }
 
     public static void ldapAuthenticate(String user, String password) throws MdwSecurityException {
-        String ldapProtocol = PropertyManager.getProperty(PropertyNames.LDAP_PROTOCOL);
+        String ldapProtocol = PropertyManager.getProperty(PropertyNames.MDW_LDAP_PROTOCOL);
+        if (ldapProtocol == null)
+            ldapProtocol = PropertyManager.getProperty("LDAP/Protocol"); // compatibility
         if (ldapProtocol == null)
             ldapProtocol = "ldap";
-        String ldapHost = PropertyManager.getProperty(PropertyNames.LDAP_HOST);
-        String ldapPort = PropertyManager.getProperty(PropertyNames.LDAP_PORT);
+        String ldapHost = PropertyManager.getProperty(PropertyNames.MDW_LDAP_HOST);
+        if (ldapHost == null)
+            ldapHost = PropertyManager.getProperty("LDAP/Host");
+        String ldapPort = PropertyManager.getProperty(PropertyNames.MDW_LDAP_PORT);
+        if (ldapPort == null)
+            ldapPort = PropertyManager.getProperty("LDAP/Port");
         String ldapUrl = ldapProtocol + "://" + ldapHost + ":" + ldapPort;
-        String baseDn = PropertyManager.getProperty(PropertyNames.BASE_DN);
+        String baseDn = PropertyManager.getProperty(PropertyNames.MDW_LDAP_BASE_DN);
+        if (baseDn == null)
+            baseDn = PropertyManager.getProperty("LDAP/BaseDN");
         LdapAuthenticator auth = new LdapAuthenticator(ldapUrl, baseDn);
         auth.authenticate(user, password);
     }
