@@ -1,4 +1,3 @@
 LoadBasedRoutingStrategy.java=2
 RoundRobinRoutingStrategy.java=2
 RoutingServiceMonitor.java=7
-SlackRoutingStrategy.java=1

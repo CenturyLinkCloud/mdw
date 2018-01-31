@@ -243,6 +243,11 @@ public class AccessFilter implements Filter {
                 }
             }
 
+            if (request.getServletPath().equalsIgnoreCase("/logout")) {
+                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                return;
+            }
+
             if (responseHeaders != null || logHeaders) {
                 chain.doFilter(request, new ResponseWrapper(response));
             }

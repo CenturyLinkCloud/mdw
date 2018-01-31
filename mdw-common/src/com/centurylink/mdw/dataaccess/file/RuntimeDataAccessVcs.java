@@ -491,7 +491,11 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                     sqlBuff.append("\n     and ivi.variable_name = '" + varName + "') = '"+ varValue + "') ");
                 }
                 else {
-                    sqlBuff.append(" and vi.VARIABLE_VALUE = '" + varValue + "') ");
+                    if (varValue != null && ((varValue.trim().toLowerCase().startsWith("like ") && varValue.indexOf('%') >=0 )
+                            || (varValue.trim().toLowerCase().startsWith("in ") && varValue.indexOf('(') >=0)))
+                        sqlBuff.append(" and vi.VARIABLE_VALUE " + varValue + ") ");
+                    else
+                        sqlBuff.append(" and vi.VARIABLE_VALUE = '" + varValue + "') ");
                 }
             }
         }
