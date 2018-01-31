@@ -70,32 +70,6 @@ public class FilePanelService extends JsonRestService {
                         headers.put(Listener.METAINFO_DOWNLOAD_FILE, file.getPath());
                         return null;
                     }
-                    else if (query.getFilter("tail") != null) {
-                        boolean tailOn = query.getBooleanFilter("tail");
-                        String absPath = p.toAbsolutePath().toString();
-                        TailWatcher watcher;
-                        synchronized(tailWatchers) {
-                            watcher = tailWatchers.get(absPath);
-                            if (tailOn) {
-                                if (watcher == null) {
-                                    watcher = new TailWatcher(p, query.getIntFilter("lastLine"));
-                                    tailWatchers.put(absPath, watcher);
-                                    watcher.watch();
-                                }
-                                else {
-                                    watcher.refCount++;
-                                }
-                            }
-                            else {
-                                watcher.refCount--;
-                                if (watcher.refCount < 1) {
-                                    watcher.done = true;
-                                    tailWatchers.remove(absPath);
-                                }
-                            }
-                        }
-                        return null;
-                    }
                     else if (query.getFilter("grep") != null) {
                         // TODO grep
                         return new JSONObject();
@@ -105,6 +79,9 @@ public class FilePanelService extends JsonRestService {
                             // file view
                             FileInfo fileInfo = new FileInfo(file);
                             FileView fileView = new FileView(fileInfo, query);
+                            if (query.getFilter("tail") != null) {
+                                tail(query, fileInfo.getLineCount() - 1);
+                            }
                             return fileView.getJson();
                         }
                         else if (file.isDirectory()) {
@@ -152,6 +129,30 @@ public class FilePanelService extends JsonRestService {
             }
         }
         return dirs;
+    }
+
+    private void tail(Query query, int lastLine) throws IOException {
+        boolean tailOn = query.getBooleanFilter("tail");
+        TailWatcher watcher = null;
+        String path = query.getFilter("path");
+        synchronized(tailWatchers) {
+            watcher = tailWatchers.get(path);
+            if (tailOn) {
+                if (watcher == null) {
+                    watcher = new TailWatcher(Paths.get(path), lastLine);
+                    tailWatchers.put(path, watcher);
+                    watcher.watch();
+                }
+                watcher.refCount++;
+            }
+            else if (watcher != null) {
+                watcher.refCount--;
+                if (watcher.refCount < 1) {
+                    watcher.stop();
+                    tailWatchers.remove(path);
+                }
+            }
+        }
     }
 
     private static List<java.nio.file.Path> rootPaths;

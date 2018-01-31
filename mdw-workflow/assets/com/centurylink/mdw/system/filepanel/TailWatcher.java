@@ -2,8 +2,10 @@ package com.centurylink.mdw.system.filepanel;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
@@ -21,10 +23,13 @@ public class TailWatcher {
     private int lastLine;
     public int getLastLine() { return lastLine; }
 
+    private WatchService watcher;
+    private Thread watcherThread;
+    private long lastModified;
+
     public TailWatcher(Path file, int lastLine) {
         this.file = file;
         this.lastLine = lastLine;
-        this.refCount = 1;
     }
 
     int refCount;
@@ -32,20 +37,17 @@ public class TailWatcher {
 
     public void watch() throws IOException {
         try {
-            new Thread(() -> {
-                try (WatchService watcher = FileSystems.getDefault().newWatchService()) {
-                    file.getParent().register(watcher, ENTRY_MODIFY); // TODO: delete, modify?
+            watcher = FileSystems.getDefault().newWatchService();
+            watcherThread = new Thread(() -> {
+                try {
+                    file.getParent().register(watcher, ENTRY_MODIFY);
                     while (!done) {
                         try {
                             WatchKey key = watcher.take();
                             for (WatchEvent<?> event : key.pollEvents()) {
                                 if (((Path)event.context()).getFileName().equals(file.getFileName())) {
-                                    FileInfo fileInfo = new FileInfo(file.toFile());
-                                    FileView fileView = new FileView(fileInfo, lastLine);
-                                    WebSocketMessenger websocket = WebSocketMessenger.getInstance();
-                                    if (websocket != null) {
-                                        websocket.send(file.toAbsolutePath().toString(),
-                                                fileView.getJson().toString());
+                                    if (file.toFile().lastModified() != lastModified) { // avoid duplicate events
+                                        send();
                                     }
                                 }
                             }
@@ -56,13 +58,42 @@ public class TailWatcher {
                         }
                     }
                 }
+                catch (ClosedByInterruptException ex) {
+                    done = true;
+                }
                 catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
-            }).start();
+            });
+            watcherThread.start();
         }
         catch (UncheckedIOException ex) {
             throw ex.getCause();
         }
+    }
+
+    public void stop() throws IOException {
+        done = true;
+        if (watcherThread != null) {
+            watcherThread.interrupt();
+        }
+        if (watcher != null) {
+            watcher.close();
+        }
+    }
+
+    boolean send() throws IOException {
+        File f = file.toFile();
+        lastModified = f.lastModified();
+        FileInfo fileInfo = new FileInfo(f);
+        FileView fileView = new FileView(fileInfo, lastLine);
+        WebSocketMessenger websocket = WebSocketMessenger.getInstance();
+        boolean subscribers = false;
+        if (websocket != null) {
+            subscribers = websocket.send(file.toAbsolutePath().toString().replace('\\', '/'),
+                    fileView.getJson().toString());
+        }
+        lastLine = fileInfo.getLineCount() - 1;
+        return subscribers;
     }
 }

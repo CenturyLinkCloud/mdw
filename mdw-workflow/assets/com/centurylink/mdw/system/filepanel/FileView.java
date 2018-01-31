@@ -108,6 +108,9 @@ public class FileView implements Jsonable {
         }
     }
 
+    /**
+     * For tail mode.
+     */
     public FileView(FileInfo info, int lastLine) throws IOException {
         this.info = info;
         path = Paths.get(info.getPath());
@@ -115,12 +118,12 @@ public class FileView implements Jsonable {
         lineBuffer = new StringBuilder();
         try (Stream<String> stream = Files.lines(path)) {
             // repeat last line in case it changed
-            stream.skip(lastLine - 1).forEachOrdered(line -> {
+            stream.skip(lastLine).forEachOrdered(line -> {
                 lineBuffer.append(applyMask(line)).append("\n");
                 bufferLength++;
                 lineCount++;
             });
-            info.setLineCount(lineCount);
+            info.setLineCount(lastLine + lineCount);
         }
         catch (UncheckedIOException ex) {
             throw ex.getCause();

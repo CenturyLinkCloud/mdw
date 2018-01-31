@@ -99,12 +99,16 @@ public class WebSocketMessenger {
        }
     }
 
-    public void send(String topic, String message) throws IOException {
+    /**
+     * Returns true if any subscribers.
+     */
+    public boolean send(String topic, String message) throws IOException {
         List<Session> sessions = topicSubscribers.get(topic);
         if (sessions != null) {
             for (Session session : sessions) {
                 session.getBasicRemote().sendText(message);
             }
         }
+        return sessions != null;
     }
 }
