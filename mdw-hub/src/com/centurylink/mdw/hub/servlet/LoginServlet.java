@@ -64,10 +64,14 @@ public class LoginServlet extends HttpServlet {
                     response.getWriter().println(retLine);
                 }
                 response.getWriter().close();
-            }else
-              request.getRequestDispatcher("auth/"+authMethod+"Login.html").forward(request, response);
-
-        }else {
+            } else {
+                if (request.getServletPath().equalsIgnoreCase("/logout")) {
+                    response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                    return;
+                }
+                request.getRequestDispatcher("auth/"+authMethod+"Login.html").forward(request, response);
+            }
+        } else {
             StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,
                     "Unsupported authMethod: " + authMethod);
             response.setStatus(sr.getStatus().getCode());
@@ -122,6 +126,9 @@ public class LoginServlet extends HttpServlet {
             }
 
         }
+/*        else if ("ct".equals(authMethod)) {
+            response.sendRedirect(WebAppContext.getMdw().getHubRoot());
+        }*/
         else {
             super.doPost(request, response);
         }
