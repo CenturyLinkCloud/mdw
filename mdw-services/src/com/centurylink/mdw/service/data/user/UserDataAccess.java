@@ -1059,7 +1059,27 @@ public class UserDataAccess extends UserDataAccessDb {
             return attrs;
         }
         catch (Exception e) {
-            throw new DataAccessException(0, "failed to get task actions", e);
+            throw new DataAccessException(0, "failed to get user attribute names", e);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public List<String> getGroupAttributeNames() throws DataAccessException {
+        try {
+            db.openConnection();
+            List<String> attrs = new ArrayList<String>();
+            String query = "select distinct attribute_name from attribute "
+                    + "where attribute_owner = '" + OwnerType.USER_GROUP + "' "
+                    + "order by lower(attribute_name)";
+            ResultSet rs = db.runSelect(query, null);
+            while (rs.next())
+                attrs.add(rs.getString("attribute_name"));
+            return attrs;
+        }
+        catch (Exception e) {
+            throw new DataAccessException(0, "failed to get group attribute names", e);
         }
         finally {
             db.closeConnection();

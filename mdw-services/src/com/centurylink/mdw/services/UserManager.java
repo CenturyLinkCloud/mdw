@@ -340,4 +340,6 @@ public interface UserManager {
     public List<String> getPublicUserAttributeNames()
     throws DataAccessException, UserException;
 
+    public List<String> getWorkgroupAttributeNames()
+    throws DataAccessException;
 }

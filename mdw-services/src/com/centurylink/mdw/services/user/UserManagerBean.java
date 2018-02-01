@@ -466,4 +466,10 @@ public class UserManagerBean implements UserManager {
     throws DataAccessException, UserException {
         return getUserDAO().getPublicUserAttributeNames();
     }
+
+    public List<String> getWorkgroupAttributeNames()
+    throws DataAccessException {
+        return getUserDAO().getGroupAttributeNames();
+    }
+
 }

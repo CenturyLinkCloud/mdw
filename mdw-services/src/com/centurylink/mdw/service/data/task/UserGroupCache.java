@@ -46,6 +46,7 @@ public class UserGroupCache implements PreloadableCache {
     private List<Workgroup> workgroups;
     private List<Role> roles;
     private List<String> userAttributeNames;
+    private List<String> workgroupAttributeNames;
 
     // these are loaded on demand
     private volatile Map<String,User> usersByCuid = new HashMap<String,User>(); // includes group-roles and attributes
@@ -196,6 +197,10 @@ public class UserGroupCache implements PreloadableCache {
         return instance.userAttributeNames;
     }
 
+    public static List<String> getWorkgroupAttributeNames() {
+        return instance.workgroupAttributeNames;
+    }
+
     public static User getUser(Long id) throws CachingException {
         return instance.getUser0(id);
     }
@@ -302,6 +307,10 @@ public class UserGroupCache implements PreloadableCache {
                 userAttributeNames.add(User.EMAIL_ADDRESS);
             if (!userAttributeNames.contains(User.PHONE_NUMBER) && !getUserAttributeNames().contains(User.OLD_PHONE_NUMBER))
                 userAttributeNames.add(User.PHONE_NUMBER);
+
+            workgroupAttributeNames = userManager.getWorkgroupAttributeNames();
+            if (!workgroupAttributeNames.contains(Workgroup.SLACK_CHANNELS))
+                workgroupAttributeNames.add(Workgroup.SLACK_CHANNELS);
         }
         catch (Exception ex) {
             throw new CachingException(ex.getMessage(), ex);
@@ -325,8 +334,6 @@ public class UserGroupCache implements PreloadableCache {
         try {
             UserManager userManager = ServiceLocator.getUserManager();
             Workgroup group = userManager.getUserGroup(name, false);
-            if (group != null && group.getAttribute(Workgroup.SLACK_CHANNEL) == null)
-                group.setAttribute(Workgroup.SLACK_CHANNEL, "");
             return group;
         }
         catch (Exception ex) {
