@@ -26,8 +26,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -39,19 +41,21 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
- * Clean up old database entries from tables that are older than a specified amount
- * Add following to mdw.properties
- * # Scheduled job - process clean up.
+ * This script cleans up old database entries from tables that are older than a specified time
  * Make sure appropriate db package is imported and Cleanup-Runtime.sql is there.
- * mdw.timer.task.ProcessCleanup.TimerClass=com.centurylink.mdw.timer.cleanup.ProcessCleanup
- * # run every 15 min
- * mdw.timer.task.ProcessCleanup.Schedule=0,15,30,45 * * * *
- * # How old process instance should be to be a candidate for deleting
- * MDWFramework.ProcessCleanup/ProcessExpirationAgeInDays=90
- * # How many process instances to be deleted in each run
- * MDWFramework.ProcessCleanup/MaximumProcessExpiration=1000
- * MDWFramework.ProcessCleanup/ExternalEventExpirationAgeInDays=90
- * MDWFramework.ProcessCleanup/CommitInterval=10000
+ * Add following to mdw.yaml
+timer.task:
+  ProcessCleanup: # run every 15 min
+    TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
+    Schedule: 0,15,30,45 * * * *    # to run daily at 2:30 am use : Schedule: 30 2 * * ? *
+    RuntimeCleanupScript: Cleanup-Runtime.sql
+    ProcessExpirationAgeInDays: 225 #How old process instance should be to be a candidate for deleting
+    MaximumProcessExpiration: 1  #How many process instances to be deleted in each run
+    ExternalEventExpirationAgeInDays: 225
+    CommitInterval: 1000
+ * if you need to make change in above properties then first delete the db entry by identifying the row using
+ * this sql:  select * from event_instance where event_name like '%ScheduledJob%'
+ * Then re-start the server/instance for new clean-up properties to be effective.
  */
 
 public class ProcessCleanup extends RoundRobinScheduledJob {
@@ -73,18 +77,36 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
         logger = LoggerUtil.getStandardLogger();
 
         logger.info("methodEntry-->ProcessCleanup.run()");
+        int processExpirationDays = 0;
+        int maxProcesses = 0;
+        int eventExpirationDays = 0;
+        int commitInterval = 10000;
+        String cleanupScript = null;
 
-        int processExpirationDays = PropertyManager.getIntegerProperty(
-                PropertyNames.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 0);
-        int maxProcesses = PropertyManager.getIntegerProperty(
-                PropertyNames.PROCESS_CLEANUP + "/MaximumProcessExpiration", 0);
-        int eventExpirationDays = PropertyManager.getIntegerProperty(
-                PropertyNames.PROCESS_CLEANUP + "/ExternalEventExpirationAgeInDays", 0);
-        int commitInterval = PropertyManager
-                .getIntegerProperty(PropertyNames.PROCESS_CLEANUP + "/CommitInterval", 10000);
-        String cleanupScript = PropertyManager
-                .getProperty(PropertyNames.PROCESS_CLEANUP + "/RuntimeCleanupScript");
-
+        if (PropertyManager.isYaml()) {
+            try {
+                Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
+                processExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ProcessExpirationAgeInDays", "0"));
+                maxProcesses = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.MaximumProcessExpiration", "0"));
+                eventExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ExternalEventExpirationAgeInDays", "0"));
+                commitInterval = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.CommitInterval", "10000"));
+                cleanupScript = cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.RuntimeCleanupScript", "Cleanup-Runtime.sql");
+            }
+            catch (PropertyException e) {
+                logger.info("ProcessCleanup.run() : Properties not found" + e.getMessage());
+            }
+        } else {
+            processExpirationDays = PropertyManager.getIntegerProperty(
+                    PropertyNames.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 0);
+            maxProcesses = PropertyManager.getIntegerProperty(
+                    PropertyNames.PROCESS_CLEANUP + "/MaximumProcessExpiration", 0);
+            eventExpirationDays = PropertyManager.getIntegerProperty(
+                    PropertyNames.PROCESS_CLEANUP + "/ExternalEventExpirationAgeInDays", 0);
+            commitInterval = PropertyManager
+                    .getIntegerProperty(PropertyNames.PROCESS_CLEANUP + "/CommitInterval", 10000);
+            cleanupScript = PropertyManager
+                    .getProperty(PropertyNames.PROCESS_CLEANUP + "/RuntimeCleanupScript");
+        }
         if (cleanupScript == null) {
             cleanupScript = "Cleanup-Runtime.sql";
         }
@@ -156,8 +178,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             else {  //Assume Oracle DB by default
                 if (assetRoot != null)
                     cleanupScript = new File(assetRoot + "/com/centurylink/mdw/oracle/" + filename);
-               if (cleanupScript.exists())
-                   printMsg = "Located Oracle cleanup Script file: " + cleanupScript.getAbsolutePath();
+                if (cleanupScript.exists())
+                    printMsg = "Located Oracle cleanup Script file: " + cleanupScript.getAbsolutePath();
                 else
                     printMsg = "Unable to locate Oracle Cleanup Script file: Make sure com.centurylink.mdw.oracle package has Cleanup-Runtime.sql";
             }
@@ -233,9 +255,9 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                 try {
                     is.close();
                 }
-                catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
+            catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
