@@ -92,32 +92,31 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         if (widget.value)
           widget.label += '*';
       }
-      else if (widget.type === 'link'){
-        var implementorName=widget.value;
-        //mdw demo assets starting from com.centurylink.mdw
-        var demoAssets=["microservice","drools","demo","kafka","filepanel","slack","tibco"];
-        var isMDWClass=true;
-        for(var ii = 0; ii < demoAssets.length;ii++){
-          if(implementorName.indexOf(demoAssets[ii])>-1){
-            isMDWClass=false;
+      else if (widget.type === 'link') {
+        var basePkg = 'com.centurylink.mdw';
+        var implementorName = widget.value;
+        // mdw assets delivered in pkgs 
+        var assetPkgs = ["microservice","drools","demo","kafka","filepanel","slack","tibco","tests"];
+        var isAsset = false;
+        for (var ii = 0; ii < assetPkgs.length; ii++){
+          if (implementorName.startsWith(basePkg + '.' + assetPkgs[ii])) {
+            isAsset = true;
             break;
-          }          
+          }
         }
-        if(implementorName.indexOf('com.centurylink.mdw')>-1 && isMDWClass){
-          var filePath=widget.value.replace(/\./g,"/");
-          var baseURL='https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/src/';
-          widget.assetURL=baseURL+filePath+".java";     
-        }else{
+        if (implementorName.startsWith(basePkg + '.') && !isAsset) {
+          var filePath = widget.value.replace(/\./g,"/");
+          var baseURL = 'https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/src/';
+          widget.url = baseURL + filePath + ".java";     
+        }
+        else {
            var lastSlash = widget.value.lastIndexOf('.');
            var pkgName = widget.value.substring(0, lastSlash);
            var assetName = widget.value.substring(lastSlash + 1);
-           var assetURL= mdw.roots.hub + '/#/asset/' +pkgName+"/"+assetName+".java";
-           widget.assetURL=assetURL;      
+           var assetURL = mdw.roots.hub + '/#/asset/' + pkgName + "/" + assetName + ".java";
+           widget.url = assetURL;      
         }
-       
       }
-          
-    
       else if (widget.type === 'picklist') {
         if (widget.value)
           widget.value = Compatibility.getArray(widget.value);
@@ -353,8 +352,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     var tab = this.tab;
     this.template.pagelet.widgets.forEach(function(widget) {
       if (!widget.hidden) {
-        // TODO unsupported sections: Bindings (LdapAdapter.impl and
-        // OAuthServiceAdapter.impl)
+        // TODO unsupported sections: Bindings (LdapAdapter.impl and OAuthServiceAdapter.impl)
         if ((widget.section && tab === widget.section) || (!widget.section && (tab == 'Design' || tab == 'General')))
           widgets.push(widget);
       }

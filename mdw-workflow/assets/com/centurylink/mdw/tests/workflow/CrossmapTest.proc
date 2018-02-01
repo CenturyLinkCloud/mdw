@@ -24,8 +24,8 @@
     {
       "attributes": {
         "Input": "jsonInput",
-        "Mapper": "jsonToJson.groovy",
-        "Mapper_assetVersion": "0",
+        "Mapper": "com.centurylink.mdw.tests.workflow/jsonToJson.groovy",
+        "Mapper_assetVersion": "[0.1,1)",
         "Output": "jsonToJsonOutput",
         "WORK_DISPLAY_INFO": "x=157,y=118,w=100,h=60"
       },

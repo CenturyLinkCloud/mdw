@@ -1,20 +1,20 @@
 <form name="groupForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
   <div class="form-group" ng-class="{'has-error': workgroup.name === undefined}">
     <label class="control-label col-xs-2 mdw-required" for="groupName">Name:</label>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
       <input type="text" id="groupName" name="name" class="form-control" required focus-me ng-model="workgroup.name"
         ng-blur="workgroup.name === '' ? undefined : workgroup.name">
     </div>
   </div>
   <div class="form-group">
     <label class="control-label col-xs-2" for="groupDescrip">Description:</label>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
       <textarea id="groupDescrip" class="form-control" rows="4" maxlength="1000" ng-model="workgroup.description"></textarea>
     </div>
   </div>
   <div class="form-group">
     <label class="control-label col-xs-2" for="parent">Parent:</label>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
       <select id="parent" class="form-control" ng-model="workgroup.parent">
         <option ng-repeat="workgroup in getGroupList().workgroups" value="{{workgroup.name}}">{{workgroup.name}}</option>      
       </select>
@@ -23,7 +23,7 @@
   
   <div class="form-group" ng-repeat="(attrName, attrVal) in workgroup.attributes">
     <label class="control-label col-xs-2" for="{{attrName}}">{{attrName}}:</label>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
       <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="workgroup.attributes[attrName]">
     </div>
     <button ng-if="authUser.hasRole('Site Admin') && attrName.indexOf('Slack Channel') < 0"
