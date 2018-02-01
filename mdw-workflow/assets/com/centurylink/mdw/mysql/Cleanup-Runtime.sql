@@ -283,11 +283,87 @@ SET foreign_key_checks=0;
    SELECT ( CONCAT('Start Purging Document Content Records: ' , ifnull(dt, '')));
 
    
+   -- COMMENT OUT THE BELOW QUERY IF USING MONGODB TO STORE DOCUMENTS, INSTEAD OF DOCUMENT_CONTENT TABLE
    -- deleting from document_content to avoid the integrity constraint issue
    SET row_count = 0;
    REPEAT
    	 COMMIT;
    	 DELETE dc1 from document_content dc1 JOIN   
+     	( SELECT document_id FROM document doc
+       -- 1. all documents with owner_id being a process instance ID marked for deletion
+       		WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN','LISTENER_REQUEST')  
+               AND EXISTS (
+                       SELECT
+                              process_instance_id
+                         FROM process_instance pi
+                        WHERE pi.process_instance_id = doc.owner_id
+                          AND pi.status_cd = purgestatusid)
+               )
+           -- 2. all documents with owner type of VARIABLE_INSTANCE where row in VARIABLE_INSTANCE table has been deleted
+            OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'VARIABLE_INSTANCE'
+            	AND NOT EXISTS (
+            				SELECT variable_inst_id
+            				FROM variable_instance
+            				WHERE variable_inst_id = doc.owner_id)
+               )
+           -- 3. all documents with owner type of TASK_INSTANCE where row in TASK_INSTANCE table has been deleted
+            OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'TASK_INSTANCE'
+            	AND NOT EXISTS (
+            				SELECT task_instance_id
+            				FROM task_instance
+            				WHERE task_instance_id = doc.owner_id)
+               )   
+           -- 4. all documents with owner type of ACTIVITY_INSTANCE/ADAPTER_REQUEST/ADAPTER_RESPONSE/INTERNAL_EVENT where row 
+           --		in ACTIVITY_INSTANCE table has been deleted
+            OR ( doc.owner_id != 0 AND doc.OWNER_TYPE IN('ACTIVITY_INSTANCE','ADAPTER_REQUEST','ADAPTER_RESPONSE','INTERNAL_EVENT')
+            	AND NOT EXISTS (
+            				SELECT activity_instance_id
+            				FROM activity_instance
+            				WHERE activity_instance_id = doc.owner_id)
+               )    
+       	   -- 5. all documents with LISTENER_REQUEST/USER/TASK_INSTANCE/LISTENER_REQUEST_META/LISTENER_RESPONSE/VARIABLE_INSTANCE/INTERNAL_EVENT
+       	   --    as owner type and no owner id meeting DATE criteria 
+            OR ( doc.create_dt < DATE_SUB(CURDATE(), INTERVAL daydiff DAY)  
+                AND doc.owner_id = 0 
+                AND doc.owner_type IN ('LISTENER_REQUEST', 'USER', 'TASK_INSTANCE','LISTENER_REQUEST_META','LISTENER_RESPONSE','VARIABLE_INSTANCE','INTERNAL_EVENT')
+               )
+       		-- 6. all documents with LISTENER_RESPONSE/DOCUMENT/ *_META as owner type and owner is deleted
+            OR ( doc.owner_id != 0 AND doc.owner_type IN 
+            	('LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
+                AND NOT EXISTS (SELECT document_id
+                                  FROM document_content doc2
+                                 WHERE doc2.document_id = doc.owner_id)
+               )
+           LIMIT commitcnt
+         ) d2 USING (document_id);            
+      SET row_count = row_count + ROW_COUNT();
+   UNTIL ROW_COUNT() < 1 END REPEAT; 
+   
+   SELECT
+      ( CONCAT('Number of rows deleted from DOCUMENT Content: ', row_count));    
+	 COMMIT;
+
+   SELECT SYSDATE()
+     INTO dt
+     FROM DUAL;
+
+   SELECT ( CONCAT('Start Purging Document Records: ' , ifnull(dt, '')));
+   
+   -- delete DOCUMENT 
+   SET row_count = 0;
+   REPEAT
+   	 COMMIT;
+   	 -- USE THE BELOW QUERY IF NOT USING MONGODB (meaning all documents are stored in document_content table)
+   	 DELETE d1 FROM document d1 JOIN 
+   	 	(SELECT d3.document_id FROM document d3 LEFT OUTER JOIN document_content dc 
+   	 	   USING (document_id) 
+		   WHERE dc.document_id IS null
+		   LIMIT commitcnt
+		 ) d2 USING (document_id);
+	  
+	  -- USE THE BELOW QUERY IF USING MONGODB TO STORE DOCUMENTS, INSTEAD OF DOCUMENT_CONTENT
+	  /*
+	   DELETE d1 from document d1 JOIN   
      	( SELECT document_id FROM document doc
        -- 1. all documents with process instance ID populated
        		WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN')  
@@ -326,7 +402,7 @@ SET foreign_key_checks=0;
                 AND doc.owner_id = 0 
                 AND doc.owner_type IN ('LISTENER_REQUEST', 'USER', 'TASK_INSTANCE','LISTENER_REQUEST_META','LISTENER_RESPONSE','VARIABLE_INSTANCE','INTERNAL_EVENT')
                )
-       -- 4. all documents with LISTENER_REQUEST/LISTENER_RESPONSE/DOCUMENT/*_META as owner type and owner is deleted
+       -- 4. all documents with LISTENER_REQUEST/LISTENER_RESPONSE/DOCUMENT/ *_META as owner type and owner is deleted
             OR ( doc.owner_id != 0 AND doc.owner_type IN 
             	('LISTENER_REQUEST','LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
                 AND NOT EXISTS (SELECT document_id
@@ -334,30 +410,8 @@ SET foreign_key_checks=0;
                                  WHERE doc2.document_id = doc.owner_id)
                )
            LIMIT commitcnt
-         ) dc2 USING (document_id);            
-      SET row_count = row_count + ROW_COUNT();
-   UNTIL ROW_COUNT() < 1 END REPEAT; 
-   
-   SELECT
-      ( CONCAT('Number of rows deleted from DOCUMENT Content: ', row_count));    
-	 COMMIT;
-
-   SELECT SYSDATE()
-     INTO dt
-     FROM DUAL;
-
-   SELECT ( CONCAT('Start Purging Document Records: ' , ifnull(dt, '')));
-   
-   -- delete DOCUMENT 
-   SET row_count = 0;
-   REPEAT
-   	 COMMIT;
-   	 DELETE d1 FROM document d1 JOIN 
-   	 	(SELECT d3.document_id FROM document d3 LEFT OUTER JOIN document_content dc 
-   	 	   USING (document_id) 
-		   WHERE dc.document_id IS null
-		   LIMIT commitcnt
-		 ) d2 USING (document_id);
+         ) d2 USING (document_id);  
+	   */
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;           
 
