@@ -288,8 +288,9 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE dc1 from document_content dc1 JOIN   
-     	( SELECT document_id FROM document doc
+   	 DELETE dc1 FROM document_content dc1 JOIN 
+      ( SELECT a.document_id FROM 
+		( SELECT dc.document_id FROM document doc JOIN document_content dc USING (document_id)
        -- 1. all documents with owner_id being a process instance ID marked for deletion
        		WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN','LISTENER_REQUEST')  
                AND EXISTS (
@@ -333,9 +334,10 @@ SET foreign_key_checks=0;
                 AND NOT EXISTS (SELECT document_id
                                   FROM document_content doc2
                                  WHERE doc2.document_id = doc.owner_id)
-               )
-           LIMIT commitcnt
-         ) d2 USING (document_id);            
+               ) 
+		   ) a 
+         LIMIT commitcnt
+      ) dc2 USING (document_id);    
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT; 
    
