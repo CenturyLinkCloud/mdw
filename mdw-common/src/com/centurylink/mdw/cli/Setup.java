@@ -354,6 +354,25 @@ public abstract class Setup implements Operation {
      * Override for extended debug info (always calling super.debug()).
      */
     public boolean validate() throws IOException {
+        // check config
+        if (needsConfig()) {
+            String mdwConfig = null;
+            File mdwYaml = new File(getConfigRoot() + "/mdw.yaml");
+            if (mdwYaml.isFile()) {
+                mdwConfig = mdwYaml.getName();
+            }
+            else {
+                File mdwProps = new File(getConfigRoot() + "/mdw.properties");
+                if (mdwProps.isFile()) {
+                    mdwConfig = mdwProps.getName();
+                }
+            }
+            if (mdwConfig == null) {
+                throw new IOException("Missing config: (mdw.yaml or mdw.properties)");
+            }
+            Props.init(mdwConfig);
+        }
+
         String projPath = Paths.get(getProjectDir().getPath()).toAbsolutePath().normalize().toString();
         String assetPath = Paths.get(getAssetRoot().getPath()).toAbsolutePath().normalize().toString();
 
@@ -366,13 +385,6 @@ public abstract class Setup implements Operation {
         if (!assetPath.startsWith(projPath)) {
             System.err.println("Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
             return false;
-        }
-
-        // check config
-        if (needsConfig()) {
-            File mdwProps = new File(getConfigRoot() + "/mdw.properties");
-            if (!mdwProps.isFile())
-                throw new IOException("Missing config: " + mdwProps.getAbsolutePath());
         }
 
         return true;

@@ -222,4 +222,8 @@ public abstract class PropertyManager implements CacheService {
             ;
         }
     }
+
+    public static boolean isYaml() {
+        return getInstance() instanceof YamlPropertyManager;
+    }
 }
