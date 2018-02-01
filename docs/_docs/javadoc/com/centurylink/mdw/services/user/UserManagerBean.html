@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -288,12 +288,16 @@ implements <a href="../../../../../com/centurylink/mdw/services/UserManager.html
 </td>
 </tr>
 <tr id="i22" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#getWorkgroupAttributeNames--">getWorkgroupAttributeNames</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html" title="class in com.centurylink.mdw.model.user">AuthenticatedUser</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#loadUser-java.lang.String-">loadUser</a></span>(java.lang.String&nbsp;cuid)</code>
 <div class="block">Load an Authenticated user from the database.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#queryUsers-java.lang.String-boolean-int-int-java.lang.String-">queryUsers</a></span>(java.lang.String&nbsp;whereCondition,
           boolean&nbsp;withGroups,
@@ -303,21 +307,21 @@ implements <a href="../../../../../com/centurylink/mdw/services/UserManager.html
 <div class="block">Returns a pageful of user list</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateGroupUsers-java.lang.Long-java.lang.Long:A-">updateGroupUsers</a></span>(java.lang.Long&nbsp;groupId,
                 java.lang.Long[]&nbsp;userIds)</code>
 <div class="block">Updates the users associated with a group.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateGroupUsers-java.lang.Long-java.lang.String:A-">updateGroupUsers</a></span>(java.lang.Long&nbsp;groupId,
                 java.lang.String[]&nbsp;userCuids)</code>
 <div class="block">Updates the users associated with a group.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUser-java.lang.Long-java.lang.String-java.lang.String-">updateUser</a></span>(java.lang.Long&nbsp;pUserId,
           java.lang.String&nbsp;pCuid,
@@ -325,33 +329,33 @@ implements <a href="../../../../../com/centurylink/mdw/services/UserManager.html
 <div class="block">Updates a User</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUserGroup-com.centurylink.mdw.model.user.Workgroup-">updateUserGroup</a></span>(<a href="../../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&nbsp;pUserGroupVO)</code>
 <div class="block">Updates a UserGroup</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUserGroups-java.lang.String-java.lang.String:A-">updateUserGroups</a></span>(java.lang.String&nbsp;pCUID,
                 java.lang.String[]&nbsp;pUpdatedGrps)</code>
 <div class="block">Updates the User Groups for the passed in user Id</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUserPreferences-java.lang.Long-java.util.Map-">updateUserPreferences</a></span>(java.lang.Long&nbsp;userId,
                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;preferences)</code>
 <div class="block">Update user preferences.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUserRole-com.centurylink.mdw.model.user.Role-">updateUserRole</a></span>(<a href="../../../../../com/centurylink/mdw/model/user/Role.html" title="class in com.centurylink.mdw.model.user">Role</a>&nbsp;role)</code>
 <div class="block">Updates a UserRole</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUserRoles-java.lang.Long-java.lang.Long-java.lang.String:A-">updateUserRoles</a></span>(java.lang.Long&nbsp;userId,
                java.lang.Long&nbsp;groupId,
@@ -359,7 +363,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/UserManager.html
 <div class="block">Update roles of a user for a given group</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/user/UserManagerBean.html#updateUserRoles-java.lang.String-java.lang.String-java.lang.String:A-">updateUserRoles</a></span>(java.lang.String&nbsp;cuid,
                java.lang.String&nbsp;groupName,
@@ -1153,7 +1157,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/UserManager.html
 <a name="getPublicUserAttributeNames--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getPublicUserAttributeNames</h4>
 <pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getPublicUserAttributeNames()
@@ -1168,6 +1172,22 @@ implements <a href="../../../../../com/centurylink/mdw/services/UserManager.html
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getWorkgroupAttributeNames--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getWorkgroupAttributeNames</h4>
+<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getWorkgroupAttributeNames()
+                                                            throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/UserManager.html#getWorkgroupAttributeNames--">getWorkgroupAttributeNames</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/UserManager.html" title="interface in com.centurylink.mdw.services">UserManager</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>

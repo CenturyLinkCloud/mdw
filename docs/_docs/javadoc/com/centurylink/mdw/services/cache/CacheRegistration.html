@@ -179,7 +179,10 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#performInitialRequest--">performInitialRequest</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#performInitialRequest--">performInitialRequest</a></span>()</code>
+<div class="block">After all caches have been loaded or refreshed (startup or a cache refresh request),
+ call this method to eliminate "first request" performance penalty.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -380,6 +383,8 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 <li class="blockList">
 <h4>performInitialRequest</h4>
 <pre>public static&nbsp;void&nbsp;performInitialRequest()</pre>
+<div class="block">After all caches have been loaded or refreshed (startup or a cache refresh request),
+ call this method to eliminate "first request" performance penalty.</div>
 </li>
 </ul>
 </li>

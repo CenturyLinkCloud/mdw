@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -260,13 +260,17 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i22" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#getWorkgroupAttributeNames--">getWorkgroupAttributeNames</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html" title="class in com.centurylink.mdw.model.user">AuthenticatedUser</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#loadUser-java.lang.String-">loadUser</a></span>(java.lang.String&nbsp;cuid)</code>
 <div class="block">Load an authenticated user from database,
  along with preferences.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#queryUsers-java.lang.String-boolean-int-int-java.lang.String-">queryUsers</a></span>(java.lang.String&nbsp;whereCondition,
           boolean&nbsp;withGroups,
@@ -276,21 +280,21 @@ var activeTableTab = "activeTableTab";
 <div class="block">Query for users</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateGroupUsers-java.lang.Long-java.lang.Long:A-">updateGroupUsers</a></span>(java.lang.Long&nbsp;groupId,
                 java.lang.Long[]&nbsp;userIds)</code>
 <div class="block">Updates the users associated with a group.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateGroupUsers-java.lang.Long-java.lang.String:A-">updateGroupUsers</a></span>(java.lang.Long&nbsp;groupId,
                 java.lang.String[]&nbsp;userCuids)</code>
 <div class="block">Updates the users associated with a group.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUser-java.lang.Long-java.lang.String-java.lang.String-">updateUser</a></span>(java.lang.Long&nbsp;pUserId,
           java.lang.String&nbsp;pCuid,
@@ -298,33 +302,33 @@ var activeTableTab = "activeTableTab";
 <div class="block">Updates a user's CUID and displayed name</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUserGroup-com.centurylink.mdw.model.user.Workgroup-">updateUserGroup</a></span>(<a href="../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&nbsp;pUserGroupVO)</code>
 <div class="block">Update a group's name, description and parent group ID</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUserGroups-java.lang.String-java.lang.String:A-">updateUserGroups</a></span>(java.lang.String&nbsp;pCUID,
                 java.lang.String[]&nbsp;pUpdatedGrps)</code>
 <div class="block">Updates the groups to which the given user belongs</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUserPreferences-java.lang.Long-java.util.Map-">updateUserPreferences</a></span>(java.lang.Long&nbsp;userId,
                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;preferences)</code>
 <div class="block">Update user preferences.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUserRole-com.centurylink.mdw.model.user.Role-">updateUserRole</a></span>(<a href="../../../../com/centurylink/mdw/model/user/Role.html" title="class in com.centurylink.mdw.model.user">Role</a>&nbsp;role)</code>
 <div class="block">Updates a role.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUserRoles-java.lang.Long-java.lang.Long-java.lang.String:A-">updateUserRoles</a></span>(java.lang.Long&nbsp;userId,
                java.lang.Long&nbsp;groupId,
@@ -332,7 +336,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Update roles of a user for a given group</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserManager.html#updateUserRoles-java.lang.String-java.lang.String-java.lang.String:A-">updateUserRoles</a></span>(java.lang.String&nbsp;cuid,
                java.lang.String&nbsp;groupName,
@@ -1040,7 +1044,7 @@ var activeTableTab = "activeTableTab";
 <a name="getPublicUserAttributeNames--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getPublicUserAttributeNames</h4>
 <pre>java.util.List&lt;java.lang.String&gt;&nbsp;getPublicUserAttributeNames()
@@ -1052,6 +1056,20 @@ var activeTableTab = "activeTableTab";
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 <dd><code><a href="../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getWorkgroupAttributeNames--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getWorkgroupAttributeNames</h4>
+<pre>java.util.List&lt;java.lang.String&gt;&nbsp;getWorkgroupAttributeNames()
+                                                     throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>

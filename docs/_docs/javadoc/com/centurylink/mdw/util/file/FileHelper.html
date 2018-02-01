@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":41,"i22":9,"i23":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":41,"i21":9,"i22":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -193,37 +193,35 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#fileInputStreamFromClasspath-java.lang.String-">fileInputStreamFromClasspath</a></span>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>static java.io.File</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#getConfigurationFile-java.lang.String-">getConfigurationFile</a></span>(java.lang.String&nbsp;filepath)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#getFileContents-java.lang.String-">getFileContents</a></span>(java.lang.String&nbsp;pFileName)</code>
 <div class="block">Method that returns the file contents</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#getFileFromClasspath-java.lang.String-">getFileFromClasspath</a></span>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#getFilePath-java.net.URL-">getFilePath</a></span>(java.net.URL&nbsp;url)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#isEmpty-java.io.File-">isEmpty</a></span>(java.io.File&nbsp;directory)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static java.io.InputStream</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#openConfigurationFile-java.lang.String-">openConfigurationFile</a></span>(java.lang.String&nbsp;filename)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>static java.io.InputStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#openConfigurationFile-java.lang.String-java.lang.ClassLoader-">openConfigurationFile</a></span>(java.lang.String&nbsp;filepath,
-                     java.lang.ClassLoader&nbsp;classLoader)</code>&nbsp;</td>
-</tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>static java.io.InputStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#openConfigurationFile-java.lang.String-java.lang.ClassLoader-boolean-">openConfigurationFile</a></span>(java.lang.String&nbsp;filepath,
-                     java.lang.ClassLoader&nbsp;classLoader,
-                     boolean&nbsp;useMDWConfigLocation)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#openConfigurationFile-java.lang.String-java.lang.ClassLoader-">openConfigurationFile</a></span>(java.lang.String&nbsp;filepath,
+                     java.lang.ClassLoader&nbsp;classLoader)</code>
 <div class="block">Open configuration file.</div>
 </td>
 </tr>
@@ -236,11 +234,6 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#readConfig-java.lang.String-">readConfig</a></span>(java.lang.String&nbsp;filepath)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#readConfig-java.lang.String-boolean-">readConfig</a></span>(java.lang.String&nbsp;filepath,
-          boolean&nbsp;useMDWConfigLocation)</code>&nbsp;</td>
-</tr>
-<tr id="i16" class="altColor">
 <td class="colFirst"><code>static java.io.InputStream</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#readFile-java.lang.String-java.lang.ClassLoader-">readFile</a></span>(java.lang.String&nbsp;filename,
         java.lang.ClassLoader&nbsp;classLoader)</code>
@@ -251,23 +244,23 @@ extends java.lang.Object</pre>
    - From META-INF/mdw using the designated class loader</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#readFileFromClasspath-java.lang.String-">readFileFromClasspath</a></span>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#readFromFile-java.lang.String-">readFromFile</a></span>(java.lang.String&nbsp;filePath)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#readFromResourceStream-java.io.InputStream-">readFromResourceStream</a></span>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#stripDisallowedFilenameChars-java.lang.String-">stripDisallowedFilenameChars</a></span>(java.lang.String&nbsp;input)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#unzipFile-java.io.File-java.io.File-java.lang.String-java.util.List-boolean-">unzipFile</a></span>(java.io.File&nbsp;zipFile,
          java.io.File&nbsp;destDir,
@@ -279,12 +272,12 @@ extends java.lang.Object</pre>
 </div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#writeToFile-java.io.InputStream-java.io.File-">writeToFile</a></span>(java.io.InputStream&nbsp;inputStream,
            java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#writeToFile-java.lang.String-java.lang.String-boolean-">writeToFile</a></span>(java.lang.String&nbsp;pFileName,
            java.lang.String&nbsp;pContents,
@@ -588,22 +581,6 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;java.io.InputStream&nbsp;openConfigurationFile(java.lang.String&nbsp;filepath,
                                                         java.lang.ClassLoader&nbsp;classLoader)
                                                  throws java.io.FileNotFoundException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.FileNotFoundException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="openConfigurationFile-java.lang.String-java.lang.ClassLoader-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>openConfigurationFile</h4>
-<pre>public static&nbsp;java.io.InputStream&nbsp;openConfigurationFile(java.lang.String&nbsp;filepath,
-                                                        java.lang.ClassLoader&nbsp;classLoader,
-                                                        boolean&nbsp;useMDWConfigLocation)
-                                                 throws java.io.FileNotFoundException</pre>
 <div class="block">Open configuration file. If Java system property mdw.config.location is defined,
  and the file exists in that directory, it will load the file. Otherwise it loads through
  the class path.</div>
@@ -616,6 +593,15 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.FileNotFoundException</code> - if the file is not found</dd>
 </dl>
+</li>
+</ul>
+<a name="getConfigurationFile-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConfigurationFile</h4>
+<pre>public static&nbsp;java.io.File&nbsp;getConfigurationFile(java.lang.String&nbsp;filepath)</pre>
 </li>
 </ul>
 <a name="readFile-java.lang.String-java.lang.ClassLoader-">
@@ -647,24 +633,8 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;java.lang.String&nbsp;readConfig(java.lang.String&nbsp;filepath)
                                    throws java.io.IOException</pre>
 <dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="readConfig-java.lang.String-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readConfig</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;readConfig(java.lang.String&nbsp;filepath,
-                                          boolean&nbsp;useMDWConfigLocation)
-                                   throws java.io.IOException</pre>
-<dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>springContextFile</code> - </dd>
-<dd><code>useMDWConfigLocation</code> - - whether to check for externally located files</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>

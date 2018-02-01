@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":9,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":10,"i8":10,"i9":10,"i10":6,"i11":6,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":6};
+var methods = {"i0":6,"i1":9,"i2":9,"i3":9,"i4":10,"i5":9,"i6":9,"i7":6,"i8":9,"i9":10,"i10":10,"i11":10,"i12":6,"i13":9,"i14":10,"i15":10,"i16":10,"i17":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -111,7 +111,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../com/centurylink/mdw/config/DefaultPropertyManager.html" title="class in com.centurylink.mdw.config">DefaultPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/MockPropertyManager.html" title="class in com.centurylink.mdw.config">MockPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html" title="class in com.centurylink.mdw.config">PaaSPropertyManager</a></dd>
+<dd><a href="../../../../com/centurylink/mdw/config/JavaPropertyManager.html" title="class in com.centurylink.mdw.config">JavaPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/MockPropertyManager.html" title="class in com.centurylink.mdw.config">MockPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html" title="class in com.centurylink.mdw.config">PaaSPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html" title="class in com.centurylink.mdw.config">YamlPropertyManager</a></dd>
 </dl>
 <hr>
 <br>
@@ -209,47 +209,43 @@ implements <a href="../../../../com/centurylink/mdw/cache/CacheService.html" tit
                   int&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getList-java.lang.String-">getList</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>static java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getListProperty-java.lang.String-">getListProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getLongProperty-java.lang.String-long-">getLongProperty</a></span>(java.lang.String&nbsp;name,
                long&nbsp;defaultValue)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>abstract java.util.Properties</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperties-java.lang.String-">getProperties</a></span>(java.lang.String&nbsp;pGroupName)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperties-java.lang.String-">getProperties</a></span>(java.lang.String&nbsp;group)</code>
 <div class="block">returns the properties for group</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-">getProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertyFileLocation--">getPropertyFileLocation</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertySource-java.lang.String-">getPropertySource</a></span>(java.lang.String&nbsp;propname)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getSources--">getSources</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
-</tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>abstract java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getStringProperty-java.lang.String-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;group,
-                 java.lang.String&nbsp;name)</code>
-<div class="block">Returns the handle to the property based on the passed in
- GroupName and the property Name</div>
-</td>
-</tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#initializeDesignerPropertyManager--">initializeDesignerPropertyManager</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></td>
@@ -416,36 +412,14 @@ implements <a href="../../../../com/centurylink/mdw/cache/CacheService.html" tit
 <ul class="blockList">
 <li class="blockList">
 <h4>getProperties</h4>
-<pre>public abstract&nbsp;java.util.Properties&nbsp;getProperties(java.lang.String&nbsp;pGroupName)
+<pre>public abstract&nbsp;java.util.Properties&nbsp;getProperties(java.lang.String&nbsp;group)
                                             throws <a href="../../../../com/centurylink/mdw/config/PropertyException.html" title="class in com.centurylink.mdw.config">PropertyException</a></pre>
 <div class="block">returns the properties for group</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pGroupName</code> - </dd>
+<dd><code>group</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Properties for the group</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/centurylink/mdw/config/PropertyException.html" title="class in com.centurylink.mdw.config">PropertyException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getStringProperty-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getStringProperty</h4>
-<pre>public abstract&nbsp;java.lang.String&nbsp;getStringProperty(java.lang.String&nbsp;group,
-                                                   java.lang.String&nbsp;name)
-                                            throws <a href="../../../../com/centurylink/mdw/config/PropertyException.html" title="class in com.centurylink.mdw.config">PropertyException</a></pre>
-<div class="block">Returns the handle to the property based on the passed in
- GroupName and the property Name</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>group</code> - </dd>
-<dd><code>name</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>Value defined for the property as String</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyException.html" title="class in com.centurylink.mdw.config">PropertyException</a></code></dd>
 </dl>
@@ -541,13 +515,22 @@ implements <a href="../../../../com/centurylink/mdw/cache/CacheService.html" tit
                                          boolean&nbsp;defaultValue)</pre>
 </li>
 </ul>
-<a name="initializeDesignerPropertyManager--">
+<a name="getListProperty-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>initializeDesignerPropertyManager</h4>
-<pre>public static&nbsp;<a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a>&nbsp;initializeDesignerPropertyManager()</pre>
+<h4>getListProperty</h4>
+<pre>public static&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getListProperty(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="getList-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getList</h4>
+<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getList(java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
 <a name="initializeMockPropertyManager--">

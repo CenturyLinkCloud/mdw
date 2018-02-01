@@ -163,7 +163,6 @@
 <li><a href="com/centurylink/mdw/spring/package-tree.html">com.centurylink.mdw.spring</a>, </li>
 <li><a href="com/centurylink/mdw/startup/package-tree.html">com.centurylink.mdw.startup</a>, </li>
 <li><a href="com/centurylink/mdw/sync/package-tree.html">com.centurylink.mdw.sync</a>, </li>
-<li><a href="com/centurylink/mdw/system/package-tree.html">com.centurylink.mdw.system</a>, </li>
 <li><a href="com/centurylink/mdw/task/types/package-tree.html">com.centurylink.mdw.task.types</a>, </li>
 <li><a href="com/centurylink/mdw/test/package-tree.html">com.centurylink.mdw.test</a>, </li>
 <li><a href="com/centurylink/mdw/test/impl/package-tree.html">com.centurylink.mdw.test.impl</a>, </li>
@@ -767,9 +766,10 @@
 <li type="circle">com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Prop.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Prop</span></a></li>
 <li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">PropertyManager</span></a> (implements com.centurylink.mdw.cache.<a href="com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>)
 <ul>
-<li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/DefaultPropertyManager.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">DefaultPropertyManager</span></a></li>
+<li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/JavaPropertyManager.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">JavaPropertyManager</span></a></li>
 <li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/MockPropertyManager.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">MockPropertyManager</span></a></li>
 <li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/PaaSPropertyManager.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">PaaSPropertyManager</span></a></li>
+<li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlPropertyManager.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">YamlPropertyManager</span></a></li>
 </ul>
 </li>
 <li type="circle">com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant"><span class="typeNameLink">PropertyNames</span></a></li>
@@ -859,6 +859,8 @@
 </li>
 <li type="circle">com.centurylink.mdw.services.event.<a href="com/centurylink/mdw/services/event/ScheduledEventQueue.html" title="class in com.centurylink.mdw.services.event"><span class="typeNameLink">ScheduledEventQueue</span></a> (implements com.centurylink.mdw.cache.<a href="com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>)</li>
 <li type="circle">com.centurylink.mdw.timer.cleanup.<a href="com/centurylink/mdw/timer/cleanup/ScriptRunner.html" title="class in com.centurylink.mdw.timer.cleanup"><span class="typeNameLink">ScriptRunner</span></a></li>
+<li type="circle">com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Server</span></a></li>
+<li type="circle">com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app"><span class="typeNameLink">ServerList</span></a> (implements java.lang.Iterable&lt;T&gt;)</li>
 <li type="circle">java.net.ServerSocket (implements java.io.Closeable)
 <ul>
 <li type="circle">com.centurylink.mdw.soccom.<a href="com/centurylink/mdw/soccom/SoccomServer.html" title="class in com.centurylink.mdw.soccom"><span class="typeNameLink">SoccomServer</span></a>
@@ -950,10 +952,8 @@
 <li type="circle">com.centurylink.mdw.sync.<a href="com/centurylink/mdw/sync/SyncExpressionEvaluator.html" title="class in com.centurylink.mdw.sync"><span class="typeNameLink">SyncExpressionEvaluator</span></a></li>
 <li type="circle">com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/SysInfo.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">SysInfo</span></a> (implements com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>)</li>
 <li type="circle">com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/SysInfoCategory.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">SysInfoCategory</span></a> (implements com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>)</li>
-<li type="circle">com.centurylink.mdw.service.resource.<a href="com/centurylink/mdw/service/resource/SystemInfo.html" title="class in com.centurylink.mdw.service.resource"><span class="typeNameLink">SystemInfo</span></a> (implements com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/TextService.html" title="interface in com.centurylink.mdw.common.service">TextService</a>)</li>
 <li type="circle">com.centurylink.mdw.util.timer.<a href="com/centurylink/mdw/util/timer/SystemOutProgressMonitor.html" title="class in com.centurylink.mdw.util.timer"><span class="typeNameLink">SystemOutProgressMonitor</span></a> (implements com.centurylink.mdw.util.timer.<a href="com/centurylink/mdw/util/timer/ProgressMonitor.html" title="interface in com.centurylink.mdw.util.timer">ProgressMonitor</a>)</li>
 <li type="circle">com.centurylink.mdw.services.system.<a href="com/centurylink/mdw/services/system/SystemServicesImpl.html" title="class in com.centurylink.mdw.services.system"><span class="typeNameLink">SystemServicesImpl</span></a> (implements com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/SystemServices.html" title="interface in com.centurylink.mdw.services">SystemServices</a>)</li>
-<li type="circle">com.centurylink.mdw.system.<a href="com/centurylink/mdw/system/SystemUtil.html" title="class in com.centurylink.mdw.system"><span class="typeNameLink">SystemUtil</span></a></li>
 <li type="circle">com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/TableSequenceName.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">TableSequenceName</span></a></li>
 <li type="circle">com.centurylink.mdw.common.service.types.<a href="com/centurylink/mdw/common/service/types/Task.html" title="class in com.centurylink.mdw.common.service.types"><span class="typeNameLink">Task</span></a></li>
 <li type="circle">com.centurylink.mdw.common.service.types.<a href="com/centurylink/mdw/common/service/types/TaskAction.html" title="class in com.centurylink.mdw.common.service.types"><span class="typeNameLink">TaskAction</span></a></li>
@@ -1189,6 +1189,7 @@
 <li type="circle">com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/XPathHelper.html" title="class in com.centurylink.mdw.util"><span class="typeNameLink">XPathHelper</span></a></li>
 <li type="circle">com.centurylink.mdw.services.test.<a href="com/centurylink/mdw/services/test/YamlBuilder.html" title="class in com.centurylink.mdw.services.test"><span class="typeNameLink">YamlBuilder</span></a></li>
 <li type="circle">com.centurylink.mdw.yaml.<a href="com/centurylink/mdw/yaml/YamlLoader.html" title="class in com.centurylink.mdw.yaml"><span class="typeNameLink">YamlLoader</span></a></li>
+<li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlProperties.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">YamlProperties</span></a></li>
 <li type="circle">com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/ZipHelper.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">ZipHelper</span></a></li>
 </ul>
 </li>
@@ -1400,6 +1401,7 @@
 <li type="circle">java.lang.Enum&lt;E&gt; (implements java.lang.Comparable&lt;T&gt;, java.io.Serializable)
 <ul>
 <li type="circle">com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/CertificateChainInfo.Status.html" title="enum in com.centurylink.mdw.auth"><span class="typeNameLink">CertificateChainInfo.Status</span></a></li>
+<li type="circle">com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlProperties.PropType.html" title="enum in com.centurylink.mdw.config"><span class="typeNameLink">YamlProperties.PropType</span></a></li>
 <li type="circle">com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/ProcessPersister.PersistType.html" title="enum in com.centurylink.mdw.dataaccess"><span class="typeNameLink">ProcessPersister.PersistType</span></a></li>
 <li type="circle">com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/GitDiffs.DiffType.html" title="enum in com.centurylink.mdw.dataaccess.file"><span class="typeNameLink">GitDiffs.DiffType</span></a></li>
 <li type="circle">com.centurylink.mdw.email.<a href="com/centurylink/mdw/email/Template.Format.html" title="enum in com.centurylink.mdw.email"><span class="typeNameLink">Template.Format</span></a></li>

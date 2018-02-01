@@ -159,9 +159,11 @@ extends java.lang.Object</pre>
       javax.websocket.EndpointConfig&nbsp;config)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/WebSocketMessenger.html#send-java.lang.String-java.lang.String-">send</a></span>(java.lang.String&nbsp;topic,
-    java.lang.String&nbsp;message)</code>&nbsp;</td>
+    java.lang.String&nbsp;message)</code>
+<div class="block">Returns true if any subscribers.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -271,9 +273,10 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>send</h4>
-<pre>public&nbsp;void&nbsp;send(java.lang.String&nbsp;topic,
-                 java.lang.String&nbsp;message)
-          throws java.io.IOException</pre>
+<pre>public&nbsp;boolean&nbsp;send(java.lang.String&nbsp;topic,
+                    java.lang.String&nbsp;message)
+             throws java.io.IOException</pre>
+<div class="block">Returns true if any subscribers.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>

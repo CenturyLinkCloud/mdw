@@ -839,7 +839,7 @@
 <ul class="blockList">
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/DefaultPropertyManager.html" title="class in com.centurylink.mdw.config">DefaultPropertyManager</a></span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/JavaPropertyManager.html" title="class in com.centurylink.mdw.config">JavaPropertyManager</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th scope="col">Constant Field</th>
@@ -847,10 +847,10 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.config.DefaultPropertyManager.APP_CONFIG_NAME">
+<td class="colFirst"><a name="com.centurylink.mdw.config.JavaPropertyManager.APP_CONFIG_NAME">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/config/DefaultPropertyManager.html#APP_CONFIG_NAME">APP_CONFIG_NAME</a></code></td>
+<td><code><a href="com/centurylink/mdw/config/JavaPropertyManager.html#APP_CONFIG_NAME">APP_CONFIG_NAME</a></code></td>
 <td class="colLast"><code>"mdw.application.config.name"</code></td>
 </tr>
 </tbody>
@@ -1768,20 +1768,6 @@
 <td class="colLast"><code>"mdw.activity.resume.delay"</code></td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.APP_CUID">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#APP_CUID">APP_CUID</a></code></td>
-<td class="colLast"><code>"LDAP/AppCUID"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.APP_PASSWORD">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#APP_PASSWORD">APP_PASSWORD</a></code></td>
-<td class="colLast"><code>"LDAP/AppPassword"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.APPLICATION_NAME">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
@@ -1789,74 +1775,46 @@
 <td class="colLast"><code>"mdw.application.name"</code></td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.BASE_DN">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#BASE_DN">BASE_DN</a></code></td>
-<td class="colLast"><code>"LDAP/BaseDN"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.DISCOVERY_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#DISCOVERY_URL">DISCOVERY_URL</a></code></td>
 <td class="colLast"><code>"mdw.discovery.url"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.DOCS_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#DOCS_URL">DOCS_URL</a></code></td>
 <td class="colLast"><code>"mdw.docs.url"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.FILEPANEL_EXCLUDE_PATTERNS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#FILEPANEL_EXCLUDE_PATTERNS">FILEPANEL_EXCLUDE_PATTERNS</a></code></td>
 <td class="colLast"><code>"mdw.filepanel.exclude.patterns"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.FILEPANEL_MASKED_LINES">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#FILEPANEL_MASKED_LINES">FILEPANEL_MASKED_LINES</a></code></td>
 <td class="colLast"><code>"mdw.filepanel.masked.lines"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.FILEPANEL_ROOT_DIRS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#FILEPANEL_ROOT_DIRS">FILEPANEL_ROOT_DIRS</a></code></td>
 <td class="colLast"><code>"mdw.filepanel.root.dirs"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.HTTP_BASIC_AUTH_MODE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#HTTP_BASIC_AUTH_MODE">HTTP_BASIC_AUTH_MODE</a></code></td>
 <td class="colLast"><code>"mdw.services.http.basic.auth"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.LDAP_HOST">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#LDAP_HOST">LDAP_HOST</a></code></td>
-<td class="colLast"><code>"LDAP/Host"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.LDAP_PORT">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#LDAP_PORT">LDAP_PORT</a></code></td>
-<td class="colLast"><code>"LDAP/Port"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.LDAP_PROTOCOL">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#LDAP_PROTOCOL">LDAP_PROTOCOL</a></code></td>
-<td class="colLast"><code>"LDAP/Protocol"</code></td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_ACTIVITY_ACTIVE_MAX_RETRY">
@@ -1899,20 +1857,6 @@
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT">MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT</a></code></td>
 <td class="colLast"><code>"mdw.certified_message.AcknowlegmentTimeout"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL">MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL</a></code></td>
-<td class="colLast"><code>"mdw.certified_message.CheckInterval"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_CERTIFIED_MESSAGE_INITIAL_DELAY">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_CERTIFIED_MESSAGE_INITIAL_DELAY">MDW_CERTIFIED_MESSAGE_INITIAL_DELAY</a></code></td>
-<td class="colLast"><code>"mdw.certified_message.InitialDelay"</code></td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_CERTIFIED_MESSAGE_MAX_TRIES">
@@ -1985,123 +1929,95 @@
 <td class="colLast"><code>"mdw.db.base.location"</code></td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_BORROW_TIMEOUT">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_BORROW_TIMEOUT">MDW_DB_BORROW_TIMEOUT</a></code></td>
-<td class="colLast"><code>"mdw.database.borrow.timeout"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_DATA_LOC">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_DATA_LOC">MDW_DB_DATA_LOC</a></code></td>
 <td class="colLast"><code>"mdw.db.data.location"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_EMBEDDED_HOST_PORT">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_EMBEDDED_HOST_PORT">MDW_DB_EMBEDDED_HOST_PORT</a></code></td>
 <td class="colLast"><code>"mdw.db.embedded.server"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_PASSWORD">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_PASSWORD">MDW_DB_PASSWORD</a></code></td>
 <td class="colLast"><code>"mdw.database.password"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_POOLSIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_POOLSIZE">MDW_DB_POOLSIZE</a></code></td>
 <td class="colLast"><code>"mdw.database.poolsize"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_PRECISION_TIME">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_PRECISION_TIME">MDW_DB_PRECISION_TIME</a></code></td>
 <td class="colLast"><code>"mdw.database.macrosecondprecision.enable"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_TRACE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_TRACE">MDW_DB_TRACE</a></code></td>
 <td class="colLast"><code>"mdw.database.trace"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_URL">MDW_DB_URL</a></code></td>
 <td class="colLast"><code>"mdw.database.url"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_USERNAME">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_USERNAME">MDW_DB_USERNAME</a></code></td>
 <td class="colLast"><code>"mdw.database.username"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_VERSION">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_VERSION">MDW_DB_VERSION</a></code></td>
 <td class="colLast"><code>"mdw.database.version"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DB_VERSION_SUPPORTED">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DB_VERSION_SUPPORTED">MDW_DB_VERSION_SUPPORTED</a></code></td>
 <td class="colLast"><code>"mdw.database.version.supported"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_DYNAMIC_JAVA_COMPILE_OPTIONS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_DYNAMIC_JAVA_COMPILE_OPTIONS">MDW_DYNAMIC_JAVA_COMPILE_OPTIONS</a></code></td>
 <td class="colLast"><code>"mdw.dynamic.java.compile.options"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_ENGINE_USE_TRANSACTION">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_ENGINE_USE_TRANSACTION">MDW_ENGINE_USE_TRANSACTION</a></code></td>
 <td class="colLast"><code>"mdw.engine.use.transaction"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_FEATURE_TESTS_SUMMARY_FILE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_FEATURE_TESTS_SUMMARY_FILE">MDW_FEATURE_TESTS_SUMMARY_FILE</a></code></td>
 <td class="colLast"><code>"mdw.feature.tests.summary.file"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_FILE_DIR">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_FILE_DIR">MDW_FILE_DIR</a></code></td>
-<td class="colLast"><code>"mdw.file.dir"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_FS_PASSWORD">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_FS_PASSWORD">MDW_FS_PASSWORD</a></code></td>
-<td class="colLast"><code>"mdw.file.system.password"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_FS_USER">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_FS_USER">MDW_FS_USER</a></code></td>
-<td class="colLast"><code>"mdw.file.system.user"</code></td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE">
@@ -2223,6 +2139,34 @@
 <td class="colLast"><code>"mdw.jms.listener.receive.timeout"</code></td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_LDAP_BASE_DN">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LDAP_BASE_DN">MDW_LDAP_BASE_DN</a></code></td>
+<td class="colLast"><code>"mdw.ldap.base.dn"</code></td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_LDAP_HOST">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LDAP_HOST">MDW_LDAP_HOST</a></code></td>
+<td class="colLast"><code>"mdw.ldap.host"</code></td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_LDAP_PORT">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LDAP_PORT">MDW_LDAP_PORT</a></code></td>
+<td class="colLast"><code>"mdw.ldap.port"</code></td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_LDAP_PROTOCOL">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LDAP_PROTOCOL">MDW_LDAP_PROTOCOL</a></code></td>
+<td class="colLast"><code>"mdw.ldap.protocol"</code></td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_LISTENER_BUS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
@@ -2283,7 +2227,7 @@
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_MAIL_CONNECTION_TIMEOUT">MDW_MAIL_CONNECTION_TIMEOUT</a></code></td>
-<td class="colLast"><code>"mdw.mail.connectiontimeout"</code></td>
+<td class="colLast"><code>"mdw.mail.connection.timeout"</code></td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_MAIL_SMTP_HOST">
@@ -2321,39 +2265,25 @@
 <td class="colLast"><code>"mdw.mail.smtp.user"</code></td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_MAX_UPLOAD_BYTES">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_MAX_UPLOAD_BYTES">MDW_MAX_UPLOAD_BYTES</a></code></td>
-<td class="colLast"><code>"mdw.max.upload.bytes"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_MONGODB_HOST">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_MONGODB_HOST">MDW_MONGODB_HOST</a></code></td>
 <td class="colLast"><code>"mdw.mongodb.host"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_MONGODB_POOLSIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_MONGODB_POOLSIZE">MDW_MONGODB_POOLSIZE</a></code></td>
 <td class="colLast"><code>"mdw.mongodb.poolsize"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_MONGODB_PORT">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_MONGODB_PORT">MDW_MONGODB_PORT</a></code></td>
 <td class="colLast"><code>"mdw.mongodb.port"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_OAUTH_REST_APP_DOMAIN">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_OAUTH_REST_APP_DOMAIN">MDW_OAUTH_REST_APP_DOMAIN</a></code></td>
-<td class="colLast"><code>"mdw.oauth.rest.app.domain"</code></td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_OAUTH_REST_ENDPOINT">
@@ -2447,11 +2377,11 @@
 <td class="colLast"><code>"mdw.requestrouting.server.list"</code></td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_SCRIPT_EXECUTOR">
+<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_SCRIPT_EXECUTORS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SCRIPT_EXECUTOR">MDW_SCRIPT_EXECUTOR</a></code></td>
-<td class="colLast"><code>"mdw.script.executor"</code></td>
+<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SCRIPT_EXECUTORS">MDW_SCRIPT_EXECUTORS</a></code></td>
+<td class="colLast"><code>"mdw.script.executors"</code></td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_SERVER_LIST">
@@ -2461,242 +2391,214 @@
 <td class="colLast"><code>"mdw.server.list"</code></td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_SERVER_PROXY">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SERVER_PROXY">MDW_SERVER_PROXY</a></code></td>
-<td class="colLast"><code>"mdw.server.proxy"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_SERVICES_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SERVICES_URL">MDW_SERVICES_URL</a></code></td>
 <td class="colLast"><code>"mdw.services.url"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_STUB_SERVER">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_STUB_SERVER">MDW_STUB_SERVER</a></code></td>
 <td class="colLast"><code>"mdw.stub.server"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TASK_ACTION_DEF">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TASK_ACTION_DEF">MDW_TASK_ACTION_DEF</a></code></td>
 <td class="colLast"><code>"mdw.hub.action.definition"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TEMP_DIR">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TEMP_DIR">MDW_TEMP_DIR</a></code></td>
 <td class="colLast"><code>"mdw.temp.dir"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TEST_RESULTS_LOCATION">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TEST_RESULTS_LOCATION">MDW_TEST_RESULTS_LOCATION</a></code></td>
 <td class="colLast"><code>"mdw.test.results.location"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_THREADPOOL_CORE_THREADS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_THREADPOOL_CORE_THREADS">MDW_THREADPOOL_CORE_THREADS</a></code></td>
 <td class="colLast"><code>"mdw.threadpool.core_threads"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_THREADPOOL_KEEP_ALIVE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_THREADPOOL_KEEP_ALIVE">MDW_THREADPOOL_KEEP_ALIVE</a></code></td>
 <td class="colLast"><code>"mdw.threadpool.keep_alive"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_THREADPOOL_MAX_THREADS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_THREADPOOL_MAX_THREADS">MDW_THREADPOOL_MAX_THREADS</a></code></td>
 <td class="colLast"><code>"mdw.threadpool.max_threads"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_THREADPOOL_QUEUE_SIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_THREADPOOL_QUEUE_SIZE">MDW_THREADPOOL_QUEUE_SIZE</a></code></td>
 <td class="colLast"><code>"mdw.threadpool.queue_size"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_THREADPOOL_TERMINATION_TIMEOUT">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_THREADPOOL_TERMINATION_TIMEOUT">MDW_THREADPOOL_TERMINATION_TIMEOUT</a></code></td>
 <td class="colLast"><code>"mdw.threadpool.termination_timeout"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_THREADPOOL_WORKER">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_THREADPOOL_WORKER">MDW_THREADPOOL_WORKER</a></code></td>
 <td class="colLast"><code>"mdw.threadpool.worker"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TIMER_CHECK_INTERVAL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TIMER_CHECK_INTERVAL">MDW_TIMER_CHECK_INTERVAL</a></code></td>
 <td class="colLast"><code>"mdw.timer.CheckInterval"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TIMER_INITIAL_DELAY">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TIMER_INITIAL_DELAY">MDW_TIMER_INITIAL_DELAY</a></code></td>
 <td class="colLast"><code>"mdw.timer.InitialDelay"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TIMER_TASK">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TIMER_TASK">MDW_TIMER_TASK</a></code></td>
 <td class="colLast"><code>"mdw.timer.task"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TIMER_THRESHOLD_FOR_DELAY">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TIMER_THRESHOLD_FOR_DELAY">MDW_TIMER_THRESHOLD_FOR_DELAY</a></code></td>
 <td class="colLast"><code>"mdw.timer.ThresholdForDelay"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TRANSACTION_RETRY_INTERVAL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TRANSACTION_RETRY_INTERVAL">MDW_TRANSACTION_RETRY_INTERVAL</a></code></td>
 <td class="colLast"><code>"mdw.transaction.retry.interval"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TRANSACTION_RETRY_MAX">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TRANSACTION_RETRY_MAX">MDW_TRANSACTION_RETRY_MAX</a></code></td>
 <td class="colLast"><code>"mdw.transaction.retry.max"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS">MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS</a></code></td>
 <td class="colLast"><code>"mdw.translator.xmlbeans.load.options"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_TRANSLATOR_XMLBEANS_SAVE_OPTIONS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_TRANSLATOR_XMLBEANS_SAVE_OPTIONS">MDW_TRANSLATOR_XMLBEANS_SAVE_OPTIONS</a></code></td>
 <td class="colLast"><code>"mdw.translator.xmlbeans.save.options"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WAR_NAME">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WAR_NAME">MDW_WAR_NAME</a></code></td>
 <td class="colLast"><code>"mdw.war.name"</code></td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WEB_SESSION_TIMEOUT">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WEB_SESSION_TIMEOUT">MDW_WEB_SESSION_TIMEOUT</a></code></td>
-<td class="colLast"><code>"mdw.web.session.timeout"</code></td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WEB_URL">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WEB_URL">MDW_WEB_URL</a></code></td>
-<td class="colLast"><code>"mdw.web.url"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WEBSOCKET_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WEBSOCKET_URL">MDW_WEBSOCKET_URL</a></code></td>
 <td class="colLast"><code>"mdw.websocket.url"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.PROCESS_CLEANUP">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#PROCESS_CLEANUP">PROCESS_CLEANUP</a></code></td>
 <td class="colLast"><code>"MDWFramework.ProcessCleanup"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.SCHEDULED_EVENTS_BATCH_SIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#SCHEDULED_EVENTS_BATCH_SIZE">SCHEDULED_EVENTS_BATCH_SIZE</a></code></td>
 <td class="colLast"><code>"mdw.scheduled.events.max.batch.size"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.SCHEDULED_EVENTS_MEMORY_RANGE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#SCHEDULED_EVENTS_MEMORY_RANGE">SCHEDULED_EVENTS_MEMORY_RANGE</a></code></td>
 <td class="colLast"><code>"mdw.scheduled.events.memory.range"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.TASK_NOTICE_EMAIL_FROM">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#TASK_NOTICE_EMAIL_FROM">TASK_NOTICE_EMAIL_FROM</a></code></td>
 <td class="colLast"><code>"mdw.task.notice.email.from"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.TASK_RESUME_NOTIFY_ENDPOINT">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#TASK_RESUME_NOTIFY_ENDPOINT">TASK_RESUME_NOTIFY_ENDPOINT</a></code></td>
 <td class="colLast"><code>"mdw.task.resume.notify.endpoint"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_BATCH_SIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_BATCH_SIZE">UNSCHEDULED_EVENTS_BATCH_SIZE</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.max.batch.size"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_CHECK_DELAY">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_CHECK_DELAY">UNSCHEDULED_EVENTS_CHECK_DELAY</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.check.delay"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_CHECK_INTERVAL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_CHECK_INTERVAL">UNSCHEDULED_EVENTS_CHECK_INTERVAL</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.check.interval"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_MIN_AGE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_MIN_AGE">UNSCHEDULED_EVENTS_MIN_AGE</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.min.age"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.WEBTOOLS_URL">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#WEBTOOLS_URL">WEBTOOLS_URL</a></code></td>
-<td class="colLast"><code>"mdw.webtools.url"</code></td>
 </tr>
 </tbody>
 </table>
@@ -4966,59 +4868,45 @@
 <td class="colLast"><code>"Bus"</code></td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_EJB">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_EJB">METAINFO_PROTOCOL_EJB</a></code></td>
-<td class="colLast"><code>"Ejb"</code></td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_EMAIL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_EMAIL">METAINFO_PROTOCOL_EMAIL</a></code></td>
 <td class="colLast"><code>"Email"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_INTERNAL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_INTERNAL">METAINFO_PROTOCOL_INTERNAL</a></code></td>
 <td class="colLast"><code>"Internal"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_JMS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_JMS">METAINFO_PROTOCOL_JMS</a></code></td>
 <td class="colLast"><code>"Jms"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_KAFKA">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_KAFKA">METAINFO_PROTOCOL_KAFKA</a></code></td>
 <td class="colLast"><code>"Kafka"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_MQSERIES">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_MQSERIES">METAINFO_PROTOCOL_MQSERIES</a></code></td>
 <td class="colLast"><code>"MqSeries"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_REST">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_REST">METAINFO_PROTOCOL_REST</a></code></td>
-<td class="colLast"><code>"REST"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.model.listener.Listener.METAINFO_PROTOCOL_RESTFUL_WEBSERVICE">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/model/listener/Listener.html#METAINFO_PROTOCOL_RESTFUL_WEBSERVICE">METAINFO_PROTOCOL_RESTFUL_WEBSERVICE</a></code></td>
 <td class="colLast"><code>"REST"</code></td>
 </tr>
 <tr class="rowColor">
@@ -5845,11 +5733,11 @@
 <td class="colLast"><code>"Site Admin"</code></td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.model.user.Workgroup.SLACK_CHANNEL">
+<td class="colFirst"><a name="com.centurylink.mdw.model.user.Workgroup.SLACK_CHANNELS">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/model/user/Workgroup.html#SLACK_CHANNEL">SLACK_CHANNEL</a></code></td>
-<td class="colLast"><code>"Slack Channel"</code></td>
+<td><code><a href="com/centurylink/mdw/model/user/Workgroup.html#SLACK_CHANNELS">SLACK_CHANNELS</a></code></td>
+<td class="colLast"><code>"Slack Channel(s)"</code></td>
 </tr>
 </tbody>
 </table>
@@ -6403,60 +6291,6 @@
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/service/resource/DocumentValue.html#PARAM_DOC_ID">PARAM_DOC_ID</a></code></td>
 <td class="colLast"><code>"id"</code></td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList">
-<table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>com.centurylink.mdw.service.resource.<a href="com/centurylink/mdw/service/resource/SystemInfo.html" title="class in com.centurylink.mdw.service.resource">SystemInfo</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th scope="col">Constant Field</th>
-<th class="colLast" scope="col">Value</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.service.resource.SystemInfo.PARAM_INFO_TYPE">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/service/resource/SystemInfo.html#PARAM_INFO_TYPE">PARAM_INFO_TYPE</a></code></td>
-<td class="colLast"><code>"type"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.service.resource.SystemInfo.TYPE_MEM_INFO">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/service/resource/SystemInfo.html#TYPE_MEM_INFO">TYPE_MEM_INFO</a></code></td>
-<td class="colLast"><code>"memoryInfo"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.service.resource.SystemInfo.TYPE_POOL_STATUS">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/service/resource/SystemInfo.html#TYPE_POOL_STATUS">TYPE_POOL_STATUS</a></code></td>
-<td class="colLast"><code>"threadPoolStatus"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.service.resource.SystemInfo.TYPE_THREAD_DUMP">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/service/resource/SystemInfo.html#TYPE_THREAD_DUMP">TYPE_THREAD_DUMP</a></code></td>
-<td class="colLast"><code>"threadDump"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.service.resource.SystemInfo.TYPE_THREAD_DUMP_COUNT">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/service/resource/SystemInfo.html#TYPE_THREAD_DUMP_COUNT">TYPE_THREAD_DUMP_COUNT</a></code></td>
-<td class="colLast"><code>"threadDumpCount"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.service.resource.SystemInfo.TYPE_TOP_OUTPUT">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/service/resource/SystemInfo.html#TYPE_TOP_OUTPUT">TYPE_TOP_OUTPUT</a></code></td>
-<td class="colLast"><code>"topOutput"</code></td>
 </tr>
 </tbody>
 </table>

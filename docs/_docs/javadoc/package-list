@@ -90,7 +90,6 @@ com.centurylink.mdw.soccom
 com.centurylink.mdw.spring
 com.centurylink.mdw.startup
 com.centurylink.mdw.sync
-com.centurylink.mdw.system
 com.centurylink.mdw.task.types
 com.centurylink.mdw.test
 com.centurylink.mdw.test.impl
