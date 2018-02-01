@@ -357,7 +357,7 @@ SET foreign_key_checks=0;
    	 	   USING (document_id) 
 		   WHERE dc.document_id IS null
 		   LIMIT commitcnt
-		 ) d2 USING (document_id)
+		 ) d2 USING (document_id);
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;           
 
