@@ -815,10 +815,10 @@ public abstract class BaseActivity implements GeneralActivity {
             throw new NullPointerException("Missing script evaluator language");
 
         ScriptEvaluator evalImpl = null;
-        String propName = PropertyNames.MDW_SCRIPT_EXECUTOR + "." + language.toLowerCase();
+        String propName = PropertyNames.MDW_SCRIPT_EXECUTORS + "." + language.toLowerCase();
         String evalImplClassName = getProperty(propName);
         if (evalImplClassName == null)
-            evalImplClassName = getProperty("MDWFramework.ScriptExecutors/" + language); // compatibility
+            evalImplClassName = getProperty("mdw.script.executor." + language); // compatibility
         if (evalImplClassName == null) {
             if ("Groovy".equals(language))
                 evalImpl = new GroovyExecutor();  // don't require property for default language
@@ -1310,10 +1310,10 @@ public abstract class BaseActivity implements GeneralActivity {
             throw new NullPointerException("Missing script executor language");
 
         ScriptExecutor exeImpl = null;
-        String propName = PropertyNames.MDW_SCRIPT_EXECUTOR + "." + language.toLowerCase();
+        String propName = PropertyNames.MDW_SCRIPT_EXECUTORS + "." + language.toLowerCase();
         String exeImplClassName = getProperty(propName);
         if (exeImplClassName == null)
-            exeImplClassName = getProperty("MDWFramework.ScriptExecutors/" + language); // compatibility
+            exeImplClassName = getProperty("mdw.script.executor." + language.toLowerCase()); // compatibility
         if (exeImplClassName == null) {
             if ("Groovy".equals(language))
                 exeImpl = new GroovyExecutor();  // don't require property for default language

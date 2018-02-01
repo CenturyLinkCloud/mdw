@@ -33,10 +33,6 @@ public class MockPropertyManager extends PropertyManager {
         properties.clear();
     }
 
-    public String getStringProperty(String group, String name) {
-        return this.getStringProperty(group + "/" + name);
-    }
-
     public Properties getProperties(String group) {
         Properties props = new Properties();
         int k = group.length();

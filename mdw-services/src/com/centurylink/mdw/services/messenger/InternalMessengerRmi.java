@@ -24,6 +24,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.RMIListener;
+import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
@@ -71,14 +72,14 @@ public class InternalMessengerRmi extends InternalMessenger {
     }
 
     public void broadcastMessage(String msg) throws ProcessException {
-        for (String hostport : ApplicationContext.getServerList()) {
+        for (Server server : ApplicationContext.getServerList()) {
             try {
-                RMIListener server = (RMIListener)ApplicationContext.getNamingProvider().
-                    lookup(hostport, RMIListener.JNDI_NAME, RMIListener.class);
-                server.invoke(null, RMIListener.BROADCAST_MARKER + msg);
+                RMIListener rmiServer = (RMIListener)ApplicationContext.getNamingProvider().
+                    lookup(server.toString(), RMIListener.JNDI_NAME, RMIListener.class);
+                rmiServer.invoke(null, RMIListener.BROADCAST_MARKER + msg);
             } catch (Exception e) {
                 StandardLogger logger = LoggerUtil.getStandardLogger();
-                logger.severeException("Failed to broadcast to server " + hostport, e);
+                logger.severeException("Failed to broadcast to server " + server, e);
             }
         }
     }

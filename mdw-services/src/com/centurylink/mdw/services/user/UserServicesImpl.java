@@ -121,7 +121,18 @@ public class UserServicesImpl implements UserServices {
 
     public Workgroup getWorkgroup(String groupName) throws DataAccessException {
         try {
-            return UserGroupCache.getWorkgroup(groupName);
+            Workgroup workgroup = UserGroupCache.getWorkgroup(groupName);
+            if (workgroup != null) {
+                // add empty attributes
+                if (workgroup.getAttributes() == null)
+                    workgroup.setAttributes(new HashMap<String,String>());
+                for (String name : UserGroupCache.getWorkgroupAttributeNames()) {
+                    if (!workgroup.getAttributes().containsKey(name))
+                        workgroup.setAttribute(name, null);
+                }
+            }
+
+            return workgroup;
         }
         catch (CachingException ex) {
             throw new DataAccessException("Cannot find workgroup: " + groupName, ex);

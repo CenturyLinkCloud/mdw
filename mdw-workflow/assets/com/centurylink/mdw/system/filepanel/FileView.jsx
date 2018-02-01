@@ -12,7 +12,7 @@ class FileView extends Component {
 
     this.options = Toolbar.getOptions();
     
-    this.state = {item: {}, buffer: {length: 0}, search: {results: [], message: null}};
+    this.state = {item: {}, buffer: {length: 0}, search: {results: [], message: null}, tailOn: false};
     this.lineIndex = 0;  // not kept in state
     this.retrieving = false;
     this.specifiedLineIndex = null; // transient value when click track or drag thumb
@@ -33,6 +33,7 @@ class FileView extends Component {
   }
   
   componentWillReceiveProps(props) {
+    this.stopTail();
     // retrieve fileView
     if (props.item.path) {
       this.lineIndex = 0;
@@ -73,14 +74,15 @@ class FileView extends Component {
           encodeURIComponent(this.props.item.path) + '&download=true';
     }
     else if (action === 'scrollToEnd') {
-      delete this.rememberedScrollStart;
-      this.setViewScrollTop(1);
+      this.scrollToEnd();
     }
     else if (action === 'find') {
+      this.stopTail();
       var search = Object.assign({}, this.state.search, params, {message: null});
       this.find(search);
     }
     else if (action === 'search') {
+      this.stopTail();
       var search = Object.assign({}, this.state.search, params, {message: null});
       if (search.find.search) {
         if (this.options.searchWhileTyping) {
@@ -100,11 +102,21 @@ class FileView extends Component {
       }
     }
     else if (action === 'tailMode') {
-      alert('Tail Mode is coming in mdw build 6.0.12');
+      const wasOn = this.state.tailOn;
+      this.stopTail();
+      this.state.tailOn = !wasOn;
+      this.setState(this.state);
+      if (!wasOn) {
+        // toggling start new tail (after update to reflect latest)
+        this.doFetch(this.props, null, () => {
+          this.scrollToEnd();
+          this.tail(true);
+        });
+      }
     }
   }
   
-  doFetch(props, params) {
+  doFetch(props, params, callback) {
     this.retrieving = true;
     $mdwUi.hubLoading(true);
     let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
@@ -193,6 +205,9 @@ class FileView extends Component {
       
       this.props.onInfo(json.info);
       this.retrieving = false;
+      if (callback) {
+        callback();
+      }
     });
   }
 
@@ -329,6 +344,11 @@ class FileView extends Component {
       return (this.scrollbars.view.offsetHeight - 6) / lineHeight;
     }
   }
+
+  scrollToEnd() {
+    delete this.rememberedScrollStart;
+    this.setViewScrollTop(1);
+  }
   
   // finds and highlights (no scroll or 
   find(search, callback) {
@@ -365,7 +385,7 @@ class FileView extends Component {
       }, callback);
     }    
   }
-  
+    
   // Go to next match (assumes find has been executed).
   // If not found in buffer, fetch from server.
   search(search) {
@@ -457,6 +477,82 @@ class FileView extends Component {
     });
   }
   
+  // stop any existing tail
+  stopTail() {
+    if (this.props.item && this.props.item.path && this.state.tailOn) {  
+      this.state.tailOn = false;
+      this.tail(false);
+    }
+  }
+  
+  tail(tailOn) {
+    this.state.tailOn = tailOn;
+    const webSocketUrl = $mdwUi.getWebSocketUrl();
+    if (webSocketUrl) {
+      if (!this.state.tailOn && this.webSocket) {
+        this.webSocket.close();
+      }
+      this.setState(this.state);
+      $mdwUi.hubLoading(true);
+      let url = this.context.serviceRoot + '/com/centurylink/mdw/system/filepanel';
+      url += '?path=' + encodeURIComponent(this.props.item.path);
+      url += '&tail=' + this.state.tailOn;
+      fetch(new Request(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json'},
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        $mdwUi.hubLoading(false);
+        return response.json();
+      })
+      .then(responseJson => {
+        if (this.state.tailOn) {
+          const fileView = this;
+          this.webSocket = new WebSocket(webSocketUrl);
+            this.webSocket.addEventListener('open', function(event) {
+              fileView.webSocket.send(fileView.props.item.path);
+            });
+            this.webSocket.addEventListener('message', function(event) {
+              const json = JSON.parse(event.data);
+              console.log("MESSAGE: " + JSON.stringify(json, null, 2));
+              if (json.buffer.length) {
+                const buffer = fileView.state.buffer;
+                // response always repeats the last line in case it changed
+                var lines = fileView.state.buffer.lines.split(/\n/);
+                const newLength = buffer.length + json.buffer.length - 1;
+                if (newLength > fileView.options.bufferSize) {
+                  lines.splice(0, newLength - fileView.options.bufferSize);
+                }
+                else {
+                  buffer.length = newLength;
+                }
+                lines.splice(lines.length - 2, 1);
+                buffer.lines = lines.join('\n') + json.buffer.lines;
+                fileView.setState({
+                  item: json.info,
+                  buffer: fileView.state.buffer,
+                  search: fileView.state.search
+                });
+                fileView.scrollToEnd();
+              }
+              else {
+                // file length has diminished -- re-retrieve and stop tailing
+                fileView.doFetch(fileView.props, null, () => {
+                  fileView.scrollToEnd();
+                  fileView.stopTail();
+                });
+              }
+            });
+        }
+        else if (this.webSocket) {
+          delete this.tailPath;
+          delete this.webSocket;
+        }
+      });
+    }
+  }
+  
   render() {
     // uncomment for render timing
     // this.beforeRender = Date.now();
@@ -481,7 +577,8 @@ class FileView extends Component {
             item={this.state.item}
             searchMessage={this.state.search.message}
             onOptions={this.handleOptions}
-            onAction={this.handleAction} />
+            onAction={this.handleAction} 
+            tailMode={this.state.tailOn} />
         }
         {this.state.item.isFile &&
           <div className="fp-file">

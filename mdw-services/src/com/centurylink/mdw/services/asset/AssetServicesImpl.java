@@ -222,7 +222,7 @@ public class AssetServicesImpl implements AssetServices {
         assetRoots.add(assetRoot);
         try {
             File vcsRoot = getVersionControl() == null ? null : getGitRoot();
-            PackageList pkgList = new PackageList(ApplicationContext.getServerHostPort(), assetRoot, vcsRoot);
+            PackageList pkgList = new PackageList(ApplicationContext.getServer(), assetRoot, vcsRoot);
             CodeTimer timer = new CodeTimer("AssetServices", true);
             List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<File>());
             timer.logTimingAndContinue("findPackageDirs()");

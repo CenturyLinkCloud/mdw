@@ -44,11 +44,11 @@ public abstract class AbstractRoutingStrategy implements RequestRoutingStrategy 
     }
 
     protected List<String> getWorkerInstances() {
-        return ApplicationContext.getServerList();
+        return ApplicationContext.getServerList().getHostPortList();
     }
 
     protected List<String> getRoutingInstances() {
-        return ApplicationContext.getRoutingServerList();
+        return ApplicationContext.getRoutingServerList().getHostPortList();
     }
 
     protected String getServicesRoot() {

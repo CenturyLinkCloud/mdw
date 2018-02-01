@@ -52,6 +52,7 @@ import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.container.plugin.MdwDataSource;
+import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.StringHelper;
@@ -76,7 +77,6 @@ public class ApplicationContext {
     private static String mdwBuildTimestamp;
     private static String serverHost;
     private static StandardLogger logger;
-    private static String proxyServerName=null;
     private static String containerName="";
     private static String engineContextPath = null;
 
@@ -258,14 +258,15 @@ public class ApplicationContext {
 
     /**
      * Returns the server host name
+     * TODO: infer default port based on https/http in mdw.services.url.
      */
     public static String getServerHost(){
         if (serverHost == null) {
             try {
                 // unravel cloud deployment host name
                 String localIp = new String(InetAddress.getLocalHost().getHostAddress());
-                for (String hostPort : getCompleteServerList()) {
-                    String host = hostPort.indexOf(':') < 0 ? hostPort : hostPort.substring(0, hostPort.indexOf(':'));
+                for (Server server : getCompleteServerList().getServers()) {
+                    String host = server.getHost();
                     if (host.equals("localhost")) {
                         serverHost = host;
                     }
@@ -274,7 +275,7 @@ public class ApplicationContext {
                         Exception ex = new UnknownHostException("Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
                         logger.severeException(ex.getMessage(), ex);
                     }
-                    if (hostPort.equals(host)) {
+                    if (server.getPort() <= 0) {
                         // We need the port specified, even if it's just port 80
                         logger.severe("Specify the port for each instance (use 80 if default port) in " + PropertyNames.MDW_SERVER_LIST);
                     }
@@ -442,14 +443,13 @@ public class ApplicationContext {
     }
 
     public static String getLocalServiceUrl() {
-        return "http://" + getServerHostPort() + "/" + getServicesContextRoot();
+        return "http://" + getServer() + "/" + getServicesContextRoot();
     }
 
     public static String getMdwHubUrl() {
         String url = PropertyManager.getProperty(PropertyNames.MDW_HUB_URL);
         if (StringHelper.isEmpty(url) || url.startsWith("@")) {
-            String thisServer = getServerHostPort();
-            url = "http://" + thisServer + "/mdw";
+            url = "http://" + getServer() + "/mdw";
         }
         if (url.endsWith("/"))
             url = url.substring(1);
@@ -493,17 +493,17 @@ public class ApplicationContext {
         return engineContextPath;
     }
 
-    public static String getServerHostPort() {
-        return getServerHost() + ":" + getServerPort();
+    public static Server getServer() {
+        return new Server(getServerHost(), getServerPort());
     }
 
-    public static String getMasterServer() {
+    public static Server getMasterServer() {
         return getServerList().get(0);
     }
 
     public static boolean isMasterServer() {
-        // getServerHostPort() does not work in PaaS
-        return isPaaS() || getMasterServer().equals(getServerHostPort());
+        // getServerHost(), getServerPort() do not work in PaaS
+        return isPaaS() || getMasterServer().equals(getServer());
     }
 
     public static String getTempDirectory() {
@@ -586,61 +586,37 @@ public class ApplicationContext {
         deployPath = path;
     }
 
-    private static List<String> serverList;
+    private static ServerList serverList;
     /**
      * @return hosta:8080,hosta:8181,hostb:8080
      */
-    public static List<String> getServerList() {
+    public static ServerList getServerList() {
         if (serverList == null) {
-            serverList = new ArrayList<String>();
-            String prop = PropertyManager.getProperty(PropertyNames.MDW_SERVER_LIST);
-            if (prop != null) {
-                for (String hostPort : prop.split(","))
-                    serverList.add(hostPort);
-            }
+            serverList = new ServerList(PropertyNames.MDW_SERVER_LIST);
         }
         return serverList;
     }
 
-    private static List<String> routingServerList;
+    private static ServerList routingServerList;
     /**
      * @return hosta:8080,hosta:8181,hostb:8080
      */
-    public static List<String> getRoutingServerList() {
+    public static ServerList getRoutingServerList() {
         if (routingServerList == null) {
-            routingServerList = new ArrayList<String>();
-            String prop = PropertyManager.getProperty(PropertyNames.MDW_ROUTING_SERVER_LIST);
-            if (prop != null) {
-                for (String hostPort : prop.split(","))
-                    routingServerList.add(hostPort);
-            }
+            routingServerList = new ServerList(PropertyNames.MDW_ROUTING_SERVER_LIST);
         }
         return routingServerList;
     }
 
-    private static List<String> completeServerList;
+    private static ServerList completeServerList;
     /**
      * @return hosta:8080,hosta:8181,hostb:8080
      */
-    public static List<String> getCompleteServerList() {
+    public static ServerList getCompleteServerList() {
         if (completeServerList == null) {
-            completeServerList = new ArrayList<String>();
-            for (String server : getServerList()) {
-                completeServerList.add(server);
-            }
-            for (String server : getRoutingServerList()) {
-                if (!completeServerList.contains(server))
-                    completeServerList.add(server);
-            }
+            completeServerList = new ServerList(getServerList(), getRoutingServerList());
         }
         return completeServerList;
-    }
-
-    public static String getProxyServerName() {
-        if (proxyServerName==null) {
-            proxyServerName = PropertyManager.getProperty(PropertyNames.MDW_SERVER_PROXY);
-        }
-        return proxyServerName;
     }
 
     private static Map<String,Date> mdwBundleActivationTimes;
@@ -732,8 +708,8 @@ public class ApplicationContext {
         // (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
         String thisHost = thisUrl.getHost().indexOf(".") > 0 ? thisUrl.getHost().substring(0, thisUrl.getHost().indexOf(".")) : thisUrl.getHost();
         int thisPort = thisUrl.getPort() == 80 || thisUrl.getPort() == 443 ? -1 : thisUrl.getPort();
-        for (String serverHost : ApplicationContext.getCompleteServerList()) {
-            String serviceUrl = "http://" + serverHost + thisUrl.getPath();
+        for (Server server : getCompleteServerList().getServers()) {
+            String serviceUrl = "http://" + server.toString() + thisUrl.getPath();
             URL otherUrl = new URL(serviceUrl);
             String otherHost = otherUrl.getHost().indexOf(".") > 0 ? otherUrl.getHost().substring(0, otherUrl.getHost().indexOf(".")) : otherUrl.getHost();
             int otherPort = otherUrl.getPort() == 80 || otherUrl.getPort() == 443 ? -1 : otherUrl.getPort();

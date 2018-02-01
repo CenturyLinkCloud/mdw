@@ -34,7 +34,6 @@ public class PropertyNames {
     public static final String MDW_DB_VERSION = "mdw.database.version";
     public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
     public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
-    public static final String MDW_DB_BORROW_TIMEOUT = "mdw.database.borrow.timeout";   // seconds; 0 - block indefinitely, -1 - fail right away
     public static final String MDW_DB_TRACE = "mdw.database.trace";     // none, query, timing
     public static final String MDW_DB_PRECISION_TIME = "mdw.database.macrosecondprecision.enable";  // If true, then will save datetime/timestamp using macrosecond precision - Depends on declaring table columns correctly
     // for embedded db
@@ -45,10 +44,6 @@ public class PropertyNames {
     public static final String MDW_MONGODB_HOST = "mdw.mongodb.host";
     public static final String MDW_MONGODB_PORT = "mdw.mongodb.port";
     public static final String MDW_MONGODB_POOLSIZE = "mdw.mongodb.poolsize";
-    // file system
-    public static final String MDW_FS_USER = "mdw.file.system.user";
-    public static final String MDW_FS_PASSWORD = "mdw.file.system.password";
-    public static final String MDW_MAX_UPLOAD_BYTES = "mdw.max.upload.bytes";
 
     // thread pool
     public static final String MDW_THREADPOOL_CORE_THREADS = "mdw.threadpool.core_threads";
@@ -64,15 +59,12 @@ public class PropertyNames {
 
     // misc
     public static final String MDW_SERVER_LIST = "mdw.server.list"; // host1:port1,host2:port2,...  Represents MDW worker instances
-    public static final String MDW_FILE_DIR = "mdw.file.dir";
     public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
     public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
-    public static final String MDW_WEB_SESSION_TIMEOUT = "mdw.web.session.timeout";
     public static final String MDW_PERFORMANCE_LEVEL_SERVICE = "mdw.performance.level.service";
     public static final String MDW_PERFORMANCE_LEVEL_REGULAR = "mdw.performance.level.regular";
     public static final String MDW_ENGINE_USE_TRANSACTION = "mdw.engine.use.transaction";
     public static final String MDW_STUB_SERVER = "mdw.stub.server"; // used internally, set by regression tester "<host>:<port>:<timeout>";
-    public static final String WEBTOOLS_URL = "mdw.webtools.url";
     public static final String DOCS_URL = "mdw.docs.url";
     public static final String DISCOVERY_URL = "mdw.discovery.url";
     public static final String FILEPANEL_ROOT_DIRS = "mdw.filepanel.root.dirs";
@@ -86,7 +78,6 @@ public class PropertyNames {
 
     public static final String APPLICATION_NAME = "mdw.application.name";
     public static final String MDW_WAR_NAME = "mdw.war.name";
-    public static final String MDW_WEB_URL = "mdw.web.url";
     public static final String MDW_SERVICES_URL = "mdw.services.url";
     public static final String ACTIVITY_RESUME_DELAY = "mdw.activity.resume.delay";
     public static final String TASK_NOTICE_EMAIL_FROM = "mdw.task.notice.email.from";
@@ -98,20 +89,8 @@ public class PropertyNames {
     public static final String MDW_COMPILER_CLASSPATH = "mdw.compiler.classpath";
     public static final String MDW_CLASSPATH = "mdw.classpath";
 
-    public static final String MDW_BUS_ACCOUNT = "mdw.bus.account";
-    public static final String MDW_BUS_URI = "mdw.bus.uri";
-
-    // this is a group, contains <name>.topic/uri/queueSize/minWorker/maxWorker/dqName
-    public static final String MDW_LISTENER_BUS = "mdw.listener.bus";   // prefix for bus listener properties
-
     // this is a group, contains <name>.ClassName/Directory/FilenamePattern/IntervalMinutes/DelayMinutes
     public static final String MDW_LISTENER_FILE = "mdw.listener.file"; // prefix for file listener properties
-
-    // this is a group, for multiple MQ listeners
-    public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
-
-    // this is a group, for multiple Kafka listeners
-    public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
 
     // this is a group, contains <name>.TimerClass/Schedule
     public static final String MDW_TIMER_TASK = "mdw.timer.task";   // prefix for timer task properties
@@ -131,8 +110,6 @@ public class PropertyNames {
     public static final String MDW_TIMER_CHECK_INTERVAL = "mdw.timer.CheckInterval";    // interval between checks in seconds
     public static final String MDW_TIMER_THRESHOLD_FOR_DELAY = "mdw.timer.ThresholdForDelay";   // (minutes) threshold for using timer for delayed JMS messages
 
-    public static final String MDW_CERTIFIED_MESSAGE_INITIAL_DELAY = "mdw.certified_message.InitialDelay";  // delay of first check in seconds
-    public static final String MDW_CERTIFIED_MESSAGE_CHECK_INTERVAL = "mdw.certified_message.CheckInterval";    // interval between checks in seconds
     public static final String MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT = "mdw.certified_message.AcknowlegmentTimeout";    // default ack timeout in seconds
     public static final String MDW_CERTIFIED_MESSAGE_RETRY_INTERVAL = "mdw.certified_message.RetryInterval";    // default interval for next retry in seconds
     public static final String MDW_CERTIFIED_MESSAGE_MAX_TRIES = "mdw.certified_message.MaxTries";  // default max tries
@@ -140,13 +117,11 @@ public class PropertyNames {
     // this is a group, contains <name>.Adapter and pool specific properties
     public static final String MDW_CONNECTION_POOL = "mdw.connection.pool"; // prefix for connection pool properties
 
-    public static final String MDW_SERVER_PROXY = "mdw.server.proxy";
-
     public static final String MDW_HUB_URL = "mdw.hub.url";
     public static final String MDW_TASK_ACTION_DEF = "mdw.hub.action.definition";
     public static final String MDW_HUB_OVERRIDE_PACKAGE = "mdw.hub.override.package";
 
-    public static final String MDW_SCRIPT_EXECUTOR = "mdw.script.executor";
+    public static final String MDW_SCRIPT_EXECUTORS = "mdw.script.executors";
 
     // XmlOptions properties
     public static final String MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS = "mdw.translator.xmlbeans.load.options";
@@ -169,12 +144,10 @@ public class PropertyNames {
     public static final String MDW_FEATURE_TESTS_SUMMARY_FILE = "mdw.feature.tests.summary.file";
 
     // Ldap configuration
-    public static final String LDAP_PROTOCOL = "LDAP/Protocol";
-    public static final String LDAP_HOST = "LDAP/Host";
-    public static final String LDAP_PORT = "LDAP/Port";
-    public static final String BASE_DN = "LDAP/BaseDN";
-    public static final String APP_CUID = "LDAP/AppCUID";
-    public static final String APP_PASSWORD = "LDAP/AppPassword";
+    public static final String MDW_LDAP_PROTOCOL = "mdw.ldap.protocol";
+    public static final String MDW_LDAP_HOST = "mdw.ldap.host";
+    public static final String MDW_LDAP_PORT = "mdw.ldap.port";
+    public static final String MDW_LDAP_BASE_DN = "mdw.ldap.base.dn";
 
     // Authentication
     public static final String HTTP_BASIC_AUTH_MODE = "mdw.services.http.basic.auth";
@@ -188,20 +161,32 @@ public class PropertyNames {
     public static final String MDW_ROUTING_REQUEST_TIMEOUT = "mdw.requestrouting.timeout";  // Seconds to wait for response from routed to server
 
     // Mail
-    public static final String MDW_MAIL_CONNECTION_TIMEOUT = "mdw.mail.connectiontimeout";
     public static final String MDW_MAIL_SMTP_HOST = "mdw.mail.smtp.host";
     public static final String MDW_MAIL_SMTP_TIMEOUT = "mdw.mail.smtp.timeout";
     public static final String MDW_MAIL_SMTP_PORT = "mdw.mail.smtp.port";
     public static final String MDW_MAIL_SMTP_USER = "mdw.mail.smtp.user";
     public static final String MDW_MAIL_SMTP_PASS = "mdw.mail.smtp.pass";
+    public static final String MDW_MAIL_CONNECTION_TIMEOUT = "mdw.mail.connection.timeout";
 
     // oauth
     public static final String MDW_OAUTH_REST_ENDPOINT = "mdw.oauth.rest.endpoint";
-    public static final String MDW_OAUTH_REST_APP_DOMAIN = "mdw.oauth.rest.app.domain";
     public static final String MDW_OAUTH_REST_USER_DOMAIN = "mdw.oauth.rest.user.domain";
     public static final String MDW_OAUTH_REST_HEADERS = "mdw.oauth.rest.headers";
 
     // Transaction Retry
     public static final String MDW_TRANSACTION_RETRY_INTERVAL = "mdw.transaction.retry.interval";
     public static final String MDW_TRANSACTION_RETRY_MAX = "mdw.transaction.retry.max";
+
+    // deprecated props (TODO: remove)
+    @Deprecated
+    public static final String MDW_LISTENER_BUS = "mdw.listener.bus";   // prefix for bus listener properties
+    @Deprecated
+    public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
+    @Deprecated
+    public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
+    @Deprecated
+    public static final String MDW_BUS_ACCOUNT = "mdw.bus.account";
+    @Deprecated
+    public static final String MDW_BUS_URI = "mdw.bus.uri";
+
 }

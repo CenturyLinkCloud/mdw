@@ -12,6 +12,9 @@ response:
     content-type: application/json
   body: |-
     {
+      "attributes": {
+        "Slack Channel(s)": ""
+      },
       "description": "${~.*}",
       "name": "${group-name}",
       "users": []

@@ -52,14 +52,10 @@ public interface Listener {
     public static final String METAINFO_ERROR_RESPONSE_VALUE = Boolean.TRUE.toString();
 
     public static final String METAINFO_PROTOCOL_JMS = "Jms";
-    public static final String METAINFO_PROTOCOL_BUS = "Bus";
     public static final String METAINFO_PROTOCOL_WEBSERVICE = "WebService";
     public static final String METAINFO_PROTOCOL_REST = "REST";
-    public static final String METAINFO_PROTOCOL_RESTFUL_WEBSERVICE = METAINFO_PROTOCOL_REST;
     public static final String METAINFO_PROTOCOL_SOAP = "SOAP";
-    public static final String METAINFO_PROTOCOL_EJB = "Ejb";
     public static final String METAINFO_PROTOCOL_RMI = "Rmi";
-    public static final String METAINFO_PROTOCOL_MQSERIES = "MqSeries";
     public static final String METAINFO_PROTOCOL_EMAIL = "Email";
     public static final String METAINFO_PROTOCOL_INTERNAL = "Internal";    // called directly
     public static final String METAINFO_PROTOCOL_KAFKA = "Kafka";
@@ -105,4 +101,9 @@ public interface Listener {
 
     public static final String METAINFO_CLOUD_ROUTING = "cloud-routing";
     public static final String METAINFO_MDW_APP_TOKEN = "mdw-app-token";
+
+    @Deprecated
+    public static final String METAINFO_PROTOCOL_BUS = "Bus";
+    @Deprecated
+    public static final String METAINFO_PROTOCOL_MQSERIES = "MqSeries";
 }

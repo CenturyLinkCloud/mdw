@@ -836,7 +836,7 @@ public class EventManagerBean implements EventManager {
             if (processed)  {
                 if (event.isScheduledJob()) {
                     edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
-                            ApplicationContext.getServerHostPort());
+                            ApplicationContext.getServer().toString());
                 }
                 if (event.getScheduledTime()==null) edao.deleteEventInstance(event.getName());
                 else edao.updateEventInstance(event.getName(), null, null,

@@ -26,6 +26,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.ServerList;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -33,6 +34,7 @@ import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.event.EventHandlerException;
+import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
@@ -128,8 +130,8 @@ public class RefreshCache implements XmlService {
     private List<URL> getOtherServerUrls(String requestUrl) throws PropertyException {
 
         List<URL> serverUrls = new ArrayList<URL>();
-        List<String> serverList = ApplicationContext.getCompleteServerList();
-        for (String server : serverList) {
+        ServerList serverList = ApplicationContext.getCompleteServerList();
+        for (Server server : serverList) {
             String serviceUrl = "http://" + server + "/" + ApplicationContext.getMdwHubContextRoot() + "/services";
             try {
                 URL thisUrl = new URL(requestUrl);

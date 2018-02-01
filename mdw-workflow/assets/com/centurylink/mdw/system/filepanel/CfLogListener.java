@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 import org.cloudfoundry.client.lib.ApplicationLogListener;
 import org.cloudfoundry.client.lib.CloudCredentials;
@@ -49,7 +50,7 @@ public class CfLogListener implements StartupService {
     @Override
     public void onStartup() throws StartupException {
         if (ApplicationContext.isPaaS()) {
-            String filepanelDirs = PropertyManager.getProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
+            List<String> filepanelDirs = PropertyManager.getListProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
             if (filepanelDirs != null) {
                 // make sure environment variables are set (TODO: oauth2)
                 String cfApiUser = System.getenv("CF_API_USER");
@@ -59,7 +60,7 @@ public class CfLogListener implements StartupService {
                             + "*****          FilePanel log accumulation will not function.");
                     return;
                 }
-                String logDir0 = filepanelDirs.trim().split("\\s*,\\s*")[0];
+                String logDir0 = filepanelDirs.get(0);
                 File logDir = new File(logDir0);
                 try {
                     if (!logDir.isDirectory() && !logDir.mkdirs())

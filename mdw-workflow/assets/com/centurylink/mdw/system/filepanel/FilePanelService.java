@@ -21,6 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,8 @@ import com.centurylink.mdw.util.log.StandardLogger;
 public class FilePanelService extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private static Map<String,TailWatcher> tailWatchers = new HashMap<>();
 
     @Override
     @Path("/{filePath}")
@@ -76,6 +79,9 @@ public class FilePanelService extends JsonRestService {
                             // file view
                             FileInfo fileInfo = new FileInfo(file);
                             FileView fileView = new FileView(fileInfo, query);
+                            if (query.getFilter("tail") != null) {
+                                tail(query, fileInfo.getLineCount() - 1);
+                            }
                             return fileView.getJson();
                         }
                         else if (file.isDirectory()) {
@@ -125,14 +131,38 @@ public class FilePanelService extends JsonRestService {
         return dirs;
     }
 
+    private void tail(Query query, int lastLine) throws IOException {
+        boolean tailOn = query.getBooleanFilter("tail");
+        TailWatcher watcher = null;
+        String path = query.getFilter("path");
+        synchronized(tailWatchers) {
+            watcher = tailWatchers.get(path);
+            if (tailOn) {
+                if (watcher == null) {
+                    watcher = new TailWatcher(Paths.get(path), lastLine);
+                    tailWatchers.put(path, watcher);
+                    watcher.watch();
+                }
+                watcher.refCount++;
+            }
+            else if (watcher != null) {
+                watcher.refCount--;
+                if (watcher.refCount < 1) {
+                    watcher.stop();
+                    tailWatchers.remove(path);
+                }
+            }
+        }
+    }
+
     private static List<java.nio.file.Path> rootPaths;
     private static List<java.nio.file.Path> getRootPaths() throws ServiceException {
         if (rootPaths == null) {
-            String rootDirsProp = PropertyManager.getProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
-            if (rootDirsProp == null)
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing property: " + PropertyNames.FILEPANEL_ROOT_DIRS);
+            List<String> rootDirs = PropertyManager.getListProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
+            if (rootDirs == null)
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing config: " + PropertyNames.FILEPANEL_ROOT_DIRS);
             rootPaths = new ArrayList<>();
-            for (String dir : rootDirsProp.trim().split("\\s*,\\s*")) {
+            for (String dir : rootDirs) {
                 rootPaths.add(Paths.get(new File(dir).getPath()));
             }
         }
@@ -143,9 +173,9 @@ public class FilePanelService extends JsonRestService {
     public static List<PathMatcher> getExcludes() {
         if (excludes == null) {
             excludes = new ArrayList<>();
-            String excludePatterns = PropertyManager.getProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
+            List<String> excludePatterns = PropertyManager.getListProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
             if (excludePatterns != null) {
-                for (String excludePattern : excludePatterns.trim().split("\\s*,\\s*")) {
+                for (String excludePattern : excludePatterns) {
                     excludes.add(FileSystems.getDefault().getPathMatcher("glob:" + excludePattern));
                 }
             }

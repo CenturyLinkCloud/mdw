@@ -33,7 +33,6 @@ authExclusions:
   - '/css/*'
   - '/doc/*'
   - '/javadoc/*'
-  - '/filepanel/*'
   - '/services/*'
   - '/Services/*'
   - '/api/*'

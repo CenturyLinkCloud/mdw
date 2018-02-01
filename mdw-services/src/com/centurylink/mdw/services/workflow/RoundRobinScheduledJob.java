@@ -36,7 +36,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
 
     public void runOnLoadBalancedInstance(CallURL args) {
         try {
-            List<String> serverList = ApplicationContext.getServerList(); // host:8181,host:8282,host:8383,host:8484
+            List<String> serverList = ApplicationContext.getServerList().getHostPortList(); // host:8181,host:8282,host:8383,host:8484
             EventManager eventManager = ServiceLocator.getEventManager();
             String eventName = "ScheduledJob." + this.getClass().getName();
             boolean runOnCurrentInstance = true;
@@ -63,7 +63,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
             }
             for (String nextServerInst : serverInstQueue) {
                 boolean success = false;
-                if (nextServerInst.equals(ApplicationContext.getServerHostPort())) {
+                if (nextServerInst.equals(ApplicationContext.getServer().toString())) {
                     break;
                 } else {
                     success = super.runOnDifferentManagedServer(nextServerInst); // if one instance is offline, user next in the queue
@@ -75,8 +75,8 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
             }
             if (runOnCurrentInstance) {
                 if (logger.isDebugEnabled())
-                    logger.debug("Scheduled job running on instance : " + ApplicationContext.getServerHostPort());
-                eventManager.updateEventInstance(eventName, null, null, null, null, null, 0, ApplicationContext.getServerHostPort());
+                    logger.debug("Scheduled job running on instance : " + ApplicationContext.getServer());
+                eventManager.updateEventInstance(eventName, null, null, null, null, null, 0, ApplicationContext.getServer().toString());
                 run(args);
             }
         }

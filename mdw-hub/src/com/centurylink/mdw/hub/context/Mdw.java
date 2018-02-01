@@ -34,10 +34,6 @@ public class Mdw {
     private String servicesRoot;
     public String getServicesRoot() { return servicesRoot; }
 
-    private String webToolsRoot;
-    public String getWebToolsRoot() { return webToolsRoot; }
-    public void setWebToolsRoot(String webToolsRoot) { this.webToolsRoot = webToolsRoot; }
-
     private String docsRoot;
     public String getDocsRoot() { return docsRoot; }
     public void setDocsRoot(String docsRoot) { this.docsRoot = docsRoot; }

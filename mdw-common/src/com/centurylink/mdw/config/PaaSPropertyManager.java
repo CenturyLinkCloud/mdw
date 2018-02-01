@@ -99,15 +99,6 @@ public class PaaSPropertyManager extends PropertyManager {
     }
 
     @Override
-    public String getStringProperty(String group, String name)
-            throws PropertyException {
-        if (group != null)
-            return this.getStringProperty(group + "/" + name);
-        else
-            return this.getStringProperty(name);
-    }
-
-    @Override
     public String getStringProperty(String name) {
         int slash = name.indexOf('/');
         String propName = slash == -1 ? name : name.replace('/', GROUP_SEPARATOR);

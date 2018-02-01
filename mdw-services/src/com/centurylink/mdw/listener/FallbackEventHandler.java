@@ -41,7 +41,6 @@ import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
-import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
@@ -239,7 +238,7 @@ public class FallbackEventHandler implements ExternalEventHandler {
             pool.ping_and_start();
             response = "OK";
         } else if (rootNodeName.equals("_mdw_peer_server_list")) {
-            List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getServerList() : ApplicationContext.getRoutingServerList();
+            List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getServerList().getHostPortList() : ApplicationContext.getRoutingServerList().getHostPortList();
             StringBuffer sb = new StringBuffer();
             for (String server : servers) {
                 if (sb.length()>0) sb.append(",");

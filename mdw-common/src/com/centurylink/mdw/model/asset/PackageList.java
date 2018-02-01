@@ -24,8 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.system.Server;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,8 +34,8 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="PackageList", description="Asset package list")
 public class PackageList implements Jsonable {
 
-    private String serverInstance;
-    public String getServerInstance() { return serverInstance; }
+    private Server server;
+    public Server getServer() { return server; }
 
     private File assetRoot;
     @ApiModelProperty(dataType="string")
@@ -63,15 +64,15 @@ public class PackageList implements Jsonable {
     public List<PackageDir> getPackageDirs() { return packageDirs; }
     public void setPackageDirs(List<PackageDir> pkgDirs) { this.packageDirs = pkgDirs; }
 
-    public PackageList(String serverInstance, File assetRoot, File vcsRoot) {
-        this.serverInstance = serverInstance;
+    public PackageList(Server server, File assetRoot, File vcsRoot) {
+        this.server = server;
         this.assetRoot = assetRoot;
         this.vcsRoot = vcsRoot;
     }
 
     public JSONObject getJson() throws JSONException {
         JSONObject pkgs = create();
-        pkgs.put("serverInstance", serverInstance);
+        pkgs.put("serverInstance", server.toString());
         pkgs.put("assetRoot", assetRoot.toString().replace('\\', '/'));
         if (vcsRoot != null)
             pkgs.put("vcsRoot", vcsRoot);

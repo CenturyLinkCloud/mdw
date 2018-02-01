@@ -67,9 +67,6 @@ public class WebAppContext {
 
             mdw.setWebSocketUrl(ApplicationContext.getWebSocketUrl());
 
-            String webToolsUrl = PropertyManager.getProperty(PropertyNames.WEBTOOLS_URL);
-            mdw.setWebToolsRoot(webToolsUrl);
-
             mdw.setDocsRoot(ApplicationContext.getDocsUrl());
 
             String discoveryUrl = PropertyManager.getProperty(PropertyNames.DISCOVERY_URL);
