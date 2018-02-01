@@ -19,10 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import com.centurylink.mdw.yaml.YamlLoader;
 
 /**
+ * Reads and writes yaml configuration settings as if they were properties.
  * Filename (minus extension) is the default property prefix.
  */
 public class YamlProperties {
@@ -44,7 +46,6 @@ public class YamlProperties {
         this.loader = new YamlLoader(yamlFile);
          root = loader.getRequiredMap("", loader.getTop(), "");
     }
-
 
     /**
      * Examples:
@@ -105,6 +106,13 @@ public class YamlProperties {
                 return value;
             }
         }
+        return null;
+    }
+
+    public static String translate(Properties properties) {
+
+        // TODO:
+
         return null;
     }
 
