@@ -287,13 +287,12 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE dc1 from document_content dc1 JOIN document_content dc2 USING (document_id) 
-     WHERE dc2.document_id IN (
-      SELECT document_id FROM document doc
+   	 DELETE dc1 from document_content dc1 JOIN   
+     	( SELECT document_id FROM document doc
        -- 1. all documents with process instance ID populated
-       WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN')  
+       		WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN')  
                AND EXISTS (
-                       SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
+                       SELECT
                               process_instance_id
                          FROM process_instance pi
                         WHERE pi.process_instance_id = doc.owner_id
@@ -334,8 +333,8 @@ SET foreign_key_checks=0;
                                   FROM document_content doc2
                                  WHERE doc2.document_id = doc.owner_id)
                )
-             )
-      LIMIT commitcnt;
+           LIMIT commitcnt
+         ) dc2 USING (document_id);            
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT; 
    
@@ -353,9 +352,12 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE d1 FROM document d1 LEFT OUTER JOIN document_content dc using (document_id) 
-		WHERE dc.document_id IS null
-      LIMIT commitcnt;
+   	 DELETE d1 FROM document d1 JOIN 
+   	 	(SELECT d3.document_id FROM document d3 LEFT OUTER JOIN document_content dc 
+   	 	   USING (document_id) 
+		   WHERE dc.document_id IS null
+		   LIMIT commitcnt
+		 ) d2 USING (document_id)
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;           
 
