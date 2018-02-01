@@ -2201,7 +2201,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/container/ContainerException.html#ContainerException-java.lang.String-java.lang.Throwable-">ContainerException(String, Throwable)</a></span> - Constructor for exception com.centurylink.mdw.container.<a href="com/centurylink/mdw/container/ContainerException.html" title="class in com.centurylink.mdw.container">ContainerException</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#contains-com.centurylink.mdw.model.system.Server-">contains(Server)</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#contains-com.centurylink.mdw.model.system.Server-">contains(Server)</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Package.html#containsActivityImpl-java.lang.Long-">containsActivityImpl(Long)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a></dt>
 <dd>&nbsp;</dd>
@@ -4456,8 +4456,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/JsonArray.html#GENERIC_ARRAY">GENERIC_ARRAY</a></span> - Static variable in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#get-int-">get(int)</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Fetch.html#get--">get()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Fetch.html" title="class in com.centurylink.mdw.cli">Fetch</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Props.html#get-java.lang.String-">get(String)</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Props.html" title="class in com.centurylink.mdw.cli">Props</a></dt>
@@ -4469,6 +4467,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/YamlProperties.html#get-java.lang.String-com.centurylink.mdw.config.YamlProperties.PropType-">get(String, YamlProperties.PropType)</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlProperties.html" title="class in com.centurylink.mdw.config">YamlProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/email/ProcessEmailModel.html#get-java.lang.Object-">get(Object)</a></span> - Method in class com.centurylink.mdw.email.<a href="com/centurylink/mdw/email/ProcessEmailModel.html" title="class in com.centurylink.mdw.email">ProcessEmailModel</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#get-int-">get(int)</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/user/RoleList.html#get-java.lang.String-">get(String)</a></span> - Method in class com.centurylink.mdw.model.user.<a href="com/centurylink/mdw/model/user/RoleList.html" title="class in com.centurylink.mdw.model.user">RoleList</a></dt>
 <dd>&nbsp;</dd>
@@ -4852,7 +4852,9 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/PropertyManager.html#getAllProperties--">getAllProperties()</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/YamlPropertyManager.html#getAllProperties--">getAllProperties()</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlPropertyManager.html" title="class in com.centurylink.mdw.config">YamlPropertyManager</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Only returns cached (previously-read) properties.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/user/UserDataAccess.html#getAllRoles--">getAllRoles()</a></span> - Method in class com.centurylink.mdw.service.data.user.<a href="com/centurylink/mdw/service/data/user/UserDataAccess.html" title="class in com.centurylink.mdw.service.data.user">UserDataAccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/BaselineData.html#getAllTaskStates--">getAllTaskStates()</a></span> - Method in interface com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/BaselineData.html" title="interface in com.centurylink.mdw.dataaccess">BaselineData</a></dt>
@@ -5555,6 +5557,8 @@
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 &nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#getConfig--">getConfig()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/test/TestCaseRun.html#getConfig--">getConfig()</a></span> - Method in class com.centurylink.mdw.services.test.<a href="com/centurylink/mdw/services/test/TestCaseRun.html" title="class in com.centurylink.mdw.services.test">TestCaseRun</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Setup.html#getConfigLoc--">getConfigLoc()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></dt>
@@ -6510,6 +6514,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Setup.html#getGitUser--">getGitUser()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/YamlProperties.html#getGroup-java.lang.String-">getGroup(String)</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlProperties.html" title="class in com.centurylink.mdw.config">YamlProperties</a></dt>
+<dd>
+<div class="block">Returns a flattened value map with full-path keys (including prefix).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Dir.html#getGroup--">getGroup()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Dir.html" title="class in com.centurylink.mdw.model.system">Dir</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/FileInfo.html#getGroup--">getGroup()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system">FileInfo</a></dt>
@@ -6604,7 +6612,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#getHost--">getHost()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#getHostPortList--">getHostPortList()</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#getHostPortList--">getHostPortList()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/TimeInterval.html#getHrs--">getHrs()</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/TimeInterval.html" title="class in com.centurylink.mdw.model">TimeInterval</a></dt>
 <dd>&nbsp;</dd>
@@ -7489,6 +7497,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/YamlProperties.html#getLoader--">getLoader()</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlProperties.html" title="class in com.centurylink.mdw.config">YamlProperties</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/YamlPropertyManager.html#getLoader-java.lang.String-">getLoader(String)</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlPropertyManager.html" title="class in com.centurylink.mdw.config">YamlPropertyManager</a></dt>
+<dd>
+<div class="block">Returns the YAML loader containing the given root name (if any).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/VcInfo.html#getLocalDir--">getLocalDir()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/VcInfo.html" title="class in com.centurylink.mdw.cli">VcInfo</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ApplicationContext.html#getLocalServiceUrl--">getLocalServiceUrl()</a></span> - Static method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ApplicationContext.html" title="class in com.centurylink.mdw.app">ApplicationContext</a></dt>
@@ -9588,7 +9600,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/container/plugin/tomcat/TomcatNaming.html#getServerPort--">getServerPort()</a></span> - Method in class com.centurylink.mdw.container.plugin.tomcat.<a href="com/centurylink/mdw/container/plugin/tomcat/TomcatNaming.html" title="class in com.centurylink.mdw.container.plugin.tomcat">TomcatNaming</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#getServers--">getServers()</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#getServers--">getServers()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestExecConfig.html#getServerUrl--">getServerUrl()</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestExecConfig.html" title="class in com.centurylink.mdw.test">TestExecConfig</a></dt>
 <dd>&nbsp;</dd>
@@ -12315,13 +12327,13 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/Compatibility.SubstitutionResult.html#isEmpty--">isEmpty()</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/Compatibility.SubstitutionResult.html" title="class in com.centurylink.mdw.app">Compatibility.SubstitutionResult</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#isEmpty--">isEmpty()</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/GitDiffs.html#isEmpty--">isEmpty()</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/GitDiffs.html" title="class in com.centurylink.mdw.dataaccess.file">GitDiffs</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Asset.html#isEmpty--">isEmpty()</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/Response.html#isEmpty--">isEmpty()</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#isEmpty--">isEmpty()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/CollectionUtil.html#isEmpty-java.util.Collection-">isEmpty(Collection&lt;?&gt;)</a></span> - Static method in class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/CollectionUtil.html" title="class in com.centurylink.mdw.util">CollectionUtil</a></dt>
 <dd>
@@ -12782,7 +12794,9 @@
 <dd>
 <div class="block">If pkg is null then will use any available bundle to provide the translator.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#iterator--">iterator()</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/PropertyManager.html#isYaml--">isYaml()</a></span> - Static method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#iterator--">iterator()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a name="I:J">
@@ -13836,9 +13850,7 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LISTENER_FILE">MDW_LISTENER_FILE</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LISTENER_KAFKA">MDW_LISTENER_KAFKA</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
-<dd>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
-</dd>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_LISTENER_MQ">MDW_LISTENER_MQ</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
@@ -13909,9 +13921,13 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_ROUTING_SERVER_LIST">MDW_ROUTING_SERVER_LIST</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_ROUTING_SERVERS">MDW_ROUTING_SERVERS</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SCRIPT_EXECUTORS">MDW_SCRIPT_EXECUTORS</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SERVER_LIST">MDW_SERVER_LIST</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SERVERS">MDW_SERVERS</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SERVICES_URL">MDW_SERVICES_URL</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
@@ -17425,19 +17441,25 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Server</span></a> - Class in <a href="com/centurylink/mdw/model/system/package-summary.html">com.centurylink.mdw.model.system</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#Server-java.lang.String-int-">Server(String, int)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#Server-java.lang.String-int-java.util.Map-">Server(String, int, Map&lt;?, ?&gt;)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#Server-java.lang.String-">Server(String)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#Server-java.net.URL-">Server(URL)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Server.html#Server-java.lang.String-int-">Server(String, int)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system">Server</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/adapter/jms/JmsAdapter.html#SERVER_URL">SERVER_URL</a></span> - Static variable in class com.centurylink.mdw.workflow.adapter.jms.<a href="com/centurylink/mdw/workflow/adapter/jms/JmsAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.jms">JmsAdapter</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app"><span class="typeNameLink">ServerList</span></a> - Class in <a href="com/centurylink/mdw/app/package-summary.html">com.centurylink.mdw.app</a></dt>
+<dt><a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">ServerList</span></a> - Class in <a href="com/centurylink/mdw/model/system/package-summary.html">com.centurylink.mdw.model.system</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#ServerList-java.lang.String-">ServerList(String)</a></span> - Constructor for class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#ServerList-java.util.Map-">ServerList(Map&lt;?, ?&gt;)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
+<dd>
+<div class="block">Structured server config.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#ServerList-java.util.List-">ServerList(List&lt;String&gt;)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ServerList.html#ServerList-com.centurylink.mdw.app.ServerList...-">ServerList(ServerList...)</a></span> - Constructor for class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ServerList.html" title="class in com.centurylink.mdw.app">ServerList</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/ServerList.html#ServerList-com.centurylink.mdw.model.system.ServerList...-">ServerList(ServerList...)</a></span> - Constructor for class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system">ServerList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/ProcessVisibilityConstant.html#SERVICE">SERVICE</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/ProcessVisibilityConstant.html" title="class in com.centurylink.mdw.constant">ProcessVisibilityConstant</a></dt>
 <dd>&nbsp;</dd>

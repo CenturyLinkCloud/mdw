@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/model/system/SysInfo.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/system/Server.html" target="_top">Frames</a></li>
@@ -134,6 +134,11 @@ extends java.lang.Object</pre>
       int&nbsp;port)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#Server-java.lang.String-int-java.util.Map-">Server</a></span>(java.lang.String&nbsp;host,
+      int&nbsp;port,
+      java.util.Map&lt;?,?&gt;&nbsp;config)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#Server-java.net.URL-">Server</a></span>(java.net.URL&nbsp;url)</code>&nbsp;</td>
 </tr>
 </table>
@@ -156,18 +161,22 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;other)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>java.util.Map&lt;?,?&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#getConfig--">getConfig</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#getHost--">getHost</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#getPort--">getPort</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/Server.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -193,6 +202,27 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="Server-java.lang.String-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Server</h4>
+<pre>public&nbsp;Server(java.lang.String&nbsp;host,
+              int&nbsp;port)</pre>
+</li>
+</ul>
+<a name="Server-java.lang.String-int-java.util.Map-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Server</h4>
+<pre>public&nbsp;Server(java.lang.String&nbsp;host,
+              int&nbsp;port,
+              java.util.Map&lt;?,?&gt;&nbsp;config)</pre>
+</li>
+</ul>
 <a name="Server-java.lang.String-">
 <!--   -->
 </a>
@@ -205,20 +235,10 @@ extends java.lang.Object</pre>
 <a name="Server-java.net.URL-">
 <!--   -->
 </a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Server</h4>
-<pre>public&nbsp;Server(java.net.URL&nbsp;url)</pre>
-</li>
-</ul>
-<a name="Server-java.lang.String-int-">
-<!--   -->
-</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Server</h4>
-<pre>public&nbsp;Server(java.lang.String&nbsp;host,
-              int&nbsp;port)</pre>
+<pre>public&nbsp;Server(java.net.URL&nbsp;url)</pre>
 </li>
 </ul>
 </li>
@@ -245,6 +265,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getPort</h4>
 <pre>public&nbsp;int&nbsp;getPort()</pre>
+</li>
+</ul>
+<a name="getConfig--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConfig</h4>
+<pre>public&nbsp;java.util.Map&lt;?,?&gt;&nbsp;getConfig()</pre>
 </li>
 </ul>
 <a name="toString--">
@@ -314,7 +343,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/model/system/SysInfo.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/system/Server.html" target="_top">Frames</a></li>

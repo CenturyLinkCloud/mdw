@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -174,27 +174,35 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.Properties</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getAllProperties--">getAllProperties</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getAllProperties--">getAllProperties</a></span>()</code>
+<div class="block">Only returns cached (previously-read) properties.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getList-java.lang.String-">getList</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/yaml/YamlLoader.html" title="class in com.centurylink.mdw.yaml">YamlLoader</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getLoader-java.lang.String-">getLoader</a></span>(java.lang.String&nbsp;name)</code>
+<div class="block">Returns the YAML loader containing the given root name (if any).</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.util.Properties</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getProperties-java.lang.String-">getProperties</a></span>(java.lang.String&nbsp;group)</code>
 <div class="block">returns the properties for group</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#setStringProperty-java.lang.String-java.lang.String-">setStringProperty</a></span>(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;value)</code>&nbsp;</td>
@@ -205,7 +213,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.config.<a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></h3>
-<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getBooleanProperty-java.lang.String-boolean-">getBooleanProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getInstance--">getInstance</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getIntegerProperty-java.lang.String-int-">getIntegerProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getListProperty-java.lang.String-">getListProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getLongProperty-java.lang.String-long-">getLongProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertyFileLocation--">getPropertyFileLocation</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertySource-java.lang.String-">getPropertySource</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getSources--">getSources</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#initializeMockPropertyManager--">initializeMockPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isDbConfigEnabled--">isDbConfigEnabled</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#loadFromStream-java.util.Properties-java.io.InputStream-java.lang.String-">loadFromStream</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#putPropertySource-java.lang.String-java.lang.String-">putPropertySource</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getBooleanProperty-java.lang.String-boolean-">getBooleanProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getInstance--">getInstance</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getIntegerProperty-java.lang.String-int-">getIntegerProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getListProperty-java.lang.String-">getListProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getLongProperty-java.lang.String-long-">getLongProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertyFileLocation--">getPropertyFileLocation</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertySource-java.lang.String-">getPropertySource</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getSources--">getSources</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#initializeMockPropertyManager--">initializeMockPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isDbConfigEnabled--">isDbConfigEnabled</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isYaml--">isYaml</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#loadFromStream-java.util.Properties-java.io.InputStream-java.lang.String-">loadFromStream</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#putPropertySource-java.lang.String-java.lang.String-">putPropertySource</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -343,14 +351,27 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <a name="getAllProperties--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getAllProperties</h4>
 <pre>public&nbsp;java.util.Properties&nbsp;getAllProperties()</pre>
+<div class="block">Only returns cached (previously-read) properties.
+ For other values, refer to yaml/property files.
+ Or execute CLI command <code>mdw config [name]</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getAllProperties--">getAllProperties</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="getLoader-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getLoader</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/yaml/YamlLoader.html" title="class in com.centurylink.mdw.yaml">YamlLoader</a>&nbsp;getLoader(java.lang.String&nbsp;name)</pre>
+<div class="block">Returns the YAML loader containing the given root name (if any).</div>
 </li>
 </ul>
 </li>
