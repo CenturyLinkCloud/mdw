@@ -24,7 +24,85 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.centurylink.mdw.config.YamlProperties;
+
 public class Props {
+
+    public static Prop ASSET_LOC;
+    public static Prop DISCOVERY_URL;
+    public static Prop SERVICES_URL;
+    public static Prop HUB_URL;
+
+    public static class Git {
+        public static Prop REMOTE_URL;
+        public static Prop BRANCH;
+        public static Prop USER;
+        public static Prop PASSWORD;
+    }
+
+    public static class Db {
+        public static Prop URL;
+        public static Prop USER;
+        public static Prop PASSWORD;
+        public static Prop DRIVER;
+    }
+
+    public static class Gradle {
+        public static Prop MDW_VERSION;
+        public static Prop SPRING_VERSION;
+        public static Prop MAVEN_REPO_URL;
+    }
+
+    public static List<Prop> ALL_PROPS = new ArrayList<>();
+
+    private static String MDW;
+
+    static void init(String mdwConfig) {
+        MDW = mdwConfig;
+
+        // mdw
+        ASSET_LOC = new Prop("asset-loc", MDW, "mdw.asset.location");
+        DISCOVERY_URL = new Prop("discovery-url", MDW, "mdw.discovery.url");
+        SERVICES_URL = new Prop("services-url", MDW, "mdw.services.url");
+        HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
+
+        ALL_PROPS.add(ASSET_LOC);
+        ALL_PROPS.add(DISCOVERY_URL);
+        ALL_PROPS.add(SERVICES_URL);
+        ALL_PROPS.add(HUB_URL);
+
+        // mdw git
+        Git.REMOTE_URL = new Prop("git-remote-url", MDW, "mdw.git.remote.url");
+        Git.BRANCH = new Prop("git-branch", MDW, "mdw.git.branch");
+        Git.USER = new Prop("git-user", MDW, "mdw.git.user");
+        Git.PASSWORD = new Prop("git-password", MDW, "mdw.git.password");
+
+        ALL_PROPS.add(Git.REMOTE_URL);
+        ALL_PROPS.add(Git.BRANCH);
+        ALL_PROPS.add(Git.USER);
+        ALL_PROPS.add(Git.PASSWORD);
+
+        // mdw db
+        Db.URL = new Prop("database-url", MDW, "mdw.database.url");
+        Db.USER = new Prop("database-user", MDW, "mdw.database.username");
+        Db.PASSWORD = new Prop("database-password", MDW, "mdw.database.password");
+        Db.DRIVER = new Prop("database-driver", MDW, "mdw.database.driver");
+
+        ALL_PROPS.add(Db.URL);
+        ALL_PROPS.add(Db.USER);
+        ALL_PROPS.add(Db.PASSWORD);
+        ALL_PROPS.add(Db.DRIVER);
+
+        // gradle (TODO: maven support)
+        String GRADLE = "gradle.properties";
+        Gradle.MDW_VERSION = new Prop("mdw-version", GRADLE, "mdwVersion", true);
+        Gradle.SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion", true);
+        Gradle.MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl", true);
+
+        ALL_PROPS.add(Gradle.MDW_VERSION);
+        ALL_PROPS.add(Gradle.SPRING_VERSION);
+        ALL_PROPS.add(Gradle.MAVEN_REPO_URL);
+    }
 
     private Map<File,Properties> propFiles = new HashMap<>();
     private Setup setup;
@@ -33,65 +111,24 @@ public class Props {
         this.setup = setup;
     }
 
-    private static final String MDW = "mdw.properties";
-    private static final String GRADLE = "gradle.properties";
-
-    public static List<Prop> ALL_PROPS = new ArrayList<>();
-
-    public static final Prop ASSET_LOC = new Prop("asset-loc", MDW, "mdw.asset.location");
-    public static final Prop DISCOVERY_URL = new Prop("discovery-url", MDW, "mdw.discovery.url");
-    public static final Prop SERVICES_URL = new Prop("services-url", MDW, "mdw.services.url");
-    public static final Prop HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
-    static {
-        ALL_PROPS.add(ASSET_LOC);
-        ALL_PROPS.add(DISCOVERY_URL);
-        ALL_PROPS.add(SERVICES_URL);
-        ALL_PROPS.add(HUB_URL);
-    }
-
-    public static class Git {
-        public static final Prop REMOTE_URL = new Prop("git-remote-url", MDW, "mdw.git.remote.url");
-        public static final Prop BRANCH = new Prop("git-branch", MDW, "mdw.git.branch");
-        public static final Prop USER = new Prop("git-user", MDW, "mdw.git.user");
-        public static final Prop PASSWORD = new Prop("git-password", MDW, "mdw.git.password");
-    }
-    static {
-        ALL_PROPS.add(Git.REMOTE_URL);
-        ALL_PROPS.add(Git.BRANCH);
-        ALL_PROPS.add(Git.USER);
-        ALL_PROPS.add(Git.PASSWORD);
-    }
-
-    public static class Db {
-        public static final Prop URL = new Prop("database-url", MDW, "mdw.database.url");
-        public static final Prop USER = new Prop("database-user", MDW, "mdw.database.username");
-        public static final Prop PASSWORD = new Prop("database-password", MDW, "mdw.database.password");
-        public static final Prop DRIVER = new Prop("database-driver", MDW, "mdw.database.driver");
-    }
-    static {
-        ALL_PROPS.add(Db.URL);
-        ALL_PROPS.add(Db.USER);
-        ALL_PROPS.add(Db.PASSWORD);
-        ALL_PROPS.add(Db.DRIVER);
-    }
-
-    public static class Gradle {
-        public static final Prop MDW_VERSION = new Prop("mdw-version", GRADLE, "mdwVersion", true);
-        public static final Prop SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion", true);
-        public static final Prop MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl", true);
-    }
-    static {
-        ALL_PROPS.add(Gradle.MDW_VERSION);
-        ALL_PROPS.add(Gradle.SPRING_VERSION);
-        ALL_PROPS.add(Gradle.MAVEN_REPO_URL);
-    }
 
     private Properties getProperties(File file) throws IOException {
         Properties properties = propFiles.get(file);
         if (properties == null) {
             if (file.exists()) {
-                properties = new Properties();
-                properties.load(new FileInputStream(file));
+                if (file.getName().endsWith(".yaml")) {
+                    final YamlProperties yamlProps = new YamlProperties(file);
+                    properties = new Properties() {
+                        @Override
+                        public String getProperty(String key) {
+                            return yamlProps.getString(key);
+                        }
+                    };
+                }
+                else {
+                    properties = new Properties();
+                    properties.load(new FileInputStream(file));
+                }
                 propFiles.put(file, properties);
             }
         }
