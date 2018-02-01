@@ -42,6 +42,7 @@ import javax.sql.DataSource;
 
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.YamlPropertyManager;
 import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PaaSConstants;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -53,11 +54,13 @@ import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.container.plugin.MdwDataSource;
 import com.centurylink.mdw.model.system.Server;
+import com.centurylink.mdw.model.system.ServerList;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.yaml.YamlLoader;
 
 /**
  * Class that needs to be used when getting the application context
@@ -592,7 +595,20 @@ public class ApplicationContext {
      */
     public static ServerList getServerList() {
         if (serverList == null) {
-            serverList = new ServerList(PropertyNames.MDW_SERVER_LIST);
+            if (PropertyManager.isYaml()) {
+                YamlLoader loader = ((YamlPropertyManager) PropertyManager.getInstance())
+                        .getLoader(PropertyNames.MDW_SERVERS);
+                if (loader != null) {
+                    serverList = new ServerList(loader.getMap(PropertyNames.MDW_SERVERS, loader.getTop()));
+                }
+            }
+            else {
+                List<String> hostPorts = PropertyManager.getListProperty(PropertyNames.MDW_SERVER_LIST);
+                if (hostPorts != null)
+                    serverList = new ServerList(hostPorts);
+            }
+            if (serverList == null)
+                serverList = new ServerList();
         }
         return serverList;
     }
@@ -603,7 +619,20 @@ public class ApplicationContext {
      */
     public static ServerList getRoutingServerList() {
         if (routingServerList == null) {
-            routingServerList = new ServerList(PropertyNames.MDW_ROUTING_SERVER_LIST);
+            if (PropertyManager.isYaml()) {
+                YamlLoader loader = ((YamlPropertyManager) PropertyManager.getInstance())
+                        .getLoader(PropertyNames.MDW_ROUTING_SERVERS);
+                if (loader != null) {
+                    serverList = new ServerList(loader.getMap(PropertyNames.MDW_ROUTING_SERVERS, loader.getTop()));
+                }
+            }
+            else {
+                List<String> hostPorts = PropertyManager.getListProperty(PropertyNames.MDW_ROUTING_SERVER_LIST);
+                if (hostPorts != null)
+                    routingServerList = new ServerList(hostPorts);
+            }
+            if (routingServerList == null)
+                routingServerList = new ServerList();
         }
         return routingServerList;
     }

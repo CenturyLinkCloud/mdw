@@ -58,7 +58,7 @@ public class PropertyNames {
     public static final int MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT = 5;
 
     // misc
-    public static final String MDW_SERVERS = "mdw.servers"; // server configuration in yaml form
+    public static final String MDW_SERVERS = "servers"; // server configuration in yaml form
     public static final String MDW_SERVER_LIST = "mdw.server.list"; // host1:port1,host2:port2,...  Represents MDW worker instances
     public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
     public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
@@ -157,7 +157,7 @@ public class PropertyNames {
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";
     public static final String MDW_ROUTING_REQUESTS_HTTPS_ENABLED = "mdw.requestrouting.https.enabled";
     public static final String MDW_ROUTING_REQUESTS_DEFAULT_STRATEGY = "mdw.requestrouting.default.strategy";
-    public static final String MDW_ROUTING_SERVERS = "mdw.routing.servers";
+    public static final String MDW_ROUTING_SERVERS = "routing.servers";
     public static final String MDW_ROUTING_SERVER_LIST = "mdw.requestrouting.server.list";    // host1:port1,host2:port2,... Represents MDW routing instances
     public static final String MDW_ROUTING_ACTIVE_SERVER_INTERVAL = "mdw.requestrouting.active.server.interval";  // Interval in seconds for checking server status
     public static final String MDW_ROUTING_REQUEST_TIMEOUT = "mdw.requestrouting.timeout";  // Seconds to wait for response from routed to server

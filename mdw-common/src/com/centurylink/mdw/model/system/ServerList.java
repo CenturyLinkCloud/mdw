@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.app;
+package com.centurylink.mdw.model.system;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.model.system.Server;
+import java.util.Map;
 
 public class ServerList implements Iterable<Server> {
 
@@ -29,12 +27,23 @@ public class ServerList implements Iterable<Server> {
         return servers;
     }
 
-    public ServerList(String name) {
-        List<String> hostPorts = PropertyManager.getListProperty(name);
-        if (hostPorts != null) {
-            for (String hostPort : hostPorts)
-                servers.add(new Server(hostPort));
+    /**
+     * Structured server config.
+     */
+    public ServerList(Map<?,?> serverMap) {
+        for (Object name : serverMap.keySet()) {
+            String host = name.toString();
+            Map<?,?> config = (Map<?,?>)serverMap.get(host);
+            List<?> ports = (List<?>)config.get("ports");
+            for (Object port : ports) {
+                servers.add(new Server(host, (Integer)port, config));
+            }
         }
+    }
+
+    public ServerList(List<String> hostPorts) {
+        for (String hostPort : hostPorts)
+            servers.add(new Server(hostPort));
     }
 
     public ServerList(ServerList...lists) {

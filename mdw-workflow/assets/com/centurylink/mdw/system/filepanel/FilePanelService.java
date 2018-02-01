@@ -127,6 +127,10 @@ public class FilePanelService extends JsonRestService {
                     logger.severeException(ex.getMessage(), ex);
                 }
             }
+            else {
+                logger.warn("*** WARNING ***: Configured FilePanel root is not a directory: "
+                        + file.getAbsolutePath());
+            }
         }
         return dirs;
     }

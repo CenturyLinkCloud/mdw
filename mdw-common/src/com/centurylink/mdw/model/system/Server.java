@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.system;
 
 import java.net.URL;
+import java.util.Map;
 
 public class Server {
 
@@ -27,6 +28,19 @@ public class Server {
     private int port;
     public int getPort() {
         return port;
+    }
+
+    private Map<?,?> config;
+    public Map<?,?> getConfig() { return config; }
+
+    public Server(String host, int port) {
+        this(host, port, null);
+    }
+
+    public Server(String host, int port, Map<?,?> config) {
+        this.host = host;
+        this.port = port;
+        this.config = config;
     }
 
     public Server(String hostPort) {
@@ -48,11 +62,6 @@ public class Server {
         }
     }
 
-    public Server(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
-
     @Override
     public String toString() {
         return host + ":" + port;
@@ -71,5 +80,4 @@ public class Server {
     public int hashCode() {
         return this.toString().hashCode();
     }
-
 }

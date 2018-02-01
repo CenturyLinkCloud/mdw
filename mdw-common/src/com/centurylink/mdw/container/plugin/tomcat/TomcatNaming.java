@@ -71,7 +71,7 @@ public class TomcatNaming implements NamingProvider {
         if (portStr == null)
             portStr = System.getProperty("server.port");
         if (portStr == null && ApplicationContext.isSpringBoot())
-            portStr = "8080";
+            portStr = "8080"; // TODO
 
         if (portStr != null )
             return Integer.parseInt(portStr);

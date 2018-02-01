@@ -87,12 +87,15 @@ public class YamlProperties {
      */
     @SuppressWarnings("unchecked")
     public Map<String,String> getGroup(String name) {
-        Map<String,String> map = new HashMap<>();
+        Map<String,String> map = null;
         Map<String,Object> groupMap = (Map<String,Object>)get(name, PropType.group);
-        for (String groupKey : groupMap.keySet()) {
-            Map<String,Object> innerMap = loader.getMap(groupKey, groupMap);
-            for (String innerKey : innerMap.keySet()) {
-                map.put(groupKey + "." + innerKey, innerMap.get(innerKey).toString());
+        if (groupMap != null) {
+            map = new HashMap<>();
+            for (String groupKey : groupMap.keySet()) {
+                Map<String,Object> innerMap = loader.getMap(groupKey, groupMap);
+                for (String innerKey : innerMap.keySet()) {
+                    map.put(groupKey + "." + innerKey, innerMap.get(innerKey).toString());
+                }
             }
         }
         return map;

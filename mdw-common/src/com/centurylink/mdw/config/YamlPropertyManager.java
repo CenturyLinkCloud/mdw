@@ -103,7 +103,7 @@ public class YamlPropertyManager extends PropertyManager {
         Properties props = new Properties();
         for (YamlProperties yamlProp : yamlProps) {
             Map<String,String> groupMap = yamlProp.getGroup(group);
-            if (group != null) {
+            if (groupMap != null) {
                 for (String key : groupMap.keySet()) {
                     props.put(key, groupMap.get(key));
                 }
@@ -128,7 +128,8 @@ public class YamlPropertyManager extends PropertyManager {
     @Override
     public String getStringProperty(String name) {
         if (cachedValues.containsKey(name)) {
-            return cachedValues.get(name).toString();
+            Object obj = cachedValues.get(name);
+            return obj == null ? null : obj.toString();
         }
         else {
             String value = getValue(name);
@@ -167,6 +168,18 @@ public class YamlPropertyManager extends PropertyManager {
             props.put(name, String.valueOf(cachedValues.get(name)));
         }
         return props;
+    }
+
+    /**
+     * Returns the YAML loader containing the given root name (if any).
+     */
+    public YamlLoader getLoader(String name) {
+        for (YamlProperties yamlProp : yamlProps) {
+            if (yamlProp.getRoot().containsKey(name)) {
+                return yamlProp.getLoader();
+            }
+        }
+        return null;
     }
 
     /**
