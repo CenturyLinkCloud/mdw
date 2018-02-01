@@ -287,8 +287,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE d1 from document_content d1 JOIN document_content d2 USING (document_id) 
-     WHERE d2.document_id IN (
+     DELETE dc1 from document_content dc1 JOIN document_content dc2 USING (document_id) 
+     WHERE dc2.document_id IN (
       SELECT document_id FROM document doc
        -- 1. all documents with process instance ID populated
        WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN')  
@@ -300,14 +300,14 @@ SET foreign_key_checks=0;
                           AND pi.status_cd = purgestatusid)
                )
            -- 2. all documents with owner type of VARIABLE_INSTANCE where row in VARIABLE_INSTANCE table has been deleted
-            OR ( doc_owner_id != 0 AND doc.OWNER_TYPE = 'VARIABLE_INSTANCE'
+            OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'VARIABLE_INSTANCE'
             	AND NOT EXISTS (
-            				SELECT variable_instance_id
+            				SELECT variable_inst_id
             				FROM variable_instance
-            				WHERE variable_instance_id = doc.owner_id)
+            				WHERE variable_inst_id = doc.owner_id)
                )
            -- 3. all documents with owner type of TASK_INSTANCE where row in TASK_INSTANCE table has been deleted
-            OR ( doc_owner_id != 0 AND doc.OWNER_TYPE = 'TASK_INSTANCE'
+            OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'TASK_INSTANCE'
             	AND NOT EXISTS (
             				SELECT task_instance_id
             				FROM task_instance
@@ -315,7 +315,7 @@ SET foreign_key_checks=0;
                )   
            -- 4. all documents with owner type of ACTIVITY_INSTANCE/ADAPTER_REQUEST/ADAPTER_RESPONSE/INTERNAL_EVENT where row 
            --		in ACTIVITY_INSTANCE table has been deleted
-            OR ( doc_owner_id != 0 AND doc.OWNER_TYPE IN('ACTIVITY_INSTANCE','ADAPTER_REQUEST','ADAPTER_RESPONSE','INTERNAL_EVENT')
+            OR ( doc.owner_id != 0 AND doc.OWNER_TYPE IN('ACTIVITY_INSTANCE','ADAPTER_REQUEST','ADAPTER_RESPONSE','INTERNAL_EVENT')
             	AND NOT EXISTS (
             				SELECT activity_instance_id
             				FROM activity_instance
@@ -353,8 +353,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE D1 from DOCUMENT D1 left outer join DOCUMENT_CONTENT D2 using (DOCUMENT_ID) 
-		WHERE D2.DOCUMENT_ID is null
+   	 DELETE d1 FROM document d1 LEFT OUTER JOIN document_content dc using (document_id) 
+		WHERE dc.document_id IS null
       LIMIT commitcnt;
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;           
