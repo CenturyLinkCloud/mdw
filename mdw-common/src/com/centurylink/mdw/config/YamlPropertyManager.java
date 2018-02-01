@@ -50,6 +50,7 @@ public class YamlPropertyManager extends PropertyManager {
 
         yamlProps = new ArrayList<>();
         YamlProperties mdwYamlProps = new YamlProperties(mdwYaml);
+        System.out.println("mdw config: " + mdwYaml.getAbsolutePath());
         yamlProps.add(mdwYamlProps);
 
         // application yamls
@@ -60,6 +61,7 @@ public class YamlPropertyManager extends PropertyManager {
             List<String> appConfigs = loader.getList("configs", application);
             if (appConfigs != null) {
                 for (String appConfig : appConfigs) {
+                    System.out.println("  app config: " + appConfig);
                     if (appConfig.endsWith(".yaml") || appConfig.endsWith(".yml")) {
                         yamlProps.add(new YamlProperties(new File(mdwYaml.getParentFile() + "/" + appConfig)));
                     }
@@ -98,8 +100,29 @@ public class YamlPropertyManager extends PropertyManager {
 
     @Override
     public Properties getProperties(String group) throws PropertyException {
-        // TODO Auto-generated method stub
-        return null;
+        Properties props = new Properties();
+        for (YamlProperties yamlProp : yamlProps) {
+            Map<String,String> groupMap = yamlProp.getGroup(group);
+            if (group != null) {
+                for (String key : groupMap.keySet()) {
+                    props.put(key, groupMap.get(key));
+                }
+            }
+        }
+        if (javaProps != null) {
+            for (Properties javaProp : javaProps) {
+                for (String name : javaProp.stringPropertyNames()) {
+                    if (name.startsWith(group + ".")) {
+                        String value = javaProp.getProperty(name);
+                        if (value != null) {
+                            props.put(name, value);
+                        }
+
+                    }
+                }
+            }
+        }
+        return props;
     }
 
     @Override
@@ -132,10 +155,18 @@ public class YamlPropertyManager extends PropertyManager {
         }
     }
 
+    /**
+     * Only returns cached (previously-read) properties.
+     * For other values, refer to yaml/property files.
+     * Or execute CLI command <code>mdw config [name]</code>.
+     */
     @Override
     public Properties getAllProperties() {
-        // TODO Auto-generated method stub
-        return null;
+        Properties props = new Properties();
+        for (String name : cachedValues.keySet()) {
+            props.put(name, String.valueOf(cachedValues.get(name)));
+        }
+        return props;
     }
 
     /**

@@ -58,6 +58,7 @@ public class PropertyNames {
     public static final int MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT = 5;
 
     // misc
+    public static final String MDW_SERVERS = "mdw.servers"; // server configuration in yaml form
     public static final String MDW_SERVER_LIST = "mdw.server.list"; // host1:port1,host2:port2,...  Represents MDW worker instances
     public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
     public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
@@ -156,6 +157,7 @@ public class PropertyNames {
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";
     public static final String MDW_ROUTING_REQUESTS_HTTPS_ENABLED = "mdw.requestrouting.https.enabled";
     public static final String MDW_ROUTING_REQUESTS_DEFAULT_STRATEGY = "mdw.requestrouting.default.strategy";
+    public static final String MDW_ROUTING_SERVERS = "mdw.routing.servers";
     public static final String MDW_ROUTING_SERVER_LIST = "mdw.requestrouting.server.list";    // host1:port1,host2:port2,... Represents MDW routing instances
     public static final String MDW_ROUTING_ACTIVE_SERVER_INTERVAL = "mdw.requestrouting.active.server.interval";  // Interval in seconds for checking server status
     public static final String MDW_ROUTING_REQUEST_TIMEOUT = "mdw.requestrouting.timeout";  // Seconds to wait for response from routed to server
@@ -177,13 +179,14 @@ public class PropertyNames {
     public static final String MDW_TRANSACTION_RETRY_INTERVAL = "mdw.transaction.retry.interval";
     public static final String MDW_TRANSACTION_RETRY_MAX = "mdw.transaction.retry.max";
 
+    public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
+
+
     // deprecated props (TODO: remove)
     @Deprecated
     public static final String MDW_LISTENER_BUS = "mdw.listener.bus";   // prefix for bus listener properties
     @Deprecated
     public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
-    @Deprecated
-    public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
     @Deprecated
     public static final String MDW_BUS_ACCOUNT = "mdw.bus.account";
     @Deprecated

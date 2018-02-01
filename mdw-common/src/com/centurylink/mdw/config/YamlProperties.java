@@ -17,6 +17,7 @@ package com.centurylink.mdw.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -31,7 +32,8 @@ public class YamlProperties {
 
     public enum PropType {
         string,
-        list
+        list,
+        group
     }
 
     private String prefix;
@@ -44,7 +46,7 @@ public class YamlProperties {
     public YamlProperties(File yamlFile) throws IOException {
         this.prefix = yamlFile.getName().substring(0, yamlFile.getName().lastIndexOf('.'));
         this.loader = new YamlLoader(yamlFile);
-         root = loader.getRequiredMap("", loader.getTop(), "");
+        root = loader.getRequiredMap("", loader.getTop(), "");
     }
 
     /**
@@ -80,18 +82,37 @@ public class YamlProperties {
         return (List<String>)get(name, PropType.list);
     }
 
+    /**
+     * Returns a flattened value map with full-path keys (including prefix).
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String,String> getGroup(String name) {
+        Map<String,String> map = new HashMap<>();
+        Map<String,Object> groupMap = (Map<String,Object>)get(name, PropType.group);
+        for (String groupKey : groupMap.keySet()) {
+            Map<String,Object> innerMap = loader.getMap(groupKey, groupMap);
+            for (String innerKey : innerMap.keySet()) {
+                map.put(groupKey + "." + innerKey, innerMap.get(innerKey).toString());
+            }
+        }
+        return map;
+    }
+
     public Object get(String name, PropType type) {
-        if (name.startsWith(this.prefix + ".")) {
-            name = name.substring(this.prefix.length() + 1);
+        String key = name;
+        if (key.startsWith(this.prefix + ".")) {
+            key = key.substring(this.prefix.length() + 1);
         }
         Map<?,?> deepest = root;
-        String residual = name;
-        for (String segment : name.split("\\.")) {
+        String residual = key;
+        for (String segment : key.split("\\.")) {
             Object value = null;
             if (type == PropType.string)
                 value = loader.get(residual, deepest);
             else if (type == PropType.list)
                 value = loader.getList(residual, deepest);
+            else if (type == PropType.group)
+                value = loader.getMap(residual, deepest);
             if (value == null) {
                 Map<?,?> map = loader.getMap(segment, deepest);
                 if (map == null) {
@@ -103,6 +124,14 @@ public class YamlProperties {
                 }
             }
             else {
+                if (type == PropType.group) {
+                    Map<String,Object> map = new HashMap<>();
+                    Map<?,?> groupMap = (Map<?,?>)value;
+                    for (Object groupKey : groupMap.keySet()) {
+                        map.put(name + "." + groupKey, groupMap.get(groupKey));
+                    }
+                    return map;
+                }
                 return value;
             }
         }
