@@ -146,12 +146,14 @@ function Toolbar(props) {
                     <Glyphicon glyph="refresh" />
                   </Button>
                 }
-                <Button name="download" 
-                  className="fp-icon-btn" 
-                  title="Download" 
-                  onClick={handleClick}>
-                  <Glyphicon glyph="download-alt" />
-                </Button>
+                {!props.item.host &&
+                  <Button name="download" 
+                    className="fp-icon-btn" 
+                    title="Download" 
+                    onClick={handleClick}>
+                    <Glyphicon glyph="download-alt" />
+                  </Button>
+                }
                 {!props.item.binary && !props.item.host &&
                   <span>
                     <label>

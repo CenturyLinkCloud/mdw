@@ -71,7 +71,8 @@ class FileView extends Component {
     else if (action === 'download') {
       location = this.context.serviceRoot + 
           '/com/centurylink/mdw/system/filepanel?path=' + 
-          encodeURIComponent(this.props.item.path) + '&download=true';
+          encodeURIComponent(this.props.item.path) + '&download=true' +
+          (this.props.item.host ? '&host=' + this.props.item.host : '');
     }
     else if (action === 'scrollToEnd') {
       this.scrollToEnd();
@@ -143,6 +144,9 @@ class FileView extends Component {
       return response.json();
     })
     .then(json => {
+      if (props.item.host) {
+        json.info.host = props.item.host;
+      }
       this.lineIndex = this.lineIndex ? this.lineIndex : 0;
       var prevSearchIndex = this.state.buffer.start;
       if (!this.state.search.backward) {
