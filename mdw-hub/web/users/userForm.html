@@ -18,8 +18,10 @@
     <div class="col-xs-10">
       <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="user.attributes[attrName]">
     </div>
-    <button ng-if="authUser.hasRole('Site Admin') && attrName.indexOf('Email Address') < 0 ? attrName.indexOf('Phone Number') < 0 : false"
-      class="btn btn-danger mdw-btn" type="button" ng-click="del(attrName)">Delete</button>
+    <div class="col-xs-10 mdw-buttons" for="deleteAttr"  ng-if="authUser.hasRole('Site Admin') && attrName.indexOf('Email Address') < 0 ? attrName.indexOf('Phone Number') < 0 : false">
+      <button 
+        class="btn btn-danger mdw-btn" id="deleteAttr" type="button" ng-click="del(attrName)">Delete</button>
+    </div>
   </div>
   
   <div ng-if="edit && advance" ng-include="'users/userAttributes.html'"></div>

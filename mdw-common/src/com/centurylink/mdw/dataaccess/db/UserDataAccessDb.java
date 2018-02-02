@@ -157,7 +157,7 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
         // load attributes for user
         String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute att1  " +
                 " where att1.attribute_owner = '" + OwnerType.USER + "' and att1.attribute_owner_id  = ?" +
-                " UNION DISTINCT " +
+                " UNION  " +
                 " select DISTINCT att2.attribute_name, '' from attribute att2 " +
                 " where att2.attribute_owner = '" + OwnerType.USER + "' and att2.attribute_owner_id  != ? " +
                 " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
@@ -170,10 +170,10 @@ public class UserDataAccessDb extends CommonDataAccess implements UserDataAccess
 
     protected void loadAttributesForGroup(Workgroup group) throws SQLException, CachingException {
         // load attributes for workgroup
-        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute as att1  " +
+        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute  att1  " +
             " where att1.attribute_owner = '" + OwnerType.USER_GROUP + "' and att1.attribute_owner_id  = ?" +
-            " UNION DISTINCT " +
-            " select DISTINCT att2.attribute_name, '' from attribute as att2 " +
+            " UNION  " +
+            " select DISTINCT att2.attribute_name, '' from attribute  att2 " +
             " where att2.attribute_owner = '" + OwnerType.USER_GROUP + "' and att2.attribute_owner_id  != ?" +
             " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
             " where att3.attribute_owner = '" + OwnerType.USER_GROUP + "' and att3.attribute_Owner_id  = ? )";
