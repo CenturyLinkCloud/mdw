@@ -12,6 +12,7 @@ cloudfoundry-client-lib-1.1.3.jar=1
 filepanel.css=6
 filepanel.png=1
 protobuf-java-2.6.1.jar=1
+readme.md=1
 spring-security-core-3.2.5.RELEASE.jar=1
 spring-security-oauth2-2.0.4.RELEASE.jar=1
 spring-web-4.3.9.RELEASE.jar=1

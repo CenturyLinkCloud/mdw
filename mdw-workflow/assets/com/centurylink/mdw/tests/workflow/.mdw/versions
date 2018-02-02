@@ -2,6 +2,7 @@ A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=3
 ActivityException.test=2
 ActivityException.yaml=4
+AppConfig.proc=1
 CancelWaitAfterStart.test=2
 CancelWaitAfterStart.yaml=1
 CollectionsVariables.test=2
