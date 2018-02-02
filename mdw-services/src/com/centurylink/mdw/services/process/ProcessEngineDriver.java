@@ -912,7 +912,8 @@ public class ProcessEngineDriver {
         }
         else if (vartype.equals("java.util.Map<String,String>") || vartype.equals(Object.class.getName())) {
             DocumentReference docRef = engine.createDocument(vartype, OwnerType.VARIABLE_INSTANCE, new Long(0), headers);
-            engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, docRef);
+            VariableInstance varInst = engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, docRef);
+            engine.updateDocumentInfo(docRef, null, null, varInst.getInstanceId(), null, null);
         }
         else {
             logger.info("Implicit requestHeaders supports variable types " + Map.class.getName() + " or " + Object.class.getName());
