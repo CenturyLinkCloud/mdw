@@ -758,6 +758,10 @@ public class ApplicationContext {
             else if (hubUrl.startsWith("http://"))
                 websocketUrl = "ws://" + hubUrl.substring(7) + "/websocket";
         }
+        else if (websocketUrl.equals("none")) {
+            // force polling for web operations that support it
+            websocketUrl = null;
+        }
         return websocketUrl;
     }
  }
