@@ -127,7 +127,7 @@ public class Dir implements Jsonable {
 
     private void addDetails() throws IOException {
         Path path = Paths.get(this.path);
-        this.absolutePath = path.toAbsolutePath().toString();
+        this.absolutePath = path.toAbsolutePath().toString().replace('\\', '/');
         if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
             PosixFileAttributes attrs = Files.getFileAttributeView(path, PosixFileAttributeView.class).readAttributes();
             permissions = PosixFilePermissions.toString(attrs.permissions());

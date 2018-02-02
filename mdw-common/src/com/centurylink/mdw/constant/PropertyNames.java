@@ -68,10 +68,10 @@ public class PropertyNames {
     public static final String MDW_STUB_SERVER = "mdw.stub.server"; // used internally, set by regression tester "<host>:<port>:<timeout>";
     public static final String DOCS_URL = "mdw.docs.url";
     public static final String DISCOVERY_URL = "mdw.discovery.url";
-    public static final String FILEPANEL_ROOT_DIRS = "mdw.filepanel.root.dirs";
-    public static final String FILEPANEL_EXCLUDE_PATTERNS = "mdw.filepanel.exclude.patterns";
-    public static final String FILEPANEL_MASKED_LINES = "mdw.filepanel.masked.lines";
-    public static final String MDW_PROCESS_LAUNCH_DELAY = "mdw.process.launch.delay";
+    public static final String FILEPANEL_ROOT_DIRS = "filepanel.root.dirs";
+    public static final String FILEPANEL_EXCLUDE_PATTERNS = "filepanel.exclude.patterns";
+    public static final String FILEPANEL_MASKED_LINES = "filepanel.masked.lines";
+    public static final String MDW_PROCESS_LAUNCH_DELAY = "process.launch.delay";
     public static final String MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP = "mdw.internal.event.consume.retry.sleep";
     public static final String MDW_INTERNAL_EVENT_DEV_CLEANUP = "mdw.internal.event.dev.cleanup";
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";

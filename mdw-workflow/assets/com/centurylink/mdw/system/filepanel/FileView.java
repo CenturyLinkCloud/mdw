@@ -221,7 +221,7 @@ public class FileView implements Jsonable {
 
     private String applyMask(String line) {
         for (String masked : getMaskedLines()) {
-            if (line.startsWith(masked)) {
+            if (line.trim().startsWith(masked)) {
                 int lineLen = line.length();
                 line = line.substring(0, masked.length());
                 for (int i = 0; i < lineLen - masked.length(); i++)
@@ -237,7 +237,9 @@ public class FileView implements Jsonable {
             maskedLines = new ArrayList<>();
             maskedLines.add("mdw.database.password=");
             maskedLines.add("LDAP-AppPassword=");
-            String maskedLinesProp = PropertyManager.getProperty(PropertyNames.FILEPANEL_MASKED_LINES);
+            maskedLines.add("password:");
+            // only global configuration supported at present
+            String maskedLinesProp = PropertyManager.getProperty("mdw." + PropertyNames.FILEPANEL_MASKED_LINES);
             if (maskedLinesProp != null) {
                 for (String maskedLine : maskedLinesProp.trim().split("\\s*,\\s*")) {
                     maskedLines.add(maskedLine);

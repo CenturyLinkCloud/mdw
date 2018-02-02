@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -38,6 +39,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.system.Dir;
 import com.centurylink.mdw.model.system.FileInfo;
+import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -58,9 +60,11 @@ public class FilePanelService extends JsonRestService {
         if (segments.length == 5) {
             Query query = new Query(path, headers);
             if (query.getFilter("path") != null) {
+                String host = query.getFilter("server");
+                // TODO: check and forward to appropriate server
                 java.nio.file.Path p = Paths.get(query.getFilter("path"));
                 try {
-                    if (!include(p) || exclude(p))
+                    if (!include(host, p) || exclude(host, p))
                         throw new ServiceException(ServiceException.FORBIDDEN, "Forbidden");
                     File file = p.toFile();
                     if (query.getBooleanFilter("download")) {
@@ -85,7 +89,7 @@ public class FilePanelService extends JsonRestService {
                             return fileView.getJson();
                         }
                         else if (file.isDirectory()) {
-                            Dir dir = new Dir(file, getExcludes(), true);
+                            Dir dir = new Dir(file, getExcludes(host), true);
                             JSONObject json = new JSONObject();
                             json.put("info", dir.getJson());
                             return json;
@@ -100,39 +104,44 @@ public class FilePanelService extends JsonRestService {
                 }
             }
             else {
-                // root dirs
-                List<Dir> dirs = getFilePanelDirs();
                 JSONObject json = new JSONObject();
-                JSONArray dirsArr = new JSONArray();
-                for (Dir dir : dirs)
-                    dirsArr.put(dir.getJson());
-                json.put("dirs", dirsArr);
+                // non-host-specific dirs
+                List<Dir> dirs = getFilePanelDirs(null);
+                if (dirs != null) {
+                    JSONArray dirsArr = new JSONArray();
+                    for (Dir dir : dirs)
+                        dirsArr.put(dir.getJson());
+                    json.put("dirs", dirsArr);
+                }
+                // host-specific dirs
+                List<String> hosts = getHosts();
+                if (!hosts.isEmpty()) {
+                    JSONArray hostsArr = new JSONArray();
+                    for (String host : getHosts()) {
+                        // TODO: collect dirs from host services
+                        JSONObject hostJson = new JSONObject();
+                        hostJson.put("name", host);
+                        List<Dir> hostDirs = getFilePanelDirs(host);
+                        if (hostDirs != null) {
+                            if (dirs != null) {
+                                throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                        "FilePanel root.dirs may be specified either globally or per-server; not both.");
+                            }
+                            JSONArray hostDirsArr = new JSONArray();
+                            for (Dir hostDir : hostDirs)
+                                hostDirsArr.put(hostDir.getJson());
+                            hostJson.put("dirs", hostDirsArr);
+                        }
+                        hostsArr.put(hostJson);
+                    }
+                    json.put("hosts", hostsArr);
+                }
                 return json;
             }
         }
         else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         }
-    }
-
-    private List<Dir> getFilePanelDirs() throws ServiceException {
-        List<Dir> dirs = new ArrayList<>();
-        for (java.nio.file.Path path : getRootPaths()) {
-            File file = path.toFile();
-            if (file.isDirectory()) {
-                try {
-                    dirs.add(new Dir(file, getExcludes(), false));
-                }
-                catch (IOException ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                }
-            }
-            else {
-                logger.warn("*** WARNING ***: Configured FilePanel root is not a directory: "
-                        + file.getAbsolutePath());
-            }
-        }
-        return dirs;
     }
 
     private void tail(Query query, int lastLine) throws IOException {
@@ -159,52 +168,125 @@ public class FilePanelService extends JsonRestService {
         }
     }
 
-    private static List<java.nio.file.Path> rootPaths;
-    private static List<java.nio.file.Path> getRootPaths() throws ServiceException {
-        if (rootPaths == null) {
-            List<String> rootDirs = PropertyManager.getListProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
-            if (rootDirs == null)
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing config: " + PropertyNames.FILEPANEL_ROOT_DIRS);
-            rootPaths = new ArrayList<>();
-            for (String dir : rootDirs) {
-                rootPaths.add(Paths.get(new File(dir).getPath()));
+    private static List<String> hosts;
+    public static List<String> getHosts() {
+        if (hosts == null) {
+            hosts = new ArrayList<>();
+            for (Server server : ApplicationContext.getServerList()) {
+                if (server.getConfig().containsKey("filepanel"))
+                    hosts.add(server.getHost());
             }
         }
-        return rootPaths;
+        return hosts;
     }
 
-    private static List<PathMatcher> excludes;
-    public static List<PathMatcher> getExcludes() {
-        if (excludes == null) {
-            excludes = new ArrayList<>();
-            List<String> excludePatterns = PropertyManager.getListProperty(PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
-            if (excludePatterns != null) {
-                for (String excludePattern : excludePatterns) {
-                    excludes.add(FileSystems.getDefault().getPathMatcher("glob:" + excludePattern));
+    private List<Dir> getFilePanelDirs(String host) throws ServiceException {
+        List<Dir> dirs = null;
+        List<java.nio.file.Path> paths = getRootPaths(host);
+        if (paths != null) {
+            dirs = new ArrayList<>();
+            for (java.nio.file.Path path : paths) {
+                File file = path.toFile();
+                if (file.isDirectory()) {
+                    try {
+                        dirs.add(new Dir(file, getExcludes(host), false));
+                    }
+                    catch (IOException ex) {
+                        logger.severeException(ex.getMessage(), ex);
+                    }
+                }
+                else {
+                    String msg = "Warning: Configured FilePanel root is not a directory";
+                    if (host != null)
+                        msg += " (on host " + host + ")";
+                    logger.warn(msg + ": " + file.getAbsolutePath());
                 }
             }
         }
-        return excludes;
+        return dirs;
+    }
+
+    private static Map<String,List<java.nio.file.Path>> rootPaths;
+    private static List<java.nio.file.Path> getRootPaths(String host) throws ServiceException {
+        if (rootPaths == null) {
+            // per-server roots (or null key if not specified)
+            rootPaths = new HashMap<>();
+            List<String> rootDirs;
+            if (host == null) {
+                rootDirs = PropertyManager.getListProperty("mdw." + PropertyNames.FILEPANEL_ROOT_DIRS);
+            }
+            else {
+                rootDirs = PropertyManager.getListProperty("mdw.servers." + host + "." + PropertyNames.FILEPANEL_ROOT_DIRS);
+            }
+            if (rootDirs != null) {
+                for (String dir : rootDirs) {
+                    java.nio.file.Path path = Paths.get(new File(dir).getPath());
+                    List<java.nio.file.Path> paths = rootPaths.get(host);
+                    if (paths == null) {
+                        paths = new ArrayList<>();
+                        rootPaths.put(host, paths);
+                    }
+                    paths.add(path);
+                }
+            }
+        }
+        return rootPaths.get(host);
+    }
+
+    private static Map<String,List<PathMatcher>> excludes;
+    public static List<PathMatcher> getExcludes(String host) {
+        if (excludes == null) {
+            excludes = new HashMap<>();
+            List<String> excludePatterns;
+            if (host == null) {
+                excludePatterns = PropertyManager.getListProperty("mdw." + PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
+            }
+            else {
+                excludePatterns = PropertyManager.getListProperty("mdw.servers." + host + "." + PropertyNames.FILEPANEL_EXCLUDE_PATTERNS);
+            }
+            if (excludePatterns != null) {
+                for (String excludePattern : excludePatterns) {
+                    PathMatcher exclusion = FileSystems.getDefault().getPathMatcher("glob:" + excludePattern);
+                    List<PathMatcher> exclusions = excludes.get(host);
+                    if (exclusions == null) {
+                        exclusions = new ArrayList<>();
+                        excludes.put(host, exclusions);
+                    }
+                    exclusions.add(exclusion);
+                }
+            }
+        }
+        return excludes.get(host);
     }
 
     /**
      * Checks for matching exclude patterns.
      */
-    private static boolean exclude(java.nio.file.Path path) {
-        for (PathMatcher matcher : getExcludes()) {
-            if (matcher.matches(path))
-                return true;
+    private static boolean exclude(String host, java.nio.file.Path path) {
+        List<PathMatcher> exclusions = getExcludes(host);
+        if (exclusions == null && host != null) {
+            exclusions = getExcludes(null); // check global config
+        }
+        if (exclusions != null) {
+            for (PathMatcher matcher : exclusions) {
+                if (matcher.matches(path))
+                    return true;
+            }
         }
         return false;
     }
 
     /**
      * Checks whether subpath of a designated root dir.
+     * Root dirs must be configured per host or globally (not both).
      */
-    private static boolean include(java.nio.file.Path path) throws ServiceException {
-        for (java.nio.file.Path rootPath : getRootPaths()) {
-            if (path.startsWith(rootPath))
-                return true;
+    private static boolean include(String host, java.nio.file.Path path) throws ServiceException {
+        List<java.nio.file.Path> roots = getRootPaths(host);
+        if (roots != null) {
+            for (java.nio.file.Path rootPath : roots) {
+                if (path.startsWith(rootPath))
+                    return true;
+            }
         }
         return false;
     }

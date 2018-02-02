@@ -1,5 +1,8 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
+import {Glyphicon} from '../../node/node_modules/react-bootstrap';
+import TreeView from '../../node/node_modules/react-treeview';
+import '../../node/node_modules/style-loader!../../react/react-treeview.css';
 import DirTree from './DirTree.jsx';
 import FileView from './FileView.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
@@ -15,7 +18,7 @@ document.body.style.overflowY = 'hidden';
 class Index extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { rootDirs: [], selected: {}};
+    this.state = { hosts: [], rootDirs: [], selected: {}};
     this.handleSelect = this.handleSelect.bind(this);
     this.handleInfo = this.handleInfo.bind(this);
   }
@@ -49,10 +52,18 @@ class Index extends Component {
             }
           });
         };
+        if (json.hosts) {
+          json.hosts.forEach(host => {
+            if (host.dirs) {
+              assignTabIndexes(host.dirs);
+            }
+          });
+        }
         if (json.dirs) {
           assignTabIndexes(json.dirs);
         }
         this.setState({
+          hosts: json.hosts,
           rootDirs: json.dirs
         });
       }
@@ -115,6 +126,38 @@ class Index extends Component {
                     onSelect={this.handleSelect}
                     root={true} 
                     selected={this.state.selected} />
+                );
+              })
+            }
+            {this.state.hosts &&
+              this.state.hosts.map(host => {
+                const hostLabel = (
+                  <span className="fp-item" style={{cursor:'default'}}>
+                    <Glyphicon glyph="unchecked" className="fp-item-icon" 
+                      style={{paddingRight:'4px'}}/>
+                    {host.name}
+                  </span>
+                );
+                return (
+                  <TreeView 
+                    key={host.name} 
+                    nodeLabel={hostLabel}
+                    defaultCollapsed={false}>
+                    {host.dirs &&
+                      host.dirs.map(dir => {
+                        dir.host = host.name;
+                        return (
+                          <DirTree 
+                            key={dir.name}
+                            dir={dir} 
+                            onSelect={this.handleSelect}
+                            root={true}
+                            selected={this.state.selected}
+                            host={host.name} />
+                        );
+                      })
+                    }
+                  </TreeView>
                 );
               })
             }

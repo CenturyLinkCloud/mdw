@@ -50,7 +50,7 @@ public class CfLogListener implements StartupService {
     @Override
     public void onStartup() throws StartupException {
         if (ApplicationContext.isPaaS()) {
-            List<String> filepanelDirs = PropertyManager.getListProperty(PropertyNames.FILEPANEL_ROOT_DIRS);
+            List<String> filepanelDirs = PropertyManager.getListProperty("mdw." + PropertyNames.FILEPANEL_ROOT_DIRS);
             if (filepanelDirs != null) {
                 // make sure environment variables are set (TODO: oauth2)
                 String cfApiUser = System.getenv("CF_API_USER");

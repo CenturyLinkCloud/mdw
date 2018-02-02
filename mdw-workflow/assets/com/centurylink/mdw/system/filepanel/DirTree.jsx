@@ -29,17 +29,20 @@ function DirTree(props, context) {
       defaultCollapsed={!props.dir.dirs}>
       {props.dir.dirs &&
         props.dir.dirs.map(dir => {
+          dir.host = props.host;
           return (
             <DirTree 
               key={dir.name}
               dir={dir} 
               onSelect={props.onSelect} 
-              selected={props.selected} />
+              selected={props.selected}
+              host={props.host} />
           );
         })
       }
       {props.dir.files &&
         props.dir.files.map(file => {
+          file.host = props.host;
           return (
             <div 
               style={{marginTop: '2px'}} // should match tree-view-item margin-top

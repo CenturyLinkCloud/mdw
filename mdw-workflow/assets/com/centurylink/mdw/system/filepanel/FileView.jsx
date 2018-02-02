@@ -130,6 +130,9 @@ class FileView extends Component {
         url += '&' + params;
       }
     }
+    if (props.item.host) {
+      url += '&server=' + props.item.host;
+    }
     fetch(new Request(url, {
       method: 'GET',
       headers: { Accept: 'application/json'},
