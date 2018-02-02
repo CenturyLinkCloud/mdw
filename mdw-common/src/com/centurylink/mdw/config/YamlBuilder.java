@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.services.test;
+package com.centurylink.mdw.config;
 
 public class YamlBuilder {
 
@@ -23,6 +23,10 @@ public class YamlBuilder {
 
     public YamlBuilder() {
         stringBuilder = new StringBuilder();
+    }
+
+    public YamlBuilder append(YamlBuilder builder) {
+        return newLine().append(builder.toString());
     }
 
     public YamlBuilder(String newLine) {

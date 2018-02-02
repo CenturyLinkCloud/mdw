@@ -17,11 +17,13 @@ package com.centurylink.mdw.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.yaml.YamlLoader;
 
 /**
@@ -141,11 +143,45 @@ public class YamlProperties {
         return null;
     }
 
-    public static String translate(Properties properties) {
+    public static YamlBuilder translate(String prefix, Properties properties)
+    throws IOException, ReflectiveOperationException {
+        Map<String,YamlPropertyTranslator> translators = new HashMap<>();
 
-        // TODO:
+        for (String name : properties.stringPropertyNames()) {
+            if (name.startsWith(prefix + ".")) {
+                String mapped = Compatibility.getConfiguration(properties.getProperty(name));
+                if (mapped.startsWith("(")) {
+                    String className = mapped.substring(1, mapped.length() - 1);
+                    YamlPropertyTranslator translator = null;
+                    for (YamlPropertyTranslator instance : translators.values()) {
+                        if (instance.getClass().getName().equals(className)) {
+                            translator = instance;
+                            break;
+                        }
+                    }
+                    if (translator == null) {
+                        translator = Class.forName(className).asSubclass(YamlPropertyTranslator.class).newInstance();
 
-        return null;
+                    }
+                    translators.put(name, translator);
+                }
+                else if (mapped.isEmpty()) {
+                    // blank means remove this prop
+                }
+                else {
+                    // TODO: default translation
+
+                }
+            }
+        }
+
+        YamlBuilder yamlBuilder = new YamlBuilder();
+//        for (String prop : translators.keySet()) {
+//            yamlBuilder.append(translators.get(prop).translate());
+//        }
+
+        return yamlBuilder;
     }
+
 
 }
