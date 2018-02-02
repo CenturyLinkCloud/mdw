@@ -17,6 +17,8 @@ package com.centurylink.mdw.system.filepanel;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Path;
 
@@ -41,6 +44,7 @@ import com.centurylink.mdw.model.system.Dir;
 import com.centurylink.mdw.model.system.FileInfo;
 import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -58,79 +62,107 @@ public class FilePanelService extends JsonRestService {
 
         String[] segments = getSegments(path);
         if (segments.length == 5) {
-            Query query = new Query(path, headers);
+            Query query = getQuery(path, headers);
+            URL requestUrl = getRequestUrl(headers);
+            boolean forwarded = query.getBooleanFilter("forwarded");
+            String hostParam = query.getFilter("host");
+            // we match against request host and server host
+            String requestHost = requestUrl.getHost();
+            String serverHost = ApplicationContext.getServerHost();
+
             if (query.getFilter("path") != null) {
-                String host = query.getFilter("server");
-                // TODO: check and forward to appropriate server
-                java.nio.file.Path p = Paths.get(query.getFilter("path"));
                 try {
-                    if (!include(host, p) || exclude(host, p))
-                        throw new ServiceException(ServiceException.FORBIDDEN, "Forbidden");
-                    File file = p.toFile();
-                    if (query.getBooleanFilter("download")) {
-                        if (!file.isFile())
-                            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
-                        headers.put(Listener.METAINFO_DOWNLOAD_FORMAT, Listener.DOWNLOAD_FORMAT_FILE);
-                        headers.put(Listener.METAINFO_DOWNLOAD_FILE, file.getPath());
-                        return null;
-                    }
-                    else if (query.getFilter("grep") != null) {
-                        // TODO grep
-                        return new JSONObject();
+                    if (!forwarded && hostParam != null && !hostParam.equals(requestHost) && !hostParam.equals(serverHost)) {
+                        // forward to appropriate server
+                        HttpHelper helper = new HttpHelper(getForwardUrl(requestUrl, hostParam));
+                        return new JSONObject(helper.get());
                     }
                     else {
-                        if (file.isFile()) {
-                            // file view
-                            FileInfo fileInfo = new FileInfo(file);
-                            FileView fileView = new FileView(fileInfo, query);
-                            if (query.getFilter("tail") != null) {
-                                tail(query, fileInfo.getLineCount() - 1);
-                            }
-                            return fileView.getJson();
+                        java.nio.file.Path p = Paths.get(query.getFilter("path"));
+                        if (!include(hostParam, p) || exclude(hostParam, p))
+                            throw new ServiceException(ServiceException.FORBIDDEN, "Forbidden");
+                        File file = p.toFile();
+                        if (query.getBooleanFilter("download")) {
+                            if (!file.isFile())
+                                throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
+                            headers.put(Listener.METAINFO_DOWNLOAD_FORMAT, Listener.DOWNLOAD_FORMAT_FILE);
+                            headers.put(Listener.METAINFO_DOWNLOAD_FILE, file.getPath());
+                            return null;
                         }
-                        else if (file.isDirectory()) {
-                            Dir dir = new Dir(file, getExcludes(host), true);
-                            JSONObject json = new JSONObject();
-                            json.put("info", dir.getJson());
-                            return json;
+                        else if (query.getFilter("grep") != null) {
+                            // TODO grep
+                            return new JSONObject();
                         }
                         else {
-                            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
+                            if (file.isFile()) {
+                                // file view
+                                FileInfo fileInfo = new FileInfo(file);
+                                FileView fileView = new FileView(fileInfo, query);
+                                if (query.getFilter("tail") != null) {
+                                    tail(query, fileInfo.getLineCount() - 1);
+                                }
+                                return fileView.getJson();
+                            }
+                            else if (file.isDirectory()) {
+                                Dir dir = new Dir(file, getExcludes(hostParam), true);
+                                JSONObject json = new JSONObject();
+                                json.put("info", dir.getJson());
+                                return json;
+                            }
+                            else {
+                                throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + p);
+                            }
                         }
                     }
                 }
                 catch (IOException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
                 }
             }
             else {
                 JSONObject json = new JSONObject();
-                // non-host-specific dirs
-                List<Dir> dirs = getFilePanelDirs(null);
-                if (dirs != null) {
+                Set<String> hosts = getHosts();
+                if (hosts.isEmpty() || forwarded) {
+                    // non-host-specific dirs or forwarded request
+                    if (!forwarded && PropertyManager.getListProperty("mdw." + PropertyNames.FILEPANEL_ROOT_DIRS) == null) {
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                "Missing config: mdw." + PropertyNames.FILEPANEL_ROOT_DIRS);
+                    }
                     JSONArray dirsArr = new JSONArray();
-                    for (Dir dir : dirs)
-                        dirsArr.put(dir.getJson());
+                    for (Dir selfDir : getFilePanelDirs(hostParam))
+                        dirsArr.put(selfDir.getJson());
                     json.put("dirs", dirsArr);
                 }
-                // host-specific dirs
-                List<String> hosts = getHosts();
-                if (!hosts.isEmpty()) {
+                else {
+                    // primary request for host-specific dirs
+                    if (PropertyManager.getListProperty("mdw." + PropertyNames.FILEPANEL_ROOT_DIRS) != null) {
+                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
+                                "FilePanel root.dirs may be specified either globally or per-server; not both.");
+                    }
                     JSONArray hostsArr = new JSONArray();
                     for (String host : getHosts()) {
-                        // TODO: collect dirs from host services
                         JSONObject hostJson = new JSONObject();
                         hostJson.put("name", host);
-                        List<Dir> hostDirs = getFilePanelDirs(host);
-                        if (hostDirs != null) {
-                            if (dirs != null) {
-                                throw new ServiceException(ServiceException.INTERNAL_ERROR,
-                                        "FilePanel root.dirs may be specified either globally or per-server; not both.");
+                        if (requestHost.equals(host) || serverHost.equals(host)) {
+                            // no need to forward
+                            List<Dir> hostDirs = getFilePanelDirs(host);
+                            if (hostDirs != null) {
+                                JSONArray hostDirsArr = new JSONArray();
+                                for (Dir hostDir : hostDirs)
+                                    hostDirsArr.put(hostDir.getJson());
+                                hostJson.put("dirs", hostDirsArr);
                             }
-                            JSONArray hostDirsArr = new JSONArray();
-                            for (Dir hostDir : hostDirs)
-                                hostDirsArr.put(hostDir.getJson());
-                            hostJson.put("dirs", hostDirsArr);
+                        }
+                        else {
+                            try {
+                                HttpHelper httpHelper = new HttpHelper(getForwardUrl(requestUrl, host));
+                                JSONObject hostDirsJson = new JSONObject(httpHelper.get());
+                                hostJson.put("dirs", hostDirsJson.getJSONArray("dirs"));
+                            }
+                            catch (IOException ex) {
+                                // don't let this blow up FilePanel altogether
+                                logger.severeException("Error retrieving from: " + getServer(host), ex);;
+                            }
                         }
                         hostsArr.put(hostJson);
                     }
@@ -142,6 +174,11 @@ public class FilePanelService extends JsonRestService {
         else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         }
+    }
+
+    private URL getForwardUrl(URL requestUrl, String host) throws MalformedURLException {
+        return new URL(requestUrl.getProtocol() + "://" + getServer(host) + requestUrl.getPath()
+        + (requestUrl.getQuery() == null ? "?" : "?" + requestUrl.getQuery() + "&") + "forwarded=true&host=" + host);
     }
 
     private void tail(Query query, int lastLine) throws IOException {
@@ -168,23 +205,33 @@ public class FilePanelService extends JsonRestService {
         }
     }
 
-    private static List<String> hosts;
-    public static List<String> getHosts() {
-        if (hosts == null) {
-            hosts = new ArrayList<>();
+    // one server per host (despite possibly running on multiple ports)
+    private static Map<String,Server> hostServers;
+    public static Map<String,Server> getHostServers() {
+        if (hostServers == null) {
+            hostServers = new HashMap<>();
             for (Server server : ApplicationContext.getServerList()) {
-                if (server.getConfig().containsKey("filepanel"))
-                    hosts.add(server.getHost());
+                if (server.getConfig().containsKey("filepanel")) {
+                    if (!hostServers.containsKey(server.getHost()))
+                        hostServers.put(server.getHost(), server);
+                }
             }
         }
-        return hosts;
+        return hostServers;
+    }
+
+    public static Set<String> getHosts() {
+        return getHostServers().keySet();
+    }
+
+    public static Server getServer(String host) {
+        return getHostServers().get(host);
     }
 
     private List<Dir> getFilePanelDirs(String host) throws ServiceException {
-        List<Dir> dirs = null;
+        List<Dir> dirs = new ArrayList<>();
         List<java.nio.file.Path> paths = getRootPaths(host);
         if (paths != null) {
-            dirs = new ArrayList<>();
             for (java.nio.file.Path path : paths) {
                 File file = path.toFile();
                 if (file.isDirectory()) {
@@ -290,4 +337,5 @@ public class FilePanelService extends JsonRestService {
         }
         return false;
     }
+
 }

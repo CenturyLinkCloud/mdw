@@ -131,7 +131,7 @@ class FileView extends Component {
       }
     }
     if (props.item.host) {
-      url += '&server=' + props.item.host;
+      url += '&host=' + props.item.host;
     }
     fetch(new Request(url, {
       method: 'GET',

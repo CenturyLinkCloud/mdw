@@ -152,7 +152,7 @@ function Toolbar(props) {
                   onClick={handleClick}>
                   <Glyphicon glyph="download-alt" />
                 </Button>
-                {!props.item.binary &&
+                {!props.item.binary && !props.item.host &&
                   <span>
                     <label>
                       <input name="tailMode" 

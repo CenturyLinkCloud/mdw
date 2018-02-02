@@ -246,7 +246,7 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
       
       elem.bind('click', function() {
         var main = document.getElementById('mdw-main');
-        if (main && main.style.padding == '0') {
+        if (main) {
           // navigating from full-screen (eg: filepanel)
           main.style.padding = '20px';
           main.style.height = '';

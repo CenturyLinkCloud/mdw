@@ -17,6 +17,7 @@ package com.centurylink.mdw.services.rest;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -189,6 +190,24 @@ public abstract class RestService {
 
     protected List<URL> getOtherServerUrls(String requestUrl) throws IOException {
         return ApplicationContext.getOtherServerUrls(new URL(requestUrl));
+    }
+
+    /**
+     * Includes query string.
+     */
+    protected URL getRequestUrl(Map<String,String> headers) throws ServiceException {
+        String requestUrl = headers.get(Listener.METAINFO_REQUEST_URL);
+        if (requestUrl == null)
+            throw new ServiceException("Missing header: " + Listener.METAINFO_REQUEST_URL);
+        String queryStr = "";
+        if (!StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
+            queryStr = "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
+        try {
+            return new URL(requestUrl + queryStr);
+        }
+        catch (MalformedURLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     protected void auditLog(UserAction userAction) {
