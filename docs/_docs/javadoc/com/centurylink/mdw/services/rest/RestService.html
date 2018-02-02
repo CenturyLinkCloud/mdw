@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -274,14 +274,20 @@ extends java.lang.Object</pre>
         java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
+<td class="colFirst"><code>protected java.net.URL</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequestUrl-java.util.Map-">getRequestUrl</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
+<div class="block">Includes query string.</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a></span>(java.lang.String&nbsp;propName)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredWorkgroups-org.json.JSONObject-">getRequiredWorkgroups</a></span>(org.json.JSONObject&nbsp;content)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path)</code>
 <div class="block">TODO: pass HTTP Method
@@ -290,26 +296,26 @@ extends java.lang.Object</pre>
  to perform this action/method.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegment-java.lang.String-int-">getSegment</a></span>(java.lang.String&nbsp;path,
           int&nbsp;segment)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegments-java.lang.String-">getSegments</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSource--">getSource</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSub-java.lang.String-">getSub</a></span>(java.lang.String&nbsp;path)</code>
 <div class="block">Minus the base path that triggered this service.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/model/user/UserAction.html" title="class in com.centurylink.mdw.model.user">UserAction</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getUserAction-com.centurylink.mdw.model.user.User-java.lang.String-java.lang.Object-java.util.Map-">getUserAction</a></span>(<a href="../../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&nbsp;user,
              java.lang.String&nbsp;path,
@@ -318,13 +324,13 @@ extends java.lang.Object</pre>
 <div class="block">For audit logging.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#propagate-java.lang.String-java.lang.String-java.util.Map-">propagate</a></span>(java.lang.String&nbsp;method,
          java.lang.String&nbsp;request,
          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#validateResponse-java.lang.String-">validateResponse</a></span>(java.lang.String&nbsp;response)</code>&nbsp;</td>
 </tr>
@@ -622,6 +628,21 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRequestUrl-java.util.Map-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestUrl</h4>
+<pre>protected&nbsp;java.net.URL&nbsp;getRequestUrl(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
+                              throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<div class="block">Includes query string.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
