@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.yaml.YamlLoader;
 
 /**
@@ -147,17 +146,26 @@ public class YamlProperties {
      * Translate old-style properties to yaml according to rules in
      * compatibility mapping file configurations.map.
      */
-    public static YamlBuilder translate(String prefix, Properties properties)
+    public static YamlBuilder translate(String prefix, Properties properties, Properties map)
     throws IOException, ReflectiveOperationException {
 
         // map translators to ruleProps
         Map<YamlPropertyTranslator,Map<String,String>> translators = new HashMap<>();
         YamlPropertyTranslator defaultTranslator = new DefaultYamlTranslator();
         for (String name : properties.stringPropertyNames()) {
-            if (name.startsWith(prefix + ".")) {
+            if ((prefix == null || name.startsWith(prefix + ".")) ||
+                    (prefix.equals("mdw") && (name.startsWith("MDWFramework") || name.startsWith("LDAP")))) {
                 YamlPropertyTranslator translator = null;
-                String rule = Compatibility.getConfiguration(properties.getProperty(name));
-                if (rule.startsWith("[")) {
+                String rule = map.getProperty(name);
+                if (rule == null) {
+                    // fully structured
+                    rule = prefix == null ? name.replace('.', '/') : name.substring(prefix.length() + 1).replace('.', '/');
+                    translator = defaultTranslator;
+                }
+                else if (rule.isEmpty()) {
+                    // blank means remove this prop (no translator)
+                }
+                else if (rule.startsWith("[")) {
                     // custom translator -- reuse existing instance if found
                     String className = rule.substring(1, rule.length() - 1);
                     for (YamlPropertyTranslator instance : translators.keySet()) {
@@ -169,9 +177,6 @@ public class YamlProperties {
                     if (translator == null) {
                         translator = Class.forName(className).asSubclass(YamlPropertyTranslator.class).newInstance();
                     }
-                }
-                else if (rule.isEmpty()) {
-                    // blank means remove this prop (no translator)
                 }
                 else {
                     translator = defaultTranslator;

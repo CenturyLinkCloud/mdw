@@ -43,7 +43,7 @@ public class YamlBuilder {
     }
 
     public YamlBuilder append(YamlBuilder builder) {
-        return newLine().append(builder.toString());
+        return append(builder.toString()).newLine();
     }
 
     public YamlBuilder(String newLine) {
@@ -83,6 +83,10 @@ public class YamlBuilder {
 
     public YamlBuilder newLine() {
         return append(newLine);
+    }
+
+    public YamlBuilder comment(String comment) {
+        return append("# ").append(comment).newLine();
     }
 
     public int length() {

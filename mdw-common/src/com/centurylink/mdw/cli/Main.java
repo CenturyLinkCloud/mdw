@@ -56,6 +56,7 @@ public class Main {
         Test test = new Test();
         Status status = new Status();
         Version version = new Version();
+        Convert convert = new Convert();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -71,6 +72,7 @@ public class Main {
             .addCommand("status", status)
             .addCommand("archive", archive)
             .addCommand("test", test)
+            .addCommand("convert", convert)
             .build();
 
         cmd.setProgramName("mdw");
@@ -113,6 +115,9 @@ public class Main {
                 else if (command.equals("version")) {
                     op = version;
                 }
+                else if (command.equals("convert")) {
+                    op = convert;
+                }
 
                 if (op == null) {
                     cmd.usage();
@@ -120,10 +125,10 @@ public class Main {
                 else {
                     if (op instanceof Setup) {
                         Setup setup = (Setup) op;
-                        if (setup.isDebug())
-                            setup.debug();
                         if (!setup.validate())
                             return;
+                        if (setup.isDebug())
+                            setup.debug();
                     }
                     op.run(getMonitor());
                     if (op instanceof Test && !((Test)op).isSuccess()) {

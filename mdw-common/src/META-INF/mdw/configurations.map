@@ -1,3 +1,10 @@
+mdw.container.jms.provider=container/jms.provider
+mdw.container.threadpool.provider=container/threadpool.provider
+mdw.container.datasource.provider=container/datasource.provider
+mdw.container.jms_provider=container/jms.provider
+mdw.container.threadpool_provider=container/threadpool.provider
+mdw.container.datasource_provider=container/datasource.provider
+
 mdw.db.embedded.server=db.embedded.server
 
 mdw.git.local.path=git/local.path
@@ -7,22 +14,24 @@ mdw.git.auto.pull=git/auto.pull
 mdw.temp.dir=temp.dir
 
 # ServerList implements YamlPropertyTranslator
-mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
+# mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
 
 mdw.hub.url=hub.url
 mdw.services.url=services.url
 mdw.discovery.url=discovery.url
+mdw.websocket.url=discovery.url
 
 mdw.application.config.name=application/(configs)
 
-mdw.script.executor.groovy=script.executors.groovy
-mdw.script.executor.javascript=script.executors.javascript
-MDWFramework.ScriptExecutors/Groovy=script.executors.groovy
-MDWFramework.ScriptExecutors/JavaScript=script.executors.javascript
+# mdw.script.executors.* handled by default rule
+mdw.script.executor.groovy=script/executors/groovy
+mdw.script.executor.javascript=script/executors/javascript
+MDWFramework.ScriptExecutors/Groovy=script/executors/groovy
+MDWFramework.ScriptExecutors/JavaScript=script/executors/javascript
 
 mdw.mail.smtp.host=mail/smtp.host
 mdw.mail.smtp.port=mail/smtp.port
-mdw.mail.smtp.timeout=mail.smtp.timeout
+mdw.mail.smtp.timeout=mail/smtp.timeout
 mdw.mail.connectiontimeout=mail/connection.timeout
 
 LDAP/Host=ldap/host
