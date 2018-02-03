@@ -52,8 +52,6 @@ after_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
   - cd ..
-  # Overwite update gradle.properties which contains added sensitive information during build
-  - git checkout mdw/gradle.properties
   # publish javadoc
   - git add -A docs/_docs/javadoc
   - git commit -a -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed [skip ci]"
