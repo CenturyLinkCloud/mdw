@@ -13,6 +13,7 @@ before_install:
 - npm install -g bower
 - npm install -g grunt-cli
 before_script:
+- git update-index --assume-unchanged mdw/gradle.properties
 - cat secret.properties >> mdw/gradle.properties
 - cd mdw-hub
 - npm install
