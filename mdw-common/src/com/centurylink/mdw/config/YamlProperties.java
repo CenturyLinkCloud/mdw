@@ -150,7 +150,7 @@ public class YamlProperties {
     throws IOException, ReflectiveOperationException {
 
         // map translators to ruleProps
-        Map<YamlPropertyTranslator,Map<String,String>> translators = new HashMap<>();
+        Map<YamlPropertyTranslator,Map<String,String>> translators = new LinkedHashMap<>();
         YamlPropertyTranslator defaultTranslator = new DefaultYamlTranslator();
         for (String name : properties.stringPropertyNames()) {
             if ((prefix == null || name.startsWith(prefix + ".")) ||
@@ -167,7 +167,8 @@ public class YamlProperties {
                 }
                 else if (rule.startsWith("[")) {
                     // custom translator -- reuse existing instance if found
-                    String className = rule.substring(1, rule.length() - 1);
+                    int endBracket = rule.lastIndexOf(']');
+                    String className = rule.substring(1, endBracket);
                     for (YamlPropertyTranslator instance : translators.keySet()) {
                         if (instance.getClass().getName().equals(className)) {
                             translator = instance;

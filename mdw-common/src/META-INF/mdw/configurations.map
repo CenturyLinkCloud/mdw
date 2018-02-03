@@ -14,7 +14,7 @@ mdw.git.auto.pull=git/auto.pull
 mdw.temp.dir=temp.dir
 
 # ServerList implements YamlPropertyTranslator
-# mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
+mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
 
 mdw.hub.url=hub.url
 mdw.services.url=services.url
@@ -33,6 +33,10 @@ mdw.mail.smtp.host=mail/smtp.host
 mdw.mail.smtp.port=mail/smtp.port
 mdw.mail.smtp.timeout=mail/smtp.timeout
 mdw.mail.connectiontimeout=mail/connection.timeout
+MDWFramework.JavaMail/smtpHost=mail/smtp.host
+MDWFramework.JavaMail/smtpPort=mail/smtp.port
+MDWFramework.JavaMail/connectionTimeout=mail/smtp.timeout
+MDWFramework.JavaMail/smtpTimeout=mail/connection.timeout
 
 LDAP/Host=ldap/host
 LDAP/Port=ldap/port
@@ -52,5 +56,5 @@ MDWFramework.ProcessCleanup/MaximumProcessExpiration=timer.task/ProcessCleanup/M
 MDWFramework.ProcessCleanup/ExternalEventExpirationAgeInDays=timer.task/ProcessCleanup/ExternalEventExpirationAgeInDays
 MDWFramework.ProcessCleanup/CommitInterval=timer.task/ProcessCleanup/CommitInterval
 
-
+mdw.dev.user=
 

@@ -17,14 +17,21 @@ package com.centurylink.mdw.model.system;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ServerList implements Iterable<Server> {
+import com.centurylink.mdw.config.YamlBuilder;
+import com.centurylink.mdw.config.YamlPropertyTranslator;
+
+public class ServerList implements Iterable<Server>, YamlPropertyTranslator {
 
     private List<Server> servers = new ArrayList<>();
     public List<Server> getServers() {
         return servers;
+    }
+
+    public ServerList() {
     }
 
     /**
@@ -80,6 +87,30 @@ public class ServerList implements Iterable<Server> {
             hostPorts.add(server.toString());
         }
         return hostPorts;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public YamlBuilder translate(Map<String,String> ruleProps) {
+        String hostPortsProp = ruleProps.get("[" + getClass().getName() + "]");
+        for (String hostPort : hostPortsProp.split("\\s*,\\s*")) {
+            servers.add(new Server(hostPort));
+        }
+
+        Map<String,Object> topMap = new LinkedHashMap<>();
+        Map<String,Object> serverMap = new LinkedHashMap<>();
+        topMap.put("servers", serverMap);
+        for (Server server : servers) {
+            Map<String,Object> hostMap = (Map<String,Object>)serverMap.get(server.getHost());
+            if (hostMap == null) {
+                hostMap = new LinkedHashMap<>();
+                hostMap.put("ports", new ArrayList<String>());
+                serverMap.put(server.getHost(), hostMap);
+            }
+            ((List<String>)hostMap.get("ports")).add(String.valueOf(server.getPort()));
+        }
+
+        return new YamlBuilder(topMap);
     }
 
 }
