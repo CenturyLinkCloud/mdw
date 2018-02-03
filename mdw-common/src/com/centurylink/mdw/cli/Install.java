@@ -118,7 +118,7 @@ public class Install extends Setup {
                 JSONObject releaseJson = null;
                 for (int i = 0; i < releasesArr.length(); i++) {
                     JSONObject relObj = releasesArr.getJSONObject(i);
-                    if (relObj.optString("name").equals(mdwVer)) {
+                    if (relObj.optString("name").equals(mdwVer) || relObj.optString("tag_name").equals(mdwVer)) {
                         releaseJson = relObj;
                         break;
                     }

@@ -52,6 +52,7 @@ public class Convert extends Setup {
             mapIn = getClass().getClassLoader().getResourceAsStream("META-INF/mdw/configurations.map");
         }
         else {
+            System.out.println("Mapping from " + map.getAbsolutePath());
             mapIn = new FileInputStream(map);
         }
         Properties mapProps = new Properties();
@@ -60,14 +61,16 @@ public class Convert extends Setup {
         if (input == null) {
             input = new File(getConfigRoot() + "/mdw.properties");
         }
+        System.out.println("Loading properties from " + input.getAbsolutePath());
         Properties inputProps = new OrderedProperties();
         inputProps.load(new FileInputStream(input));
 
         String prefix = input.getName().substring(0, input.getName().lastIndexOf('.'));
         try {
             YamlBuilder yamlBuilder = YamlProperties.translate(prefix, inputProps, mapProps);
-            Files.write(Paths.get(new File(getConfigRoot() + "/" + prefix + ".yaml").getPath()),
-                    yamlBuilder.toString().getBytes());
+            File out = new File(getConfigRoot() + "/" + prefix + ".yaml");
+            System.out.println("Writing output config: " + out.getAbsolutePath());
+            Files.write(Paths.get(out.getPath()), yamlBuilder.toString().getBytes());
         }
         catch (ReflectiveOperationException ex) {
             throw new IOException(ex.getMessage(), ex);

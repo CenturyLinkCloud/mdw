@@ -1,3 +1,6 @@
+application:
+  name: {{project}}
+
 container:
   datasource.provider: Tomcat
   messenger: jms
@@ -34,9 +37,6 @@ temp.dir: ../mdw/.temp
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
 discovery.url: {{discovery-url}}
-
-application:
-  name: {{project}}
 
 logging:
   level: DEBUG
