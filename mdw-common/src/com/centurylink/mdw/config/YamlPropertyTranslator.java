@@ -26,6 +26,6 @@ public interface YamlPropertyTranslator {
     /**
      * Map key is rule.  Value is property value.
      */
-    public YamlBuilder translate(Map<String,String> ruleProps);
+    public YamlBuilder translate(Map<String,Object> ruleProps);
 
 }

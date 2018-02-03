@@ -56,5 +56,29 @@ MDWFramework.ProcessCleanup/MaximumProcessExpiration=timer.task/ProcessCleanup/M
 MDWFramework.ProcessCleanup/ExternalEventExpirationAgeInDays=timer.task/ProcessCleanup/ExternalEventExpirationAgeInDays
 MDWFramework.ProcessCleanup/CommitInterval=timer.task/ProcessCleanup/CommitInterval
 
+# remove obsolete props
 mdw.dev.user=
+mdw.admin.url=
+mdw.tasks.ui=
+mdw.bam.services.url=
+mdw.bam.useSSL=
+mdw.bam.websocket=
+mdw.bam.url=
+mdw.bam.realm=
+mdw.bam.keyStore.file=
+mdw.bam.keyStore.keyPassword=
+mdw.bam.brokerURL=
+mdw.bam.route.fromuri=
+mdw.bam.route.touri=
+mdw.blv.topic.name=
+MDWFramework.TaskManagerWeb/attachments.storage.location=
+MDWFramework.TaskManagerWeb/workflow.snapshot.image.url=
+MDWFramework.TaskManagerWeb/task.notice.email.from.address=
+MDWFramework.WorkflowEngine/ActivityResumeDelay=
+MDWFramework.WorkflowEngine/ActivityStatusMessage.ShowStackTrace=
+mdw.taskmgr.dynamic.java.jsf.annotations=
+mdw.default.rendering.engine=
+mdw.artis.key=
+mdw.artis.forceall=
+mdw.artis.forceallwithconfig=
 

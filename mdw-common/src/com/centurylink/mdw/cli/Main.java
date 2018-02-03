@@ -125,10 +125,12 @@ public class Main {
                 else {
                     if (op instanceof Setup) {
                         Setup setup = (Setup) op;
-                        if (!setup.validate())
-                            return;
+                        String mdwConfig = setup.getMdwConfig();
+                        Props.init(mdwConfig == null ? "mdw.yaml" : mdwConfig);
                         if (setup.isDebug())
                             setup.debug();
+                        if (!setup.validate())
+                            return;
                     }
                     op.run(getMonitor());
                     if (op instanceof Test && !((Test)op).isSuccess()) {

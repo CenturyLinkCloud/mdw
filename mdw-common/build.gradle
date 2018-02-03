@@ -134,6 +134,8 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/config/DefaultYamlTranslator.class"
         include "com/centurylink/mdw/config/OrderedProperties.class"
         include "com/centurylink/mdw/yaml/YamlLoader.class"
+        include "com/centurylink/mdw/model/system/Server.class"
+        include "com/centurylink/mdw/model/system/ServerList.class"
     }
     
     from configurations.cli.asFileTree.files.collect {

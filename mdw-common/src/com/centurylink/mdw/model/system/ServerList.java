@@ -91,8 +91,8 @@ public class ServerList implements Iterable<Server>, YamlPropertyTranslator {
 
     @Override
     @SuppressWarnings("unchecked")
-    public YamlBuilder translate(Map<String,String> ruleProps) {
-        String hostPortsProp = ruleProps.get("[" + getClass().getName() + "]");
+    public YamlBuilder translate(Map<String,Object> ruleProps) {
+        String hostPortsProp = ruleProps.get("[" + getClass().getName() + "]").toString();
         for (String hostPort : hostPortsProp.split("\\s*,\\s*")) {
             servers.add(new Server(hostPort));
         }
@@ -104,10 +104,10 @@ public class ServerList implements Iterable<Server>, YamlPropertyTranslator {
             Map<String,Object> hostMap = (Map<String,Object>)serverMap.get(server.getHost());
             if (hostMap == null) {
                 hostMap = new LinkedHashMap<>();
-                hostMap.put("ports", new ArrayList<String>());
+                hostMap.put("ports", new ArrayList<Integer>());
                 serverMap.put(server.getHost(), hostMap);
             }
-            ((List<String>)hostMap.get("ports")).add(String.valueOf(server.getPort()));
+            ((List<Integer>)hostMap.get("ports")).add(server.getPort());
         }
 
         return new YamlBuilder(topMap);

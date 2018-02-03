@@ -150,7 +150,7 @@ public class YamlProperties {
     throws IOException, ReflectiveOperationException {
 
         // map translators to ruleProps
-        Map<YamlPropertyTranslator,Map<String,String>> translators = new LinkedHashMap<>();
+        Map<YamlPropertyTranslator,Map<String,Object>> translators = new LinkedHashMap<>();
         YamlPropertyTranslator defaultTranslator = new DefaultYamlTranslator();
         for (String name : properties.stringPropertyNames()) {
             if ((prefix == null || name.startsWith(prefix + ".")) ||
@@ -164,6 +164,7 @@ public class YamlProperties {
                 }
                 else if (rule.isEmpty()) {
                     // blank means remove this prop (no translator)
+                    System.out.println("Removing obsolete property: " + name);
                 }
                 else if (rule.startsWith("[")) {
                     // custom translator -- reuse existing instance if found
@@ -183,12 +184,19 @@ public class YamlProperties {
                     translator = defaultTranslator;
                 }
                 if (translator != null) {
-                    Map<String,String> ruleProps = translators.get(translator);
+                    Map<String,Object> ruleProps = translators.get(translator);
                     if (ruleProps == null) {
                         ruleProps = new LinkedHashMap<>();
                         translators.put(translator, ruleProps);
                     }
-                    ruleProps.put(rule, properties.getProperty(name));
+                    Object propValue = properties.getProperty(name);
+                    try {
+                        // integers should be treated as such
+                        propValue = Integer.parseInt(propValue.toString());
+                    }
+                    catch (NumberFormatException ex) {
+                    }
+                    ruleProps.put(rule, propValue);
                 }
             }
         }

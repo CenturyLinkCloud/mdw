@@ -53,7 +53,7 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
     Map<String,Object> top = new LinkedHashMap<>();
 
     @Override
-    public YamlBuilder translate(Map<String,String> ruleProps) {
+    public YamlBuilder translate(Map<String,Object> ruleProps) {
         for (String rule : ruleProps.keySet()) {
             process(rule, ruleProps.get(rule), top);
         }
@@ -61,7 +61,7 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void process(String rule, String value, Object root) {
+    protected void process(String rule, Object value, Object root) {
         int slash = rule.indexOf('/');
         if (slash > 0) {
             String name = rule.substring(0, slash);
@@ -76,7 +76,7 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
         }
         else {
             if (rule.startsWith("(")) {
-                List list = Arrays.asList(value.split("\\s*,\\s*"));
+                List list = Arrays.asList(value.toString().split("\\s*,\\s*"));
                 ((Map)root).put(rule.substring(1, rule.length() - 1), list);
             }
             else {

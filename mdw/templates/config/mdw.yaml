@@ -1,0 +1,73 @@
+container:
+  datasource.provider: Tomcat
+  messenger: jms
+  jms.provider: ActiveMQ
+  threadpool.provider: MDW
+
+database:
+  driver: {{database-driver}}
+  url: {{database-url}}
+  username: {{database-user}}
+  password: {{database-password}}
+  poolsize: 5
+  poolMaxIdle: 3
+  validationQuery: select 1 from dual
+
+db.embedded.server: localhost:8080
+
+# optional mongodb
+# mongodb:
+#   host: localhost
+#   port: 27017
+
+# asset location info (use absolute paths when running thru eclipse wtp) 
+asset:
+  location: {{asset-loc}}
+
+git:
+  local.path: .
+  remote.url: {{git-remote-url}}
+  branch: {{git-branch}}
+
+temp.dir: ../mdw/.temp
+
+hub.url: http://localhost:8080/mdw
+services.url: http://localhost:8080/mdw
+discovery.url: {{discovery-url}}
+
+application:
+  name: {{project}}
+
+logging:
+  level: DEBUG
+
+script:
+  executors:
+    groovy: com.centurylink.mdw.script.GroovyExecutor
+    javascript: com.centurylink.mdw.script.JavaScriptExecutor
+
+mail:
+  smtp.host: mymailhost
+  smtp.port: 25
+  connection.timeout: 10000
+  smtp.timeout: 10000
+
+ldap:
+  host: ldap.myorg.com
+  port: 1636
+  base.dn: dc=ad,dc=intra,dc=com
+
+servers:
+  localhost:
+    ports:
+    - 8080
+    
+# timer.task:
+#   ProcessCleanup: # run daily at 2:30 am
+#     TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
+#     Schedule: 30 2 * * ? *
+#     RuntimeCleanupScript: Cleanup-Runtime.sql
+#     ProcessExpirationAgeInDays: 180
+#     ExternalEventExpirationAgeInDays: 180
+#     MaximumProcessExpiration: 10000
+#     CommitInterval: 10000
