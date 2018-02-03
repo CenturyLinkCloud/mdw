@@ -15,51 +15,73 @@
  */
 package com.centurylink.mdw.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Translates properties based on rules to YAML.
+ * (See also configurations.map in compatibility).
+ *
+ * Slash separators indicate nested elements:
+ * <code>
+ *   database/driver=org.mariadb.jdbc.Driver
+ *   database/url=jdbc:mariadb://localhost:3308/mdw
+ * </code>
+ * creates:
+ * <code>
+ *   database:
+ *     driver: org.mariadb.jdbc.Driver
+ *     url: jdbc:mariadb://localhost:3308/mdw
+ * </code>
+ *
+ * Parentheses represent a list:
+ * <code>
+ *   filepanel/(root.dirs)=./logs,./config
+ * </code>
+ * creates:
+ * <code>
+ * filepanel:
+ *   root.dirs:
+ *   - ./logs
+ *   - ./config
+ * </code>
+ */
 public class DefaultYamlTranslator implements YamlPropertyTranslator {
 
     Map<String,Object> top = new LinkedHashMap<>();
 
     @Override
-    public YamlBuilder translate(Map<String,String> propRules) {
-        for (String rule : propRules.keySet()) {
-            process(rule, propRules.get(rule), top);
+    public YamlBuilder translate(Map<String,String> ruleProps) {
+        for (String rule : ruleProps.keySet()) {
+            process(rule, ruleProps.get(rule), top);
         }
-        // TODO Auto-generated method stub
-        return null;
+        return new YamlBuilder(top);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void process(String rule, String value, Object root) {
         int slash = rule.indexOf('/');
         if (slash > 0) {
-            process(rule.substring(slash), rule.substring(slash + 1, rule.length()), root);
+            String name = rule.substring(0, slash);
+            if (root instanceof Map) {
+                Object obj = ((Map)root).get(name);
+                if (obj == null) {
+                    obj = new LinkedHashMap<>();
+                    ((Map)root).put(name, obj);
+                }
+                process(rule.substring(slash + 1), value, obj);
+            }
         }
         else {
-            if (root instanceof List) {
-                ((List<String>)root).add(value);
+            if (rule.startsWith("(")) {
+                List list = Arrays.asList(value.split("\\s*,\\s*"));
+                ((Map)root).put(rule.substring(1, rule.length() - 1), list);
             }
-            else if (root instanceof Map) {
-                ((Map<String,String>)root).put(rule, value);
+            else {
+                ((Map)root).put(rule, value);
             }
-            throw new IllegalArgumentException("Unsupported root type: " + root.getClass());
         }
-//
-//
-//
-//        Object obj = source.get(name);
-//        if (obj == null) {
-//            if (name.startsWith("(")) {
-//                obj = new ArrayList<>();
-//            }
-//            else {
-//                obj = new HashMap<>();
-//            }
-//        }
     }
 }

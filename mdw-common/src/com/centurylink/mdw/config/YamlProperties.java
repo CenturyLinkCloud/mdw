@@ -17,8 +17,8 @@ package com.centurylink.mdw.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -143,17 +143,24 @@ public class YamlProperties {
         return null;
     }
 
+    /**
+     * Translate old-style properties to yaml according to rules in
+     * compatibility mapping file configurations.map.
+     */
     public static YamlBuilder translate(String prefix, Properties properties)
     throws IOException, ReflectiveOperationException {
-        Map<String,YamlPropertyTranslator> translators = new HashMap<>();
 
+        // map translators to ruleProps
+        Map<YamlPropertyTranslator,Map<String,String>> translators = new HashMap<>();
+        YamlPropertyTranslator defaultTranslator = new DefaultYamlTranslator();
         for (String name : properties.stringPropertyNames()) {
             if (name.startsWith(prefix + ".")) {
-                String mapped = Compatibility.getConfiguration(properties.getProperty(name));
-                if (mapped.startsWith("(")) {
-                    String className = mapped.substring(1, mapped.length() - 1);
-                    YamlPropertyTranslator translator = null;
-                    for (YamlPropertyTranslator instance : translators.values()) {
+                YamlPropertyTranslator translator = null;
+                String rule = Compatibility.getConfiguration(properties.getProperty(name));
+                if (rule.startsWith("[")) {
+                    // custom translator -- reuse existing instance if found
+                    String className = rule.substring(1, rule.length() - 1);
+                    for (YamlPropertyTranslator instance : translators.keySet()) {
                         if (instance.getClass().getName().equals(className)) {
                             translator = instance;
                             break;
@@ -161,27 +168,30 @@ public class YamlProperties {
                     }
                     if (translator == null) {
                         translator = Class.forName(className).asSubclass(YamlPropertyTranslator.class).newInstance();
-
                     }
-                    translators.put(name, translator);
                 }
-                else if (mapped.isEmpty()) {
-                    // blank means remove this prop
+                else if (rule.isEmpty()) {
+                    // blank means remove this prop (no translator)
                 }
                 else {
-                    // TODO: default translation
-
+                    translator = defaultTranslator;
+                }
+                if (translator != null) {
+                    Map<String,String> ruleProps = translators.get(translator);
+                    if (ruleProps == null) {
+                        ruleProps = new LinkedHashMap<>();
+                        translators.put(translator, ruleProps);
+                    }
+                    ruleProps.put(rule, properties.getProperty(name));
                 }
             }
         }
 
+        // perform translations
         YamlBuilder yamlBuilder = new YamlBuilder();
-//        for (String prop : translators.keySet()) {
-//            yamlBuilder.append(translators.get(prop).translate());
-//        }
-
+        for (YamlPropertyTranslator translator : translators.keySet()) {
+            yamlBuilder.append(translator.translate(translators.get(translator))).newLine();
+        }
         return yamlBuilder;
     }
-
-
 }

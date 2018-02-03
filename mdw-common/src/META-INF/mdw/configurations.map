@@ -7,20 +7,18 @@ mdw.git.auto.pull=git/auto.pull
 mdw.temp.dir=temp.dir
 
 # ServerList implements YamlPropertyTranslator
-mdw.server.list=(com.centurylink.mdw.model.system.ServerList)
+mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
 
 mdw.hub.url=hub.url
 mdw.services.url=services.url
 mdw.discovery.url=discovery.url
 
-mdw.application.config.name=(List)application/configs
+mdw.application.config.name=application/(configs)
 
-mdw.script.executor.groovy=(ScriptConfigTranslator)
-mdw.script.executor.javascript=(ScriptConfigTranslator)
-mdw.script.executors.groovy=(ScriptConfigTranslator)
-mdw.script.executors.javascript=(ScriptConfigTranslator)
-MDWFramework.ScriptExecutors/Groovy=(ScriptConfigTranslator)
-MDWFramework.ScriptExecutors/JavaScript=(ScriptConfigTranslator)
+mdw.script.executor.groovy=script.executors.groovy
+mdw.script.executor.javascript=script.executors.javascript
+MDWFramework.ScriptExecutors/Groovy=script.executors.groovy
+MDWFramework.ScriptExecutors/JavaScript=script.executors.javascript
 
 mdw.mail.smtp.host=mail/smtp.host
 mdw.mail.smtp.port=mail/smtp.port
