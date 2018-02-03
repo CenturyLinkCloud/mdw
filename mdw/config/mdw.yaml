@@ -41,7 +41,7 @@ servers:
 
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
-discovery.url: https://mdw.useast.appfog.ctl.io/mdw
+discovery.url: http://repo.maven.apache.org/maven2
 
 application:
   name: mdw6
