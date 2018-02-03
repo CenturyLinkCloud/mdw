@@ -25,6 +25,7 @@
 - Polling for automated tests page when no websocket [\#317](https://github.com/CenturyLinkCloud/mdw/issues/317)
 - Add the functionality to search process instances with like \(and in\)  condition in variable value [\#312](https://github.com/CenturyLinkCloud/mdw/issues/312)
 - Use React production build for non-dev environments [\#309](https://github.com/CenturyLinkCloud/mdw/issues/309)
+- Fix Sign Out page [\#307](https://github.com/CenturyLinkCloud/mdw/issues/307)
 - IBM MQ adapter throws java.lang.IllegalAccessError under specific circumstances [\#306](https://github.com/CenturyLinkCloud/mdw/issues/306)
 - Special Event with root name \<\_mdw\_task\_sla\> is not handled by FallbackEventHandler [\#296](https://github.com/CenturyLinkCloud/mdw/issues/296)
 - Task creation currently ignores the entered SLA \("Task Due In" field\)  [\#294](https://github.com/CenturyLinkCloud/mdw/issues/294)
