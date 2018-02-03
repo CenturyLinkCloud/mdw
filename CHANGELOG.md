@@ -1,27 +1,27 @@
 # Change Log
 
+## [6.0.13-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/6.0.13-SNAPSHOT) (2018-02-02)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.0.12...6.0.13-SNAPSHOT)
+
 ## [6.0.12](https://github.com/CenturyLinkCloud/mdw/tree/6.0.12) (2018-02-02)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.11...6.0.12)
 
 **Implemented enhancements:**
 
-- FilePanel replacement in React/JSX [\#258](https://github.com/CenturyLinkCloud/mdw/issues/258)
-- YAML format for mdw.properties [\#257](https://github.com/CenturyLinkCloud/mdw/issues/257)
-- Error message on failed login attempt [\#238](https://github.com/CenturyLinkCloud/mdw/issues/238)
 - Add log statements to ASSET\_REF table updating to better identify when it happens [\#297](https://github.com/CenturyLinkCloud/mdw/issues/297)
 - Arbitrary attributes for Users and Workgroups [\#289](https://github.com/CenturyLinkCloud/mdw/issues/289)
 - Upload release artifacts from travis build [\#288](https://github.com/CenturyLinkCloud/mdw/issues/288)
 - Indexes for arbitrary instance-level owners [\#279](https://github.com/CenturyLinkCloud/mdw/issues/279)
 - Slack app routing and general MDW App token cloud routing [\#271](https://github.com/CenturyLinkCloud/mdw/issues/271)
+- FilePanel replacement in React/JSX [\#258](https://github.com/CenturyLinkCloud/mdw/issues/258)
+- YAML format for mdw.properties [\#257](https://github.com/CenturyLinkCloud/mdw/issues/257)
+- Error message on failed login attempt [\#238](https://github.com/CenturyLinkCloud/mdw/issues/238)
 - Advanced button for User attributes and Solutions values [\#24](https://github.com/CenturyLinkCloud/mdw/issues/24)
 
 **Closed issues:**
 
-- Spring boot does not listen for websocket connections [\#287](https://github.com/CenturyLinkCloud/mdw/issues/287)
-- Skipping travis build for changes not related to source files [\#286](https://github.com/CenturyLinkCloud/mdw/issues/286)
 - Publish build using Travis CI [\#284](https://github.com/CenturyLinkCloud/mdw/issues/284)
 - Create Demo [\#243](https://github.com/CenturyLinkCloud/mdw/issues/243)
-- Activity implementor source link broken [\#240](https://github.com/CenturyLinkCloud/mdw/issues/240)
 - Polling for automated tests page when no websocket [\#317](https://github.com/CenturyLinkCloud/mdw/issues/317)
 - Add the functionality to search process instances with like \(and in\)  condition in variable value [\#312](https://github.com/CenturyLinkCloud/mdw/issues/312)
 - Use React production build for non-dev environments [\#309](https://github.com/CenturyLinkCloud/mdw/issues/309)
@@ -30,7 +30,9 @@
 - Task creation currently ignores the entered SLA \("Task Due In" field\)  [\#294](https://github.com/CenturyLinkCloud/mdw/issues/294)
 - Locked Document selected for update is released prior to update being performed  [\#293](https://github.com/CenturyLinkCloud/mdw/issues/293)
 - NullPointerException can occur sometimes in active flows when cache is being refreshed [\#291](https://github.com/CenturyLinkCloud/mdw/issues/291)
+- Spring boot does not listen for websocket connections [\#287](https://github.com/CenturyLinkCloud/mdw/issues/287)
 - Dynamic service registration omits qualifying package path [\#285](https://github.com/CenturyLinkCloud/mdw/issues/285)
+- Activity implementor source link broken [\#240](https://github.com/CenturyLinkCloud/mdw/issues/240)
 
 ## [v6.0.11](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.11) (2018-01-06)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.11-SNAPSHOT...v6.0.11)
