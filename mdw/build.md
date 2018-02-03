@@ -11,14 +11,11 @@
   - **/.mdw/package.json
 
 3 - Clean Tag (Formal builds only)
-  - Delete SNAPSHOT release and tags
-      - git pull
-      - git tag -d 6.0.xx-SNAPSHOT 
-      - Delete the Draft of SNAPSHOT from GitHub:
-        https://github.com/CenturyLinkCloud/mdw/releases
-      - git push origin --tags
+  - Go to https://github.com/CenturyLinkCloud/mdw/tags
+  - Delete SNAPSHOT release and tag
+  - git pull
         
-4 - Git pull and Commit and push all the above changes to Git.
+4 - Commit and push all the above changes to Git (normally plugin.xml and gradle.properties).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 

@@ -13,6 +13,7 @@ before_install:
 - npm install -g bower
 - npm install -g grunt-cli
 before_script:
+- git update-index --assume-unchanged mdw/gradle.properties
 - cat secret.properties >> mdw/gradle.properties
 - cd mdw-hub
 - npm install
@@ -22,6 +23,7 @@ before_script:
 script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
+- cat mdw.log
 - sleep 10s
 notifications:
   slack:
@@ -50,8 +52,6 @@ after_deploy:
   - git config --local user.name magrawa
   - git config --local user.email manoj.a.agrawal@gmail.com
   - cd ..
-  # Overwite update gradle.properties which contains added sensitive information during build
-  - git checkout mdw/gradle.properties
   # publish javadoc
   - git add -A docs/_docs/javadoc
   - git commit -a -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed [skip ci]"
