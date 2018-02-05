@@ -139,6 +139,8 @@ public class ApplicationContext {
             logger.info("Naming Provider: " + namingProvider.getClass().getName());
 
             String ds = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_DATASOURCE_PROVIDER);
+            if (ds == null)
+                ds = PropertyManager.getProperty("mdw.container.datasource_provider"); // compatibility
             if (StringHelper.isEmpty(ds) || ds.equals(DataSourceProvider.MDW)) {
                 dataSourceProvider = new MdwDataSource();
             } else if (DataSourceProvider.TOMCAT.equals(ds)){
@@ -153,6 +155,8 @@ public class ApplicationContext {
             logger.info("Data Source Provider: " + dataSourceProvider.getClass().getName());
 
             String jms = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_JMS_PROVIDER);
+            if (jms == null)
+                jms = PropertyManager.getProperty("mdw.container.jms_provider"); // compatibility
             if (StringHelper.isEmpty(jms))
                 jms = JmsProvider.ACTIVEMQ;
             else if (JmsProvider.ACTIVEMQ.equals(jms)) {
@@ -171,6 +175,8 @@ public class ApplicationContext {
             logger.info("JMS Provider: " + (jmsProvider==null?"none":jmsProvider.getClass().getName()));
 
             String tp = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_THREADPOOL_PROVIDER);
+            if (tp == null)
+                tp = PropertyManager.getProperty("mdw.container.threadpool_provider"); // compatibility
             if (StringHelper.isEmpty(tp) || ThreadPoolProvider.MDW.equals(tp)) {
                 threadPoolProvider = new CommonThreadPool();
                 MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();

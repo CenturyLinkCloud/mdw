@@ -130,13 +130,20 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/dataaccess/file/GitDiffs\$*.class"
         include "com/centurylink/mdw/dataaccess/AssetRef.class"
         include "com/centurylink/mdw/model/asset/CommitInfo.class"
-        include "com/centurylink/mdw/config/YamlProperties.class"
-        include "com/centurylink/mdw/config/YamlProperties\$*.class"
+        include "com/centurylink/mdw/config/Yaml*.class"
+        include "com/centurylink/mdw/config/DefaultYamlTranslator.class"
+        include "com/centurylink/mdw/config/OrderedProperties.class"
         include "com/centurylink/mdw/yaml/YamlLoader.class"
+        include "com/centurylink/mdw/model/system/Server.class"
+        include "com/centurylink/mdw/model/system/ServerList.class"
     }
     
     from configurations.cli.asFileTree.files.collect {
         zipTree(it)
+    }
+    
+    from("src") {
+        include "META-INF/mdw/configurations.map"
     }
 }
 

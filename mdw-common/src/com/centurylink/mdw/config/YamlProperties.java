@@ -18,6 +18,7 @@ package com.centurylink.mdw.config;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -141,11 +142,70 @@ public class YamlProperties {
         return null;
     }
 
-    public static String translate(Properties properties) {
+    /**
+     * Translate old-style properties to yaml according to rules in
+     * compatibility mapping file configurations.map.
+     */
+    public static YamlBuilder translate(String prefix, Properties properties, Properties map)
+    throws IOException, ReflectiveOperationException {
 
-        // TODO:
+        // map translators to ruleProps
+        Map<YamlPropertyTranslator,Map<String,Object>> translators = new LinkedHashMap<>();
+        YamlPropertyTranslator defaultTranslator = new DefaultYamlTranslator();
+        for (String name : properties.stringPropertyNames()) {
+            if ((prefix == null || name.startsWith(prefix + ".")) ||
+                    (prefix.equals("mdw") && (name.startsWith("MDWFramework") || name.startsWith("LDAP")))) {
+                YamlPropertyTranslator translator = null;
+                String rule = map.getProperty(name);
+                if (rule == null) {
+                    // fully structured
+                    rule = prefix == null ? name.replace('.', '/') : name.substring(prefix.length() + 1).replace('.', '/');
+                    translator = defaultTranslator;
+                }
+                else if (rule.isEmpty()) {
+                    // blank means remove this prop (no translator)
+                    System.out.println("Removing obsolete property: " + name);
+                }
+                else if (rule.startsWith("[")) {
+                    // custom translator -- reuse existing instance if found
+                    int endBracket = rule.lastIndexOf(']');
+                    String className = rule.substring(1, endBracket);
+                    for (YamlPropertyTranslator instance : translators.keySet()) {
+                        if (instance.getClass().getName().equals(className)) {
+                            translator = instance;
+                            break;
+                        }
+                    }
+                    if (translator == null) {
+                        translator = Class.forName(className).asSubclass(YamlPropertyTranslator.class).newInstance();
+                    }
+                }
+                else {
+                    translator = defaultTranslator;
+                }
+                if (translator != null) {
+                    Map<String,Object> ruleProps = translators.get(translator);
+                    if (ruleProps == null) {
+                        ruleProps = new LinkedHashMap<>();
+                        translators.put(translator, ruleProps);
+                    }
+                    Object propValue = properties.getProperty(name);
+                    try {
+                        // integers should be treated as such
+                        propValue = Integer.parseInt(propValue.toString());
+                    }
+                    catch (NumberFormatException ex) {
+                    }
+                    ruleProps.put(rule, propValue);
+                }
+            }
+        }
 
-        return null;
+        // perform translations
+        YamlBuilder yamlBuilder = new YamlBuilder();
+        for (YamlPropertyTranslator translator : translators.keySet()) {
+            yamlBuilder.append(translator.translate(translators.get(translator))).newLine();
+        }
+        return yamlBuilder;
     }
-
 }

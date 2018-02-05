@@ -39,10 +39,8 @@ public class Compatibility {
     public static final String EVENT_HANDLERS_MAP = "event-handlers.map";
     public static final String VARIABLE_TRANSLATORS_MAP = "variable-translators.map";
     public static final String VARIABLE_TYPES_MAP = "variable-types.map";
-    public static final String DOCUMENTATION_PATHS_MAP = "documentation-paths.map";
-
     public static final String CODE_SUBSTITUTIONS_MAP = "code-substitutions.map";
-    public static final String PAGE_SUBSTITUTIONS_MAP = "page-substitutions.map";
+    public static final String CONFIGURATIONS_MAP = "configurations.map";
 
     private static boolean inEffect = true;
     public static boolean isInEffect() { return inEffect; }
@@ -111,10 +109,6 @@ public class Compatibility {
         return className;
     }
 
-    public static boolean isOldImplementor(String className) throws IOException {
-        return getActivityImplementors() != null && getActivityImplementors().containsKey(className);
-    }
-
     public static Map<String,String> getEventHandlers() throws IOException {
         if (!inEffect)
             return null;
@@ -172,35 +166,25 @@ public class Compatibility {
         return getInstance().variableTypes;
     }
 
-    /**
-     * If the docPath argument needs to be mapped to a new location,
-     * returns the new location path; otherwise returns the unmodified argument.
-     */
-    public static String getDocumentationPath(String docPath) throws IOException {
-        if (getDocumentationPaths() != null) {
-            String newPath = getDocumentationPaths().get(docPath);
-            if (newPath != null)
-                return newPath;
-        }
-        return docPath;
-    }
-
-    public static Map<String,String> getDocumentationPaths() throws IOException {
-        if (!inEffect)
-            return null;
-        return getInstance().documentationPaths;
-    }
-
     public static boolean hasCodeSubstitutions() throws IOException {
         if (!inEffect)
             return false;
         return getInstance().codeSubstitutions != null && getInstance().codeSubstitutions.size() > 0;
     }
 
-    public static boolean hasPageSubstitutions() throws IOException {
+    public static String getConfiguration(String prop) throws IOException {
+        if (getConfigurations() != null) {
+            String newConfig = getConfigurations().get(prop);
+            if (newConfig != null)
+                return newConfig;
+        }
+        return prop;
+    }
+
+    public static Map<String,String> getConfigurations() throws IOException {
         if (!inEffect)
-            return false;
-        return getInstance().pageSubstitutions != null && getInstance().pageSubstitutions.size() > 0;
+            return null;
+        return getInstance().configurations;
     }
 
     protected Compatibility() {}
@@ -212,9 +196,8 @@ public class Compatibility {
     private Map<String,String> eventHandlers;
     private Map<String,String> variableTranslators;
     private Map<String,String> variableTypes;
-    private Map<String,String> documentationPaths;
     private Map<String,String> codeSubstitutions;
-    private Map<String,String> pageSubstitutions;
+    private Map<String,String> configurations;
 
     private void load() throws IOException {
         namespaces = loadMap(NAMESPACES_MAP);
@@ -227,9 +210,8 @@ public class Compatibility {
         eventHandlers = loadMap(EVENT_HANDLERS_MAP);
         variableTranslators = loadMap(VARIABLE_TRANSLATORS_MAP);
         variableTypes = loadMap(VARIABLE_TYPES_MAP);
-        documentationPaths = loadMap(DOCUMENTATION_PATHS_MAP);
         codeSubstitutions = loadMap(CODE_SUBSTITUTIONS_MAP);
-        pageSubstitutions = loadMap(PAGE_SUBSTITUTIONS_MAP);
+        configurations = loadMap(CONFIGURATIONS_MAP);
     }
 
     private Map<String,String> loadMap(String propFile) throws IOException {
@@ -265,10 +247,6 @@ public class Compatibility {
 
     public SubstitutionResult performCodeSubstitutions(String input) throws IOException {
         return performSubstitutions(input, codeSubstitutions);
-    }
-
-    public SubstitutionResult performPageSubstitutions(String input) throws IOException {
-        return performSubstitutions(input, pageSubstitutions);
     }
 
     private SubstitutionResult performSubstitutions(String input, Map<String,String> substitutions) throws IOException {

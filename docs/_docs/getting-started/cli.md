@@ -30,28 +30,31 @@ title: Command Line Interface
     init      Initialize an MDW project
       Usage: init [options] <project>
 
-    import      Import assets from Git (HARD RESET!)
+    import    Import assets from Git (HARD RESET!)
       Usage: import [options]
 
-    update      Update MDW assets locally via Discovery
+    update    Update MDW assets locally via Discovery
       Usage: update [options]
 
-    install      Install MDW
+    install   Install MDW
       Usage: install [options]
 
-    run      Run MDW
+    run       Run MDW
       Usage: run [options]
 
-    version      MDW CLI Version
+    version   MDW CLI Version
       Usage: version
 
-    git      Git commands
+    convert   Convert .properties to .yaml config
+      Usage: convert --input=[propFile]
+
+    git       Git commands
       Usage: git [args]
 
-    status      Project status
+    status    Project status
       Usage: status [options]
 
-    archive      Asset ref info (--show for contents)
+    archive   Asset ref info (--show for contents)
       Usage: archive [options]
       
     General Options ("mdw help" for command-specific options):

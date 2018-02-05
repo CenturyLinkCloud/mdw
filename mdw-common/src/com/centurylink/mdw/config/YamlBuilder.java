@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.services.test;
+package com.centurylink.mdw.config;
+
+import java.util.Map;
+
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 
 public class YamlBuilder {
 
@@ -23,6 +29,21 @@ public class YamlBuilder {
 
     public YamlBuilder() {
         stringBuilder = new StringBuilder();
+    }
+
+    public YamlBuilder(Map<?,?> map) {
+        this();
+        append(map);
+    }
+
+    public YamlBuilder append(Map<?,?> map) {
+        Yaml yaml = new Yaml(new Representer(), getDumperOptions());
+        append(yaml.dump(map));
+        return this;
+    }
+
+    public YamlBuilder append(YamlBuilder builder) {
+        return append(builder.toString()).newLine();
     }
 
     public YamlBuilder(String newLine) {
@@ -64,6 +85,10 @@ public class YamlBuilder {
         return append(newLine);
     }
 
+    public YamlBuilder comment(String comment) {
+        return append("# ").append(comment).newLine();
+    }
+
     public int length() {
         return stringBuilder.length();
     }
@@ -74,5 +99,13 @@ public class YamlBuilder {
         if (str.endsWith(newLine))
           str = str.substring(0, str.length() - newLine.length());
         return str;
+    }
+
+    protected DumperOptions getDumperOptions() {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setPrettyFlow(true);
+        options.setIndent(2);
+        return options;
     }
 }
