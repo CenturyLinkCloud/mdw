@@ -433,8 +433,15 @@ public class TaskDataAccess extends CommonDataAccess {
                 groupIds.add(rs.getLong(1));
             }
             // delete existing groups
-            String query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID=?";
+            String query = "";
+            if (db.isMySQL())
+                query = "delete TG1 from TASK_INST_GRP_MAPP TG1 join TASK_INST_GRP_MAPP TG2 " +
+                        "using (TASK_INSTANCE_ID, USER_GROUP_ID) " +
+                        "where TG2.TASK_INSTANCE_ID=?";
+            else
+                query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID=?";
             db.runUpdate(query, taskInstId);
+            if (db.isMySQL()) db.commit(); // MySQL will lock even when no rows were deleted and using unique index, so commit so that multiple session inserts aren't deadlocked
             // insert groups
             query = "insert into TASK_INST_GRP_MAPP " +
                 "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?,"+now()+")";
