@@ -7,7 +7,7 @@ env:
 before_install:
 - java -version
 - gradle -version
-- openssl aes-256-cbc -K $encrypted_111f9bd112d8_key -iv $encrypted_111f9bd112d8_iv
+- openssl aes-256-cbc -K $encrypted_12077084ea60_key -iv $encrypted_12077084ea60_iv
   -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
 - npm install -g bower
