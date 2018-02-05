@@ -18,5 +18,15 @@ MDW Mobile is coming soon to the App Store and Google Play.  In the meantime fol
   - Find out your iOS device ID as described in 
     [Apple developer documentation](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingProfiles/MaintainingProfiles.html#//apple_ref/doc/uid/TP40012582-CH30-SW46)
   - Send an email to <mdwcoreteam@centurylink.com> requesting your device be registered.
-  - When notified, download mdw.ipa from [Releases]().
-  - Install on your device through [Apple Configurator 2](https://help.apple.com/xcode/mac/current/#/devade83d1d7?sub=dev87a955931), or through iTunes.  
+  - When notified, download mdw.ipa from [Releases](https://github.com/CenturyLinkCloud/mdw-mobile/releases).
+  - Install on your device using one of these options:
+    - [Apple Configurator 2](https://help.apple.com/xcode/mac/current/#/devade83d1d7?sub=dev87a955931)
+      - Follow these instructions to install: https://help.apple.com/xcode/mac/current/#/devade83d1d7?sub=dev87a955931
+    - [iTunes](https://www.apple.com/itunes/)
+      - Note: If your version of iTunes is 12.7 or later, install Apple's iTunes for business users:
+        https://support.apple.com/en-us/HT208079
+        (Unfortunately you must delete/rename existing itl files (https://discussions.apple.com/thread/8030764)
+      - With your device connected, select `Apps` from the iTunes device dropdown menu (first selecting `Edit Menu` if necessary).
+	  - Drag mdw.ipa from Explorer or Finder.
+	  - Open the device in iTunes.  Select Summary > Apps, and click the Install button next to mdw.
+	  
