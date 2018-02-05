@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/config/PropertyUtil.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/config/YamlBuilder.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/config/YamlProperties.PropType.html" title="enum in com.centurylink.mdw.config"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -197,8 +197,13 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#translate-java.util.Properties-">translate</a></span>(java.util.Properties&nbsp;properties)</code>&nbsp;</td>
+<td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/config/YamlBuilder.html" title="class in com.centurylink.mdw.config">YamlBuilder</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#translate-java.lang.String-java.util.Properties-java.util.Properties-">translate</a></span>(java.lang.String&nbsp;prefix,
+         java.util.Properties&nbsp;properties,
+         java.util.Properties&nbsp;map)</code>
+<div class="block">Translate old-style properties to yaml according to rules in
+ compatibility mapping file configurations.map.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -324,13 +329,24 @@ extends java.lang.Object</pre>
                             <a href="../../../../com/centurylink/mdw/config/YamlProperties.PropType.html" title="enum in com.centurylink.mdw.config">YamlProperties.PropType</a>&nbsp;type)</pre>
 </li>
 </ul>
-<a name="translate-java.util.Properties-">
+<a name="translate-java.lang.String-java.util.Properties-java.util.Properties-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>translate</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;translate(java.util.Properties&nbsp;properties)</pre>
+<pre>public static&nbsp;<a href="../../../../com/centurylink/mdw/config/YamlBuilder.html" title="class in com.centurylink.mdw.config">YamlBuilder</a>&nbsp;translate(java.lang.String&nbsp;prefix,
+                                    java.util.Properties&nbsp;properties,
+                                    java.util.Properties&nbsp;map)
+                             throws java.io.IOException,
+                                    java.lang.ReflectiveOperationException</pre>
+<div class="block">Translate old-style properties to yaml according to rules in
+ compatibility mapping file configurations.map.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+<dd><code>java.lang.ReflectiveOperationException</code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -360,7 +376,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/config/PropertyUtil.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/config/YamlBuilder.html" title="class in com.centurylink.mdw.config"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/config/YamlProperties.PropType.html" title="enum in com.centurylink.mdw.config"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
