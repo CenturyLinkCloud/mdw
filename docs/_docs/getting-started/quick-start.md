@@ -30,7 +30,7 @@ Get up and running with MDW in a hurry.
      mdw init my-mdw
      ```
   This sets up a basic MDW project structure using certain default values that [can be overridden](../cli).
-  It also downloads some MDW base [assets](../../help/assets.html) to get you started.
+  It also creates an [mdw.yaml config](../../guides/configuration) and downloads some MDW base [assets](../../help/assets.html) to get you started.
   (You'll add your own assets on top of these as you build out your project.)
   The MDW base assets, along with your own, should be version controlled in Git.
   You can update these base assets at any time by running `mdw update`.

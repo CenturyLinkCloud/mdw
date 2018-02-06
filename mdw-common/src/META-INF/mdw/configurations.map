@@ -5,13 +5,18 @@ mdw.container.jms_provider=container/jms.provider
 mdw.container.threadpool_provider=container/threadpool.provider
 mdw.container.datasource_provider=container/datasource.provider
 
+mdw.database.microsecond.precision=database/microsecond.precision
+
 mdw.db.embedded.server=db.embedded.server
+mdw.db.base.location=db.base.location
+mdw.db.base.location
 
 mdw.git.local.path=git/local.path
 mdw.git.remote.url=git/remote.url
 mdw.git.auto.pull=git/auto.pull
 
 mdw.temp.dir=temp.dir
+mdw.attachments.dir=attachments.dir
 
 # ServerList implements YamlPropertyTranslator
 mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
@@ -19,7 +24,8 @@ mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
 mdw.hub.url=hub.url
 mdw.services.url=services.url
 mdw.discovery.url=discovery.url
-mdw.websocket.url=discovery.url
+mdw.websocket.url=websocket.url
+mdw.docs.url=docs.url
 
 mdw.application.config.name=application/(configs)
 
@@ -56,6 +62,57 @@ MDWFramework.ProcessCleanup/MaximumProcessExpiration=timer.task/ProcessCleanup/M
 MDWFramework.ProcessCleanup/ExternalEventExpirationAgeInDays=timer.task/ProcessCleanup/ExternalEventExpirationAgeInDays
 MDWFramework.ProcessCleanup/CommitInterval=timer.task/ProcessCleanup/CommitInterval
 
+mdw.timer.InitialDelay=timer.InitialDelay
+mdw.timer.CheckInterval=timer.CheckInterval
+mdw.timer.ThresholdForDelay=timer.ThresholdForDelay
+
+mdw.jms.listener.poll.interval=jms/listener/poll.interval
+mdw.jms.listener.receive.timeout=jms/listener/receive.timeout
+
+mdw.compiler.classpath=java/compiler.classpath
+mdw.dynamic.java.compile.options=java/compiler.options
+mdw.jar.library.path=java/library.path
+mdw.classpath=java/runtime.classpath
+
+mdw.services.http.basic.auth=services/http.basic.auth
+
+mdw.activity.active.max.retry=activity/active.max.retry
+mdw.activity.resume.delay=activity/resume.delay
+
+mdw.performance.level.service=performance/level.service
+mdw.performance.level.regular=performance/level.regular
+
+mdw.engine.use.transaction=engine/use.transaction
+
+mdw.process.launch.delay=process/launch.delay
+
+mdw.internal.event.consume.retry.sleep=internal.event/consume.retry.sleep
+mdw.internal.event.dev.cleanup=internal.event/dev.cleanup
+
+mdw.scheduled.events.max.batch.size=scheduled.events/max.batch.age
+mdw.scheduled.events.memory.range=scheduled.events/memory.range
+
+mdw.unscheduled.events.check.delay=unscheduled.events/check.delay
+mdw.unscheduled.events.check.interval=unscheduled.events/check.interval
+mdw.unscheduled.events.batch.size=unscheduled.events/batch.size
+mdw.unscheduled.events.min.age=unscheduled.events/min.age
+
+mdw.hub.override.package=hub/override.package
+mdw.hub.action.definition=hub/action.definition
+
+mdw.translator.xmlbeans.load.options=translator/xmlbeans.load.options
+mdw.translator.xmlbeans.save.options=translator/xmlbeans.save.options
+
+mdw.test.results.location=test/results.location
+mdw.function.tests.summary.file=test/summary.file
+
+mdw.requestrouting.server.list=[com.centurylink.mdw.model.system.ServerList]
+mdw.requestrouting.enabled=requestrouting/enabled
+mdw.requestrouting.https.enabled=requestrouting/https.enabled
+mdw.requestrouting.default.strategy=requestrouting/default.strategy
+mdw.requestrouting.active.server.interval=requestrouting/active.server.interval
+mdw.requestrouting.timeout=requestrouting/timeout
+
 # remove obsolete props
 mdw.dev.user=
 mdw.admin.url=
@@ -81,4 +138,4 @@ mdw.default.rendering.engine=
 mdw.artis.key=
 mdw.artis.forceall=
 mdw.artis.forceallwithconfig=
-
+mdw.feature.tests.summary.file=

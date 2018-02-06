@@ -142,7 +142,7 @@ public class DatabaseAccess {
             isEmbedded = dbprop != null && isMariaDB && isEmbeddedDb(dbprop);
         }
 
-        if ("true".equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_DB_PRECISION_TIME)))
+        if ("true".equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_DB_MICROSECOND_PRECISION)))
             precisionSupport = true;
         else
             precisionSupport = false;

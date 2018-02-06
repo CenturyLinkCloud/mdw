@@ -470,7 +470,7 @@ public class ApplicationContext {
         if (docsUrl == null) {
             docsUrl = PropertyManager.getProperty(PropertyNames.DOCS_URL);
             if (docsUrl == null)
-                docsUrl = "http://centurylinkcloud.github.io/mdw/docs";
+                docsUrl = "https://centurylinkcloud.github.io/mdw/docs";
             if (docsUrl.endsWith("/"))
                 docsUrl = docsUrl.substring(1);
         }

@@ -35,7 +35,8 @@ public class PropertyNames {
     public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
     public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
     public static final String MDW_DB_TRACE = "mdw.database.trace";     // none, query, timing
-    public static final String MDW_DB_PRECISION_TIME = "mdw.database.macrosecondprecision.enable";  // If true, then will save datetime/timestamp using macrosecond precision - Depends on declaring table columns correctly
+    // If true, then will save datetime/timestamp using microsecond precision - Depends on declaring table columns correctly
+    public static final String MDW_DB_MICROSECOND_PRECISION = "mdw.database.microsecond.precision";
     // for embedded db
     public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
     public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
@@ -71,7 +72,7 @@ public class PropertyNames {
     public static final String FILEPANEL_ROOT_DIRS = "filepanel.root.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "filepanel.exclude.patterns";
     public static final String FILEPANEL_MASKED_LINES = "filepanel.masked.lines";
-    public static final String MDW_PROCESS_LAUNCH_DELAY = "process.launch.delay";
+    public static final String MDW_PROCESS_LAUNCH_DELAY = "mdw.process.launch.delay";
     public static final String MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP = "mdw.internal.event.consume.retry.sleep";
     public static final String MDW_INTERNAL_EVENT_DEV_CLEANUP = "mdw.internal.event.dev.cleanup";
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
@@ -82,13 +83,13 @@ public class PropertyNames {
     public static final String MDW_SERVICES_URL = "mdw.services.url";
     public static final String ACTIVITY_RESUME_DELAY = "mdw.activity.resume.delay";
     public static final String TASK_NOTICE_EMAIL_FROM = "mdw.task.notice.email.from";
-    public static final String MDW_DYNAMIC_JAVA_COMPILE_OPTIONS = "mdw.dynamic.java.compile.options";
     public static final String TASK_RESUME_NOTIFY_ENDPOINT = "mdw.task.resume.notify.endpoint";
     public static final String MDW_WEBSOCKET_URL = "mdw.websocket.url";
 
-    public static final String MDW_JAR_LIBRARY_PATH = "mdw.jar.library.path";
-    public static final String MDW_COMPILER_CLASSPATH = "mdw.compiler.classpath";
-    public static final String MDW_CLASSPATH = "mdw.classpath";
+    public static final String MDW_JAVA_COMPILER_OPTIONS = "mdw.java.compiler.options";
+    public static final String MDW_JAVA_LIBRARY_PATH = "mdw.java.library.path";
+    public static final String MDW_JAVA_COMPILER_CLASSPATH = "mdw.java.compiler.classpath";
+    public static final String MDW_JAVA_RUNTIME_CLASSPATH = "mdw.java.runtime.classpath";
 
     // this is a group, contains <name>.ClassName/Directory/FilenamePattern/IntervalMinutes/DelayMinutes
     public static final String MDW_LISTENER_FILE = "mdw.listener.file"; // prefix for file listener properties
@@ -105,7 +106,7 @@ public class PropertyNames {
     public static final String UNSCHEDULED_EVENTS_MIN_AGE = "mdw.unscheduled.events.min.age";  // seconds
 
     public static final String SCHEDULED_EVENTS_BATCH_SIZE = "mdw.scheduled.events.max.batch.size";
-    public static final String SCHEDULED_EVENTS_MEMORY_RANGE = "mdw.scheduled.events.memory.range";  // seconds
+    public static final String SCHEDULED_EVENTS_MEMORY_RANGE = "mdw.scheduled.events.memory.range";  // minutes
 
     public static final String MDW_TIMER_INITIAL_DELAY = "mdw.timer.InitialDelay";  // delay of first check in seconds
     public static final String MDW_TIMER_CHECK_INTERVAL = "mdw.timer.CheckInterval";    // interval between checks in seconds
@@ -141,8 +142,7 @@ public class PropertyNames {
 
     // automated testing
     public static final String MDW_TEST_RESULTS_LOCATION = "mdw.test.results.location";
-    public static final String MDW_FUNCTION_TESTS_SUMMARY_FILE = "mdw.function.tests.summary.file";
-    public static final String MDW_FEATURE_TESTS_SUMMARY_FILE = "mdw.feature.tests.summary.file";
+    public static final String MDW_TEST_SUMMARY_FILE = "mdw.test.summary.file";
 
     // Ldap configuration
     public static final String MDW_LDAP_PROTOCOL = "mdw.ldap.protocol";

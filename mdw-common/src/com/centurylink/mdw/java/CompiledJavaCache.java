@@ -344,7 +344,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         }
 
         options.addAll(Arrays.asList("-g", "-classpath", classpath));
-        String extraOptions = PropertyManager.getProperty(PropertyNames.MDW_DYNAMIC_JAVA_COMPILE_OPTIONS);
+        String extraOptions = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_OPTIONS);
         if (extraOptions != null)
             options.addAll(Arrays.asList(extraOptions.split(" ")));
 
@@ -416,7 +416,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         }
 
         options.addAll(Arrays.asList("-g", "-classpath", classpath));
-        String extraOptions = PropertyManager.getProperty(PropertyNames.MDW_DYNAMIC_JAVA_COMPILE_OPTIONS);
+        String extraOptions = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_OPTIONS);
         if (extraOptions != null)
             options.addAll(Arrays.asList(extraOptions.split(" ")));
 

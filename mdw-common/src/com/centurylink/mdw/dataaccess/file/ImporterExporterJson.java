@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +23,10 @@ import org.apache.xmlbeans.XmlException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.JsonUtil;
-
-import com.centurylink.mdw.model.JsonObject;
 
 /**
  * TODO: Import/Export override attributes.

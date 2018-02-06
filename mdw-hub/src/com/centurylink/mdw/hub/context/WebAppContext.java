@@ -71,7 +71,7 @@ public class WebAppContext {
 
             String discoveryUrl = PropertyManager.getProperty(PropertyNames.DISCOVERY_URL);
             if (discoveryUrl == null)
-                discoveryUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+                discoveryUrl = "http://repo.maven.apache.org/maven2";
             mdw.setDiscoveryUrl(discoveryUrl);
 
             try {

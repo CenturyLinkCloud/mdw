@@ -358,14 +358,9 @@ public class TestingServicesImpl implements TestingServices {
             return null;
         String summaryFile = null;
         if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format) || Asset.getFileExtension(Asset.POSTMAN).equals("." + format)) {
-            summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FUNCTION_TESTS_SUMMARY_FILE);
+            summaryFile = PropertyManager.getProperty(PropertyNames.MDW_TEST_SUMMARY_FILE);
             if (summaryFile == null)
                 summaryFile = "mdw-function-test-results.json";
-        }
-        else if (Asset.getFileExtension(Asset.FEATURE).equals("." + format)) {
-            summaryFile = PropertyManager.getProperty(PropertyNames.MDW_FEATURE_TESTS_SUMMARY_FILE);
-            if (summaryFile == null)
-                summaryFile = "mdw-cucumber-test-results.json";
         }
 
         return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);

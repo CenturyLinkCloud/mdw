@@ -1043,7 +1043,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Using Designer or MDWHub, import the necessary Slack asset package dependency.  In MDWHub, for example, on the Admin tab click the Assets nav link and
     then Import > Discover and select the `com.centurylink.mdw.slack` package in the discovered list.
    
-  - Configure an [incoming webhook](https://api.slack.com/incoming-webhooks) as described in the Slack documentation, and add it to mdw.properties:
+  - Configure an [incoming webhook](https://api.slack.com/incoming-webhooks) as described in the Slack documentation, and add it to [mdw.yaml](../configuration/):
     ```
     mdw.slack.webhook.url=https://hooks.slack.com/services/XXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX
     ```

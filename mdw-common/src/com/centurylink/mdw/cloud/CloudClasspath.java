@@ -124,7 +124,7 @@ public class CloudClasspath {
     public String toString() {
         StringBuffer classpath = new StringBuffer(systemClasspath);
         // user-specified classpath entries come first
-        String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_COMPILER_CLASSPATH);
+        String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_CLASSPATH);
         if (compilerClasspath != null)
             classpath.append(PATH_SEP).append(compilerClasspath);
         for (File jarFile : tomcatBaseLibJars) {

@@ -74,7 +74,7 @@ Run MDW on Apache Tomcat.
   And output is directed to the Eclipse Console view, where you can click on stack traces to open associated source code 
   (including MDW code and your Java assets).
   
-  **Note:** In config/mdw.properties, if mdw.asset.loc and mdw.git.local.path are relative (eg: "assets", "."), change them to
+  **Note:** In config/mdw.yaml, if asset.loc and git/local.path are relative (eg: "assets", "."), change them to
     absolute paths (eg: "c:/workspaces/my-mdw/assets", "c:/workspaces/my-mdw").  The startup directory when running Tomcat
     this way is the Eclipse installation directory.  Relative to that, your assets won't be found by MDW.
   - Start your server by right-clicking on it (or use the icon in the Servers view toolbar).
