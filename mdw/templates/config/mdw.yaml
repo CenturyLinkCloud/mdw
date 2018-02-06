@@ -16,8 +16,6 @@ database:
   poolMaxIdle: 3
   validationQuery: select 1 from dual
 
-db.embedded.server: localhost:8080
-
 # optional mongodb
 # mongodb:
 #   host: localhost

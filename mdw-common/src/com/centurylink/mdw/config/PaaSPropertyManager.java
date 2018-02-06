@@ -26,10 +26,7 @@ import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.MiniCrypter;
 
 /**
- * Handles environment variables deployed on a Cloud Foundry env
- *
- * @author aa70413
- *
+ * Handles environment variables when deployed in a Cloud Foundry env.
  */
 public class PaaSPropertyManager extends PropertyManager {
 
@@ -56,17 +53,10 @@ public class PaaSPropertyManager extends PropertyManager {
 
     @Override
     public void refreshCache() throws Exception {
-
-        /**
-         * How do we refresh Cache ? Maybe we just restage ?
-         */
-
     }
 
     @Override
     public void clearCache() {
-        properties.clear();
-
     }
 
     /**
@@ -119,6 +109,5 @@ public class PaaSPropertyManager extends PropertyManager {
             properties.remove(name);
         else
             properties.put(name, value);
-
     }
 }

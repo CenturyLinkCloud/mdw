@@ -30,6 +30,8 @@ import com.centurylink.mdw.yaml.YamlLoader;
 public class YamlPropertyManager extends PropertyManager {
 
     private File mdwYaml;
+    private String yaml;
+
     private List<YamlProperties> yamlProps;
     private List<Properties> javaProps;
 
@@ -44,13 +46,28 @@ public class YamlPropertyManager extends PropertyManager {
         load();
     }
 
+    /**
+     * For PaaS.  Prefix is wired to "mdw",
+     */
+    public YamlPropertyManager(String yaml) throws IOException {
+        this.yaml = yaml;
+        load();
+        setStringProperty("mdw.asset.location", System.getenv("MDW_ASSET_LOCATION"));
+    }
+
     private void load() throws IOException {
         cachedValues = new HashMap<>();
         javaProps = null;
 
         yamlProps = new ArrayList<>();
-        YamlProperties mdwYamlProps = new YamlProperties(mdwYaml);
-        System.out.println("mdw config: " + mdwYaml.getAbsolutePath());
+        YamlProperties mdwYamlProps;
+        if (yaml != null) {
+            mdwYamlProps = new YamlProperties("mdw", yaml);
+        }
+        else {
+            mdwYamlProps = new YamlProperties(mdwYaml);
+            System.out.println("mdw config: " + mdwYaml.getAbsolutePath());
+        }
         yamlProps.add(mdwYamlProps);
 
         // application yamls

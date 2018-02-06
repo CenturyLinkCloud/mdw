@@ -50,6 +50,12 @@ public class YamlProperties {
         root = loader.getRequiredMap("", loader.getTop(), "");
     }
 
+    public YamlProperties(String prefix, String yaml) throws IOException {
+        this.prefix = prefix;
+        this.loader = new YamlLoader(yaml);
+        root = loader.getRequiredMap("", loader.getTop(), "");
+    }
+
     /**
      * Examples:
      *

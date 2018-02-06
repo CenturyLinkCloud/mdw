@@ -5,7 +5,7 @@ upstreamHosts:
   - 0:0:0:0:0:0:0:1
   
 # Auth methods supported include ct (ClearTrust Web Agent) 
-# or oauth (OAuth2).  Default is oauth.
+# oauth (OAuth2), or jwt (JSON Web Tokens).  Default is jwt.
 authMethod: ct
 
 # This is the header we trust to specify the authenticated user id.

@@ -13,13 +13,10 @@ database:
   poolMaxIdle: 3
   validationQuery: select 1 from dual
 
-# embedded database
-db.embedded.server: localhost:8080
-
 # optional mongodb
-#mongodb:
-#  host: localhost
-#  port: 27017
+# mongodb:
+#   host: localhost
+#   port: 27017
 
 # asset location info (use absolute paths when running thru eclipse wtp) 
 asset:

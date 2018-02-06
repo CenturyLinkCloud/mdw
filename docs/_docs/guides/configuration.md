@@ -68,6 +68,7 @@ title: MDW Configuration
     
     hub.url: http://localhost:8080/mdw  # required
     services.url: http://localhost:8080/mdw  # required
+    websocket.url: none # 'none' to use polling; otherwise don't set
     discovery.url: http://repo.maven.apache.org/maven2  # default=http://repo.maven.apache.org/maven2
     docs.url: https://centurylinkcloud.github.io/mdw/docs  # default=https://centurylinkcloud.github.io/mdw/docs
     
@@ -149,7 +150,7 @@ title: MDW Configuration
     process:
       launch.delay: 3  # (seconds) default=2
    
-    # see <https://centurylinkcloud.github.io/mdw/docs/guides/tuning/#performance-levels>
+    # https://centurylinkcloud.github.io/mdw/docs/guides/tuning/#performance-levels
     performance:
       level.service: 5  # default=3
       level.regular: 5  # default=3

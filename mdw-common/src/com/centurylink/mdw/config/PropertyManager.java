@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.apache.xmlbeans.XmlException;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -156,7 +157,15 @@ public abstract class PropertyManager implements CacheService {
             System.out.println("Using Property Manager: " + pm);
             try {
                 Class<?> cls = PropertyManager.class.getClassLoader().loadClass(pm);
-                instance = (PropertyManager) cls.newInstance();
+                if (ApplicationContext.isPaaS() && cls.getName().equals(YamlPropertyManager.class.getName())) {
+                    String yamlSettings = System.getenv("mdw_settings");
+                    instance = new YamlPropertyManager(yamlSettings);
+
+                }
+                else {
+                    instance = (PropertyManager) cls.newInstance();
+
+                }
             }
             catch (Exception e) {
                 String msg = "Cannot create property manager " + pm;
