@@ -153,6 +153,11 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#YamlPropertyManager-java.io.File-">YamlPropertyManager</a></span>(java.io.File&nbsp;mdwYaml)</code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#YamlPropertyManager-java.lang.String-">YamlPropertyManager</a></span>(java.lang.String&nbsp;yaml)</code>
+<div class="block">For PaaS.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -246,11 +251,26 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <a name="YamlPropertyManager-java.io.File-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>YamlPropertyManager</h4>
 <pre>public&nbsp;YamlPropertyManager(java.io.File&nbsp;mdwYaml)
                     throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="YamlPropertyManager-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>YamlPropertyManager</h4>
+<pre>public&nbsp;YamlPropertyManager(java.lang.String&nbsp;yaml)
+                    throws java.io.IOException</pre>
+<div class="block">For PaaS.  Prefix is wired to "mdw",</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
