@@ -639,7 +639,7 @@ public class ApplicationContext {
                 YamlLoader loader = ((YamlPropertyManager) PropertyManager.getInstance())
                         .getLoader(PropertyNames.MDW_ROUTING_SERVERS);
                 if (loader != null) {
-                    serverList = new ServerList(loader.getMap(PropertyNames.MDW_ROUTING_SERVERS, loader.getTop()));
+                    routingServerList = new ServerList(loader.getMap(PropertyNames.MDW_ROUTING_SERVERS, loader.getTop()));
                 }
             }
             else {
