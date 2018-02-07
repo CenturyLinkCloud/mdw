@@ -16,22 +16,19 @@
 package com.centurylink.mdw.container.plugin.tomcat;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import com.centurylink.mdw.container.DataSourceProvider;
+import com.centurylink.mdw.container.plugin.MdwDataSource;
 import com.centurylink.mdw.spring.SpringAppContext;
 
-public class TomcatDataSource implements DataSourceProvider {
-
-    private HashMap<String,DataSource> dataSource = new HashMap<String,DataSource>();
+public class TomcatDataSource extends MdwDataSource {
 
     public DataSource getDataSource(String dataSourceName) throws NamingException {
-        if (dataSource.get(dataSourceName) == null) {
+        if (dataSources.get(dataSourceName) == null) {
             try {
-                dataSource.put(dataSourceName, (DataSource)SpringAppContext.getInstance().getBean(dataSourceName));
+                dataSources.put(dataSourceName, (DataSource)SpringAppContext.getInstance().getBean(dataSourceName));
             }
             catch (IOException ex) {
                 NamingException ne = new NamingException(ex.getMessage());
@@ -39,6 +36,6 @@ public class TomcatDataSource implements DataSourceProvider {
                 throw ne;
             }
         }
-        return dataSource.get(dataSourceName);
+        return dataSources.get(dataSourceName);
     }
 }

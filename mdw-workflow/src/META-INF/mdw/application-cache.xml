@@ -25,6 +25,10 @@
   <Cache Name="SpringAppCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.spring.SpringAppContext</Property>
   </Cache>
+  <Cache Name="DataSourceCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.container.plugin.MdwDataSource</Property>
+    <Property Name="dependsOn">CompiledJavaCache,SpringAppCache</Property>
+  </Cache>
   <Cache Name="UserGroupCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.task.UserGroupCache</Property>
   </Cache>

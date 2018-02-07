@@ -52,7 +52,7 @@ public class DatabaseAccess {
     private static String INTERNAL_DATA_SOURCE = null;
     private static Long db_time_diff = null;
 
-    private static Map<String, Boolean> loadedDataSources = new ConcurrentHashMap<String, Boolean>();
+    private static Map<String, DataSource> loadedDataSources = new ConcurrentHashMap<String, DataSource>();
     private static Map<String, Boolean> collectionDocIdIndexed = new ConcurrentHashMap<String, Boolean>();
 
     private static EmbeddedDataAccess embedded;
@@ -210,14 +210,14 @@ public class DatabaseAccess {
             DataSource dataSource = ApplicationContext.getDataSourceProvider().getDataSource(database_name);
 
             // Only need to load driver the first time, which creates the connection factory.  All JDBC drivers are provided as assets in a package
-            if (loadedDataSources.get(database_name) == null) {
+            if (loadedDataSources.get(database_name) == null || !loadedDataSources.get(database_name).equals(dataSource)) {
                 List<com.centurylink.mdw.model.workflow.Package> pkgList = PackageCache.getPackages();
                 if (pkgList == null || pkgList.size() <= 0)
                     throw new SQLException("MDW asset package containing JDBC driver is required");
 
                 ClassLoader origCL = ApplicationContext.setContextCloudClassLoader(pkgList.get(0));
                 connection = dataSource.getConnection();
-                loadedDataSources.put(database_name, Boolean.valueOf(true));
+                loadedDataSources.put(database_name, dataSource);
                 ApplicationContext.resetContextClassLoader(origCL);
             }
             else
