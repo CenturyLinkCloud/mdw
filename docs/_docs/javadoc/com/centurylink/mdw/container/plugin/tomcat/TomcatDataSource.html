@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.container.plugin.MdwDataSource">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -98,7 +98,12 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html" title="class in com.centurylink.mdw.container.plugin">com.centurylink.mdw.container.plugin.MdwDataSource</a></li>
+<li>
+<ul class="inheritance">
 <li>com.centurylink.mdw.container.plugin.tomcat.TomcatDataSource</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -107,13 +112,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></dd>
+<dd><a href="../../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>, <a href="../../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>, <a href="../../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">TomcatDataSource</span>
-extends java.lang.Object
-implements <a href="../../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></pre>
+extends <a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html" title="class in com.centurylink.mdw.container.plugin">MdwDataSource</a></pre>
 </li>
 </ul>
 </div>
@@ -126,6 +130,13 @@ implements <a href="../../../../../../com/centurylink/mdw/container/DataSourcePr
 <!--   -->
 </a>
 <h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.container.plugin.MdwDataSource">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;com.centurylink.mdw.container.plugin.<a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html" title="class in com.centurylink.mdw.container.plugin">MdwDataSource</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#dataSources">dataSources</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.container.DataSourceProvider">
 <!--   -->
@@ -170,11 +181,25 @@ implements <a href="../../../../../../com/centurylink/mdw/container/DataSourcePr
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.container.plugin.MdwDataSource">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.container.plugin.<a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html" title="class in com.centurylink.mdw.container.plugin">MdwDataSource</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#clearCache--">clearCache</a>, <a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#refreshCache--">refreshCache</a>, <a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#setDataSource-java.lang.String-javax.sql.DataSource-">setDataSource</a></code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.common.service.RegisteredService">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.common.service.<a href="../../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/common/service/RegisteredService.html#isEnabled--">isEnabled</a></code></li>
 </ul>
 </li>
 </ul>
@@ -218,6 +243,8 @@ implements <a href="../../../../../../com/centurylink/mdw/container/DataSourcePr
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/container/DataSourceProvider.html#getDataSource-java.lang.String-">getDataSource</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#getDataSource-java.lang.String-">getDataSource</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html" title="class in com.centurylink.mdw.container.plugin">MdwDataSource</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.naming.NamingException</code></dd>
 </dl>
@@ -276,7 +303,7 @@ implements <a href="../../../../../../com/centurylink/mdw/container/DataSourcePr
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.container.plugin.MdwDataSource">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

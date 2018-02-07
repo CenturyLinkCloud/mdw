@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -107,13 +107,17 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></dd>
+<dd><a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>, <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>, <a href="../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></dd>
+</dl>
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../../../com/centurylink/mdw/container/plugin/tomcat/TomcatDataSource.html" title="class in com.centurylink.mdw.container.plugin.tomcat">TomcatDataSource</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">MdwDataSource</span>
 extends java.lang.Object
-implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a></pre>
+implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container">DataSourceProvider</a>, <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a></pre>
 </li>
 </ul>
 </div>
@@ -126,6 +130,17 @@ implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvi
 <!--   -->
 </a>
 <h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static java.util.concurrent.ConcurrentHashMap&lt;java.lang.String,javax.sql.DataSource&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#dataSources">dataSources</a></span></code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.container.DataSourceProvider">
 <!--   -->
@@ -165,10 +180,18 @@ implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvi
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#clearCache--">clearCache</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>javax.sql.DataSource</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#getDataSource-java.lang.String-">getDataSource</a></span>(java.lang.String&nbsp;dataSourceName)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/container/plugin/MdwDataSource.html#setDataSource-java.lang.String-javax.sql.DataSource-">setDataSource</a></span>(java.lang.String&nbsp;dataSourceName,
              javax.sql.DataSource&nbsp;dataSource)</code>&nbsp;</td>
@@ -181,6 +204,13 @@ implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvi
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.common.service.RegisteredService">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.common.service.<a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></h3>
+<code><a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html#isEnabled--">isEnabled</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -189,6 +219,23 @@ implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvi
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="dataSources">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>dataSources</h4>
+<pre>protected static&nbsp;java.util.concurrent.ConcurrentHashMap&lt;java.lang.String,javax.sql.DataSource&gt; dataSources</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -231,11 +278,40 @@ implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvi
 <a name="setDataSource-java.lang.String-javax.sql.DataSource-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setDataSource</h4>
 <pre>public&nbsp;void&nbsp;setDataSource(java.lang.String&nbsp;dataSourceName,
                           javax.sql.DataSource&nbsp;dataSource)</pre>
+</li>
+</ul>
+<a name="refreshCache--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>refreshCache</h4>
+<pre>public&nbsp;void&nbsp;refreshCache()
+                  throws java.lang.Exception</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html#refreshCache--">refreshCache</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="clearCache--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>clearCache</h4>
+<pre>public&nbsp;void&nbsp;clearCache()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html#clearCache--">clearCache</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -291,13 +367,13 @@ implements <a href="../../../../../com/centurylink/mdw/container/DataSourceProvi
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
