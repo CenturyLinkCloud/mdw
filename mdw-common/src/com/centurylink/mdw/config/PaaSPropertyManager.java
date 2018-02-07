@@ -28,6 +28,7 @@ import com.centurylink.mdw.util.MiniCrypter;
 /**
  * Handles environment variables when deployed in a Cloud Foundry env.
  */
+@Deprecated
 public class PaaSPropertyManager extends PropertyManager {
 
     protected Properties properties = new Properties();

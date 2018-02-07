@@ -271,32 +271,37 @@ public class ApplicationContext {
      */
     public static String getServerHost(){
         if (serverHost == null) {
-            try {
-                // unravel cloud deployment host name
-                String localIp = new String(InetAddress.getLocalHost().getHostAddress());
-                for (Server server : getCompleteServerList().getServers()) {
-                    String host = server.getHost();
-                    if (host.equals("localhost")) {
-                        serverHost = host;
-                    }
-                    else if (host.indexOf('.') < 0) {
-                        // encourage fully-qualified domain names
-                        Exception ex = new UnknownHostException("Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
-                        logger.severeException(ex.getMessage(), ex);
-                    }
-                    if (server.getPort() <= 0) {
-                        // We need the port specified, even if it's just port 80
-                        logger.severe("Specify the port for each instance (use 80 if default port) in " + PropertyNames.MDW_SERVER_LIST);
-                    }
-                    for (InetAddress address : InetAddress.getAllByName(host)) {
-                        if (address.getHostAddress().equals(localIp)) {
+            if (isPaaS()) {
+                serverHost = getMasterServer().getHost();
+            }
+            else {
+                try {
+                    // unravel cloud deployment host name
+                    String localIp = new String(InetAddress.getLocalHost().getHostAddress());
+                    for (Server server : getCompleteServerList().getServers()) {
+                        String host = server.getHost();
+                        if (host.equals("localhost")) {
                             serverHost = host;
+                        }
+                        else if (host.indexOf('.') < 0) {
+                            // encourage fully-qualified domain names
+                            Exception ex = new UnknownHostException("Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
+                            logger.severeException(ex.getMessage(), ex);
+                        }
+                        if (server.getPort() <= 0) {
+                            // We need the port specified, even if it's just port 80
+                            logger.severe("Specify the port for each instance (use 80 if default port) in " + PropertyNames.MDW_SERVER_LIST);
+                        }
+                        for (InetAddress address : InetAddress.getAllByName(host)) {
+                            if (address.getHostAddress().equals(localIp)) {
+                                serverHost = host;
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
             }
         }
 
@@ -306,11 +311,16 @@ public class ApplicationContext {
     private static int serverPort = -1;
     public static int getServerPort() {
         if (serverPort == -1) {
-            try {
-                serverPort = getNamingProvider().getServerPort();
+            if (isPaaS()) {
+                serverPort = getMasterServer().getPort();
             }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+            else {
+                try {
+                    serverPort = getNamingProvider().getServerPort();
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
             }
         }
         return serverPort;

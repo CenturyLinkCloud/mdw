@@ -391,7 +391,9 @@ public abstract class Setup implements Operation {
         return true;
     }
 
-    protected boolean needsConfig() { return true; }
+    protected boolean needsConfig() {
+        return true;
+    }
 
     /**
      * Override for extended debug info (always calling super.debug()).

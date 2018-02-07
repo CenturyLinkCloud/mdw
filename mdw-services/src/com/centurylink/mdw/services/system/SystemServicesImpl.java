@@ -18,6 +18,7 @@ package com.centurylink.mdw.services.system;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -29,6 +30,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
@@ -365,7 +367,7 @@ public class SystemServicesImpl implements SystemServices {
                 throw new IOException("Cannot create dir: " + cliJar.getParentFile().getAbsolutePath());
             // grab cli zip from github
             String v = ApplicationContext.getMdwVersion();
-            URL cliUrl = new URL("https://github.com/CenturyLinkCloud/mdw/releases/download/v" + v + "/mdw-cli-" + v + ".zip");
+            URL cliUrl = new URL("https://github.com/CenturyLinkCloud/mdw/releases/download/" + v + "/mdw-cli-" + v + ".zip");
             File tempZip = Files.createTempFile("mdw-cli", ".jar").toFile();
             new Download(cliUrl, tempZip, 210L).run(); // TODO progress via websocket
             // unzip into MDW_HOME
@@ -379,6 +381,20 @@ public class SystemServicesImpl implements SystemServices {
         if (mdwCmd.get(0).equals("mdw"))
             mdwCmd.remove(0);
         if (!mdwCmd.isEmpty()) {
+            if (ApplicationContext.isPaaS() && System.getProperty("mdw.config.location") == null) {
+                String configLoc = ApplicationContext.getTempDirectory() + File.separator + "config";
+                System.setProperty("mdw.config.location", configLoc);
+                Files.createDirectories(Paths.get(configLoc));
+                // write pseudo-config if needed
+                if (System.getProperty("mdw.property.manager").equalsIgnoreCase("com.centurylink.mdw.config.PaasPropertyManager")) {
+                    Properties props = PropertyManager.getInstance().getAllProperties();
+                    props.store(new FileOutputStream(configLoc + "/mdw.properties"), null);
+                }
+                else {
+                    String yaml = System.getenv("mdw_settings");
+                    Files.write(Paths.get(configLoc + "/mdw.yaml"), yaml.getBytes());
+                }
+            }
             String first = mdwCmd.get(0);
             if (first.equals("archive") || first.equals("import") || first.equals("install")
                     || first.equals("status") || first.equals("test") || first.equals("update")) {
@@ -390,6 +406,7 @@ public class SystemServicesImpl implements SystemServices {
         logger.debug("Running MDW CLI command: '" + String.valueOf(cmd));
 
         ProcessBuilder builder = new ProcessBuilder(cmd);
+        builder.environment().put("MDW_HOME", mdwHome);
         builder.directory(new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH)));
         builder.redirectErrorStream(true);
         Process process = builder.start();
