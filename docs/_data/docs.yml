@@ -6,21 +6,21 @@
   - features-guide
   - mdw-components
   
-- title: Demo
+- title: Getting Started
   docs:
-  - link-to-demo
-
+  - getting-started/quick-start
+  - getting-started/cli
+  - help
+  
 - title: Guides
   docs:
   - guides/mdw-cookbook
   - guides/tomcat-guide
   - guides/SetupGuideForCloudFoundry
-  
-- title: Documentation
-  docs:
-  - link-to-javadoc
-  - getting-started/cli
-  - help
+  - guides/configuration
+  - guides/docker-guide
+  - guides/mdw-mobile
+  - guides/tuning
   
 - title: Designer
   docs:
@@ -31,8 +31,12 @@
   docs:
   - development/built-in-activities
   - development/built-in-variable-types
-  - guides/spring-boot
+  - getting-started/spring-boot
   - link-to-javadoc
+
+- title: Demo
+  docs:
+  - link-to-demo
 
 - title: Presentations
   docs:

@@ -606,9 +606,6 @@ public class ApplicationContext {
     }
 
     private static ServerList serverList;
-    /**
-     * @return hosta:8080,hosta:8181,hostb:8080
-     */
     public static ServerList getServerList() {
         if (serverList == null) {
             if (PropertyManager.isYaml()) {
@@ -630,9 +627,6 @@ public class ApplicationContext {
     }
 
     private static ServerList routingServerList;
-    /**
-     * @return hosta:8080,hosta:8181,hostb:8080
-     */
     public static ServerList getRoutingServerList() {
         if (routingServerList == null) {
             if (PropertyManager.isYaml()) {

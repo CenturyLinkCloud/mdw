@@ -9,7 +9,6 @@ mdw.database.microsecond.precision=database/microsecond.precision
 
 mdw.db.embedded.server=db.embedded.server
 mdw.db.base.location=db.base.location
-mdw.db.base.location
 
 mdw.git.local.path=git/local.path
 mdw.git.remote.url=git/remote.url
@@ -193,3 +192,4 @@ mdw.filepanel.binary.patterns=
 mdw.application.config.pids=
 mdw.asset.compatibility.datasource=
 mdw.hub.view.definition=
+mdw.activemq.connector.url=
