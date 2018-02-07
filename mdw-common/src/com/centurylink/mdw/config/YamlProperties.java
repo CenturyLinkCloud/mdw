@@ -45,7 +45,11 @@ public class YamlProperties {
     public Map<?,?> getRoot() { return root; }
 
     public YamlProperties(File yamlFile) throws IOException {
-        this.prefix = yamlFile.getName().substring(0, yamlFile.getName().lastIndexOf('.'));
+        this(yamlFile.getName().substring(0, yamlFile.getName().lastIndexOf('.')), yamlFile);
+    }
+
+    public YamlProperties(String prefix, File yamlFile) throws IOException {
+        this.prefix = prefix;
         this.loader = new YamlLoader(yamlFile);
         root = loader.getRequiredMap("", loader.getTop(), "");
     }
@@ -110,8 +114,8 @@ public class YamlProperties {
 
     public Object get(String name, PropType type) {
         String key = name;
-        if (key.startsWith(this.prefix + ".")) {
-            key = key.substring(this.prefix.length() + 1);
+        if (prefix != null && key.startsWith(prefix + ".")) {
+            key = key.substring(prefix.length() + 1);
         }
         Map<?,?> deepest = root;
         String residual = key;
@@ -163,14 +167,21 @@ public class YamlProperties {
                     (prefix.equals("mdw") && (name.startsWith("MDWFramework") || name.startsWith("LDAP")))) {
                 YamlPropertyTranslator translator = null;
                 String rule = map.getProperty(name);
-                if (rule == null) {
+                if (rule != null && rule.isEmpty()) {
+                    // blank means remove this prop (no translator)
+                    System.out.println("Info: Obsolete property: '" + name + "' -- removed");
+                }
+                else if (!"mdw".equals(prefix) && (name.startsWith("mdw")
+                        || name.startsWith("MDWFramework") || name.startsWith("LDAP"))) {
+                    String msg = "Warning: '" + name + "' belongs in mdw.yaml ";
+                    if (rule != null)
+                        msg += "(as " + rule + ") ";
+                    System.err.println(msg + "-- removed");
+                }
+                else if (rule == null) {
                     // fully structured
                     rule = prefix == null ? name.replace('.', '/') : name.substring(prefix.length() + 1).replace('.', '/');
                     translator = defaultTranslator;
-                }
-                else if (rule.isEmpty()) {
-                    // blank means remove this prop (no translator)
-                    System.out.println("Removing obsolete property: " + name);
                 }
                 else if (rule.startsWith("[")) {
                     // custom translator -- reuse existing instance if found

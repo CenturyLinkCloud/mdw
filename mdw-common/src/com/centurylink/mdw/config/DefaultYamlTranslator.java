@@ -75,12 +75,17 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
             }
         }
         else {
-            if (rule.startsWith("(")) {
-                List list = Arrays.asList(value.toString().split("\\s*,\\s*"));
-                ((Map)root).put(rule.substring(1, rule.length() - 1), list);
+            if (root instanceof Map) {
+                if (rule.startsWith("(")) {
+                    List list = Arrays.asList(value.toString().split("\\s*,\\s*"));
+                    ((Map)root).put(rule.substring(1, rule.length() - 1), list);
+                }
+                else {
+                    ((Map)root).put(rule, value);
+                }
             }
             else {
-                ((Map)root).put(rule, value);
+                System.err.println("Warning: non-hierarchical subelement '" + rule + "' -- not converted");
             }
         }
     }

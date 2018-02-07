@@ -44,6 +44,12 @@ public class Convert extends Setup {
         return map;
     }
 
+    @Parameter(names="--prefix", description="Optional common prop prefix")
+    private String prefix;
+    public String getPrefix() {
+        return prefix;
+    }
+
     @Override
     public Convert run(ProgressMonitor... progressMonitors) throws IOException {
 
@@ -65,10 +71,13 @@ public class Convert extends Setup {
         Properties inputProps = new OrderedProperties();
         inputProps.load(new FileInputStream(input));
 
-        String prefix = input.getName().substring(0, input.getName().lastIndexOf('.'));
+        String baseName = input.getName().substring(0, input.getName().lastIndexOf('.'));
+        if (prefix == null && baseName.equals("mdw"))
+            prefix = "mdw";
+
         try {
             YamlBuilder yamlBuilder = YamlProperties.translate(prefix, inputProps, mapProps);
-            File out = new File(getConfigRoot() + "/" + prefix + ".yaml");
+            File out = new File(getConfigRoot() + "/" + baseName + ".yaml");
             System.out.println("Writing output config: " + out.getAbsolutePath());
             Files.write(Paths.get(out.getPath()), yamlBuilder.toString().getBytes());
         }
