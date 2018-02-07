@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":42,"i1":42,"i2":42,"i3":42,"i4":42,"i5":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -115,8 +115,10 @@ var activeTableTab = "activeTableTab";
 <dd><a href="../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>, <a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <br>
-<pre>public class <span class="typeNameLabel">PaaSPropertyManager</span>
+<pre>@Deprecated
+public class <span class="typeNameLabel">PaaSPropertyManager</span>
 extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></pre>
 <div class="block">Handles environment variables when deployed in a Cloud Foundry env.</div>
 </li>
@@ -139,11 +141,15 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static char</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#GROUP_SEPARATOR">GROUP_SEPARATOR</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#GROUP_SEPARATOR">GROUP_SEPARATOR</a></span></code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected java.util.Properties</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#properties">properties</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#properties">properties</a></span></code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -167,7 +173,9 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#PaaSPropertyManager--">PaaSPropertyManager</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#PaaSPropertyManager--">PaaSPropertyManager</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -179,37 +187,48 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#clearCache--">clearCache</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#clearCache--">clearCache</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.Properties</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#getAllProperties--">getAllProperties</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#getAllProperties--">getAllProperties</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.Properties</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#getProperties-java.lang.String-">getProperties</a></span>(java.lang.String&nbsp;group)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">returns the properties for group.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;name)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#refreshCache--">refreshCache</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PaaSPropertyManager.html#setStringProperty-java.lang.String-java.lang.String-">setStringProperty</a></span>(java.lang.String&nbsp;name,
-                 java.lang.String&nbsp;value)</code>&nbsp;</td>
+                 java.lang.String&nbsp;value)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -254,6 +273,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <li class="blockList">
 <h4>properties</h4>
 <pre>protected&nbsp;java.util.Properties properties</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="GROUP_SEPARATOR">
@@ -263,6 +283,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <li class="blockList">
 <h4>GROUP_SEPARATOR</h4>
 <pre>public static final&nbsp;char GROUP_SEPARATOR</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../constant-values.html#com.centurylink.mdw.config.PaaSPropertyManager.GROUP_SEPARATOR">Constant Field Values</a></dd>
@@ -285,6 +306,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <h4>PaaSPropertyManager</h4>
 <pre>public&nbsp;PaaSPropertyManager()
                     throws <a href="../../../../com/centurylink/mdw/startup/StartupException.html" title="class in com.centurylink.mdw.startup">StartupException</a></pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/startup/StartupException.html" title="class in com.centurylink.mdw.startup">StartupException</a></code></dd>
@@ -307,6 +329,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <h4>refreshCache</h4>
 <pre>public&nbsp;void&nbsp;refreshCache()
                   throws java.lang.Exception</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
@@ -320,6 +343,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <li class="blockList">
 <h4>clearCache</h4>
 <pre>public&nbsp;void&nbsp;clearCache()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getProperties-java.lang.String-">
@@ -329,6 +353,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <li class="blockList">
 <h4>getProperties</h4>
 <pre>public&nbsp;java.util.Properties&nbsp;getProperties(java.lang.String&nbsp;group)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">returns the properties for group. When the group is specified with
  ApplicationProperties.xml (old style), the names of the properties
  returned will not contain the group names and '/', for backward
@@ -352,6 +377,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <li class="blockList">
 <h4>getStringProperty</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getStringProperty(java.lang.String&nbsp;name)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></dd>
@@ -365,6 +391,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <li class="blockList">
 <h4>getAllProperties</h4>
 <pre>public&nbsp;java.util.Properties&nbsp;getAllProperties()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getAllProperties--">getAllProperties</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></dd>
@@ -379,6 +406,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <h4>setStringProperty</h4>
 <pre>public&nbsp;void&nbsp;setStringProperty(java.lang.String&nbsp;name,
                               java.lang.String&nbsp;value)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#setStringProperty-java.lang.String-java.lang.String-">setStringProperty</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></dd>
