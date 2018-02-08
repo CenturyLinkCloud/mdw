@@ -85,9 +85,11 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	COMMIT;
-     DELETE FROM event_log
-         WHERE create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY)
-         LIMIT commitcnt;
+   	 DELETE e1 FROM event_log e1 JOIN
+     	(SELECT e2.event_log_id FROM event_log e2
+         	WHERE e2.create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY)
+         LIMIT commitcnt) e2
+     USING (event_log_id);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;
    
@@ -97,10 +99,14 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE FROM event_instance
-         WHERE create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY) 
-         AND  event_name NOT LIKE 'ScheduledJob%'
-		 LIMIT commitcnt;
+   	 DELETE e1 FROM event_instance e1 JOIN 
+   	 	(SELECT e2.event_name FROM event_instance e2
+         	WHERE e2.create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY) 
+         	AND e2.event_name NOT LIKE 'ScheduledJob%' 
+         	AND NOT EXISTS 
+         		(SELECT doc.document_id FROM document doc WHERE doc.document_id = e2.document_id)
+         	LIMIT commitcnt) e3  
+	 USING (event_name);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;
    
@@ -111,17 +117,18 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
      COMMIT;
-     DELETE from   event_wait_instance 
-         WHERE event_wait_instance_owner = 'ACTIVITY_INSTANCE'
-           AND event_wait_instance_owner_id IN (
-                  SELECT activity_instance_id
-                    FROM activity_instance 
-                   WHERE process_instance_id IN (
-                                               SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                                      process_instance_id
-                                                 FROM process_instance
-                                                WHERE status_cd = purgestatusid))
-     LIMIT commitcnt;
+     DELETE e1 FROM event_wait_instance e1 JOIN
+     	(SELECT e2.event_wait_instance_id FROM event_wait_instance e2 
+         	WHERE e2.event_wait_instance_owner = 'ACTIVITY_INSTANCE'
+           	AND e2.event_wait_instance_owner_id IN (
+                  SELECT a1.activity_instance_id
+                    FROM activity_instance a1 
+                   	WHERE a1.process_instance_id IN (
+                 		SELECT p1.process_instance_id
+                        	FROM process_instance p1
+                            WHERE p1.status_cd = purgestatusid))
+            LIMIT commitcnt) e3
+        USING (event_wait_instance_id);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;                                                             
 
@@ -137,12 +144,13 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE  from  activity_instance 
-         WHERE process_instance_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                                 process_instance_id
-                                            FROM process_instance
-                                           WHERE status_cd = purgestatusid)
-                                           LIMIT commitcnt;
+   	 DELETE a1 FROM activity_instance a1 JOIN
+     	(SELECT a2.activity_instance_id FROM activity_instance a2 
+         	WHERE a2.process_instance_id IN (SELECT p1.process_instance_id
+                                            FROM process_instance p1
+                                           WHERE p1.status_cd = purgestatusid)
+            LIMIT commitcnt) a3
+        USING (activity_instance_id);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;                                               
 
@@ -153,12 +161,13 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE  from    work_transition_instance 
-         WHERE process_inst_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                              process_instance_id
-                                         FROM process_instance
-                                        WHERE status_cd = purgestatusid)
-                                           LIMIT commitcnt;
+   	 DELETE w1 FROM work_transition_instance w1 JOIN
+     	(SELECT w2.WORK_TRANS_INST_ID FROM work_transition_instance w2 
+         	WHERE w2.process_inst_id IN (SELECT p1.process_instance_id
+                                         FROM process_instance p1
+                                        WHERE p1.status_cd = purgestatusid)
+            LIMIT commitcnt) w3
+        USING (WORK_TRANS_INST_ID);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;     
    SELECT( CONCAT('Number of rows deleted from WORK_TRANSITION_INSTANCE: ', row_count));           
@@ -169,12 +178,13 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE from   variable_instance 
-         WHERE process_inst_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                             process_instance_id
-                                        FROM process_instance
-                                       WHERE status_cd = purgestatusid)
-                                           LIMIT commitcnt;
+   	 DELETE v1 FROM variable_instance v1 JOIN
+     	(SELECT v2.variable_inst_id FROM variable_instance v2 
+         	WHERE v2.process_inst_id IN (SELECT p1.process_instance_id
+                                        FROM process_instance p1
+                                       WHERE p1.status_cd = purgestatusid)
+            LIMIT commitcnt) v3
+        USING (variable_inst_id);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT; 
    SELECT ( CONCAT('Number of rows deleted from VARIABLE_INSTANCE: ', row_count));                  
@@ -190,18 +200,18 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE  from instance_note
-         WHERE instance_note_owner_id IN (
-                  SELECT task_instance_id
+   	 DELETE i1 FROM instance_note i1 JOIN
+     	(SELECT i2.instance_note_id FROM instance_note i2
+         	WHERE i2.instance_note_owner_id IN (
+                  SELECT ti.task_instance_id
                     FROM task_instance ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
-                                               SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                                      process_instance_id
-                                                 FROM process_instance
-                                                WHERE status_cd =
-                                                                 purgestatusid))                                           
-                                                                 LIMIT commitcnt;
+                                               SELECT p1.process_instance_id
+                                                 FROM process_instance p1
+                                                WHERE p1.status_cd = purgestatusid))                                           
+            LIMIT commitcnt) i3
+       USING (instance_note_id);
      SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT; 
    
@@ -220,18 +230,18 @@ SET foreign_key_checks=0;
      SET row_count = 0;
 	   REPEAT
 	   	 COMMIT;
-	     DELETE  from    instance_index
-         WHERE owner_type='TASK_INSTANCE' and instance_id IN (
-                  SELECT task_instance_id
+	     DELETE i1 FROM instance_index i1 JOIN
+	     	(SELECT INSTANCE_ID,OWNER_TYPE,INDEX_KEY FROM instance_index i2
+         		WHERE i2.owner_type='TASK_INSTANCE' and i2.instance_id IN (
+                  SELECT ti.task_instance_id
                     FROM task_instance ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
-                                               SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                                      process_instance_id
-                                                 FROM process_instance
-                                                WHERE status_cd =
-                                                                 purgestatusid))
-        LIMIT commitcnt;
+                                               SELECT p1.process_instance_id
+                                                 FROM process_instance p1
+                                                WHERE p1.status_cd = purgestatusid))
+             	LIMIT commitcnt) i3
+        	USING (INSTANCE_ID,OWNER_TYPE,INDEX_KEY);
         SET row_count = row_count + ROW_COUNT();
      UNTIL ROW_COUNT() < 1 END REPEAT;                                                                  
 		 SELECT ( CONCAT('Number of rows deleted from INSTANCE_INDEX:', row_count));             
@@ -241,18 +251,18 @@ SET foreign_key_checks=0;
      SET row_count = 0;
      REPEAT
        COMMIT;
-       DELETE  from    task_inst_grp_mapp
-         WHERE task_instance_id IN (
-                  SELECT task_instance_id
+       DELETE tg1 FROM task_inst_grp_mapp tg1 JOIN
+       	(SELECT tg2.TASK_INSTANCE_ID, tg2.USER_GROUP_ID FROM task_inst_grp_mapp tg2
+         	WHERE tg2.task_instance_id IN (
+                  SELECT ti.task_instance_id
                     FROM task_instance ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
-                                               SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                                      process_instance_id
-                                                 FROM process_instance
-                                                WHERE status_cd =
-                                                                 purgestatusid))
-        LIMIT commitcnt;
+                                               SELECT p1.process_instance_id
+                                                 FROM process_instance p1
+                                                WHERE p1.status_cd = purgestatusid))
+        	LIMIT commitcnt) tg3
+        USING (TASK_INSTANCE_ID,USER_GROUP_ID);
         SET row_count = row_count + ROW_COUNT();
      UNTIL ROW_COUNT() < 1 END REPEAT;     
 	   SELECT ( CONCAT('Number of rows deleted from TASK_INST_GRP_MAPP: ', row_count));            
@@ -263,13 +273,14 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-     DELETE   from   task_instance 
-         WHERE task_instance_owner = 'PROCESS_INSTANCE'
-           AND task_instance_owner_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
-                                                    process_instance_id
-                                               FROM process_instance
-                                              WHERE status_cd = purgestatusid)
-      LIMIT commitcnt;
+   	 DELETE t1 FROM task_instance t1 JOIN
+     	(SELECT t2.task_instance_id FROM task_instance t2 
+         	WHERE t2.task_instance_owner = 'PROCESS_INSTANCE'
+           	AND t2.task_instance_owner_id IN (SELECT p1.process_instance_id
+                                               FROM process_instance p1
+                                              WHERE p1.status_cd = purgestatusid)
+      		LIMIT commitcnt) t3
+      	USING (task_instance_id);
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT;  
 
@@ -431,9 +442,11 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	COMMIT;
-    DELETE  from    process_instance 
-         WHERE status_cd = purgestatusid
-      LIMIT commitcnt;
+   	DELETE p1 FROM process_instance p1 JOIN
+    	(SELECT p2.process_instance_id FROM process_instance p2 
+         	WHERE p2.status_cd = purgestatusid
+      		LIMIT commitcnt) p3
+      	USING (process_instance_id);
       SET row_count = row_count + ROW_COUNT();
    UNTIL ROW_COUNT() < 1 END REPEAT; 
    
