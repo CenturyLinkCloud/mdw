@@ -45,6 +45,8 @@ import com.centurylink.mdw.model.system.FileInfo;
 import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.file.Grep;
+import com.centurylink.mdw.util.file.Grep.LineMatches;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -58,7 +60,7 @@ public class FilePanelService extends JsonRestService {
     @Override
     @Path("/{filePath}")
     public JSONObject get(String path, Map<String,String> headers)
-            throws ServiceException, JSONException {
+    throws ServiceException, JSONException {
 
         String[] segments = getSegments(path);
         if (segments.length == 5) {
@@ -90,8 +92,29 @@ public class FilePanelService extends JsonRestService {
                             return null;
                         }
                         else if (query.getFilter("grep") != null) {
-                            // TODO grep
-                            return new JSONObject();
+                            Grep grep = new Grep(p, query.getFilter("glob"));
+                            int limit = query.getIntFilter("limit");
+                            grep.setLimit(limit < 0 ? 250 : limit);
+                            Map<java.nio.file.Path,List<LineMatches>> matches = grep.find(query.getFilter("grep"));
+                            JSONObject json = new JSONObject();
+                            json.put("limit", grep.getLimit());
+                            json.put("root", p.toAbsolutePath().toString().replace('\\', '/'));
+                            JSONArray results = new JSONArray();
+                            json.put("results", results);
+                            int lines = 0;
+                            for (java.nio.file.Path resPath : matches.keySet()) {
+                                JSONObject fileObj = new JSONObject();
+                                results.put(fileObj);
+                                fileObj.put("file", resPath.toString().replace('\\', '/'));
+                                JSONArray matchesArr = new JSONArray();
+                                fileObj.put("lineMatches", matchesArr);
+                                for (LineMatches lineMatches : matches.get(resPath)) {
+                                    matchesArr.put(lineMatches.getJson());
+                                    lines++;
+                                }
+                            }
+                            json.put("count", lines);
+                            return json;
                         }
                         else {
                             if (file.isFile()) {

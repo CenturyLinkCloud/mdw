@@ -1,12 +1,13 @@
 CfLogListener.java=2
 DirListing.jsx=2
 DirTree.jsx=2
-FilePanelService.java=4
+FilePanelService.java=9
 FileView.java=6
 FileView.jsx=22
-Grep.jsx=1
-Index.jsx=10
-Search.jsx=4
+Grep.jsx=2
+GrepResults.jsx=1
+Index.jsx=12
+Search.jsx=5
 TailWatcher.java=2
 Toolbar.jsx=5
 cloudfoundry-client-lib-1.1.3.jar=1

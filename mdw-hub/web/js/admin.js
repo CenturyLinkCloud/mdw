@@ -245,6 +245,7 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
       var url = attrs.tabLink;
       
       elem.bind('click', function() {
+        $mdwUi.clearMessage();
         var main = document.getElementById('mdw-main');
         if (main) {
           // navigating from full-screen (eg: filepanel)

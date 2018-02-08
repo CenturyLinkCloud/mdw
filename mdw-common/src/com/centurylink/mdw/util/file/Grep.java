@@ -43,12 +43,15 @@ public class Grep {
 
     private Path root;
     private PathMatcher matcher;
-    private int totalLines;
+    private int count;
 
     /**
      * Line limit.
      */
     private int limit = Integer.MAX_VALUE;
+    public int getLimit() {
+        return limit;
+    }
     public void setLimit(int limit) {
         this.limit = limit;
     }
@@ -67,6 +70,7 @@ public class Grep {
      * Find all line matches (mapped per file path).
      */
     public Map<Path,List<LineMatches>> find(String search) throws IOException {
+        count = 0;
         Pattern pattern = Pattern.compile(search);
         Map<Path,List<LineMatches>> fileMatches = new LinkedHashMap<>();
         Files.walkFileTree(root,
@@ -75,9 +79,9 @@ public class Grep {
                     if (matcher.matches(path)) {
                         List<LineMatches> lineMatches = search(path, pattern);
                         if (lineMatches != null)
-                            fileMatches.put(path, lineMatches);
+                            fileMatches.put(root.relativize(path), lineMatches);
                     }
-                    return FileVisitResult.CONTINUE;
+                    return count == 0 || count < limit ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
                 }
             }
         );
@@ -94,7 +98,7 @@ public class Grep {
         matchMap = null;
         try (Stream<String> stream = Files.lines(path)) {
             stream.forEachOrdered(line -> {
-                if (totalLines < limit) {
+                if (count < limit) {
                     if (lineMatcher == null)
                         lineMatcher = pattern.matcher(line);
                     else
@@ -108,18 +112,19 @@ public class Grep {
                         if (matches == null) {
                             matches = new LineMatches(lineIndex, line);
                             matchMap.put(lineIndex, matches);
+                            count++;
                         }
                         matches.getMatches().add(new LineMatch(lineMatcher.start(), lineMatcher.end()));
                     }
                 }
                 lineIndex++;
-                totalLines++;
             });
             List<LineMatches> lineMatches = null;
             if (matchMap != null) {
                 lineMatches = new ArrayList<>();
-                for (int index : matchMap.keySet())
+                for (int index : matchMap.keySet()) {
                     lineMatches.add(matchMap.get(index));
+                }
             }
             return lineMatches;
         }

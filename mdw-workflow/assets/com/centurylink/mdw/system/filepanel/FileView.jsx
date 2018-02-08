@@ -522,7 +522,6 @@ class FileView extends Component {
             });
             this.webSocket.addEventListener('message', function(event) {
               const json = JSON.parse(event.data);
-              console.log("MESSAGE: " + JSON.stringify(json, null, 2));
               if (json.buffer.length) {
                 const buffer = fileView.state.buffer;
                 // response always repeats the last line in case it changed

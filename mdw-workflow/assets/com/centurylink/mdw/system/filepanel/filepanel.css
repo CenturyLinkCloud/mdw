@@ -43,6 +43,22 @@
   border-radius: 3px;
   padding: 2px 5px;  
 }
+.fp-grep button:disabled {
+	opacity: .65;
+}
+.fp-grep-results {
+  height: 100%;
+  font-family: monospace;
+  font-size: 13px;
+}
+.fp-grep-linenum {
+	font-weight: bold;
+	color: #81c784;
+}
+.fp-grep-hit {
+	font-weight: bold;
+	background-color: #fff176;
+}
 .fp-right {
   display: flex;
   flex-direction: column;
@@ -56,6 +72,7 @@
 .fp-item {
   width: auto;
   padding: 1px;
+  margin-right: 2px;
   border: 1px solid transparent;
 }
 .fp-item:hover {
@@ -130,6 +147,9 @@
   padding: 2px 4px;
   color: #607d8b;
   font-weight: bold;	
+}
+.fp-toolbar button:disabled {
+  cursor: default;
 }
 .fp-toolbar input[type="checkbox"] {
   position: relative;

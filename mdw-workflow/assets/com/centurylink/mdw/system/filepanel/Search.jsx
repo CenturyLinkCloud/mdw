@@ -70,7 +70,7 @@ class Search extends Component {
           <Button name="backward" 
             className="fp-icon-btn"
             style={{marginLeft:'0'}}
-            title="Backward"
+            title={this.state.search ? 'Backward' : ''}
             disabled={!this.state.search}
             onClick={this.handleClick}>
             <Glyphicon glyph="chevron-up" />
@@ -78,7 +78,7 @@ class Search extends Component {
           <Button name="forward" 
             className="fp-icon-btn"
             style={{marginLeft:'3px'}}
-            title="Forward"
+            title={this.state.search ? 'Forward' : ''}
             disabled={!this.state.search}
             onClick={this.handleClick}>
             <Glyphicon glyph="chevron-down" />
