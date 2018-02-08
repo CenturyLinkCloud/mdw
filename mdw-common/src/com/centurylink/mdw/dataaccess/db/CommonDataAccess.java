@@ -100,7 +100,8 @@ public class CommonDataAccess {
             transaction.setDatabaseAccess(db);
             if (transManager.getStatus()==Status.STATUS_NO_TRANSACTION) {
                 transaction.setTransactionAlreadyStarted(false);
-                db.openConnection();// Get connection BEFORE beginning transaction to avoid transaction timeout (10 minutes) exceptions (Fail to stop the transaction)
+                // Get connection BEFORE beginning transaction to avoid transaction timeout (10 minutes) exceptions (Fail to stop the transaction)
+                db.openConnection().setAutoCommit(false); // Also set autoCommit to false
                 transManager.begin();
                 transUtil.setCurrentConnection(db.getConnection());
             } else {
@@ -115,7 +116,7 @@ public class CommonDataAccess {
                     // not opened through this DatabaseAccess
                     transaction.setDatabaseConnectionAlreadyOpened(false);
                     if (transUtil.getCurrentConnection() == null) {
-                        db.openConnection();
+                        db.openConnection().setAutoCommit(false);  // Set autoCommit to false
                         transUtil.setCurrentConnection(db.getConnection());
                     } else {
                         db.setConnection(transUtil.getCurrentConnection());

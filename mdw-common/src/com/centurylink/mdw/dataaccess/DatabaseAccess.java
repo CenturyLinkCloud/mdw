@@ -52,6 +52,9 @@ public class DatabaseAccess {
     private static String INTERNAL_DATA_SOURCE = null;
     private static Long db_time_diff = null;
 
+    private static int retryMax = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_MAX, 3);
+    private static int retryInterval = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_INTERVAL, 500);
+
     private static Map<String, DataSource> loadedDataSources = new ConcurrentHashMap<String, DataSource>();
     private static Map<String, Boolean> collectionDocIdIndexed = new ConcurrentHashMap<String, Boolean>();
 
@@ -227,7 +230,7 @@ public class DatabaseAccess {
             throw new SQLException("Failed to find data source " + database_name, e);
         }
 
-        connection.setAutoCommit(false);
+        connection.setAutoCommit(true);  // New default. Code using startTransaction/stopTransaction methods will set this to false.
 
         return connection;
     }
@@ -261,13 +264,13 @@ public class DatabaseAccess {
     }
 
     public void commit() throws SQLException {
-        if (connectionIsOpen())
+        if (connectionIsOpen() && !connection.getAutoCommit())
             connection.commit();
     }
 
     public void rollback() {
         try {
-            if (connectionIsOpen()) {
+            if (connectionIsOpen() && !connection.getAutoCommit()) {
                 connection.rollback();
             }
         } catch (SQLException e) {
@@ -331,11 +334,32 @@ public class DatabaseAccess {
     }
 
     private int logExecuteUpdate(String query) throws SQLException {
+        // Only retry if autoCommit is true
+        int retriesRemaining = connection.getAutoCommit() ? retryMax : 0;
+
         if (queryTimeout > 0 && ps != null)
             ps.setQueryTimeout(queryTimeout);
-        if (connection instanceof QueryLogger)
-            return ((QueryLogger)connection).executeUpdate(ps, query);
-        else return ps.executeUpdate();
+
+        while (retriesRemaining >= 0) {
+            try {
+                if (connection instanceof QueryLogger)
+                    return ((QueryLogger)connection).executeUpdate(ps, query);
+                else
+                    return ps.executeUpdate();
+            } catch (Exception e) {
+                if (retriesRemaining-- > 0) {
+                    LoggerUtil.getStandardLogger().infoException("SQL Exception occured on query: " + query + "\nRetrying...\n", e);
+                    try {
+                        Thread.sleep(retryInterval); // short delay before retry
+                    } catch (InterruptedException e1) {
+                        LoggerUtil.getStandardLogger().info("Sleep was interrupted.");
+                    }
+                }
+                else
+                    throw e;  // Can't retry anymore, throw the exception
+            }
+        }
+        return -1;  // Not reachable code
     }
 
     private int [] logExecuteBatch(String query) throws SQLException {
