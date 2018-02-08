@@ -154,9 +154,19 @@ class Index extends Component {
     });
   }
   
-  handleResultClick(file, match) {
-    console.log("\nFILE: " + file);
-    console.log("  MATCH: " + JSON.stringify(match));
+  handleResultClick(file, lineMatch) {
+    $mdwUi.clearMessage();
+    var name = file;
+    const lastSlash = file.lastIndexOf('/');
+    if (lastSlash > 0) {
+      name = file.substring(lastSlash + 1);
+    }
+    this.setState({
+      rootDirs: this.state.rootDirs,
+      selected: {path: file, isFile: true, name: name},
+      grep: {},
+      lineMatch: lineMatch
+    });
   }
   
   render() {
@@ -225,7 +235,9 @@ class Index extends Component {
               onResultClick={this.handleResultClick} />
           }
           {!this.state.grep.results &&
-            <FileView item={this.state.selected} onInfo={this.handleInfo} />
+            <FileView item={this.state.selected} 
+              onInfo={this.handleInfo} 
+              lineMatch={this.state.lineMatch} />
           }
         </div>
       </div>

@@ -17,6 +17,7 @@ class FileView extends Component {
     this.retrieving = false;
     this.specifiedLineIndex = null; // transient value when click track or drag thumb
     
+    this.doUpdate = this.doUpdate.bind(this);
     this.doFetch = this.doFetch.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.handleOptions = this.handleOptions.bind(this);
@@ -30,13 +31,18 @@ class FileView extends Component {
   }
   
   componentDidMount() {
+    this.doUpdate(this.props);
   }
   
   componentWillReceiveProps(props) {
+    this.doUpdate(props);
+  }
+  
+  doUpdate(props) {
     this.stopTail();
     // retrieve fileView
     if (props.item.path) {
-      this.lineIndex = 0;
+      this.lineIndex = props.lineMatch ? props.lineMatch.index : 0;
       this.setState({
         item: props.item,
         buffer: {length: 0},
@@ -164,42 +170,48 @@ class FileView extends Component {
           const st = (this.lineIndex - json.buffer.start) * this.scrollbars.view.scrollHeight / (json.info.lineCount * this.getScale());
           this.scrollbars.view.scrollTop = st;
         }
-        
-        // find search pattern if present
-        if (this.state.search.find) {
-          this.find({find: this.state.search.find, backward: this.state.search.backward});
-          var searchIndex = json.info.searchIndex;
-          if (typeof(searchIndex) !== 'undefined') {
-            if (searchIndex === -1) {
-              this.state.search.message = 'Not found';
-              this.setState({
-                item: this.state.item,
-                buffer: this.state.buffer,
-                search: this.state.search
-              });
-              
-            }
-            else {
-              if (this.state.search.backward) {
-                if (searchIndex >= prevSearchIndex - 1) {
-                  this.state.search.message = 'Wrapped';
-                } 
+
+        // honor line match
+        if (this.props.lineMatch) {
+          this.setLineMatchResults(this.props.lineMatch);
+        }
+        else {
+          // find search pattern if present
+          if (this.state.search.find) {
+            this.find({find: this.state.search.find, backward: this.state.search.backward});
+            var searchIndex = json.info.searchIndex;
+            if (typeof(searchIndex) !== 'undefined') {
+              if (searchIndex === -1) {
+                this.state.search.message = 'Not found';
+                this.setState({
+                  item: this.state.item,
+                  buffer: this.state.buffer,
+                  search: this.state.search
+                });
+                
               }
               else {
-                if (searchIndex <= prevSearchIndex) {
-                  this.state.search.message = 'Wrapped';
+                if (this.state.search.backward) {
+                  if (searchIndex >= prevSearchIndex - 1) {
+                    this.state.search.message = 'Wrapped';
+                  } 
                 }
+                else {
+                  if (searchIndex <= prevSearchIndex) {
+                    this.state.search.message = 'Wrapped';
+                  }
+                }
+                if (this.lineIndex + this.getClientLines() < searchIndex || this.lineIndex > searchIndex) {
+                  // make lineIndex visible after service search 
+                  this.lineIndex = searchIndex;
+                }
+                this.search(this.state.search);
               }
-              if (this.lineIndex + this.getClientLines() < searchIndex || this.lineIndex > searchIndex) {
-                // make lineIndex visible after service search 
-                this.lineIndex = searchIndex;
-              }
-              this.search(this.state.search);
             }
-          }
-          else if (typeof(this.rememberedSearchStart) !== 'undefined') {
-            // may have scrolled for buffering after scroll due to search
-            this.search(Object.assign(this.state.search), {start: this.rememberedSearchStart})
+            else if (typeof(this.rememberedSearchStart) !== 'undefined') {
+              // may have scrolled for buffering after scroll due to search
+              this.search(Object.assign(this.state.search), {start: this.rememberedSearchStart})
+            }
           }
         }
       }
@@ -392,7 +404,7 @@ class FileView extends Component {
       }, callback);
     }    
   }
-    
+  
   // Go to next match (assumes find has been executed).
   // If not found in buffer, fetch from server.
   search(search) {
@@ -482,6 +494,40 @@ class FileView extends Component {
       buffer: this.state.buffer,
       search: search
     });
+  }
+  
+  setLineMatchResults(lineMatch) {
+    if (this.state.buffer.length > 0) {
+      var pos = 0;
+      const bufferLines = this.state.buffer.lines.replace(/\n$/, '').split(/\n/);
+      var stop = lineMatch.index - this.state.buffer.start;
+      for (let i = 0; i < stop; i++) {
+        pos += bufferLines[i].length + 1;
+      }
+      pos += lineMatch.match.start;
+      var results = [];
+      if (pos > 0) {
+        results.push({
+          text: this.state.buffer.lines.substring(0, pos) 
+        });
+      }
+      const endPos = pos + (lineMatch.match.end - lineMatch.match.start);
+      results.push({
+        found: this.state.buffer.lines.substring(pos, endPos),
+        index: pos
+      });
+      if (endPos < this.state.buffer.lines.length) {
+        results.push({
+          text: this.state.buffer.lines.substring(endPos)
+        });
+      }
+      this.setState({
+        item: this.state.item,
+        buffer: this.state.buffer,
+        search: {start: pos, results: results}
+      });
+      this.rememberedSearchStart = pos;
+    }    
   }
   
   // stop any existing tail

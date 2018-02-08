@@ -44,7 +44,7 @@ function ResultLine(props) {
               {segment.match &&
                 <a className="fp-grep-hit"
                   href="#/system/filepanel"
-                  onClick={e => props.onResultClick(props.file, segment.match)}>
+                  onClick={e => props.onResultClick(props.file, {index: lineMatch.index, match: segment.match})}>
                   {segment.text}
                 </a>
               }
@@ -60,7 +60,7 @@ function GrepResults(props) {
 
   var path = props.item.path;
   if (props.item.isFile) {
-    path = path.substring(0, path.length - props.item.name.length)
+    path = path.substring(0, path.length - props.item.name.length - 1)
   }
 
   var pad = 2;
@@ -79,12 +79,12 @@ function GrepResults(props) {
       thumbSize={30}>
       <div className="fp-grep-results">
         <div id="fp-grep-results" className="fp-content">
-          {path + '\n\n' }
+          {path + '/\n' }
           { props.results && 
             props.results.map(result => {
               return (
                 <div key={path + '/' + result.file}>
-                  {result.file + ':'}
+                  {'\n' + result.file + ':'}
                   {
                     result.lineMatches.map(lineMatch => {
                       return (

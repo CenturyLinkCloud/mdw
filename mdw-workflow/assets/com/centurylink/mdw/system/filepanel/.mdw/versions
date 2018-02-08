@@ -1,12 +1,12 @@
 CfLogListener.java=2
-DirListing.jsx=2
-DirTree.jsx=2
+DirListing.jsx=3
+DirTree.jsx=3
 FilePanelService.java=9
 FileView.java=6
-FileView.jsx=22
+FileView.jsx=26
 Grep.jsx=2
-GrepResults.jsx=1
-Index.jsx=12
+GrepResults.jsx=5
+Index.jsx=22
 Search.jsx=5
 TailWatcher.java=2
 Toolbar.jsx=5

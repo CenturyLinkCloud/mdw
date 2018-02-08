@@ -100,7 +100,7 @@ function DirListing(props) {
       }
       lines.push(line);
     });
-    return dirItem.absolutePath + '\n\n' + lines.join('\n');
+    return dirItem.absolutePath + '/\n\n' + lines.join('\n');
   }
   
   return (
