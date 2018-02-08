@@ -5,6 +5,7 @@ import TreeView from '../../node/node_modules/react-treeview';
 import '../../node/node_modules/style-loader!../../react/react-treeview.css';
 import DirTree from './DirTree.jsx';
 import FileView from './FileView.jsx';
+import Grep from './Grep.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
 // adjust mdw-main layout
@@ -168,15 +169,7 @@ class Index extends Component {
                 <div id="fp-info"></div>
               }
             </div>
-            <div className="fp-grep">
-              <div>
-                <input type="text" placeholder="Pattern" />
-              </div>
-              <div>
-                <input type="text" placeholder="Files" />
-                <button value="grep" onClick={event => alert('Grep is coming in mdw 6.0.12')}>Grep</button>
-              </div>
-            </div>
+            <Grep />
           </div>
         </div>
         <div className="fp-right">

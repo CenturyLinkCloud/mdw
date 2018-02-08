@@ -30,6 +30,7 @@
   background-color: #eeeeee;
 }
 .fp-grep input {
+	color: black;
 	margin: 3px;
 	width: calc(100% - 60px);
 	border: 1px solid gray;
