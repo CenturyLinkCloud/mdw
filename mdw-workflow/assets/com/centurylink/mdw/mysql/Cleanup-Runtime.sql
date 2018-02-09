@@ -103,8 +103,9 @@ SET foreign_key_checks=0;
    	 	(SELECT e2.event_name FROM event_instance e2
          	WHERE e2.create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY) 
          	AND e2.event_name NOT LIKE 'ScheduledJob%' 
-         	AND NOT EXISTS 
-         		(SELECT doc.document_id FROM document doc WHERE doc.document_id = e2.document_id)
+         	AND (e2.document_id IS NULL 
+         		OR (e2.document_id IS NOT NULL AND NOT EXISTS 
+         			(SELECT doc.document_id FROM document doc WHERE doc.document_id = e2.document_id)))
          	LIMIT commitcnt) e3  
 	 USING (event_name);
      SET row_count = row_count + ROW_COUNT();
@@ -291,7 +292,7 @@ SET foreign_key_checks=0;
      INTO dt
      FROM DUAL;
 
-   SELECT ( CONCAT('Start Purging Document Content Records: ' , ifnull(dt, '')));
+   SELECT ( CONCAT('Start Purging Document_Content Records: ' , ifnull(dt, '')));
 
    
    -- COMMENT OUT THE BELOW QUERY IF USING MONGODB TO STORE DOCUMENTS, INSTEAD OF DOCUMENT_CONTENT TABLE
@@ -353,9 +354,32 @@ SET foreign_key_checks=0;
    UNTIL ROW_COUNT() < 1 END REPEAT; 
    
    SELECT
-      ( CONCAT('Number of rows deleted from DOCUMENT Content: ', row_count));    
+      ( CONCAT('Number of rows deleted from DOCUMENT_CONTENT: ', row_count));    
 	 COMMIT;
 
+   SELECT SYSDATE()
+     INTO dt
+     FROM DUAL;
+     
+   SELECT ( CONCAT('Start Purging Event_instance Records with Document FK: ' , ifnull(dt, '')));
+     
+   SET row_count = 0;
+   REPEAT
+   	 COMMIT;
+   	 DELETE e1 FROM event_instance e1 JOIN 
+   	 	(SELECT e2.event_name FROM event_instance e2 JOIN
+   	 		(SELECT d.document_id FROM document d LEFT OUTER JOIN document_content dc
+   	 			USING (document_id)
+   	 			WHERE dc.document_id IS null) d1
+   	 		USING (document_id)
+         	LIMIT commitcnt) e3  
+	 	USING (event_name);
+     SET row_count = row_count + ROW_COUNT();
+   UNTIL ROW_COUNT() < 1 END REPEAT;
+   
+   SELECT ( CONCAT('Number of FK rows deleted from EVENT_INSTANCE:', row_count));
+   COMMIT;  
+   
    SELECT SYSDATE()
      INTO dt
      FROM DUAL;
