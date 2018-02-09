@@ -83,7 +83,8 @@ class Index extends Component {
     this.setState({
       rootDirs: this.state.rootDirs,
       selected: selection,
-      grep: {}
+      grep: {},
+      lineMatch: {}
     });
   }
   
@@ -126,7 +127,10 @@ class Index extends Component {
       path = path.substring(0, path.length - this.state.selected.name.length - 1)
     }
     var url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/system/filepanel';
-    url += '?path=' + encodeURIComponent(path) + '&grep=' + find + '&glob=' + glob;    
+    url += '?path=' + encodeURIComponent(path) + '&grep=' + find + '&glob=' + glob;
+    if (this.state.selected.host) {
+      url += '&host=' + this.state.selected.host
+    }
     fetch(new Request(url, {
       method: 'GET',
       headers: { Accept: 'application/json'},
@@ -163,7 +167,12 @@ class Index extends Component {
     }
     this.setState({
       rootDirs: this.state.rootDirs,
-      selected: {path: file, isFile: true, name: name},
+      selected: {
+        path: file, 
+        isFile: true, 
+        name: name, 
+        host: this.state.selected.host
+      },
       grep: {},
       lineMatch: lineMatch
     });

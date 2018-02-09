@@ -59,6 +59,8 @@ public class FileView implements Jsonable {
         this.info = info;
         this.query = query;
 
+        lineBuffer = new StringBuilder();  // TODO: presize?
+
         if (info.isBinary()) {
             lineBuffer.append("Binary file: " + info.getName());
         }
@@ -71,7 +73,6 @@ public class FileView implements Jsonable {
             if (bufferSize == -1)
                 bufferSize = 1000;
 
-            lineBuffer = new StringBuilder();  // TODO: presize?
             bufferLength = 0;
 
             search = query.getFilter("search");

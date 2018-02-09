@@ -42,7 +42,7 @@ class FileView extends Component {
     this.stopTail();
     // retrieve fileView
     if (props.item.path) {
-      this.lineIndex = props.lineMatch ? props.lineMatch.index : 0;
+      this.lineIndex = props.lineMatch && props.lineMatch.index ? props.lineMatch.index : 0;
       this.setState({
         item: props.item,
         buffer: {length: 0},
@@ -172,7 +172,7 @@ class FileView extends Component {
         }
 
         // honor line match
-        if (this.props.lineMatch) {
+        if (this.props.lineMatch && this.props.lineMatch.index) {
           this.setLineMatchResults(this.props.lineMatch);
         }
         else {
