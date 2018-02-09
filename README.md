@@ -46,7 +46,7 @@
    - mdw/config/mdw.properties (locally, use absolute paths for mdw.asset.location and mdw.git.local.path)
    - mdw/config/access.yaml (set devUser to yourself)
    - mdw/config/seed_users.json
-   - (On Linux or Mac): Copy mdw-common/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
+   - (On Linux or Mac): Copy mdw-common/src/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
    
 7. Deploy on Tomcat in Eclipse
    - In Eclipse Servers view, right-click and select New > Server  
