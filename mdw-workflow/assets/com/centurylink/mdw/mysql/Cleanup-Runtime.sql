@@ -419,7 +419,7 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.owner_type IN 
             	('LISTENER_REQUEST','LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
                 AND NOT EXISTS (SELECT document_id
-                                  FROM document_content doc2
+                                  FROM document doc2
                                  WHERE doc2.document_id = doc.owner_id)
                )
            LIMIT commitcnt
