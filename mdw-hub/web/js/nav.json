@@ -205,6 +205,11 @@
             "href": "#/system/threadInfo/Thread"
           },
           {
+            "label": "Memory Info",
+            "path": "system/memory",
+            "href": "#/system/memory/Memory"
+          },
+          {
             "label": "Messaging",
             "path": "system/message",
             "href": "#/system/message"

@@ -31,6 +31,7 @@ public interface SystemServices {
         Caches,
         JMS,
         MBean,
+        Memory,
         Exit // only works from localhost
     }
 
