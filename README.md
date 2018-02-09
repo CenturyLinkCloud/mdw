@@ -37,7 +37,6 @@
 4. Build the Projects (Initial, non-incremental build)
    - Window > Show View > Other > Gradle  > Gradle Tasks.
    - Expand the mdw project, click View Menu then `Show All Tasks` then expand other folder and double-click the `buildAll` task. If you do not see the Other folder, refresh the mdw project.
-   - (On Mac): Run `gradle buildAll` from the command-line instead.
    - Refresh all projects in Eclipse and (ctrl-b) to build (or let autobuild do it).  Incremental builds can be performed this way and do not require a Gradle build.
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
@@ -64,7 +63,9 @@
 
 8. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
-   - (On Mac): Right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.
+   - (On Linux and Mac): Right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.  If initially mdw-hub publishing is incomplete (missing index.html, etc):
+     - On the file system under mdw-hub/deploy, delete the directories webapps/mdw and work/Catalina/localhost/mdw.
+	 - In Eclipse Servers view, right-click on your server and select Clean from the menu.
    - Check MDWHub access:                                                
      http://localhost:8080/mdw
      

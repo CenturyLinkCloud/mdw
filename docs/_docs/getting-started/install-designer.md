@@ -12,9 +12,8 @@ Install the MDW Designer Eclipse Plugin
   java version "1.8.0_60"
   ...
   ```
-  - Eclipse Neon for JavaEE Developers:<br>
-    <https://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/neon3>  
-    (make sure you download the **eclipse-jee**... zip)
+  - Eclipse Oxygen for JavaEE Developers:<br>
+    <https://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/oxygen2>  
   
 ### Install Designer from our Update Site
   - Launch Eclipse and from the menu select Help > Install New Software...
