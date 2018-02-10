@@ -7,6 +7,12 @@ configurations {
     }
 }
 
+if ('true'.equals(findProperty('devBuild'))) {
+    subprojects {
+        tasks.withType(Javadoc).all { enabled = false }
+    }
+}
+
 subprojects {
     apply plugin: "java"
     apply plugin: "eclipse-wtp"
@@ -228,10 +234,10 @@ task buildAll(type: GradleBuild) {
     tasks = ["build"]
 }
 
-// TODO: still builds mdw-services and mdw-workflow javadocs
 task buildDev(type: GradleBuild) {
 	buildFile = "build.gradle"
 	tasks = ["build"]
+    startParameter.projectProperties = [devBuild: 'true']
 }
 
 task testAll(type: GradleBuild) {
