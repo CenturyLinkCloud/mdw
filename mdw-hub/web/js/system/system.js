@@ -11,6 +11,8 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
   }
   
   $scope.sysInfoCategories = System.get({sysInfoType: $scope.sysInfoType}, function() {
+	if($scope.sysInfoType === 'Memory')
+		return;
     $scope.defaultClassLoader = $scope.sysInfoCategories.find(function(cat) {
       return cat.name === 'System Details';
     }).sysInfos.find(function (sysInfoCat) {
