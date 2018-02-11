@@ -34,6 +34,8 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
@@ -96,6 +98,9 @@ public class RestServlet extends ServiceServlet {
                     File file = new File(f);
                     if (!file.isFile())
                         throw new ServiceException(ServiceException.NOT_FOUND, "File not found: " + file.getAbsolutePath());
+                    int max = PropertyManager.getIntegerProperty(PropertyNames.MAX_DOWNLOAD_BYTES, 104857600);
+                    if (file.length() > max)
+                        throw new ServiceException(ServiceException.NOT_ALLOWED, file.getAbsolutePath() + " exceeds max download size (" + max + "b )");
                     response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
                     try (InputStream in = new FileInputStream(file)) {
                         int read = 0;

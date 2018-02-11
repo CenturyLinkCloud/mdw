@@ -72,6 +72,7 @@ public class PropertyNames {
     public static final String FILEPANEL_ROOT_DIRS = "filepanel.root.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "filepanel.exclude.patterns";
     public static final String FILEPANEL_MASKED_LINES = "filepanel.masked.lines";
+    public static final String MAX_DOWNLOAD_BYTES = "mdw.max.download.bytes";
     public static final String MDW_PROCESS_LAUNCH_DELAY = "mdw.process.launch.delay";
     public static final String MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP = "mdw.internal.event.consume.retry.sleep";
     public static final String MDW_INTERNAL_EVENT_DEV_CLEANUP = "mdw.internal.event.dev.cleanup";

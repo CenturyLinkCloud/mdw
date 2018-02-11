@@ -66,6 +66,7 @@ public class AccessFilter implements Filter {
     private static boolean logResponseTimes;
     private static boolean logHeaders;
     private static boolean logParameters;
+    private static boolean logCookies;
 
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -147,6 +148,9 @@ public class AccessFilter implements Filter {
                 // logParameters
                 String logParamsStr = yamlLoader.get("logParameters", optionsMap);
                 logParameters = "true".equalsIgnoreCase(logParamsStr);
+                // logCookies
+                String logCookiesStr = yamlLoader.get("logCookies", optionsMap);
+                logCookies = "true".equalsIgnoreCase(logCookiesStr);
             }
 
         }
@@ -204,6 +208,8 @@ public class AccessFilter implements Filter {
                 logRequestHeaders(request);
             if (logParameters)
                 logRequestParams(request);
+            if (logCookies)
+                logCookies(request);
 
             String authUser = null;
             if (authUserHeader != null) {
@@ -288,6 +294,15 @@ public class AccessFilter implements Filter {
         while (en.hasMoreElements()) {
             String name = en.nextElement().toString();
             logger.info("   " + name + ": " + request.getParameter(name));
+        }
+    }
+
+    private void logCookies(HttpServletRequest request) {
+        logger.info("** - cookies (" + request.getRequestURL() + "):");
+        if (request.getCookies() != null) {
+            for (javax.servlet.http.Cookie cookie : request.getCookies()) {
+                logger.info("   " + cookie.getName() + ": " + cookie.getValue());
+            }
         }
     }
 

@@ -204,89 +204,63 @@ public class SystemServicesImpl implements SystemServices {
         return new SysInfoCategory("Memory Info", memoryInfo);
     }
 
-    private int _lineCount;
-    private String memoryInfo()
-    {
+    private String memoryInfo() {
         String info = "";
         StringBuffer output = new StringBuffer();
-        _lineCount = 0;
 
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
 
         MemoryUsage heapMemUsage = memBean.getHeapMemoryUsage();
         output.append("Heap Memory:\n------------\n");
-        _lineCount += 2;
         output.append(memoryUsage(heapMemUsage, 0));
-        _lineCount += 4;
 
         output.append("\n");
-        _lineCount++;
 
         MemoryUsage nonHeapMemUsage = memBean.getNonHeapMemoryUsage();
         output.append("Non-Heap Memory:\n----------------\n");
-        _lineCount += 2;
         output.append(memoryUsage(nonHeapMemUsage, 0));
-        _lineCount += 4;
 
         output.append("\n");
-        _lineCount++;
 
         output.append("Objects Pending Finalization: " + memBean.getObjectPendingFinalizationCount() + "\n\n");
-        _lineCount += 2;
 
         output.append("Memory Pools:\n-------------\n");
-        _lineCount += 2;
         List<MemoryPoolMXBean> memoryPoolBeans = ManagementFactory.getMemoryPoolMXBeans();
-        for (MemoryPoolMXBean memoryPoolBean : memoryPoolBeans)
-        {
+        for (MemoryPoolMXBean memoryPoolBean : memoryPoolBeans) {
             output.append(memoryPoolBean.getName() + " ");
             output.append("(type=" + memoryPoolBean.getType() + "):\n");
-            _lineCount++;
 
-            if (memoryPoolBean.isUsageThresholdSupported())
-            {
+            if (memoryPoolBean.isUsageThresholdSupported()) {
                 output.append("\tUsage Threshold:" + memoryPoolBean.getUsageThreshold() + " (" + (memoryPoolBean.getUsageThreshold() >> 10) + "K)\n");
                 output.append("\tUsage Threshold Count:" + memoryPoolBean.getUsageThresholdCount() + " (" + (memoryPoolBean.getUsageThresholdCount() >> 10) + "K)\n");
                 output.append("\tUsage Threshold Exceeded: " + memoryPoolBean.isUsageThresholdExceeded() + "\n");
-                _lineCount += 3;
             }
 
-            if (memoryPoolBean.isCollectionUsageThresholdSupported())
-            {
+            if (memoryPoolBean.isCollectionUsageThresholdSupported()) {
                 output.append("\tCollection Usage Threshold: " + memoryPoolBean.getCollectionUsageThreshold() + " (" + (memoryPoolBean.getCollectionUsageThreshold() >> 10) + "K)\n");
                 output.append("\tCollection Usage Threshold Count: " + memoryPoolBean.getCollectionUsageThresholdCount() + " (" + (memoryPoolBean.getCollectionUsageThresholdCount() >> 10) + "K)\n");
                 output.append("\tCollection Usage Threshold Exceeded: " + memoryPoolBean.isCollectionUsageThresholdExceeded() + "\n");
-                _lineCount += 3;
             }
 
-            if (memoryPoolBean.isUsageThresholdSupported() && memoryPoolBean.getUsage() != null)
-            {
+            if (memoryPoolBean.isUsageThresholdSupported() && memoryPoolBean.getUsage() != null) {
                 output.append("\n\tUsage:\n\t------\n").append(memoryUsage(memoryPoolBean.getUsage(), 1));
-                _lineCount += 7;
             }
-            if (memoryPoolBean.isCollectionUsageThresholdSupported() && memoryPoolBean.getCollectionUsage() != null)
-            {
+            if (memoryPoolBean.isCollectionUsageThresholdSupported() && memoryPoolBean.getCollectionUsage() != null) {
                 output.append("\n\tCollection Usage:\n\t-----------------\n").append(memoryUsage(memoryPoolBean.getCollectionUsage(), 1));
-                _lineCount += 7;
             }
-            if (memoryPoolBean.getPeakUsage() != null)
-            {
+            if (memoryPoolBean.getPeakUsage() != null) {
                 output.append("\n\tPeak Usage:\n\t-----------\n").append(memoryUsage(memoryPoolBean.getPeakUsage(), 1));
-                _lineCount += 7;
             }
 
             String[] memoryManagerNames = memoryPoolBean.getMemoryManagerNames();
-            if (memoryManagerNames != null)
-            {
+            if (memoryManagerNames != null) {
                 output.append("\n\tMemory Manager Names: ");
                 for (String memoryManagerName : memoryManagerNames)
                     output.append(memoryManagerName + " ");
                 output.append("\n");
-                _lineCount += 2;
             }
 
             output.append("\n");
-            _lineCount += 1;
         }
 
         info = output.toString() + getTopInfo();
@@ -294,8 +268,7 @@ public class SystemServicesImpl implements SystemServices {
         return info;
     }
 
-    private String memoryUsage(MemoryUsage memUsage, int indent)
-    {
+    private String memoryUsage(MemoryUsage memUsage, int indent) {
         StringBuffer output = new StringBuffer();
         for (int i = 0; i < indent; i++)
             output.append("\t");
@@ -312,10 +285,8 @@ public class SystemServicesImpl implements SystemServices {
         return output.toString();
     }
 
-    public String getTopInfo()
-    {
-        try
-        {
+    public String getTopInfo() {
+        try {
             ProcessBuilder builder = new ProcessBuilder(new String[] {"/usr/bin/top", "-b", "-n", "1"});
             builder.redirectErrorStream(true);
             Process process = builder.start();
@@ -323,20 +294,15 @@ public class SystemServicesImpl implements SystemServices {
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             StringBuffer output = new StringBuffer("\nTop Output:\n-----------\n");
-            _lineCount += 3;
             String line;
-            while ((line = br.readLine()) != null)
-            {
+            while ((line = br.readLine()) != null) {
                 output.append(line).append("\n");
-                _lineCount++;
             }
             return output.toString();
         }
-        catch (Throwable th)
-        {
+        catch (Throwable th) {
             StringWriter writer = new StringWriter();
             th.printStackTrace(new PrintWriter(writer));
-            _lineCount += 3 + writer.toString().split("\\n").length;
             return "\nError running top:\n------------------\n" + writer;
         }
     }

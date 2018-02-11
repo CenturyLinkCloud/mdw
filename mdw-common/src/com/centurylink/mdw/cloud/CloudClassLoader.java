@@ -400,7 +400,7 @@ public class CloudClassLoader extends ClassLoader {
     }
 
     public String toString() {
-        return this.getClass() + (mdwPackage == null ? "null" : mdwPackage.getLabel());
+        return this.getClass() + (mdwPackage == null ? "null" : (":" + mdwPackage.getName()));
     }
 
 }

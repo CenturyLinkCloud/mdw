@@ -146,7 +146,7 @@ function Toolbar(props) {
                     <Glyphicon glyph="refresh" />
                   </Button>
                 }
-                {!props.item.host &&
+                {
                   <Button name="download" 
                     className="fp-icon-btn" 
                     title="Download" 

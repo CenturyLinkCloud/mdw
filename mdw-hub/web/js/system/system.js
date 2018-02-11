@@ -11,14 +11,15 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
   }
   
   $scope.sysInfoCategories = System.get({sysInfoType: $scope.sysInfoType}, function() {
-	if($scope.sysInfoType === 'Memory')
-		return;
-    $scope.defaultClassLoader = $scope.sysInfoCategories.find(function(cat) {
+    var detailsCategory = $scope.defaultClassLoader = $scope.sysInfoCategories.find(function(cat) {
       return cat.name === 'System Details';
-    }).sysInfos.find(function (sysInfoCat) {
-      return sysInfoCat.name === 'Default ClassLoader';
-    }).value;
-    $scope.classLoader = $scope.defaultClassLoader;
+    });
+    if (detailsCategory) {
+      $scope.defaultClassLoader = detailsCategory.sysInfos.find(function (sysInfoCat) {
+        return sysInfoCat.name === 'Default ClassLoader';
+      }).value;
+      $scope.classLoader = $scope.defaultClassLoader;
+    }
   });
   
   $scope.packageList = Assets.get({});

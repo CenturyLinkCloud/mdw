@@ -16,9 +16,12 @@
 package com.centurylink.mdw.system.filepanel;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
@@ -75,9 +78,34 @@ public class FilePanelService extends JsonRestService {
             if (query.getFilter("path") != null) {
                 try {
                     if (!forwarded && hostParam != null && !hostParam.equals(requestHost) && !hostParam.equals(serverHost)) {
-                        // forward to appropriate server
-                        HttpHelper helper = new HttpHelper(getForwardUrl(requestUrl, hostParam));
-                        return new JSONObject(helper.get());
+                        URL url = getForwardUrl(requestUrl, hostParam);
+                        // not for this server
+                        if (query.getBooleanFilter("download")) {
+                            // special handling for remote download (#321)
+                            String tempPath =  query.getFilter("path").replace(':', '_').replace('\\', '/');
+                            File tempFile = new File(ApplicationContext.getTempDirectory() + "/" + hostParam + "/" + tempPath);
+                            if (!tempFile.getParentFile().exists() && !tempFile.getParentFile().mkdirs())
+                                throw new IOException("Unable to create temp directory: " + tempFile.getParentFile().getAbsolutePath());
+                            URLConnection urlConn = url.openConnection();
+                            try (
+                                InputStream in = urlConn.getInputStream();
+                                FileOutputStream out = new FileOutputStream(tempFile);
+                            ) {
+                                byte[] buffer = new byte[1024];
+                                int len;
+                                while ((len = in.read(buffer)) != -1) {
+                                    out.write(buffer, 0, len);
+                                }
+                            }
+                            headers.put(Listener.METAINFO_DOWNLOAD_FORMAT, Listener.DOWNLOAD_FORMAT_FILE);
+                            headers.put(Listener.METAINFO_DOWNLOAD_FILE, tempFile.getPath());
+                            return null;
+                        }
+                        else {
+                            // forward to appropriate server
+                            HttpHelper helper = new HttpHelper(url);
+                            return new JSONObject(helper.get());
+                        }
                     }
                     else {
                         java.nio.file.Path p = Paths.get(query.getFilter("path"));
