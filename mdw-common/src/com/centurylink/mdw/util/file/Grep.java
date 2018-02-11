@@ -23,6 +23,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -163,5 +164,36 @@ public class Grep {
 
         private int end;
         public int getEnd() { return end; }
+    }
+
+    /**
+     * TODO: color
+     */
+    public static void main(String[] args) throws IOException {
+        if (args.length != 2) {
+            System.err.println("Syntax: grep <pattern> <glob>");
+            System.exit(-1);
+        }
+        Grep grep = new Grep(Paths.get("."), args[1]);
+        Map<Path,List<LineMatches>> pathMatches = grep.find(args[0]);
+
+        for (Path path : pathMatches.keySet()) {
+            System.out.println(path + ":");
+            int maxIndex = pathMatches.get(path).stream().reduce((max, lineMatches) -> {
+                return max == null || lineMatches.index > max.index ? lineMatches : max;
+            }).get().index;
+            int padLen = 2 + String.valueOf(maxIndex).length();
+            for (LineMatches lineMatches : pathMatches.get(path)) {
+                String idx = String.valueOf(lineMatches.index);
+                while (idx.length() < padLen) {
+                    idx = " " + idx;
+                }
+                System.out.println(idx + ": " + lineMatches.line);
+            }
+
+        }
+        if (grep.count >= grep.limit)
+            System.err.println("(Showing first " + grep.count + " results)");
+        System.exit(grep.count);
     }
 }

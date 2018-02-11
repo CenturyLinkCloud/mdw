@@ -3,7 +3,7 @@
 var messageMod = angular.module('message', ['ngResource', 'ui.bootstrap', 'mdw']);
 
 messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw', 'util', 'HttpMessage', 'JmsMessage', 'HTTP_METHODS', 'QUEUE_NAMES',
-  											function($scope, $location, $http, mdw, util, HttpMessage, JmsMessage, HTTP_METHODS, QUEUE_NAMES) {
+                        function($scope, $location, $http, mdw, util, HttpMessage, JmsMessage, HTTP_METHODS, QUEUE_NAMES) {
   
 
   $scope.waitingForResponse = false;

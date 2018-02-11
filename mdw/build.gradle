@@ -248,8 +248,33 @@ task testAll(type: GradleBuild) {
 exclude: "com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test,com/centurylink/mdw/tests/services/InflightHandling.test"]
 }
 
+task javaNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', '**/*.java']
+    workingDir = '..'
+}
+
+task jsNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-hub/web/js/**/*.js']
+    workingDir = '..'
+}
+
+task jsxNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-workflow/assets/**/*.jsx']
+    workingDir = '..'
+}
+
+task codeFormatting {
+    dependsOn(javaNoTabs, jsNoTabs, jsxNoTabs)
+}
+
 task test {
-    dependsOn testAll
+    dependsOn(codeFormatting, testAll)
 }
 
 task archiveAssetZips {

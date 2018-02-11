@@ -180,9 +180,9 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   };
 
   $scope.findProcess = function(typed) {
-	    return $http.get(mdw.roots.services + '/services/Processes?app=mdw-admin&find=' + typed).then(function(response) {
-	      return response.data.processInstances;
-	    });
+      return $http.get(mdw.roots.services + '/services/Processes?app=mdw-admin&find=' + typed).then(function(response) {
+        return response.data.processInstances;
+      });
   };
   
   $scope.addSelectedTask = function(selTask) {
@@ -232,26 +232,26 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   };
   
   $scope.addSelectedProcess = function(selProcess) {
-	    console.log('adding Process: ' + selProcess.id + 'to solution: ' + $scope.solution.id);
-	    Solutions.create({id: $scope.solution.id, rel: 'processes', relId: selProcess.id }, Solutions.shallowCopy({}, $scope.solution),
-	        function(data) {
-	          if (data.status.code !== 0) {
-	            $scope.solution.message = data.status.message;
-	          }
-	          else {
-	            if (!$scope.solution.members.processes)
-	              $scope.solution.members.processes = [];
-	            $scope.solution.members.processes.push(selProcess);
-	            $scope.solution.members.processes.sort(function(mr1, mr2) {
-	              return mr1.id - mr2.id;
-	            });
-	          }
-	        },
-	        function(error) {
-	          $scope.solution.message = error.data.status.message;
-	        });
+      console.log('adding Process: ' + selProcess.id + 'to solution: ' + $scope.solution.id);
+      Solutions.create({id: $scope.solution.id, rel: 'processes', relId: selProcess.id }, Solutions.shallowCopy({}, $scope.solution),
+          function(data) {
+            if (data.status.code !== 0) {
+              $scope.solution.message = data.status.message;
+            }
+            else {
+              if (!$scope.solution.members.processes)
+                $scope.solution.members.processes = [];
+              $scope.solution.members.processes.push(selProcess);
+              $scope.solution.members.processes.sort(function(mr1, mr2) {
+                return mr1.id - mr2.id;
+              });
+            }
+          },
+          function(error) {
+            $scope.solution.message = error.data.status.message;
+          });
 
-	    $scope.closePopover();
+      $scope.closePopover();
   };
   
   $scope.removeTask = function(task) {
@@ -285,46 +285,46 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   };
   
   $scope.removeProcess = function(process) {
-	    Solutions.remove({id: $scope.solution.id, rel: 'processes', relId: process.id }, Solutions.shallowCopy({}, $scope.solution),
-	        function(data) {
-	          if (data.status.code !== 0) {
-	            $scope.solution.message = data.status.message;
-	          }
-	          else {
-	            $scope.solution.members.processes.splice($scope.solution.members.processes.indexOf(process), 1);
-	          }
-	        },
-	        function(error) {
-	          $scope.solution.message = error.data.status.message;
-	        });
+      Solutions.remove({id: $scope.solution.id, rel: 'processes', relId: process.id }, Solutions.shallowCopy({}, $scope.solution),
+          function(data) {
+            if (data.status.code !== 0) {
+              $scope.solution.message = data.status.message;
+            }
+            else {
+              $scope.solution.members.processes.splice($scope.solution.members.processes.indexOf(process), 1);
+            }
+          },
+          function(error) {
+            $scope.solution.message = error.data.status.message;
+          });
   };
   $scope.setAdvance = function(advance) {
-	    $scope.advance = advance;
+      $scope.advance = advance;
   };
   $scope.attribute = {
-	      name: '', 
-	      value: ''
-	  };
+        name: '', 
+        value: ''
+    };
   $scope.addAttribute = function () {
-	    if ($scope.solution.values === undefined) {
-	    	$scope.solution.values = {};
-	    }
+      if ($scope.solution.values === undefined) {
+        $scope.solution.values = {};
+      }
 
-	  $scope.solution.values[$scope.attribute.name] = $scope.attribute.value;
-	  
-	  $scope.attribute = {
-	      name: '', 
-	      value: ''
-	  };
+    $scope.solution.values[$scope.attribute.name] = $scope.attribute.value;
+    
+    $scope.attribute = {
+        name: '', 
+        value: ''
+    };
   };
   $scope.del = function(attrName){
-		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
-		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
-			if (res) {
-				delete  $scope.solution.values[attrName];
-			   console.log('deleted attribute ' + attrName);
-			}
-		});
+    var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+    uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+      if (res) {
+        delete  $scope.solution.values[attrName];
+         console.log('deleted attribute ' + attrName);
+      }
+    });
   };  
 }]);
 

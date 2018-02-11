@@ -21,15 +21,15 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     return $scope.model.activityList.getSelectedItems();
   };
   
-  $scope.getSelectedActionableActivities = function(selectedRawActivities) {	   
-	  var selectedActivities = [];			  
-	  if (selectedRawActivities) {
-	  selectedRawActivities.forEach(function(activity) {
-		  if ($scope.canAction(activity, $scope.action))
-			  selectedActivities.push(activity);
-		  });
-	  }
-	  return selectedActivities;
+  $scope.getSelectedActionableActivities = function(selectedRawActivities) {     
+    var selectedActivities = [];        
+    if (selectedRawActivities) {
+    selectedRawActivities.forEach(function(activity) {
+      if ($scope.canAction(activity, $scope.action))
+        selectedActivities.push(activity);
+      });
+    }
+    return selectedActivities;
   };
   
   $scope.confirmAction = function(action) {
@@ -40,19 +40,19 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     // Filter out selected activities that are not actionable
     $scope.selectedActivities = $scope.getSelectedActionableActivities(selectedRawActivities);
     if ($scope.selectedActivities && $scope.selectedActivities.length > 0) {
-    	var modalInstance = $uibModal.open({
-    	      scope: $scope,
-    	      templateUrl: 'workflow/activityActionConfirm.html',
-    	      controller: 'ActivitiesController',
-    	      size: 'sm'
-    	    });    
+      var modalInstance = $uibModal.open({
+            scope: $scope,
+            templateUrl: 'workflow/activityActionConfirm.html',
+            controller: 'ActivitiesController',
+            size: 'sm'
+          });    
     }
     else {
-    	if (selectedRawActivities && selectedRawActivities.length > 0) 
-    		mdw.messages = "None of the selected activities can be actioned based on their current status and selected action";   	
-    	else 
-    		mdw.messages = 'Please select Activity(s) to perform action on.';
-    }	
+      if (selectedRawActivities && selectedRawActivities.length > 0) 
+        mdw.messages = "None of the selected activities can be actioned based on their current status and selected action";     
+      else 
+        mdw.messages = 'Please select Activity(s) to perform action on.';
+    }  
   };
 
   $scope.performActionOnActivities = function(action) {
@@ -63,7 +63,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     if (selectedActivities && selectedActivities.length > 0) {
       console.log('Performing action: ' + $scope.action + ' on ' + selectedActivities.length + ' selected activitie(s)');
       if (selectedActivities.length !== selectedRawActivities.length) 
-    	  mdw.messages = "Some of the selected activities could not be actioned based on their current status and selected action";
+        mdw.messages = "Some of the selected activities could not be actioned based on their current status and selected action";
       
       var instanceIds = [];
       selectedActivities.forEach(function(activity) {
@@ -200,14 +200,14 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   };
   
   $scope.canAction = function(activity, action) {
-	   if (action == 'Retry' && activity.status != 'Failed' && activity.status != 'Completed' && activity.status != 'Cancelled') 
-		   return false;
-	   else
-		   return true;
+     if (action == 'Retry' && activity.status != 'Failed' && activity.status != 'Completed' && activity.status != 'Cancelled') 
+       return false;
+     else
+       return true;
   };
 
   $scope.getSelectedActivitiesMessage = function() {
-	var selectedActivities = $scope.$parent.selectedActivities;
+  var selectedActivities = $scope.$parent.selectedActivities;
     if (selectedActivities && selectedActivities.length > 0) {        
       var base = 'Do you want to perform the selected action on ';
       if (selectedActivities.length == 1)
@@ -281,10 +281,10 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Proc
    };
    
    $scope.canAction = function(action) {
-	   if (action == 'Retry' && $scope.activity.status != 'Failed' && $scope.activity.status != 'Completed' && $scope.activity.status != 'Cancelled') 
-		   return false;
-	   else
-		   return true;
+     if (action == 'Retry' && $scope.activity.status != 'Failed' && $scope.activity.status != 'Completed' && $scope.activity.status != 'Cancelled') 
+       return false;
+     else
+       return true;
    };
    
 }]);

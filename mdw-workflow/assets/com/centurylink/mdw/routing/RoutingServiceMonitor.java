@@ -142,14 +142,14 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         for (RequestRoutingStrategy routingStrategy : MdwServiceRegistry.getInstance().getRequestRoutingStrategies()) {
             URL destination = routingStrategy.getDestination(request, headers);
             if (destination != null) {
-            	// Only return a destination if it is not itself (identical call) - Avoid infinite loop
+                // Only return a destination if it is not itself (identical call) - Avoid infinite loop
          //       int queryIdx = destination.toString().indexOf("?");
-            	URL origRequestUrl = null;
+                URL origRequestUrl = null;
                 try {
                     origRequestUrl = new URL(headers.get(Listener.METAINFO_REQUEST_URL));
                 }
                 catch (MalformedURLException e) {
-                	logger.severeException("Malformed original RequestURL", e);
+                    logger.severeException("Malformed original RequestURL", e);
                 }
                 String origHost = origRequestUrl.getHost().indexOf(".") > 0 ? origRequestUrl.getHost().substring(0, origRequestUrl.getHost().indexOf(".")) : origRequestUrl.getHost();
                 int origPort = origRequestUrl.getPort() == 80 || origRequestUrl.getPort() == 443 ? -1 : origRequestUrl.getPort();
@@ -162,7 +162,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
                     return destination;
 
         /*        if (origRequestUrl.lastIndexOf(":") < 8 && destination.toString().lastIndexOf(":") > 7) {
-                	origRequestUrl = origRequestUrl.substring(0, origRequestUrl.indexOf("/", 9)) + ":" + origRequestUrl.substring(origRequestUrl.indexOf("/", 9));
+                    origRequestUrl = origRequestUrl.substring(0, origRequestUrl.indexOf("/", 9)) + ":" + origRequestUrl.substring(origRequestUrl.indexOf("/", 9));
                 }
                 if (queryIdx > 0 && !StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING))) {
                     origRequestUrl = origRequestUrl + "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
@@ -181,7 +181,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         return PropertyManager.getBooleanProperty(PropertyNames.MDW_ROUTING_REQUESTS_ENABLED, false) &&
                !ApplicationContext.getRoutingServerList().isEmpty() &&
                (ApplicationContext.getRoutingServerList().contains(ApplicationContext.getServer()) ||
-            	 (ApplicationContext.isPaaS() && ApplicationContext.getRoutingServerList().contains(ApplicationContext.getMasterServer()))) &&
+                 (ApplicationContext.isPaaS() && ApplicationContext.getRoutingServerList().contains(ApplicationContext.getMasterServer()))) &&
                !ApplicationContext.getServerList().isEmpty();
     }
 }

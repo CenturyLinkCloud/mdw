@@ -332,8 +332,8 @@ public class ListenerHelper {
             return response.getContent();
         }
         finally {
-        	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
-        		ApplicationContext.resetContextClassLoader();
+            if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+                ApplicationContext.resetContextClassLoader();
         }
 
         // Parse the incoming message
@@ -458,7 +458,7 @@ public class ListenerHelper {
             return response.getContent();
         }
         finally {
-        	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+            if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
                 ApplicationContext.resetContextClassLoader();
         }
     }

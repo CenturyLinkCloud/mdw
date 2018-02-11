@@ -230,7 +230,7 @@ public abstract class BaseActivity implements GeneralActivity {
             }
             finally
             {
-            	if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+                if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
                     ApplicationContext.resetContextClassLoader();
             }
         }

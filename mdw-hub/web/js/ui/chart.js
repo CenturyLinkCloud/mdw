@@ -5,27 +5,26 @@ var chartMod = angular.module('mdwChart', ['mdw']);
 
 chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD' ,
                                              function($scope, $cookieStore, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
-    
 
   $scope.init = function() {
-  $scope.spans = ['Week', 'Month']; 
-  $scope.span = 'Week';
-  $scope.timefilters = ['Milliseconds','Seconds','Mins','Hours', 'Days'];
-  $scope.timefilter = '';
-  $scope.days = 7;
+    $scope.spans = ['Week', 'Month']; 
+    $scope.span = 'Week';
+    $scope.timefilters = ['Milliseconds','Seconds','Mins','Hours', 'Days'];
+    $scope.timefilter = '';
+    $scope.days = 7;
+        
+      // TODO hardcoded
+    $scope.initialSelect = 5;
       
-    // TODO hardcoded
-  $scope.initialSelect = 5;
-    
-  $scope.name='name';
-  $scope.chartLabels=[];
-    
+    $scope.name='name';
+    $scope.chartLabels=[];
+      
     // TODO: hardcoded
     $scope.max = 50;
     
     // TODO: hardcoded
     $scope.showTotal = true;
-
+  
     $scope.tops = []; // (sorted by most instances)
     $scope.selected = [];
     $scope.breakdowns = [];
@@ -298,32 +297,32 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
             var ct = 0;
             var dateCounts = $scope.dateObjs[date];// horizondal  dates
             
-	       if (dateCounts) {
+         if (dateCounts) {
 
-		    for (var l = 0; l < dateCounts.length; l++) {
-		      if (dateCounts[l][$scope.selField] == sel){
+        for (var l = 0; l < dateCounts.length; l++) {
+          if (dateCounts[l][$scope.selField] == sel){
 
-			  if((breakdown.throughput).indexOf("completionTime=true") > 0) {                		 
-				  if(dateCounts[l].meanCompletionTime > bigNumer){
-					  bigNumer=dateCounts[l].meanCompletionTime; 
-				  }
+        if((breakdown.throughput).indexOf("completionTime=true") > 0) {                     
+          if(dateCounts[l].meanCompletionTime > bigNumer){
+            bigNumer=dateCounts[l].meanCompletionTime; 
+          }
 
-			  }
-		      }
-		    }
-		}       
-	                         
-		 if(bigNumer/1000/60/60/24 > 1 && ($scope.timefilter=== "")){
-			 $scope.timefilter= 'Days';   
-		 } else if(bigNumer/1000/60/60> 1 && ($scope.timefilter=== "")){
-			 $scope.timefilter= 'Hours';   
-		 } else if(bigNumer/1000/60 > 1 && ($scope.timefilter=== "")){ //one min
-			$scope.timefilter= 'Mins';            	
-		 } else if(bigNumer/1000 > 1  && ($scope.timefilter=== "")){
-			 $scope.Seconds= 'Seconds';   
-		 } else{ 
-			$scope.Milliseconds= 'Milliseconds';            	
-		 }
+        }
+          }
+        }
+    }       
+                           
+     if(bigNumer/1000/60/60/24 > 1 && ($scope.timefilter=== "")){
+       $scope.timefilter= 'Days';   
+     } else if(bigNumer/1000/60/60> 1 && ($scope.timefilter=== "")){
+       $scope.timefilter= 'Hours';   
+     } else if(bigNumer/1000/60 > 1 && ($scope.timefilter=== "")){ //one min
+      $scope.timefilter= 'Mins';              
+     } else if(bigNumer/1000 > 1  && ($scope.timefilter=== "")){
+       $scope.Seconds= 'Seconds';   
+     } else{ 
+      $scope.Milliseconds= 'Milliseconds';              
+     }
              
             if (dateCounts) {
               for (var k = 0; k < dateCounts.length; k++) {
@@ -331,16 +330,16 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
                     if((breakdown.throughput).indexOf("completionTime=true") == -1)  
                       ct = dateCounts[k].count;
                   else{ //Vertical seconds
-                	  if($scope.timefilter=== 'Milliseconds')
-                		  ct = dateCounts[k].meanCompletionTime;
-                	  else if ($scope.timefilter=== 'Seconds')
-                		  ct = dateCounts[k].meanCompletionTime/1000;
-                	  else if ($scope.timefilter=== 'Mins')
-                		  ct = dateCounts[k].meanCompletionTime/1000/60;
-                	  else if ($scope.timefilter=== 'Hours')  
-                		  ct = dateCounts[k].meanCompletionTime/1000/60/60;
-                	  else if ($scope.timefilter=== 'Days')
-                		  ct = dateCounts[k].meanCompletionTime/1000/60/60/24;                	
+                    if($scope.timefilter=== 'Milliseconds')
+                      ct = dateCounts[k].meanCompletionTime;
+                    else if ($scope.timefilter=== 'Seconds')
+                      ct = dateCounts[k].meanCompletionTime/1000;
+                    else if ($scope.timefilter=== 'Mins')
+                      ct = dateCounts[k].meanCompletionTime/1000/60;
+                    else if ($scope.timefilter=== 'Hours')  
+                      ct = dateCounts[k].meanCompletionTime/1000/60/60;
+                    else if ($scope.timefilter=== 'Days')
+                      ct = dateCounts[k].meanCompletionTime/1000/60/60/24;                  
                      }                   
                   seriesTotal += ct;
                   break;
@@ -368,50 +367,50 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
           var dateCounts = $scope.dateObjs[date];
           
           if (dateCounts) {
-	                	
-	    for (var m = 0; m < dateCounts.length; m++) {
-	      if (dateCounts[m][$scope.selField] == sel){
+                    
+      for (var m = 0; m < dateCounts.length; m++) {
+        if (dateCounts[m][$scope.selField] == sel){
 
-		  if((breakdown.throughput).indexOf("completionTime=true") > 0) {                		 
-			  if(dateCounts[m].meanCompletionTime > bigNumer){
-				  bigNumer=dateCounts[m].meanCompletionTime; 
-			  }
+      if((breakdown.throughput).indexOf("completionTime=true") > 0) {                     
+        if(dateCounts[m].meanCompletionTime > bigNumer){
+          bigNumer=dateCounts[m].meanCompletionTime; 
+        }
 
-		  }
-	      }
-	    }
-	  }
-	                
-	                         
-	 if(bigNumer/1000/60/60/24 > 1 && ($scope.timefilter=== "")){
-		 $scope.timefilter= 'Days';   
-	 } else if(bigNumer/1000/60/60> 1 && ($scope.timefilter=== "")){
-		 $scope.timefilter= 'Hours';   
-	 } else if(bigNumer/1000/60 > 1 && ($scope.timefilter=== "")){ //one min
-		$scope.timefilter= 'Mins';            	
-	 } else if(bigNumer/1000 > 1  && ($scope.timefilter==="")){
-		 $scope.Seconds= 'Seconds';   
-	 } else{ 
-		$scope.Milliseconds= 'Milliseconds';            	
+      }
+        }
+      }
+    }
+                  
+                           
+   if(bigNumer/1000/60/60/24 > 1 && ($scope.timefilter=== "")){
+     $scope.timefilter= 'Days';   
+   } else if(bigNumer/1000/60/60> 1 && ($scope.timefilter=== "")){
+     $scope.timefilter= 'Hours';   
+   } else if(bigNumer/1000/60 > 1 && ($scope.timefilter=== "")){ //one min
+    $scope.timefilter= 'Mins';              
+   } else if(bigNumer/1000 > 1  && ($scope.timefilter==="")){
+     $scope.Seconds= 'Seconds';   
+   } else{ 
+    $scope.Milliseconds= 'Milliseconds';              
          }
                
           if (dateCounts) {
            for (var k = 0; k < dateCounts.length; k++) {
               if (dateCounts[k][$scope.selField] == sel) {
-		if((breakdown.throughput).indexOf("completionTime=true") == -1)
-				ct = dateCounts[k].count;
-		else{ //Vertical seconds
-			  if($scope.timefilter=== 'Milliseconds')
-				  ct = dateCounts[k].meanCompletionTime;
-			  else if ($scope.timefilter=== 'Seconds')
-				  ct = dateCounts[k].meanCompletionTime/1000;
-			  else if ($scope.timefilter=== 'Mins')
-				  ct = dateCounts[k].meanCompletionTime/1000/60;
-			  else if ($scope.timefilter=== 'Hours')  
-				  ct = dateCounts[k].meanCompletionTime/1000/60/60;
-			  else if ($scope.timefilter=== 'Days')
-				  ct = dateCounts[k].meanCompletionTime/1000/60/60/24;                	
-	       }
+    if((breakdown.throughput).indexOf("completionTime=true") == -1)
+        ct = dateCounts[k].count;
+    else{ //Vertical seconds
+        if($scope.timefilter=== 'Milliseconds')
+          ct = dateCounts[k].meanCompletionTime;
+        else if ($scope.timefilter=== 'Seconds')
+          ct = dateCounts[k].meanCompletionTime/1000;
+        else if ($scope.timefilter=== 'Mins')
+          ct = dateCounts[k].meanCompletionTime/1000/60;
+        else if ($scope.timefilter=== 'Hours')  
+          ct = dateCounts[k].meanCompletionTime/1000/60/60;
+        else if ($scope.timefilter=== 'Days')
+          ct = dateCounts[k].meanCompletionTime/1000/60/60/24;                  
+         }
                 seriesTotal += ct; 
                 break;
               }
@@ -496,10 +495,10 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
   };
 
   $scope.setTimefilter = function(timefilter) {
-    $scope.timefilter = timefilter;	    
+    $scope.timefilter = timefilter;      
     $scope.updateRange();
   };
-	   
+     
   $scope.setBreakdown = function(breakdown) {   
     $scope.breakdown = breakdown;
     if ($scope.breakdownConfig[breakdown]) {
@@ -542,18 +541,18 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       if (top.count){
         if((breakdown.throughput).indexOf("completionTime=true") == -1)  
           label += ' (' + top.count + ')';
-        else{    		 
-	  if($scope.timefilter== 'Milliseconds')
-		  label += ' (' + top.meanCompletionTime + ')';
-	  else if ($scope.timefilter== 'Seconds')        		
-	      label += ' (' + top.meanCompletionTime/1000 + ')';
-	  else if ($scope.timefilter== 'Mins')
-		  label += ' (' + top.meanCompletionTime/1000/60 + ')';        		  
-	  else if ($scope.timefilter== 'Hours')  
-		  label += ' (' + top.meanCompletionTime/1000/60/60 + ')';        		  
-	  else if ($scope.timefilter== 'Days')
-		  label += ' (' + top.meanCompletionTime/1000/60/60/24 + ')';    		     
-    	  }
+        else{         
+    if($scope.timefilter== 'Milliseconds')
+      label += ' (' + top.meanCompletionTime + ')';
+    else if ($scope.timefilter== 'Seconds')            
+        label += ' (' + top.meanCompletionTime/1000 + ')';
+    else if ($scope.timefilter== 'Mins')
+      label += ' (' + top.meanCompletionTime/1000/60 + ')';              
+    else if ($scope.timefilter== 'Hours')  
+      label += ' (' + top.meanCompletionTime/1000/60/60 + ')';              
+    else if ($scope.timefilter== 'Days')
+      label += ' (' + top.meanCompletionTime/1000/60/60/24 + ')';             
+        }
     } else if (seriesTotal && typeof top.seriesTotal != 'undefined')
         label += ' (' + top.seriesTotal + ')';
       return label;

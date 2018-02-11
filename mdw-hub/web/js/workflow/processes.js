@@ -12,7 +12,7 @@ processMod.controller('ProcessesController',
   $scope.selectedChart=$cookieStore.get('selectedChart');
   $scope.processFilter = $cookieStore.get('processFilter');
   if (!$scope.processFilter) {
-	    $scope.processFilter = { 
+      $scope.processFilter = { 
         master: true,
         status: '[Active]',
         sort: 'startDate',
@@ -25,7 +25,7 @@ processMod.controller('ProcessesController',
     $scope.processFilter.masterRequestId = null;
     // fix date format stored in cookieStore
     if ($scope.processFilter.startDate)
-    	$scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
+      $scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
     $cookieStore.remove('selectedChart');
   }
   
@@ -33,14 +33,14 @@ processMod.controller('ProcessesController',
   $scope.allStatuses = ['[Active]','[Any]'].concat(PROCESS_STATUSES);
   
   $scope.setSelectedChart=function(selChart) {
-	  $scope.selectedChart= selChart;
-	  $cookieStore.put('selectedChart',$scope.selectedChart);
-	  if (selChart ==='List') {
-		  window.location.href='#/workflow/processes';
-	  }
-	  else {	   
-	    window.location.href='#/dashboard/processes?chart='+selChart;
-	  }    
+    $scope.selectedChart= selChart;
+    $cookieStore.put('selectedChart',$scope.selectedChart);
+    if (selChart ==='List') {
+      window.location.href='#/workflow/processes';
+    }
+    else {     
+      window.location.href='#/dashboard/processes?chart='+selChart;
+    }    
   };
   
   // preselected procDef
@@ -52,8 +52,8 @@ processMod.controller('ProcessesController',
   }
   
   $scope.$on('page-retrieved', function(event, processList) {
-	$cookieStore.remove('selectedChart');
-	// start date and end date, adjusted for db offset
+  $cookieStore.remove('selectedChart');
+    // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
     processList.processInstances.forEach(function(processInstance) {
       processInstance.startDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.startDate), dbDate));
