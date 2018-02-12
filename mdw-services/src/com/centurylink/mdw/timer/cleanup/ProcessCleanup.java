@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
@@ -205,8 +206,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                 }
             }
             else {
-                db.openConnection();
-                conn = db.getConnection();
+                conn = db.openConnection();
+                conn.setAutoCommit(false);
             }
 
             byte[] bytes = FileHelper.readFromResourceStream(is);
@@ -235,10 +236,55 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                             + WorkStatus.STATUS_COMPLETED.toString() + ","
                             + WorkStatus.STATUS_CANCELLED.toString()); // process instance statuses
             callStmt.setInt(6, commitInterval);
-            callStmt.execute();
+            boolean isResultSet = callStmt.execute();
             if (db != null && !db.isMySQL())
                 show_output(db);
-
+            else if (db != null && db.isMySQL()) {
+                ResultSet rs = null;
+                int updateCount = -1;
+                printMsg = "";
+                if (isResultSet) {
+                    rs = callStmt.getResultSet();
+                    printMsg = "DB Cleanup Script Output:";
+                }
+                else {
+                    updateCount = callStmt.getUpdateCount();
+                    printMsg = "DB Cleanup Script Output is missing";
+                }
+                if (null == logger)
+                    System.out.println(printMsg);
+                else
+                    logger.info(printMsg);
+                while (isResultSet || updateCount >= 0) {
+                    if (rs != null) {
+                        int i = 1;  // Column index
+                        while (rs.next()) {
+                           try {
+                               while (true) {
+                                   printMsg = rs.getObject(i).toString();
+                                   if (i != 1)
+                                       printMsg = " | " + printMsg;
+                                   if (null == logger)
+                                       System.out.println(printMsg);
+                                   else
+                                       logger.info(printMsg);
+                                   i++;
+                               }
+                           } catch (SQLException e) {/* Not that many columns in row */ }
+                       }
+                       rs.close();
+                    }
+                    else if (updateCount >=0) {
+                        if (null == logger)
+                            System.out.println("Update count: " + updateCount);
+                        else
+                            logger.info("Update count: " + updateCount);
+                    }
+                    isResultSet = callStmt.getMoreResults();
+                    rs = isResultSet ? callStmt.getResultSet() : null;
+                    updateCount = isResultSet ? -1 : callStmt.getUpdateCount();
+               }
+            }
         }
         catch (Exception e) {
             printMsg = e.getMessage();
