@@ -74,7 +74,7 @@ public class ApplicationContext {
     private static JmsProvider jmsProvider;
     private static ThreadPoolProvider threadPoolProvider;
 
-    private static String appName;
+    private static String appId;
     private static String appVersion;
     private static String mdwVersion;
     private static String mdwBuildTimestamp;
@@ -254,15 +254,15 @@ public class ApplicationContext {
     /**
      * Returns the application name
      */
-    public static String getApplicationName(){
-        if (appName != null)
-            return appName;
-        appName = PropertyManager.getProperty(PropertyNames.APPLICATION_NAME);
-        if (appName == null) // try legacy property
-            appName = PropertyManager.getProperty("MDWFramework.ApplicationDetails/ApplicationName");
-        if (appName == null)
+    public static String getAppId() {
+        if (appId != null)
+            return appId;
+        appId = PropertyManager.getProperty(PropertyNames.MDW_APP_ID);
+        if (appId == null) // try legacy property
+            appId = PropertyManager.getProperty("mdw.application.name");
+        if (appId == null)
             return "Unknown";
-        return appName;
+        return appId;
     }
 
     /**
@@ -329,11 +329,11 @@ public class ApplicationContext {
     /**
      * Returns the application version read from the build version file
      */
-    public static String getApplicationVersion() {
+    public static String getAppVersion() {
         if (appVersion != null)
             return appVersion;
 
-        String appName = getApplicationName();
+        String appName = getAppId();
         if ("mdw".equalsIgnoreCase(appName)) {
             appVersion = getMdwVersion();
         }
@@ -773,5 +773,13 @@ public class ApplicationContext {
             websocketUrl = null;
         }
         return websocketUrl;
+    }
+
+    private static String authMethod;
+    public static String getAuthMethod() {
+        return authMethod;
+    }
+    public static void setAuthMethod(String method) {
+        authMethod = method;
     }
  }

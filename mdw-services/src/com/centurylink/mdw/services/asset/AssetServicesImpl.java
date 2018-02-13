@@ -487,7 +487,7 @@ public class AssetServicesImpl implements AssetServices {
             if (pkgDir == null) {
                 pkgDir = getGhostPackage(pkgName);
                 if (pkgDir == null)
-                    throw new DataAccessException("Missing package metadata directory: " + pkgDir);
+                    return null;
 
                 // ghost package contains ghost assets
                 AssetInfo asset = getGhostAsset(pkgDir, assetName);

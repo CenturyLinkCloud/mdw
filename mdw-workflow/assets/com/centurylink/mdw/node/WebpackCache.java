@@ -79,7 +79,9 @@ public class WebpackCache implements PreloadableCache {
                 String preloadedJsx = params.get("PreloadedJsx");
                 if (preloadedJsx != null && preloadedJsx.length() > 0) {
                     for (String jsxAssetPath : preloadedJsx.split(",")) {
-                        getCompiled(ServiceLocator.getAssetServices().getAsset(jsxAssetPath));
+                        AssetInfo asset = ServiceLocator.getAssetServices().getAsset(jsxAssetPath);
+                        if (asset != null)
+                            getCompiled(asset);
                     }
                 }
             }

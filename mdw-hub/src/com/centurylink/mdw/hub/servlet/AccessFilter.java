@@ -100,6 +100,7 @@ public class AccessFilter implements Filter {
             if (authMethodVal != null)
                 authMethod = authMethodVal;
             WebAppContext.getMdw().setAuthMethod(authMethod);
+            ApplicationContext.setAuthMethod(authMethod);
 
             // authUserHeader
             authUserHeader = yamlLoader.get("authUserHeader", topMap);

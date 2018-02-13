@@ -79,7 +79,7 @@ public class PropertyNames {
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
     public static final String MDW_ATTACHMENTS_DIR = "mdw.attachments.dir";
 
-    public static final String APPLICATION_NAME = "mdw.application.name";
+    public static final String MDW_APP_ID = "mdw.app.id";
     public static final String MDW_WAR_NAME = "mdw.war.name";
     public static final String MDW_SERVICES_URL = "mdw.services.url";
     public static final String ACTIVITY_RESUME_DELAY = "mdw.activity.resume.delay";

@@ -42,7 +42,6 @@ import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.action.InstanceLevelActionHandler;
-import com.centurylink.mdw.service.resource.AppSummary;
 import com.centurylink.mdw.service.rest.Users;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -77,12 +76,7 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
 
         try {
             // compatibility - START
-            if ("GetAppSummary".equals(path)) {
-                service = new AppSummary();
-                format = Format.xml;
-                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
-            }
-            else if ("User".equals(path)) {
+            if ("User".equals(path)) {
                 service = new Users();
             }
 
