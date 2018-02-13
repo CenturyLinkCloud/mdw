@@ -53,7 +53,7 @@ public class LoginServlet extends HttpServlet {
         request.getSession().removeAttribute("authenticatedUser");
         String authError = (String) request.getSession().getAttribute(MDW_AUTH_MSG);
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("ct".equals(authMethod) || ("af".equals(authMethod))){
+        if ("ct".equals(authMethod) || "af".equals(authMethod) || "mdw".equals(authMethod)) {
             if ((authError != null)) {
                 response.setContentType("text/html");
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
@@ -126,9 +126,48 @@ public class LoginServlet extends HttpServlet {
             }
 
         }
-/*        else if ("ct".equals(authMethod)) {
-            response.sendRedirect(WebAppContext.getMdw().getHubRoot());
-        }*/
+        else if ("mdw".equals(authMethod)) {
+            String user = request.getParameter("user");
+            String password = request.getParameter("password");
+            if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
+                try {
+                    Authenticator authenticator = new OAuthAuthenticator(
+                            WebAppContext.getMdw().getAuthTokenLoc());
+                    authenticator.authenticate(user, password);
+                    logger.info("User logged in: " + user);
+                    AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);
+                    if (authUser == null) {
+                        if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser()) {
+                            throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(),
+                                    AUTHORIZATION_FAILED_MSG);
+                        }
+                    }
+                    else {
+                        request.getSession().setAttribute("authenticatedUser", authUser);
+                        response.sendRedirect(WebAppContext.getMdw().getHubRoot());
+                    }
+
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                    if (ex instanceof AuthenticationException) {
+                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
+                    }
+                    else if (ex instanceof MdwSecurityException
+                            && ((MdwSecurityException) ex).getCode() == 401) {
+                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHORIZATION_FAILED_MSG);
+                    }
+                    else {
+                        request.getSession().setAttribute(MDW_AUTH_MSG, SECURITY_ERR_MSG);
+                    }
+                    response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                }
+            }
+            else {
+                request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
+                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+            }
+        }
         else {
             super.doPost(request, response);
         }
