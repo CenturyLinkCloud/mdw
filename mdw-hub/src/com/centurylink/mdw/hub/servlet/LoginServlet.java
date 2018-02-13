@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
-import com.centurylink.mdw.auth.OAuthAuthenticator;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
@@ -53,7 +52,7 @@ public class LoginServlet extends HttpServlet {
         request.getSession().removeAttribute("authenticatedUser");
         String authError = (String) request.getSession().getAttribute(MDW_AUTH_MSG);
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("ct".equals(authMethod) || "af".equals(authMethod) || "mdw".equals(authMethod)) {
+        if ("ct".equals(authMethod) || "mdw".equals(authMethod)) {
             if ((authError != null)) {
                 response.setContentType("text/html");
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
@@ -83,56 +82,12 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("af".equals(authMethod)) {
+        if ("mdw".equals(authMethod)) {
             String user = request.getParameter("user");
             String password = request.getParameter("password");
             if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
                 try {
-                    Authenticator authenticator = new OAuthAuthenticator(
-                            WebAppContext.getMdw().getAuthTokenLoc());
-                    authenticator.authenticate(user, password);
-                    logger.info("User logged in: " + user);
-                    AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);
-                    if (authUser == null) {
-                        if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser()) {
-                            throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(),
-                                    AUTHORIZATION_FAILED_MSG);
-                        }
-                    }
-                    else {
-                        request.getSession().setAttribute("authenticatedUser", authUser);
-                        response.sendRedirect(WebAppContext.getMdw().getHubRoot());
-                    }
-
-                }
-                catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                    if (ex instanceof AuthenticationException) {
-                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
-                    }
-                    else if (ex instanceof MdwSecurityException
-                            && ((MdwSecurityException) ex).getCode() == 401) {
-                        request.getSession().setAttribute(MDW_AUTH_MSG, AUTHORIZATION_FAILED_MSG);
-                    }
-                    else {
-                        request.getSession().setAttribute(MDW_AUTH_MSG, SECURITY_ERR_MSG);
-                    }
-                    response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
-                }
-            }
-            else {
-                request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
-                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
-            }
-
-        }
-        else if ("mdw".equals(authMethod)) {
-            String user = request.getParameter("user");
-            String password = request.getParameter("password");
-            if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
-                try {
-                    Authenticator authenticator = new OAuthAuthenticator(
-                            WebAppContext.getMdw().getAuthTokenLoc());
+                    Authenticator authenticator = null; // TODO MdwAuthenticator
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
                     AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);

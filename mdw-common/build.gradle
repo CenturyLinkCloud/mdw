@@ -86,12 +86,6 @@ dependencies {
     compile group: "org.springframework.amqp", name: "spring-rabbit", version: "1.4.4.RELEASE"
     compile group: "org.springframework.retry", name: "spring-retry", version: "1.0.2.RELEASE"
 
-    // oauth
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.common", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.client", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.resourceserver", version: "1.0.1"
-    compile group: "org.apache.oltu.oauth2", name: "org.apache.oltu.oauth2.authzserver", version: "1.0.1"
-    
     // doc store
     compile group: "org.mongodb", name: "mongodb-driver", version: "3.3.0"
     compile group: "org.mongodb", name: "mongodb-driver-core", version: "3.3.0"

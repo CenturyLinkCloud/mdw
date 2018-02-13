@@ -29,9 +29,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
-import com.centurylink.mdw.auth.OAuthAuthenticator;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.AuthConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.listener.Listener;
@@ -229,8 +227,8 @@ public class AuthUtils {
             String pass = creds[1];
 
             try {
-                if (AuthConstants.getOAuthTokenLocation() != null) {
-                    oauthAuthenticate(user, pass);
+                if (ApplicationContext.getAuthMethod().equals("mdw")) {
+                    // TODO
                 }
                 else {
                     ldapAuthenticate(user, pass);
@@ -276,10 +274,6 @@ public class AuthUtils {
             baseDn = PropertyManager.getProperty("LDAP/BaseDN");
         LdapAuthenticator auth = new LdapAuthenticator(ldapUrl, baseDn);
         auth.authenticate(user, password);
-    }
-
-    public static void oauthAuthenticate(String user, String password) throws MdwSecurityException {
-        new OAuthAuthenticator().authenticate(user, password);
     }
 
 }

@@ -54,7 +54,7 @@ public class AccessFilter implements Filter {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static List<InetAddress> upstreamHosts; // null means not restricted
-    private static String authMethod = "oauth";
+    private static String authMethod = "mdw";
     private static String authUserHeader;
     private static String forwardingHeader;  // x-forwarded-for
     private static String authTokenLoc;
