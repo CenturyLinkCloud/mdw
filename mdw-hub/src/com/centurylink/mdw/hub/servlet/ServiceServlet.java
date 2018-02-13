@@ -134,8 +134,14 @@ public abstract class ServiceServlet extends HttpServlet {
     protected void authenticate(HttpServletRequest request, Map<String,String> headers, String payload) throws ServiceException {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
         if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase())) {
-            // perform http basic auth, which populates the auth user header
-            AuthUtils.authenticate(AuthUtils.HTTP_BASIC_AUTHENTICATION, headers);
+            String authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
+            if (authHeader == null)
+                authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
+
+            if (authHeader != null && authHeader.startsWith("Token"))
+                AuthUtils.authenticate(AuthUtils.MDW_AUTH_TOKEN, headers);
+            else
+                AuthUtils.authenticate(AuthUtils.HTTP_BASIC_AUTHENTICATION, headers);
         }
         else {
             // check for user authenticated in session
@@ -203,6 +209,10 @@ public abstract class ServiceServlet extends HttpServlet {
                     // perform http GitHub auth, which populates the auth user header
                     if (AuthUtils.authenticate(AuthUtils.GIT_HUB_SECRET_KEY, headers, payload))
                         return;
+                }
+                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/central/auth")) {
+                    // perform MDW Auth based on JWT - generate token
+                	return;
                 }
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
                 throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");

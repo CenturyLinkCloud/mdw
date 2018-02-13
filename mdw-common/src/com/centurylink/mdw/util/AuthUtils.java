@@ -26,6 +26,10 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
@@ -45,6 +49,9 @@ public class AuthUtils {
     public static final String SLACK_TOKEN = "MDW_SLACK_TOKEN";
     public static final String OAUTH_AUTHENTICATION = "OAuth";
     public static final String MDW_APP_TOKEN = "MDW_APP_TOKEN";
+    public static final String MDW_AUTH_TOKEN = "MDW_Auth";
+
+    private static JWTVerifier verifier = null;
 
     private static volatile Map<String,String> mdwAppTokenMap = null;
     private static final Object lock = new Object();
@@ -67,6 +74,9 @@ public class AuthUtils {
         }
         else if (authMethod.equals(MDW_APP_TOKEN)) {
             return authenticateMdwAppToken(headers, payload);
+        }
+        else if (authMethod.equals(MDW_AUTH_TOKEN)) {
+            return authenticateMdwAuthToken(headers, payload);
         }
         else {
             throw new IllegalArgumentException("Unsupported authentication method: " + authMethod);
@@ -204,6 +214,49 @@ public class AuthUtils {
             logger.severeException("Exception processing incoming Cloud Routing message", e);
         }
         return okay;
+    }
+
+    private static boolean authenticateMdwAuthToken(Map<String,String> headers, String payload) {
+        String authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
+        if (authHeader == null)
+            authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
+
+        if (authHeader == null || !authHeader.startsWith("Token"))
+            return false;
+
+        authHeader = authHeader.replaceFirst("Token ", "");
+        // If first call, generate verifier
+        JWTVerifier tempVerifier = verifier;
+        if (tempVerifier == null) {
+            synchronized(lock) {
+                tempVerifier = verifier;
+                if (tempVerifier == null) {
+                    String appToken = System.getenv("MDW_APP_TOKEN");
+                    if (StringHelper.isEmpty(appToken)) {
+                        logger.severe("Exception processing incoming message using MDW Auth token - Missing System variable MDW_APP_TOKEN");
+                        return false;
+                    }
+                    try {
+                        Algorithm algorithm = Algorithm.HMAC256(appToken);
+                        verifier = tempVerifier = JWT.require(algorithm)
+                                .withIssuer("mdwAuth")
+                                .build(); //Reusable verifier instance
+                    }
+                    catch (IllegalArgumentException | UnsupportedEncodingException e) {
+                        logger.severeException("Exception processing incoming message using MDW Auth token", e);
+                        return false;
+                    }
+                }
+            }
+        }
+        try {
+            DecodedJWT jwt = tempVerifier.verify(authHeader);
+        }
+        catch (Throwable e) {
+            logger.warnException("Provided MDW Auth token is not valid", e);
+            return false;
+        }
+        return true;
     }
 
     /**
