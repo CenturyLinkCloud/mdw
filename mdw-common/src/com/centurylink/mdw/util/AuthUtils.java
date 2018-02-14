@@ -208,6 +208,7 @@ public class AuthUtils {
             return false;
 
         try {
+            // TODO: Consider adding more verifications if we decide to sign token with additional claims/headers and not checked in createMdwTokenVerifier()
             DecodedJWT jwt = tempVerifier.verify(authHeader);
         }
         catch (Throwable e) {
@@ -296,6 +297,7 @@ public class AuthUtils {
             else {
                 try {
                     Algorithm algorithm = Algorithm.HMAC256(appToken);
+                    // TODO: Add additional ".with*" clauses if we decide to add additional claims/headers
                     verifier = tempVerifier = JWT.require(algorithm)
                             .withIssuer("mdwAuth")
                             .build(); //Reusable verifier instance

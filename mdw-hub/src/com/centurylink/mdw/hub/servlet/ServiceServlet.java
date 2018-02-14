@@ -211,8 +211,12 @@ public abstract class ServiceServlet extends HttpServlet {
                         return;
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/central/auth")) {
-                    // perform MDW Auth based on JWT - generate token
+                    // perform MDW Auth for user/pass/appId - returns JWT if successful
                 	return;
+                }
+                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/central/account")) {
+                    // perform MDW Auth for user/pass
+                    return;
                 }
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
                 throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
