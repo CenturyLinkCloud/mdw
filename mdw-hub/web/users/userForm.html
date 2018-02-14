@@ -13,7 +13,7 @@
         ng-blur="user.name = user.name === '' ? undefined : user.name">
     </div>
   </div>
-  <div class="form-group" ng-repeat="(attrName, attrVal) in user.attributes" ng-if="attrName.indexOf(':') < 0">
+  <div class="form-group" ng-repeat="(attrName, attrVal) in user.attributes" ng-if="attrName.indexOf(':') < 0 && attrName != 'Password'">
     <label class="control-label col-xs-2" for="{{attrName}}">{{attrName}}:</label>
     <div class="col-xs-10">
       <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="user.attributes[attrName]">

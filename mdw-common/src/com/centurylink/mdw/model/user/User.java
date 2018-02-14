@@ -38,6 +38,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
     // new friendly attribute names that can be displayed as labels
     public static final String EMAIL_ADDRESS = "Email Address";
     public static final String PHONE_NUMBER = "Phone Number";
+    public static final String PASSWORD = "Password";
     // old unfriendly attribute names for compatibility
     public static final String OLD_EMAIL_ADDRESS = "emailAddress";
     public static final String OLD_PHONE_NUMBER = "phoneNumber";
