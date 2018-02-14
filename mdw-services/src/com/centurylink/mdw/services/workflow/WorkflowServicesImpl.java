@@ -201,6 +201,31 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public String getValue(String ownerType, String ownerId, String name) throws ServiceException {
+        try {
+            if (OwnerType.SYSTEM.equals(ownerType)) {
+                if ("mdwProperties".equals(ownerId)) {
+                    Map<String,String> mdwProps = new HashMap<String,String>();
+                    SysInfoCategory cat = ServiceLocator.getSystemServices().getMdwProperties();
+                    for (SysInfo sysInfo : cat.getSysInfos()) {
+                        mdwProps.put(sysInfo.getName(), sysInfo.getValue());
+                    }
+                    return mdwProps.get(name);
+                }
+                else {
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported System values: " + ownerId);
+                }
+            }
+            else {
+                CommonDataAccess dao = new CommonDataAccess();
+                return dao.getValue(ownerType, ownerId, name);
+            }
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
     public List<String> getValueHolderIds(String valueName, String valuePattern) throws ServiceException {
         return getValueHolderIds(valueName, valuePattern, null);
     }

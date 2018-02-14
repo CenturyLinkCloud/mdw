@@ -65,6 +65,7 @@ public interface WorkflowServices {
      */
     public void updateAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException;
     public Map<String,String> getValues(String ownerType, String ownerId) throws ServiceException;
+    public String getValue(String ownerType, String ownerId, String name) throws ServiceException;
     /**
      * Replace <b>all</b> values for this ownerId
      * @param ownerType
