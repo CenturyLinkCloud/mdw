@@ -19,9 +19,7 @@
   margin-top: 5px;
 }
 .mdw_user {
-  width: 99%;
-  position: absolute;
-  top: 72px;
+  margin-top: -5px;
   font-family: verdana;
   font-size: 10px;
   font-weight: bold;
