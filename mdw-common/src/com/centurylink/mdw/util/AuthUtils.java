@@ -179,33 +179,32 @@ public class AuthUtils {
     private static boolean checkMdwAuthenticationHeader(String authHeader, Map<String,String> headers) {
         String user = "Unknown";
         try {
-        // Do NOT try to authenticate if it's not MDW auth
-        if (authHeader == null || !authHeader.startsWith("MDW-JWT"))
-            throw new Exception("Invalid MDW Auth Header");  // This should never happen
+            // Do NOT try to authenticate if it's not MDW auth
+            if (authHeader == null || !authHeader.startsWith("MDW-JWT"))
+                throw new Exception("Invalid MDW Auth Header");  // This should never happen
 
-        authHeader = authHeader.replaceFirst("MDW-JWT ", "");
+            authHeader = authHeader.replaceFirst("MDW-JWT ", "");
 
-        String[] creds = authHeader.split("/");
+            String[] creds = authHeader.split("/");
 
-        if (creds.length < 2)
-            throw new Exception("Invalid MDW Auth Header");
+            if (creds.length < 2)
+                throw new Exception("Invalid MDW Auth Header");
 
-        user = creds[0];
-        String token = creds[1];
+            user = creds[0];
+            String token = creds[1];
 
-        // If first call, generate verifier
-        JWTVerifier tempVerifier = verifier;
-        if (tempVerifier == null)
-            tempVerifier = createMdwTokenVerifier();
+            // If first call, generate verifier
+            JWTVerifier tempVerifier = verifier;
+            if (tempVerifier == null)
+                tempVerifier = createMdwTokenVerifier();
 
-        if (tempVerifier == null)
-            throw new Exception("Cannot generate JWT verifier");
+            if (tempVerifier == null)
+                throw new Exception("Cannot generate JWT verifier");
 
-            // TODO: Consider adding more verifications if we decide to sign token with additional claims/headers and not checked in createMdwTokenVerifier()
             DecodedJWT jwt = tempVerifier.verify(token);
 
             // Verify token is for same user as specified in Authorization header
-            String tokenUser = jwt.getHeaderClaim("user").asString();
+            String tokenUser = jwt.getSubject();
             if (tokenUser != null && tokenUser.equals(user))
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
             else
@@ -301,9 +300,9 @@ public class AuthUtils {
             else {
                 try {
                     Algorithm algorithm = Algorithm.HMAC256(appToken);
-                    // TODO: Add additional ".with*" clauses if we decide to add additional claims/headers
                     verifier = tempVerifier = JWT.require(algorithm)
                             .withIssuer("mdwAuth")
+                            .withAudience(ApplicationContext.getAppId())
                             .build(); //Reusable verifier instance
                 }
                 catch (IllegalArgumentException | UnsupportedEncodingException e) {
