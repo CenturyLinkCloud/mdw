@@ -210,6 +210,13 @@ public class AuthUtils {
         try {
             // TODO: Consider adding more verifications if we decide to sign token with additional claims/headers and not checked in createMdwTokenVerifier()
             DecodedJWT jwt = tempVerifier.verify(authHeader);
+            String user = jwt.getHeaderClaim("user").asString();
+            if (user != null)
+                headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
+            else {
+                logger.warn("Received valid JWT token, but cannot identify the user");
+                return false;
+            }
         }
         catch (Throwable e) {
             logger.warnException("Provided MDW Auth token is not valid", e);
