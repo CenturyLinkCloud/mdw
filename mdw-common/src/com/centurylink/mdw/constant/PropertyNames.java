@@ -152,7 +152,7 @@ public class PropertyNames {
     public static final String MDW_LDAP_BASE_DN = "mdw.ldap.base.dn";
 
     // Authentication
-    public static final String HTTP_BASIC_AUTH_MODE = "mdw.services.http.basic.auth";
+    public static final String MDW_AUTH_TOKEN_MAX_AGE = "mdw.auth.token.maxage";  // Max age in seconds that a JWT token will still be considered valid
 
     // Request Routing
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";
