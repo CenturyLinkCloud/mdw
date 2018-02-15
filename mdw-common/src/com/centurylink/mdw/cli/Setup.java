@@ -118,7 +118,8 @@ public abstract class Setup implements Operation {
     public String getAssetLoc() { return assetLoc; }
     public void setAssetLoc(String assetLoc) {
         this.assetLoc = assetLoc;
-        Props.ASSET_LOC.specified = true;
+        if (Props.ASSET_LOC != null)
+            Props.ASSET_LOC.specified = true;
     }
 
     @Parameter(names="--base-asset-packages", description="MDW Base Asset Packages (comma-separated)",
