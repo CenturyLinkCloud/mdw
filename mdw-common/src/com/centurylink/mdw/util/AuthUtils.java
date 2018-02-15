@@ -211,7 +211,7 @@ public class AuthUtils {
                 throw new Exception("Received valid JWT token, but cannot validate the user");
 
             // Verify token is not too old, if application specifies property for max token age - in seconds
-            long maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0);  // MDW default is token never expires
+            long maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;  // MDW default is token never expires
             if (maxAge > 0 && jwt.getIssuedAt() != null) {
                 if ((new Date().getTime() - jwt.getIssuedAt().getTime()) > maxAge)
                     throw new Exception("JWT token has expired");
