@@ -50,6 +50,14 @@ public class Convert extends Setup {
         return prefix;
     }
 
+    Convert() {
+
+    }
+
+    public Convert(File input) {
+        this.input = input;
+    }
+
     @Override
     public Convert run(ProgressMonitor... progressMonitors) throws IOException {
 

@@ -62,10 +62,13 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void process(String rule, Object value, Object root) {
-        int slash = rule.indexOf('/');
-        if (slash > 0) {
-            String name = rule.substring(0, slash);
-            if (root instanceof Map) {
+        if (!(root instanceof Map)) {
+            System.err.println("Warning: non-hierarchical subelement '" + rule + "' -- not converted");
+        }
+        else {
+            int slash = rule.indexOf('/');
+            if (slash > 0) {
+                String name = rule.substring(0, slash);
                 Object obj = ((Map)root).get(name);
                 if (obj == null) {
                     obj = new LinkedHashMap<>();
@@ -73,9 +76,7 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
                 }
                 process(rule.substring(slash + 1), value, obj);
             }
-        }
-        else {
-            if (root instanceof Map) {
+            else {
                 if (rule.startsWith("(")) {
                     List list = Arrays.asList(value.toString().split("\\s*,\\s*"));
                     ((Map)root).put(rule.substring(1, rule.length() - 1), list);
@@ -83,9 +84,6 @@ public class DefaultYamlTranslator implements YamlPropertyTranslator {
                 else {
                     ((Map)root).put(rule, value);
                 }
-            }
-            else {
-                System.err.println("Warning: non-hierarchical subelement '" + rule + "' -- not converted");
             }
         }
     }

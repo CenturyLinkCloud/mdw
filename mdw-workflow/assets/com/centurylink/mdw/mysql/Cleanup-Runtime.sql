@@ -102,9 +102,6 @@ SET foreign_key_checks=0;
    	 	(SELECT e2.event_name FROM event_instance e2
          	WHERE e2.create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY) 
          	AND e2.event_name NOT LIKE 'ScheduledJob%' 
-         	AND (e2.document_id IS NULL 
-         		OR (e2.document_id IS NOT NULL AND NOT EXISTS 
-         			(SELECT doc.document_id FROM document doc WHERE doc.document_id = e2.document_id)))
          	LIMIT commitcnt) e3  
 	 USING (event_name);
      SET row_count = row_count + ROW_COUNT();
@@ -294,16 +291,15 @@ SET foreign_key_checks=0;
    SELECT ( CONCAT('Start Purging Document_Content Records: ' , ifnull(dt, '')));
 
    
-   -- COMMENT OUT THE BELOW QUERY IF USING MONGODB TO STORE DOCUMENTS, INSTEAD OF DOCUMENT_CONTENT TABLE
    -- deleting from document_content to avoid the integrity constraint issue
    SET row_count = 0;
    REPEAT
    	 COMMIT;
    	 DELETE dc1 FROM document_content dc1 JOIN 
       ( SELECT a.document_id FROM 
-		( SELECT dc.document_id FROM document doc JOIN document_content dc USING (document_id)
+		( SELECT doc.document_id FROM document doc JOIN document_content dc USING (document_id)
        -- 1. all documents with owner_id being a process instance ID marked for deletion
-       		WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN','LISTENER_REQUEST')  
+       		WHERE  ( ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN','LISTENER_REQUEST')  
                AND EXISTS (
                        SELECT
                               process_instance_id
@@ -343,9 +339,14 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.owner_type IN 
             	('LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
                 AND NOT EXISTS (SELECT document_id
-                                  FROM document_content doc2
-                                 WHERE doc2.document_id = doc.owner_id)
+                                FROM document_content doc2
+                                WHERE doc2.document_id = doc.owner_id)
                ) 
+             )
+             -- 7. the document (event message) is not tied to an event_instance
+             AND NOT EXISTS (SELECT e1.document_id 
+             					FROM event_instance e1 
+             					WHERE e1.document_id = doc.document_id)
 		   ) a 
          LIMIT commitcnt
       ) dc2 USING (document_id);    
@@ -355,29 +356,6 @@ SET foreign_key_checks=0;
    SELECT
       ( CONCAT('Number of rows deleted from DOCUMENT_CONTENT: ', row_count));    
 	 COMMIT;
-
-   SELECT SYSDATE()
-     INTO dt
-     FROM DUAL;
-     
-   SELECT ( CONCAT('Start Purging Event_instance Records with Document FK: ' , ifnull(dt, '')));
-     
-   SET row_count = 0;
-   REPEAT
-   	 COMMIT;
-   	 DELETE e1 FROM event_instance e1 JOIN 
-   	 	(SELECT e2.event_name FROM event_instance e2 JOIN
-   	 		(SELECT d.document_id FROM document d LEFT OUTER JOIN document_content dc
-   	 			USING (document_id)
-   	 			WHERE dc.document_id IS null) d1
-   	 		USING (document_id)
-         	LIMIT commitcnt) e3  
-	 	USING (event_name);
-     SET row_count = row_count + ROW_COUNT();
-   UNTIL ROW_COUNT() < 1 END REPEAT;
-   
-   SELECT ( CONCAT('Number of FK rows deleted from EVENT_INSTANCE:', row_count));
-   COMMIT;  
    
    SELECT SYSDATE()
      INTO dt
@@ -436,9 +414,14 @@ SET foreign_key_checks=0;
                                  WHERE doc2.document_id = doc.owner_id)
                ) 
 			)
+			-- 7. the document doesn't exists in document_content
 			AND NOT EXISTS (SELECT document_id
                                   FROM document_content dc
-                                 WHERE dc.document_id = doc.document_id)	 
+                                 WHERE dc.document_id = doc.document_id)
+            -- 8. the document (event message) is not tied to an event_instance
+            AND NOT EXISTS (SELECT e1.document_id 
+             					FROM event_instance e1 
+             					WHERE e1.document_id = doc.document_id)
          LIMIT commitcnt
       ) dc2 USING (document_id);
       SET row_count = row_count + ROW_COUNT();
