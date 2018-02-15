@@ -33,9 +33,7 @@ response:
       "ownerType": "DOCUMENT",
       "values": {
         "inputVar": {
-          "display": "Optional",
-          "type": "java.lang.String",
-          "value": "inputVarVal"
+          "value": "{\"value\":\"{\\\"display\\\":\\\"Optional\\\",\\\"type\\\":\\\"java.lang.String\\\",\\\"value\\\":\\\"inputVarVal\\\"}\"}"
         }
       }
     }
