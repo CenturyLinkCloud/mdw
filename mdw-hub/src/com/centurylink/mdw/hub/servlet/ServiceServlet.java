@@ -133,16 +133,8 @@ public abstract class ServiceServlet extends HttpServlet {
 
     protected void authenticate(HttpServletRequest request, Map<String,String> headers, String payload) throws ServiceException {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
-        if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase())) {
-            String authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
-            if (authHeader == null)
-                authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
-
-            if (authHeader != null && authHeader.startsWith("Token"))
-                AuthUtils.authenticate(AuthUtils.MDW_AUTH_TOKEN, headers);
-            else
-                AuthUtils.authenticate(AuthUtils.HTTP_BASIC_AUTHENTICATION, headers);
-        }
+        if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase()))
+            AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers);
         else {
             // check for user authenticated in session
             AuthenticatedUser user = (AuthenticatedUser)request.getSession().getAttribute("authenticatedUser");
@@ -151,21 +143,17 @@ public abstract class ServiceServlet extends HttpServlet {
         }
 
         if (headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-            if (ApplicationContext.isDevelopment()) {
+            if (ApplicationContext.isDevelopment() && ApplicationContext.getDevUser() != null) {
                 // auth failed or not provided but allow dev override
-                if (ApplicationContext.getDevUser() != null) {
-                    headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
-                    if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                        headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
-                }
+                headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
+                if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
+                    headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
             }
-            else if (ApplicationContext.isServiceApiOpen()) {
-              // auth failed or not provided but allow service user override
-              if (ApplicationContext.getServiceUser() != null) {
-                  headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
-                  if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                      headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
-              }
+            else if (ApplicationContext.isServiceApiOpen() && ApplicationContext.getServiceUser() != null) {
+                // auth failed or not provided but allow service user override
+                headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
+                if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
+                    headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
             }
             else {
                 if ("GET".equalsIgnoreCase(request.getMethod())) {

@@ -40,7 +40,7 @@ public class AuthUtils {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public static final String HTTP_BASIC_AUTHENTICATION = "Basic";
+    public static final String AUTHORIZATION_HEADER_AUTHENTICATION = "Authorization";
     public static final String GIT_HUB_SECRET_KEY = "GitHub";
     public static final String SLACK_TOKEN = "MDW_SLACK_TOKEN";
     public static final String OAUTH_AUTHENTICATION = "OAuth";
@@ -56,8 +56,8 @@ public class AuthUtils {
     public static boolean authenticate(String authMethod, Map<String,String> headers, String payload) {
         // avoid any fishiness -- only we should populate this header
         headers.remove(Listener.AUTHENTICATED_USER_HEADER);
-        if (authMethod.equals(HTTP_BASIC_AUTHENTICATION)) {
-            return authenticateHttpBasic(headers);
+        if (authMethod.equals(AUTHORIZATION_HEADER_AUTHENTICATION)) {
+            return authenticateAuthorizationHeader(headers);
         }
         else if (authMethod.equals(GIT_HUB_SECRET_KEY)) {
             return authenticateGitHubSecretKey(headers, payload);
@@ -68,9 +68,6 @@ public class AuthUtils {
         else if (authMethod.equals(MDW_APP_TOKEN)) {
             return authenticateMdwAppToken(headers, payload);
         }
-        else if (authMethod.equals(MDW_AUTH_TOKEN)) {
-            return authenticateMdwAuthToken(headers, payload);
-        }
         else {
             throw new IllegalArgumentException("Unsupported authentication method: " + authMethod);
         }
@@ -79,7 +76,7 @@ public class AuthUtils {
    /**
      * <p>
      * Currently uses the metainfo property "Authorization" and checks
-     * specifically for Basic Authentication in a property.
+     * specifically for Basic Authentication or MDW-JWT Authentication.
      * In the future, probably change this.
      * </p>
      * <p>
@@ -89,32 +86,20 @@ public class AuthUtils {
      * @param headers
      * @return
      */
-    private static boolean authenticateHttpBasic(Map<String,String> headers) {
+    private static boolean authenticateAuthorizationHeader(Map<String,String> headers) {
         String hdr = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
         if (hdr == null)
             hdr = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
-        if (PropertyManager.getBooleanProperty(PropertyNames.HTTP_BASIC_AUTH_MODE, false)) {
-            // auth required
-            if (hdr == null) {
-                if (ApplicationContext.isDevelopment() && ApplicationContext.getDevUser() != null) {
-                    headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
-                    return true;
-                }
-                return false;
-            }
-            else
-                return checkBasicAuthenticationHeader(headers);
-        }
-        else {
-            // auth not required but accepted
-            if (hdr == null) {
-                if (ApplicationContext.isDevelopment() && ApplicationContext.getDevUser() != null)
-                    headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
-                return true;
-            }
-            else
-                return checkBasicAuthenticationHeader(headers);
-        }
+
+        headers.remove(Listener.AUTHORIZATION_HEADER_NAME);
+        headers.remove(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
+
+        if (hdr != null && hdr.startsWith("Basic"))
+            return checkBasicAuthenticationHeader(hdr, headers);
+        else if (hdr != null && hdr.startsWith("MDW-JWT"))
+            return checkMdwAuthenticationHeader(hdr, headers);
+
+        return false;
     }
 
     private static boolean authenticateGitHubSecretKey(Map<String,String> headers, String payload) {
@@ -190,37 +175,48 @@ public class AuthUtils {
         return true;
     }
 
-    private static boolean authenticateMdwAuthToken(Map<String,String> headers, String payload) {
-        String authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
-        if (authHeader == null)
-            authHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
+    private static boolean checkMdwAuthenticationHeader(String authHeader, Map<String,String> headers) {
+        String user = "Unknown";
+        try {
+        // Do NOT try to authenticate if it's not MDW auth
+        if (authHeader == null || !authHeader.startsWith("MDW-JWT"))
+            throw new Exception("Invalid MDW Auth Header");  // This should never happen
 
-        if (authHeader == null || !authHeader.startsWith("Token"))
-            return false;
+        authHeader = authHeader.replaceFirst("MDW-JWT ", "");
 
-        authHeader = authHeader.replaceFirst("Token ", "");
+        String[] creds = authHeader.split("/");
+
+        if (creds.length < 2)
+            throw new Exception("Invalid MDW Auth Header");
+
+        user = creds[0];
+        String token = creds[1];
+
         // If first call, generate verifier
         JWTVerifier tempVerifier = verifier;
         if (tempVerifier == null)
             tempVerifier = createMdwTokenVerifier();
 
         if (tempVerifier == null)
-            return false;
+            throw new Exception("Cannot generate JWT verifier");
 
-        try {
             // TODO: Consider adding more verifications if we decide to sign token with additional claims/headers and not checked in createMdwTokenVerifier()
-            DecodedJWT jwt = tempVerifier.verify(authHeader);
-            String user = jwt.getHeaderClaim("user").asString();
-            if (user != null)
+            DecodedJWT jwt = tempVerifier.verify(token);
+
+            // Verify token is for same user as specified in Authorization header
+            String tokenUser = jwt.getHeaderClaim("user").asString();
+            if (tokenUser != null && tokenUser.equals(user))
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
-            else {
-                logger.warn("Received valid JWT token, but cannot identify the user");
-                return false;
-            }
+            else
+                throw new Exception("Received valid JWT token, but cannot validate the user");
         }
-        catch (Throwable e) {
-            logger.warnException("Provided MDW Auth token is not valid", e);
+        catch (Throwable ex) {
+            headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '" + user + "' " + ex.getMessage());
+            logger.severeException("Authentication failed for user '"+user+"'" + ex.getMessage(), ex);
             return false;
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("authentication successful for user '"+user+"'");
         }
         return true;
     }
@@ -228,49 +224,42 @@ public class AuthUtils {
     /**
      * @return true if no authentication at all or authentication is successful
      */
-    private static boolean checkBasicAuthenticationHeader(Map<String,String> headers) {
+    private static boolean checkBasicAuthenticationHeader(String authorizationHeader, Map<String,String> headers) {
+        String user = "Unknown";
+        try {
+            // Do NOT try to authenticate if it's not Basic auth
+            if (authorizationHeader  == null || !authorizationHeader.startsWith("Basic"))
+                throw new Exception("Invalid Basic Auth Header");  // This should never happen
 
-        String authorizationHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
-        if (authorizationHeader == null)
-            authorizationHeader = headers.get(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
-
-        // Do NOT try to authenticate if it's not Basic auth
-        if (authorizationHeader!=null && authorizationHeader.startsWith("Basic")) {
             authorizationHeader = authorizationHeader.replaceFirst("Basic ", "");
 
             byte[] valueDecoded= Base64.decodeBase64(authorizationHeader.getBytes());
             authorizationHeader = new String(valueDecoded);
 
             String[] creds = authorizationHeader.split(":");
-            String user = creds[0];
+
+            if (creds.length < 2)
+                throw new Exception("Invalid Basic Auth Header");
+
+            user = creds[0];
             String pass = creds[1];
 
-            try {
-                if (ApplicationContext.getAuthMethod().equals("mdw")) {
-                    // TODO
-                }
-                else {
-                    ldapAuthenticate(user, pass);
-                }
+            if (ApplicationContext.getAuthMethod().equals("mdw")) {
+                // TODO - Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
+            }
+            else {
+                ldapAuthenticate(user, pass);
+            }
 
-                /**
-                 * Authentication passed so take credentials out
-                 * of the metadata and just put user name in.
-                 */
-                headers.remove(Listener.AUTHORIZATION_HEADER_NAME);
-                headers.remove(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("authentication successful for user '"+user+"'");
-                }
+            headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
+            if (logger.isDebugEnabled()) {
+                logger.debug("authentication successful for user '"+user+"'");
             }
-            catch (Exception ex) {
-                headers.remove(Listener.AUTHORIZATION_HEADER_NAME);
-                headers.remove(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase());
-                headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '"+user+"' "+ex.getMessage());
-                logger.severeException("Authentication failed for user '"+user+"'" + ex.getMessage(), ex);
-                return false;
-            }
+        }
+        catch (Exception ex) {
+            headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '"+user+"' "+ex.getMessage());
+            logger.severeException("Authentication failed for user '"+user+"'" + ex.getMessage(), ex);
+            return false;
         }
         return true;
     }
