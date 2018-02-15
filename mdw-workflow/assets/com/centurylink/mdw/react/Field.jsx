@@ -8,35 +8,55 @@ import {
   Glyphicon
 } from '../node/node_modules/react-bootstrap';
 
+/**
+ * validity can be a map like so:
+ * {
+ *   propId: { status: 'error', message: 'i need help' }
+ * }
+ * or for this specific field:
+ * {
+ *   status: 'error',
+ *   message: 'back to the drawing board'
+ * }
+ */
+function Field({label, help, validity, ...props}) {
 
-function Field({help, ...props}) {
-  
-  var fieldValidity;
-  var status;
-  if (props.validity && props.validity[props.id]) {
-    fieldValidity = props.validity[props.id];
-    status = fieldValidity.status;
+  if (validity) {
+    if (validity[props.id]) {
+      validity = validity[props.id];
+    }
+  }
+  else {
+    validity = {};
   }
   
-  console.log("Status: " + status);
-  
   return (
-      <FormGroup controlId={props.id}
-        validationState={status}>
-        {props.label && 
-          <ControlLabel>{props.label}</ControlLabel>
+    <FormGroup controlId={props.id}
+      validationState={validity.status}>
+      {label && 
+        <ControlLabel style={{marginBottom:'3px'}}>
+          {label}
+        </ControlLabel>
+      }
+      <FormControl {...props} />
+      <FormControl.Feedback>
+        {validity.status === 'error' &&
+          <Glyphicon glyph="warning-sign"
+            style={{fontSize:'19px'}}/>
         }
-        <FormControl {...props} />
-        <FormControl.Feedback>
-          {status === 'error' &&
-            <Glyphicon glyph="warning-sign" />
-          }
-        </FormControl.Feedback>
-        {props.help && 
-          <HelpBlock>{props.help}</HelpBlock>
-        }
-      </FormGroup>       
+      </FormControl.Feedback>
+      {validity.message && 
+        <HelpBlock style={{position:'absolute',color:'#a94442',marginTop:'0',marginLeft:'5px'}}>
+          {validity.message}
+        </HelpBlock>
+      }
+      {help && 
+        <HelpBlock style={{visibility:validity.message ? 'hidden' : 'visible'}}>
+          {help}
+        </HelpBlock>
+      }
+    </FormGroup>       
   );
 }
 
-export default Field;  
+export default Field;

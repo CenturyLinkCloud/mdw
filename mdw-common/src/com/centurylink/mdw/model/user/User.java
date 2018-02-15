@@ -54,7 +54,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         if (json.has("cuid"))
             cuid = json.getString("cuid");
         else
-            cuid = json.getString("id");
+            cuid = json.optString("id");
         if (json.has("name"))
             name = json.getString("name");
         JSONArray grps = null;
@@ -121,7 +121,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
     public String getName() { return this.name; }
     public void setName(String fullName) { this.name = fullName; }
 
-    @Size(max=128)
+    @Size(min=3,max=128)
     private String cuid;
     @ApiModelProperty(value="User's workstation id", required=true)
     public String getCuid() { return this.cuid; }

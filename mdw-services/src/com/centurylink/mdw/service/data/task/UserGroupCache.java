@@ -32,10 +32,6 @@ import com.centurylink.mdw.util.timer.CodeTimer;
 
 /**
  * Cache for MDW users/groups/roles (plus group relationships for tasks).
- *
- * TODO: Currently everything is loaded into memory. Beyond 10,000 users this
- * may become unwieldy.  For MDW 6.0 we'll investigate a NoSQL, BigData solution.
- *
  */
 public class UserGroupCache implements PreloadableCache {
 
@@ -172,6 +168,12 @@ public class UserGroupCache implements PreloadableCache {
             }
         }
         return matches;
+    }
+
+    public static boolean userAttributeExists(String attributeName, String attributeValue) {
+        return instance.users.stream().filter(user -> {
+            return attributeValue.equals(user.getAttribute(attributeName));
+        }).findAny().isPresent();
     }
 
     private static boolean isMatch(User user, String prefix) {
