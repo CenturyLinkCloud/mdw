@@ -17,6 +17,7 @@ package com.centurylink.mdw.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
@@ -209,6 +210,13 @@ public class AuthUtils {
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
             else
                 throw new Exception("Received valid JWT token, but cannot validate the user");
+
+            // Verify token is not too old, if application specifies property for max token age - in seconds
+            long maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0);  // MDW default is token never expires
+            if (maxAge > 0 && jwt.getIssuedAt() != null) {
+                if ((new Date().getTime() - jwt.getIssuedAt().getTime()) > maxAge)
+                    throw new Exception("JWT token has expired");
+            }
         }
         catch (Throwable ex) {
             headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '" + user + "' " + ex.getMessage());
