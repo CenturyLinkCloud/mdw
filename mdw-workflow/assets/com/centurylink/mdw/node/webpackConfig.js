@@ -24,11 +24,12 @@ module.exports = {
               {
                 loader: 'babel-loader',
                 options: {
-                  presets: [nodeLoc + '/node_modules/babel-preset-react']
+                  presets: [nodeLoc + '/node_modules/babel-preset-react'], 
+                  plugins: [nodeLoc + '/node_modules/babel-plugin-transform-object-rest-spread']
                 }
               }
             ]
-          },      
+          },
           {
             test: /\.css$/,
             // allows custom css files in assets (but excluding node/node_modules)
