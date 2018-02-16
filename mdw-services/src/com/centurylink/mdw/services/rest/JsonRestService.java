@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExport;
 import com.centurylink.mdw.model.JsonExportable;
@@ -39,7 +40,10 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.HttpHelper;
 
 import io.swagger.annotations.Api;
@@ -276,6 +280,14 @@ public abstract class JsonRestService extends RestService implements JsonService
         for (String key : responseHeaders.keySet())
             headers.put(key, responseHeaders.get(key));
         return responseJson;
+    }
+
+    protected void launchProcess(String name, String masterRequestId,
+            Map<String,String> parameters, Map<String,String> headers) throws ServiceException {
+        Process process = ProcessCache.getProcess(name);
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        long documentId = Long.parseLong(headers.get(Listener.METAINFO_DOCUMENT_ID));
+        workflowServices.launchProcess(process, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
     }
 
 }
