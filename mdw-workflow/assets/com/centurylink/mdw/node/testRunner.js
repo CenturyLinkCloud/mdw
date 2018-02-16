@@ -44,14 +44,6 @@ try {
       else if (require('fs').existsSync(testLoc + '/localhost.env')) {
         vals = Object.assign(vals, limberest.loadValuesSync(testLoc + '/localhost.env'), item.values);
       }
-      //assign unique value to masterRequestId for every execution
-      var value=vals['proc-run-json'];
-      if(value){
-        var radomNoBet0and99= Math.floor(Math.random() * 200);
-        var uniqueMasterReqIdVal="dxoakes-20171012-"+radomNoBet0and99;
-        value = value.replace("replaceMe", uniqueMasterReqIdVal);
-        vals['proc-run-json']=value;
-      }
       if (opts.debug)
         console.log("values: " + JSON.stringify(vals, null, 2));
       if (opts.caseName && opts.verify) {

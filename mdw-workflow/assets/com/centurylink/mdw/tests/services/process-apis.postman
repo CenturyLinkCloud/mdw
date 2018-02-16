@@ -19,6 +19,14 @@
 						"Workflow",
 						"{{process-path}}"
 					],
+					"header": [
+					   {
+						"key": "genMasterRequestId",
+						"value": "true",
+						"equals": true,
+						"description": ""
+					    }
+				    ],
 					"query": [
 						{
 							"key": "summary",
@@ -74,6 +82,12 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "genMasterRequestId",
+						"value": "true",
+						"equals": true,
 						"description": ""
 					}
 				],

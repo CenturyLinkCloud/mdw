@@ -4,10 +4,10 @@ request:
   method: POST
   headers:
     Content-Type: application/json
+    genMasterRequestId: 'true'
   body: |-
     {
       "definitionId": ${process-id},
-      "masterRequestId": "${~.*}",
       "values": {
         "inputVar": {
           "display": "Optional",
