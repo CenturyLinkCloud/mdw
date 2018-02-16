@@ -1,6 +1,5 @@
 import React from '../node/node_modules/react';
 import {
-  Button,
   FormGroup,
   ControlLabel,
   FormControl,
