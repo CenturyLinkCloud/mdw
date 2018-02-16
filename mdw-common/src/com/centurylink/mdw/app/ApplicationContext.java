@@ -775,6 +775,20 @@ public class ApplicationContext {
         return websocketUrl;
     }
 
+    public static String getMdwCentralHost() {
+        String mdwCentral = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_HOST);
+        if (mdwCentral == null)
+            mdwCentral = "mdw.useast.appfog.ctl.io";
+        return mdwCentral;
+    }
+
+    public static String getMdwCloudRoutingUrl() {
+        String mdwRouting = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_ROUTING_URL);
+        if (mdwRouting == null)
+            mdwRouting = "https://" + getMdwCentralHost() + "/mdw/services/routing";
+        return mdwRouting;
+    }
+
     private static String authMethod;
     public static String getAuthMethod() {
         return authMethod;

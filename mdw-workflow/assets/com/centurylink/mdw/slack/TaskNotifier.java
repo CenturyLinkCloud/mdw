@@ -27,7 +27,6 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.EnvironmentVariables;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskAction;
@@ -56,7 +55,7 @@ public class TaskNotifier extends TemplatedNotifier {
             hdrs.put(Listener.METAINFO_CLOUD_ROUTING, "SlackWebHook");
             hdrs.put(Listener.METAINFO_MDW_APP_ID, ApplicationContext.getAppId());
             hdrs.put(Listener.METAINFO_MDW_APP_TOKEN, System.getenv("MDW_APP_TOKEN"));   // Add the application specific MDW provided token
-            HttpHelper helper = new HttpHelper(new URL(EnvironmentVariables.MDW_CLOUD_ROUTER_URL + "/slack"));
+            HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getMdwCloudRoutingUrl() + "/slack"));
             helper.setHeaders(hdrs);
             String response = helper.post(getMessage().toString(2));
             if (helper.getResponseCode() != 200)

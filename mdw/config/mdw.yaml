@@ -60,6 +60,12 @@ mail:
   smtp.timeout: 10000
   connection.timeout: 10000
 
+# MDW central
+central:
+  host: mdw.useast.appfog.ctl.io
+  auth.url: https://mdw.useast.appfog.ctl.io/mdw/services/com/centurylink/mdw/central/auth
+  routing.url: https://mdw.useast.appfog.ctl.io/mdw/services/routing
+  
 # ldap
 ldap:
   host: ldap.myorg.com

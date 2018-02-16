@@ -151,8 +151,11 @@ public class PropertyNames {
     public static final String MDW_LDAP_PORT = "mdw.ldap.port";
     public static final String MDW_LDAP_BASE_DN = "mdw.ldap.base.dn";
 
-    // Authentication
+    // Authentication / MDW Central
     public static final String MDW_AUTH_TOKEN_MAX_AGE = "mdw.auth.token.maxage";  // Max age in seconds that a JWT token will still be considered valid
+    public static final String MDW_CENTRAL_HOST = "mdw.central.host";
+    public static final String MDW_CENTRAL_AUTH_URL = "mdw.central.auth.url";
+    public static final String MDW_CENTRAL_ROUTING_URL = "mdw.central.routing.url";
 
     // Request Routing
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";

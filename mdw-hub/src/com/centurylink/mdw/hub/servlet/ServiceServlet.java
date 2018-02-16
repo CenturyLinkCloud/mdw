@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.constant.EnvironmentVariables;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
@@ -172,17 +171,17 @@ public abstract class ServiceServlet extends HttpServlet {
                     if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
                     else {
-                        List<InetAddress> appFogProd = null;
+                        List<InetAddress> mdwCentral = null;
                         InetAddress remote = null;
                         try {
                             remote = InetAddress.getByName(request.getRemoteHost());
-                            appFogProd = Arrays.asList(InetAddress.getAllByName(EnvironmentVariables.MDW_CLOUD_ROUTER));
+                            mdwCentral = Arrays.asList(InetAddress.getAllByName(ApplicationContext.getMdwCentralHost()));
                         }
                         catch (UnknownHostException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                        if (appFogProd != null && appFogProd.contains(remote)) {
+                        if (mdwCentral != null && mdwCentral.contains(remote)) {
                             headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
                             return;
                         }
