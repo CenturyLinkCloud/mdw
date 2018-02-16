@@ -782,6 +782,13 @@ public class ApplicationContext {
         return mdwCentral;
     }
 
+    public static String getMdwAuthUrl() {
+        String mdwAuth = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_AUTH_URL);
+        if (mdwAuth == null)
+            mdwAuth = "https://" + getMdwCentralHost() + "/mdw/services/com/centurylink/mdw/central/auth";
+        return mdwAuth;
+    }
+
     public static String getMdwCloudRoutingUrl() {
         String mdwRouting = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_ROUTING_URL);
         if (mdwRouting == null)
