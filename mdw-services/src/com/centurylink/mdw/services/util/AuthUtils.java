@@ -248,6 +248,9 @@ public class AuthUtils {
     private static boolean checkBasicAuthenticationHeader(String authorizationHeader, Map<String,String> headers) {
         String user = "Unknown";
         try {
+            if ((headers.get(Listener.METAINFO_REQUEST_URL) == null || !headers.get(Listener.METAINFO_REQUEST_URL).toLowerCase().startsWith("https")) && !ApplicationContext.isDevelopment())
+                throw new Exception("Must authenticate using HTTPS");
+
             // Do NOT try to authenticate if it's not Basic auth
             if (authorizationHeader  == null || !authorizationHeader.startsWith("Basic"))
                 throw new Exception("Invalid Basic Auth Header");  // This should never happen
