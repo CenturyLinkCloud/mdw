@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.util;
+package com.centurylink.mdw.services.util;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.Map;
@@ -30,10 +31,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
-import com.centurylink.mdw.cache.impl.AppTokenCache;
+import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.util.HmacSha1Signature;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -47,6 +51,8 @@ public class AuthUtils {
     public static final String OAUTH_AUTHENTICATION = "OAuth";
     public static final String MDW_APP_TOKEN = "MDW_APP_TOKEN";
     public static final String MDW_AUTH_TOKEN = "MDW_Auth";
+
+    private static final String APPTOKENCACHE = "AppTokenCache";
 
     private static JWTVerifier verifier = null;
 
@@ -161,7 +167,15 @@ public class AuthUtils {
 
         String appId = headers.get(Listener.METAINFO_MDW_APP_ID);
         String providedToken = headers.get(Listener.METAINFO_MDW_APP_TOKEN);
-        String realToken = AppTokenCache.getAppToken(appId);
+        String realToken = "";
+        CacheService appTokenCacheInstance = CacheRegistration.getInstance().getCache(APPTOKENCACHE);
+        try {
+            Method compiledAssetGetter = appTokenCacheInstance.getClass().getMethod("getAppToken", String.class);
+            realToken = (String)compiledAssetGetter.invoke(appTokenCacheInstance, appId);
+        }
+        catch (Exception ex) {
+            logger.severeException("Exception trying to retreieve App token from cache", ex);
+        }
 
         // If the provided token doesn't match real token for specified appId, fail authentication
         if (providedToken == null || !providedToken.equals(realToken)) {

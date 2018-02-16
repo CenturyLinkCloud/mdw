@@ -31,7 +31,7 @@ import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.BroadcastHelper;
 import com.centurylink.mdw.services.process.EventServices;
-import com.centurylink.mdw.util.AuthUtils;
+import com.centurylink.mdw.services.util.AuthUtils;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 

@@ -37,7 +37,7 @@ import com.centurylink.mdw.constant.EnvironmentVariables;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
-import com.centurylink.mdw.util.AuthUtils;
+import com.centurylink.mdw.services.util.AuthUtils;
 
 /**
  * Base class for HTTP protocol service handling.
