@@ -29,6 +29,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.auth.JwtAuthenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.cache.CacheService;
@@ -269,7 +270,9 @@ public class AuthUtils {
             String pass = creds[1];
 
             if (ApplicationContext.getAuthMethod().equals("mdw")) {
-                // TODO - Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
+                // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
+                JwtAuthenticator jwtAuth = new JwtAuthenticator();
+                jwtAuth.authenticate(user, pass);
             }
             else {
                 ldapAuthenticate(user, pass);
