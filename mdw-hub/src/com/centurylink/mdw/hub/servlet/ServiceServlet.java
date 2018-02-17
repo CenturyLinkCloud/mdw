@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -177,7 +176,7 @@ public abstract class ServiceServlet extends HttpServlet {
                             remote = InetAddress.getByName(request.getRemoteHost());
                             mdwCentral = Arrays.asList(InetAddress.getAllByName(ApplicationContext.getMdwCentralHost()));
                         }
-                        catch (UnknownHostException e) {
+                        catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }

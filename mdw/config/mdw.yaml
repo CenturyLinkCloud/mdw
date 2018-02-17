@@ -39,6 +39,7 @@ servers:
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
 discovery.url: http://repo.maven.apache.org/maven2
+central.url: https://mdw.useast.appfog.ctl.io/mdw
 
 app:
   id: mdw6
@@ -59,12 +60,6 @@ mail:
   smtp.port: 25
   smtp.timeout: 10000
   connection.timeout: 10000
-
-# MDW central
-central:
-  host: mdw.useast.appfog.ctl.io
-  auth.url: https://mdw.useast.appfog.ctl.io/mdw/services/com/centurylink/mdw/central/auth
-  routing.url: https://mdw.useast.appfog.ctl.io/mdw/services/routing
   
 # ldap
 ldap:

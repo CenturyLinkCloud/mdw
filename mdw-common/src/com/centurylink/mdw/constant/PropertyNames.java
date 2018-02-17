@@ -153,7 +153,7 @@ public class PropertyNames {
 
     // Authentication / MDW Central
     public static final String MDW_AUTH_TOKEN_MAX_AGE = "mdw.auth.token.maxage";  // Max age in seconds that a JWT token will still be considered valid
-    public static final String MDW_CENTRAL_HOST = "mdw.central.host";
+    public static final String MDW_CENTRAL_URL = "mdw.central.url";
     public static final String MDW_CENTRAL_AUTH_URL = "mdw.central.auth.url";
     public static final String MDW_CENTRAL_ROUTING_URL = "mdw.central.routing.url";
 

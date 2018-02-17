@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -775,24 +776,28 @@ public class ApplicationContext {
         return websocketUrl;
     }
 
-    public static String getMdwCentralHost() {
-        String mdwCentral = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_HOST);
-        if (mdwCentral == null)
-            mdwCentral = "mdw.useast.appfog.ctl.io";
-        return mdwCentral;
+    public static String getMdwCentralUrl() {
+        String mdwCentralUrl = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_URL);
+        if (mdwCentralUrl == null)
+            mdwCentralUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+        return mdwCentralUrl;
     }
 
     public static String getMdwAuthUrl() {
         String mdwAuth = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_AUTH_URL);
         if (mdwAuth == null)
-            mdwAuth = "https://" + getMdwCentralHost() + "/mdw/services/com/centurylink/mdw/central/auth";
+            mdwAuth = getMdwCentralUrl() + "/services/com/centurylink/mdw/central/auth";
         return mdwAuth;
+    }
+
+    public static String getMdwCentralHost() throws MalformedURLException {
+        return new URL(ApplicationContext.getMdwCentralUrl()).getHost();
     }
 
     public static String getMdwCloudRoutingUrl() {
         String mdwRouting = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_ROUTING_URL);
         if (mdwRouting == null)
-            mdwRouting = "https://" + getMdwCentralHost() + "/mdw/services/routing";
+            mdwRouting = getMdwCentralUrl() + "/services/routing";
         return mdwRouting;
     }
 
