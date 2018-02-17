@@ -48,8 +48,6 @@ import com.centurylink.mdw.services.UserException;
 import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.WildcardFilenameFilter;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -60,7 +58,7 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 @Tracked(LogLevel.TRACE)
 public class EmailNotificationActivity extends DefaultActivityImpl implements NotificationActivity {
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static final String RECIPIENTS_EXPRESSION = "RecipientsExpression";
 
     @Override
     public void execute() throws ActivityException {
@@ -73,26 +71,12 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
     }
 
     public void sendNotices() throws ActivityException {
-        String groups = getAttributeValue(WorkAttributeConstant.NOTICE_GROUPS);
-        String recipEmails = getAttributeValue(WorkAttributeConstant.NOTICE_RECIP_EMAILS);
-        if (!StringHelper.isEmpty(recipEmails) && recipEmails.indexOf('@') < 0 && !recipEmails.startsWith("$")) {
-            if (recipEmails.startsWith("prop:")) {
-                try {
-                    recipEmails = getAttributeValueSmart(WorkAttributeConstant.NOTICE_RECIP_EMAILS);
-                }
-                catch (PropertyException e) {
-                    throw new ActivityException("Notification activity requires recipient emails or groups attribute: " + this.getActivityName()
-                            + "Property not found  = recipEmails" + recipEmails);
-                }
-            }
-            else
-                recipEmails = "$" + recipEmails;
-        }
-        if (StringHelper.isEmpty(groups) && StringHelper.isEmpty(recipEmails)) {
-            throw new ActivityException("Notification activity requires recipient emails or groups attribute: " + this.getActivityName());
-        }
 
         try {
+            String groups = getAttributeValue(WorkAttributeConstant.NOTICE_GROUPS);
+            String recipEmails = getAttributeValueSmart(RECIPIENTS_EXPRESSION);
+            String ccGroups = getAttributeValue(WorkAttributeConstant.CC_GROUPS);
+
             String fromAddress = getAttributeValueSmart(WorkAttributeConstant.NOTICE_FROM);
             if (fromAddress == null)
                 throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_FROM);
@@ -103,6 +87,14 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             if (templateName == null)
                 throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_TEMPLATE);
 
+            Address[] recipAddresses = getRecipients(groups, recipEmails);
+            Address[] ccAddresses = getRecipients(ccGroups, null);
+
+            if (recipAddresses.length == 0 && ccAddresses.length == 0) {
+                logwarn(" ** Warning: no email recipients found");
+                return;
+            }
+
             TemplatedEmail templatedEmail = new TemplatedEmail();
             templatedEmail.setFromAddress(fromAddress);
             templatedEmail.setSubject(subject);
@@ -110,26 +102,26 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             templatedEmail.setTemplateName(templateName);
             templatedEmail.setModel(getTemplatedEmailModel());
             templatedEmail.setAttachments(getAttachments());
-            templatedEmail.setRecipients(getRecipients(groups, recipEmails));
-            templatedEmail.setCcRecipients(getCcRecipients());
-            templatedEmail.setRuntimeContext(this.getRuntimeContext());
+            templatedEmail.setRecipients(recipAddresses);
+            templatedEmail.setCcRecipients(ccAddresses);
+            templatedEmail.setRuntimeContext(getRuntimeContext());
 
             JSONObject emailJson = templatedEmail.buildEmailJson();
             createDocument(JSONObject.class.getName(), emailJson, OwnerType.NOTIFICATION_ACTIVITY, getActivityInstanceId());
             templatedEmail.sendEmail(emailJson);
         }
         catch (MessagingException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logexception(ex.getMessage(), ex);
             while (ex.getNextException() != null && ex.getNextException() instanceof MessagingException) {
                 ex = (MessagingException) ex.getNextException();
-                logger.severeException(ex.getMessage(), ex);
+                logexception(ex.getMessage(), ex);
             }
             String continueDespite = getAttributeValue(WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION);
             if (continueDespite == null || !Boolean.parseBoolean(continueDespite))
                 throw new ActivityException(-1, ex.getMessage(), ex);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logexception(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }
@@ -170,24 +162,6 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
         }
 
         return recipients.toArray(new Address[0]);
-    }
-
-    /**
-     * Default behavior is CC recipients driven by attributes.
-     * @throws AddressException
-     */
-    protected Address[] getCcRecipients()
-        throws ActivityException, CachingException, AddressException {
-        String groups = getAttributeValue(WorkAttributeConstant.CC_GROUPS);
-        String recipEmails = getAttributeValue(WorkAttributeConstant.CC_EMAILS);
-        if (!StringHelper.isEmpty(recipEmails) && recipEmails.indexOf('@') < 0 && !recipEmails.startsWith("$"))
-            recipEmails = "$" + recipEmails;
-        if (StringHelper.isEmpty(groups) && StringHelper.isEmpty(recipEmails)) {
-            return null;
-        }
-        else {
-            return getRecipients(groups, recipEmails);
-        }
     }
 
     private Address[] toMailAddresses(List<String> addressList) throws AddressException {

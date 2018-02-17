@@ -15,11 +15,13 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,9 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.hub.context.Mdw;
+import com.centurylink.mdw.hub.context.Page;
 import com.centurylink.mdw.hub.context.WebAppContext;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.util.ExpressionUtil;
 
 /**
  * Overrides 404 handling to check for matching asset content.
@@ -45,7 +49,11 @@ public class NotFoundServlet extends HttpServlet {
                 response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/images/tab_sel.png");
                 return;
             }
-            if (path.indexOf('.') == -1 && path.indexOf('#') == -1) {
+            if (path.endsWith("/mdw.ico")) {  // hack for nav back from Task UI
+                response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/mdw.ico");
+                return;
+            }
+            if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && path.startsWith("/tasks")) {
                 String redirectPath = path;
                 String[] pathSegs = path.substring(1).split("/");
                 if (pathSegs.length > 2)
@@ -55,53 +63,61 @@ public class NotFoundServlet extends HttpServlet {
             }
 
             Mdw mdw = WebAppContext.getMdw();
-            AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), path);
-            if (!asset.exists()) {
-                if (asset.getExtension() == null) {
-                    // try appending page extensions
-                    // TODO: make this a method
-                    asset = new AssetInfo(mdw.getAssetRoot(), path + ".html");
-                    if (!asset.exists()) {
-                        asset = new AssetInfo(mdw.getAssetRoot(), path + ".md");
+            Page page = new Page(mdw, path);
+
+            if (!page.exists()) {
+                if (page.getExt() == null) {
+                    // try appending supported page extensions
+                    page = new Page(mdw, path + ".html");
+                    if (!page.exists()) {
+                        page = new Page(mdw, path + ".md");
+                    }
+                    if (!page.exists()) {
+                        page = new Page(mdw, path + ".jsx");
+                        if (page.exists()) {
+                            // standalone jsx path (without extension): set template html
+                            page.setTemplate("com/centurylink/mdw/react/index.html");
+                        }
                     }
                 }
-                if (asset.exists()) {
-                    path += '.' + asset.getExtension(); // append extension to the path
-                }
-                else {
-                    path = "/error/404.html";
+                if (!page.exists()) {
                     // allow 404 override
-                    asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + path);
+                    page = new Page(mdw, "/error/404.html");
                 }
             }
-            if (asset.exists()) {
-                if (asset.getExtension().equals("md")) {
-                    // TODO: render markdown
+            if (page.exists()) {
+                response.setContentType("text/html");
+
+                if (page.getAsset().shouldCache(request.getHeader("If-None-Match"))) {
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 }
                 else {
-                    response.setContentType(asset.getContentType());
-
-                    if (asset.shouldCache(request.getHeader("If-None-Match"))) {
-                        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                    response.setHeader("ETag", page.getAsset().getETag());
+                    InputStream in = null;
+                    OutputStream out = response.getOutputStream();
+                    try {
+                        if (page.getExt().equals("md")) {
+                            // TODO: render markdown to html
+                        }
+                        else if (page.getTemplate() != null) {
+                            String html = new String(Files.readAllBytes(Paths.get(page.getTemplateAsset().getFile().getPath())));
+                            in = new ByteArrayInputStream(ExpressionUtil.substitute(html, page, true).getBytes());
+                        }
+                        else {
+                            in = new FileInputStream(page.getFile());
+                        }
+                        int read = 0;
+                        byte[] bytes = new byte[1024];
+                        while((read = in.read(bytes)) != -1)
+                            out.write(bytes, 0, read);
                     }
-                    else {
-                        response.setHeader("ETag", asset.getETag());
-                        String pkg = path.substring(0, path.length() - asset.getName().length());
-                        File file = new File(mdw.getAssetRoot() + "/" + pkg.replace('.', '/') + "/" + asset.getName());
-                        InputStream in = null;
-                        OutputStream out = response.getOutputStream();
-                        try {
-                            in = new FileInputStream(file);
-                            int read = 0;
-                            byte[] bytes = new byte[1024];
-                            while((read = in.read(bytes)) != -1)
-                                out.write(bytes, 0, read);
-                        }
-                        finally {
-                            if (in != null)
-                                in.close();
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        }
+                    catch (MdwException ex) {
+                        throw new IOException(ex.getMessage(), ex);
+                    }
+                    finally {
+                        if (in != null)
+                            in.close();
+                        response.setStatus(HttpServletResponse.SC_OK);
                     }
                 }
                 return;

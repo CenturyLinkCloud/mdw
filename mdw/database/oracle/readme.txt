@@ -1,5 +1,4 @@
 Run the following scripts to create a  database on Oracle for VCS based projects:
-(scripts location : http://cshare.ad.qintra.com/sites/MDW/Developer Resources/MDW Database/Base Scripts MDW 5.5 Oracle/VCSBasedDB)
 1. create_tables.sql	
 2. create_indexes.sql
 3. add_primary_keys.sql
