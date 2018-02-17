@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" style="height:100%">
+<head>
+  <meta charset="utf-8">
+  <title>MDW</title>
+  <link rel="stylesheet" href="${mdw.hubRoot}/bower_components/bootstrap-css-only/css/bootstrap.css">
+  <link rel="stylesheet" href="${mdw.hubRoot}/css/mdw.css">
+  <link rel="stylesheet" href="${mdw.hubRoot}/css/mdw-hub.css">
+  <link rel="stylesheet" href="${mdw.hubRoot}/css/mdw-admin.css">
+  <link rel="icon" type="image/png" href="${mdw.hubRoot}/images/mdw.ico" />
+  <script src="${mdw.hubRoot}/js/ui/mdwUi.js"></script>
+</head>
+<body>
+  <script>
+    var $mdwHubRoot = '${mdw.hubRoot}';
+    var $mdwServicesRoot = '${mdw.servicesRoot}';
+  </script>
+  <div mdw-jsx="${assetPath}">
+  </div>
+  <script type="text/javascript" src="${mdw.hubRoot}/${relPath}"></script>
+</body>
+</html>

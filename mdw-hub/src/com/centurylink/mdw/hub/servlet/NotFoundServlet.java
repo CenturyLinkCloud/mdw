@@ -73,7 +73,9 @@ public class NotFoundServlet extends HttpServlet {
                         page = new Page(mdw, path + ".md");
                     }
                     if (!page.exists()) {
-                        page = new Page(mdw, path + ".jsx");
+                        int lastSlash = path.lastIndexOf('/');
+                        String name = path.substring(lastSlash + 1);
+                        page = new Page(mdw, path.substring(0, lastSlash) + "/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".jsx");
                         if (page.exists()) {
                             // standalone jsx path (without extension): set template html
                             page.setTemplate("com/centurylink/mdw/react/index.html");
