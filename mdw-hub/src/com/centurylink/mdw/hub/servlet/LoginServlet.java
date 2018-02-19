@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
+import com.centurylink.mdw.auth.JwtAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.hub.context.WebAppContext;
@@ -90,7 +91,7 @@ public class LoginServlet extends HttpServlet {
             String password = request.getParameter("password");
             if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
                 try {
-                    Authenticator authenticator = null; // TODO MdwAuthenticator
+                    Authenticator authenticator = new JwtAuthenticator();
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
                     AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);
