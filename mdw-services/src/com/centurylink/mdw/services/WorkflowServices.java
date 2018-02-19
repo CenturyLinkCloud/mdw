@@ -162,8 +162,11 @@ public interface WorkflowServices {
     public List<ActivityImplementor> getImplementors() throws ServiceException;
     public ActivityImplementor getImplementor(String className) throws ServiceException;
 
+    public Long launchProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> params) throws ServiceException;
+
     public Long launchProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String, String> params) throws ServiceException;
+            Long ownerId, Map<String,String> params) throws ServiceException;
 
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;

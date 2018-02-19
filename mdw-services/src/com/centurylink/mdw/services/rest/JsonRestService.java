@@ -40,8 +40,6 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.HttpHelper;
@@ -283,11 +281,10 @@ public abstract class JsonRestService extends RestService implements JsonService
     }
 
     protected void launchProcess(String name, String masterRequestId,
-            Map<String,String> parameters, Map<String,String> headers) throws ServiceException {
-        Process process = ProcessCache.getProcess(name);
+            Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         long documentId = Long.parseLong(headers.get(Listener.METAINFO_DOCUMENT_ID));
-        workflowServices.launchProcess(process, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
+        workflowServices.launchProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
     }
 
 }

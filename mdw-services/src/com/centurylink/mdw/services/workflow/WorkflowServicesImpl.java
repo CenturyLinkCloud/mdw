@@ -917,6 +917,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public Long launchProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> parameters) throws ServiceException {
+        try {
+            Process process = ProcessCache.getProcess(name);
+            ProcessEngineDriver driver = new ProcessEngineDriver();
+            Map<String,String> params = translateParameters(process, parameters);
+            return driver.startProcess(process.getId(), masterRequestId, ownerType, ownerId, params, null);
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
     public Long launchProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params) throws ServiceException {
         try {
