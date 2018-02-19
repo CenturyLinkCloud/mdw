@@ -30,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
@@ -287,4 +288,8 @@ public abstract class JsonRestService extends RestService implements JsonService
         workflowServices.launchProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
     }
 
+    protected int notifyProcess(String packageName, String eventId) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        return workflowServices.notify(PackageCache.getPackage(packageName), eventId, null);
+    }
 }
