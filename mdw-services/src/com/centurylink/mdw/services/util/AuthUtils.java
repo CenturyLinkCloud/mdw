@@ -33,6 +33,7 @@ import com.centurylink.mdw.auth.JwtAuthenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.impl.JwtTokenCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
@@ -56,6 +57,7 @@ public class AuthUtils {
     private static final String APPTOKENCACHE = "AppTokenCache";
 
     private static JWTVerifier verifier = null;
+    private static long maxAge = 0;
 
     public static boolean authenticate(String authMethod, Map<String,String> headers) {
         return authenticate(authMethod, headers, null);
@@ -104,8 +106,8 @@ public class AuthUtils {
 
         if (hdr != null && hdr.startsWith("Basic"))
             return checkBasicAuthenticationHeader(hdr, headers);
-        else if (hdr != null && hdr.startsWith("MDW-JWT"))
-            return checkMdwAuthenticationHeader(hdr, headers);
+        else if (hdr != null && hdr.startsWith("Bearer"))
+            return checkBearerAuthenticationHeader(hdr, headers);
 
         return false;
     }
@@ -191,46 +193,22 @@ public class AuthUtils {
         return true;
     }
 
-    private static boolean checkMdwAuthenticationHeader(String authHeader, Map<String,String> headers) {
+    private static boolean checkBearerAuthenticationHeader(String authHeader, Map<String,String> headers) {
         String user = "Unknown";
         try {
-            // Do NOT try to authenticate if it's not MDW auth
-            if (authHeader == null || !authHeader.startsWith("MDW-JWT"))
+            // Do NOT try to authenticate if it's not Bearer
+            if (authHeader == null || !authHeader.startsWith("Bearer"))
                 throw new Exception("Invalid MDW Auth Header");  // This should never happen
 
-            authHeader = authHeader.replaceFirst("MDW-JWT ", "");
+            authHeader = authHeader.replaceFirst("Bearer ", "");
+            DecodedJWT jwt = JWT.decode(authHeader);  // Validate it is a JWT and see which kind of JWT it is
 
-            String[] creds = authHeader.split("/");
-
-            if (creds.length < 2)
-                throw new Exception("Invalid MDW Auth Header");
-
-            user = creds[0];
-            String token = creds[1];
-
-            // If first call, generate verifier
-            JWTVerifier tempVerifier = verifier;
-            if (tempVerifier == null)
-                tempVerifier = createMdwTokenVerifier();
-
-            if (tempVerifier == null)
-                throw new Exception("Cannot generate JWT verifier");
-
-            DecodedJWT jwt = tempVerifier.verify(token);
-
-            // Verify token is for same user as specified in Authorization header
-            String tokenUser = jwt.getSubject();
-            if (tokenUser != null && tokenUser.equals(user))
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
-            else
-                throw new Exception("Received valid JWT token, but cannot validate the user");
-
-            // Verify token is not too old, if application specifies property for max token age - in seconds
-            long maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;  // MDW default is token never expires
-            if (maxAge > 0 && jwt.getIssuedAt() != null) {
-                if ((new Date().getTime() - jwt.getIssuedAt().getTime()) > maxAge)
-                    throw new Exception("JWT token has expired");
+            if ("mdwAuth".equals(jwt.getIssuer())) {  // JWT was issued by MDW Central
+                verifyMdwJWT(authHeader, headers);
             }
+      //     else if ()   // Future support for other issuers of JWTs
+            else
+                throw new Exception("Invalid JWT Issuer");
         }
         catch (Throwable ex) {
             headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '" + user + "' " + ex.getMessage());
@@ -270,9 +248,20 @@ public class AuthUtils {
             String pass = creds[1];
 
             if (ApplicationContext.getAuthMethod().equals("mdw")) {
-                // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
-                JwtAuthenticator jwtAuth = new JwtAuthenticator();
-                jwtAuth.authenticate(user, pass);
+                String token = JwtTokenCache.getToken((user + "/" + pass));
+                boolean validated = false;
+                if (!StringHelper.isEmpty(token)) { // Use token if this user was already validated
+                    try {
+                        // Use cached token
+                        verifyMdwJWT(token, headers);
+                        validated = true;
+                    } catch (Exception e) {}  // Token might be expired or some other issue with it - re-authenticate
+                }
+                if (!validated) {
+                    // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
+                    JwtAuthenticator jwtAuth = new JwtAuthenticator();
+                    jwtAuth.authenticate(user, pass);  // This will populate JwtTokenCache with token for next time
+                }
             }
             else {
                 ldapAuthenticate(user, pass);
@@ -311,6 +300,30 @@ public class AuthUtils {
         auth.authenticate(user, password);
     }
 
+    private static void verifyMdwJWT(String token, Map<String,String> headers) throws Exception {
+        // If first call, generate verifier
+        JWTVerifier tempVerifier = verifier;
+        if (tempVerifier == null)
+            tempVerifier = createMdwTokenVerifier();
+
+        if (tempVerifier == null)
+            throw new Exception("Cannot generate MDW JWT verifier");
+
+        DecodedJWT jwt = tempVerifier.verify(token);  // Verifies JWT is valid
+
+        // Verify token is not too old, if application specifies property for max token age - in seconds
+        if (maxAge > 0 && jwt.getIssuedAt() != null) {
+            if ((new Date().getTime() - jwt.getIssuedAt().getTime()) > maxAge)
+                throw new Exception("JWT token has expired");
+        }
+
+        // Get the user JWT was created for
+        if (!StringHelper.isEmpty(jwt.getSubject()))
+            headers.put(Listener.AUTHENTICATED_USER_HEADER, jwt.getSubject());
+        else
+            throw new Exception("Received valid JWT token, but cannot identify the user");
+    }
+
     private static synchronized JWTVerifier createMdwTokenVerifier() {
         JWTVerifier tempVerifier = verifier;
         if (tempVerifier == null) {
@@ -319,6 +332,7 @@ public class AuthUtils {
                 logger.severe("Exception processing incoming message using MDW Auth token - Missing System variable MDW_APP_TOKEN");
             else {
                 try {
+                    maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;  // MDW default is token never expires
                     Algorithm algorithm = Algorithm.HMAC256(appToken);
                     verifier = tempVerifier = JWT.require(algorithm)
                             .withIssuer("mdwAuth")
