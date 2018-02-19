@@ -306,7 +306,8 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         JSONObject json = create();
         // json.put("id", getCuid());
         json.put("cuid", getCuid());
-        json.put("name", getName());
+        if (json.has("name"))
+            json.put("name", getName());
         if (workgroups != null) {
             JSONArray grpsJson = new JSONArray();
             for (Workgroup group : workgroups) {
@@ -317,8 +318,10 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         if (attributes != null) {
             JSONObject attrsJson = create();
             for (String attr : attributes.keySet()) {
-                String value = attributes.get(attr);
-                attrsJson.put(attr, value == null ? "" : value);
+                if (!attr.equals(PASSWORD)) {
+                    String value = attributes.get(attr);
+                    attrsJson.put(attr, value == null ? "" : value);
+                }
             }
             json.put("attributes", attrsJson);
         }

@@ -54,7 +54,6 @@ public class WebSocketMessenger {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        System.out.println("SESSION: " + session);
     }
 
     @OnClose
