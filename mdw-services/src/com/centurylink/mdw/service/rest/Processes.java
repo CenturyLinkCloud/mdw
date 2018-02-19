@@ -319,8 +319,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
                 ProcessRun run = new ProcessRun(content);
                 if(headers.get("genmasterrequestid")!=null){
-                   Long radomNoBet0and99= (Long) Math.round((Math.random() * 200));
-                   run.setMasterRequestId("mdwapp-20180216"+radomNoBet0and99);
+                    run.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
                 }
                 if (run.getMasterRequestId() == null || run.getMasterRequestId().isEmpty())
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Missing master request id");
