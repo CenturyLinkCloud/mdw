@@ -58,8 +58,6 @@ import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.UserException;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.MiniCrypter;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -475,9 +473,8 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         }
     }
 
-    public List<String> getGroupEmails(List<String> groups) throws UserException, DataAccessException {
-        UserManager userManager = ServiceLocator.getUserManager();
-        return userManager.getEmailAddressesForGroups(groups);
+    public List<String> getGroupEmails(List<String> groups) throws DataAccessException {
+        return ServiceLocator.getUserServices().getWorkgroupEmails(groups);
     }
 
     protected class VariablesModel extends HashMap<String,Object> {

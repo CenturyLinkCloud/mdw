@@ -24,7 +24,6 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
@@ -79,14 +78,6 @@ public class DataAccess {
         if (assetRoot == null)
             throw new IllegalStateException("Asset root not known");
         return getVcsRuntimeDataAccess(db, assetRoot);
-    }
-
-    public static UserDataAccess getUserDataAccess(DatabaseAccess db) throws DataAccessException {
-        return getUserDataAccess(currentSchemaVersion, supportedSchemaVersion, db);
-    }
-
-    public static UserDataAccess getUserDataAccess(int version, int supportedVersion, DatabaseAccess db) {
-        return new UserDataAccessDb(db, version, supportedVersion);
     }
 
     private static volatile ProcessLoader loaderPersisterVcs;

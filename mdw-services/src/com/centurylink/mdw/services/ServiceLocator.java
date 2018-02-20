@@ -25,7 +25,6 @@ import com.centurylink.mdw.services.rules.RulesServicesImpl;
 import com.centurylink.mdw.services.system.SystemServicesImpl;
 import com.centurylink.mdw.services.task.TaskServicesImpl;
 import com.centurylink.mdw.services.test.TestingServicesImpl;
-import com.centurylink.mdw.services.user.UserManagerBean;
 import com.centurylink.mdw.services.user.UserServicesImpl;
 import com.centurylink.mdw.services.workflow.ProcessServicesImpl;
 import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
@@ -34,10 +33,6 @@ import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
  * TODO: Bean instances should be provided by Spring.
  */
 public class ServiceLocator {
-
-    public static UserManager getUserManager() {
-        return new UserManagerBean();
-    }
 
     public static EventManager getEventManager() {
         return new EventManagerBean();

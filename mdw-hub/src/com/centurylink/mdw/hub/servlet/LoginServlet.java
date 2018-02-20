@@ -36,6 +36,7 @@ import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.ExpressionUtil;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -94,7 +95,10 @@ public class LoginServlet extends HttpServlet {
                     Authenticator authenticator = new JwtAuthenticator();
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
-                    AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);
+                    AuthenticatedUser authUser = null;
+                    User u = ServiceLocator.getUserServices().getUser(user);
+                    if (u != null)
+                      authUser = new AuthenticatedUser(u, u.getAttributes());
                     if (authUser == null) {
                         if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser()) {
                             throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(),

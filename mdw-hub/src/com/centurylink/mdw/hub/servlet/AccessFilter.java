@@ -41,6 +41,7 @@ import com.centurylink.mdw.auth.AuthExcludePattern;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -228,7 +229,9 @@ public class AccessFilter implements Filter {
                 }
                 if (authUser != null && authUser.length() > 0) {
                     // load the user
-                    user = ServiceLocator.getUserManager().loadUser(authUser);
+                    User u = ServiceLocator.getUserServices().getUser(authUser);
+                    if (u != null)
+                      user = new AuthenticatedUser(u, u.getAttributes());
                     session.setAttribute("authenticatedUser", user);
                     if (user == null) {
                         if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))

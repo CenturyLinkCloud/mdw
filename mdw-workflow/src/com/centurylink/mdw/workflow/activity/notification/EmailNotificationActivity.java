@@ -37,15 +37,12 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.email.ProcessEmailModel;
 import com.centurylink.mdw.email.TemplatedEmail;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.UserException;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.WildcardFilenameFilter;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -180,17 +177,12 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
     protected Address[] getGroupEmailAddresses(List<String> groups)
     throws ActivityException, AddressException {
         try {
-            return toMailAddresses(getGroupEmails(groups));
+            return toMailAddresses(ServiceLocator.getUserServices().getWorkgroupEmails(groups));
         }
         catch (MdwException e) {
             logger.severeException(e.getMessage(), e);
             throw new ActivityException(-1, e.getMessage(), e);
         }
-    }
-
-    public List<String> getGroupEmails(List<String> groups) throws UserException, DataAccessException {
-        UserManager userManager = ServiceLocator.getUserManager();
-        return userManager.getEmailAddressesForGroups(groups);
     }
 
     /**

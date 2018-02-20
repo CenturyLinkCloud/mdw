@@ -23,11 +23,12 @@ import java.util.Map;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.UserManager;
+import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
 /**
@@ -289,28 +290,35 @@ public class UserGroupCache implements PreloadableCache {
         return role;
     }
 
+    private UserDataAccess getUserDataAccess() {
+        return new UserDataAccess(new DatabaseAccess(null));
+    }
     private synchronized void load() throws CachingException {
         CodeTimer timer = null;
         try {
             timer = new CodeTimer(true);
-            UserManager userManager = ServiceLocator.getUserManager();
+
+            UserDataAccess dataAccess = getUserDataAccess();
 
             // roles
-            roles = userManager.getUserRoles();
+            roles = dataAccess.getAllRoles();
 
             // groups
-            workgroups = userManager.getUserGroups(false);
+            workgroups = dataAccess.getAllGroups(false);
+            for (Workgroup workgroup : workgroups) {
+                workgroup.setRoles(dataAccess.getRolesForGroup(workgroup.getId()));
+            }
 
             // users TODO: one query per user is executed for loading groups/roles
-            users = userManager.getUsers();
+            users = dataAccess.queryUsers("END_DATE is null", false, -1, -1, "NAME");
 
-            userAttributeNames = userManager.getPublicUserAttributeNames();
+            userAttributeNames = dataAccess.getUserAttributeNames();
             if (!userAttributeNames.contains(User.EMAIL_ADDRESS) && !getUserAttributeNames().contains(User.OLD_EMAIL_ADDRESS))
                 userAttributeNames.add(User.EMAIL_ADDRESS);
             if (!userAttributeNames.contains(User.PHONE_NUMBER) && !getUserAttributeNames().contains(User.OLD_PHONE_NUMBER))
                 userAttributeNames.add(User.PHONE_NUMBER);
 
-            workgroupAttributeNames = userManager.getWorkgroupAttributeNames();
+            workgroupAttributeNames = dataAccess.getGroupAttributeNames();
             if (!workgroupAttributeNames.contains(Workgroup.SLACK_CHANNELS))
                 workgroupAttributeNames.add(Workgroup.SLACK_CHANNELS);
         }
@@ -324,39 +332,47 @@ public class UserGroupCache implements PreloadableCache {
 
     private Role loadRole(String name) throws CachingException {
         try {
-            UserManager userManager = ServiceLocator.getUserManager();
-            return userManager.getUserRole(name);
+            UserDataAccess dataAccess = getUserDataAccess();
+            Role role = dataAccess.getRole(name);
+            if (role != null) {
+                List<User> users = dataAccess.getUsersForRole(name);
+                role.setUsers(users.toArray(new User[0]));
+            }
+            return role;
         }
-        catch (Exception ex) {
+        catch (DataAccessException ex) {
             throw new CachingException(ex.getMessage(), ex);
         }
     }
 
     private Workgroup loadWorkgroup(String name) throws CachingException {
         try {
-            UserManager userManager = ServiceLocator.getUserManager();
-            Workgroup group = userManager.getUserGroup(name, false);
-            return group;
+            UserDataAccess dataAccess = getUserDataAccess();
+            Workgroup workgroup = dataAccess.getGroup(name);
+            if (workgroup != null) {
+                workgroup.setRoles(dataAccess.getRolesForGroup(workgroup.getId()));
+                List<User> users = dataAccess.getUsersForGroup(workgroup.getName(), false);
+                workgroup.setUsers(users.toArray(new User[0]));
+            }
+            return workgroup;
         }
-        catch (Exception ex) {
+        catch (DataAccessException ex) {
             throw new CachingException(ex.getMessage(), ex);
         }
     }
 
     private User loadUser(String cuid) throws CachingException {
         try {
-            UserManager userManager = ServiceLocator.getUserManager();
-            return userManager.getUser(cuid);
+            return getUserDataAccess().getUser(cuid);
         }
-        catch (Exception ex) {
+        catch (DataAccessException ex) {
             throw new CachingException(ex.getMessage(), ex);
         }
     }
 
     private User loadUser(Long id) throws CachingException {
         try {
-            UserManager userManager = ServiceLocator.getUserManager();
-            return userManager.getUser(id);
+            return getUserDataAccess().getUser(id);
         }
         catch (Exception ex) {
             throw new CachingException(ex.getMessage(), ex);
