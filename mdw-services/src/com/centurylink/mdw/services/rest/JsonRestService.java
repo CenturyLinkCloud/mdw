@@ -44,6 +44,7 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;
 
@@ -288,8 +289,8 @@ public abstract class JsonRestService extends RestService implements JsonService
         workflowServices.launchProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
     }
 
-    protected int notifyProcess(String packageName, String eventId) throws ServiceException {
+    protected int notifyProcess(String packageName, String eventId, Map<String,String> headers) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-        return workflowServices.notify(PackageCache.getPackage(packageName), eventId, null);
+        return workflowServices.notify(PackageCache.getPackage(packageName), eventId, JsonUtil.getJson(headers));
     }
 }
