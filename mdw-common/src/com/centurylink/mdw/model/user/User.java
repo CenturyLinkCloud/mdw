@@ -306,7 +306,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         JSONObject json = create();
         // json.put("id", getCuid());
         json.put("cuid", getCuid());
-        if (json.has("name"))
+        if (name != null)
             json.put("name", getName());
         if (workgroups != null) {
             JSONArray grpsJson = new JSONArray();
