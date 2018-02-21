@@ -57,12 +57,8 @@ public class JwtAuthenticator implements Authenticator {
     }
 
     public static String getJwtTokenLocation() {
-        if (tokenLocation == null) {
-            String tokenLoc = ApplicationContext.getMdwAuthUrl();
-            if (tokenLoc == null)
-                tokenLoc = System.getenv(PropertyNames.MDW_CENTRAL_AUTH_URL);
-            tokenLocation = tokenLoc;
-        }
+        if (tokenLocation == null)
+            tokenLocation = ApplicationContext.getMdwAuthUrl();
         return tokenLocation;
     }
 
