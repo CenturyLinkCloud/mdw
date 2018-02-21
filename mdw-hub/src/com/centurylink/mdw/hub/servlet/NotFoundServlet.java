@@ -16,6 +16,7 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,9 +74,20 @@ public class NotFoundServlet extends HttpServlet {
                         page = new Page(mdw, path + ".md");
                     }
                     if (!page.exists()) {
-                        int lastSlash = path.lastIndexOf('/');
-                        String name = path.substring(lastSlash + 1);
-                        page = new Page(mdw, path.substring(0, lastSlash) + "/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".jsx");
+                        String assetPath = path;
+                        if (assetPath.endsWith("/"))
+                            assetPath = assetPath.substring(0, assetPath.length() - 1);
+                        int lastSlash = assetPath.lastIndexOf('/');
+                        String pkgPath = assetPath.substring(0, lastSlash);
+                        String name = assetPath.substring(lastSlash + 1);
+                        page = new Page(mdw, pkgPath + "/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".jsx");
+                        if (!page.exists()) {
+                            // try index.jsx
+                            if (new File(mdw.getAssetRoot() + "/" + assetPath + "/.mdw/package.json").isFile())
+                                page = new Page(mdw, assetPath + "/index.jsx");
+                            if (!page.exists() && new File(mdw.getAssetRoot() + pkgPath + "/.mdw/package.json").isFile())
+                                page = new Page(mdw, pkgPath + "/index.jsx");
+                        }
                         if (page.exists()) {
                             // standalone jsx path (without extension): set template html
                             page.setTemplate("com/centurylink/mdw/react/index.html");
