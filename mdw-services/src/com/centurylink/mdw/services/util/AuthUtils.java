@@ -29,13 +29,14 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.auth.JwtAuthenticator;
+import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.JwtTokenCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.HmacSha1Signature;
@@ -55,6 +56,10 @@ public class AuthUtils {
     public static final String MDW_AUTH_TOKEN = "MDW_Auth";
 
     private static final String APPTOKENCACHE = "AppTokenCache";
+
+    private static final String JWTTOKENCACHE = "JwtTokenCache";
+    private static final String CTLJWTPKG = "com.centurylink.mdw.authCTL";
+    private static final String CTLJWTAUTH = "com.centurylink.mdw.authCTL.JwtAuthenticatorCTL";
 
     private static JWTVerifier verifier = null;
     private static long maxAge = 0;
@@ -248,7 +253,18 @@ public class AuthUtils {
             String pass = creds[1];
 
             if (ApplicationContext.getAuthMethod().equals("mdw")) {
-                String token = JwtTokenCache.getToken((user + "/" + pass));
+                if (PackageCache.getPackage(CTLJWTPKG) == null)
+                    throw new Exception("Basic Auth is not allowed when authMethod is mdw");
+
+                String token = null;
+                CacheService jwtTokenCacheInstance = CacheRegistration.getInstance().getCache(JWTTOKENCACHE);
+                try {
+                    Method compiledAssetGetter = jwtTokenCacheInstance.getClass().getMethod("getToken", String.class, String.class);
+                    token = (String)compiledAssetGetter.invoke(jwtTokenCacheInstance, user, pass);
+                }
+                catch (Exception ex) {
+                    logger.severeException("Exception trying to retreieve App token from cache", ex);
+                }
                 boolean validated = false;
                 if (!StringHelper.isEmpty(token)) { // Use token if this user was already validated
                     try {
@@ -259,7 +275,10 @@ public class AuthUtils {
                 }
                 if (!validated) {
                     // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
-                    JwtAuthenticator jwtAuth = new JwtAuthenticator();
+                    com.centurylink.mdw.model.workflow.Package pkg = PackageCache.getPackage(CTLJWTPKG);
+                    Authenticator jwtAuth = (Authenticator) CompiledJavaCache.getInstance(CTLJWTAUTH, pkg.getCloudClassLoader(), pkg);
+                    if (jwtAuth == null)
+                        throw new Exception("Missing dynamic java class " + CTLJWTAUTH + " in asset package " + CTLJWTPKG);
                     jwtAuth.authenticate(user, pass);  // This will populate JwtTokenCache with token for next time
                 }
             }

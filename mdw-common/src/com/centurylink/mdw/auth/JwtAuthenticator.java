@@ -23,13 +23,12 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.JwtTokenCache;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
 
 /**
  * <p>
@@ -42,7 +41,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
  */
 public class JwtAuthenticator implements Authenticator {
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    protected static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static String tokenLocation;
     private static String appId;
 
@@ -80,8 +79,7 @@ public class JwtAuthenticator implements Authenticator {
      * @param pass
      */
     public void authenticate(String cuid, String pass) throws MdwSecurityException {
-        String token = doAuthentication(cuid, pass);
-        JwtTokenCache.setToken((cuid + "/" + pass), token);
+        doAuthentication(cuid, pass);
     }
 
     /**
