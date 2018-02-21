@@ -85,15 +85,27 @@ public class UserServicesImpl implements UserServices {
         }
     }
 
+    public User getUser(String cuid) throws DataAccessException {
+        return getUser(cuid, true);
+    }
+
+    public User optUser(String cuid) throws DataAccessException {
+        return getUser(cuid, false);
+    }
+
     /**
      * Does not include non-public attributes.
      * Includes empty values for all public attributes.
      */
-    public User getUser(String cuid) throws DataAccessException {
+    private User getUser(String cuid, boolean exceptionIfNotFound) throws DataAccessException {
         try {
             User user = UserGroupCache.getUser(cuid);
-            if (user == null)
-                throw new CachingException("");
+            if (user == null) {
+                if (exceptionIfNotFound)
+                    throw new CachingException("");
+                else
+                    return null;
+            }
             // add empty attributes
             if (user.getAttributes() == null)
                 user.setAttributes(new HashMap<String,String>());

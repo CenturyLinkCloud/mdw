@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.io.Closeable;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -47,7 +46,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 
-public class DatabaseAccess implements Closeable {
+public class DatabaseAccess implements AutoCloseable {
 
     private String database_name; // JDBC url or a connection pool name
     private static String INTERNAL_DATA_SOURCE = null;
@@ -623,6 +622,11 @@ public class DatabaseAccess implements Closeable {
             newDoc.put(newKey, value);
         }
         return newDoc;
+    }
+
+    public DatabaseAccess open() throws SQLException {
+        openConnection();
+        return this;
     }
 
     @Override
