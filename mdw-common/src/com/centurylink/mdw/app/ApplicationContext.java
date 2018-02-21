@@ -808,4 +808,7 @@ public class ApplicationContext {
     public static void setAuthMethod(String method) {
         authMethod = method;
     }
+    public static boolean isMdwAuth() {
+        return "mdw".equals(getAuthMethod());
+    }
  }

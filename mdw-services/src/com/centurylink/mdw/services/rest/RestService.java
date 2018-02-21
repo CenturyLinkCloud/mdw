@@ -85,7 +85,7 @@ public abstract class RestService {
             if (user == null)
                 throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Cannot find user: " + userId);
             String workgroup = headers.get(Listener.AUTHORIZATION_WORKGROUP);
-            List<String> roles = getRoles(path);
+            List<String> roles = getRoles(path, headers.get(Listener.METAINFO_HTTP_METHOD));
             if (roles != null) {
                 if (roles.contains(Role.ANY))
                     return user;
@@ -148,10 +148,14 @@ public abstract class RestService {
         return null;
     }
 
+    /**
+     * Default impl pays no attention to method (for compatibility).
+     */
+    public List<String> getRoles(String path, String method) {
+        return getRoles(path);
+    }
 
     /**
-     * TODO: pass HTTP Method
-     *
      * A user who belongs to any role in the returned list is allowed
      * to perform this action/method.  Override to open access beyond Site Admin.
      * @param path

@@ -55,7 +55,7 @@ public abstract class JsonRestService extends RestService implements JsonService
         String path = headers.get(Listener.METAINFO_REQUEST_PATH);
         try {
             JSONObject response;
-            if ("GET".equals(headers.get(Listener.METAINFO_HTTP_METHOD))) {
+            if ("GET".equals(headers.get(Listener.METAINFO_HTTP_METHOD)) && !ApplicationContext.isMdwAuth()) {
                 // TODO separate auth for GET requests
                 // But BE CAREFUL because Designer uses these services
                 // and we have to figure out the auth credentials strategy.
