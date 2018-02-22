@@ -173,7 +173,7 @@ public class UserGroupCache implements PreloadableCache {
 
     public static boolean userAttributeExists(String attributeName, String attributeValue) {
         return instance.users.stream().filter(user -> {
-            return attributeValue.equals(user.getAttribute(attributeName));
+            return attributeValue.equals(getUser(user.getCuid()).getAttribute(attributeName));
         }).findAny().isPresent();
     }
 
