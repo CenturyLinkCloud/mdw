@@ -252,7 +252,7 @@ public class AuthUtils {
             user = creds[0];
             String pass = creds[1];
 
-            if (ApplicationContext.getAuthMethod().equals("mdw")) {
+            if (ApplicationContext.isMdwAuth()) {
                 if (PackageCache.getPackage(CTLJWTPKG) == null)
                     throw new Exception("Basic Auth is not allowed when authMethod is mdw");
 
@@ -277,8 +277,6 @@ public class AuthUtils {
                     // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
                     com.centurylink.mdw.model.workflow.Package pkg = PackageCache.getPackage(CTLJWTPKG);
                     Authenticator jwtAuth = (Authenticator) CompiledJavaCache.getInstance(CTLJWTAUTH, pkg.getCloudClassLoader(), pkg);
-                    if (jwtAuth == null)
-                        throw new Exception("Missing dynamic java class " + CTLJWTAUTH + " in asset package " + CTLJWTPKG);
                     jwtAuth.authenticate(user, pass);  // This will populate JwtTokenCache with token for next time
                 }
             }

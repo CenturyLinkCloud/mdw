@@ -40,9 +40,11 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthExcludePattern;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.hub.context.WebAppContext;
+import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.util.AuthUtils;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -214,22 +216,44 @@ public class AccessFilter implements Filter {
                 logCookies(request);
 
             String authUser = null;
-            if (authUserHeader != null) {
+            if (authUserHeader != null && !ApplicationContext.isMdwAuth()) {
                 authUser = request.getHeader(authUserHeader);
             }
 
             // check authentication
             AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
+                user = null;
+                if (ApplicationContext.isMdwAuth()) {
+                    String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
+                    if (authHdr != null) {
+                        Map<String,String> headers = new HashMap<String,String>();
+                        headers.put(Listener.AUTHORIZATION_HEADER_NAME, authHdr);
+                        if (AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers)) {
+                            authUser = headers.get(Listener.AUTHENTICATED_USER_HEADER);
+                            if (authUser != null) {
+                                User u = ServiceLocator.getUserServices().optUser(authUser);
+                                if (u != null) {
+                                    user = new AuthenticatedUser(u, u.getAttributes());
+                                    session.setAttribute("authenticatedUser", user);
+                                }
+                                if (user == null) {
+                                    if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))
+                                        throw new MdwSecurityException("User not authorized: " + authUser);
+                                }
+                            }
+                        }
+                    }
+                }
                 if (devMode) {
                     if (authUser == null) // otherwise honor the header to support auth even in dev mode
                         authUser = ApplicationContext.getDevUser();
                     ApplicationContext.setDevUser(authUser);
                     WebAppContext.getMdw().setHubUser(authUser);
                 }
-                if (authUser != null && authUser.length() > 0) {
+                if (user == null && authUser != null && authUser.length() > 0) {
                     // load the user
-                    User u = ServiceLocator.getUserServices().getUser(authUser);
+                    User u = ServiceLocator.getUserServices().optUser(authUser);
                     if (u != null)
                       user = new AuthenticatedUser(u, u.getAttributes());
                     session.setAttribute("authenticatedUser", user);
@@ -238,7 +262,7 @@ public class AccessFilter implements Filter {
                             throw new MdwSecurityException("User not authorized: " + authUser);
                     }
                 }
-                else {
+                else if (user == null) {
                     // user not authenticated
                     if (!isAuthExclude(path)) {
                         if ("ct".equals(authMethod)) {
@@ -288,7 +312,10 @@ public class AccessFilter implements Filter {
         Enumeration<?> en = request.getHeaderNames();
         while (en.hasMoreElements()) {
             String name = en.nextElement().toString();
-            logger.info("   " + name + ": " + request.getHeader(name));
+            if (name.equalsIgnoreCase(Listener.AUTHORIZATION_HEADER_NAME) || name.equalsIgnoreCase("Password"))
+                logger.info("   " + name + ": *************");
+            else
+                logger.info("   " + name + ": " + request.getHeader(name));
         }
     }
 

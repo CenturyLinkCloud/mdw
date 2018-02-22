@@ -131,14 +131,12 @@ public abstract class ServiceServlet extends HttpServlet {
 
     protected void authenticate(HttpServletRequest request, Map<String,String> headers, String payload) throws ServiceException {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
-        if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase()))
+        // check for user authenticated in session (added by AccessFilter.java)
+        AuthenticatedUser user = (AuthenticatedUser)request.getSession().getAttribute("authenticatedUser");
+        if (user != null && user.getCuid() != null)
+            headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
+        else if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase()))
             AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers);
-        else {
-            // check for user authenticated in session
-            AuthenticatedUser user = (AuthenticatedUser)request.getSession().getAttribute("authenticatedUser");
-            if (user != null)
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
-        }
 
         if (headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
             if (ApplicationContext.isDevelopment() && ApplicationContext.getDevUser() != null) {
