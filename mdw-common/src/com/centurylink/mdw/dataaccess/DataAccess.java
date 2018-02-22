@@ -218,11 +218,11 @@ public class DataAccess {
             DatabaseAccess db = new DatabaseAccess(null);
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-            try (Connection conn = db.openConnection()) {
+            try (DatabaseAccess dbAccess = db.open()) {
                 String ref = vcGit.getCommit();
                 if (ref != null) {  // avoid attempting update for local-only resources
                     logger.info("Auto-populating ASSET_REF table...");
-                    Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), conn);
+                    Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), dbAccess.getConnection());
                     cp.updateRefs();
                 }
                 else

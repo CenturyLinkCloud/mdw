@@ -25,6 +25,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +193,7 @@ public class AssetContentServlet extends HttpServlet {
 
     /**
      * Distributed operations support does not include package import.
-     * TODO: authorization for distributed requests (Issue #69).
+     * authorization for distributed requests handled by issue #222.
      */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
@@ -307,8 +308,8 @@ public class AssetContentServlet extends HttpServlet {
                         VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
                         AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
                         DatabaseAccess db = new DatabaseAccess(null);
-                        try (Connection conn = db.openConnection()) {
-                            Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), conn);
+                        try (DatabaseAccess dbAccess = db.open()) {
+                            Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), dbAccess.getConnection());
                             cp.updateRef(curRef);
                         }
                     }
@@ -330,7 +331,7 @@ public class AssetContentServlet extends HttpServlet {
 
                     boolean distributed = "true".equalsIgnoreCase(request.getParameter("distributedSave"));
                     if (distributed)
-                        propagate(request.getMethod(), request.getRequestURL().toString(), content);
+                        propagate(request, content);
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));
                 }
             }
@@ -378,11 +379,20 @@ public class AssetContentServlet extends HttpServlet {
         ServiceLocator.getUserServices().auditLog(userAction);
     }
 
-    protected void propagate(String method, String url, byte[] requestContent) throws IOException {
-        URL requestUrl = new URL(url);
+    protected void propagate(HttpServletRequest request, byte[] requestContent) throws IOException {
+        String method = request.getMethod();
+        URL requestUrl = new URL(request.getRequestURL().toString());
         for (URL serviceUrl : ApplicationContext.getOtherServerUrls(requestUrl)) {
             HttpHelper httpHelper = new HttpHelper(serviceUrl);
             try {
+                // Add headers from request, which would include Authorization header with JWT token
+                Enumeration<String> names = request.getHeaderNames();
+                Map<String,String> headers = new HashMap<String,String>();
+                while (names.hasMoreElements()) {
+                    String key = names.nextElement();
+                    headers.put(key, request.getHeader(key));
+                }
+                httpHelper.setHeaders(headers);
                 byte[] response;
                 if ("post".equalsIgnoreCase(method))
                     response = httpHelper.postBytes(requestContent);

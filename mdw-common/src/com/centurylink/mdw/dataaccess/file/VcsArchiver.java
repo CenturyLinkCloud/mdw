@@ -238,8 +238,8 @@ public class VcsArchiver {
         if (vcGit != null) {
             progressMonitor.subTask("Adding asset Git references to ASSET_REF table");
             DatabaseAccess db = new DatabaseAccess(null);
-            try (Connection conn = db.openConnection()){
-                Checkpoint cp = new Checkpoint(assetDir, versionControl, vcGit.getCommit(), conn);
+            try (DatabaseAccess dbAccess = db.open()){
+                Checkpoint cp = new Checkpoint(assetDir, versionControl, vcGit.getCommit(), dbAccess.getConnection());
                 cp.updateRefs();
             }
             catch (SQLException e) {

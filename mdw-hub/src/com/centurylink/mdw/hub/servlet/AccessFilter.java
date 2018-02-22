@@ -65,7 +65,7 @@ public class AccessFilter implements Filter {
     private static Map<String,String> responseHeaders;
     private static boolean devMode;
     private static boolean allowAnyAuthenticatedUser;
-    private static int sessionTimeoutSecs;
+    private static int sessionTimeoutSecs = 1800;
     private static boolean logResponseTimes;
     private static boolean logHeaders;
     private static boolean logParameters;
@@ -136,7 +136,7 @@ public class AccessFilter implements Filter {
                 sessionTimeoutSecs = Integer.parseInt(sessionTimeoutStr);
 
             // allowAnyAuthenticadUser
-            String allowAnyAuthUserStr = yamlLoader.get("authUserHeader", topMap);
+            String allowAnyAuthUserStr = yamlLoader.get("allowAnyAuthenticatedUser", topMap);
             allowAnyAuthenticatedUser = "true".equalsIgnoreCase(allowAnyAuthUserStr);
             if (allowAnyAuthenticatedUser)
                 WebAppContext.getMdw().setAllowAnyAuthenticatedUser(allowAnyAuthenticatedUser);
@@ -204,8 +204,8 @@ public class AccessFilter implements Filter {
 
             if (session.isNew()) {
                 logger.mdwDebug("** - new HTTP session from: " + request.getRemoteHost());
-                if (sessionTimeoutSecs > 0)
-                    session.setMaxInactiveInterval(1800);
+            //    if (sessionTimeoutSecs > 0)
+                    session.setMaxInactiveInterval(sessionTimeoutSecs);
             }
 
             if (logHeaders)
@@ -254,9 +254,10 @@ public class AccessFilter implements Filter {
                 if (user == null && authUser != null && authUser.length() > 0) {
                     // load the user
                     User u = ServiceLocator.getUserServices().optUser(authUser);
-                    if (u != null)
+                    if (u != null) {
                       user = new AuthenticatedUser(u, u.getAttributes());
-                    session.setAttribute("authenticatedUser", user);
+                      session.setAttribute("authenticatedUser", user);
+                    }
                     if (user == null) {
                         if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))
                             throw new MdwSecurityException("User not authorized: " + authUser);

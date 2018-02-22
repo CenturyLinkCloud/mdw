@@ -118,8 +118,8 @@ public class AssetRefCache implements CacheService {
             LoaderPersisterVcs loader = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)loader.getVersionControl();
             DatabaseAccess db = new DatabaseAccess(null);
-            try (Connection conn = db.openConnection()){
-                Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), conn);
+            try (DatabaseAccess dbAccess = db.open()){
+                Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                 assetRef = cp.retrieveRef(name);
             }
         }
@@ -141,8 +141,8 @@ public class AssetRefCache implements CacheService {
             LoaderPersisterVcs loader = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)loader.getVersionControl();
             DatabaseAccess db = new DatabaseAccess(null);
-            try (Connection conn = db.openConnection()){
-                Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), conn);
+            try (DatabaseAccess dbAccess = db.open()){
+                Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                 assetRef = cp.retrieveRef(definitionId);
             }
         }
@@ -176,8 +176,8 @@ public class AssetRefCache implements CacheService {
                         offset = PropertyManager.getIntegerProperty("mdw.assetref.offset", 730) * 24 * 3600 * 1000L;
                     if (offset != 0L)  // If offset == 0, then load entire table
                         date = new Date(DatabaseAccess.getCurrentTime() - offset);
-                    try (Connection conn = db.openConnection()){
-                        Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), conn);
+                    try (DatabaseAccess dbAccess = db.open()){
+                        Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                         list = cp.retrieveAllRefs(date);
                     }
                     if (list != null) {
