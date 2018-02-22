@@ -77,7 +77,10 @@ public class Users extends JsonRestService {
                 userId = getSegment(path, 1);
             if (userId != null) {
                 boolean oldStyle = "true".equals(parameters.get("withRoles")); // compatibility for old-style common roles
-                return userServices.getUser(userId).getJsonWithRoles(oldStyle);
+                User user = userServices.getUser(userId);
+                if (user == null)
+                    throw new ServiceException(HTTP_404_NOT_FOUND, "User not found: " + userId);
+                return user.getJsonWithRoles(oldStyle);
             }
             else {
                 Query query = getQuery(path, headers);

@@ -61,6 +61,8 @@ public class AuthenticatedUser extends JsonRestService {
                 throw new ServiceException("Missing parameter: " + Listener.AUTHENTICATED_USER_HEADER);
             UserServices userServices = ServiceLocator.getUserServices();
             User userVO = userServices.getUser(authUser);
+            if (userVO == null)
+                throw new ServiceException(HTTP_404_NOT_FOUND, "User not found: " + authUser);
             return userVO.getJsonWithRoles();
         }
         catch (DataAccessException ex) {

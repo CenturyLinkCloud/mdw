@@ -232,7 +232,7 @@ public class AccessFilter implements Filter {
                         if (AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers)) {
                             authUser = headers.get(Listener.AUTHENTICATED_USER_HEADER);
                             if (authUser != null) {
-                                User u = ServiceLocator.getUserServices().optUser(authUser);
+                                User u = ServiceLocator.getUserServices().getUser(authUser);
                                 if (u != null) {
                                     user = new AuthenticatedUser(u, u.getAttributes());
                                     session.setAttribute("authenticatedUser", user);
@@ -253,7 +253,7 @@ public class AccessFilter implements Filter {
                 }
                 if (user == null && authUser != null && authUser.length() > 0) {
                     // load the user
-                    User u = ServiceLocator.getUserServices().optUser(authUser);
+                    User u = ServiceLocator.getUserServices().getUser(authUser);
                     if (u != null) {
                       user = new AuthenticatedUser(u, u.getAttributes());
                       session.setAttribute("authenticatedUser", user);

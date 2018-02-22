@@ -49,7 +49,6 @@ public interface UserServices {
     public UserList findWorkgroupUsers(String[] workgroups, String prefix) throws DataAccessException;
 
     public User getUser(String cuid) throws DataAccessException;
-    public User optUser(String cuid) throws DataAccessException;
 
     public void createUser(User user) throws DataAccessException;
     public void updateUser(User user) throws DataAccessException;

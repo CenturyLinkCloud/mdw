@@ -908,6 +908,8 @@ public class TaskWorkflowHelper {
         if (taskInstance.getAssigneeCuid() != null) {
             try {
                 assignee = ServiceLocator.getUserServices().getUser(taskInstance.getAssigneeCuid());
+                if (assignee == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + taskInstance.getAssigneeCuid());
             }
             catch (DataAccessException ex) {
                 throw new ServiceException(ex.getMessage(), ex);
