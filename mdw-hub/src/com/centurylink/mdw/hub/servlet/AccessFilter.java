@@ -65,7 +65,7 @@ public class AccessFilter implements Filter {
     private static Map<String,String> responseHeaders;
     private static boolean devMode;
     private static boolean allowAnyAuthenticatedUser;
-    private static int sessionTimeoutSecs = 1800;
+    private static int sessionTimeoutSecs = 0;
     private static boolean logResponseTimes;
     private static boolean logHeaders;
     private static boolean logParameters;
@@ -204,7 +204,7 @@ public class AccessFilter implements Filter {
 
             if (session.isNew()) {
                 logger.mdwDebug("** - new HTTP session from: " + request.getRemoteHost());
-            //    if (sessionTimeoutSecs > 0)
+                if (sessionTimeoutSecs > 0)
                     session.setMaxInactiveInterval(sessionTimeoutSecs);
             }
 
