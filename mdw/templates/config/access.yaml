@@ -19,6 +19,8 @@ devUser: {{user}}
 # Auth exclusions are patterns that can be accessed directly
 # without authentication even when running with protection 
 # (upstreamHosts != null & not in dev mode). 
+# In the cases where the pattern accesses a service, it falls to
+# the specific service to handle access (i.e. based on HTTP method and/or path)
 authExclusions:
   - '/login'
   - '/error'
@@ -29,6 +31,7 @@ authExclusions:
   - '/api/*'
   - '/services/Appsummary'
   - '/services/System/sysInfo'
+  - '/services/com/centurylink/mdw/slack'
   
 # Headers appended to all HTTP servlet responses.
 responseHeaders:
