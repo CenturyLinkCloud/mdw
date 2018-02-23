@@ -46,7 +46,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 
-public class DatabaseAccess implements AutoCloseable {
+public class DatabaseAccess {
 
     private String database_name; // JDBC url or a connection pool name
     private static String INTERNAL_DATA_SOURCE = null;
@@ -370,6 +370,10 @@ public class DatabaseAccess implements AutoCloseable {
         else return ps.executeBatch();
     }
 
+    public ResultSet runSelect(String query) throws SQLException {
+        return runSelect(query, null);
+     }
+
     public ResultSet runSelect(String query, Object arg)
        throws SQLException
     {
@@ -394,6 +398,10 @@ public class DatabaseAccess implements AutoCloseable {
         }
         rs = logExecuteQuery(query);
         return rs;
+    }
+
+    public int runUpdate(String query) throws SQLException {
+        return runUpdate(query, null);
     }
 
     public int runUpdate(String query, Object arg)
@@ -505,12 +513,12 @@ public class DatabaseAccess implements AutoCloseable {
             Timestamp ts;
             if (connection==null) {
                 openConnection();
-                ResultSet rs = runSelect(query, null);
+                ResultSet rs = runSelect(query);
                 rs.next();
                 ts = rs.getTimestamp(1);
                 closeConnection();
             } else {
-                ResultSet rs = runSelect(query, null);
+                ResultSet rs = runSelect(query);
                 rs.next();
                 ts = rs.getTimestamp(1);
             }
@@ -622,15 +630,5 @@ public class DatabaseAccess implements AutoCloseable {
             newDoc.put(newKey, value);
         }
         return newDoc;
-    }
-
-    public DatabaseAccess open() throws SQLException {
-        openConnection();
-        return this;
-    }
-
-    @Override
-    public void close() {
-        closeConnection();
     }
 }

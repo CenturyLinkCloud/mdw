@@ -159,7 +159,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             // count query
             Long count;
             String query = buildCountQuery(criteria);
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             if (rs.next())
                 count = new Long(rs.getLong(1));
             else
@@ -172,7 +172,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             int endIndex = startIndex + pageSize;
             query = buildQuery(criteria, startIndex, endIndex, orderBy);
 
-            rs = db.runSelect(query, null);
+            rs = db.runSelect(query);
             List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
             while (rs.next()) {
                 ProcessInstance pi = new ProcessInstance(rs.getLong(8), rs.getString(9));
@@ -221,7 +221,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             db.openConnection();
 
             String query = buildCountQuery(criteria, variables);
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             Long count;
             if (rs.next())
                 count = new Long(rs.getLong(1));
@@ -234,7 +234,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             int endIndex = startIndex + pageSize;
             query = buildQuery(criteria, variableNames, variables, startIndex, endIndex, orderBy);
 
-            rs = db.runSelect(query, null);
+            rs = db.runSelect(query);
             List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
             while (rs.next()) {
                 ProcessInstance pi = new ProcessInstance(rs.getLong(8), rs.getString(9));
@@ -286,7 +286,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                     + " FROM PROCESS_INSTANCE pi,  rule_set r WHERE pi.PROCESS_ID=r.RULE_SET_ID "
                     + " AND SECONDARY_OWNER_ID = " + secondaryOwnerId + " AND pi.OWNER = '" + owner + "' AND SECONDARY_OWNER = '" + secondaryOwner +"'";
             query = query + orderBy;
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             List<ProcessInstance> mdwProcessInstanceList = new ArrayList<ProcessInstance>();
             while (rs.next()) {
                 ProcessInstance pi = new ProcessInstance(rs.getLong(2), rs.getString(8));
@@ -353,7 +353,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         int count = 0, n;
         String query = "select ATTRIBUTE_VALUE from ATTRIBUTE where ATTRIBUTE_OWNER='SYSTEM' and ATTRIBUTE_NAME='"
                 + PropertyNames.MDW_DB_VERSION + "'";
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
 
         query = "select PROCESS_INSTANCE_ID"
                 + " from PROCESS_INSTANCE"
@@ -613,7 +613,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             StringBuilder sql = new StringBuilder();
             db.openConnection();
             sql.append(buildActivityCountQuery(query, start));
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             Long count;
             if (rs.next())
                 count = new Long(rs.getLong(1));
@@ -627,7 +627,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
             sql = buildActivityQuery(query, start);
 
-            rs = db.runSelect(sql.toString(), null);
+            rs = db.runSelect(sql.toString());
             while (rs.next()) {
                 ActivityInstance ai = new ActivityInstance();
                 ai.setId(rs.getLong("aii"));

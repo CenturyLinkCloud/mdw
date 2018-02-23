@@ -555,7 +555,7 @@ public class CommonDataAccess {
         buff.append("select count(").append(keyElement).append(") from ").append(tableName);
         if (whereCondition!=null) buff.append(" where ").append(whereCondition);
         String query = buff.toString();
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         if (rs.next()) {
             return rs.getInt(1);
         } else throw new SQLException("Failed to count rows");
@@ -585,7 +585,7 @@ public class CommonDataAccess {
         }
         buff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
         String query = buff.toString();
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         List<String[]> result = new ArrayList<String[]>();
         while (rs.next()) {
             String[] one = new String[n];
@@ -599,7 +599,7 @@ public class CommonDataAccess {
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
     }
@@ -612,7 +612,7 @@ public class CommonDataAccess {
         if (dbOnline == null) {
             try {
                 db.openConnection();
-                db.runSelect(db.isMySQL() ? "select now()" : "select sysdate from dual", null).next();
+                db.runSelect(db.isMySQL() ? "select now()" : "select sysdate from dual").next();
                 dbOnline = true;
             }
             catch (SQLException ex) {

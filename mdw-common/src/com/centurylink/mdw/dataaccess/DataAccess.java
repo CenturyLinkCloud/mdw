@@ -17,7 +17,6 @@ package com.centurylink.mdw.dataaccess;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.centurylink.mdw.app.ApplicationContext;
@@ -215,10 +214,9 @@ public class DataAccess {
         StandardLogger logger = LoggerUtil.getStandardLogger();
         if (assetVersionControl != null && !ApplicationContext.isDevelopment() && !"true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))){
             // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
-            DatabaseAccess db = new DatabaseAccess(null);
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-            try (DatabaseAccess dbAccess = db.open()) {
+            try (DbAccess dbAccess = new DbAccess()) {
                 String ref = vcGit.getCommit();
                 if (ref != null) {  // avoid attempting update for local-only resources
                     logger.info("Auto-populating ASSET_REF table...");

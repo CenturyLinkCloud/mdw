@@ -85,7 +85,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 q = "SHOW COLUMNS FROM `task_instance` LIKE 'task_title'";
             else
                 q = "select column_name from all_tab_columns where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
-            if (db.runSelect(q, null).next()) {
+            if (db.runSelect(q).next()) {
                 hasTaskTitleColumn = true;
                 TASK_INSTANCE_SELECT_SHALLOW += ", TI.TASK_TITLE";
             }
@@ -105,7 +105,7 @@ public class TaskDataAccess extends CommonDataAccess {
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
     }
@@ -427,7 +427,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 sb.append("'").append(groups[i]).append("'");
             }
             sb.append(")");
-            ResultSet rs = db.runSelect(sb.toString(), null);
+            ResultSet rs = db.runSelect(sb.toString());
             List<Long> groupIds = new ArrayList<Long>();
             while (rs.next()) {
                 groupIds.add(rs.getLong(1));
@@ -648,7 +648,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 sql.append(orderBy);
 
             Long total = 0L;
-            ResultSet rs = db.runSelect(countSql.toString(), null);
+            ResultSet rs = db.runSelect(countSql.toString());
             if (rs.next())
                 total = rs.getLong(1);
 
@@ -659,7 +659,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
 
             List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
-            rs = db.runSelect(sql.toString(), null);
+            rs = db.runSelect(sql.toString());
             while (rs.next()) {
                 TaskInstance taskInst = getTaskInstanceSub(rs, true);
                 if (taskInst != null) {

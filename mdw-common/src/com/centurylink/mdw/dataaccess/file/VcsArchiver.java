@@ -17,7 +17,6 @@ package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +26,7 @@ import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -237,8 +236,7 @@ public class VcsArchiver {
         }
         if (vcGit != null) {
             progressMonitor.subTask("Adding asset Git references to ASSET_REF table");
-            DatabaseAccess db = new DatabaseAccess(null);
-            try (DatabaseAccess dbAccess = db.open()){
+            try (DbAccess dbAccess = new DbAccess()){
                 Checkpoint cp = new Checkpoint(assetDir, versionControl, vcGit.getCommit(), dbAccess.getConnection());
                 cp.updateRefs();
             }

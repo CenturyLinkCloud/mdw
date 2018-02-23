@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.cache.impl;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +24,16 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class AssetRefCache implements CacheService {
 
@@ -117,8 +117,7 @@ public class AssetRefCache implements CacheService {
         try {
             LoaderPersisterVcs loader = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)loader.getVersionControl();
-            DatabaseAccess db = new DatabaseAccess(null);
-            try (DatabaseAccess dbAccess = db.open()){
+            try (DbAccess dbAccess = new DbAccess()){
                 Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                 assetRef = cp.retrieveRef(name);
             }
@@ -140,8 +139,7 @@ public class AssetRefCache implements CacheService {
         try {
             LoaderPersisterVcs loader = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)loader.getVersionControl();
-            DatabaseAccess db = new DatabaseAccess(null);
-            try (DatabaseAccess dbAccess = db.open()){
+            try (DbAccess dbAccess = new DbAccess()){
                 Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                 assetRef = cp.retrieveRef(definitionId);
             }
@@ -170,13 +168,12 @@ public class AssetRefCache implements CacheService {
                     List<AssetRef> list = null;
                     LoaderPersisterVcs loader = (LoaderPersisterVcs)DataAccess.getProcessLoader();
                     VersionControlGit vc = (VersionControlGit)loader.getVersionControl();
-                    DatabaseAccess db = new DatabaseAccess(null);
                     Date date = null;
                     if (offset == null)
                         offset = PropertyManager.getIntegerProperty("mdw.assetref.offset", 730) * 24 * 3600 * 1000L;
                     if (offset != 0L)  // If offset == 0, then load entire table
                         date = new Date(DatabaseAccess.getCurrentTime() - offset);
-                    try (DatabaseAccess dbAccess = db.open()){
+                    try (DbAccess dbAccess = new DbAccess()){
                         Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                         list = cp.retrieveAllRefs(date);
                     }

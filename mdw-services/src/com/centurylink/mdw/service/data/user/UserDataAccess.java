@@ -84,7 +84,7 @@ public class UserDataAccess extends CommonDataAccess {
                 if (whereCondition != null)
                     sql = sql + " where " + whereCondition;
                 sql += sortOn == null ? " order by CUID" : (" order by " + sortOn);
-                ResultSet rs = db.runSelect(sql, null);
+                ResultSet rs = db.runSelect(sql);
                 while (rs.next()) {
                     users.add(createUserInfoFromResultSet(rs));
                 }
@@ -109,7 +109,7 @@ public class UserDataAccess extends CommonDataAccess {
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
     }
@@ -346,7 +346,7 @@ public class UserDataAccess extends CommonDataAccess {
             db.openConnection();
             List<Role> roles = new ArrayList<Role>();
             String sql = "select USER_ROLE_ID, USER_ROLE_NAME, COMMENTS from USER_ROLE order by USER_ROLE_NAME";
-            ResultSet rs = db.runSelect(sql, null);
+            ResultSet rs = db.runSelect(sql);
             while (rs.next()) {
                 Role role = new Role();
                 role.setId(rs.getLong(1));
@@ -821,8 +821,7 @@ public class UserDataAccess extends CommonDataAccess {
                 + now() + ", " + "(select user_group_id from user_group where group_name = ?))";
         try {
             db.openConnection();
-            String[] params = new String[] { cuid, group };
-            db.runUpdate(query, params);
+            db.runUpdate(query, new Object[]{cuid, group});
             db.commit();
         }
         catch (Exception ex) {
@@ -843,7 +842,7 @@ public class UserDataAccess extends CommonDataAccess {
                 + group + "')";
         try {
             db.openConnection();
-            db.runUpdate(query, null);
+            db.runUpdate(query);
             db.commit();
         }
         catch (Exception ex) {
@@ -866,8 +865,7 @@ public class UserDataAccess extends CommonDataAccess {
                 + "(select user_role_id from user_role where user_role_name = ?))";
         try {
             db.openConnection();
-            String[] params = new String[] { cuid, role };
-            db.runUpdate(query, params);
+            db.runUpdate(query, new Object[]{cuid, role});
             db.commit();
         }
         catch (Exception ex) {
@@ -889,7 +887,7 @@ public class UserDataAccess extends CommonDataAccess {
                 + role + "')";
         try {
             db.openConnection();
-            db.runUpdate(query, null);
+            db.runUpdate(query);
             db.commit();
         }
         catch (Exception ex) {
@@ -1003,7 +1001,7 @@ public class UserDataAccess extends CommonDataAccess {
             String query = "select distinct attribute_name from attribute "
                     + "where attribute_owner = 'USER' "
                     + "order by lower(attribute_name)";
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             while (rs.next())
                 attrs.add(rs.getString("attribute_name"));
             return attrs;
@@ -1023,7 +1021,7 @@ public class UserDataAccess extends CommonDataAccess {
             String query = "select distinct attribute_name from attribute "
                     + "where attribute_owner = '" + OwnerType.USER_GROUP + "' "
                     + "order by lower(attribute_name)";
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             while (rs.next())
                 attrs.add(rs.getString("attribute_name"));
             return attrs;
@@ -1158,7 +1156,7 @@ public class UserDataAccess extends CommonDataAccess {
             String sql = "select USER_GROUP_ID, GROUP_NAME, COMMENTS, PARENT_GROUP_ID, END_DATE from USER_GROUP";
             if (!includeDeleted) sql = sql + " where END_DATE is null";
             sql += " order by GROUP_NAME";
-            ResultSet rs = db.runSelect(sql, null);
+            ResultSet rs = db.runSelect(sql);
             Map<Long,String> nameMap = new HashMap<Long,String>();
             while (rs.next()) {
                 Long groupId = rs.getLong(1);

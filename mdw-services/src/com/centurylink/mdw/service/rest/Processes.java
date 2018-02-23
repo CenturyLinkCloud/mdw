@@ -80,7 +80,7 @@ public class Processes extends JsonRestService implements JsonExportable {
     @Override
     public List<String> getRoles(String path) {
         List<String> roles = super.getRoles(path);
-        roles.add(Role.ANY); // TODO: for now this is needed for Designer access
+        roles.add(Role.PROCESS_EXECUTION);
         return roles;
     }
 

@@ -56,12 +56,10 @@ import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
-import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.task.AllowableTaskActions;
@@ -468,24 +466,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
      * @see com.centurylink.mdw.service.action.ActionService#getAuthorizedWorkGroups()
      */
     @Override
-    protected List<Workgroup> getRequiredWorkgroups(JSONObject content)
-            throws JSONException, DataAccessException {
-        List<Workgroup> groups = null;
-        if (content.has("workgroups")) {
-            UserServices userServices = ServiceLocator.getUserServices();
-            JSONArray workGrpsJsonArr = content.getJSONArray("workgroups");
-            if (workGrpsJsonArr != null) {
-                groups = new ArrayList<Workgroup>();
-                for (int i = 0; i < workGrpsJsonArr.length(); i++) {
-                    Workgroup workgroup = userServices.getWorkgroup(workGrpsJsonArr.getString(i));
-                    if (workgroup == null)
-                        throw new DataAccessException(
-                                "Workgroup not found: " + workGrpsJsonArr.getString(i));
-                    groups.add(workgroup);
-                }
-            }
-        }
-        return groups;
+    protected List<String> getWorkgroups(String path, String method) {
+        return null; // TODO
     }
 
     @Override

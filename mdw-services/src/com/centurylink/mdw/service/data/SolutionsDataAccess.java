@@ -71,7 +71,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
                 sql = "select " + SOLUTION_COLS + " from solution s";
             else
                 sql = "select " + SOLUTION_COLS + " from solution s where id like '" + solutionId + "%'";
-            ResultSet rs = db.runSelect(sql, null);
+            ResultSet rs = db.runSelect(sql);
             while (rs.next())
                 solutions.add(buildSolution(rs, false, false));
             return solutions;
@@ -488,7 +488,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
             if (memberType != null && !StringHelper.isEmpty(memberType.toString()))
                 query.append("\n and sm.member_type = '"  + memberType + "'");
 
-            ResultSet rs = db.runSelect(query.toString(), null);
+            ResultSet rs = db.runSelect(query.toString());
             while (rs.next())
                 solutions.add(buildSolution(rs, false, false));
             return solutions;

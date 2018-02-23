@@ -70,7 +70,6 @@ public interface Listener {
     public static final String AUTHENTICATED_USER_HEADER = "AuthenticatedUser";
     // Will be populated when authentication fails
     public static final String AUTHENTICATION_FAILED = "AuthenticationFailed";
-    public static final String AUTHORIZATION_WORKGROUP = "AuthorizationWorkgroup";
 
     public static final String METAINFO_DOWNLOAD_FORMAT = "DownloadFormat";
     public static final String METAINFO_MASTER_OP = "mdw-master-op";

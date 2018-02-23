@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -50,7 +49,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
@@ -307,8 +306,7 @@ public class AssetContentServlet extends HttpServlet {
                         String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
                         VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
                         AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
-                        DatabaseAccess db = new DatabaseAccess(null);
-                        try (DatabaseAccess dbAccess = db.open()) {
+                        try (DbAccess dbAccess = new DbAccess()) {
                             Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), dbAccess.getConnection());
                             cp.updateRef(curRef);
                         }
