@@ -361,7 +361,7 @@ public class AssetContentServlet extends HttpServlet {
      */
     private void authorizeForUpdate(HttpSession session, Action action, Entity entity, String includes) throws AuthorizationException, DataAccessException {
         AuthenticatedUser user  = (AuthenticatedUser)session.getAttribute("authenticatedUser");
-        if (user == null && ApplicationContext.isServiceApiOpen()) {
+        if (user == null && ApplicationContext.getServiceUser() != null) {
             String cuid = ApplicationContext.getServiceUser();
             user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
         }
@@ -383,14 +383,6 @@ public class AssetContentServlet extends HttpServlet {
         for (URL serviceUrl : ApplicationContext.getOtherServerUrls(requestUrl)) {
             HttpHelper httpHelper = new HttpHelper(serviceUrl);
             try {
-                // Add headers from request, which would include Authorization header with JWT token
-                Enumeration<String> names = request.getHeaderNames();
-                Map<String,String> headers = new HashMap<String,String>();
-                while (names.hasMoreElements()) {
-                    String key = names.nextElement();
-                    headers.put(key, request.getHeader(key));
-                }
-                httpHelper.setHeaders(headers);
                 byte[] response;
                 if ("post".equalsIgnoreCase(method))
                     response = httpHelper.postBytes(requestContent);

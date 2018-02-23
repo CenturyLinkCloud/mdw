@@ -27,6 +27,8 @@ authExclusions:
   - '/doc/*'
   - '/javadoc/*'
   - '/api/*'
+  - '/services/Appsummary'
+  - '/services/System/sysInfo'
   
 # Headers appended to all HTTP servlet responses.
 responseHeaders:

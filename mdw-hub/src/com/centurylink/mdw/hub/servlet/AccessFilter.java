@@ -40,7 +40,9 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthExcludePattern;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.hub.context.WebAppContext;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -70,6 +72,7 @@ public class AccessFilter implements Filter {
     private static boolean logHeaders;
     private static boolean logParameters;
     private static boolean logCookies;
+    private static List<InetAddress> internalHosts; // List of servers in cluster
 
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -87,8 +90,8 @@ public class AccessFilter implements Filter {
 
             if (devMode)
                 ApplicationContext.setDevUser(yamlLoader.get("devUser", topMap));
-            if (ApplicationContext.isServiceApiOpen())
-                ApplicationContext.setServiceUser(yamlLoader.get("serviceUser", topMap));
+
+            ApplicationContext.setServiceUser(yamlLoader.get("serviceUser", topMap));
 
             // upstreamHosts
             List<?> upstreamHostsList = yamlLoader.getList("upstreamHosts", topMap);
@@ -157,6 +160,11 @@ public class AccessFilter implements Filter {
                 logCookies = "true".equalsIgnoreCase(logCookiesStr);
             }
 
+            //Get MDW server list for IntraMessaging (service propagation)
+            internalHosts =  new ArrayList<InetAddress>();
+            for (Server server : ApplicationContext.getServerList().getServers()) {
+                internalHosts.add(InetAddress.getByName(server.getHost()));
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -176,9 +184,10 @@ public class AccessFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) resp;
         HttpSession session = request.getSession();
 
-        String path = request.getServletPath() + (request.getPathInfo() == null ? "" : request.getPathInfo());
+        String path = (request.getServletPath().equals("/Services") ? "/services" : request.getServletPath()) + (request.getPathInfo() == null ? "" : request.getPathInfo());
 
         try {
+            InetAddress remoteHost = null;
             String allowedHost = null;
             if (upstreamHosts != null && !devMode) {
                 if (forwardingHeader != null) {
@@ -193,7 +202,7 @@ public class AccessFilter implements Filter {
                     }
                 }
                 if (allowedHost == null) {
-                    InetAddress remoteHost = InetAddress.getByName(request.getRemoteHost());
+                    remoteHost = InetAddress.getByName(request.getRemoteHost());
                     if (upstreamHosts.contains(remoteHost))
                         allowedHost = remoteHost.toString();
                 }
@@ -224,23 +233,21 @@ public class AccessFilter implements Filter {
             AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
                 user = null;
-                if (ApplicationContext.isMdwAuth()) {
-                    String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
-                    if (authHdr != null) {
-                        Map<String,String> headers = new HashMap<String,String>();
-                        headers.put(Listener.AUTHORIZATION_HEADER_NAME, authHdr);
-                        if (AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers)) {
-                            authUser = headers.get(Listener.AUTHENTICATED_USER_HEADER);
-                            if (authUser != null) {
-                                User u = ServiceLocator.getUserServices().getUser(authUser);
-                                if (u != null) {
-                                    user = new AuthenticatedUser(u, u.getAttributes());
-                                    session.setAttribute("authenticatedUser", user);
-                                }
-                                if (user == null) {
-                                    if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))
-                                        throw new MdwSecurityException("User not authorized: " + authUser);
-                                }
+                String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
+                if (authHdr != null) {
+                    Map<String,String> headers = new HashMap<String,String>();
+                    headers.put(Listener.AUTHORIZATION_HEADER_NAME, authHdr);
+                    if (AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers)) {
+                        authUser = headers.get(Listener.AUTHENTICATED_USER_HEADER);
+                        if (authUser != null) {
+                            User u = ServiceLocator.getUserServices().getUser(authUser);
+                            if (u != null) {
+                                user = new AuthenticatedUser(u, u.getAttributes());
+                                session.setAttribute("authenticatedUser", user);
+                            }
+                            if (user == null) {
+                                if (!allowAnyAuthenticatedUser && !(devMode && "/services/System/exit".equals(path)))
+                                    throw new MdwSecurityException("User not authorized: " + authUser);
                             }
                         }
                     }
@@ -255,23 +262,33 @@ public class AccessFilter implements Filter {
                     // load the user
                     User u = ServiceLocator.getUserServices().getUser(authUser);
                     if (u != null) {
-                      user = new AuthenticatedUser(u, u.getAttributes());
-                      session.setAttribute("authenticatedUser", user);
+                        user = new AuthenticatedUser(u, u.getAttributes());
+                        session.setAttribute("authenticatedUser", user);
                     }
                     if (user == null) {
-                        if (!allowAnyAuthenticatedUser && !(devMode && "/Services/System/exit".equals(path)))
+                        if (!allowAnyAuthenticatedUser && !(devMode && "/services/System/exit".equals(path)))
                             throw new MdwSecurityException("User not authorized: " + authUser);
                     }
                 }
                 else if (user == null) {
                     // user not authenticated
-                    if (!isAuthExclude(path)) {
+                    if (remoteHost == null)
+                        remoteHost = InetAddress.getByName(request.getRemoteHost());
+                    if (!isAuthExclude(path) && !IsIntraRequest(remoteHost)) {
                         if ("ct".equals(authMethod)) {
                             // redirect to login page is performed upstream (CT web agent)
                             throw new MdwSecurityException("Authentication required");
                         }
                         else {
-                            response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                            if (path.startsWith("/services/SOAP/") || path.startsWith("/SOAP/"))
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                            else if (path.startsWith("/services/") || path.startsWith("/REST/") || path.startsWith("/asset/")) {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.getWriter().println(new Status(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Required").getJson().toString(2));
+                            }
+                            else
+                                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+
                             return;
                         }
                     }
@@ -303,6 +320,13 @@ public class AccessFilter implements Filter {
             }
         }
         return false;
+    }
+
+    private boolean IsIntraRequest(InetAddress remoteHost) {
+        if (internalHosts.contains(remoteHost))
+            return true;
+        else
+            return false;
     }
 
     public void destroy() {

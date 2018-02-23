@@ -135,35 +135,15 @@ public abstract class ServiceServlet extends HttpServlet {
         AuthenticatedUser user = (AuthenticatedUser)request.getSession().getAttribute("authenticatedUser");
         if (user != null && user.getCuid() != null)
             headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
-        else if (headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME) || headers.containsKey(Listener.AUTHORIZATION_HEADER_NAME.toLowerCase()))
-            AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers);
-
-        if (headers.get(Listener.AUTHENTICATED_USER_HEADER) == null) {
-            if (ApplicationContext.isDevelopment() && ApplicationContext.getDevUser() != null) {
-                // auth failed or not provided but allow dev override
-                headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getDevUser());
-                if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
-                    headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
-            }
-            else if (ApplicationContext.isServiceApiOpen() && ApplicationContext.getServiceUser() != null) {
-                // auth failed or not provided but allow service user override
+        else { // headers.get(Listener.AUTHENTICATED_USER_HEADER) == null
+            if (ApplicationContext.getServiceUser() != null) {
+                // auth failed or not provided but /services/* path was in authExclusions, so allow service user override
                 headers.put(Listener.AUTHENTICATED_USER_HEADER, ApplicationContext.getServiceUser());
                 if (String.valueOf(HttpServletResponse.SC_UNAUTHORIZED).equals(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)))
                     headers.remove(Listener.METAINFO_HTTP_STATUS_CODE);
             }
             else {
-                if ("GET".equalsIgnoreCase(request.getMethod())) {
-                    // allow GET access to app summary and assets (for discovery)
-                    // TODO more general approach (also "/Services/exit)
-                    String[] allowed = new String[] { "/Services/AppSummary",
-                            "/Services/GetAppSummary", "/services/AppSummary",
-                            "/Services/System/sysInfo", "/services/Assets" };
-                    for (String allow : allowed) {
-                        if (request.getRequestURI().equals("/" + ApplicationContext.getMdwHubContextRoot() + allow))
-                            return;
-                    }
-                }
-                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/slack")) {
+                if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/slack")) {
                     // validates Slack token unless request is coming from our AppFog prod instance
                     if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
@@ -182,28 +162,30 @@ public abstract class ServiceServlet extends HttpServlet {
                             headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
                             return;
                         }
+                        else {
+                            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
+                            throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
+                        }
                     }
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/routing")) {
                     // Validates request is coming from application with valid MDW APP Token - For routing services
                     if (AuthUtils.authenticate(AuthUtils.MDW_APP_TOKEN, headers))
                         return;
+                    else {
+                        headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
+                        throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
+                    }
                 }
                 else if (headers.containsKey(Listener.X_HUB_SIGNATURE) || headers.containsKey(Listener.X_HUB_SIGNATURE.toLowerCase())) {
                     // perform http GitHub auth, which populates the auth user header
                     if (AuthUtils.authenticate(AuthUtils.GIT_HUB_SECRET_KEY, headers, payload))
                         return;
+                    else {
+                        headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
+                        throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
+                    }
                 }
-                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/central/auth")) {
-                    // perform MDW Auth for user/pass/appId - returns JWT if successful
-                	return;
-                }
-                else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/com/centurylink/mdw/central/account")) {
-                    // perform MDW Auth for user/pass
-                    return;
-                }
-                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
-                throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
             }
         }
     }

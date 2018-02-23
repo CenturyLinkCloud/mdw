@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.JwtAuthenticator;
@@ -66,7 +67,7 @@ public class LoginServlet extends HttpServlet {
             else {
                 response.setContentType("text/html");
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
-                if (!request.getRequestURL().toString().toLowerCase().startsWith("https")) {
+                if (!ApplicationContext.isDevelopment() && !request.getRequestURL().toString().toLowerCase().startsWith("https")) {
                     StatusResponse sr = new StatusResponse(Status.FORBIDDEN,
                             "Must use HTTPS to login");
                     response.setStatus(sr.getStatus().getCode());

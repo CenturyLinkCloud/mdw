@@ -556,10 +556,6 @@ public class ApplicationContext {
         return "dev".equalsIgnoreCase(getRuntimeEnvironment());
     }
 
-    public static boolean isServiceApiOpen() {
-        return "true".equalsIgnoreCase(System.getProperty("mdw.service.api.open"));
-    }
-
     private static String devUser;
     /**
      * Can only be set once (by AccessFilter) at deploy time.
@@ -580,14 +576,18 @@ public class ApplicationContext {
      * Can only be set once (by AccessFilter) at deploy time.
      */
     public static void setServiceUser(String user) {
-        if (serviceUser == null)
-            serviceUser = user;
+        if (serviceUser == null) {
+            if (StringHelper.isEmpty(user))
+                serviceUser = "N/A";
+            else
+                serviceUser = user;
+        }
     }
     public static String getServiceUser() {
-        if (isServiceApiOpen())
-            return serviceUser;
-        else
+        if ("N/A".equals(serviceUser))
             return null;
+        else
+            return serviceUser;
     }
 
     public static boolean isPaaS() {
