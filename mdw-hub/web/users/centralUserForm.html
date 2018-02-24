@@ -1,0 +1,27 @@
+<form name="userForm" class="form-horizontal mdw-section" ng-submit="save()" role="form">
+  <div class="form-group"  ng-show="mdw.authMethod === 'mdw' && authUser.hasRole('User Admin')">
+    <label class="control-label col-xs-2" for="userCuid">Search Users</label>
+    <div class="col-xs-10">
+      <input type="text" class="form-control mdw-inline" autofocus placeholder=" in mdw-central" 
+        ng-model="selectedUser" uib-typeahead="user as user.name for user in findCentralUser($viewValue)" 
+        typeahead-editable="false" typeahead-on-select="addSelectedUser($item)" ng-change="change()">
+    </div>
+  </div>
+  
+  <div class="form-group" ng-if="selectedUser.cuid != undefined">
+    <label class="control-label col-xs-2" for="userCuid">ID: </label>
+    <label class="control-label"  for="userCuid">{{selectedUser.cuid}}</label>
+  </div>
+  <div class="form-group" ng-if="selectedUser.name != undefined">
+    <label class="control-label col-xs-2" ng-if="selectedUser.name != undefined" for="userName">Name: </label>
+    <label class="control-label">{{selectedUser.name}}</label>
+  </div>
+ 
+  <div class="mdw-form-footer">
+    <div class="col-xs-2"></div>
+    <div class="mdw-message">{{user.message}}</div>
+    <div class="mdw-buttons">
+      <button class="btn mdw-btn mdw-cancel-btn" type="reset" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

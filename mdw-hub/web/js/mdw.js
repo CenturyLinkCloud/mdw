@@ -9,10 +9,13 @@ mdwMod.factory('mdw', function() {
     build: $mdwBuild,
     webSocketUrl: $mdwWebSocketUrl,
     discoveryUrl: $mdwDiscoveryUrl,
+    authMethod: $mdwAuthMethod,
+    appId: $mdwAppId,
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot,
-      docs: $mdwDocsRoot
+      docs: $mdwDocsRoot,
+      central: $mdwCentralRoot
     },
     serviceParams: function() {
       return { 

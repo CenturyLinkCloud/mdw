@@ -5,7 +5,8 @@ var userMod = angular.module('users', ['ngResource', 'mdw', 'infinite-scroll']);
 userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'Users', 
                                        function($scope, $http, $location, mdw, Users) {
   $scope.users = [];
-    
+  $scope.user = null;
+  
   $scope.busy = false;
   $scope.total = 0;
   $scope.selected = null;
@@ -42,6 +43,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
     $scope.users = [$scope.selected];
   };
   
+  
   $scope.change = function() {
     if ($scope.selected === null) {
       // repopulate list
@@ -51,9 +53,37 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   };
   
   $scope.find = function(typed) {
-    return $http.get(mdw.roots.services + '/Services/Users?app=mdw-admin&find=' + typed).then(function(response) {
+    return $http.get(mdw.roots.services + '/services/Users?app=mdw-admin&find=' + typed).then(function(response) {
       return response.data.users;
     });
+  };
+  
+  $scope.findCentralUser = function(typed) {
+	  return $http.get(mdw.roots.central + '/services/' + 'com/centurylink/mdw/central/' + 'users?app=mdw-admin&appId=' + mdw.appId + '&find=' + typed).then(function(response) {
+		  return response.data.users;
+	  });
+  };  
+
+  // adding central user
+  $scope.selectedUser = null; // not used but required by typeahead
+  $scope.addSelectedUser = function(selUser) {
+	  console.log('creating user: ' + selUser.cuid);
+	  $scope.selectedUser = selUser;
+	  Users.create({cuid: selUser.cuid}, selUser,
+			  function(data) {
+		  if (data.status.code !== 0) {
+			  $scope.user.message = data.status.message;
+		  }
+		  else {
+			  $scope.setCreate(false);
+			  $scope.users = [];
+			  $scope.total = 0;          
+			  $scope.user.message = "User ID added: [" + $scope.selectedUser.cuid + "]";
+		  }
+	  }, 
+	  function(error) {
+		  $scope.user.message = error.data.status.message;
+	  });
   };
   
   $scope.create = false;
