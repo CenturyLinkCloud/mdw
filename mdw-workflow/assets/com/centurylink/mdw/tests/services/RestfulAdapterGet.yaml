@@ -36,4 +36,4 @@ process: # 10229
           "url": "${~http.*}"
         },
         "servicesUrl": "${~http.*}"
-      }}
+      }
