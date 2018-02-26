@@ -187,8 +187,7 @@ extends javax.servlet.http.HttpServlet</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/hub/servlet/AssetContentServlet.html#propagate-java.lang.String-java.lang.String-byte:A-">propagate</a></span>(java.lang.String&nbsp;method,
-         java.lang.String&nbsp;url,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/hub/servlet/AssetContentServlet.html#propagate-javax.servlet.http.HttpServletRequest-byte:A-">propagate</a></span>(javax.servlet.http.HttpServletRequest&nbsp;request,
          byte[]&nbsp;requestContent)</code>&nbsp;</td>
 </tr>
 </table>
@@ -290,7 +289,7 @@ extends javax.servlet.http.HttpServlet</pre>
               throws javax.servlet.ServletException,
                      java.io.IOException</pre>
 <div class="block">Distributed operations support does not include package import.
- TODO: authorization for distributed requests (Issue #69).</div>
+ authorization for distributed requests handled by issue #222.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>doPut</code>&nbsp;in class&nbsp;<code>javax.servlet.http.HttpServlet</code></dd>
@@ -300,14 +299,13 @@ extends javax.servlet.http.HttpServlet</pre>
 </dl>
 </li>
 </ul>
-<a name="propagate-java.lang.String-java.lang.String-byte:A-">
+<a name="propagate-javax.servlet.http.HttpServletRequest-byte:A-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>propagate</h4>
-<pre>protected&nbsp;void&nbsp;propagate(java.lang.String&nbsp;method,
-                         java.lang.String&nbsp;url,
+<pre>protected&nbsp;void&nbsp;propagate(javax.servlet.http.HttpServletRequest&nbsp;request,
                          byte[]&nbsp;requestContent)
                   throws java.io.IOException</pre>
 <dl>

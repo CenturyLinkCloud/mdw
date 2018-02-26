@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -143,7 +143,7 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.centurylink.mdw.services.process.<a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#DISABLED">DISABLED</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#GROOVY">GROOVY</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#JAVA_EL">JAVA_EL</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#JAVASCRIPT">JAVASCRIPT</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#OUTPUTDOCS">OUTPUTDOCS</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#DISABLED">DISABLED</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#GROOVY">GROOVY</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#JAVA_EL">JAVA_EL</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#JAVASCRIPT">JAVASCRIPT</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logger">logger</a>, <a href="../../../../../../com/centurylink/mdw/services/process/BaseActivity.html#OUTPUTDOCS">OUTPUTDOCS</a></code></li>
 </ul>
 </li>
 </ul>
@@ -188,21 +188,11 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getCcRecipients--">getCcRecipients</a></span>()</code>
-<div class="block">Default behavior is CC recipients driven by attributes.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getGroupEmailAddresses-java.util.List-">getGroupEmailAddresses</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;groups)</code>
 <div class="block">Finds the relevant users for the specified group names</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getGroupEmails-java.util.List-">getGroupEmails</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;groups)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected javax.mail.Address[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipients-java.lang.String-java.lang.String-">getRecipients</a></span>(java.lang.String&nbsp;groups,
              java.lang.String&nbsp;recipEmails)</code>
@@ -210,17 +200,17 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
  along with those specified by the recipient variable value;</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected javax.mail.Address[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipientsFromVariable-java.lang.String-">getRecipientsFromVariable</a></span>(java.lang.String&nbsp;varName)</code>
 <div class="block">Supports variable type of String or String[].</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../com/centurylink/mdw/email/ProcessEmailModel.html" title="class in com.centurylink.mdw.email">ProcessEmailModel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getTemplatedEmailModel--">getTemplatedEmailModel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#sendNotices--">sendNotices</a></span>()</code>&nbsp;</td>
 </tr>
@@ -342,25 +332,6 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 </dl>
 </li>
 </ul>
-<a name="getCcRecipients--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getCcRecipients</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getCcRecipients()
-                                        throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
-                                               <a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a>,
-                                               javax.mail.internet.AddressException</pre>
-<div class="block">Default behavior is CC recipients driven by attributes.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="getGroupEmailAddresses-java.util.List-">
 <!--   -->
 </a>
@@ -377,22 +348,6 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.mail.internet.AddressException</code></dd>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getGroupEmails-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getGroupEmails</h4>
-<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getGroupEmails(java.util.List&lt;java.lang.String&gt;&nbsp;groups)
-                                                throws <a href="../../../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a>,
-                                                       <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a></code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>

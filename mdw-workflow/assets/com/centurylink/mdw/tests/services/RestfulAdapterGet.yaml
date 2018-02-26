@@ -22,7 +22,7 @@ process: # 10229
   variable: # 10491
     name: responseDoc
     value: |
-      {"ApplicationSummary": {
+      {
         "appId": "${~mdw.*}",
         "appVersion": "${~.*}",
         "authMethod": "${~.*}",
@@ -36,4 +36,4 @@ process: # 10229
           "url": "${~http.*}"
         },
         "servicesUrl": "${~http.*}"
-      }}
+      }

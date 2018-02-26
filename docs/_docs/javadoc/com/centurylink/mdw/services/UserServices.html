@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/services/UserManager.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -201,28 +201,36 @@ var activeTableTab = "activeTableTab";
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#getWorkgroup-java.lang.String-">getWorkgroup</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i17" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#getWorkgroupEmails-java.util.List-">getWorkgroupEmails</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;groups)</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/user/WorkgroupList.html" title="class in com.centurylink.mdw.model.user">WorkgroupList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#getWorkgroups--">getWorkgroups</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#getWorkgroupUsers-java.util.List-">getWorkgroupUsers</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;groups)</code>&nbsp;</td>
+</tr>
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#removeUserFromRole-java.lang.String-java.lang.String-">removeUserFromRole</a></span>(java.lang.String&nbsp;cuid,
                   java.lang.String&nbsp;role)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#removeUserFromWorkgroup-java.lang.String-java.lang.String-">removeUserFromWorkgroup</a></span>(java.lang.String&nbsp;cuid,
                        java.lang.String&nbsp;group)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#updateRole-com.centurylink.mdw.model.user.Role-">updateRole</a></span>(<a href="../../../../com/centurylink/mdw/model/user/Role.html" title="class in com.centurylink.mdw.model.user">Role</a>&nbsp;role)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#updateUser-com.centurylink.mdw.model.user.User-">updateUser</a></span>(<a href="../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&nbsp;user)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/UserServices.html#updateWorkgroup-com.centurylink.mdw.model.user.Workgroup-">updateWorkgroup</a></span>(<a href="../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&nbsp;workgroup)</code>&nbsp;</td>
 </tr>
@@ -561,11 +569,39 @@ var activeTableTab = "activeTableTab";
 <a name="auditLog-com.centurylink.mdw.model.user.UserAction-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>auditLog</h4>
 <pre>void&nbsp;auditLog(<a href="../../../../com/centurylink/mdw/model/user/UserAction.html" title="class in com.centurylink.mdw.model.user">UserAction</a>&nbsp;userAction)
        throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getWorkgroupUsers-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWorkgroupUsers</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&gt;&nbsp;getWorkgroupUsers(java.util.List&lt;java.lang.String&gt;&nbsp;groups)
+                                throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getWorkgroupEmails-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getWorkgroupEmails</h4>
+<pre>java.util.List&lt;java.lang.String&gt;&nbsp;getWorkgroupEmails(java.util.List&lt;java.lang.String&gt;&nbsp;groups)
+                                             throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
@@ -599,7 +635,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/services/UserManager.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
