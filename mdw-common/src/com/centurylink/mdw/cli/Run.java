@@ -167,7 +167,7 @@ public class Run implements Operation {
                     }
                     try {
                         String response = new Fetch(url).run().getData();
-                        String mdwVersion = new JSONObject(response).getJSONObject("ApplicationSummary").getString("MdwVersion");
+                        String mdwVersion = new JSONObject(response).getString("mdwVersion");
                         System.out.println("\nMDW " + mdwVersion + " became available after " + (elapsed/1000) + " s");
                         available = true;
                     }

@@ -67,9 +67,9 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   // adding central user
   $scope.selectedUser = null; // not used but required by typeahead
   $scope.addSelectedUser = function(selUser) {
-	  console.log('creating user: ' + selUser.cuid);
+	  console.log('creating user: ' + selUser.username);
 	  $scope.selectedUser = selUser;
-	  Users.create({cuid: selUser.cuid}, selUser,
+	  Users.create({cuid: selUser.username}, selUser,
 			  function(data) {
 		  if (data.status.code !== 0) {
 			  $scope.user.message = data.status.message;
@@ -78,7 +78,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
 			  $scope.setCreate(false);
 			  $scope.users = [];
 			  $scope.total = 0;          
-			  $scope.user.message = "User ID added: [" + $scope.selectedUser.cuid + "]";
+			  $scope.user.message = "User ID added: [" + $scope.selectedUser.username + "]";
 		  }
 	  }, 
 	  function(error) {

@@ -23,22 +23,17 @@ process: # 10229
     name: responseDoc
     value: |
       {"ApplicationSummary": {
-        "ApplicationName": "${~mdw.*}",
-        "Container": "Tomcat",
-        "Database": "MySQL",
-        "DbInfo": {
-          "jdbcUrl": "${~jdbc.*}",
-          "user": "${~.*}"
-        },
-        "MdwBuild": "${~201.*}",
-        "MdwHubUrl": "${~http.*}",
-        "MdwVersion": "${~6.*}",
-        "Repository": {
+        "appId": "${~mdw.*}",
+        "appVersion": "${~.*}",
+        "authMethod": "${~.*}",
+        "mdwBuild": "${~201.*}",
+        "mdwHubUrl": "${~http.*}",
+        "mdwVersion": "${~6.*}",
+        "repository": {
           "branch": "master",
           "commit": "${~.*}",
           "provider": "Git",
           "url": "${~http.*}"
         },
-        "ServicesUrl": "${~http.*}",
-        "Version": "Unknown"
+        "servicesUrl": "${~http.*}"
       }}
