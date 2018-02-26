@@ -133,7 +133,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         summary.put("masterRequestId", process.getMasterRequestId());
                         summary.put("definitionId", process.getProcessId());
                         Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
-                        if (!latest.getId().equals(process.getProcessId()))
+                        if (latest != null && !latest.getId().equals(process.getProcessId()))
                             summary.put("archived", true);
 
                         return summary;
