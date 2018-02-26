@@ -22,18 +22,17 @@ process: # 10229
   variable: # 10491
     name: responseDoc
     value: |
-      {"ApplicationSummary": {
-        "appId": "${~mdw.*}",
-        "appVersion": "${~.*}",
-        "authMethod": "${~.*}",
-        "mdwBuild": "${~201.*}",
-        "mdwHubUrl": "${~http.*}",
-        "mdwVersion": "${~6.*}",
-        "repository": {
-          "branch": "master",
-          "commit": "${~.*}",
-          "provider": "Git",
-          "url": "${~http.*}"
-        },
-        "servicesUrl": "${~http.*}"
+      {"appId": "${~mdw.*}",
+       "appVersion": "${~.*}",
+       "authMethod": "${~.*}",
+       "mdwBuild": "${~201.*}",
+       "mdwHubUrl": "${~http.*}",
+       "mdwVersion": "${~6.*}",
+       "repository": {
+         "branch": "master",
+         "commit": "${~.*}",
+         "provider": "Git",
+         "url": "${~http.*}"
+       },
+       "servicesUrl": "${~http.*}"
       }}
