@@ -30,7 +30,7 @@ authExclusions:
   - '/doc/*'
   - '/javadoc/*'
   - '/api/*'
-  - '/services/Appsummary'
+  - '/services/AppSummary'
   - '/services/System/sysInfo'
   - '/services/com/centurylink/mdw/slack'
   
