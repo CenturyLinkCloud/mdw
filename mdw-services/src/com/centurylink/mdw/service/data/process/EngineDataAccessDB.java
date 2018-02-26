@@ -87,7 +87,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
     }
@@ -805,7 +805,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public String[] getDistinctEventLogEventNames() throws SQLException {
         String sql = "select distinct EVENT_NAME from EVENT_LOG";
         List<String> retList = new ArrayList<String>();
-        ResultSet rs = db.runSelect(sql.toString(), null);
+        ResultSet rs = db.runSelect(sql.toString());
         while (rs.next()) {
             String evName = rs.getString(1);
             retList.add(evName);
@@ -821,7 +821,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public String[] getDistinctEventLogEventSources() throws SQLException {
         String sql = "select distinct EVENT_SOURCE from EVENT_LOG";
         List<String> retList = new ArrayList<String>();
-        ResultSet rs = db.runSelect(sql.toString(), null);
+        ResultSet rs = db.runSelect(sql.toString());
         while (rs.next()) {
             String evName = rs.getString(1);
             retList.add(evName);
@@ -891,7 +891,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 sb.append(varInstId.toString());
             }
             sb.append(") and vi.VARIABLE_ID=v.VARIABLE_ID and v.VARIABLE_TYPE_ID=vt.VARIABLE_TYPE_ID");
-            rs = db.runSelect(sb.toString(), null);
+            rs = db.runSelect(sb.toString());
             while (rs.next()) {
                 Long varInstId = rs.getLong(1);
                 VariableInstance var = oldVarInsts.get(varInstId);
@@ -1121,7 +1121,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         ResultSet rs;
         if (cutofftime==null) {
             query.append(" and CONSUME_DT is null");
-            rs = db.runSelect(query.toString(), null);
+            rs = db.runSelect(query.toString());
         } else {
             query.append(" and CONSUME_DT < ?");
             rs = db.runSelect(query.toString(), cutofftime);
@@ -1329,7 +1329,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         StringBuffer buff = new StringBuffer();
         buff.append("select count(*) from ").append(tableName);
         if (whereClause!=null) buff.append(" where ").append(whereClause);
-        ResultSet rs = db.runSelect(buff.toString(), null);
+        ResultSet rs = db.runSelect(buff.toString());
         rs.next();
         return rs.getInt(1);
     }
@@ -1352,7 +1352,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         }
         if (rowCount>0) buff.append(db.pagingQuerySuffix(startRow-1, rowCount));
         String query = buff.toString();
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         List<String[]> ret = new ArrayList<String[]>();
         while (rs.next()) {
             String[] row = new String[types.length];

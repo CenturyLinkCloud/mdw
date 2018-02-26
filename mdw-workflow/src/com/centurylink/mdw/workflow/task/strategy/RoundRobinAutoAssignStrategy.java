@@ -24,7 +24,6 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -36,8 +35,7 @@ public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
     public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
         try {
             List<String> groups = ServiceLocator.getTaskServices().getGroupsForTaskInstance(taskInstance);
-            UserManager userManager = ServiceLocator.getUserManager();
-            User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
+            User[] taskUsers = ServiceLocator.getUserServices().getWorkgroupUsers(groups).toArray(new User[0]);
             if (taskUsers == null || taskUsers.length == 0) {
                 return null;
             }

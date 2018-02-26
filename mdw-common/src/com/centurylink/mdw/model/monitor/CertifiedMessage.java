@@ -133,7 +133,7 @@ public class CertifiedMessage implements Comparable<CertifiedMessage> {
     }
     
     public String getId() {
-        return CERTIFIED_MESSAGE_PREFIX + ApplicationContext.getApplicationName() 
+        return CERTIFIED_MESSAGE_PREFIX + ApplicationContext.getAppId() 
             + "-" + documentId;
     }
     public int getTryCount() {

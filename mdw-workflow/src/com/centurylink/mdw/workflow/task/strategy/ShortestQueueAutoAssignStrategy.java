@@ -23,7 +23,6 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -34,13 +33,12 @@ public class ShortestQueueAutoAssignStrategy implements AutoAssignStrategy {
     public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
         try {
             List<String> groups = ServiceLocator.getTaskServices().getGroupsForTaskInstance(taskInstance);
-            UserManager userManager = ServiceLocator.getUserManager();
-            User[] taskUsers = userManager.getUsersForGroups(groups.toArray(new String[groups.size()]));
-            if (taskUsers == null || taskUsers.length == 0) {
+            List<User> taskUsers = ServiceLocator.getUserServices().getWorkgroupUsers(groups);
+            if (taskUsers.isEmpty()) {
                 return null;
             }
 
-            User assignee = taskUsers[0];
+            User assignee = taskUsers.get(0);
             int shortest = Integer.MAX_VALUE;
             for (User user : taskUsers) {
                 int depth = ServiceLocator.getTaskServices().getTasks(new Query().setFilter("assigneee", user.getCuid())).getCount();

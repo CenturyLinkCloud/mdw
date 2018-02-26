@@ -23,8 +23,8 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.annotations.RegisteredService;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.constant.EnvironmentVariables;
 import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.monitor.ServiceMonitor;
@@ -57,9 +57,10 @@ public class MessageMonitor implements ServiceMonitor {
                     json.put("channel", "C85DLE1U7"); // TODO
                     json.put("as_user", false);
                     try {
-                        HttpHelper helper = new HttpHelper(new URL(EnvironmentVariables.MDW_CLOUD_ROUTER_URL + "/slack"));
+                        HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getMdwCloudRoutingUrl() + "/slack"));
                         Map<String,String> hdrs = new HashMap<>();
                         hdrs.put(Listener.METAINFO_CLOUD_ROUTING, "https://slack.com/api/chat.postMessage");
+                        hdrs.put(Listener.METAINFO_MDW_APP_ID, ApplicationContext.getAppId());
                         hdrs.put(Listener.METAINFO_MDW_APP_TOKEN, System.getenv("MDW_APP_TOKEN"));   // Add the application specific MDW provided token
                         hdrs.put("Content-Type", "application/json; charset=utf-8");
                         helper.setHeaders(hdrs);

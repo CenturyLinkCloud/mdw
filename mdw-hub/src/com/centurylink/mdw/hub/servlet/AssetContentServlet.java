@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
@@ -192,7 +191,7 @@ public class AssetContentServlet extends HttpServlet {
 
     /**
      * Distributed operations support does not include package import.
-     * TODO: authorization for distributed requests (Issue #69).
+     * authorization for distributed requests handled by issue #222.
      */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (!assetRoot.isDirectory())
@@ -306,9 +305,8 @@ public class AssetContentServlet extends HttpServlet {
                         String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
                         VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
                         AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
-                        DatabaseAccess db = new DatabaseAccess(null);
-                        try (Connection conn = db.openConnection()) {
-                            Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), conn);
+                        try (DbAccess dbAccess = new DbAccess()) {
+                            Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), dbAccess.getConnection());
                             cp.updateRef(curRef);
                         }
                     }
@@ -330,7 +328,7 @@ public class AssetContentServlet extends HttpServlet {
 
                     boolean distributed = "true".equalsIgnoreCase(request.getParameter("distributedSave"));
                     if (distributed)
-                        propagate(request.getMethod(), request.getRequestURL().toString(), content);
+                        propagate(request, content);
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));
                 }
             }
@@ -362,7 +360,7 @@ public class AssetContentServlet extends HttpServlet {
      */
     private void authorizeForUpdate(HttpSession session, Action action, Entity entity, String includes) throws AuthorizationException, DataAccessException {
         AuthenticatedUser user  = (AuthenticatedUser)session.getAttribute("authenticatedUser");
-        if (user == null && ApplicationContext.isServiceApiOpen()) {
+        if (user == null && ApplicationContext.getServiceUser() != null) {
             String cuid = ApplicationContext.getServiceUser();
             user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
         }
@@ -378,8 +376,9 @@ public class AssetContentServlet extends HttpServlet {
         ServiceLocator.getUserServices().auditLog(userAction);
     }
 
-    protected void propagate(String method, String url, byte[] requestContent) throws IOException {
-        URL requestUrl = new URL(url);
+    protected void propagate(HttpServletRequest request, byte[] requestContent) throws IOException {
+        String method = request.getMethod();
+        URL requestUrl = new URL(request.getRequestURL().toString());
         for (URL serviceUrl : ApplicationContext.getOtherServerUrls(requestUrl)) {
             HttpHelper httpHelper = new HttpHelper(serviceUrl);
             try {

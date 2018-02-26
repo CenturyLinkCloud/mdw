@@ -64,7 +64,7 @@ public class RequestDataAccess extends CommonDataAccess {
             count.append("from process_instance pi, document d\n");
             count.append(where);
             int total = 0;
-            ResultSet countRs = db.runSelect(count.toString(), null);
+            ResultSet countRs = db.runSelect(count.toString());
             countRs.next();
             total = countRs.getInt(1);
 
@@ -86,7 +86,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
             List<Long> listenerRequestIds = new ArrayList<Long>();
-            ResultSet rs = db.runSelect(q.toString(), null);
+            ResultSet rs = db.runSelect(q.toString());
             while (rs.next()) {
                 ProcessInstance pi = buildProcessInstance(rs);
                 Request request = new Request(rs.getLong("document_id"));
@@ -111,7 +111,7 @@ public class RequestDataAccess extends CommonDataAccess {
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
             if (query.getMax() != Query.MAX_ALL && listenerRequestIds.size() > 0) {
-                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, listenerRequestIds), null);
+                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, listenerRequestIds));
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
                     if (request != null) {
@@ -384,7 +384,7 @@ public class RequestDataAccess extends CommonDataAccess {
             count.append("from document d\n");
             count.append(where);
             int total = 0;
-            ResultSet countRs = db.runSelect(count.toString(), null);
+            ResultSet countRs = db.runSelect(count.toString());
             countRs.next();
             total = countRs.getInt(1);
 
@@ -397,7 +397,7 @@ public class RequestDataAccess extends CommonDataAccess {
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
             List<Request> requests = new ArrayList<Request>();
             List<Long> requestIds = new ArrayList<Long>();
-            ResultSet rs = db.runSelect(q.toString(), null);
+            ResultSet rs = db.runSelect(q.toString());
             while (rs.next()) {
                 Request request = new Request(rs.getLong("document_id"));
                 request.setCreated(rs.getTimestamp("create_dt"));
@@ -411,7 +411,7 @@ public class RequestDataAccess extends CommonDataAccess {
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
             if (query.getMax() != Query.MAX_ALL && !requestIds.isEmpty()) {
-                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, requestIds), null);
+                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, requestIds));
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
                     if (request != null) {
@@ -469,7 +469,7 @@ public class RequestDataAccess extends CommonDataAccess {
             count.append("from document d\n");
             count.append(where);
             int total = 0;
-            ResultSet countRs = db.runSelect(count.toString(), null);
+            ResultSet countRs = db.runSelect(count.toString());
             countRs.next();
             total = countRs.getInt(1);
 
@@ -482,7 +482,7 @@ public class RequestDataAccess extends CommonDataAccess {
             Map<Long,Request> requestMap = new HashMap<Long,Request>();
             List<Request> requests = new ArrayList<Request>();
             List<Long> activityIds = new ArrayList<Long>();
-            ResultSet rs = db.runSelect(q.toString(), null);
+            ResultSet rs = db.runSelect(q.toString());
             while (rs.next()) {
                 Long activityId = rs.getLong("owner_id");
                 Request request = new Request(rs.getLong("document_id"));
@@ -498,7 +498,7 @@ public class RequestDataAccess extends CommonDataAccess {
             // This join takes forever on MySQL, so a separate query is used to populate response info:
             // -- left join document d2 on (d2.owner_id = d.document_id)
             if (query.getMax() != Query.MAX_ALL && !activityIds.isEmpty()) {
-                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.ADAPTER_RESPONSE, activityIds), null);
+                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.ADAPTER_RESPONSE, activityIds));
                 while (respRs.next()) {
                     Request request = requestMap.get(respRs.getLong("owner_id"));
                     if (request != null) {

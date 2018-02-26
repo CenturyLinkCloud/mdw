@@ -72,7 +72,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("order by ct desc\n");
             }
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             List<ProcessCount> list = new ArrayList<ProcessCount>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
@@ -171,7 +171,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             }
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             Map<Date,List<ProcessCount>> map = new HashMap<Date,List<ProcessCount>>();
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
@@ -268,7 +268,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             sql.append("order by ct desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             List<TaskCount> list = new ArrayList<TaskCount>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
@@ -304,7 +304,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             sql.append("order by ct desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             List<TaskCount> list = new ArrayList<TaskCount>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
@@ -339,7 +339,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             sql.append("order by ct desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             List<TaskCount> list = new ArrayList<TaskCount>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
@@ -460,7 +460,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             Map<Date,List<TaskCount>> map = new HashMap<Date,List<TaskCount>>();
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
@@ -571,7 +571,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             sql.append("order by ct desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             List<ActivityCount> list = new ArrayList<ActivityCount>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
@@ -677,7 +677,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             Map<Date,List<ActivityCount>> map = new HashMap<Date,List<ActivityCount>>();
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
@@ -754,7 +754,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("\norder by to_date(created, 'DD-Mon-yyyy') desc\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString());
             Map<Date,List<RequestCount>> map = new HashMap<Date,List<RequestCount>>();
             while (rs.next()) {
                 String createDtStr = rs.getString("created");

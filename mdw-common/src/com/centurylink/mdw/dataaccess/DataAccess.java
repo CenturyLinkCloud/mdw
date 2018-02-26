@@ -17,14 +17,12 @@ package com.centurylink.mdw.dataaccess;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
@@ -79,14 +77,6 @@ public class DataAccess {
         if (assetRoot == null)
             throw new IllegalStateException("Asset root not known");
         return getVcsRuntimeDataAccess(db, assetRoot);
-    }
-
-    public static UserDataAccess getUserDataAccess(DatabaseAccess db) throws DataAccessException {
-        return getUserDataAccess(currentSchemaVersion, supportedSchemaVersion, db);
-    }
-
-    public static UserDataAccess getUserDataAccess(int version, int supportedVersion, DatabaseAccess db) {
-        return new UserDataAccessDb(db, version, supportedVersion);
     }
 
     private static volatile ProcessLoader loaderPersisterVcs;
@@ -224,14 +214,13 @@ public class DataAccess {
         StandardLogger logger = LoggerUtil.getStandardLogger();
         if (assetVersionControl != null && !ApplicationContext.isDevelopment() && !"true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))){
             // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
-            DatabaseAccess db = new DatabaseAccess(null);
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-            try (Connection conn = db.openConnection()) {
+            try (DbAccess dbAccess = new DbAccess()) {
                 String ref = vcGit.getCommit();
                 if (ref != null) {  // avoid attempting update for local-only resources
                     logger.info("Auto-populating ASSET_REF table...");
-                    Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), conn);
+                    Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), dbAccess.getConnection());
                     cp.updateRefs();
                 }
                 else

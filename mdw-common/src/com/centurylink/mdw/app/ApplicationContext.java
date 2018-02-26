@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -74,7 +75,7 @@ public class ApplicationContext {
     private static JmsProvider jmsProvider;
     private static ThreadPoolProvider threadPoolProvider;
 
-    private static String appName;
+    private static String appId;
     private static String appVersion;
     private static String mdwVersion;
     private static String mdwBuildTimestamp;
@@ -254,15 +255,15 @@ public class ApplicationContext {
     /**
      * Returns the application name
      */
-    public static String getApplicationName(){
-        if (appName != null)
-            return appName;
-        appName = PropertyManager.getProperty(PropertyNames.APPLICATION_NAME);
-        if (appName == null) // try legacy property
-            appName = PropertyManager.getProperty("MDWFramework.ApplicationDetails/ApplicationName");
-        if (appName == null)
+    public static String getAppId() {
+        if (appId != null)
+            return appId;
+        appId = PropertyManager.getProperty(PropertyNames.MDW_APP_ID);
+        if (appId == null) // try legacy property
+            appId = PropertyManager.getProperty("mdw.application.name");
+        if (appId == null)
             return "Unknown";
-        return appName;
+        return appId;
     }
 
     /**
@@ -329,11 +330,11 @@ public class ApplicationContext {
     /**
      * Returns the application version read from the build version file
      */
-    public static String getApplicationVersion() {
+    public static String getAppVersion() {
         if (appVersion != null)
             return appVersion;
 
-        String appName = getApplicationName();
+        String appName = getAppId();
         if ("mdw".equalsIgnoreCase(appName)) {
             appVersion = getMdwVersion();
         }
@@ -555,10 +556,6 @@ public class ApplicationContext {
         return "dev".equalsIgnoreCase(getRuntimeEnvironment());
     }
 
-    public static boolean isServiceApiOpen() {
-        return "true".equalsIgnoreCase(System.getProperty("mdw.service.api.open"));
-    }
-
     private static String devUser;
     /**
      * Can only be set once (by AccessFilter) at deploy time.
@@ -579,14 +576,18 @@ public class ApplicationContext {
      * Can only be set once (by AccessFilter) at deploy time.
      */
     public static void setServiceUser(String user) {
-        if (serviceUser == null)
-            serviceUser = user;
+        if (serviceUser == null) {
+            if (StringHelper.isEmpty(user))
+                serviceUser = "N/A";
+            else
+                serviceUser = user;
+        }
     }
     public static String getServiceUser() {
-        if (isServiceApiOpen())
-            return serviceUser;
-        else
+        if ("N/A".equals(serviceUser))
             return null;
+        else
+            return serviceUser;
     }
 
     public static boolean isPaaS() {
@@ -773,5 +774,41 @@ public class ApplicationContext {
             websocketUrl = null;
         }
         return websocketUrl;
+    }
+
+    public static String getMdwCentralUrl() {
+        String mdwCentralUrl = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_URL);
+        if (mdwCentralUrl == null)
+            mdwCentralUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+        return mdwCentralUrl;
+    }
+
+    public static String getMdwAuthUrl() {
+        String mdwAuth = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_AUTH_URL);
+        if (mdwAuth == null)
+            mdwAuth = getMdwCentralUrl() + "/services/com/centurylink/mdw/central/auth";
+        return mdwAuth;
+    }
+
+    public static String getMdwCentralHost() throws MalformedURLException {
+        return new URL(ApplicationContext.getMdwCentralUrl()).getHost();
+    }
+
+    public static String getMdwCloudRoutingUrl() {
+        String mdwRouting = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_ROUTING_URL);
+        if (mdwRouting == null)
+            mdwRouting = getMdwCentralUrl() + "/services/routing";
+        return mdwRouting;
+    }
+
+    private static String authMethod;
+    public static String getAuthMethod() {
+        return authMethod;
+    }
+    public static void setAuthMethod(String method) {
+        authMethod = method;
+    }
+    public static boolean isMdwAuth() {
+        return "mdw".equals(getAuthMethod());
     }
  }

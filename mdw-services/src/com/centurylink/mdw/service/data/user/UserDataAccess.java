@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.data.user;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +28,18 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.db.UserDataAccessDb;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.util.StringHelper;
 
-public class UserDataAccess extends UserDataAccessDb {
+public class UserDataAccess extends CommonDataAccess {
+
+    protected String USER_SELECT_FIELDS = "u.USER_INFO_ID, u.CUID, u.NAME, u.END_DATE, u.COMMENTS";
 
     public UserDataAccess(DatabaseAccess db) {
         super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
@@ -42,7 +48,7 @@ public class UserDataAccess extends UserDataAccessDb {
     public int countUsers(String whereCondition) throws DataAccessException {
         try {
             db.openConnection();
-            return super.countRows("USER_INFO", "USER_INFO_ID", whereCondition);
+            return countRows("USER_INFO", "USER_INFO_ID", whereCondition);
         }
         catch (Exception e) {
             throw new DataAccessException(0, "failed to count users", e);
@@ -78,7 +84,7 @@ public class UserDataAccess extends UserDataAccessDb {
                 if (whereCondition != null)
                     sql = sql + " where " + whereCondition;
                 sql += sortOn == null ? " order by CUID" : (" order by " + sortOn);
-                ResultSet rs = db.runSelect(sql, null);
+                ResultSet rs = db.runSelect(sql);
                 while (rs.next()) {
                     users.add(createUserInfoFromResultSet(rs));
                 }
@@ -103,7 +109,7 @@ public class UserDataAccess extends UserDataAccessDb {
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";
-        ResultSet rs = db.runSelect(query, null);
+        ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
     }
@@ -173,6 +179,28 @@ public class UserDataAccess extends UserDataAccessDb {
             throw new DataAccessException(-1, "Failed to get user", ex);
         }
         finally {
+            db.closeConnection();
+        }
+    }
+
+    public User getUser(String userName) throws DataAccessException {
+        try {
+            User user = null;
+            db.openConnection();
+            String sql = "select " + USER_SELECT_FIELDS + " from USER_INFO u where lower(u.CUID)=?";
+               sql += " and END_DATE is null";
+             ResultSet rs = db.runSelect(sql, userName.toLowerCase());
+             if (rs.next()) {
+                 user = createUserInfoFromResultSet(rs);
+             }
+             if (user != null) {
+                 loadGroupsRolesForUser(user);
+                 loadAttributesForUser(user);
+             }
+             return user;
+        } catch(Exception ex){
+            throw new DataAccessException(-1, "Failed to get user: " + userName, ex);
+        } finally {
             db.closeConnection();
         }
     }
@@ -318,7 +346,7 @@ public class UserDataAccess extends UserDataAccessDb {
             db.openConnection();
             List<Role> roles = new ArrayList<Role>();
             String sql = "select USER_ROLE_ID, USER_ROLE_NAME, COMMENTS from USER_ROLE order by USER_ROLE_NAME";
-            ResultSet rs = db.runSelect(sql, null);
+            ResultSet rs = db.runSelect(sql);
             while (rs.next()) {
                 Role role = new Role();
                 role.setId(rs.getLong(1));
@@ -534,7 +562,7 @@ public class UserDataAccess extends UserDataAccessDb {
             query = "delete from USER_ROLE_MAPPING where USER_ROLE_MAPPING_OWNER='USER'"
                     + " and USER_ROLE_MAPPING_OWNER_ID=?";
             db.runUpdate(query, userId);
-            // delete user preferences
+            // delete user attributes
             query = "delete from ATTRIBUTE where ATTRIBUTE_OWNER='USER' and ATTRIBUTE_OWNER_ID=?";
             db.runUpdate(query, userId);
             // end-date user itself
@@ -793,8 +821,7 @@ public class UserDataAccess extends UserDataAccessDb {
                 + now() + ", " + "(select user_group_id from user_group where group_name = ?))";
         try {
             db.openConnection();
-            String[] params = new String[] { cuid, group };
-            db.runUpdate(query, params);
+            db.runUpdate(query, new Object[]{cuid, group});
             db.commit();
         }
         catch (Exception ex) {
@@ -815,7 +842,7 @@ public class UserDataAccess extends UserDataAccessDb {
                 + group + "')";
         try {
             db.openConnection();
-            db.runUpdate(query, null);
+            db.runUpdate(query);
             db.commit();
         }
         catch (Exception ex) {
@@ -838,8 +865,7 @@ public class UserDataAccess extends UserDataAccessDb {
                 + "(select user_role_id from user_role where user_role_name = ?))";
         try {
             db.openConnection();
-            String[] params = new String[] { cuid, role };
-            db.runUpdate(query, params);
+            db.runUpdate(query, new Object[]{cuid, role});
             db.commit();
         }
         catch (Exception ex) {
@@ -861,7 +887,7 @@ public class UserDataAccess extends UserDataAccessDb {
                 + role + "')";
         try {
             db.openConnection();
-            db.runUpdate(query, null);
+            db.runUpdate(query);
             db.commit();
         }
         catch (Exception ex) {
@@ -907,91 +933,13 @@ public class UserDataAccess extends UserDataAccessDb {
                 errmsg);
     }
 
-    public Map<String, String> getUserPreferences(Long userId) throws DataAccessException {
-        try {
-            db.openConnection();
-            String sql = "select ATTRIBUTE_NAME, ATTRIBUTE_VALUE from ATTRIBUTE "
-                    + "where ATTRIBUTE_OWNER='" + OwnerType.USER + "' and ATTRIBUTE_OWNER_ID=?";
-            ResultSet rs = db.runSelect(sql, userId);
-            Map<String, String> map = new HashMap<String, String>();
-            while (rs.next()) {
-                map.put(rs.getString(1), rs.getString(2));
-            }
-            return map;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(-1, "Failed to get user preferences", ex);
-        }
-        finally {
-            db.closeConnection();
-        }
-    }
-
-    public void updateUserPreferences(Long userId, Map<String, String> preferences)
-            throws DataAccessException {
-        try {
-            db.openConnection();
-            String sql = "select ATTRIBUTE_NAME, ATTRIBUTE_VALUE from ATTRIBUTE "
-                    + "where ATTRIBUTE_OWNER='" + OwnerType.USER + "' and ATTRIBUTE_OWNER_ID=?";
-            ResultSet rs = db.runSelect(sql, userId);
-            Map<String, String> existing = new HashMap<String, String>();
-            while (rs.next()) {
-                existing.put(rs.getString(1), rs.getString(2));
-            }
-
-            String deleteQuery = "delete from ATTRIBUTE where "
-                    + " ATTRIBUTE_OWNER=? and ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_NAME=?";
-            Object[] args = new Object[3];
-            args[0] = OwnerType.USER;
-            args[1] = userId;
-            for (String key : existing.keySet()) {
-                if (preferences == null || !preferences.containsKey(key)) {
-                    args[2] = key;
-                    db.runUpdate(deleteQuery, args);
-                }
-            }
-            if (preferences != null && !preferences.isEmpty()) {
-                String insertQuery = "insert into ATTRIBUTE"
-                        + " (ATTRIBUTE_ID,ATTRIBUTE_OWNER,ATTRIBUTE_VALUE,ATTRIBUTE_OWNER_ID,ATTRIBUTE_NAME,CREATE_DT,CREATE_USR)"
-                        + " values (" + (db.isMySQL() ? "null" : "MDW_COMMON_ID_SEQ.NEXTVAL") + ",'"
-                        + OwnerType.USER + "',?,?,?," + now() + ",'MDW')";
-                String updateQuery = "update ATTRIBUTE set ATTRIBUTE_VALUE=? where "
-                        + " ATTRIBUTE_OWNER='" + OwnerType.USER
-                        + "' and ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_NAME=?";
-                args[1] = userId;
-                for (String key : preferences.keySet()) {
-                    args[0] = preferences.get(key);
-                    args[2] = key;
-                    if (existing.containsKey(key)) {
-                        db.runUpdate(updateQuery, args);
-                    }
-                    else {
-                        db.runUpdate(insertQuery, args);
-                    }
-                }
-            }
-            db.commit();
-        }
-        catch (Exception ex) {
-            db.rollback();
-            throw new DataAccessException(-1, "Failed to update user preferences", ex);
-        }
-        finally {
-            db.closeConnection();
-        }
-    }
-
-    /**
-     * Ignores non-public attributes (those that contain a ':').
-     */
-    public void updateUserAttributes(Long userId, Map<String, String> attributes)
+    public void updateUserAttributes(Long userId, Map<String,String> attributes)
             throws DataAccessException {
         try {
             db.openConnection();
 
             String deleteQuery = "delete from ATTRIBUTE where " + " ATTRIBUTE_OWNER='"
-                    + OwnerType.USER
-                    + "' and ATTRIBUTE_OWNER_ID=? and attribute_name not like '%:%'";
+                    + OwnerType.USER + "' and ATTRIBUTE_OWNER_ID=?";
             db.runUpdate(deleteQuery, userId);
 
             if (attributes != null && !attributes.isEmpty()) {
@@ -1046,14 +994,14 @@ public class UserDataAccess extends UserDataAccessDb {
         }
     }
 
-    public List<String> getPublicUserAttributeNames() throws DataAccessException {
+    public List<String> getUserAttributeNames() throws DataAccessException {
         try {
             db.openConnection();
             List<String> attrs = new ArrayList<String>();
             String query = "select distinct attribute_name from attribute "
-                    + "where attribute_owner = 'USER' and attribute_name not like '%:%' "
+                    + "where attribute_owner = 'USER' "
                     + "order by lower(attribute_name)";
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             while (rs.next())
                 attrs.add(rs.getString("attribute_name"));
             return attrs;
@@ -1073,13 +1021,193 @@ public class UserDataAccess extends UserDataAccessDb {
             String query = "select distinct attribute_name from attribute "
                     + "where attribute_owner = '" + OwnerType.USER_GROUP + "' "
                     + "order by lower(attribute_name)";
-            ResultSet rs = db.runSelect(query, null);
+            ResultSet rs = db.runSelect(query);
             while (rs.next())
                 attrs.add(rs.getString("attribute_name"));
             return attrs;
         }
         catch (Exception e) {
             throw new DataAccessException(0, "failed to get group attribute names", e);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected User createUserInfoFromResultSet(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong(1));
+        user.setCuid(rs.getString(2));
+        String name = rs.getString(3);
+        if (name==null) name = rs.getString(5);
+        // Set Cuid as name to handle migrated users from MDW4 to 5
+        // and comment is missing in user_info table
+        if (StringHelper.isEmpty(name)) name = rs.getString(2);
+        user.setEndDate(rs.getString(4));
+        user.setName(name);
+        user.parseName();
+        return user;
+    }
+
+    protected void loadGroupsRolesForUser(User user) throws SQLException, CachingException {
+        // load groups
+        String sql = "select g.USER_GROUP_ID, g.GROUP_NAME, g.COMMENTS, ug.COMMENTS " +
+            "from USER_GROUP_MAPPING ug, USER_GROUP g " +
+            "where ug.USER_GROUP_ID = g.USER_GROUP_ID and ug.USER_INFO_ID = ? ";
+        sql += "order by lower(g.GROUP_NAME)";
+
+        ResultSet rs = db.runSelect(sql, user.getId());
+        ArrayList<Workgroup> groups = new ArrayList<Workgroup>();
+        Map<String,Boolean> rolesConverted = new HashMap<String,Boolean>();
+        while (rs.next()) {
+            Long groupId = rs.getLong(1);
+            String groupName = rs.getString(2);
+            String comment = rs.getString(3);
+            String converted = rs.getString(4);
+            Workgroup group = new Workgroup(groupId, groupName, comment);
+            rolesConverted.put(groupName, "Converted".equalsIgnoreCase(converted));
+            groups.add(group);
+        }
+        // load roles for the groups other than the shared
+        sql = "select r.USER_ROLE_NAME, ug.USER_GROUP_ID " +
+            "from USER_GROUP_MAPPING ug, USER_ROLE r, USER_ROLE_MAPPING ugr " +
+            "where ug.USER_INFO_ID = ? " +
+            "    and ugr.USER_ROLE_MAPPING_OWNER='" + OwnerType.USER_GROUP_MAP + "'" +
+            "    and ugr.USER_ROLE_MAPPING_OWNER_ID = ug.USER_GROUP_MAPPING_ID" +
+            "    and ugr.USER_ROLE_ID = r.USER_ROLE_ID";
+        rs = db.runSelect(sql, user.getId());
+        while (rs.next()) {
+            Long groupId = rs.getLong(2);
+            for (Workgroup group : groups) {
+                if (group.getId().equals(groupId)) {
+                    List<String> roles = group.getRoles();
+                    if (roles==null) {
+                        roles = new ArrayList<String>();
+                        group.setRoles(roles);
+                    }
+                    roles.add(rs.getString(1));
+                    break;
+                }
+            }
+        }
+        // load roles for the shared group
+        sql = "select r.USER_ROLE_NAME " +
+            "from USER_INFO u, USER_ROLE r, USER_ROLE_MAPPING ur " +
+            "where u.CUID = ?" +
+            "   and ((u.USER_INFO_ID = ur.USER_ROLE_MAPPING_OWNER_ID" +
+            "         and ur.USER_ROLE_MAPPING_OWNER = '" + OwnerType.USER + "'" +
+            "          and r.USER_ROLE_ID = ur.USER_ROLE_ID)" +
+            "       or (ur.USER_ROLE_MAPPING_OWNER = '" + OwnerType.USER_GROUP + "'" +
+            "         and ur.USER_ROLE_MAPPING_OWNER_ID in " +
+            "           (select ug.USER_GROUP_ID from USER_GROUP_MAPPING ug" +
+            "            where ug.USER_INFO_ID = u.USER_INFO_ID" +
+            "              and r.USER_ROLE_ID = ur.USER_ROLE_ID))) " +
+            "order by r.USER_ROLE_NAME";
+        rs = db.runSelect(sql, user.getCuid());
+        List<String> sharedRoles = new ArrayList<String>();
+        while (rs.next()) {
+            String roleName = rs.getString(1);
+            if (!sharedRoles.contains(roleName))
+                sharedRoles.add(roleName);
+        }
+        Workgroup sharedGroup = new Workgroup(Workgroup.COMMON_GROUP_ID, Workgroup.COMMON_GROUP, null);
+        sharedGroup.setRoles(sharedRoles);
+        groups.add(sharedGroup);
+        // set groups to user
+        Collections.sort(groups);
+        user.setGroups(groups);
+    }
+
+    protected void loadAttributesForUser(User user) throws SQLException, CachingException {
+        // load attributes for user
+        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute att1  " +
+                " where att1.attribute_owner = '" + OwnerType.USER + "' and att1.attribute_owner_id  = ?" +
+                " UNION  " +
+                " select DISTINCT att2.attribute_name, '' from attribute att2 " +
+                " where att2.attribute_owner = '" + OwnerType.USER + "' and att2.attribute_owner_id  != ? " +
+                " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
+                " where att3.attribute_owner = '" + OwnerType.USER + "' and att3.attribute_Owner_id  = ? )";
+
+        ResultSet rs = db.runSelect(sql, new Object[]{user.getId(), user.getId(), user.getId()});
+        while (rs.next()) {
+            user.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
+        }
+    }
+
+    protected void loadAttributesForGroup(Workgroup group) throws SQLException, CachingException {
+        // load attributes for workgroup
+        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute  att1  " +
+            " where att1.attribute_owner = '" + OwnerType.USER_GROUP + "' and att1.attribute_owner_id  = ?" +
+            " UNION  " +
+            " select DISTINCT att2.attribute_name, '' from attribute  att2 " +
+            " where att2.attribute_owner = '" + OwnerType.USER_GROUP + "' and att2.attribute_owner_id  != ?" +
+            " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
+            " where att3.attribute_owner = '" + OwnerType.USER_GROUP + "' and att3.attribute_Owner_id  = ? )";
+
+        ResultSet rs = db.runSelect(sql, new Object[]{group.getId(), group.getId(), group.getId()});
+        while (rs.next())
+            group.setAttribute(rs.getString("attribute_name"), rs.getString("attribute_value"));
+    }
+
+    public List<Workgroup> getAllGroups(boolean includeDeleted) throws DataAccessException {
+        try {
+            List<Workgroup> groups = new ArrayList<Workgroup>();
+            db.openConnection();
+            String sql = "select USER_GROUP_ID, GROUP_NAME, COMMENTS, PARENT_GROUP_ID, END_DATE from USER_GROUP";
+            if (!includeDeleted) sql = sql + " where END_DATE is null";
+            sql += " order by GROUP_NAME";
+            ResultSet rs = db.runSelect(sql);
+            Map<Long,String> nameMap = new HashMap<Long,String>();
+            while (rs.next()) {
+                Long groupId = rs.getLong(1);
+                String groupName = rs.getString(2);
+                String comments = rs.getString(3);
+                Workgroup group = new Workgroup(groupId, groupName, comments);
+                long pid = rs.getLong(4);
+                if (pid>0L) group.setParentGroup(Long.toString(pid));
+                group.setEndDate(rs.getString(5));
+                nameMap.put(groupId, groupName);
+                groups.add(group);
+            }
+            for (Workgroup group : groups) {
+                loadAttributesForGroup(group);
+                if (group.getParentGroup()!=null) {
+                    Long pid = new Long(group.getParentGroup());
+                    group.setParentGroup(nameMap.get(pid));
+                }
+            }
+            return groups;
+        } catch(Exception ex){
+            throw new DataAccessException(-1, "Failed to get user group", ex);
+        } finally {
+            db.closeConnection();
+        }
+    }
+
+    public void auditLogUserAction(UserAction userAction)
+    throws DataAccessException {
+        try {
+            db.openConnection();
+            Long id = db.isMySQL()?null:this.getNextId("EVENT_LOG_ID_SEQ");
+            String query = "insert into EVENT_LOG " +
+                "(EVENT_LOG_ID, EVENT_NAME, EVENT_CATEGORY, EVENT_SUB_CATEGORY, " +
+                "EVENT_SOURCE, EVENT_LOG_OWNER, EVENT_LOG_OWNER_ID, CREATE_USR, CREATE_DT, COMMENTS, STATUS_CD) " +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, '1')";
+            Object[] args = new Object[9];
+            args[0] = id;
+            args[1] = userAction.getAction().toString();
+            args[2] = EventLog.CATEGORY_AUDIT;
+            args[3] = "User Action";
+            args[4] = userAction.getSource();
+            args[5] = userAction.getEntity().toString();
+            args[6] = userAction.getEntityId();
+            args[7] = userAction.getUser();
+            args[8] = userAction.getDescription();
+            db.runUpdate(query, args);
+            db.commit();
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException(-1, "failed to insert audit log", ex);
         }
         finally {
             db.closeConnection();

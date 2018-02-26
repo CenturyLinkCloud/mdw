@@ -32,7 +32,6 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.UserManager;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -45,7 +44,6 @@ public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements 
     @SuppressWarnings("unchecked")
     public User selectAssignee(TaskInstance taskInstanceVO) throws ObserverException{
       User user = new User();
-      UserManager userManager = ServiceLocator.getUserManager();
       KieBase knowledgeBase = null;
       logger.info("Getting knowledgeBase");
       try
@@ -70,7 +68,7 @@ public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements 
 
       try
       {
-        user = userManager.getUser(user.getCuid());
+        user = ServiceLocator.getUserServices().getUser(user.getCuid());
         logger.info("Got UserVO ::"+ user);
       }
       catch (DataAccessException e)

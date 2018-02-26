@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.services;
 
+import java.util.List;
+
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.user.RoleList;
 import com.centurylink.mdw.model.user.UserAction;
@@ -45,7 +47,9 @@ public interface UserServices {
      * Find users who belong to a list of workgroups.
      */
     public UserList findWorkgroupUsers(String[] workgroups, String prefix) throws DataAccessException;
+
     public User getUser(String cuid) throws DataAccessException;
+
     public void createUser(User user) throws DataAccessException;
     public void updateUser(User user) throws DataAccessException;
     public void deleteUser(String cuid) throws DataAccessException;
@@ -63,4 +67,6 @@ public interface UserServices {
 
     public void auditLog(UserAction userAction) throws DataAccessException;
 
+    public List<User> getWorkgroupUsers(List<String> groups) throws DataAccessException;
+    public List<String> getWorkgroupEmails(List<String> groups) throws DataAccessException;
 }

@@ -79,7 +79,7 @@ public class PropertyNames {
     public static final String MDW_TEMP_DIR = "mdw.temp.dir";
     public static final String MDW_ATTACHMENTS_DIR = "mdw.attachments.dir";
 
-    public static final String APPLICATION_NAME = "mdw.application.name";
+    public static final String MDW_APP_ID = "mdw.app.id";
     public static final String MDW_WAR_NAME = "mdw.war.name";
     public static final String MDW_SERVICES_URL = "mdw.services.url";
     public static final String ACTIVITY_RESUME_DELAY = "mdw.activity.resume.delay";
@@ -151,8 +151,11 @@ public class PropertyNames {
     public static final String MDW_LDAP_PORT = "mdw.ldap.port";
     public static final String MDW_LDAP_BASE_DN = "mdw.ldap.base.dn";
 
-    // Authentication
-    public static final String HTTP_BASIC_AUTH_MODE = "mdw.services.http.basic.auth";
+    // Authentication / MDW Central
+    public static final String MDW_AUTH_TOKEN_MAX_AGE = "mdw.auth.token.maxage";  // Max age in seconds that a JWT token will still be considered valid
+    public static final String MDW_CENTRAL_URL = "mdw.central.url";
+    public static final String MDW_CENTRAL_AUTH_URL = "mdw.central.auth.url";
+    public static final String MDW_CENTRAL_ROUTING_URL = "mdw.central.routing.url";
 
     // Request Routing
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";

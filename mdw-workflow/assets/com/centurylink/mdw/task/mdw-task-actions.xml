@@ -6,8 +6,7 @@
      standard actions. -->
 <taskActions
   xmlns="http://mdw.centurylink.com/task"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://mdw.centurylink.com/task http://cshare.ad.qintra.com/sites/MDW/Developer%20Resources/Environment/schemas/Task/TaskActions_v01.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <bulkTaskActions>
     <!-- allowable bulk actions for any unclaimed tasks -->

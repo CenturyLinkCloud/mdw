@@ -71,6 +71,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
     }
 
     public enum Entity {
+        App,
         Project,
         Package,
         Process,

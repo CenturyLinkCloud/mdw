@@ -161,7 +161,7 @@ public class AttachmentServlet extends HttpServlet {
     private void authorize(HttpSession session, Action action, Entity entity, String location)
             throws AuthorizationException, DataAccessException {
         AuthenticatedUser user  = (AuthenticatedUser)session.getAttribute("authenticatedUser");
-        if (user == null && ApplicationContext.isServiceApiOpen()) {
+        if (user == null && ApplicationContext.getServiceUser() != null) {
             String cuid = ApplicationContext.getServiceUser();
             user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
         }

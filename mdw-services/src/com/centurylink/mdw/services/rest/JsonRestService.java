@@ -30,8 +30,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExport;
 import com.centurylink.mdw.model.JsonExportable;
@@ -40,7 +42,9 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;
 
@@ -51,17 +55,10 @@ public abstract class JsonRestService extends RestService implements JsonService
         String path = headers.get(Listener.METAINFO_REQUEST_PATH);
         try {
             JSONObject response;
-            if ("GET".equals(headers.get(Listener.METAINFO_HTTP_METHOD))) {
-                // TODO separate auth for GET requests
-                // But BE CAREFUL because Designer uses these services
-                // and we have to figure out the auth credentials strategy.
-                response = service(path, null, headers);
-            }
-            else {
-                User user = authorize(path, json, headers);
-                response = service(path, json, headers);
+            User user = authorize(path, json, headers);
+            response = service(path, json, headers);
+            if (user != null)
                 auditLog(getUserAction(user, path, json, headers));
-            }
             if (response == null) {
                 return null;
             }
@@ -278,4 +275,15 @@ public abstract class JsonRestService extends RestService implements JsonService
         return responseJson;
     }
 
+    protected void launchProcess(String name, String masterRequestId,
+            Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        long documentId = Long.parseLong(headers.get(Listener.METAINFO_DOCUMENT_ID));
+        workflowServices.launchProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
+    }
+
+    protected int notifyProcess(String packageName, String eventId, Map<String,String> headers) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        return workflowServices.notify(PackageCache.getPackage(packageName), eventId, JsonUtil.getJson(headers));
+    }
 }

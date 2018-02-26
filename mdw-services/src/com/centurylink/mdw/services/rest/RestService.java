@@ -37,7 +37,6 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -77,65 +76,46 @@ public abstract class RestService {
      * @return authorized user if successful
      */
     protected User authorize(String path, JSONObject content, Map<String,String> headers) throws AuthorizationException {
+        User user = null;
         String userId = headers.get(Listener.AUTHENTICATED_USER_HEADER);
-        if (userId == null)
-            throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Service " + this.getClass().getSimpleName() + " requires authenticated user");
+        String method = headers.get(Listener.METAINFO_HTTP_METHOD);
         try {
-            User user = UserGroupCache.getUser(userId);
-            if (user == null)
-                throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Cannot find user: " + userId);
-            String workgroup = headers.get(Listener.AUTHORIZATION_WORKGROUP);
-            List<String> roles = getRoles(path);
-            if (roles != null) {
-                if (roles.contains(Role.ANY))
-                    return user;
+            if (userId != null)
+                user = UserGroupCache.getUser(userId);
+
+            List<String> roles = getRoles(path, method);
+            if (roles != null && !roles.isEmpty()) {
+                if (user == null) {
+                    throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Service "
+                            + getClass().getSimpleName() + " requires authenticated user");
+                }
                 for (String role : roles) {
-                    if ((workgroup == null && user.hasRole(role)) || (workgroup != null && user.hasRole(workgroup, role))) {
-                        List<Workgroup> workgroups = getRequiredWorkgroups(content);
-                        // Passed Role Authorization, make sure the user is part of the necessary workgroups
-                        // Only fail if workgroups are defined and user isn't in a workgroup
-                        if (workgroups != null && !userInGroups(user, workgroups)) {
-                            String wgs = "";
-                            for (int i = 0; i < workgroups.size(); i++) {
-                                wgs += workgroups.get(i).getName();
-                                if (i < workgroups.size() - 1)
-                                    wgs += ", ";
-                            }
-                            throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                                        "User: " + userId + " not authorized for groups " + wgs + " for: " + path);
-                        }
+                    if (user.hasRole(role)) {
                         return user;
                     }
-
                 }
+                throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
+                        "User: " + userId + " not authorized for: " + path);
             }
-            throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                    "User: " + userId + " not authorized for: " + path);
-        }
-        catch (CachingException ex) {
-            throw new AuthorizationException(ex.getMessage(), ex);
-        }
-        catch (DataAccessException ex) {
-            throw new AuthorizationException(ex.getMessage(), ex);
-        }
-        catch (JSONException ex) {
-            throw new AuthorizationException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * Figure out if a user belongs to any of a list of groups
-     * @param user
-     * @param workgroups
-     * @return
-     */
-    private boolean userInGroups(User user, List<Workgroup> workgroups) {
-         for (Workgroup workgroup: workgroups) {
-            if (user.belongsToGroup(workgroup.getName())) {
-                return true;
+            List<String> workgroups = getWorkgroups(path, method);
+            if (workgroups != null && !workgroups.isEmpty()) {
+                if (user == null) {
+                    throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Service "
+                            + getClass().getSimpleName() + " requires authenticated user");
+                }
+                for (String workgroup : workgroups) {
+                    if (user.belongsToGroup(workgroup)) {
+                        return user;
+                    }
+                }
+                throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
+                        "User: " + userId + " not authorized for: " + path);
             }
+            return null;
         }
-        return false;
+        catch (CachingException | JSONException | ServiceException ex) {
+            throw new AuthorizationException(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -144,20 +124,26 @@ public abstract class RestService {
      * @throws JSONException
      * @throws DataAccessException
      */
-    protected List<Workgroup> getRequiredWorkgroups(JSONObject content) throws JSONException, DataAccessException {
-        return null;
+    protected List<String> getWorkgroups(String path, String method) {
+        return new ArrayList<>();
     }
 
+    /**
+     * Default impl pays no attention to method (for compatibility).
+     */
+    protected List<String> getRoles(String path, String method) {
+        if (method.equals("GET"))
+            return new ArrayList<>();
+        return getRoles(path);
+    }
 
     /**
-     * TODO: pass HTTP Method
-     *
      * A user who belongs to any role in the returned list is allowed
      * to perform this action/method.  Override to open access beyond Site Admin.
      * @param path
      * @return list of role names or null if authorization not required
      */
-    public List<String> getRoles(String path) {
+    protected List<String> getRoles(String path) {
         List<String> defaultRoles = new ArrayList<String>();
         defaultRoles.add(Workgroup.SITE_ADMIN_GROUP);
         return defaultRoles;

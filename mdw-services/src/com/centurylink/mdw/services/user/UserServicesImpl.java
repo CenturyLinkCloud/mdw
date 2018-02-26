@@ -15,20 +15,20 @@
  */
 package com.centurylink.mdw.services.user;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.user.RoleList;
-import com.centurylink.mdw.model.user.UserAction;
-import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.model.user.UserList;
 import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.RoleList;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.UserList;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.WorkgroupList;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
@@ -93,7 +93,7 @@ public class UserServicesImpl implements UserServices {
         try {
             User user = UserGroupCache.getUser(cuid);
             if (user == null)
-                throw new CachingException("");
+                return null;
             // add empty attributes
             if (user.getAttributes() == null)
                 user.setAttributes(new HashMap<String,String>());
@@ -149,7 +149,7 @@ public class UserServicesImpl implements UserServices {
     }
 
     public void auditLog(UserAction userAction) throws DataAccessException {
-        DataAccess.getUserDataAccess(new DatabaseAccess(null)).auditLogUserAction(userAction);;
+        getUserDAO().auditLogUserAction(userAction);
     }
 
     public void createWorkgroup(Workgroup workgroup) throws DataAccessException {
@@ -235,5 +235,29 @@ public class UserServicesImpl implements UserServices {
             throw new DataAccessException("Role: " + name + " does not exist");
         dao.deleteRole(role.getId());
         UserGroupCache.remove(role);
+    }
+
+    public List<User> getWorkgroupUsers(List<String> groups)
+    throws DataAccessException {
+        List<User> users = new ArrayList<>();
+        for (String group : groups) {
+            Workgroup workgroup = getWorkgroup(group);
+            for (User user : workgroup.getUsers()) {
+                if (!users.contains(user))
+                    users.add(user);
+            }
+        }
+        return users;
+    }
+
+    public List<String> getWorkgroupEmails(List<String> groups)
+    throws DataAccessException {
+      List<String> emails = new ArrayList<>();
+      for (User user : getWorkgroupUsers(groups)) {
+          String email = user.getEmail();
+          if (email != null && !emails.contains(email))
+              emails.add(email);
+      }
+      return emails;
     }
 }

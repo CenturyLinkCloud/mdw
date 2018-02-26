@@ -61,7 +61,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
                 where = buildWhere(query);
             }
             String countSql = "select count(process_instance_id) from process_instance pi\n" + where;
-            ResultSet rs = db.runSelect(countSql, null);
+            ResultSet rs = db.runSelect(countSql);
             if (rs.next())
                 count = rs.getLong(1);
 
@@ -72,7 +72,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             sql.append("select ").append(PROC_INST_COLS).append(" from process_instance pi\n").append(where).append(orderBy);
             if (query.getMax() != Query.MAX_ALL)
                 sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
-            rs = db.runSelect(sql.toString(), null);
+            rs = db.runSelect(sql.toString());
             while (rs.next())
                 procInsts.add(buildProcessInstance(rs));
 

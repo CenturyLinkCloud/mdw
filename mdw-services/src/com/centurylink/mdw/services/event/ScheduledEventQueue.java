@@ -495,17 +495,4 @@ public class ScheduledEventQueue implements CacheService {
             return -1;
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        String jdbcUrl = "jdbc:mysql://localhost:3308/mdw?user=mdw&password=mdw";
-        DatabaseAccess db = new DatabaseAccess(jdbcUrl);
-        db.getDatabaseTime();
-        ScheduledEventQueue me = new ScheduledEventQueue();
-        Date now = new Date();
-        Date next = me.calculateNextDate("0 12 * 1-12/2 5 *", now);
-        //Date next = me.calculateNextDate("5 * * * * *", now);
-        System.out.println("Now : " + now.toString());
-        System.out.println("Next: " + next.toString());
-    }
-
 }

@@ -24,16 +24,17 @@ module.exports = {
               {
                 loader: 'babel-loader',
                 options: {
-                  presets: [nodeLoc + '/node_modules/babel-preset-react']
+                  presets: [nodeLoc + '/node_modules/babel-preset-react'], 
+                  plugins: [nodeLoc + '/node_modules/babel-plugin-transform-object-rest-spread']
                 }
               }
             ]
-          },      
+          },
           {
             test: /\.css$/,
             // allows custom css files in assets (but excluding node/node_modules)
             include: function(modulePath) {
-              var assetRoot = path.resolve(__dirname, '..');
+              var assetRoot = path.resolve(__dirname, '../../../..');
               return modulePath.startsWith(assetRoot) && 
                 !modulePath.startsWith(assetRoot + path.sep + 'node' + path.sep + 'node_modules');
             },
@@ -43,7 +44,7 @@ module.exports = {
             test: /\.(png|svg|jpg|gif)$/,
             // allows custom image files in assets (but excluding node/node_modules)
             include: function(modulePath) {
-              var assetRoot = path.resolve(__dirname, '..');
+              var assetRoot = path.resolve(__dirname, '../../../..');
               return modulePath.startsWith(assetRoot) && 
                 !modulePath.startsWith(assetRoot + path.sep + 'node' + path.sep + 'node_modules');
             },

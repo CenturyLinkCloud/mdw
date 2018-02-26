@@ -128,6 +128,10 @@ mdw.requestrouting.default.strategy=requestrouting/default.strategy
 mdw.requestrouting.active.server.interval=requestrouting/active.server.interval
 mdw.requestrouting.timeout=requestrouting/timeout
 
+mdw.application.name=app/id
+MDWFramework.ApplicationDetails-ApplicationName=app/id
+MDWFramework.ApplicationDetails/ApplicationName=app/id
+
 # remove obsolete props
 mdw.dev.user=
 mdw.admin.url=
@@ -169,7 +173,6 @@ MDWFramework.MDWDesigner-helpers.url=
 MDWFramework.MDWDesigner-services.url=
 MDWFramework.WorkflowEngine-ActivityResumeDelay=
 MDWFramework.WorkflowEngine-ActivityStatusMessage.ShowStackTrace=
-MDWFramework.ApplicationDetails-ApplicationName=
 MDWFramework.ApplicationDetails-MALApplicationAcronym=
 MDWFramework.ApplicationDetails-ConfigDir=
 MDWFramework.ApplicationDetails-TempDir=

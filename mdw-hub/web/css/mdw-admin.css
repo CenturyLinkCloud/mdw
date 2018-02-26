@@ -45,7 +45,6 @@
 }
 .mdw-tabs-space {
   width: 100%;
-  min-width: 720px;
 }
 .mdw-sidebar {
   float: left;
@@ -688,9 +687,8 @@
   float: left;
   position: absolute;
   color: #a94442;
-  padding-top: 20px;
-  padding-left: 15px;
-  padding-right: 250px;
+  padding-top: 30px;
+  padding-left: 20px;
   font-weight: bold;  
 }
 .mdw-test-message {

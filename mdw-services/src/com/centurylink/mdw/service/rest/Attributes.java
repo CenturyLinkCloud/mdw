@@ -26,7 +26,6 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -43,9 +42,7 @@ public class Attributes extends JsonRestService {
 
     @Override
     public List<String> getRoles(String path) {
-        List<String> roles = super.getRoles(path);
-        roles.add(Role.ANY); // TODO: for now this is needed for Designer access
-        return roles;
+        return null; // TODO: for now this is needed for Designer access
     }
 
     @Override

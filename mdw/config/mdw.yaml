@@ -39,9 +39,10 @@ servers:
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
 discovery.url: http://repo.maven.apache.org/maven2
+central.url: https://mdw.useast.appfog.ctl.io/mdw
 
-application:
-  name: mdw6
+app:
+  id: mdw6
 
 # for SimpleLogger
 logging:
@@ -59,7 +60,7 @@ mail:
   smtp.port: 25
   smtp.timeout: 10000
   connection.timeout: 10000
-
+  
 # ldap
 ldap:
   host: ldap.myorg.com

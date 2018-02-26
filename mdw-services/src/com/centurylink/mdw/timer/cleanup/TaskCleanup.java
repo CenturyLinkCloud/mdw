@@ -102,7 +102,7 @@ public class TaskCleanup extends RoundRobinScheduledJob {
 
             if (ACTION_CLEAN.equals(args.getAction())) {
                 logger.info("Running task cleanup job...");
-                ResultSet rs = db.runSelect(query, null);
+                ResultSet rs = db.runSelect(query);
                 List<Long> invalidInstanceIds = new ArrayList<Long>();
                 while (rs.next()) {
                     Long instanceId = rs.getLong("TASK_INSTANCE_ID");

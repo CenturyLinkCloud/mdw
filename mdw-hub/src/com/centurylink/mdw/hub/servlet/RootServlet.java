@@ -36,7 +36,7 @@ import com.centurylink.mdw.util.file.FileHelper;
  * Also handles the case where index.html itself is customized.
  * TODO: some kind of caching that still provides dynamicism
  */
-@WebServlet(urlPatterns={"/index.html", "/root.js"}, loadOnStartup=1)
+@WebServlet(urlPatterns={"/index.html"}, loadOnStartup=1)
 public class RootServlet extends HttpServlet {
 
     private static final String MDW_ADMIN_JS = "<script src=\"js/admin.js\"></script>";
@@ -45,7 +45,7 @@ public class RootServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String path = request.getServletPath();
-        if (path.equals("/") || path.equals("/root") || path.equals("/index.html")) {
+        if (path.equals("/") || path.equals("/index.html")) {
             if (new File(WebAppContext.getMdw().getOverrideRoot() + "/index.html").isFile()) {
                 request.getRequestDispatcher("/customContent/index.html").forward(request, response);
             }

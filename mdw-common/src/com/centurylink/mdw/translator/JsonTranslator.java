@@ -45,9 +45,15 @@ public interface JsonTranslator {
 
         }
         catch (ClassNotFoundException cnfe) {
-            clazz = CompiledJavaCache
+            try {
+                clazz = CompiledJavaCache
                     .getResourceClass(type, JsonTranslator.class.getClassLoader(), getPackage())
                     .asSubclass(Jsonable.class);
+            }
+            catch (ClassNotFoundException cnfe2) {
+                // TODO: above is probably not needed (just use cloud classloader)
+                clazz = getPackage().getCloudClassLoader().loadClass(type).asSubclass(Jsonable.class);
+            }
         }
         Constructor<? extends Jsonable> ctor = clazz.getConstructor(JSONObject.class);
         Iterator<?> keys = json.keys();

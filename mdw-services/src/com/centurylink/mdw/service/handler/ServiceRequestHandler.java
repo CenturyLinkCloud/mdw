@@ -33,6 +33,7 @@ import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.RegressionTestEventHandler;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.workflow.Package;
@@ -42,9 +43,9 @@ import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
 import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.action.InstanceLevelActionHandler;
-import com.centurylink.mdw.service.resource.AppSummary;
 import com.centurylink.mdw.service.rest.Users;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
@@ -77,12 +78,7 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
 
         try {
             // compatibility - START
-            if ("GetAppSummary".equals(path)) {
-                service = new AppSummary();
-                format = Format.xml;
-                metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
-            }
-            else if ("User".equals(path)) {
+            if ("User".equals(path)) {
                 service = new Users();
             }
 
@@ -229,6 +225,10 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
+            if (service instanceof RestService) {
+                metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, "500");
+                return createResponse(Status.INTERNAL_ERROR.getCode(), ex.getMessage(), format);
+            }
             return createErrorResponse(ex, format);
         }
     }

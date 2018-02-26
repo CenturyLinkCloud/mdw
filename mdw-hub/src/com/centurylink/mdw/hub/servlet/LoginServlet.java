@@ -17,6 +17,8 @@ package com.centurylink.mdw.hub.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import javax.servlet.ServletException;
@@ -25,15 +27,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
+import com.centurylink.mdw.auth.JwtAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
-import com.centurylink.mdw.auth.OAuthAuthenticator;
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.ExpressionUtil;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -53,25 +59,32 @@ public class LoginServlet extends HttpServlet {
         request.getSession().removeAttribute("authenticatedUser");
         String authError = (String) request.getSession().getAttribute(MDW_AUTH_MSG);
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("ct".equals(authMethod) || ("af".equals(authMethod))){
-            if ((authError != null)) {
+        if ("ct".equals(authMethod) || "mdw".equals(authMethod)) {
+            if (request.getServletPath().equalsIgnoreCase("/logout")) {
+                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                return;
+            }
+            else {
                 response.setContentType("text/html");
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
-                String contents = readContent(request,authMethod);
-                response.getWriter().println("<!-- processed by MDW Login servlet -->");
-                for (String line : contents.split("\\r?\\n")) {
-                    String retLine = processLine(line, authError);
-                    response.getWriter().println(retLine);
+                if (!ApplicationContext.isDevelopment() && !request.getRequestURL().toString().toLowerCase().startsWith("https")) {
+                    StatusResponse sr = new StatusResponse(Status.FORBIDDEN,
+                            "Must use HTTPS to login");
+                    response.setStatus(sr.getStatus().getCode());
+                    response.getWriter().println(sr.getJson().toString(2));
+                }
+                else {
+                    String contents = readContent(request, authMethod);
+                    response.getWriter().println("<!-- processed by MDW Login servlet -->");
+                    for (String line : contents.split("\\r?\\n")) {
+                        String retLine = processLine(line, authError);
+                        response.getWriter().println(retLine);
+                    }
                 }
                 response.getWriter().close();
-            } else {
-                if (request.getServletPath().equalsIgnoreCase("/logout")) {
-                    response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
-                    return;
-                }
-                request.getRequestDispatcher("auth/"+authMethod+"Login.html").forward(request, response);
             }
-        } else {
+        }
+        else {
             StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,
                     "Unsupported authMethod: " + authMethod);
             response.setStatus(sr.getStatus().getCode());
@@ -83,16 +96,20 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("af".equals(authMethod)) {
+        if ("mdw".equals(authMethod)) {
             String user = request.getParameter("user");
             String password = request.getParameter("password");
             if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
                 try {
-                    Authenticator authenticator = new OAuthAuthenticator(
-                            WebAppContext.getMdw().getAuthTokenLoc());
+                    if (!request.getRequestURL().toString().toLowerCase().startsWith("https"))
+                        throw new Exception("HTTPS is required");
+                    Authenticator authenticator = new JwtAuthenticator();
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
-                    AuthenticatedUser authUser = ServiceLocator.getUserManager().loadUser(user);
+                    AuthenticatedUser authUser = null;
+                    User u = ServiceLocator.getUserServices().getUser(user);
+                    if (u != null)
+                      authUser = new AuthenticatedUser(u, u.getAttributes());
                     if (authUser == null) {
                         if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser()) {
                             throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(),
@@ -124,33 +141,34 @@ public class LoginServlet extends HttpServlet {
                 request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
                 response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
             }
-
         }
-/*        else if ("ct".equals(authMethod)) {
-            response.sendRedirect(WebAppContext.getMdw().getHubRoot());
-        }*/
         else {
             super.doPost(request, response);
         }
     }
 
     private String readContent(HttpServletRequest request,String authMethod) throws IOException {
-        String realPath = request.getSession().getServletContext().getRealPath("auth/"+authMethod+"Login.html");
+        String realPath = request.getSession().getServletContext().getRealPath("auth/" + authMethod + "Login.html");
         String contents;
         try {
             if (realPath == null) {
                 // read from classpath
                 contents = new String(FileHelper.readFromResourceStream(
-                        getClass().getClassLoader().getResourceAsStream("auth/"+authMethod+"Login.html")));
+                        getClass().getClassLoader().getResourceAsStream("auth/" + authMethod + "Login.html")));
             }
             else {
                 if (!new File(realPath).isFile() && getClass().getClassLoader().getResource(
                         "/org/springframework/web/servlet/ResourceServlet.class") != null) {
                     // spring-boot client app
                     try (Scanner scanner = new Scanner(getClass().getClassLoader()
-                            .getResourceAsStream("mdw/auth/"+authMethod+"Login.html"), "utf-8")) {
+                            .getResourceAsStream("mdw/auth/" + authMethod + "Login.html"), "utf-8")) {
                         contents = scanner.useDelimiter("\\Z").next();
                     }
+                }
+                else if (new File(WebAppContext.getMdw().getOverrideRoot() + "/login.html").isFile()) {
+                    String html = new String(Files.readAllBytes(
+                            Paths.get(WebAppContext.getMdw().getOverrideRoot() + "/login.html")));
+                    contents = ExpressionUtil.substitute(html, WebAppContext.getMdw(), true);
                 }
                 else {
                     contents = FileHelper.readFromFile(realPath);
@@ -161,6 +179,10 @@ public class LoginServlet extends HttpServlet {
             // TODO: logging
             ex.printStackTrace();
             throw ex;
+        }
+        catch (MdwException ex) {
+            ex.printStackTrace();
+            throw new IOException(ex.getMessage(), ex);
         }
         return contents;
     }

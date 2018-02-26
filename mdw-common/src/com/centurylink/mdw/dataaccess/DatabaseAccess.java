@@ -370,6 +370,10 @@ public class DatabaseAccess {
         else return ps.executeBatch();
     }
 
+    public ResultSet runSelect(String query) throws SQLException {
+        return runSelect(query, null);
+     }
+
     public ResultSet runSelect(String query, Object arg)
        throws SQLException
     {
@@ -394,6 +398,10 @@ public class DatabaseAccess {
         }
         rs = logExecuteQuery(query);
         return rs;
+    }
+
+    public int runUpdate(String query) throws SQLException {
+        return runUpdate(query, null);
     }
 
     public int runUpdate(String query, Object arg)
@@ -505,12 +513,12 @@ public class DatabaseAccess {
             Timestamp ts;
             if (connection==null) {
                 openConnection();
-                ResultSet rs = runSelect(query, null);
+                ResultSet rs = runSelect(query);
                 rs.next();
                 ts = rs.getTimestamp(1);
                 closeConnection();
             } else {
-                ResultSet rs = runSelect(query, null);
+                ResultSet rs = runSelect(query);
                 rs.next();
                 ts = rs.getTimestamp(1);
             }
