@@ -85,6 +85,7 @@ com.centurylink.mdw.services.task
 com.centurylink.mdw.services.task.factory
 com.centurylink.mdw.services.test
 com.centurylink.mdw.services.user
+com.centurylink.mdw.services.util
 com.centurylink.mdw.services.workflow
 com.centurylink.mdw.soccom
 com.centurylink.mdw.spring
@@ -120,7 +121,6 @@ com.centurylink.mdw.workflow.adapter.file
 com.centurylink.mdw.workflow.adapter.http
 com.centurylink.mdw.workflow.adapter.jms
 com.centurylink.mdw.workflow.adapter.ldap
-com.centurylink.mdw.workflow.adapter.oauth
 com.centurylink.mdw.workflow.adapter.rest
 com.centurylink.mdw.workflow.adapter.soap
 com.centurylink.mdw.workflow.adapter.socket

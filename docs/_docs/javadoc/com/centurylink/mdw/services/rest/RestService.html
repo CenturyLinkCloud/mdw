@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -284,16 +284,17 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a></span>(java.lang.String&nbsp;propName)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
-<td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredWorkgroups-org.json.JSONObject-">getRequiredWorkgroups</a></span>(org.json.JSONObject&nbsp;content)</code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path)</code>
+<div class="block">A user who belongs to any role in the returned list is allowed
+ to perform this action/method.</div>
+</td>
 </tr>
 <tr id="i14" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path)</code>
-<div class="block">TODO: pass HTTP Method
-
- A user who belongs to any role in the returned list is allowed
- to perform this action/method.</div>
+<td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path,
+        java.lang.String&nbsp;method)</code>
+<div class="block">Default impl pays no attention to method (for compatibility).</div>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
@@ -325,12 +326,17 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i20" class="altColor">
+<td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getWorkgroups-java.lang.String-java.lang.String-">getWorkgroups</a></span>(java.lang.String&nbsp;path,
+             java.lang.String&nbsp;method)</code>&nbsp;</td>
+</tr>
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#propagate-java.lang.String-java.lang.String-java.util.Map-">propagate</a></span>(java.lang.String&nbsp;method,
          java.lang.String&nbsp;request,
          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#validateResponse-java.lang.String-">validateResponse</a></span>(java.lang.String&nbsp;response)</code>&nbsp;</td>
 </tr>
@@ -547,15 +553,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getRequiredWorkgroups-org.json.JSONObject-">
+<a name="getWorkgroups-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getRequiredWorkgroups</h4>
-<pre>protected&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&gt;&nbsp;getRequiredWorkgroups(org.json.JSONObject&nbsp;content)
-                                                   throws org.json.JSONException,
-                                                          <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<h4>getWorkgroups</h4>
+<pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getWorkgroups(java.lang.String&nbsp;path,
+                                                         java.lang.String&nbsp;method)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>content</code> - </dd>
@@ -566,16 +571,25 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="getRoles-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRoles</h4>
+<pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getRoles(java.lang.String&nbsp;path,
+                                                    java.lang.String&nbsp;method)</pre>
+<div class="block">Default impl pays no attention to method (for compatibility).</div>
+</li>
+</ul>
 <a name="getRoles-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getRoles</h4>
-<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getRoles(java.lang.String&nbsp;path)</pre>
-<div class="block">TODO: pass HTTP Method
-
- A user who belongs to any role in the returned list is allowed
+<pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getRoles(java.lang.String&nbsp;path)</pre>
+<div class="block">A user who belongs to any role in the returned list is allowed
  to perform this action/method.  Override to open access beyond Site Admin.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

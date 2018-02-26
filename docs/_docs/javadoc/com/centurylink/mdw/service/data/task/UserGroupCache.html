@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":10,"i16":10,"i17":10,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9};
+var methods = {"i0":9,"i1":10,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":10,"i16":10,"i17":10,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -114,10 +114,7 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">UserGroupCache</span>
 extends java.lang.Object
 implements <a href="../../../../../../com/centurylink/mdw/cache/PreloadableCache.html" title="interface in com.centurylink.mdw.cache">PreloadableCache</a></pre>
-<div class="block">Cache for MDW users/groups/roles (plus group relationships for tasks).
-
- TODO: Currently everything is loaded into memory. Beyond 10,000 users this
- may become unwieldy.  For MDW 6.0 we'll investigate a NoSQL, BigData solution.</div>
+<div class="block">Cache for MDW users/groups/roles (plus group relationships for tasks).</div>
 </li>
 </ul>
 </div>
@@ -254,6 +251,11 @@ implements <a href="../../../../../../com/centurylink/mdw/cache/PreloadableCache
 <tr id="i23" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/task/UserGroupCache.html#set-com.centurylink.mdw.model.user.Workgroup-">set</a></span>(<a href="../../../../../../com/centurylink/mdw/model/user/Workgroup.html" title="class in com.centurylink.mdw.model.user">Workgroup</a>&nbsp;workgroup)</code>&nbsp;</td>
+</tr>
+<tr id="i24" class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/task/UserGroupCache.html#userAttributeExists-java.lang.String-java.lang.String-">userAttributeExists</a></span>(java.lang.String&nbsp;attributeName,
+                   java.lang.String&nbsp;attributeValue)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -493,6 +495,16 @@ implements <a href="../../../../../../com/centurylink/mdw/cache/PreloadableCache
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="userAttributeExists-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>userAttributeExists</h4>
+<pre>public static&nbsp;boolean&nbsp;userAttributeExists(java.lang.String&nbsp;attributeName,
+                                          java.lang.String&nbsp;attributeValue)</pre>
 </li>
 </ul>
 <a name="set-com.centurylink.mdw.model.user.User-">
