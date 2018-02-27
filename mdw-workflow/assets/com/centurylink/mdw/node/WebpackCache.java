@@ -50,7 +50,7 @@ import com.eclipsesource.v8.V8Object;
  * package and set property mdw.webpack.cache.class.name (see JsxServlet.java).
  */
 @RegisteredService(value=CacheService.class,
-    parameters={@Parameter(name="PreloadedJsx", value="com.centurylink.mdw.task/Main.jsx")})
+    parameters={@Parameter(name="PreloadedJsx", value="com.centurylink.mdw.task/Main.jsx,com.centurylink.mdw.react/Run.jsx")})
 public class WebpackCache implements PreloadableCache {
 
     private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
