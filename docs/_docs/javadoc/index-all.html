@@ -1739,8 +1739,6 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/listener/package-summary.html">com.centurylink.mdw.listener</a> - package com.centurylink.mdw.listener</dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/listener/email/package-summary.html">com.centurylink.mdw.listener.email</a> - package com.centurylink.mdw.listener.email</dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/listener/file/package-summary.html">com.centurylink.mdw.listener.file</a> - package com.centurylink.mdw.listener.file</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/listener/jms/package-summary.html">com.centurylink.mdw.listener.jms</a> - package com.centurylink.mdw.listener.jms</dt>
@@ -2405,8 +2403,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/WorkflowServices.html#createDocument-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-java.lang.String-java.lang.Object-">createDocument(ProcessRuntimeContext, String, Object)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/WorkflowServices.html" title="interface in com.centurylink.mdw.services">WorkflowServices</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#createEmailJson-com.centurylink.mdw.email.TemplatedEmail-com.centurylink.mdw.model.task.TaskInstance-">createEmailJson(TemplatedEmail, TaskInstance)</a></span> - Method in class com.centurylink.mdw.workflow.task.notifier.<a href="com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html" title="class in com.centurylink.mdw.workflow.task.notifier">TaskEmailNotifier</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#createEmailXml-javax.mail.Message-">createEmailXml(Message)</a></span> - Method in class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/types/ObjectFactory.html#createError--">createError()</a></span> - Method in class com.centurylink.mdw.common.service.types.<a href="com/centurylink/mdw/common/service/types/ObjectFactory.html" title="class in com.centurylink.mdw.common.service.types">ObjectFactory</a></dt>
 <dd>
@@ -4188,6 +4184,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/file/Grep.html#find-java.lang.String-">find(String)</a></span> - Method in class com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/Grep.html" title="class in com.centurylink.mdw.util.file">Grep</a></dt>
 <dd>
 <div class="block">Find all line matches (mapped per file path).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/context/Page.html#findAncestor-java.lang.String-">findAncestor(String)</a></span> - Method in class com.centurylink.mdw.hub.context.<a href="com/centurylink/mdw/hub/context/Page.html" title="class in com.centurylink.mdw.hub.context">Page</a></dt>
+<dd>
+<div class="block">Locate closest page in ancestor package hierarchy (if any).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/PackageDir.html#findAssetFile-java.io.File-">findAssetFile(File)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">PackageDir</a></dt>
 <dd>
@@ -11366,8 +11366,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/MessageHandler.html#handleMessage-java.io.Serializable-">handleMessage(Serializable)</a></span> - Method in interface com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/MessageHandler.html" title="interface in com.centurylink.mdw.util">MessageHandler</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#handleMimeMessages-javax.mail.Message-java.util.Map-">handleMimeMessages(Message, Map&lt;String, byte[]&gt;)</a></span> - Method in class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/ProcessExecutor.html#handleProcessFinish-com.centurylink.mdw.model.event.InternalEvent-">handleProcessFinish(InternalEvent)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/ProcessExecutor.html" title="class in com.centurylink.mdw.services.process">ProcessExecutor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/test/LogMessageMonitor.html#handleProcessMatch-java.util.regex.Matcher-">handleProcessMatch(Matcher)</a></span> - Method in class com.centurylink.mdw.services.test.<a href="com/centurylink/mdw/services/test/LogMessageMonitor.html" title="class in com.centurylink.mdw.services.test">LogMessageMonitor</a></dt>
@@ -13168,8 +13166,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/event/DefaultExternalEventHandler.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/DefaultExternalEventHandler.html" title="class in com.centurylink.mdw.event">DefaultExternalEventHandler</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/ExternalEventHandlerBase.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.listener.<a href="com/centurylink/mdw/listener/ExternalEventHandlerBase.html" title="class in com.centurylink.mdw.listener">ExternalEventHandlerBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></dt>
@@ -13849,10 +13845,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/log/SimpleLogger.html#mdwDebug-java.lang.String-">mdwDebug(String)</a></span> - Method in class com.centurylink.mdw.util.log.<a href="com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log">SimpleLogger</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/log/StandardLogger.html#mdwDebug-java.lang.String-">mdwDebug(String)</a></span> - Method in interface com.centurylink.mdw.util.log.<a href="com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email"><span class="typeNameLink">MDWEmailListener</span></a> - Class in <a href="com/centurylink/mdw/listener/email/package-summary.html">com.centurylink.mdw.listener.email</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#MDWEmailListener--">MDWEmailListener()</a></span> - Constructor for class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common"><span class="typeNameLink">MdwException</span></a> - Exception in <a href="com/centurylink/mdw/common/package-summary.html">com.centurylink.mdw.common</a></dt>
 <dd>&nbsp;</dd>
@@ -15235,8 +15227,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/DefaultYamlTranslator.html#process-java.lang.String-java.lang.Object-java.lang.Object-">process(String, Object, Object)</a></span> - Method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/DefaultYamlTranslator.html" title="class in com.centurylink.mdw.config">DefaultYamlTranslator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/OwnerType.html#PROCESS">PROCESS</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/OwnerType.html" title="interface in com.centurylink.mdw.constant">OwnerType</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#process-javax.mail.Message:A-">process(Message[])</a></span> - Method in class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Asset.html#PROCESS">PROCESS</a></span> - Static variable in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></dt>
 <dd>&nbsp;</dd>
@@ -16940,8 +16930,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html#saveAssets-com.centurylink.mdw.model.workflow.Package-com.centurylink.mdw.dataaccess.file.PackageDir-">saveAssets(Package, PackageDir)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html" title="class in com.centurylink.mdw.dataaccess.file">LoaderPersisterVcs</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#saveAttachment-java.io.InputStream-java.io.OutputStream-">saveAttachment(InputStream, OutputStream)</a></span> - Method in class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html#saveExternalEventHandlers-com.centurylink.mdw.model.workflow.Package-com.centurylink.mdw.dataaccess.file.PackageDir-">saveExternalEventHandlers(Package, PackageDir)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html" title="class in com.centurylink.mdw.dataaccess.file">LoaderPersisterVcs</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/user/UserDataAccess.html#saveGroup-com.centurylink.mdw.model.user.Workgroup-">saveGroup(Workgroup)</a></span> - Method in class com.centurylink.mdw.service.data.user.<a href="com/centurylink/mdw/service/data/user/UserDataAccess.html" title="class in com.centurylink.mdw.service.data.user">UserDataAccess</a></dt>
@@ -18389,8 +18377,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCaseHttp.html#setMessage-com.centurylink.mdw.test.TestCaseMessage-">setMessage(TestCaseMessage)</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCaseHttp.html" title="class in com.centurylink.mdw.test">TestCaseHttp</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCaseItem.html#setMessage-java.lang.String-">setMessage(String)</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCaseItem.html" title="class in com.centurylink.mdw.test">TestCaseItem</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/email/MDWEmailListener.html#setMessageAttribute-java.lang.String-java.lang.String-com.centurylink.mdw.bpm.ProtocolAttributePair:A-int-">setMessageAttribute(String, String, ProtocolAttributePair[], int)</a></span> - Method in class com.centurylink.mdw.listener.email.<a href="com/centurylink/mdw/listener/email/MDWEmailListener.html" title="class in com.centurylink.mdw.listener.email">MDWEmailListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/container/JmsProvider.html#setMessageDelay-javax.jms.QueueSender-javax.jms.Message-long-">setMessageDelay(QueueSender, Message, long)</a></span> - Method in interface com.centurylink.mdw.container.<a href="com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></dt>
 <dd>&nbsp;</dd>

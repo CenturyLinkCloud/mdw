@@ -31,7 +31,6 @@ com.centurylink.mdw.hub.servlet
 com.centurylink.mdw.java
 com.centurylink.mdw.jaxb
 com.centurylink.mdw.listener
-com.centurylink.mdw.listener.email
 com.centurylink.mdw.listener.file
 com.centurylink.mdw.listener.jms
 com.centurylink.mdw.listener.rmi
