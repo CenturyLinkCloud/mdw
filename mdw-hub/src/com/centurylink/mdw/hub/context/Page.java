@@ -16,7 +16,10 @@
 package com.centurylink.mdw.hub.context;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 
 /**
@@ -87,4 +90,20 @@ public class Page {
         this.path = path;
     }
 
+    /**
+     * Locate closest page in ancestor package hierarchy (if any).
+     */
+    public Page findAncestor(String name) {
+        Path rootPath = Paths.get(mdw.getAssetRoot().getPath()).normalize();
+        Path pkgPath = Paths.get(getAsset().getFile().getPath()).normalize();
+        while (pkgPath.startsWith(rootPath)) {
+            if (new File(pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH).exists()) {
+                Page p = new Page(mdw, "/" + rootPath.relativize(pkgPath) + "/" + name);
+                if (p.exists())
+                    return p;
+            }
+            pkgPath = pkgPath.getParent();
+        }
+        return null;
+    }
 }

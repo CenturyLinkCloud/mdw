@@ -16,7 +16,6 @@
 package com.centurylink.mdw.hub.servlet;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +38,8 @@ import com.centurylink.mdw.util.ExpressionUtil;
 
 /**
  * Overrides 404 handling to check for matching asset content.
+ * TODO: Only UI page requests should be handled here.  JS and CSS
+ * requests should continue to return 404 status to browser/caller.
  */
 @WebServlet(urlPatterns={"/404"}, loadOnStartup=1)
 public class NotFoundServlet extends HttpServlet {
@@ -82,11 +83,9 @@ public class NotFoundServlet extends HttpServlet {
                         String name = assetPath.substring(lastSlash + 1);
                         page = new Page(mdw, pkgPath + "/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".jsx");
                         if (!page.exists()) {
-                            // try index.jsx
-                            if (new File(mdw.getAssetRoot() + "/" + assetPath + "/.mdw/package.json").isFile())
-                                page = new Page(mdw, assetPath + "/index.jsx");
-                            if (!page.exists() && new File(mdw.getAssetRoot() + pkgPath + "/.mdw/package.json").isFile())
-                                page = new Page(mdw, pkgPath + "/index.jsx");
+                            Page ancestor = new Page(mdw, path).findAncestor("Index.jsx");
+                            if (ancestor != null)
+                                page = ancestor;
                         }
                         if (page.exists()) {
                             // standalone jsx path (without extension): set template html
@@ -140,4 +139,5 @@ public class NotFoundServlet extends HttpServlet {
 
         request.getRequestDispatcher("/error/404.html").forward(request, response);
     }
+
 }

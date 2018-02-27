@@ -168,7 +168,7 @@ public class AssetContentServlet extends HttpServlet {
                     if (!assetFile.isFile()) {
                         StatusResponse sr = new StatusResponse(Status.NOT_FOUND, "Asset file '" + assetFile + "' not found");
                         response.setStatus(sr.getStatus().getCode());
-                        response.getWriter().println(sr.getJson().toString(2));
+                        out.write(sr.getJson().toString(2).getBytes());
                         return;
                     }
                     in = new FileInputStream(assetFile);
