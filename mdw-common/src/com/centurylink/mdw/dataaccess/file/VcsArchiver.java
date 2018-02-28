@@ -36,9 +36,6 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
 public class VcsArchiver {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
-    private static final String ARCHIVE = "Archive";
-
     private File assetDir;
     private File tempDir;
     private File tempArchiveDir;
@@ -47,7 +44,6 @@ public class VcsArchiver {
     private ProgressMonitor progressMonitor;
     public ProgressMonitor getProgressMonitor() { return progressMonitor; }
 
-    private File archiveDir;
     private List<File> tempPkgDirs;
     private List<File> tempPkgArchiveDirs;
 
@@ -121,25 +117,11 @@ public class VcsArchiver {
     }
 
     /**
-     * Move replaced package(s) to archive from temp (those not found in updated asset folder).
+     * Adding asset Git references to ASSET_REF table.
      * Uses 40% of progressMonitor.
      */
     public void archive(boolean deleteBackups) throws DataAccessException, IOException {
         LoaderPersisterVcs newLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
-        archiveDir = new File(assetDir + "/" + ARCHIVE);
-        if (!archiveDir.exists()) {
-            if (tempPkgArchiveDirs != null && tempPkgArchiveDirs.size() > 0) {  // The Archive directory got deleted - Restore it here
-                progressMonitor.subTask("Restoring Archive assets: " + archiveDir.getAbsolutePath());
-                for (File tempPkgDir : tempPkgArchiveDirs) {
-                    File archiveDest = new File(archiveDir + "/" + tempPkgDir.getName());
-                    if (archiveDest.exists())
-                        newLoader.deletePkg(archiveDest);
-                    newLoader.copyPkg(tempPkgDir, archiveDest);
-                }
-            }
-            else if (!archiveDir.mkdirs())
-                throw new IOException("Unable to create archive directory: " + archiveDir.getAbsolutePath());
-        }
         List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
         VersionControlGit vcGit = versionControl instanceof VersionControlGit ? (VersionControlGit)versionControl : null;
         if (!"true".equals(PropertyManager.getProperty("mdw.suppress.asset.version.check"))) {
@@ -214,25 +196,6 @@ public class VcsArchiver {
                 throw new IOException(message);
             }
             progressMonitor.progress(10);
-        }
-        progressMonitor.subTask("Adding packages to archive: " + archiveDir.getAbsolutePath());
-        for (File tempPkgDir : tempPkgDirs) {
-            boolean found = false;
-            for (PackageDir newPkgDir : newPkgDirs) {
-                String newPkgLabel = newPkgDir.getPackageName() + " v" + newPkgDir.getPackageVersion();
-                if (tempPkgDir.getName().equals(newPkgLabel)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                progressMonitor.subTask("  -- " + tempPkgDir.getName());
-                File archiveDest = new File(archiveDir + "/" + tempPkgDir.getName());
-                if (archiveDest.exists())
-                    newLoader.deletePkg(archiveDest);
-                newLoader.copyPkg(tempPkgDir, archiveDest);
-             // TODO:  Insert assets from pkg into ASSET_REF DB table
-            }
         }
         if (vcGit != null) {
             progressMonitor.subTask("Adding asset Git references to ASSET_REF table");
