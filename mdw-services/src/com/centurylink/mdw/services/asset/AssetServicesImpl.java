@@ -664,7 +664,7 @@ public class AssetServicesImpl implements AssetServices {
 
         return packageList.getPackageDirs().stream()
                 .filter(packageDir -> packageDir.getVcsDiffType() == DiffType.EXTRA)
-                .map(packageDir -> packageDir.getName()).collect(Collectors.toList());
+                .map(packageDir -> packageDir.getPackageName()).collect(Collectors.toList());
     }
 
     private class GhostVersionControl implements VersionControl {
