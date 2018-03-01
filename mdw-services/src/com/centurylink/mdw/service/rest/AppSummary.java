@@ -50,6 +50,7 @@ public class AppSummary extends JsonRestService {
         appSummary.setMdwBuild(ApplicationContext.getMdwBuildTimestamp());
         appSummary.setMdwHubUrl(ApplicationContext.getMdwHubUrl());
         appSummary.setServicesUrl(ApplicationContext.getServicesUrl());
+        appSummary.setContainerName(ApplicationContext.getContainerName());
         String gitRemoteUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
         if (gitRemoteUrl != null) {
             Repository repo = new Repository();
@@ -70,7 +71,7 @@ public class AppSummary extends JsonRestService {
                 logger.severeException(ex.getMessage(),  ex);
             }
         }
-
+        
         return appSummary.getJson();
     }
 }

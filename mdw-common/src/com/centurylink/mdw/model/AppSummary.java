@@ -3,6 +3,9 @@
  */
 package com.centurylink.mdw.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AppSummary implements Jsonable {
 
     private String appId;
@@ -13,6 +16,10 @@ public class AppSummary implements Jsonable {
     public String getAppVersion() { return appVersion; }
     public void setAppVersion(String appVersion) { this.appVersion = appVersion; }
 
+    private String containerName;
+    public String getContainerName() {return containerName;}
+    public void setContainerName(String containerName) {this.containerName = containerName; }
+
     private String mdwVersion;
     public String getMdwVersion() { return mdwVersion; }
     public void setMdwVersion(String mdwVersion) { this.mdwVersion = mdwVersion; }
@@ -20,6 +27,10 @@ public class AppSummary implements Jsonable {
     private String mdwBuild;
     public String getMdwBuild() { return mdwBuild; }
     public void setMdwBuild(String mdwBuild) { this.mdwBuild = mdwBuild; }
+
+    private String database;
+    public String getDatabase() { return database; }
+    public void setDatabase(String database) { this.database = database; }
 
     private String mdwHubUrl;
     public String getMdwHubUrl() { return mdwHubUrl; }
