@@ -40,7 +40,6 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.email.ProcessEmailModel;
 import com.centurylink.mdw.email.TemplatedEmail;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.StringHelper;
@@ -55,24 +54,15 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 @Tracked(LogLevel.TRACE)
 public class EmailNotificationActivity extends DefaultActivityImpl implements NotificationActivity {
 
-    private static final String RECIPIENTS_EXPRESSION = "RecipientsExpression";
-
     @Override
     public void execute() throws ActivityException {
 
-        String noticeType = getAttributeValue(WorkAttributeConstant.NOTICE_TYPE);
-        if (noticeType == null || noticeType.equals(WorkAttributeConstant.NOTICE_TYPE_EMAIL))
-            sendNotices();
-        else
-            throw new ActivityException("Unsupported email notice type: " + noticeType);
+        sendNotices();
     }
 
     public void sendNotices() throws ActivityException {
-
         try {
-            String groups = getAttributeValue(WorkAttributeConstant.NOTICE_GROUPS);
-            String recipEmails = getAttributeValueSmart(RECIPIENTS_EXPRESSION);
-            String ccGroups = getAttributeValue(WorkAttributeConstant.CC_GROUPS);
+            String noticeType = getAttributeValue(WorkAttributeConstant.NOTICE_TYPE);
 
             String fromAddress = getAttributeValueSmart(WorkAttributeConstant.NOTICE_FROM);
             if (fromAddress == null)
@@ -84,7 +74,10 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             if (templateName == null)
                 throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_TEMPLATE);
 
+            String groups = getAttributeValue(WorkAttributeConstant.NOTICE_GROUPS);
+            String recipEmails = getAttributeValue(WorkAttributeConstant.RECIPIENTS_EXPRESSION);
             Address[] recipAddresses = getRecipients(groups, recipEmails);
+            String ccGroups = getAttributeValue(WorkAttributeConstant.CC_GROUPS);
             Address[] ccAddresses = getRecipients(ccGroups, null);
 
             if (recipAddresses.length == 0 && ccAddresses.length == 0) {
@@ -92,20 +85,26 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
                 return;
             }
 
-            TemplatedEmail templatedEmail = new TemplatedEmail();
-            templatedEmail.setFromAddress(fromAddress);
-            templatedEmail.setSubject(subject);
-            templatedEmail.setHtml(true);
-            templatedEmail.setTemplateName(templateName);
-            templatedEmail.setModel(getTemplatedEmailModel());
-            templatedEmail.setAttachments(getAttachments());
-            templatedEmail.setRecipients(recipAddresses);
-            templatedEmail.setCcRecipients(ccAddresses);
-            templatedEmail.setRuntimeContext(getRuntimeContext());
+            if (noticeType == null || noticeType.equals("E-Mail") || noticeType.equals(WorkAttributeConstant.EMAIL_NOTICE_SMTP)) {
+                TemplatedEmail templatedEmail = new TemplatedEmail();
+                templatedEmail.setFromAddress(fromAddress);
+                templatedEmail.setSubject(subject);
+                templatedEmail.setHtml(true);
+                templatedEmail.setTemplateName(templateName);
+                templatedEmail.setModel(getTemplatedEmailModel());
+                templatedEmail.setAttachments(getAttachments());
+                templatedEmail.setRecipients(recipAddresses);
+                templatedEmail.setCcRecipients(ccAddresses);
+                templatedEmail.setRuntimeContext(getRuntimeContext());
 
-            JSONObject emailJson = templatedEmail.buildEmailJson();
-            createDocument(JSONObject.class.getName(), emailJson, OwnerType.NOTIFICATION_ACTIVITY, getActivityInstanceId());
-            templatedEmail.sendEmail(emailJson);
+                JSONObject emailJson = templatedEmail.buildEmailJson();
+                createDocument(JSONObject.class.getName(), emailJson, OwnerType.NOTIFICATION_ACTIVITY, getActivityInstanceId());
+                templatedEmail.sendEmail(emailJson);
+            }
+            else {
+                throw new ActivityException("Unsupported email notice type: " + noticeType);
+            }
+
         }
         catch (MessagingException ex) {
             logexception(ex.getMessage(), ex);
@@ -139,21 +138,17 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             }
         }
         if (!StringHelper.isEmpty(recipEmails)) {
-            if (recipEmails.startsWith("$")) {
-                for (Address address : getRecipientsFromVariable(recipEmails.substring(1).trim())) {
+            if (recipEmails.indexOf("${") >= 0) {
+                for (Address address : getRecipientsFromExpression(recipEmails)) {
                     if (!recipients.contains(address))
                         recipients.add(address);
                 }
             } else {
-                String[] emails = recipEmails.split("[;,] *");
+                String[] emails = recipEmails.split(",");
                 for (String one : emails) {
-                    try {
-                        Address address = new InternetAddress(one);
-                        if (!recipients.contains(address))
-                            recipients.add(address);
-                    } catch (AddressException e) {
-                        logger.severeException("Illegal email address - " + one, e);
-                    }
+                    Address address = new InternetAddress(one);
+                    if (!recipients.contains(address))
+                        recipients.add(address);
                 }
             }
         }
@@ -186,77 +181,47 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
     }
 
     /**
-     * Supports variable type of String or String[].
+     * Must resolve to type of String or List<String>.
      * If a value corresponds to a group name, returns users in the group.
-     * @throws AddressException
      */
-    protected Address[] getRecipientsFromVariable(String varName)
-    throws ActivityException, CachingException, AddressException {
-        Object recipParam = getParameterValue(varName);
-        if (recipParam == null) {
-            throw new ActivityException("Recipient parameter '" + varName + "' value is null");
+    protected List<Address> getRecipientsFromExpression(String expression)
+    throws ActivityException, AddressException {
+        Object recip = getValue(expression);
+        if (recip == null) {
+            logwarn("Warning: Recipient expression '" + expression + "' resolves to null");
         }
-//        String recipParamType = getParameterType(varName);
-        VariableInstance var = super.getVariableInstance(varName);
-        String recipParamType = var.getType();
-        if (recipParamType.equals("java.lang.String")) {
-            String recip = (String) recipParam;
-            Workgroup group = null;
-            try {
-                group = UserGroupCache.getWorkgroup(recip);
-            }
-            catch (CachingException ex) {group=null;}
-            if (group != null) {
-                return getGroupEmailAddresses(Arrays.asList(new String[]{group.getName()}));
-            }
-            else {
-                int atIdx = recip.indexOf('@');
-                try {
-                  return new Address[]{new InternetAddress(atIdx > 0 ? recip : recip + "@centurylink.com")};
-                }
-                catch (AddressException ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                    return new Address[0];
-                }
-            }
+
+        List<Address> recips = new ArrayList<>();
+        if (recip instanceof String) {
+            Workgroup group = UserGroupCache.getWorkgroup((String)recip);
+            if (group != null)
+                recips.addAll(Arrays.asList(getGroupEmailAddresses(Arrays.asList(new String[]{group.getName()}))));
+            else
+                recips.add(new InternetAddress((String)recip));
         }
-        else if (recipParamType.equals("java.lang.String[]")) {
-            List<Address> addresses = new ArrayList<Address>();
-            String[] recips = (String[]) recipParam;
-            for (String recip : recips) {
-                Workgroup group = null;
-                try {
-                    group = UserGroupCache.getWorkgroup(recip);
-                }
-                catch (CachingException ex) {group=null;}
+        else if (recip instanceof List) {
+            for (Object email : recips) {
+                Workgroup group = UserGroupCache.getWorkgroup(email.toString());
                 if (group != null) {
-                    for (Address address : getGroupEmailAddresses(Arrays.asList(new String[]{group.getName()}))) {
-                        if (!addresses.contains(address))
-                            addresses.add(address);
+                    for (Address groupEmail : getGroupEmailAddresses(Arrays.asList(new String[]{group.getName()}))) {
+                        if (!recips.contains(groupEmail))
+                            recips.add(groupEmail);
                     }
                 }
                 else {
-                    int atIdx = recip.indexOf('@');
-                    try {
-                      Address address = new InternetAddress(atIdx > 0 ? recip : recip + "@centurylink.com");
-                      if (!addresses.contains(address))
-                        addresses.add(address);
-                    }
-                    catch (AddressException ex) {
-                        logger.severeException(ex.getMessage(), ex);
-                    }
+                    if (!recips.contains(email))
+                        recips.add(new InternetAddress(email.toString()));
                 }
             }
-            return addresses.toArray(new Address[0]);
         }
         else {
-            throw new ActivityException("Unsupported variable type for recipient address(es): " + recipParamType);
+            throw new ActivityException("Recipient expression resolved to unsupported type: " + expression + ": " + recip);
         }
+        return recips;
     }
 
     protected ProcessEmailModel getTemplatedEmailModel() throws ActivityException {
         return new ProcessEmailModel(getProcessInstance(), new HashMap<String,Object>() {
-            private static final long serialVersionUID = 1L;
             @Override
             public Object get(Object key) {
                 try {

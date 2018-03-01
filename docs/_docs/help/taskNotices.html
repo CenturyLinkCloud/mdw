@@ -6,37 +6,29 @@
 <body>
 <h1>Task Notices</h1>
 
-Task notices provide the capability to automatically send templated e-mail notifications when a stage in the task instance lifecycle is reached.
+Task notices provide the capability to automatically send templated email and Slack notifications when a stage in the task instance lifecycle is reached.
 You can configure task instance notices by adding the appropriate template name corresponding to the lifecycle outcome on the Notices tab of the Manual Task Activity properties.
 The Notifier Classes column on this tab is populated by default with the MDW Framework implementation, which you may override if desired by specifying your own custom TemplatedNotifier implementation.
 Multiple notifier classes may be registered by specifying a comma-delimited or #-delimited list.
 It is recommended that rather than implementing TemplatedNotifier directly you extend the MDW class TaskEmailNotifier.
 <br/>
-<h3>E-Mail Templates</h3>
-Templates for task lifecycle e-mails are the same as described in the general <a href="notification.html">Notification Activity</a> documentation.
+<h3>Email Templates</h3>
+Templates for task lifecycle emails and Slack notices are the same as described in the general <a href="notification.html">Notification Activity</a> documentation.
 Pre-built sample templates provided with the MDW baseline package include taskOpenEmail.html and taskOpenOneClick.html.
 
 <br/><br/>
 For simple HTML templates, the implicit model value represents the TaskRuntimeContext object, whose getters can be accessed as in the following examples:
 <ul>
-	<li><b> #{context.variables['xmlBeanVar']['/ser:ActionRequest/Action/Parameter[1]']}</b></li>
-	<li><b>#{variables['xmlBeanVar']['/ser:ActionRequest/Action/Parameter[2]']}</b></li>
-	<li><b> #{context.taskInstanceVO.taskName}</b></li>
-	<li><b>#{masterRequestId}</b></li>
-	<li><b>#{mdwWebUrl}</b></li><li><b>#{mdwTaskManagerUrl}</b></li>
-	<li><b>#{mdwDesignerUrl}</b></li><li><b>#{mdwDesignerRcpUrl}</b></li>
-	<li><b>#{processInstanceId}</b></li><li><b> #{processName}</b></li>
-	<li><b>#{customerName}</b></li><li><b>#{taskInstanceId}</b></li>
-	<li><b>#{taskName}</b></li><li><b>#{dueDate}</b></li><li><b>#{orderId}</b></li>
-	<li><b>#{taskInstanceUrl}</b></li><li><b>#{taskClaimUserCuid}</b><br></li>
+	<li><b>${context.variables['xmlBeanVar']['/ser:ActionRequest/Action/Parameter[1]']}</b></li>
+	<li><b>${variables['xmlBeanVar']['/ser:ActionRequest/Action/Parameter[2]']}</b></li>
+	<li><b>${context.taskInstanceVO.taskName}</b></li>
+	<li><b>${masterRequestId}</b></li>
+	<li><b>${mdwHubUrl}</b></li>
+	<li><b>${processInstanceId}</b></li><li><b> ${processName}</b></li>
+	<li><b>${customerName}</b></li><li><b>${taskInstanceId}</b></li>
+	<li><b>${taskName}</b></li><li><b>${dueDate}</b></li><li><b>${orderId}</b></li>
+	<li><b>${taskInstanceUrl}</b></li><li><b>${taskClaimUserCuid}</b><br></li>
 </ul>
-For Facelet templates, the implicit managed bean is a named TaskRuntimeContext object, which can be accessed as in the following examples:
-<ul>
-  	<li><b>#{context.masterRequestId} </b> -- the value of masterRequestId</li>
-	<li><b> #{context.variables.activityName}</b> -- the value of Notification activity name</li>
-	<li><b>#{context.taskId}</b> -- the value of taskId</li> 	
-	<li><b>#{context.variables.customerName}</b> -- the value of the process variable named 'customerName'</li>
-</ul><b>
 You can insert images into your e-mail body in the same manner as for general notification activities.
 </b>
 <br/><br/>
@@ -81,10 +73,6 @@ See the documentation topic <a href="taskAction.html">Task Actions</a> for an ex
   <tr>
     <th>Jeopardy</th>
     <td>Task instance has passed its scheduled Due Date without having been completed</td>
-  </tr>
-  <tr>
-    <th>Hold</th>
-    <td>Task instance has been placed on hold</td>
   </tr>
 </table>
 <br/><br/>

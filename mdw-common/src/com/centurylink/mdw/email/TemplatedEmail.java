@@ -20,11 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,22 +52,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.cache.impl.TemplateCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.email.Template.Format;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.util.ExpressionUtil;
-import com.centurylink.mdw.util.HttpHelper;
 
 /**
  * Sends an e-mail based on a template stored on the file system.
@@ -78,8 +71,9 @@ import com.centurylink.mdw.util.HttpHelper;
  */
 public class TemplatedEmail {
 
-    private String defaultMailHost = ApplicationContext.isPaaS() ?"relay.t3mx.com":"mailgate.uswc.uswest.com";
-    public void setMailHost(String host) { this.defaultMailHost = host; }
+    private static String defaultMailHost;
+    public static void setDefaultMailHost(String host) { defaultMailHost = host; }
+
     public String getMailHost() throws MessagingException {
         String mailHost = getProperty(PropertyNames.MDW_MAIL_SMTP_HOST);
         if (mailHost == null) {
@@ -87,14 +81,16 @@ public class TemplatedEmail {
         }
         if (mailHost == null)
             mailHost = defaultMailHost;
+        if (mailHost == null)
+            throw new MessagingException("Missing property: " + PropertyNames.MDW_MAIL_SMTP_HOST);
         return mailHost;
     }
 
     private String getProperty(String propname) throws MessagingException {
-        if (getTemplate().getAssetId() == 0)
+        if (getTemplate().getId() == 0)
             return PropertyManager.getProperty(propname);
         try {
-            Package pkg = PackageCache.getAssetPackage(getTemplate().getAssetId());
+            Package pkg = PackageCache.getAssetPackage(getTemplate().getId());
             if (pkg == null)
                 return PropertyManager.getProperty(propname);
             else
@@ -390,7 +386,6 @@ public class TemplatedEmail {
                 DataSource imageDataSource = null;
                 URL url = Thread.currentThread().getContextClassLoader().getResource(imageFile);
                 if (url == null) {
-                    // try to load from the db (TODO: relies on asset naming convention ending in . and the image format)
                     final Asset imageAsset = AssetCache.getAsset(imageFile, "IMAGE_" + imageFile.substring(imageFile.lastIndexOf('.') + 1).toUpperCase());
                     if (imageAsset == null)
                         throw new MessagingException("Image not found: " + imageFile);
@@ -435,10 +430,10 @@ public class TemplatedEmail {
     }
 
 
-    public Template getTemplate() throws MessagingException {
+    public Asset getTemplate() throws MessagingException {
         if (templateName == null) {
             if (templateAssetVerSpec != null && templateAssetVerSpec.getName() != null) {
-                Template template = TemplateCache.getTemplate(templateAssetVerSpec);
+                Asset template = AssetCache.getAsset(templateAssetVerSpec);
                 if (template != null)
                     return template;
                 else
@@ -448,7 +443,7 @@ public class TemplatedEmail {
             }
         }
         try {
-            return TemplateCache.getTemplate(templateName);
+            return AssetCache.getAsset(templateName);
         }
         catch (CachingException ex) {
             throw new MessagingException(ex.getMessage(), ex);
@@ -456,52 +451,19 @@ public class TemplatedEmail {
     }
 
     public String getTemplateBody() throws MessagingException {
-        Template template = getTemplate();
-        return template.getContent();
+        Asset template = getTemplate();
+        return template.getStringContent();
     }
 
     public String getBody() throws MessagingException {
-        Template template = getTemplate();
-        String templateName = template.getName();
-        String templateVersion = null;
-        if (template.getTemplateAssetVerSpec() != null) {
-            templateName = template.getTemplateAssetVerSpec().getQualifiedName();
-            templateVersion = template.getTemplateAssetVerSpec().getVersion();
-        }
-        String body = template.getContent();
+        Asset template = getTemplate();
+        String body = template.getStringContent();
         body = substitute(body); // calling just to populate images
-        if (template.getFormat() == Format.Facelet) {
-            try {
-                URL faceletUrl = getFaceletUrl(templateName, templateVersion);
-                HttpHelper httpHelper = new HttpHelper(faceletUrl);
-                return httpHelper.get();
-            }
-            catch (IOException ex) {
-                throw new MessagingException(ex.getMessage(), ex);
-            }
+        ProcessRuntimeContext runTime = this.getRuntimeContext();
+        if (runTime != null) {
+            body = runTime.evaluateToString(body);
         }
-        else {
-            ProcessRuntimeContext runTime = this.getRuntimeContext();
-            if (runTime != null) {
-                body = runTime.evaluateToString(body);
-            }
-            return body;
-        }
-    }
-
-
-    private URL getFaceletUrl(String templateName, String templateVer) throws MalformedURLException, UnsupportedEncodingException {
-        String url = ApplicationContext.getServicesUrl();
-        if (!url.endsWith("/"))
-          url += "/";
-        url += "notice.jsf?noticeTemplateName=" + URLEncoder.encode(templateName, "UTF-8");
-        if (templateVer != null)
-            url += "&noticeTemplateVersion="+URLEncoder.encode(templateVer, "UTF-8");
-
-        for (String modelKeyParam : model.getKeyParameters().keySet()) {
-            url += "&" + modelKeyParam + "=" + URLEncoder.encode(model.getKeyParameters().get(modelKeyParam), "UTF-8");
-        }
-        return new URL(url);
+        return body;
     }
 
     protected String substitute(String input) throws MessagingException {

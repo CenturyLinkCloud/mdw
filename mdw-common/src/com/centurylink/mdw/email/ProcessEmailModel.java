@@ -22,8 +22,6 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 
 public class ProcessEmailModel extends HashMap<String,Object> implements TemplatedEmail.Model  {
 
-    private static final long serialVersionUID = 1L;
-
     private ProcessInstance processInstance;
     public ProcessInstance getProcessInstance() { return processInstance; }
 

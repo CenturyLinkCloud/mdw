@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
-import values from '../react/values';
+import values from './values';
 import Value from './Value.jsx';
 import Workflow from './Workflow.jsx';
 
@@ -14,6 +14,8 @@ class Run extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    values.showLines = 12;
+    values.maxLines = 20;
   }
   
   componentDidMount() {
@@ -29,7 +31,7 @@ class Run extends Component {
     .then(run => {
       const vals = values.toArray(run.values);
       if (vals) {
-        // populated rememberd values from localStorage
+        // populated remembered values from localStorage
         const storVals = localStorage.getItem(path + '-values');
         if (storVals) {
           const vs = JSON.parse(storVals);

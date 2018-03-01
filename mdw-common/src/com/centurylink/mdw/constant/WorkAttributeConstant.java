@@ -45,7 +45,7 @@ public class WorkAttributeConstant  {
      public static final String SYNC_EXPRESSION = "Sync Expression";
 
      public static final String NOTICE_TYPE = "noticeType";
-     public static final String NOTICE_TYPE_EMAIL = "E-Mail";
+     public static final String EMAIL_NOTICE_SMTP = "SMTP";
      public static final String NOTICE_HOST = "host";
      public static final String NOTICE_FROM = "from";
      public static final String NOTICE_SUBJECT = "subject";
@@ -56,6 +56,7 @@ public class WorkAttributeConstant  {
      public static final String CC_GROUPS = "CCGroups";
      public static final String CC_EMAILS = "CCVar";  // leave attr name for backward compatibility
      public static final String CONTINUE_DESPITE_MESSAGING_EXCEPTION = "ContinueDespiteMessagingException";
+     public static final String RECIPIENTS_EXPRESSION = "RecipientsExpression";
 
      public static final String VARIABLE_NAME = "VARIABLE_NAME";
      public static final String ATTRIBUTE_NAME = "ATTRIBUTE_NAME";

@@ -29,8 +29,8 @@ import javax.mail.internet.InternetAddress;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.cache.impl.TemplateCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
@@ -38,8 +38,8 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.email.TaskEmailModel;
-import com.centurylink.mdw.email.Template;
 import com.centurylink.mdw.email.TemplatedEmail;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -83,15 +83,15 @@ public class TaskEmailNotifier extends TemplatedNotifier {
 
     protected String getProperty(String name) {
         try {
-            Template template = null;
+            Asset template = null;
             if (getTemplateSpec() != null)
-                template = TemplateCache.getTemplate(getTemplateSpec());
+                template = AssetCache.getAsset(getTemplateSpec());
             if (template == null)
-                template = TemplateCache.getTemplate(getTemplate());
-            if (template == null || template.getAssetId() == 0L)
+                template = AssetCache.getAsset(getTemplate());
+            if (template == null || template.getId() == 0L)
                 return PropertyManager.getProperty(name);
             else {
-                Package pkg = PackageCache.getAssetPackage(template.getAssetId());
+                Package pkg = PackageCache.getAssetPackage(template.getId());
                 if (pkg == null)
                     return PropertyManager.getProperty(name);
                 else
@@ -122,9 +122,9 @@ public class TaskEmailNotifier extends TemplatedNotifier {
      * @param outcome the resulting task status or state
      * @return the message
      */
-    protected void sendEmail(TaskRuntimeContext runTimeContext, String outcome)
+    protected void sendEmail(TaskRuntimeContext context, String outcome)
     throws ObserverException {
-        TaskInstance taskInstance = runTimeContext.getTaskInstance();
+        TaskInstance taskInstance = context.getTaskInstance();
         TaskEmailModel emailModel = new TaskEmailModel(taskInstance, new VariablesModel(taskInstance.getOwnerId()));
         TemplatedEmail templatedEmail = new TemplatedEmail();
         templatedEmail.setFromAddress(getFromAddress());
@@ -136,7 +136,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
         if (taskVO != null)
             emailModel.setDescription(taskVO.getComment());
         templatedEmail.setModel(emailModel);
-        templatedEmail.setRuntimeContext(runTimeContext);
+        templatedEmail.setRuntimeContext(context);
 
         try {
             Address[] recipients = getRecipients(taskInstance, outcome, emailModel);
@@ -175,13 +175,18 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                 }
             }
             else {
-                templatedEmail.setRecipients(recipients);
-                templatedEmail.setCcRecipients(ccRecipients);
-                try {
-                      templatedEmail.sendEmail(createEmailJson(templatedEmail, taskInstance));
+                if ((recipients != null && recipients.length > 0) || (ccRecipients != null && ccRecipients.length > 0)) {
+                    templatedEmail.setRecipients(recipients);
+                    templatedEmail.setCcRecipients(ccRecipients);
+                    try {
+                          templatedEmail.sendEmail(createEmailJson(templatedEmail, taskInstance));
+                    }
+                    catch (MessagingException ex) {
+                        logger.severeException(ex.getMessage(), ex);  // do not rethrow
+                    }
                 }
-                catch (MessagingException ex) {
-                    logger.severeException(ex.getMessage(), ex);  // do not rethrow
+                else {
+                    logger.warn("WARNING: No email recipients for task " + context.getTaskInstanceId() + " " + outcome);
                 }
             }
         }
@@ -222,7 +227,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             String noticeGroups;
             String recipientEmails;
             TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
-            if (task!=null) {
+            if (task != null) {
                 noticeGroups = task.getAttribute(TaskAttributeConstant.NOTICE_GROUPS);
                 recipientEmails = task.getAttribute(TaskAttributeConstant.RECIPIENT_EMAILS);
                 if (!StringHelper.isEmpty(recipientEmails) && recipientEmails.indexOf('@') < 0 && !recipientEmails.startsWith("$"))

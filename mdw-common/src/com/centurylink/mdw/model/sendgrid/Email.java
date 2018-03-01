@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.config;
+package com.centurylink.mdw.model.sendgrid;
 
-public class PropertyException extends RuntimeException {
+import com.centurylink.mdw.email.TemplatedEmail;
+import com.centurylink.mdw.model.Jsonable;
 
-    public PropertyException(String message){
-        super(message);
+public class Email implements Jsonable {
+
+    private TemplatedEmail email;
+
+    public Email(TemplatedEmail email) {
+        this.email = email;
     }
 
-    public PropertyException(String message, Throwable cause){
-        super(message, cause);
 
-    }
+
 }

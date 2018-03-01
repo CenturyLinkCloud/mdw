@@ -187,7 +187,7 @@ public class JavaPropertyManager extends PropertyManager {
             }
         }
         catch (Exception ex) {
-            throw new PropertyException(-1, "Failed to load properties from " + filename, ex);
+            throw new PropertyException("Failed to load properties from " + filename, ex);
         }
     }
 

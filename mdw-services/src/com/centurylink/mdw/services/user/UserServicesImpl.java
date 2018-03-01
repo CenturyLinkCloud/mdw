@@ -33,8 +33,12 @@ import com.centurylink.mdw.model.user.WorkgroupList;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.services.UserServices;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class UserServicesImpl implements UserServices {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private UserDataAccess getUserDAO() {
         DatabaseAccess db = new DatabaseAccess(null);
@@ -255,8 +259,13 @@ public class UserServicesImpl implements UserServices {
       List<String> emails = new ArrayList<>();
       for (User user : getWorkgroupUsers(groups)) {
           String email = user.getEmail();
-          if (email != null && !emails.contains(email))
-              emails.add(email);
+          if (email != null) {
+              if (!emails.contains(email))
+                  emails.add(email);
+          }
+          else {
+              logger.warn("No email address found for user: " + user.getCuid());
+          }
       }
       return emails;
     }

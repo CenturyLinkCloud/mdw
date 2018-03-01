@@ -691,11 +691,11 @@ public abstract class BaseActivity implements GeneralActivity {
      *      and translation fails.
      */
 
-    protected String getAttributeValueSmart(String name) throws PropertyException {
+    protected String getAttributeValueSmart(String name) {
         return getValueSmart(Attribute.findAttribute(attributes, name), "A:"+name);
     }
 
-    protected String getValueSmart(String value, String tag) throws PropertyException {
+    protected String getValueSmart(String value, String tag) {
 
         if (value==null) return null;
         if (value.startsWith("prop:")) {
@@ -707,23 +707,13 @@ public abstract class BaseActivity implements GeneralActivity {
             value = value.substring(7);
         } else if (value.startsWith("groovy:") || value.startsWith("g:") || value.startsWith("javascript:") || value.startsWith("js:")) {
             String name = GroovyNaming.getValidClassName(getActivityName() + "_" + getActivityId() + "_" + tag);
-            try {
-                Object obj = evaluateExpression(name, value.startsWith("j") ? JAVASCRIPT : GROOVY, value.substring(value.indexOf(':') + 1));
-                value = obj == null ? null : obj.toString();
-            }
-            catch (ExecutionException ex) {
-                throw new PropertyException(-1, ex.getMessage(), ex);
-            }
+            Object obj = evaluateExpression(name, value.startsWith("j") ? JAVASCRIPT : GROOVY, value.substring(value.indexOf(':') + 1));
+            value = obj == null ? null : obj.toString();
         } else if (valueIsPlaceHolder(value)) {
             value = this.translatePlaceHolder(value);
         } else if (valueIsJavaExpression(value)) {
-            try {
-                Object obj = evaluateExpression(tag, JAVA_EL, value);
-                value = obj == null ? null : obj.toString();
-            }
-            catch (ExecutionException ex) {
-                throw new PropertyException(-1, ex.getMessage(), ex);
-            }
+            Object obj = evaluateExpression(tag, JAVA_EL, value);
+            value = obj == null ? null : obj.toString();
         }
         return value == null ? null : value.trim();
     }
@@ -750,7 +740,6 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected Object evaluateExpression(String name, String language, String expression)
     throws ExecutionException {
-
         try {
             if (JAVA_EL.equals(language)) {
                 return _runtimeContext.evaluate(expression);
@@ -769,9 +758,6 @@ public abstract class BaseActivity implements GeneralActivity {
             }
             bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
             return evaluator.evaluate(expression, bindings);
-        }
-        catch (PropertyException ex) {
-            throw new ExecutionException(ex.getMessage(), ex);
         }
         catch (ActivityException ex) {
             throw new ExecutionException(ex.getMessage(), ex);

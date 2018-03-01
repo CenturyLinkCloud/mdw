@@ -9,9 +9,6 @@
   <Cache Name="EventHandlerCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.event.EventHandlerCache</Property>
   </Cache>
-  <Cache Name="TemplateCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.impl.TemplateCache</Property>
-  </Cache>
   <Cache Name="AssetCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetCache</Property>
   </Cache>

@@ -4,9 +4,38 @@
 <link rel="stylesheet" type="text/css" href="docstyle.css"/>
 </head>
 <body>
-<h1>Email Notification</h1>
+<h1>Notifications</h1>
+<h2>Notification Impls</h2>
+<table>
+  <tr>
+    <th>Type</th>
+    <th>Workflow Activity</th>
+    <th>Task Notifier</th>
+  </tr>
+  <tr>
+    <td>SMTP</td>
+    <td>Email Notification</td>
+    <td>com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier</td>
+  </tr>
+  <tr>
+    <td>SendGrid</td>
+    <td>SendGrid Email (in asset package com.centurylink.mdw.sendgrid)</td>
+    <td>com.centurylink.mdw.sendgrid.TaskNotifier</td>
+  </tr>
+  <tr>
+    <td>Slack</td>
+    <td>Slack Notify (in asset package com.centurylink.mdw.slack)</td>
+    <td>com.centurylink.mdw.slack.TaskNotifier</td>
+  </tr>
+</table>
+
+<h2>Workflow Email Notices</h2>
 An email notification activity is used in a process definition at locations where you want to send an email to interested parties.
 <br/>
+<h2>Task Email Notices</h2>
+For a discussion of how to configure notifications based on task instance lifecycle events, see the topic <a href="taskNotices.html">Task Notices</a>.
+<br/>
+
 <h3>Email Templates</h3>
 Email templates are parameterized HTML <a href="assets.html">assets</a>.
 that govern the format of your email notices.
@@ -40,6 +69,9 @@ Multiple attachment patterns can be specified by delimiting with the tilde chara
 <br/><br/><br/>
 If you require customized behavior, you can extend EmailNotificationActivity and populate your own dynamic values for your template.
 <br/><br/>
-For a discussion of how to configure notifications based on task instance lifecycle events, see the topic <a href="taskNotices.html">Task Notices</a>. 
+
+<h2>Slack Notifications</h2>
+Import asset package com.centurylink.mdw.slack, and use the Slack Notify activity in your workflow.
+TODO: <a href="https://github.com/CenturyLinkCloud/mdw/issues/270">https://github.com/CenturyLinkCloud/mdw/issues/270</a>.
 </body>
 </html>

@@ -15,19 +15,13 @@
  */
 package com.centurylink.mdw.script;
 
-import com.centurylink.mdw.common.MdwException;
-
-public class ExecutionException extends MdwException {
+public class ExecutionException extends RuntimeException {
 
     public ExecutionException(String message) {
         super(message);
     }
 
-    public ExecutionException(String message, Throwable t){
+    public ExecutionException(String message, Throwable t) {
         super(message, t);
-    }
-
-    public ExecutionException(int code, String message, Throwable t){
-        super(code, message, t);
     }
 }
