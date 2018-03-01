@@ -132,27 +132,28 @@ public class SendgridActivity extends DefaultActivityImpl {
                 List<Message> content = new ArrayList<>();
                 email.setContent(content);
                 Message message = new Message();
+                content.add(message);
                 message.setType(template.getContentType());
                 String body = template.getStringContent();
                 Map<String,String> images = new HashMap<>();
-                body = ExpressionUtil.substitute(body, new Object(), images, true);
+                body = ExpressionUtil.substituteImages(body, images);
                 if (!images.isEmpty()) {
                     for (String cid : images.keySet()) {
-                        String imageFile = images.get(cid);
-                        Asset asset = AssetCache.getAsset(imageFile);
-                        if (asset.exists()) {
+                        String imageAsset = images.get(cid);
+                        Asset asset = AssetCache.getAsset(imageAsset);
+                        if (asset != null) {
                             Attachment attachment = new Attachment();
                             if (email.getAttachments() == null) {
                                 email.setAttachments(new ArrayList<>());
                             }
                             email.getAttachments().add(attachment);
                             attachment.setContent_id(cid);
-                            attachment.setFilename(imageFile);
+                            attachment.setFilename(asset.getName());
                             attachment.setType(asset.getContentType());
                             attachment.setContent(Base64.getEncoder().encodeToString(asset.getRawContent()));
                         }
                         else {
-                            logwarn("Image asset not found: " + imageFile);
+                            logwarn("Image asset not found: " + imageAsset);
                         }
                     }
                 }

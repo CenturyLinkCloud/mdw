@@ -133,4 +133,34 @@ public class ExpressionUtil {
         }
         return null;
     }
+
+    /**
+     * Input is email template with image tags:
+     * <code>
+     * &lt;img src="${image:com.centurylink.mdw.base/mdw.png}" alt="MDW"&gt;
+     * </code>
+     * Uses the unqualified image name as its CID.  Populates imageMap with results.
+     */
+    public static String substituteImages(String input, Map<String,String> imageMap) {
+        StringBuffer substituted = new StringBuffer(input.length());
+        Matcher matcher = tokenPattern.matcher(input);
+        int index = 0;
+        while (matcher.find()) {
+            String match = matcher.group();
+            substituted.append(input.substring(index, matcher.start()));
+            if (imageMap != null && (match.startsWith("${image:"))) {
+                String imageFile = match.substring(8, match.length() - 1);
+                String imageId = imageFile.substring(imageFile.lastIndexOf('/') + 1);
+                substituted.append("cid:" + imageId);
+                imageMap.put(imageId, imageFile);
+            }
+            else {
+                // ignore everything but images
+                substituted.append(match);
+            }
+            index = matcher.end();
+        }
+        substituted.append(input.substring(index));
+        return substituted.toString();
+    }
 }

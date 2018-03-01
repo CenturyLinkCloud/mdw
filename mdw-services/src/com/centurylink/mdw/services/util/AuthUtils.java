@@ -55,7 +55,7 @@ public class AuthUtils {
     public static final String MDW_APP_TOKEN = "MDW_APP_TOKEN";
     public static final String MDW_AUTH_TOKEN = "MDW_Auth";
 
-    private static final String APPTOKENCACHE = "AppTokenCache";
+    private static final String APPTOKENCACHE = "com.centurylink.mdw.central.AppCache";
 
     private static final String JWTTOKENCACHE = "com.centurylink.mdw.authCTL.JwtTokenCache";
     private static final String CTLJWTPKG = "com.centurylink.mdw.authCTL";
