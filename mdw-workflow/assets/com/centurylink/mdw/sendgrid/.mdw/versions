@@ -4,6 +4,6 @@ Email.java=1
 Message.java=1
 Personalization.java=1
 Sender.java=1
-SendgridEmailActivity.java=1
+SendgridActivity.java=1
 TaskNotifier.java=1
 sendgrid.png=1

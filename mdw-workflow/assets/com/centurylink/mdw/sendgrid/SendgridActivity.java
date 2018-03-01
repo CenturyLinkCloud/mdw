@@ -18,6 +18,7 @@ package com.centurylink.mdw.sendgrid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  * Requires a SendGrid account with a registered API key.
  */
 @Tracked(LogLevel.TRACE)
-public class SendgridEmailActivity extends DefaultActivityImpl {
+public class SendgridActivity extends DefaultActivityImpl {
 
     @Override
     public Object execute(ActivityRuntimeContext context) throws ActivityException {
@@ -135,10 +136,29 @@ public class SendgridEmailActivity extends DefaultActivityImpl {
                 String body = template.getStringContent();
                 Map<String,String> images = new HashMap<>();
                 body = ExpressionUtil.substitute(body, new Object(), images, true);
+                if (!images.isEmpty()) {
+                    for (String cid : images.keySet()) {
+                        String imageFile = images.get(cid);
+                        Asset asset = AssetCache.getAsset(imageFile);
+                        if (asset.exists()) {
+                            Attachment attachment = new Attachment();
+                            if (email.getAttachments() == null) {
+                                email.setAttachments(new ArrayList<>());
+                            }
+                            email.getAttachments().add(attachment);
+                            attachment.setContent_id(cid);
+                            attachment.setFilename(imageFile);
+                            attachment.setType(asset.getContentType());
+                            attachment.setContent(Base64.getEncoder().encodeToString(asset.getRawContent()));
+                        }
+                        else {
+                            logwarn("Image asset not found: " + imageFile);
+                        }
+                    }
+                }
                 message.setValue(context.evaluateToString(body));
                 new Sender(email).send();
             }
-            
         }
         else if (template.getLanguage().equals(Asset.JSON)) {
             // Caller has built the message json themselves; simply apply substitutions.
