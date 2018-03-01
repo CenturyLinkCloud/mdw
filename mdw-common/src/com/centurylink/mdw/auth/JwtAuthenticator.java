@@ -102,7 +102,7 @@ public class JwtAuthenticator implements Authenticator {
             JSONObject json = new JSONObject();
             json.put("user", cuid);
             json.put("password", pass);
-            json.put("appId", appId);
+            json.put("appId", getAppId());
 
             if (logger.isDebugEnabled())
                 logger.debug("JwtAuthenticator...authenticating to " + tokenLocation +  " user " + cuid + " appid " +  ApplicationContext.getAppId());
