@@ -201,9 +201,9 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipientsFromVariable-java.lang.String-">getRecipientsFromVariable</a></span>(java.lang.String&nbsp;varName)</code>
-<div class="block">Supports variable type of String or String[].</div>
+<td class="colFirst"><code>protected java.util.List&lt;javax.mail.Address&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipientsFromExpression-java.lang.String-">getRecipientsFromExpression</a></span>(java.lang.String&nbsp;expression)</code>
+<div class="block">Must resolve to type of String or List<String>.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -351,23 +351,21 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 </dl>
 </li>
 </ul>
-<a name="getRecipientsFromVariable-java.lang.String-">
+<a name="getRecipientsFromExpression-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getRecipientsFromVariable</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getRecipientsFromVariable(java.lang.String&nbsp;varName)
-                                                  throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
-                                                         <a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a>,
-                                                         javax.mail.internet.AddressException</pre>
-<div class="block">Supports variable type of String or String[].
+<h4>getRecipientsFromExpression</h4>
+<pre>protected&nbsp;java.util.List&lt;javax.mail.Address&gt;&nbsp;getRecipientsFromExpression(java.lang.String&nbsp;expression)
+                                                                  throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
+                                                                         javax.mail.internet.AddressException</pre>
+<div class="block">Must resolve to type of String or List<String>.
  If a value corresponds to a group name, returns users in the group.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a></code></dd>
+<dd><code>javax.mail.internet.AddressException</code></dd>
 </dl>
 </li>
 </ul>

@@ -43,6 +43,7 @@ com.centurylink.mdw.model.listener
 com.centurylink.mdw.model.message
 com.centurylink.mdw.model.monitor
 com.centurylink.mdw.model.request
+com.centurylink.mdw.model.sendgrid
 com.centurylink.mdw.model.system
 com.centurylink.mdw.model.task
 com.centurylink.mdw.model.user
