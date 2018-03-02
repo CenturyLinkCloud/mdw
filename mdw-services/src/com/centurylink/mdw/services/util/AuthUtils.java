@@ -62,7 +62,7 @@ public class AuthUtils {
     public static final String SLACK_TOKEN = "MDW_SLACK_TOKEN";
     public static final String OAUTH_AUTHENTICATION = "OAuth";
     public static final String MDW_APP_TOKEN = "MDW_APP_TOKEN";
-    public static final String MDW_AUTH_TOKEN = "MDW_Auth";
+    public static final String MDW_AUTH = "mdwAuth";
 
     private static final String APPTOKENCACHE = "com.centurylink.mdw.central.AppCache";
 
@@ -209,7 +209,6 @@ public class AuthUtils {
     }
 
     private static boolean checkBearerAuthenticationHeader(String authHeader, Map<String,String> headers) {
-        String user = "Unknown";
         try {
             // Do NOT try to authenticate if it's not Bearer
             if (authHeader == null || !authHeader.startsWith("Bearer"))
@@ -218,23 +217,22 @@ public class AuthUtils {
             authHeader = authHeader.replaceFirst("Bearer ", "");
             DecodedJWT jwt = JWT.decode(authHeader);  // Validate it is a JWT and see which kind of JWT it is
 
-            if ("mdwAuth".equals(jwt.getIssuer())) {  // JWT was issued by MDW Central
+            if (MDW_AUTH.equals(jwt.getIssuer()))  // JWT was issued by MDW Central
                 verifyMdwJWT(authHeader, headers);
-            }
             else if (!StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_ISSUER)) &&
-                     !StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_USER_CLAIM))) {  // Support for other issuers of JWTs
+                     !StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_USER_CLAIM)) &&
+                     PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_ISSUER).equals(jwt.getIssuer()))  // Support for other issuers of JWTs
                 verifyCustomJWT(authHeader, jwt.getAlgorithm(), headers);
-            }
             else
                 throw new Exception("Invalid JWT Issuer");
         }
         catch (Throwable ex) {
-            headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '" + user + "' " + ex.getMessage());
-            logger.severeException("Authentication failed for user '"+user+"'" + ex.getMessage(), ex);
+            headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for JWT '" + authHeader + "' " + ex.getMessage());
+            logger.severeException("Authentication failed for JWT '"+authHeader+"'" + ex.getMessage(), ex);
             return false;
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("authentication successful for user '"+user+"'");
+            logger.debug("authentication successful for user '"+headers.get(Listener.AUTHENTICATED_USER_HEADER)+"'");
         }
         return true;
     }
@@ -357,15 +355,15 @@ public class AuthUtils {
     private static synchronized JWTVerifier createMdwTokenVerifier() {
         JWTVerifier tempVerifier = verifier;
         if (tempVerifier == null) {
-            String appToken = System.getenv("MDW_APP_TOKEN");
+            String appToken = System.getenv(MDW_APP_TOKEN);
             if (StringHelper.isEmpty(appToken))
-                logger.severe("Exception processing incoming message using MDW Auth token - Missing System variable MDW_APP_TOKEN");
+                logger.severe("Exception processing incoming message using MDW Auth token - Missing System variable " + MDW_APP_TOKEN);
             else {
                 try {
                     maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;  // MDW default is token never expires
                     Algorithm algorithm = Algorithm.HMAC256(appToken);
                     verifier = tempVerifier = JWT.require(algorithm)
-                            .withIssuer("mdwAuth")
+                            .withIssuer(MDW_AUTH)
                             .withAudience(ApplicationContext.getAppId())
                             .build(); //Reusable verifier instance
                 }
@@ -410,7 +408,9 @@ public class AuthUtils {
         if (tempVerifier == null) {
             String propAlg = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_ALGORITHM);
             if (StringHelper.isEmpty(algorithmName) || (!StringHelper.isEmpty(propAlg) && !algorithmName.equals(propAlg))) {
-                logger.severe("Exception creating Custom JWT Verifier - Missing 'alg' claim in JWT or mismatch algorithm with specified Property " + PropertyNames.MDW_JWT_CUSTOM_ALGORITHM);
+                String message = "Exception creating Custom JWT Verifier - ";
+                message = StringHelper.isEmpty(algorithmName) ? "Missing 'alg' claim in JWT" : ("Mismatch algorithm with specified Property " + PropertyNames.MDW_JWT_CUSTOM_ALGORITHM);
+                logger.severe(message);
                 return null;
             }
             String key = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_KEY);
@@ -425,15 +425,17 @@ public class AuthUtils {
                 Algorithm algorithm = null;
                 Method algMethod = null;
                 if (algorithmName.startsWith("HS")) {  // HMAC
-                    algMethod = Algorithm.none().getClass().getMethod(algorithmName, String.class);
+                    String methodName = "HMAC" + algorithmName.substring(2);
+                    algMethod = Algorithm.none().getClass().getMethod(methodName, String.class);
                     algorithm = (Algorithm)algMethod.invoke(Algorithm.none(), key);
                 }
                 else if (algorithmName.startsWith("RS")) {   // RSA
+                    String methodName = "RSA" + algorithmName.substring(2);
                     byte[] publicBytes = Base64.decodeBase64(key.getBytes());
                     X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
                     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                     PublicKey pubKey = keyFactory.generatePublic(keySpec);
-                    algMethod = Algorithm.none().getClass().getMethod(algorithmName, RSAPublicKey.class, RSAPrivateKey.class);
+                    algMethod = Algorithm.none().getClass().getMethod(methodName, RSAPublicKey.class, RSAPrivateKey.class);
                     algorithm = (Algorithm)algMethod.invoke(Algorithm.none(), pubKey, null);
                 }
                 else {

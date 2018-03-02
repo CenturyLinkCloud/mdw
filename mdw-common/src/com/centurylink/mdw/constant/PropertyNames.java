@@ -158,11 +158,11 @@ public class PropertyNames {
     public static final String MDW_CENTRAL_ROUTING_URL = "mdw.central.routing.url";
 
     // Authentication / Custom JWT provider
-    public static final String MDW_JWT_CUSTOM_ISSUER = "mdw.jwt.custom.issuer";  // Required
-    public static final String MDW_JWT_CUSTOM_SUBJECT = "mdw.jwt.custom.subject";
-    public static final String MDW_JWT_CUSTOM_ALGORITHM = "mdw.jwt.custom.algorithm";
-    public static final String MDW_JWT_CUSTOM_KEY = "mdw.jwt.custom.key";  // Required
-    public static final String MDW_JWT_CUSTOM_USER_CLAIM = "mdw.jwt.custom.userClaim";  // Required
+    public static final String MDW_JWT_CUSTOM_ISSUER = "mdw.jwt.custom.issuer";  // Required if using a JWT provider other than MDW
+    public static final String MDW_JWT_CUSTOM_KEY = "mdw.jwt.custom.key";  // Required if using a JWT provider other than MDW
+    public static final String MDW_JWT_CUSTOM_USER_CLAIM = "mdw.jwt.custom.userClaim";  // Required if using a JWT provider other than MDW - name of Claim containing authenticated user
+    public static final String MDW_JWT_CUSTOM_SUBJECT = "mdw.jwt.custom.subject";  // Optional JWT field to verify
+    public static final String MDW_JWT_CUSTOM_ALGORITHM = "mdw.jwt.custom.algorithm"; // Optional for additional safety check
 
 
     // Request Routing
