@@ -16,8 +16,16 @@
 package com.centurylink.mdw.services.util;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,6 +36,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
@@ -62,6 +71,7 @@ public class AuthUtils {
     private static final String CTLJWTAUTH = "com.centurylink.mdw.authCTL.JwtAuthenticatorCTL";
 
     private static JWTVerifier verifier = null;
+    private static JWTVerifier verifierCustom = null;
     private static long maxAge = 0;
 
     public static boolean authenticate(String authMethod, Map<String,String> headers) {
@@ -211,7 +221,10 @@ public class AuthUtils {
             if ("mdwAuth".equals(jwt.getIssuer())) {  // JWT was issued by MDW Central
                 verifyMdwJWT(authHeader, headers);
             }
-      //     else if ()   // Future support for other issuers of JWTs
+            else if (!StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_ISSUER)) &&
+                     !StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_USER_CLAIM))) {  // Support for other issuers of JWTs
+                verifyCustomJWT(authHeader, jwt.getAlgorithm(), headers);
+            }
             else
                 throw new Exception("Invalid JWT Issuer");
         }
@@ -360,6 +373,86 @@ public class AuthUtils {
                     logger.severeException("Exception processing incoming message using MDW Auth token", e);
                 }
             }
+        }
+        return tempVerifier;
+    }
+
+    private static void verifyCustomJWT(String token, String algorithm, Map<String,String> headers) throws Exception {
+        // If first call, generate verifier
+        JWTVerifier tempVerifier = verifierCustom;
+        if (tempVerifier == null)
+            tempVerifier = createCustomTokenVerifier(algorithm);
+
+        if (tempVerifier == null)
+            throw new Exception("Cannot generate Custom JWT verifier");
+
+        DecodedJWT jwt = tempVerifier.verify(token);  // Verifies JWT is valid
+
+        // Verify token is not too old, if application specifies property for max token age - in seconds
+        if (maxAge > 0 && jwt.getIssuedAt() != null) {
+            if ((new Date().getTime() - jwt.getIssuedAt().getTime()) > maxAge)
+                throw new Exception("Custom JWT token has expired");
+        }
+
+        // Get the user JWT was created for (Claim specified in Property) - Check payload and header for the claim
+        String user = jwt.getClaim(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_USER_CLAIM)).asString();
+        if (StringHelper.isEmpty(user))
+            user = jwt.getHeaderClaim(PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_USER_CLAIM)).asString();
+
+        if (!StringHelper.isEmpty(user))
+            headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
+        else
+            throw new Exception("Received valid Custom JWT token, but cannot identify the user");
+    }
+
+    private static synchronized JWTVerifier createCustomTokenVerifier(String algorithmName) {
+        JWTVerifier tempVerifier = verifierCustom;
+        if (tempVerifier == null) {
+            String propAlg = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_ALGORITHM);
+            if (StringHelper.isEmpty(algorithmName) || (!StringHelper.isEmpty(propAlg) && !algorithmName.equals(propAlg))) {
+                logger.severe("Exception creating Custom JWT Verifier - Missing 'alg' claim in JWT or mismatch algorithm with specified Property " + PropertyNames.MDW_JWT_CUSTOM_ALGORITHM);
+                return null;
+            }
+            String key = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_KEY);
+            if (StringHelper.isEmpty(key)) {
+                logger.severe("Exception creating Custom JWT Verifier - Missing Property " + PropertyNames.MDW_JWT_CUSTOM_KEY);
+                return null;
+            }
+
+            try {
+                maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;
+
+                Algorithm algorithm = null;
+                Method algMethod = null;
+                if (algorithmName.startsWith("HS")) {  // HMAC
+                    algMethod = Algorithm.none().getClass().getMethod(algorithmName, String.class);
+                    algorithm = (Algorithm)algMethod.invoke(Algorithm.none(), key);
+                }
+                else if (algorithmName.startsWith("RS")) {   // RSA
+                    byte[] publicBytes = Base64.decodeBase64(key.getBytes());
+                    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+                    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                    PublicKey pubKey = keyFactory.generatePublic(keySpec);
+                    algMethod = Algorithm.none().getClass().getMethod(algorithmName, RSAPublicKey.class, RSAPrivateKey.class);
+                    algorithm = (Algorithm)algMethod.invoke(Algorithm.none(), pubKey, null);
+                }
+                else {
+                    logger.severe("Exception creating Custom JWT Verifier - Unsupported Algorithm: " + algorithmName);
+                    return null;
+                }
+
+                String issuer = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_ISSUER);
+                String subject = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_SUBJECT);
+
+                Verification tmp = JWT.require(algorithm);
+                tmp = StringHelper.isEmpty(issuer) ? tmp : tmp.withIssuer(issuer);
+                tmp = StringHelper.isEmpty(subject) ? tmp : tmp.withSubject(subject);
+                verifierCustom = tempVerifier = tmp.build();
+            }
+            catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException | InvalidKeySpecException e) {
+                logger.severeException("Exception creating Custom JWT Verifier", e);
+            }
+
         }
         return tempVerifier;
     }

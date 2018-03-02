@@ -157,6 +157,14 @@ public class PropertyNames {
     public static final String MDW_CENTRAL_AUTH_URL = "mdw.central.auth.url";
     public static final String MDW_CENTRAL_ROUTING_URL = "mdw.central.routing.url";
 
+    // Authentication / Custom JWT provider
+    public static final String MDW_JWT_CUSTOM_ISSUER = "mdw.jwt.custom.issuer";  // Required
+    public static final String MDW_JWT_CUSTOM_SUBJECT = "mdw.jwt.custom.subject";
+    public static final String MDW_JWT_CUSTOM_ALGORITHM = "mdw.jwt.custom.algorithm";
+    public static final String MDW_JWT_CUSTOM_KEY = "mdw.jwt.custom.key";  // Required
+    public static final String MDW_JWT_CUSTOM_USER_CLAIM = "mdw.jwt.custom.userClaim";  // Required
+
+
     // Request Routing
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";
     public static final String MDW_ROUTING_REQUESTS_HTTPS_ENABLED = "mdw.requestrouting.https.enabled";
@@ -173,11 +181,6 @@ public class PropertyNames {
     public static final String MDW_MAIL_SMTP_USER = "mdw.mail.smtp.user";
     public static final String MDW_MAIL_SMTP_PASS = "mdw.mail.smtp.pass";
     public static final String MDW_MAIL_CONNECTION_TIMEOUT = "mdw.mail.connection.timeout";
-
-    // oauth
-    public static final String MDW_OAUTH_REST_ENDPOINT = "mdw.oauth.rest.endpoint";
-    public static final String MDW_OAUTH_REST_USER_DOMAIN = "mdw.oauth.rest.user.domain";
-    public static final String MDW_OAUTH_REST_HEADERS = "mdw.oauth.rest.headers";
 
     // Transaction Retry
     public static final String MDW_TRANSACTION_RETRY_INTERVAL = "mdw.transaction.retry.interval";
