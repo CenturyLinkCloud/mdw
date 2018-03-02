@@ -46,9 +46,14 @@ public class PackageCache implements PreloadableCache {
 
     @Override
     public void loadCache() throws CachingException {
-        synchronized(lock) {
-            packageList = load();
-        }
+        // This would already have been loaded during startup to get the DB time - no need to load it again
+        List<Package> packageListTemp = packageList;
+        if (packageListTemp == null)
+            synchronized(lock) {
+                packageListTemp = packageList;
+                if (packageListTemp == null)
+                    packageList = load();
+            }
     }
 
     private static List<Package> getPackageList() throws CachingException {
