@@ -201,32 +201,48 @@ public class ProcessCache implements CacheService {
     }
 
     private Process getProcess0(String procname, int version, boolean exceptionWhenNotFound) {
+        if (procname.indexOf("/") < 0) {
+            logger.severe("Cannot retrieve process " + procname + ". Non-Package Qualified Process Names are NOT ALLOWED in MDW");
+            return null;
+        }
+
         if (procname.endsWith(".proc"))
             procname = procname.substring(0, procname.length() - 5);
 
+        Process procdef = getProcess0(procname, version);
+
+        if (procdef == null) {
+            synchronized(processMap) {
+                // Try to see if it got loaded while waiting to enter
+                procdef = getProcess0(procname, version);
+                if (procdef == null)
+                    procdef = loadProcess(procname, version, exceptionWhenNotFound);
+                if (procdef != null) {
+                    procdef.removeDeletedTransitions();
+                    putInCache(procdef, version == 0);
+                }
+            }
+        }
+        return procdef;
+    }
+
+    private Process getProcess0(String procname, int version) {
         Process procdef = null;
 
+
         if (version == 0) {
-            procdef = procNameLatest.get(procname);
+            Map<String,Process> procNameLatestTemp = procNameLatest;
+            procdef = procNameLatestTemp.get(procname);
         }
         else {
-            List<Process> vl = procNameMap.get(procname);
+            Map<String,List<Process>> procNameMapTemp = procNameMap;
+            List<Process> vl = procNameMapTemp.get(procname);
             if (vl != null) {
                 for (Process p : vl) {
                     if (p.getVersion() == version) {
                         procdef = p;
                         break;
                     }
-                }
-            }
-        }
-
-        if (procdef == null) {
-            synchronized(processMap) {
-                procdef = loadProcess(procname, version, exceptionWhenNotFound);
-                if (procdef != null) {
-                    procdef.removeDeletedTransitions();
-                    putInCache(procdef, version == 0);
                 }
             }
         }

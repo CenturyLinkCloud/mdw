@@ -860,15 +860,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             pkgName = plainName.substring(0, lastSlash);
             plainName = plainName.substring(lastSlash + 1);
         }
-        for (PackageDir pkgDir : getPackageDirs()) {
+        for (PackageDir pkgDir : getPackageDirs()) {  // This returns current Pkgs before Archive Pkgs
             if (pkgName == null || pkgName.equals(pkgDir.getPackageName())) {
                 for (File procFile : pkgDir.listFiles(procFileFilter)) {
                     String fileName = procFile.getName();
                     if (fileName.substring(0, fileName.length() - PROCESS_FILE_EXTENSION.length()).equals(plainName)) {
                         try {
                             Process process = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
-                            if (version == 0) {
-                                versions.add(process);
+                            if (version == 0) {  // Version 0 means we want the latest version
+                                if (!pkgDir.isArchive()) // Assume current asset is latest version
+                                    return process;
+                                else  // Only applies to deleted processes that only exist in Archive
+                                    versions.add(process);
                             }
                             else if (process.getVersion() == version) {
                                 return process;

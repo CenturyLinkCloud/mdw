@@ -5,7 +5,7 @@ send message {
     payload = '''<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">
     <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
-    <Parameter name="ProcessName">MDWTestProcessAsService</Parameter>
+    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestProcessAsService</Parameter>
     <Parameter name="PerformanceLevel">3</Parameter>
     <Parameter name="processCase">Adapter</Parameter>
   </Action>
