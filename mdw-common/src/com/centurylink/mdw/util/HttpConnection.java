@@ -29,6 +29,13 @@ public class HttpConnection {
     private HttpURLConnection connection;
     HttpURLConnection getConnection() { return connection; }
 
+
+    private boolean followRedirects = true;
+    public boolean isFollowRedirects(){ return followRedirects; }
+    public void setFollowRedirects(boolean follow) {
+        this.followRedirects = follow;
+    }
+
     private int connectTimeout = -1;
     public int getConnectTimeout() { return connectTimeout; }
     public void setConnectTimeout(int timeout) {
@@ -157,7 +164,7 @@ public class HttpConnection {
         }
         else if ("GET".equalsIgnoreCase(method)) {
             connection.setDoOutput(false);
-            HttpURLConnection.setFollowRedirects(true);
+            HttpURLConnection.setFollowRedirects(followRedirects);
         }
     }
 

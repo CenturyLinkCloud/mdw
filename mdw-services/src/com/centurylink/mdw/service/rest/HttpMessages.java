@@ -117,6 +117,7 @@ public class HttpMessages extends JsonRestService {
                 requestMessage.setTimeout(Integer.parseInt(query.getFilter("timeOut")));
             }
             httpClient = new HttpHelper(new URL(query.getFilter("url")));
+            httpClient.setFollowRedirects(false);
             httpClient.setHeaders(headers);
             httpClient.setConnectTimeout(requestMessage.getTimeout());
             httpClient.setReadTimeout(requestMessage.getTimeout());
@@ -129,6 +130,8 @@ public class HttpMessages extends JsonRestService {
         catch (Exception ex) {
             response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
             code = httpClient.getResponseCode();
+            if (code != 200)
+                throw new ServiceException(response);
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);

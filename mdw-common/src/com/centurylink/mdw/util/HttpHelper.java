@@ -42,6 +42,10 @@ public class HttpHelper {
         connection.setConnectTimeout(ms);
     }
 
+    public void setFollowRedirects(boolean follow) {
+        connection.setFollowRedirects(follow);
+    }
+
     public Map<String,String> getHeaders() {
         return connection.getHeaders();
     }
