@@ -60,6 +60,12 @@ servers:
     ports:
     - 8080
     
+# Custom JWT Provider    
+#  jwt.custom:
+#    issuer: cxg7i.test.intranet
+#    userClaim: userid
+#    key:
+
 # timer.task:
 #   ProcessCleanup: # run daily at 2:30 am
 #     TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup

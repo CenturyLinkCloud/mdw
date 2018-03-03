@@ -5,12 +5,14 @@ upstreamHosts:
   - 0:0:0:0:0:0:0:1
   
 # Auth methods supported include ct (ClearTrust Web Agent) 
-# oauth (OAuth2), or jwt (JSON Web Tokens).  Default is jwt.
-authMethod: ct
+# or mdw (or other JWT provider).  Default is mdw.
+# If using other JWT provider, must configure via properties (mdw.yml)
+authMethod: mdw
 
 # This is the header we trust to specify the authenticated user id.
 # NOTE: This is only secure when upstreamHosts is enforced.
-authUserHeader: ct-remote-user
+# ONLY un-comment when using Cleartrust for Authentication
+#authUserHeader: ct-remote-user
 
 # Allows access to all UI functions and Service APIs permitted for this
 # user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
