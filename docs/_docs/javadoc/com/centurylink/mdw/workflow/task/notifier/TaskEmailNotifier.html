@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.VariablesModel.html" title="class in com.centurylink.mdw.workflow.task.notifier"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html" target="_top">Frames</a></li>
@@ -72,7 +72,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -124,25 +124,6 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested.class.summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.VariablesModel.html" title="class in com.centurylink.mdw.workflow.task.notifier">TaskEmailNotifier.VariablesModel</a></span></code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -173,85 +154,46 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>protected org.json.JSONObject</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#createEmailJson-com.centurylink.mdw.email.TemplatedEmail-com.centurylink.mdw.model.task.TaskInstance-">createEmailJson</a></span>(<a href="../../../../../../com/centurylink/mdw/email/TemplatedEmail.html" title="class in com.centurylink.mdw.email">TemplatedEmail</a>&nbsp;templatedEmail,
-               <a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)</code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.List&lt;javax.mail.Address&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getCcRecipientAddresses-java.lang.String-">getCcRecipientAddresses</a></span>(java.lang.String&nbsp;outcome)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>protected javax.mail.Address</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getAssigneeEmailAddress-com.centurylink.mdw.model.task.TaskInstance-">getAssigneeEmailAddress</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)</code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getCcRecipients-java.lang.String-">getCcRecipients</a></span>(java.lang.String&nbsp;outcome)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getCcRecipients-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-com.centurylink.mdw.email.TaskEmailModel-">getCcRecipients</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance,
-               java.lang.String&nbsp;outcome,
-               <a href="../../../../../../com/centurylink/mdw/email/TaskEmailModel.html" title="class in com.centurylink.mdw.email">TaskEmailModel</a>&nbsp;emailModel)</code>
-<div class="block">Default logic: Send to the UNION of Notice Group members along with users
- specified by the designated recipient process variable value.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>protected java.text.SimpleDateFormat</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getDateFormat--">getDateFormat</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getFromAddress--">getFromAddress</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getGroupEmailAddresses-java.lang.String:A-">getGroupEmailAddresses</a></span>(java.lang.String[]&nbsp;groups)</code>
-<div class="block">Supports variable type of String or String[].</div>
-</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getGroupEmails-java.util.List-">getGroupEmails</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;groups)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getNoticeGroupsEmailAddresses-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-">getNoticeGroupsEmailAddresses</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstanceVO,
-                             java.lang.String&nbsp;noticeGroups)</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getProperty-java.lang.String-">getProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getRecipients-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-com.centurylink.mdw.email.TaskEmailModel-">getRecipients</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance,
-             java.lang.String&nbsp;outcome,
-             <a href="../../../../../../com/centurylink/mdw/email/TaskEmailModel.html" title="class in com.centurylink.mdw.email">TaskEmailModel</a>&nbsp;emailModel)</code>
-<div class="block">Default logic: If outcome is 'Assigned' send e-mail to assignee only,
- otherwise send to the UNION of Notice Group members along with users
- specified by the designated recipient process variable value.</div>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>protected java.util.List&lt;javax.mail.Address&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getRecipientAddresses-java.lang.String-">getRecipientAddresses</a></span>(java.lang.String&nbsp;outcome)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getRecipients-java.lang.String-">getRecipients</a></span>(java.lang.String&nbsp;outcome)</code>
+<div class="block">Default implementation: If outcome is "Assigned", send only to assignee's email.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getRecipientsFromVariable-java.lang.Object-">getRecipientsFromVariable</a></span>(java.lang.Object&nbsp;recipVarValue)</code>&nbsp;</td>
-</tr>
-<tr id="i11" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getSubject-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-">getSubject</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance,
           java.lang.String&nbsp;outcome)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#getTaskUserEmailAddresses-com.centurylink.mdw.model.task.TaskInstance-">getTaskUserEmailAddresses</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)</code>
-<div class="block">Finds the relevant users for a task instance and returns their e-mail addresses</div>
-</td>
-</tr>
-<tr id="i13" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#sendEmail-com.centurylink.mdw.model.task.TaskRuntimeContext-java.lang.String-">sendEmail</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a>&nbsp;context,
          java.lang.String&nbsp;outcome)</code>
 <div class="block">Creates the mime message for the e-mail.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#sendNotice-com.centurylink.mdw.model.task.TaskRuntimeContext-java.lang.String-java.lang.String-">sendNotice</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a>&nbsp;runTimeContext,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html#sendNotice-com.centurylink.mdw.model.task.TaskRuntimeContext-java.lang.String-java.lang.String-">sendNotice</a></span>(<a href="../../../../../../com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a>&nbsp;runtimeContext,
           java.lang.String&nbsp;taskAction,
           java.lang.String&nbsp;outcome)</code>
 <div class="block">Notifies when an action has been performed on a task instance.</div>
@@ -263,7 +205,7 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.observer.task.<a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html" title="class in com.centurylink.mdw.observer.task">TemplatedNotifier</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html#getTemplate--">getTemplate</a>, <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html#getTemplateSpec--">getTemplateSpec</a>, <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html#setTemplate-java.lang.String-">setTemplate</a>, <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html#setTemplateSpec-com.centurylink.mdw.model.asset.AssetVersionSpec-">setTemplateSpec</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html#getTemplateSpec--">getTemplateSpec</a>, <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNotifier.html#setTemplateSpec-com.centurylink.mdw.model.asset.AssetVersionSpec-">setTemplateSpec</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -316,7 +258,7 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 <ul class="blockList">
 <li class="blockList">
 <h4>sendNotice</h4>
-<pre>public&nbsp;void&nbsp;sendNotice(<a href="../../../../../../com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a>&nbsp;runTimeContext,
+<pre>public&nbsp;void&nbsp;sendNotice(<a href="../../../../../../com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a>&nbsp;runtimeContext,
                        java.lang.String&nbsp;taskAction,
                        java.lang.String&nbsp;outcome)
                 throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
@@ -356,23 +298,6 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
                                       java.lang.String&nbsp;outcome)</pre>
 </li>
 </ul>
-<a name="createEmailJson-com.centurylink.mdw.email.TemplatedEmail-com.centurylink.mdw.model.task.TaskInstance-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createEmailJson</h4>
-<pre>protected&nbsp;org.json.JSONObject&nbsp;createEmailJson(<a href="../../../../../../com/centurylink/mdw/email/TemplatedEmail.html" title="class in com.centurylink.mdw.email">TemplatedEmail</a>&nbsp;templatedEmail,
-                                              <a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)
-                                       throws javax.mail.MessagingException,
-                                              <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.MessagingException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="sendEmail-com.centurylink.mdw.model.task.TaskRuntimeContext-java.lang.String-">
 <!--   -->
 </a>
@@ -392,157 +317,68 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 </dl>
 </li>
 </ul>
-<a name="getRecipients-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-com.centurylink.mdw.email.TaskEmailModel-">
+<a name="getRecipientAddresses-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRecipientAddresses</h4>
+<pre>protected&nbsp;java.util.List&lt;javax.mail.Address&gt;&nbsp;getRecipientAddresses(java.lang.String&nbsp;outcome)
+                                                            throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a>,
+                                                                   javax.mail.internet.AddressException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
+<dd><code>javax.mail.internet.AddressException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getCcRecipientAddresses-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCcRecipientAddresses</h4>
+<pre>protected&nbsp;java.util.List&lt;javax.mail.Address&gt;&nbsp;getCcRecipientAddresses(java.lang.String&nbsp;outcome)
+                                                              throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a>,
+                                                                     javax.mail.internet.AddressException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
+<dd><code>javax.mail.internet.AddressException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRecipients-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getRecipients</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getRecipients(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance,
-                                             java.lang.String&nbsp;outcome,
-                                             <a href="../../../../../../com/centurylink/mdw/email/TaskEmailModel.html" title="class in com.centurylink.mdw.email">TaskEmailModel</a>&nbsp;emailModel)
-                                      throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a>,
-                                             javax.mail.internet.AddressException</pre>
-<div class="block">Default logic: If outcome is 'Assigned' send e-mail to assignee only,
- otherwise send to the UNION of Notice Group members along with users
- specified by the designated recipient process variable value.
- (Notice Groups are task workgroup members unless overridden by the NoticeGroup attribute).</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>taskInstance</code> - task instance vo</dd>
-<dd><code>outcome</code> - task action</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>array of recipient addresses</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getRecipientsFromVariable-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRecipientsFromVariable</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getRecipientsFromVariable(java.lang.Object&nbsp;recipVarValue)
-                                                  throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a>,
-                                                         <a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a>,
-                                                         javax.mail.internet.AddressException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a></code></dd>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getCcRecipients-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-com.centurylink.mdw.email.TaskEmailModel-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getCcRecipients</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getCcRecipients(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance,
-                                               java.lang.String&nbsp;outcome,
-                                               <a href="../../../../../../com/centurylink/mdw/email/TaskEmailModel.html" title="class in com.centurylink.mdw.email">TaskEmailModel</a>&nbsp;emailModel)
-                                        throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a>,
-                                               javax.mail.internet.AddressException</pre>
-<div class="block">Default logic: Send to the UNION of Notice Group members along with users
- specified by the designated recipient process variable value.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getDateFormat--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDateFormat</h4>
-<pre>protected&nbsp;java.text.SimpleDateFormat&nbsp;getDateFormat()</pre>
-</li>
-</ul>
-<a name="getNoticeGroupsEmailAddresses-com.centurylink.mdw.model.task.TaskInstance-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNoticeGroupsEmailAddresses</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getNoticeGroupsEmailAddresses(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstanceVO,
-                                                             java.lang.String&nbsp;noticeGroups)
-                                                      throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getTaskUserEmailAddresses-com.centurylink.mdw.model.task.TaskInstance-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getTaskUserEmailAddresses</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getTaskUserEmailAddresses(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)
+<pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getRecipients(java.lang.String&nbsp;outcome)
                                                   throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
-<div class="block">Finds the relevant users for a task instance and returns their e-mail addresses</div>
+<div class="block">Default implementation: If outcome is "Assigned", send only to assignee's email.
+ Otherwise, if Notice Groups attribute is present, the groups so specified
+ are unioned with any recipients resulting from evaluation of the Recipients Expression attribute.
+ If no Notice Groups are specified, any workgroups associated with the task are added to the
+ Recipients Expression outcome.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>taskInstance</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>an array with the valid e-mail addresses</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="getAssigneeEmailAddress-com.centurylink.mdw.model.task.TaskInstance-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAssigneeEmailAddress</h4>
-<pre>protected&nbsp;javax.mail.Address&nbsp;getAssigneeEmailAddress(<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;taskInstance)
-                                              throws javax.mail.internet.AddressException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getGroupEmailAddresses-java.lang.String:A-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getGroupEmailAddresses</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getGroupEmailAddresses(java.lang.String[]&nbsp;groups)
-                                               throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a>,
-                                                      javax.mail.internet.AddressException</pre>
-<div class="block">Supports variable type of String or String[].
- If a value corresponds to a group name, returns users in the group.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getGroupEmails-java.util.List-">
+<a name="getCcRecipients-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getGroupEmails</h4>
-<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getGroupEmails(java.util.List&lt;java.lang.String&gt;&nbsp;groups)
-                                                throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<h4>getCcRecipients</h4>
+<pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getCcRecipients(java.lang.String&nbsp;outcome)
+                                                    throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -574,7 +410,7 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../../com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.VariablesModel.html" title="class in com.centurylink.mdw.workflow.task.notifier"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/centurylink/mdw/workflow/task/notifier/TaskEmailNotifier.html" target="_top">Frames</a></li>
@@ -598,7 +434,7 @@ extends <a href="../../../../../../com/centurylink/mdw/observer/task/TemplatedNo
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":9,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":9,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,8 +47,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/email/TaskEmailModel.html" title="class in com.centurylink.mdw.email"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Prev&nbsp;Class</li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/email/TemplatedEmail.html" target="_top">Frames</a></li>
@@ -72,7 +72,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -109,33 +109,14 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">TemplatedEmail</span>
 extends java.lang.Object</pre>
-<div class="block">Sends an e-mail based on a template stored on the file system.
- Parameterization is performed using javabean access on the specified model object.</div>
+<div class="block">Sends an e-mail via JavaMail/SMTP based on a template asset.
+ Parameterization is performed through the specified RuntimeContext.</div>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested.class.summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static interface&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email">TemplatedEmail.Model</a></span></code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -210,140 +191,122 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getMailHost--">getMailHost</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
-<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email">TemplatedEmail.Model</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getModel--">getModel</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getProtocol--">getProtocol</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>javax.mail.Address[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getRecipients--">getRecipients</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></td>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getRuntimeContext--">getRuntimeContext</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>javax.mail.Session</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getSession--">getSession</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getSmtpPass--">getSmtpPass</a></span>()</code>
 <div class="block">Smtp Mail Pass</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getSmtpPort--">getSmtpPort</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getSmtpTimeout--">getSmtpTimeout</a></span>()</code>
 <div class="block">Milliseconds</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getSmtpUser--">getSmtpUser</a></span>()</code>
 <div class="block">Smtp Mail User</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getSubject--">getSubject</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getTemplate--">getTemplate</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getTemplateAssetVerSpec--">getTemplateAssetVerSpec</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getTemplateBody--">getTemplateBody</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#getTemplateName--">getTemplateName</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i24" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#isHtml--">isHtml</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#removeAttachment-java.lang.String-">removeAttachment</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#removeImage-java.lang.String-">removeImage</a></span>(java.lang.String&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#sendEmail--">sendEmail</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#sendEmail--">sendEmail</a></span>()</code>
+<div class="block">Sends an email based on the substituted template.</div>
+</td>
 </tr>
-<tr id="i28" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#sendEmail-org.json.JSONObject-">sendEmail</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
-</tr>
-<tr id="i29" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#sendEmail-java.lang.String-">sendEmail</a></span>(java.lang.String&nbsp;messageBody)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setAttachments-java.util.Map-">setAttachments</a></span>(java.util.Map&lt;java.lang.String,java.io.File&gt;&nbsp;attachments)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setCcRecipients-javax.mail.Address:A-">setCcRecipients</a></span>(javax.mail.Address[]&nbsp;ccRecipients)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setDefaultMailHost-java.lang.String-">setDefaultMailHost</a></span>(java.lang.String&nbsp;host)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setFromAddress-java.lang.String-">setFromAddress</a></span>(java.lang.String&nbsp;fromAddress)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setHtml-boolean-">setHtml</a></span>(boolean&nbsp;html)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setModel-com.centurylink.mdw.email.TemplatedEmail.Model-">setModel</a></span>(<a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email">TemplatedEmail.Model</a>&nbsp;model)</code>&nbsp;</td>
-</tr>
-<tr id="i36" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setProtocol-java.lang.String-">setProtocol</a></span>(java.lang.String&nbsp;protocol)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setRecipients-javax.mail.Address:A-">setRecipients</a></span>(javax.mail.Address[]&nbsp;recipients)</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setRuntimeContext-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">setRuntimeContext</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;runtimeContext)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setRuntimeContext-com.centurylink.mdw.model.workflow.RuntimeContext-">setRuntimeContext</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;runtimeContext)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setSubject-java.lang.String-">setSubject</a></span>(java.lang.String&nbsp;subject)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setTemplateAssetVerSpec-com.centurylink.mdw.model.asset.AssetVersionSpec-">setTemplateAssetVerSpec</a></span>(<a href="../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;templateAssetVerSpec)</code>&nbsp;</td>
 </tr>
-<tr id="i41" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#setTemplateName-java.lang.String-">setTemplateName</a></span>(java.lang.String&nbsp;templateFile)</code>&nbsp;</td>
-</tr>
-<tr id="i42" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.html#substitute-java.lang.String-">substitute</a></span>(java.lang.String&nbsp;input)</code>&nbsp;</td>
 </tr>
@@ -610,24 +573,6 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;removeImage(java.lang.String&nbsp;id)</pre>
 </li>
 </ul>
-<a name="getTemplateName--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getTemplateName</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getTemplateName()</pre>
-</li>
-</ul>
-<a name="setTemplateName-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setTemplateName</h4>
-<pre>public&nbsp;void&nbsp;setTemplateName(java.lang.String&nbsp;templateFile)</pre>
-</li>
-</ul>
 <a name="getTemplateAssetVerSpec--">
 <!--   -->
 </a>
@@ -644,24 +589,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setTemplateAssetVerSpec</h4>
 <pre>public&nbsp;void&nbsp;setTemplateAssetVerSpec(<a href="../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;templateAssetVerSpec)</pre>
-</li>
-</ul>
-<a name="getModel--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getModel</h4>
-<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email">TemplatedEmail.Model</a>&nbsp;getModel()</pre>
-</li>
-</ul>
-<a name="setModel-com.centurylink.mdw.email.TemplatedEmail.Model-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setModel</h4>
-<pre>public&nbsp;void&nbsp;setModel(<a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email">TemplatedEmail.Model</a>&nbsp;model)</pre>
 </li>
 </ul>
 <a name="getAttachments--">
@@ -707,16 +634,16 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getRuntimeContext</h4>
-<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;getRuntimeContext()</pre>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;getRuntimeContext()</pre>
 </li>
 </ul>
-<a name="setRuntimeContext-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">
+<a name="setRuntimeContext-com.centurylink.mdw.model.workflow.RuntimeContext-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setRuntimeContext</h4>
-<pre>public&nbsp;void&nbsp;setRuntimeContext(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;runtimeContext)</pre>
+<pre>public&nbsp;void&nbsp;setRuntimeContext(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;runtimeContext)</pre>
 </li>
 </ul>
 <a name="getSession--">
@@ -741,25 +668,10 @@ extends java.lang.Object</pre>
 <h4>sendEmail</h4>
 <pre>public&nbsp;void&nbsp;sendEmail()
                throws javax.mail.MessagingException</pre>
+<div class="block">Sends an email based on the substituted template.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.mail.MessagingException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="sendEmail-org.json.JSONObject-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>sendEmail</h4>
-<pre>public&nbsp;void&nbsp;sendEmail(org.json.JSONObject&nbsp;json)
-               throws javax.mail.MessagingException,
-                      org.json.JSONException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.MessagingException</code></dd>
-<dd><code>org.json.JSONException</code></dd>
 </dl>
 </li>
 </ul>
@@ -888,8 +800,8 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/email/TaskEmailModel.html" title="class in com.centurylink.mdw.email"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/email/TemplatedEmail.Model.html" title="interface in com.centurylink.mdw.email"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Prev&nbsp;Class</li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/email/TemplatedEmail.html" target="_top">Frames</a></li>
@@ -913,7 +825,7 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

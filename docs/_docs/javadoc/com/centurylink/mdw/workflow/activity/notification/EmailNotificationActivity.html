@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -187,30 +187,14 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getAttachments--">getAttachments</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getGroupEmailAddresses-java.util.List-">getGroupEmailAddresses</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;groups)</code>
-<div class="block">Finds the relevant users for the specified group names</div>
-</td>
+<td class="colFirst"><code>protected java.util.List&lt;javax.mail.Address&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getCcRecipientAddresses-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">getCcRecipientAddresses</a></span>(<a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>protected javax.mail.Address[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipients-java.lang.String-java.lang.String-">getRecipients</a></span>(java.lang.String&nbsp;groups,
-             java.lang.String&nbsp;recipEmails)</code>
-<div class="block">Default behavior returns the UNION of addresses specified by groups
- along with those specified by the recipient variable value;</div>
-</td>
+<td class="colFirst"><code>protected java.util.List&lt;javax.mail.Address&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipientAddresses-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">getRecipientAddresses</a></span>(<a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>protected java.util.List&lt;javax.mail.Address&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getRecipientsFromExpression-java.lang.String-">getRecipientsFromExpression</a></span>(java.lang.String&nbsp;expression)</code>
-<div class="block">Must resolve to type of String or List<String>.</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../../../com/centurylink/mdw/email/ProcessEmailModel.html" title="class in com.centurylink.mdw.email">ProcessEmailModel</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#getTemplatedEmailModel--">getTemplatedEmailModel</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/notification/EmailNotificationActivity.html#sendNotices--">sendNotices</a></span>()</code>&nbsp;</td>
 </tr>
@@ -311,75 +295,31 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/Notific
 </dl>
 </li>
 </ul>
-<a name="getRecipients-java.lang.String-java.lang.String-">
+<a name="getRecipientAddresses-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getRecipients</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getRecipients(java.lang.String&nbsp;groups,
-                                             java.lang.String&nbsp;recipEmails)
-                                      throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
-                                             <a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a>,
-                                             javax.mail.internet.AddressException</pre>
-<div class="block">Default behavior returns the UNION of addresses specified by groups
- along with those specified by the recipient variable value;</div>
+<h4>getRecipientAddresses</h4>
+<pre>protected&nbsp;java.util.List&lt;javax.mail.Address&gt;&nbsp;getRecipientAddresses(<a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)
+                                                            throws javax.mail.MessagingException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/cache/CachingException.html" title="class in com.centurylink.mdw.cache">CachingException</a></code></dd>
+<dd><code>javax.mail.MessagingException</code></dd>
 </dl>
 </li>
 </ul>
-<a name="getGroupEmailAddresses-java.util.List-">
+<a name="getCcRecipientAddresses-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getGroupEmailAddresses</h4>
-<pre>protected&nbsp;javax.mail.Address[]&nbsp;getGroupEmailAddresses(java.util.List&lt;java.lang.String&gt;&nbsp;groups)
-                                               throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
-                                                      javax.mail.internet.AddressException</pre>
-<div class="block">Finds the relevant users for the specified group names</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>an array with the valid e-mail addresses</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-<dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getRecipientsFromExpression-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRecipientsFromExpression</h4>
-<pre>protected&nbsp;java.util.List&lt;javax.mail.Address&gt;&nbsp;getRecipientsFromExpression(java.lang.String&nbsp;expression)
-                                                                  throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
-                                                                         javax.mail.internet.AddressException</pre>
-<div class="block">Must resolve to type of String or List<String>.
- If a value corresponds to a group name, returns users in the group.</div>
+<h4>getCcRecipientAddresses</h4>
+<pre>protected&nbsp;java.util.List&lt;javax.mail.Address&gt;&nbsp;getCcRecipientAddresses(<a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)
+                                                              throws javax.mail.MessagingException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
-<dd><code>javax.mail.internet.AddressException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getTemplatedEmailModel--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getTemplatedEmailModel</h4>
-<pre>protected&nbsp;<a href="../../../../../../com/centurylink/mdw/email/ProcessEmailModel.html" title="class in com.centurylink.mdw.email">ProcessEmailModel</a>&nbsp;getTemplatedEmailModel()
-                                            throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
+<dd><code>javax.mail.MessagingException</code></dd>
 </dl>
 </li>
 </ul>

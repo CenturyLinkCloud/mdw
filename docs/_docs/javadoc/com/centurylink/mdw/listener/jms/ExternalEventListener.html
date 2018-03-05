@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -151,10 +151,6 @@ extends <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.htm
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>protected javax.jms.TextMessage</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/listener/jms/ExternalEventListener.html#filterMessage-javax.jms.TextMessage-">filterMessage</a></span>(javax.jms.TextMessage&nbsp;message)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected java.lang.Runnable</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/listener/jms/ExternalEventListener.html#getProcesser-javax.jms.TextMessage-">getProcesser</a></span>(javax.jms.TextMessage&nbsp;message)</code>&nbsp;</td>
 </tr>
@@ -164,7 +160,7 @@ extends <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.htm
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.listener.jms.<a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html" title="class in com.centurylink.mdw.listener.jms">JmsListener</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#getQueueName--">getQueueName</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#start--">start</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#startInThread--">startInThread</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#stop--">stop</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#filterMessage-javax.jms.TextMessage-">filterMessage</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#getQueueName--">getQueueName</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#start--">start</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#startInThread--">startInThread</a>, <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#stop--">stop</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -205,26 +201,6 @@ extends <a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.htm
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="filterMessage-javax.jms.TextMessage-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>filterMessage</h4>
-<pre>protected&nbsp;javax.jms.TextMessage&nbsp;filterMessage(javax.jms.TextMessage&nbsp;message)
-                                       throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
-                                              <a href="../../../../../com/centurylink/mdw/util/ServiceLocatorException.html" title="class in com.centurylink.mdw.util">ServiceLocatorException</a>,
-                                              javax.jms.JMSException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html#filterMessage-javax.jms.TextMessage-">filterMessage</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/listener/jms/JmsListener.html" title="class in com.centurylink.mdw.listener.jms">JmsListener</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-<dd><code><a href="../../../../../com/centurylink/mdw/util/ServiceLocatorException.html" title="class in com.centurylink.mdw.util">ServiceLocatorException</a></code></dd>
-<dd><code>javax.jms.JMSException</code></dd>
-</dl>
-</li>
-</ul>
 <a name="getProcesser-javax.jms.TextMessage-">
 <!--   -->
 </a>
