@@ -34,9 +34,9 @@
   <HYPERLINK URL="/MDWWeb/doc/taskNotices.html" SECTION="Notices">Task Notices Help</HYPERLINK>
   <NOTE SECTION="Recipients" VH="65">Overrides task workgroups for notices.</NOTE>  
   <LIST NAME="NoticeGroups" LABEL="Notice Groups" SOURCE="UserGroup" SECTION="Recipients"/>
-  <TEXT LABEL="Recipient Emails" NAME="RecipientVar" VW="410" SECTION="Recipients"/>
+  <TEXT LABEL="Recipient(s) Expression" NAME="RecipientVar" VW="410" SECTION="Recipients"/>
   <LIST NAME="CCGroups" LABEL="CC Recipient Groups" SOURCE="UserGroup" SECTION="CC Recipients"/>
-  <TEXT NAME="CCVar" LABEL="CC Recipient Emails" VW="410" SECTION="CC Recipients"/>
+  <TEXT NAME="CCVar" LABEL="CC Recipient(s) Expression" VW="410" SECTION="CC Recipients"/>
   <TEXT LABEL="Task Index Provider" NAME="IndexProvider" DEFAULT="com.centurylink.mdw.services.task.AutoFormTaskIndexProvider" SECTION="Variables"/>  
   <TABLE NAME="Variables" SECTION="Variables">
     <TEXT LABEL="Variable" DEFAULT="#{new.expression}" VW="200"/>
