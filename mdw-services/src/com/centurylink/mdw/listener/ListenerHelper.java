@@ -739,11 +739,11 @@ public class ListenerHelper {
         }
     }
 
-    public void updateDocumentContent(DocumentReference docref, Object doc, String type)
+    public void updateDocumentContent(DocumentReference docref, Object doc, String type, Package pkg)
             throws ActivityException {
         try {
             EventManager eventMgr = ServiceLocator.getEventManager();
-            eventMgr.updateDocumentContent(docref.getDocumentId(), doc, type);
+            eventMgr.updateDocumentContent(docref.getDocumentId(), doc, type, pkg);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

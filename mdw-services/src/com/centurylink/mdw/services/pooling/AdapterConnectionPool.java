@@ -35,7 +35,6 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.event.CertifiedMessageManager;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -116,11 +115,7 @@ public class AdapterConnectionPool
      * @param processCertifiedMessagesAsWell If true, schedule all blocked certified
      * messages first
      */
-    synchronized public void processWaitingRequests(boolean processCertifiedMessagesAsWell) {
-        if (processCertifiedMessagesAsWell) {
-            CertifiedMessageManager cmmgr = CertifiedMessageManager.getSingleton();
-            cmmgr.resumeConnectionPoolMessages(getName());
-        }
+    synchronized public void processWaitingRequests() {
         while (isStarted() && waitingQueue.size()>0 && super.getNumActive()<getPoolSize()) {
             WaitingConnectionRequest req = waitingQueue.remove(0);
             try {
@@ -343,7 +338,7 @@ public class AdapterConnectionPool
         } else {
             if (!disabled) {
                 start();
-                this.processWaitingRequests(true);
+                this.processWaitingRequests();
             }
         }
     }
@@ -382,7 +377,7 @@ public class AdapterConnectionPool
             try {
                 this.start();
                 logger.info("Connection pool auto re-started after successful ping: " + getName());
-                this.processWaitingRequests(true);
+                this.processWaitingRequests();
             } catch (Exception e) {    // only possible when adapter class cannot be initialized
                 logger.severeException("Failed to restart connection pool " + getName(), e);
                 setStarted(false);
@@ -404,7 +399,7 @@ public class AdapterConnectionPool
             try {
                 this.start();
                 logger.info("Connection pool restarted manually: " + getName());
-                this.processWaitingRequests(true);
+                this.processWaitingRequests();
             } catch (Exception e) {    // only possible when adapter class cannot be initialized
                 logger.severeException("Failed to restart connection pool " + getName(), e);
             }

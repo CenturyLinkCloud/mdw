@@ -163,7 +163,7 @@ public class ConnectionPoolRegistration implements StartupService, CacheService 
         }
         for (String poolname : singleton.pools.keySet()) {
             AdapterConnectionPool pool = singleton.pools.get(poolname);
-            pool.processWaitingRequests(false);
+            pool.processWaitingRequests();
         }
     }
 

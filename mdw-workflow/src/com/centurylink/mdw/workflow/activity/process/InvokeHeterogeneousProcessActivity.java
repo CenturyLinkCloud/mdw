@@ -254,7 +254,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             }
             if (v!=null && v.length()>0) {
                 if (passDocumentContent) {
-                    if (VariableTranslator.isDocumentReferenceVariable(childVar.getType())
+                    if (VariableTranslator.isDocumentReferenceVariable(getPackage(), childVar.getType())
                             && v.startsWith("DOCUMENT:")) {
                         v = super.getDocumentContent(new DocumentReference(v));
                     }
@@ -412,7 +412,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             Variable var = procdef.getVariable(varname);
             if (var!=null) {
                 Object value0;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(var.getType())) {
+                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
                     if (StringHelper.isEmpty(value)) value0 = null;
                     else if (value.startsWith("DOCUMENT:"))
                         value0 = VariableTranslator.toObject(var.getType(), value);

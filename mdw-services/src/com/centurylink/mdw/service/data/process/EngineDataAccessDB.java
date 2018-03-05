@@ -35,7 +35,6 @@ import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
-import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.user.UserAction;
@@ -1254,75 +1253,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[0] = endtime;
         args[1] = actInstId;
         db.runUpdate(query, args);
-    }
-
-    public List<CertifiedMessage> getCertifiedMessageList() throws SQLException {
-        String query = "select EVENT_NAME,DOCUMENT_ID,CREATE_DT,STATUS_CD,PRESERVE_INTERVAL,AUXDATA,REFERENCE,COMMENTS " +
-                        "from EVENT_INSTANCE " +
-                        "where STATUS_CD = ?";
-        ResultSet rs = db.runSelect(query, EventInstance.STATUS_CERTIFIED_MESSAGE);
-        List<CertifiedMessage> ret = new ArrayList<CertifiedMessage>();
-        Date now = new Date(DatabaseAccess.getCurrentTime());
-        while (rs.next()) {
-            CertifiedMessage message = new CertifiedMessage();
-            long docid = rs.getLong(2);
-            message.setDocumentId(docid==0L?null:docid);
-            message.setContent(null);
-            message.setInitiateTime(rs.getTimestamp(3));
-            message.setStatus(rs.getInt(4));
-            message.setTryCount(rs.getInt(5));
-            message.setPropertyString(rs.getString(6));
-            message.setReference(rs.getString(7));
-            if (message.getPropertyString()==null) message.setPropertyString(rs.getString(8));
-            message.setNextTryTime(now);
-            ret.add(message);
-        }
-        return ret;
-    }
-
-    public void recordCertifiedMessage(CertifiedMessage message)
-    throws SQLException {
-        createEventInstance(message.getId(), message.getDocumentId(),
-                EventInstance.STATUS_CERTIFIED_MESSAGE, null,
-                message.getPropertyString(), message.getReference(), message.getTryCount());
-    }
-
-    public void consumeCertifiedMessage(String msgid)
-    throws SQLException {
-        long now = DatabaseAccess.getCurrentTime();
-        createEventInstance(msgid, null,
-                EventInstance.STATUS_CERTIFIED_MESSAGE_RECEIVED,
-                new Date(now), null, null, 3600*24*365);
-    }
-
-    public CertifiedMessage lockCertifiedMessage(String msgid)
-    throws SQLException {
-        String query = "select EVENT_NAME,CONSUME_DT,STATUS_CD,PRESERVE_INTERVAL " +
-            "from EVENT_INSTANCE " +
-            "where EVENT_NAME = ? for update";
-        if (!db.isMySQL()) query = query + " nowait";
-        ResultSet rs = db.runSelect(query, msgid);
-        if (rs.next()) {
-            CertifiedMessage message = new CertifiedMessage();
-            message.setNextTryTime(rs.getTimestamp(2));
-            message.setStatus(rs.getInt(3));
-            message.setTryCount(rs.getInt(4));
-            return message;
-        } else return null;
-    }
-
-    public void updateCertifiedMessageStatus(String msgid, Integer status, int tryCount, Date consumeTime)
-    throws SQLException {
-        StringBuffer query = new StringBuffer();
-        query.append("update EVENT_INSTANCE set STATUS_CD=?, CONSUME_DT=?");
-        if (status.equals(EventInstance.STATUS_CERTIFIED_MESSAGE))
-            query.append(", PRESERVE_INTERVAL=").append(tryCount);    // restart count
-        query.append(" where EVENT_NAME = ?");
-        Object[] args = new Object[3];
-        args[0] = status;
-        args[1] = consumeTime;
-        args[2] = msgid;
-        db.runUpdate(query.toString(), args);
     }
 
     public int getTableRowCount(String tableName, String whereClause) throws SQLException {

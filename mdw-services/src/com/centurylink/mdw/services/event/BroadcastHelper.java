@@ -27,8 +27,6 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
-import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
 import com.centurylink.mdw.services.task.WaitingForMe;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -69,11 +67,6 @@ public class BroadcastHelper  {
                 ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
                 queue.invalidate(eventName);
             }
-        } else if (action.equals("ADAPTER_POOL_STATUS")) {
-            String poolName = json.getString("POOL_NAME");
-            String status = json.getString("STATUS");
-            AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(poolName);
-            pool.processPoolStatusBroadcast(status);
         } else throw new MdwException("Unknown ACTION");
 
     }

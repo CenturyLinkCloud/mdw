@@ -306,7 +306,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     protected void updateDocumentContent(DocumentReference docref, Object doc, String type)
             throws ActivityException {
         ListenerHelper helper = new ListenerHelper();
-        helper.updateDocumentContent(docref, doc, type);
+        helper.updateDocumentContent(docref, doc, type, getPackage());
     }
 
     /**

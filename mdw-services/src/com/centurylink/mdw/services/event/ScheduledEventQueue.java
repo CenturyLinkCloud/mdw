@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.event;
 
+import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +46,7 @@ import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.EventServices;
 import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -254,10 +256,22 @@ public class ScheduledEventQueue implements CacheService {
     }
 
     private synchronized void unschedule(String name) throws Exception {
-        EventManager eventManager = ServiceLocator.getEventManager();
-        eventManager.deleteTableRow("EVENT_INSTANCE", "EVENT_NAME", name);
+        deleteTableRow("EVENT_INSTANCE", "EVENT_NAME", name);
         removeEvent(name);
         logger.info("Unchedules event " + name);
+    }
+
+    public int deleteTableRow(String tableName, String fieldName, Object fieldValue) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            return edao.deleteTableRow(tableName, fieldName, fieldValue);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to delete " + fieldValue.toString() + " from " + tableName, e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
     }
 
     public void scheduleCronJob(String name, String cronExpression) throws Exception {

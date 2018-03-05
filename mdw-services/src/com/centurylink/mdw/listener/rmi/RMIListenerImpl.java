@@ -22,13 +22,9 @@ import java.util.Map;
 import javax.jms.JMSException;
 
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.listener.RMIListener;
-import com.centurylink.mdw.model.monitor.CertifiedMessage;
-import com.centurylink.mdw.services.EventManager;
-import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.BroadcastHelper;
 import com.centurylink.mdw.services.process.EventServices;
 import com.centurylink.mdw.services.util.AuthUtils;
@@ -85,25 +81,6 @@ public class RMIListenerImpl implements RMIListener {
                 logger.severeException("Failed to process broadcast", e);
             }
             return null;
-        } else if (meta!=null && meta.startsWith(CertifiedMessage.CERTIFIED_MESSAGE_PREFIX)) {    // certified message
-            String msgid = meta;
-            boolean consumed;
-            try {
-                EventManager eventManager = ServiceLocator.getEventManager();
-                consumed = eventManager.consumeCertifiedMessage(msgid);
-            } catch (DataAccessException e) {
-                logger.severeException("Failed to check if certified message is received", e);
-                return "ERROR: Failure in checking if certified message has been received";
-            }
-            if (consumed) {
-                if (logger.isDebugEnabled())
-                    logger.debug("RMIListener receives: " + message);
-                ListenerHelper helper = new ListenerHelper();
-                helper.processEvent(message, buildMetaInfo(meta));
-                if (logger.isDebugEnabled())
-                    logger.debug("RMIListener acknowledges: " + msgid);
-            } // else consumed previously
-            return msgid;
         } else {
             if (logger.isDebugEnabled())
                 logger.debug("RMIListener receives: " + message);
@@ -118,7 +95,6 @@ public class RMIListenerImpl implements RMIListener {
     private Map<String,String> buildMetaInfo(String meta) {
         Map<String,String> metaInfo = new HashMap<String,String>();
         metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_RMI);
-//        metaInfo.put(Listener.METAINFO_NO_PERSISTENCE, "true");
         return metaInfo;
     }
 

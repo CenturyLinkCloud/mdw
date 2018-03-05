@@ -33,30 +33,21 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventManager;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.services.pooling.AdapterConnectionPool;
-import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
-import com.centurylink.mdw.translator.SelfSerializable;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -120,19 +111,6 @@ public class FallbackEventHandler implements ExternalEventHandler {
         }
     }
 
-    private String translateJavaObjectValue(EventManager eventMgr, String varValue,
-            VariableInstance varinst, Package pkg) throws DataAccessException {
-        DocumentReference docref = (DocumentReference)varinst.getData();
-        Document docvo = eventMgr.getDocumentVO(docref.getDocumentId());
-        JavaObjectTranslator translator = new JavaObjectTranslator();
-        Object obj = translator.realToObject(docvo.getContent(pkg));
-        if (obj instanceof SelfSerializable) {
-            ((SelfSerializable)obj).fromString(varValue);
-            varValue = translator.realToString(obj);
-        }
-        return varValue;
-    }
-
     public String handleSpecialEventMessage(XmlObject msgdoc)
         throws EventHandlerException, XmlException {
         String rootNodeName = XmlPath.getRootNodeName(msgdoc);
@@ -141,59 +119,6 @@ public class FallbackEventHandler implements ExternalEventHandler {
             String propname = XmlPath.getRootNodeValue(msgdoc);
             response = PropertyManager.getProperty(propname);
             if (response==null) response = "";
-        } else if (rootNodeName.equals("_mdw_update_variable")) {
-            String varInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_inst_id");
-            String varValue = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_value");
-            String procInstId = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/proc_inst_id");
-            if (varInstId==null || varValue==null) {
-                String varName = XmlPath.evaluate(msgdoc, "/_mdw_update_variable/var_name");
-                if (varName==null || procInstId==null) {
-                    response = "ERROR: var_inst_id or var_value is null";
-                } else {
-                    try {
-                        EventManager eventMgr = ServiceLocator.getEventManager();
-                        ProcessInstance procInst = eventMgr.getProcessInstance(new Long(procInstId));
-                        VariableInstance varinst = eventMgr.getVariableInstance(procInst.getId(), varName);
-                        if (varinst != null)
-                            throw new Exception("Variable instance is already defined");
-                        Process procdef = ProcessCache.getProcess(procInst.getProcessId());
-                        Package pkg = PackageCache.getProcessPackage(procdef.getId());
-                        Variable vardef = procdef.getVariable(varName);
-                        if (vardef==null) throw new Exception("Variable is not defined for the process");
-                        if (vardef.getType().equals(Object.class.getName()))
-                            varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
-                        if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getType())) {
-                            Long docid = eventMgr.createDocument(vardef.getType(),
-                                    OwnerType.PROCESS_INSTANCE, procInst.getId(), varValue, pkg);
-                            varinst = eventMgr.setVariableInstance(procInst.getId(), varName,
-                                    new DocumentReference(docid));
-                            response = "OK:" + varinst.getInstanceId().toString() + ":" + docid.toString();
-                        } else {
-                            varinst = eventMgr.setVariableInstance(procInst.getId(), varName, varValue);
-                            response = "OK:" + varinst.getInstanceId().toString();
-                        }
-                    } catch (Exception e) {
-                        response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-                    }
-                }
-            } else {
-                try {
-                    EventManager eventMgr = ServiceLocator.getEventManager();
-                    VariableInstance varinst = eventMgr.getVariableInstance(new Long(varInstId));
-                    if (varinst==null)
-                        throw new Exception("Variable instance does not exist");
-                    if (varinst.getType().equals(Object.class.getName())) {
-                        ProcessInstance procInst = eventMgr.getProcessInstance(new Long(procInstId));
-                        Process procdef = ProcessCache.getProcess(procInst.getProcessId());
-                        Package pkg = PackageCache.getProcessPackage(procdef.getId());
-                        varValue = translateJavaObjectValue(eventMgr, varValue, varinst, pkg);
-                    }
-                    eventMgr.updateVariableInstance(varinst.getInstanceId(), varValue);
-                    response = "OK";
-                } catch (Exception e) {
-                    response = "ERROR: [" + e.getClass().getName() + "] " + e.getMessage();
-                }
-            }
         } else if (rootNodeName.equals("_mdw_version")) {
             response = ApplicationContext.getMdwVersion();
         } else if (rootNodeName.equals("_mdw_run_job")) {
@@ -231,11 +156,6 @@ public class FallbackEventHandler implements ExternalEventHandler {
             String cachename = XmlPath.getRootNodeValue(msgdoc);
             CacheRegistration.broadcastRefresh(cachename, MessengerFactory.newInternalMessenger());
 //            printServerInfo();
-            response = "OK";
-        } else if (rootNodeName.equals("_mdw_pool_ping")) {
-            String poolname = XmlPath.getRootNodeValue(msgdoc);
-            AdapterConnectionPool pool = ConnectionPoolRegistration.getPool(poolname);
-            pool.ping_and_start();
             response = "OK";
         } else if (rootNodeName.equals("_mdw_peer_server_list")) {
             List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getServerList().getHostPortList() : ApplicationContext.getRoutingServerList().getHostPortList();
