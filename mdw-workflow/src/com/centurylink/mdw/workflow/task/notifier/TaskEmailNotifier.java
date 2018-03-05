@@ -63,7 +63,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     protected String getFromAddress() {
         String fromAddress = getProperty(PropertyNames.TASK_NOTICE_EMAIL_FROM);
         if (fromAddress == null)
-            fromAddress = "mdw@centurylink.com";  // compatibility (TODO: change this)
+            fromAddress = "mdw@example.com";
         return fromAddress;
     }
 
@@ -112,7 +112,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             List<Address> recipients = getRecipientAddresses(outcome);
             List<Address> ccRecipients = getCcRecipientAddresses(outcome);
 
-            if (templatedEmail.getTemplateBody().contains("${taskActionUrl}") || templatedEmail.getTemplateBody().contains("#{taskActionUrl}")) {
+            if (templatedEmail.getTemplateBody().contains("${taskActionUrl}")) {
 
                 // send individual e-mails
                 for (Address recip : recipients) {

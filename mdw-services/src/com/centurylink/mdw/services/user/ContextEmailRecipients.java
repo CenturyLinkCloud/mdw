@@ -53,10 +53,15 @@ public class ContextEmailRecipients {
         if (expressionAttr != null) {
             String expression = context.getAttribute(expressionAttr);
             if (expression != null && !expression.isEmpty()) {
+                List<String> expressionEmails;
                 if (expression.indexOf("${") >= 0)
-                    recipients.addAll(getRecipientsFromExpression(expression));
+                    expressionEmails = getRecipientsFromExpression(expression);
                 else
-                    recipients.addAll(Arrays.asList(expression.split(",")));
+                    expressionEmails = Arrays.asList(expression.split(","));
+                for (String expressionEmail : expressionEmails) {
+                    if (!recipients.contains(expressionEmail))
+                        recipients.add(expressionEmail);
+                }
             }
         }
         return recipients;
@@ -75,11 +80,13 @@ public class ContextEmailRecipients {
 
         List<String> recips = new ArrayList<>();
         if (recip instanceof String) {
-            Workgroup group = UserGroupCache.getWorkgroup((String)recip);
-            if (group != null)
-                recips.addAll(getGroupEmails(Arrays.asList(new String[]{group.getName()})));
-            else
-                recips.add((String)recip);
+            if (!((String)recip).isEmpty()) {  // null list evaluates to empty string (why?)
+                Workgroup group = UserGroupCache.getWorkgroup((String)recip);
+                if (group != null)
+                    recips.addAll(getGroupEmails(Arrays.asList(new String[]{group.getName()})));
+                else
+                    recips.add((String)recip);
+            }
         }
         else if (recip instanceof List) {
             for (Object email : recips) {

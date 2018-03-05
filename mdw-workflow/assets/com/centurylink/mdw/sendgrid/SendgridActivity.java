@@ -48,7 +48,7 @@ public class SendgridActivity extends DefaultActivityImpl {
         Asset template = AssetCache.getAsset(spec);
         if (template == null)
             throw new ActivityException("No template asset found: " + spec);
-        
+
         try {
             send(template, context);
         }
@@ -60,8 +60,8 @@ public class SendgridActivity extends DefaultActivityImpl {
         }
         return null;
     }
-    
-    protected void send(Asset template, ActivityRuntimeContext context) 
+
+    protected void send(Asset template, ActivityRuntimeContext context)
     throws ActivityException, MdwException, IOException {
         if (template.getLanguage().equals(Asset.HTML) || template.getLanguage().equals(Asset.TEXT)) {
             String fromEmail = getAttributeValueSmart(WorkAttributeConstant.NOTICE_FROM);

@@ -54,7 +54,6 @@ public class WorkAttributeConstant  {
      public static final String NOTICE_GROUPS = "NoticeGroups";
      public static final String NOTICE_RECIP_EMAILS = "RecipientVar"; // leave attr name for backward compatibility
      public static final String CC_GROUPS = "CCGroups";
-     public static final String CC_EMAILS = "CCVar";  // leave attr name for backward compatibility
      public static final String CONTINUE_DESPITE_MESSAGING_EXCEPTION = "ContinueDespiteMessagingException";
      public static final String RECIPIENTS_EXPRESSION = "RecipientsExpression";
 

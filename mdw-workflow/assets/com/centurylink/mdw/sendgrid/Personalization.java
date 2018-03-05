@@ -24,7 +24,7 @@ public class Personalization implements Jsonable {
     private String subject;
     public String getSubject() { return subject; }
     public void setSubject(String subject) { this.subject = subject; }
-    
+
     private List<Address> to;
     public List<Address> getTo() { return to; }
     public void setTo(List<Address> to) { this.to = to; }

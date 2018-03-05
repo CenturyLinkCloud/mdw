@@ -28,10 +28,13 @@ import javax.mail.internet.InternetAddress;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.email.TemplatedEmail;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.services.user.ContextEmailRecipients;
 import com.centurylink.mdw.util.ParseException;
@@ -65,19 +68,26 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             String templateName = getAttributeValueSmart(WorkAttributeConstant.NOTICE_TEMPLATE);
             if (templateName == null)
                 throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_TEMPLATE);
+            String templateVersion = getAttributeValue(WorkAttributeConstant.NOTICE_TEMPLATE + "_assetVersion");
+            AssetVersionSpec spec = new AssetVersionSpec(templateName, templateVersion == null ? "0" : templateVersion);
+            Asset template = AssetCache.getAsset(spec);
+            if (template == null)
+                throw new ActivityException("No template asset found: " + spec);
 
             ActivityRuntimeContext context = getRuntimeContext();
             List<Address> recipAddresses = getRecipientAddresses(context);
             List<Address> ccAddresses = getCcRecipientAddresses(context);
             if (recipAddresses.isEmpty() && ccAddresses.isEmpty()) {
                 logwarn("Warning: no email recipients");
+                return;
             }
 
             if (noticeType == null || noticeType.equals("E-Mail") || noticeType.equals(WorkAttributeConstant.EMAIL_NOTICE_SMTP)) {
                 TemplatedEmail templatedEmail = new TemplatedEmail();
                 templatedEmail.setFromAddress(fromAddress);
                 templatedEmail.setSubject(subject);
-                templatedEmail.setHtml(true);
+                templatedEmail.setTemplateAssetVerSpec(spec);
+                templatedEmail.setHtml(template.getLanguage().equals(Asset.HTML));
                 templatedEmail.setAttachments(getAttachments());
                 templatedEmail.setRecipients(recipAddresses.toArray(new Address[0]));
                 templatedEmail.setCcRecipients(ccAddresses.toArray(new Address[0]));
