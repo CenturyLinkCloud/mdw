@@ -40,6 +40,8 @@ public class VcsArchiver {
     private File tempDir;
     private File tempArchiveDir;
     private VersionControl versionControl;
+    private static final String ARCHIVE = "Archive";
+    private File archiveDir;
 
     private ProgressMonitor progressMonitor;
     public ProgressMonitor getProgressMonitor() { return progressMonitor; }
@@ -115,13 +117,48 @@ public class VcsArchiver {
     public void archive() throws DataAccessException, IOException {
         archive(false);
     }
+    /**
+     * Reverses previous import from backup.
+     *
+     */
+    private void revertImport(LoaderPersisterVcs newLoader,boolean deleteBackups)throws IOException{
+        for (File prevPkg : tempPkgDirs) {
+            File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
+            if (restoreDest.exists())
+                newLoader.deletePkg(restoreDest);
+            newLoader.copyPkg(prevPkg, restoreDest);
+        }
+        if (deleteBackups) {
+            progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);
+            try {
+                newLoader.delete(tempDir);
+            }
+            catch (Throwable ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        }
 
+    }
     /**
      * Adding asset Git references to ASSET_REF table.
      * Uses 40% of progressMonitor.
      */
     public void archive(boolean deleteBackups) throws DataAccessException, IOException {
         LoaderPersisterVcs newLoader = new LoaderPersisterVcs("mdw", assetDir, versionControl, new MdwBaselineData());
+        archiveDir = new File(assetDir + "/" + ARCHIVE);
+        if (!archiveDir.exists()) {
+            if (tempPkgArchiveDirs != null && tempPkgArchiveDirs.size() > 0) {  // The Archive directory got deleted - Restore it here
+                progressMonitor.subTask("Restoring Archive assets: " + archiveDir.getAbsolutePath());
+                for (File tempPkgDir : tempPkgArchiveDirs) {
+                    File archiveDest = new File(archiveDir + "/" + tempPkgDir.getName());
+                    if (archiveDest.exists())
+                        newLoader.deletePkg(archiveDest);
+                    newLoader.copyPkg(tempPkgDir, archiveDest);
+                }
+            }
+            else if (!archiveDir.mkdirs())
+                throw new IOException("Unable to create archive directory: " + archiveDir.getAbsolutePath());
+        }
         List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
         VersionControlGit vcGit = versionControl instanceof VersionControlGit ? (VersionControlGit)versionControl : null;
         if (!"true".equals(PropertyManager.getProperty("mdw.suppress.asset.version.check"))) {
@@ -167,21 +204,7 @@ public class VcsArchiver {
             }
             if (flaggedAssets != null || conflictingAssets != null) {  // Need to restore previous pkgs and error out on asset import
                 progressMonitor.subTask("Found asset(s) version inconsistencies....restoring from backup");
-                for (File prevPkg : tempPkgDirs) {
-                    File restoreDest = new File(assetDir + "/" + prevPkg.getName().substring(0, prevPkg.getName().indexOf(" v")).replace('.', '/'));
-                    if (restoreDest.exists())
-                        newLoader.deletePkg(restoreDest);
-                    newLoader.copyPkg(prevPkg, restoreDest);
-                }
-                if (deleteBackups) {
-                    progressMonitor.subTask("Removing temp backups: " + tempDir + ", " + tempArchiveDir);
-                    try {
-                        newLoader.delete(tempDir);
-                    }
-                    catch (Throwable ex) {
-                        logger.severeException(ex.getMessage(), ex);
-                    }
-                }
+                revertImport(newLoader,deleteBackups);
                 String message = "";
                 if (flaggedAssets != null) {
                     message += "Failed -- Import would replace the following assets with older versions: \n";
@@ -200,11 +223,20 @@ public class VcsArchiver {
         if (vcGit != null) {
             progressMonitor.subTask("Adding asset Git references to ASSET_REF table");
             try (DbAccess dbAccess = new DbAccess()){
-                Checkpoint cp = new Checkpoint(assetDir, versionControl, vcGit.getCommit(), dbAccess.getConnection());
-                cp.updateRefs();
+                if(vcGit.getCommit()!=null){
+                    Checkpoint cp = new Checkpoint(assetDir, versionControl, vcGit.getCommit(), dbAccess.getConnection());
+                    cp.updateRefs();
+                }else{
+                    progressMonitor.subTask("Unable to retrieve Git information....restoring from backup");
+                    revertImport(newLoader,deleteBackups);
+                    String message="Failed -- Unable to retrieve Git information for asset packages";
+                    throw new DataAccessException(message);
+                }
+
             }
-            catch (SQLException e) {
-                throw new DataAccessException(e.getErrorCode(), e.getMessage());
+            catch (SQLException  | IOException e) {
+                revertImport(newLoader,deleteBackups);
+                throw new DataAccessException(e.getMessage());
             }
         }
         progressMonitor.progress(20);
