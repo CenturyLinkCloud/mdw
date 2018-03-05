@@ -114,11 +114,10 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
 
     public String getAdvisory()
     {
-      String state = TaskStates.getTaskStates().get(getStateCode());
-      if (!TaskState.STATE_JEOPARDY.equals(state) && !TaskState.STATE_ALERT.equals(state))
+      if (!TaskState.STATE_JEOPARDY.equals(getStateCode()) && !TaskState.STATE_ALERT.equals(getStateCode()))
           return null;
       else
-          return state;
+          return TaskStates.getTaskStates().get(getStateCode());
     }
 
     public Map<String,String> getKeyParameters() {
@@ -129,5 +128,9 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
         if (getUserIdentifier() != null)
           keyParams.put("userId", getUserIdentifier());
         return keyParams;
+    }
+
+    public String getAttribute(String name) {
+        return getTaskAttribute(name);
     }
 }

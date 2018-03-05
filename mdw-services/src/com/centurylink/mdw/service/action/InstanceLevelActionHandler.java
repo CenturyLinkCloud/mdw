@@ -242,7 +242,7 @@ public class InstanceLevelActionHandler extends ExternalEventHandlerBase {
     throws DataAccessException {
         EventManager eventMgr = ServiceLocator.getEventManager();
         String docType = requestDocType == null ? XmlObject.class.getName() : requestDocType;
-        Long docid = eventMgr.createDocument(docType, ownerType, ownerId, xmlBean.xmlText());
+        Long docid = eventMgr.createDocument(docType, ownerType, ownerId, xmlBean.xmlText(), null);
         return new DocumentReference(docid);
     }
 

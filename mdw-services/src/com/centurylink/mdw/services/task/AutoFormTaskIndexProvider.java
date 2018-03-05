@@ -22,6 +22,7 @@ import java.util.Map;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
 import com.centurylink.mdw.util.StringHelper;
 
@@ -46,7 +47,7 @@ public class AutoFormTaskIndexProvider implements TaskIndexProvider {
                     if (indexes == null)
                         indexes = new HashMap<String,String>();
                     Object value = null;
-                    if (runtimeContext.isExpression(varName))
+                    if (ProcessRuntimeContext.isExpression(varName))
                         value = runtimeContext.evaluateToString(varName);
                     else
                         value = runtimeContext.getVariables().get(varName);

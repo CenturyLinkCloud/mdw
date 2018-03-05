@@ -22,12 +22,10 @@ import java.util.Map;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
-import com.centurylink.mdw.model.monitor.CertifiedMessage;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
@@ -42,17 +40,6 @@ public interface EventManager {
     public void createAuditLog(UserAction userAction)
     throws DataAccessException, EventException;
 
-    /**
-     * @param pEventName
-     * @param pEventCategory
-     * @param pEventSubCat
-     * @param pEventSource
-     * @param pEventOwner
-     * @param pEventOwnerId
-     * @param user
-     * @param comments
-     * @return id
-     */
     public Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
         String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
     throws DataAccessException, EventException;
@@ -60,55 +47,8 @@ public interface EventManager {
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,
             String pEventOwner, Long pEventOwnerId) throws DataAccessException;
 
-
-    /**
-     * This method is helping ListenerHelper and external event handler to get
-     * a transaction scope.
-     * @param clsname
-     * @param request
-     * @param metainfo
-     * @return
-     * @throws Exception
-     */
-    public String processExternalEvent(String clsname, String request, Map<String,String> metainfo)
-    throws Exception;
-
-    ////////////////////////////////////////////
-    // notify/create process instances when receiving external events
-    // and invoke synchronous process
-    ////////////////////////////////////////////
-
-    /**
-     * Method that notifies the event wait instances based on the passed in params
-     *
-     * @param pEventName
-     * @param pEventSource
-     * @param pEventOwner
-     * @param pEventOwnerId
-     * @param pCompCode
-     * @param pParams
-     * @return Boolean Status
-     */
     public Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
     throws DataAccessException, EventException;
-
-    /**
-     * Creates the process instance
-     *
-     * @param pProcessId
-     * @param pProcessOwner
-     * @param pProcessOwnerId
-     * @param pSecondaryOwner
-     * @param pSecondaryOwnerId
-     * @return new WorkInstance
-     */
-    public ProcessInstance createProcessInstance(Long pProcessId, String pProcessOwner,
-        Long pProcessOwnerId, String pSecondaryOwner, Long pSecondaryOwnerId, String pMasterRequestId)
-    throws ProcessException, DataAccessException;
-
-    ////////////////////////////////////////////
-    // get/set variable instances and documents
-    ////////////////////////////////////////////
 
     /**
      * get variable instance by its ID
@@ -123,19 +63,6 @@ public interface EventManager {
      */
     public VariableInstance getVariableInstance(Long procInstId, String name)
     throws DataAccessException;
-
-    /**
-     * updates the variable instance.
-     * The method takes care of document variables, for which the data need to be
-     * real data.
-     * The method does not take care of embedded process, so the caller needs to pass
-     * the parent process instance id when looking for variables for embedded process
-     *
-     * @param pVarInstId
-     * @param value
-     */
-    public void updateVariableInstance(Long pVarInstId, Object value)
-    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException;
 
     /**
      * Set the variable instance value.
@@ -153,14 +80,7 @@ public interface EventManager {
     public VariableInstance setVariableInstance(Long procInstId, String name, Object value)
     throws DataAccessException;
 
-    public List<VariableInstance> getProcessInstanceVariables(Long procInstId)
-    throws DataAccessException;
-
     public Document getDocumentVO(Long documentId)
-    throws DataAccessException;
-
-    @Deprecated
-    public void updateDocumentContent(Long docid, Object doc, String type)
     throws DataAccessException;
 
     public void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
@@ -169,39 +89,21 @@ public interface EventManager {
     public void updateDocumentInfo(Long docid, String documentType, String ownerType, Long ownerId)
     throws DataAccessException;
 
-    @Deprecated
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc)
-    throws DataAccessException;
-
     public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
     throws DataAccessException;
 
-    ////////////////////////////////////////////
-    // send delay events
-    ////////////////////////////////////////////
-
     public void sendDelayEventsToWaitActivities(String masterRequestId)
     throws DataAccessException, ProcessException;
-
 
     public void retryActivity(Long activityId, Long activityInstId)
     throws DataAccessException, ProcessException;
 
     /**
-     * skip the activity by sending an activity finish event, with the given completion code.
-     * The status of the activity instance is c
-     * @param activityId
-     * @param activityInstId
-     * @param completionCode
-     * @throws DataAccessException
-     * @throws ProcessException
+     * Skip the activity by sending an activity finish event, with the given completion code.
+     * The status of the activity instance is ???
      */
     public void skipActivity(Long activityId, Long activityInstId, String completionCode)
     throws DataAccessException, ProcessException;
-
-    ////////////////////////////////////////////
-    // get process/activity/transition instances and update process instance status
-    ////////////////////////////////////////////
 
     /**
      * Returns the transition instance object by ID
@@ -247,24 +149,6 @@ public interface EventManager {
     throws ProcessException, DataAccessException;
 
     /**
-     * Returns the ProcessInstance and associated variable  identified by the passed in Id
-     *
-     * @param pProcInstId
-     * @param loadVariables
-     * @return ProcessInstance
-     */
-    public ProcessInstance getProcessInstance(Long procInstId, boolean loadVariables)
-    throws ProcessException, DataAccessException;
-
-    /**
-     * Returns Document VO
-     * @param forUpdate
-     * @throws com.centurylink.mdw.dataaccess.DataAccessException
-     */
-    public Document getDocument(DocumentReference docRef, boolean forUpdate)
-    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException;
-
-    /**
      * Returns the process instances by process name and master request ID.
      *
      * @param processName
@@ -277,14 +161,6 @@ public interface EventManager {
      */
     public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException;
-
-    ////////////////////////////////////////////
-    // find/get process definition
-    ////////////////////////////////////////////
-
-    ////
-    //// the followings are for scheduled events (timer tasks and long-delayed internal messages)
-    ////
 
     /**
      * Load all internal event and scheduled jobs before cutoff time.
@@ -309,32 +185,6 @@ public interface EventManager {
 
     public List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList);
 
-    ////
-    //// the followings are for certified messages
-    ////
-    public List<CertifiedMessage> getCertifiedMessageList()
-    throws DataAccessException;
-
-    public void recordCertifiedMessage(CertifiedMessage message)
-    throws DataAccessException;
-
-    public boolean deliverCertifiedMessage(CertifiedMessage message,
-            int ackTimeout, int maxTries, int retryInterval);
-
-    public boolean consumeCertifiedMessage(String messageId)
-    throws DataAccessException;
-
-    public void updateCertifiedMessageStatus(String msgid, Integer status)
-    throws DataAccessException;
-
-    ////
-    //// for event management GUI
-    ////
-
-    public void createEventInstance(String eventName,
-            Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds)
-    throws DataAccessException;
-
     public void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds)
     throws DataAccessException;
@@ -342,34 +192,6 @@ public interface EventManager {
     public void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds, String comments)
     throws DataAccessException;
-
-    public void createEventWaitInstance(String eventName,
-            Long actInstId,  String compCode)
-    throws DataAccessException;
-
-    public int getTableRowCount(String tableName, String whereClause)
-    throws DataAccessException;
-
-    public List<String[]> getTableRowList(String tableName, Class<?>[] types, String[] fields,
-            String whereClause, String orderby, boolean descending, int startRow, int rowCount)
-    throws DataAccessException;
-
-    public int deleteTableRow(String tableName, String fieldName, Object fieldValue)
-    throws DataAccessException;
-
-    public void createTableRow(String tableName, String[] fieldNames, Object[] fieldValues)
-    throws DataAccessException;
-
-    public int updateTableRow(String tableName, String keyName, Object keyValue,
-        String[] fieldNames, Object[] fieldValues)
-    throws DataAccessException;
-
-    //
-    // miscellaneous
-    //
-
-    public void sendInternalEvent(String message)
-    throws ProcessException;
 
     public EventInstance getEventInstance(String eventName)
     throws DataAccessException;

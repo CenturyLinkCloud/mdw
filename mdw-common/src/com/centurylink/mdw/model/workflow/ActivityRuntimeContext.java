@@ -47,6 +47,10 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         return attributes;
     }
 
+    public String getAttribute(String name) {
+        return getAttributes().get(name);
+    }
+
     public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance,
             Activity activity, ActivityInstance activityInstance) {
         super(pkg, process, processInstance);

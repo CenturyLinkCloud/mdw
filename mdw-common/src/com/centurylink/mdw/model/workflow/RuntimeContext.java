@@ -51,6 +51,9 @@ public interface RuntimeContext {
 
     public String getMdwVersion();
 
+    public Object evaluate(String expression);
     public String evaluateToString(String expression);
+
+    public String getAttribute(String name);
 
 }

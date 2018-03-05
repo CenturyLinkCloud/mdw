@@ -258,7 +258,10 @@ public class UserServicesImpl implements UserServices {
     throws DataAccessException {
       List<String> emails = new ArrayList<>();
       for (User user : getWorkgroupUsers(groups)) {
-          String email = user.getEmail();
+          User deepUser = UserGroupCache.getUser(user.getId());
+          if (deepUser == null)
+              throw new DataAccessException("User not found: " + user.getCuid());
+          String email = deepUser.getEmail();
           if (email != null) {
               if (!emails.contains(email))
                   emails.add(email);

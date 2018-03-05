@@ -108,4 +108,12 @@ public class RuntimeContextAdapter implements RuntimeContext {
     public String evaluateToString(String expression) {
         return expression;
     }
+
+    public Object evaluate(String expression) {
+        return expression;
+    }
+
+    public String getAttribute(String name) {
+        return null;
+    }
 }
