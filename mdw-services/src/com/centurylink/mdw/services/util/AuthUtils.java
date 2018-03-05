@@ -60,9 +60,9 @@ public class AuthUtils {
     public static final String AUTHORIZATION_HEADER_AUTHENTICATION = "Authorization";
     public static final String GIT_HUB_SECRET_KEY = "GitHub";
     public static final String SLACK_TOKEN = "MDW_SLACK_TOKEN";
-    public static final String OAUTH_AUTHENTICATION = "OAuth";
     public static final String MDW_APP_TOKEN = "MDW_APP_TOKEN";
     public static final String MDW_AUTH = "mdwAuth";
+    public static final String MDW_JWT_CUSTOM_KEY = "MDW_JWT_CUSTOM_KEY";
 
     private static final String APPTOKENCACHE = "com.centurylink.mdw.central.AppCache";
 
@@ -357,7 +357,7 @@ public class AuthUtils {
         if (tempVerifier == null) {
             String appToken = System.getenv(MDW_APP_TOKEN);
             if (StringHelper.isEmpty(appToken))
-                logger.severe("Exception processing incoming message using MDW Auth token - Missing System variable " + MDW_APP_TOKEN);
+                logger.severe("Exception processing incoming message using MDW Auth token - Missing System environment variable " + MDW_APP_TOKEN);
             else {
                 try {
                     maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;  // MDW default is token never expires
@@ -413,10 +413,19 @@ public class AuthUtils {
                 logger.severe(message);
                 return null;
             }
-            String key = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_KEY);
+            String key = System.getenv(MDW_JWT_CUSTOM_KEY);
             if (StringHelper.isEmpty(key)) {
-                logger.severe("Exception creating Custom JWT Verifier - Missing Property " + PropertyNames.MDW_JWT_CUSTOM_KEY);
-                return null;
+                if (!algorithmName.startsWith("HS")) {  // Only allow use of Key in MDW properties for asymmetric algorithms
+                    key = PropertyManager.getProperty(PropertyNames.MDW_JWT_CUSTOM_KEY);
+                    if (StringHelper.isEmpty(key)) {
+                        logger.severe("Exception creating Custom JWT Verifier - Missing Property " + PropertyNames.MDW_JWT_CUSTOM_KEY);
+                        return null;
+                    }
+                }
+                else {
+                    logger.severe("Exception creating Custom JWT Verifier - Missing System environment variable " + MDW_JWT_CUSTOM_KEY);
+                    return null;
+                }
             }
 
             try {
