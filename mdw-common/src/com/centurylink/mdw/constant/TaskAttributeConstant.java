@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.constant;
 
-
-
 public class TaskAttributeConstant  {
 
      public static final String PROCESS_NAME = "PROCESS_NAME";
@@ -47,7 +45,6 @@ public class TaskAttributeConstant  {
      public static final String PRIORITIZATION_RULES = "Prioritization Rules";
      public static final String SERVICE_PROCESSES = "Service Processes";
      public static final String CC_GROUPS = WorkAttributeConstant.CC_GROUPS;
-     public static final String CC_EMAILS = WorkAttributeConstant.CC_EMAILS;
      //added for Auto Assignment Rules enhancement
      public static final String AUTO_ASSIGN_RULES = "Auto Assign Rules";
      //added for TaskInstance data Save/Update

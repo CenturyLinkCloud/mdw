@@ -177,11 +177,8 @@ public class TaskInstanceNotifierFactory {
             }
             notifier = getNotifierInstance(getNotifierClassName(className), packageVO);
             if (notifier instanceof TemplatedNotifier) {
-                if (lastIndex > 0) {
-                    ((TemplatedNotifier) notifier).setTemplateSpec(new AssetVersionSpec(notifierSpec.substring(k + 1, lastIndex), notifierSpec.substring(lastIndex + 1)));
-                } else {
-                    ((TemplatedNotifier) notifier).setTemplate(notifierSpec.substring(k + 1));
-                }
+                TemplatedNotifier templatedNotifier = (TemplatedNotifier) notifier;
+                templatedNotifier.setTemplateSpec(new AssetVersionSpec(notifierSpec.substring(k + 1, lastIndex), notifierSpec.substring(lastIndex + 1)));
             }
             return notifier;
         }
@@ -192,7 +189,7 @@ public class TaskInstanceNotifierFactory {
         }
     }
 
-     public TaskNotifier getNotifierInstance(String notifierClassName, Package packageVO)
+    public TaskNotifier getNotifierInstance(String notifierClassName, Package packageVO)
     throws StrategyException {
         try {
             TaskServiceRegistry registry = TaskServiceRegistry.getInstance();
@@ -228,6 +225,4 @@ public class TaskInstanceNotifierFactory {
     private boolean isXml(String attrValue) {
         return attrValue.indexOf('<') >= 0 || attrValue.indexOf('>') >= 0;
     }
-
-
 }

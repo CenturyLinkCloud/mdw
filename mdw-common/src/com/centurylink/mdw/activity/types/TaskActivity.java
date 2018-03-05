@@ -38,7 +38,6 @@ public interface TaskActivity extends GeneralActivity {
     static final String ATTRIBUTE_NOTICE_GROUPS = TaskAttributeConstant.NOTICE_GROUPS;
     static final String ATTRIBUTE_RECIPIENT_EMAILS = TaskAttributeConstant.RECIPIENT_EMAILS;
     static final String ATTRIBUTE_CC_GROUPS = TaskAttributeConstant.CC_GROUPS;
-    static final String ATTRIBUTE_CC_EMAILS = TaskAttributeConstant.CC_EMAILS;
     static final String ATTRIBUTE_TASK_AUTOASSIGN = TaskAttributeConstant.AUTO_ASSIGN;
     static final String ATTRIBUTE_AUTO_ASSIGN_RULES = TaskAttributeConstant.AUTO_ASSIGN_RULES;
     static final String ATTRIBUTE_TASK_ROUTING = TaskAttributeConstant.ROUTING_STRATEGY;
@@ -91,7 +90,6 @@ public interface TaskActivity extends GeneralActivity {
             ATTRIBUTE_NOTICE_GROUPS,
             ATTRIBUTE_RECIPIENT_EMAILS,
             ATTRIBUTE_CC_GROUPS,
-            ATTRIBUTE_CC_EMAILS,
             ATTRIBUTE_TASK_AUTOASSIGN,
             ATTRIBUTE_AUTO_ASSIGN_RULES,
             ATTRIBUTE_TASK_ROUTING,

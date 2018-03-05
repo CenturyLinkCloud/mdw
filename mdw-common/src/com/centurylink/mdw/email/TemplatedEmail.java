@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,19 +54,18 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
+import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.util.ExpressionUtil;
 
 /**
- * Sends an e-mail based on a template stored on the file system.
- * Parameterization is performed using javabean access on the specified model object.
+ * Sends an e-mail via JavaMail/SMTP based on a template asset.
+ * Parameterization is performed through the specified RuntimeContext.
  */
 public class TemplatedEmail {
 
@@ -168,17 +166,9 @@ public class TemplatedEmail {
     public void addImage(String id, String file) { images.put(id, file); }
     public void removeImage(String id) { images.remove(id); }
 
-    private String templateName;
-    public String getTemplateName() { return templateName; }
-    public void setTemplateName(String templateFile) { this.templateName = templateFile; }
-
     private AssetVersionSpec templateAssetVerSpec;
     public AssetVersionSpec getTemplateAssetVerSpec() { return templateAssetVerSpec; }
     public void setTemplateAssetVerSpec(AssetVersionSpec templateAssetVerSpec) { this.templateAssetVerSpec = templateAssetVerSpec; }
-
-    private Model model;
-    public Model getModel() { return model; }
-    public void setModel(Model model) { this.model = model; }
 
     private Map<String,File> attachments = new HashMap<String,File>();
     public Map<String,File> getAttachments() { return attachments; }
@@ -186,14 +176,14 @@ public class TemplatedEmail {
     public void addAttachment(String name, File file) { attachments.put(name, file); }
     public void removeAttachment(String name) { attachments.remove(name); }
 
-    private ProcessRuntimeContext runtimeContext;
-
-    public ProcessRuntimeContext getRuntimeContext() {
+    private RuntimeContext runtimeContext;
+    public RuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
-    public void setRuntimeContext(ProcessRuntimeContext runtimeContext) {
+    public void setRuntimeContext(RuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
     }
+
     public Session getSession() throws MessagingException {
         Properties props = new Properties();
         props.put("mail.transport.protocol", getProtocol());
@@ -225,39 +215,11 @@ public class TemplatedEmail {
 
     private MessagingException messagingException;
 
+    /**
+     * Sends an email based on the substituted template.
+     */
     public void sendEmail() throws MessagingException {
         sendEmail((String)null);
-    }
-
-    public void sendEmail(JSONObject json) throws MessagingException, JSONException {
-        setFromAddress(json.getString("FROM"));
-        setSubject(json.getString("SUBJECT"));
-        setHtml(json.getBoolean("ISHTML"));
-        if (json.has("IMAGES")) {
-            JSONObject jsonImages = json.getJSONObject("IMAGES");
-            for (Iterator<?> iter = jsonImages.keys(); iter.hasNext(); ) {
-                String imageId = (String) iter.next();
-                images.put(imageId, jsonImages.getString(imageId));
-            }
-        }
-        if (json.has("RECIPIENTS")) {
-            JSONArray jsonArray = json.getJSONArray("RECIPIENTS");
-            Address[] addresses = new Address[jsonArray.length()];
-            for (int i = 0; i < addresses.length; i++) {
-                addresses[i] = new InternetAddress(jsonArray.getString(i));
-            }
-            setRecipients(addresses);
-        }
-        if (json.has("CC")) {
-            JSONArray jsonArray = json.getJSONArray("CC");
-            Address[] addresses = new Address[jsonArray.length()];
-            for (int i = 0; i < addresses.length; i++) {
-                addresses[i] = new InternetAddress(jsonArray.getString(i));
-            }
-            setCcRecipients(addresses);
-        }
-
-        sendEmail(json.getString("CONTENT"));
     }
 
     public void sendEmail(String messageBody) throws MessagingException {
@@ -431,22 +393,15 @@ public class TemplatedEmail {
 
 
     public Asset getTemplate() throws MessagingException {
-        if (templateName == null) {
-            if (templateAssetVerSpec != null && templateAssetVerSpec.getName() != null) {
-                Asset template = AssetCache.getAsset(templateAssetVerSpec);
-                if (template != null)
-                    return template;
-                else
-                    throw new MessagingException("Unable to load e-mail template: " + templateAssetVerSpec);
-            } else {
-                throw new MessagingException("No template specified for e-mail message: " + getSubject());
-            }
+        if (templateAssetVerSpec != null && templateAssetVerSpec.getName() != null) {
+            Asset template = AssetCache.getAsset(templateAssetVerSpec);
+            if (template != null)
+                return template;
+            else
+                throw new MessagingException("Unable to load e-mail template: " + templateAssetVerSpec);
         }
-        try {
-            return AssetCache.getAsset(templateName);
-        }
-        catch (CachingException ex) {
-            throw new MessagingException(ex.getMessage(), ex);
+        else {
+            throw new MessagingException("No template specified for e-mail message: " + getSubject());
         }
     }
 
@@ -459,20 +414,14 @@ public class TemplatedEmail {
         Asset template = getTemplate();
         String body = template.getStringContent();
         body = substitute(body); // calling just to populate images
-        ProcessRuntimeContext runTime = this.getRuntimeContext();
-        if (runTime != null) {
-            body = runTime.evaluateToString(body);
+        if (runtimeContext != null) {
+            body = runtimeContext.evaluateToString(body);
         }
         return body;
     }
 
     protected String substitute(String input) throws MessagingException {
-        try {
-            return ExpressionUtil.substitute(input, model, images, true);
-        }
-        catch (MdwException ex) {
-            throw new MessagingException(ex.getMessage(), ex);
-        }
+        return ExpressionUtil.substituteImages(input, images);
     }
 
     private String getFilePath(URL url) throws MessagingException {
@@ -489,10 +438,5 @@ public class TemplatedEmail {
 
         return file.getAbsolutePath();
     }
-
-    public interface Model {
-        public Map<String,String> getKeyParameters();
-    }
-
 
 }

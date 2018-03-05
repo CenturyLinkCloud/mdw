@@ -38,23 +38,25 @@ public class ContextEmailRecipients {
      * Default behavior returns the UNION of addresses specified via the expression attribute
      * along with those specified by the designated workgroups attribute.
      */
-    public List<String> getRecipients(String expressionAttr, String workgroupsAttr)
+    public List<String> getRecipients(String workgroupsAttr, String expressionAttr)
     throws DataAccessException, ParseException {
         List<String> recipients = new ArrayList<>();
-        String expression = context.getAttribute(expressionAttr);
-        if (!StringHelper.isEmpty(expression)) {
-            if (expression.indexOf("${") >= 0)
-                recipients.addAll(getRecipientsFromExpression(expression));
-            else
-                recipients.addAll(Arrays.asList(expression.split(",")));
-        }
         if (workgroupsAttr != null) {
             String workgroups = context.getAttribute(workgroupsAttr);
-            if (workgroups != null) {
+            if (workgroups != null && !workgroups.isEmpty()) {
                 for (String groupEmail : getGroupEmails(StringHelper.parseList(workgroups))) {
                     if (!recipients.contains(groupEmail))
                         recipients.add(groupEmail);
                 }
+            }
+        }
+        if (expressionAttr != null) {
+            String expression = context.getAttribute(expressionAttr);
+            if (expression != null && !expression.isEmpty()) {
+                if (expression.indexOf("${") >= 0)
+                    recipients.addAll(getRecipientsFromExpression(expression));
+                else
+                    recipients.addAll(Arrays.asList(expression.split(",")));
             }
         }
         return recipients;
@@ -64,7 +66,7 @@ public class ContextEmailRecipients {
      * Must resolve to type of String or List<String>.
      * If a value corresponds to a group name, returns users in the group.
      */
-    protected List<String> getRecipientsFromExpression(String expression)
+    public List<String> getRecipientsFromExpression(String expression)
     throws DataAccessException, ParseException {
         Object recip = context.evaluate(expression);
         if (recip == null) {
@@ -100,7 +102,7 @@ public class ContextEmailRecipients {
         return recips;
     }
 
-    protected List<String> getGroupEmails(List<String> groups) throws DataAccessException {
+    public List<String> getGroupEmails(List<String> groups) throws DataAccessException {
         return ServiceLocator.getUserServices().getWorkgroupEmails(groups);
     }
 }

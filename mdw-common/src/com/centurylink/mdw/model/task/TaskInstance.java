@@ -456,13 +456,13 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
 
     // this is only used for templated e-mail notifications with one-click functionality
     // to identify the recipient for tracking who performed the one-click action on a task instance
-    private String userIdentifier;
+    private String messageIdentifier;
     @ApiModelProperty(hidden=true)
     public String getUserIdentifier() {
-        return userIdentifier;
+        return messageIdentifier;
     }
     public void setUserIdentifier(String userIdentifier) {
-        this.userIdentifier = userIdentifier;
+        this.messageIdentifier = userIdentifier;
     }
 
     // currently only used for templated e-mail notifications
