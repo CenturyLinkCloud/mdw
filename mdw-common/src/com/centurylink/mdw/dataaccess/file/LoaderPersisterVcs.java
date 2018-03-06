@@ -90,7 +90,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     private VersionControl versionControl;
     public VersionControl getVersionControl() throws DataAccessException {
         if (pkgDirs == null)  // Can happen while refreshing PackageCache, which clears the maps in versionControlGit
-                getPackageDirs();  // Once pkgDirs is set again, versionControlGit is ready to use
+            getPackageDirs();  // Once pkgDirs is set again, versionControlGit is ready to use
 
         return versionControl;
     }
@@ -226,7 +226,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 pkgDirFiles.add(pkgDirFile);
         }
         for (File subDir : parentDir.listFiles(subDirFilter)) {
-            if (includeArchive || !subDir.equals(archiveDir))
+            if (!excludes.contains(subDir) && (includeArchive || !subDir.equals(archiveDir)))
                 pkgDirFiles.addAll(getPkgDirFiles(subDir, excludes));
         }
         return pkgDirFiles;
