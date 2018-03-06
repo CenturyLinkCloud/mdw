@@ -94,7 +94,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
         cuid: '', 
         name: '',
         // blank default attributes force empty fields to display
-        attributes: { 'Email Address': '', 'Phone Number': '' }
+        attributes: { 'Email': '', 'Phone': '' }
     };
   };
   

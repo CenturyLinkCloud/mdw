@@ -4,7 +4,7 @@
       "name": "MDW Application",
       "id": "mdwapp",
       "attributes": {
-        "emailAddress": "mdwapp@centurylink.com"
+        "Email": "mdwapp@centurylink.com"
       },      
       "groups": [
         "Developers",
@@ -21,7 +21,7 @@
       "name": "Donald Oakes",
       "id": "dxoakes",
       "attributes": {
-        "emailAddress": "donald.oakes@centurylink.com"
+        "Email": "donald.oakes@centurylink.com"
       },      
       "groups": [
         "Developers",
@@ -38,7 +38,7 @@
       "name": "Manoj Agrawal",
       "id": "aa56486",
       "attributes": {
-        "emailAddress": "manoj.agrawal@centurylink.com"
+        "Email": "manoj.agrawal@centurylink.com"
       },      
       "groups": [
         "Developers",
@@ -55,7 +55,7 @@
       "name": "Jack Brojde",
       "id": "jbrojde",
       "attributes": {
-        "emailAddress": "jack.brojde@centurylink.com"
+        "Email": "jack.brojde@centurylink.com"
       },      
       "groups": [
         "Developers",

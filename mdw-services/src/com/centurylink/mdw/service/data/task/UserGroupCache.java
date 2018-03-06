@@ -313,10 +313,10 @@ public class UserGroupCache implements PreloadableCache {
             users = dataAccess.queryUsers("END_DATE is null", false, -1, -1, "NAME");
 
             userAttributeNames = dataAccess.getUserAttributeNames();
-            if (!userAttributeNames.contains(User.EMAIL_ADDRESS) && !getUserAttributeNames().contains(User.OLD_EMAIL_ADDRESS))
-                userAttributeNames.add(User.EMAIL_ADDRESS);
-            if (!userAttributeNames.contains(User.PHONE_NUMBER) && !getUserAttributeNames().contains(User.OLD_PHONE_NUMBER))
-                userAttributeNames.add(User.PHONE_NUMBER);
+            if (!userAttributeNames.contains(User.EMAIL) && !getUserAttributeNames().contains(User.OLD_EMAIL))
+                userAttributeNames.add(User.EMAIL);
+            if (!userAttributeNames.contains(User.PHONE) && !getUserAttributeNames().contains(User.OLD_PHONE))
+                userAttributeNames.add(User.PHONE);
 
             workgroupAttributeNames = dataAccess.getGroupAttributeNames();
             if (!workgroupAttributeNames.contains(Workgroup.SLACK_CHANNELS))

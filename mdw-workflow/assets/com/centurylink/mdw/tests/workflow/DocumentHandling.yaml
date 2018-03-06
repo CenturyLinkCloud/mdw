@@ -38,9 +38,8 @@ process: # 10158
       cuid: dxoakes,
       firstName: Donald,
       lastName: Oakes,
-      emailAddress: null,
-      phoneNumber: null,
-      notificationPrefrence: null,
+      email: null,
+      phone: null,
       allowable actions:
       workgroups
   variable: # 10470
@@ -101,9 +100,8 @@ process: # 10158
       cuid: dxoakes,
       firstName: Donald,
       lastName: Oakes,
-      emailAddress: null,
-      phoneNumber: null,
-      notificationPrefrence: null,
+      email: null,
+      phone: null,
       allowable actions:
       workgroups
   variable: # 10471
@@ -184,9 +182,8 @@ process: # 10157
       cuid: sidhug,
       firstName: Gary,
       lastName: Sidhu,
-      emailAddress: null,
-      phoneNumber: null,
-      notificationPrefrence: null,
+      email: null,
+      phone: null,
       allowable actions:
       workgroups
   variable: # 10454
@@ -255,9 +252,8 @@ process: # 10157
       cuid: dxoakes,
       firstName: Donald,
       lastName: Oakes,
-      emailAddress: null,
-      phoneNumber: null,
-      notificationPrefrence: null,
+      email: null,
+      phone: null,
       allowable actions:
       workgroups
   variable: # 10455

@@ -3,6 +3,6 @@
   "cuid": "newuser",
   "name": "A New User",
   "attributes": {
-    "Email Address": "anewuser@centurylink.com",
+    "Email": "anewuser@centurylink.com",
   }
 }

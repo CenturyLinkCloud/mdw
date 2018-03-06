@@ -45,7 +45,7 @@ called seed_users.json located in the config directory specified by system prope
       "name": "Joe Dev",
       "id": "jdev",
       "attributes": {
-        "emailAddress": "jdev@example.com"
+        "Email": "jdev@example.com"
       },      
       "groups": [
         "Developers",

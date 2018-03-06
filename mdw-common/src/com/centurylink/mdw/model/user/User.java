@@ -35,12 +35,14 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="User", description="MDW user")
 public class User implements Serializable, Comparable<User>, Jsonable {
 
-    // new friendly attribute names that can be displayed as labels
-    public static final String EMAIL_ADDRESS = "Email Address";
-    public static final String PHONE_NUMBER = "Phone Number";
+    // attribute names are displayed as labels
+    public static final String EMAIL = "Email";
+    public static final String PHONE = "Phone";
     // old unfriendly attribute names for compatibility
-    public static final String OLD_EMAIL_ADDRESS = "emailAddress";
-    public static final String OLD_PHONE_NUMBER = "phoneNumber";
+    @Deprecated
+    public static final String OLD_EMAIL = "Email Address";
+    @Deprecated
+    public static final String OLD_PHONE = "Phone Number";
 
     public User() {
     }
@@ -365,24 +367,24 @@ public class User implements Serializable, Comparable<User>, Jsonable {
 
     @ApiModelProperty(hidden=true)
     public String getEmail() {
-        String email = getAttribute(EMAIL_ADDRESS);
+        String email = getAttribute(EMAIL);
         if (email == null)
-            email = getAttribute(OLD_EMAIL_ADDRESS);
+            email = getAttribute(OLD_EMAIL);
         return email;
     }
     public void setEmail(String s) {
-        setAttribute(EMAIL_ADDRESS, s);
+        setAttribute(EMAIL, s);
     }
 
     @ApiModelProperty(hidden=true)
     public String getPhone() {
-        String phone = getAttribute(PHONE_NUMBER);
+        String phone = getAttribute(PHONE);
         if (phone == null)
-            phone = getAttribute(OLD_PHONE_NUMBER);
+            phone = getAttribute(OLD_PHONE);
         return phone;
     }
     public void setPhone(String s) {
-        setAttribute(PHONE_NUMBER, s);
+        setAttribute(PHONE, s);
     }
 
     /**

@@ -277,7 +277,7 @@ title: MDW Configuration
           "name": "MDW Application",
           "id": "mdwapp",
           "attributes": {
-            "emailAddress": "mdwapp@centurylink.com"
+            "Email": "mdwapp@centurylink.com"
           },      
           "groups": [
             "Developers",

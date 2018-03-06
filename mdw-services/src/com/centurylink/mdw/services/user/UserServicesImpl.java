@@ -105,15 +105,15 @@ public class UserServicesImpl implements UserServices {
                 if (!user.getAttributes().containsKey(name))
                     user.setAttribute(name, null);
                 // substitute friendly attribute names
-                if (user.getAttributes().containsKey(User.OLD_EMAIL_ADDRESS)) {
-                    String oldEmail = user.getAttributes().remove(User.OLD_EMAIL_ADDRESS);
-                    if (user.getAttribute(User.EMAIL_ADDRESS) == null)
-                        user.setAttribute(User.EMAIL_ADDRESS, oldEmail);
+                if (user.getAttributes().containsKey(User.OLD_EMAIL)) {
+                    String oldEmail = user.getAttributes().remove(User.OLD_EMAIL);
+                    if (user.getAttribute(User.EMAIL) == null)
+                        user.setAttribute(User.EMAIL, oldEmail);
                 }
-                if (user.getAttributes().containsKey(User.OLD_PHONE_NUMBER)) {
-                    String oldPhone = user.getAttributes().remove(User.OLD_PHONE_NUMBER);
-                    if (user.getAttribute(User.PHONE_NUMBER) == null)
-                        user.setAttribute(User.PHONE_NUMBER, oldPhone);
+                if (user.getAttributes().containsKey(User.OLD_PHONE)) {
+                    String oldPhone = user.getAttributes().remove(User.OLD_PHONE);
+                    if (user.getAttribute(User.PHONE) == null)
+                        user.setAttribute(User.PHONE, oldPhone);
                 }
             }
             return user;

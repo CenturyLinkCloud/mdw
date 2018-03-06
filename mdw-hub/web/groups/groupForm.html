@@ -25,11 +25,8 @@
     <label class="control-label col-xs-2" for="{{attrName}}">{{attrName}}:</label>
     <div class="col-xs-10">
       <input type="text" ng-attr-id="{{attrName}}" ng-attr-name="{{attrName}}" class="form-control" ng-model="workgroup.attributes[attrName]">
+      <button class="btn btn-danger mdw-btn" style="float:right;margin-top:3px;" type="button" ng-if="advance && authUser.hasRole('Site Admin') && attrName !== 'Slack Channel(s)'" ng-click="del(attrName)">Delete</button>
     </div>
-   <div class="col-xs-10 mdw-buttons" for="deleteAttr" ng-if="authUser.hasRole('Site Admin') && attrName.indexOf('Slack Channel') < 0">
-      <button 
-        class="btn btn-danger mdw-btn" id="deleteAttr" type="button" ng-click="del(attrName)">Delete</button>
-   </div>
   </div>
   
   <div ng-if="edit && advance" ng-include="'groups/groupAttributes.html'"></div>

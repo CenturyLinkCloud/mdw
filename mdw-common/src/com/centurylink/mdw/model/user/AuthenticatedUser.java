@@ -57,28 +57,10 @@ public class AuthenticatedUser extends User implements SelfSerializable {
         setAttributes(new HashMap<String, String>());
     }
 
-    public String getNotificationPreference() {
-        return getAttribute(NOTIFICATION_PREF);
-    }
-
-    public void setNotificationPreference(String s) {
-        setAttribute(NOTIFICATION_PREF, s);
-    }
-
-    public static String NOTIFICATION_OPTION_EMAIL = "E-Mail";
-    public static String NOTIFICATION_OPTION_PHONE = "Phone";
-    public static String NOTIFICATION_OPTION_TEXT_MESSAGE = "Text Message";
-    public static String NOTIFICATION_OPTION_POSTAL_MAIL = "Postal Mail";
-    public static String[] NOTIFICATION_OPTIONS = { NOTIFICATION_OPTION_EMAIL,
-            NOTIFICATION_OPTION_PHONE, NOTIFICATION_OPTION_TEXT_MESSAGE,
-            NOTIFICATION_OPTION_POSTAL_MAIL };
-
     public boolean emailOptIn;
-
     public boolean isEmailOptIn() {
         return emailOptIn;
     }
-
     public void setEmailOptIn(boolean optIn) {
         this.emailOptIn = optIn;
     }
@@ -176,9 +158,8 @@ public class AuthenticatedUser extends User implements SelfSerializable {
 
     public String toString() {
         String ret = "cuid: " + getCuid() + ",\n" + "firstName: " + getFirstName() + ",\n"
-                + "lastName: " + getLastName() + ",\n" + "emailAddress: " + getEmail() + ",\n"
-                + "phoneNumber: " + getPhone() + ",\n" + "notificationPrefrence: "
-                + getNotificationPreference() + ",\n";
+                + "lastName: " + getLastName() + ",\n" + "email: " + getEmail() + ",\n"
+                + "phone: " + getPhone() + ",\n";
 
         ret += "allowable actions:\n";
         if (_allowableActions != null) {
