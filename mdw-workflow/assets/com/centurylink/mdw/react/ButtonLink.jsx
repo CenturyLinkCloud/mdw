@@ -1,5 +1,5 @@
 import React from '../node/node_modules/react';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Glyphicon} from '../node/node_modules/react-bootstrap';
 import {Link} from '../node/node_modules/react-router-dom';
 
 function ButtonLink({linkTo, glyph, ...props}) {
