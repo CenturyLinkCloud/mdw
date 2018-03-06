@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -148,26 +148,6 @@ implements <a href="../../../../../com/centurylink/mdw/translator/SelfSerializab
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#NOTIFICATION_OPTION_EMAIL">NOTIFICATION_OPTION_EMAIL</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#NOTIFICATION_OPTION_PHONE">NOTIFICATION_OPTION_PHONE</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#NOTIFICATION_OPTION_POSTAL_MAIL">NOTIFICATION_OPTION_POSTAL_MAIL</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#NOTIFICATION_OPTION_TEXT_MESSAGE">NOTIFICATION_OPTION_TEXT_MESSAGE</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#NOTIFICATION_OPTIONS">NOTIFICATION_OPTIONS</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#NOTIFICATION_PREF">NOTIFICATION_PREF</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -176,7 +156,7 @@ implements <a href="../../../../../com/centurylink/mdw/translator/SelfSerializab
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.centurylink.mdw.model.user.<a href="../../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/model/user/User.html#EMAIL_ADDRESS">EMAIL_ADDRESS</a>, <a href="../../../../../com/centurylink/mdw/model/user/User.html#OLD_EMAIL_ADDRESS">OLD_EMAIL_ADDRESS</a>, <a href="../../../../../com/centurylink/mdw/model/user/User.html#OLD_PHONE_NUMBER">OLD_PHONE_NUMBER</a>, <a href="../../../../../com/centurylink/mdw/model/user/User.html#PHONE_NUMBER">PHONE_NUMBER</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/model/user/User.html#EMAIL">EMAIL</a>, <a href="../../../../../com/centurylink/mdw/model/user/User.html#OLD_EMAIL">OLD_EMAIL</a>, <a href="../../../../../com/centurylink/mdw/model/user/User.html#OLD_PHONE">OLD_PHONE</a>, <a href="../../../../../com/centurylink/mdw/model/user/User.html#PHONE">PHONE</a></code></li>
 </ul>
 </li>
 </ul>
@@ -248,86 +228,78 @@ implements <a href="../../../../../com/centurylink/mdw/translator/SelfSerializab
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#getLastName--">getLastName</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#getNotificationPreference--">getNotificationPreference</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.Map</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#getRoles--">getRoles</a></span>()</code>
 <div class="block">Convenience method for checking user roles in expression language
  statements.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#getUserId--">getUserId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#getWorkgroupNames--">getWorkgroupNames</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#getWorkgroupsAsString--">getWorkgroupsAsString</a></span>()</code>
 <div class="block">Returns a string concatenation of the user's workgroups.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isEmailOptIn--">isEmailOptIn</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isHasWorkgroups--">isHasWorkgroups</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isHasWorkgroupsOtherThanCommon--">isHasWorkgroupsOtherThanCommon</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isInGroup-java.lang.String-">isInGroup</a></span>(java.lang.String&nbsp;group)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isInRole-java.lang.String-java.lang.String-">isInRole</a></span>(java.lang.String&nbsp;group,
         java.lang.String&nbsp;role)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isInRoleForAnyGroup-java.lang.String-">isInRoleForAnyGroup</a></span>(java.lang.String&nbsp;role)</code>
 <div class="block">Whether the user belongs to the specified MDW role.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isLoaded--">isLoaded</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#isUserBelongsToAdminGrp--">isUserBelongsToAdminGrp</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#setAllowableActions-com.centurylink.mdw.model.task.TaskAction:A-">setAllowableActions</a></span>(<a href="../../../../../com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a>[]&nbsp;actions)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#setEmailOptIn-boolean-">setEmailOptIn</a></span>(boolean&nbsp;optIn)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#setFirstName-java.lang.String-">setFirstName</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#setLastName-java.lang.String-">setLastName</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#setNotificationPreference-java.lang.String-">setNotificationPreference</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
-</tr>
-<tr id="i24" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/AuthenticatedUser.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -385,51 +357,6 @@ implements <a href="../../../../../com/centurylink/mdw/translator/SelfSerializab
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.AuthenticatedUser.NOTIFICATION_PREF">Constant Field Values</a></dd>
 </dl>
-</li>
-</ul>
-<a name="NOTIFICATION_OPTION_EMAIL">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>NOTIFICATION_OPTION_EMAIL</h4>
-<pre>public static&nbsp;java.lang.String NOTIFICATION_OPTION_EMAIL</pre>
-</li>
-</ul>
-<a name="NOTIFICATION_OPTION_PHONE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>NOTIFICATION_OPTION_PHONE</h4>
-<pre>public static&nbsp;java.lang.String NOTIFICATION_OPTION_PHONE</pre>
-</li>
-</ul>
-<a name="NOTIFICATION_OPTION_TEXT_MESSAGE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>NOTIFICATION_OPTION_TEXT_MESSAGE</h4>
-<pre>public static&nbsp;java.lang.String NOTIFICATION_OPTION_TEXT_MESSAGE</pre>
-</li>
-</ul>
-<a name="NOTIFICATION_OPTION_POSTAL_MAIL">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>NOTIFICATION_OPTION_POSTAL_MAIL</h4>
-<pre>public static&nbsp;java.lang.String NOTIFICATION_OPTION_POSTAL_MAIL</pre>
-</li>
-</ul>
-<a name="NOTIFICATION_OPTIONS">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>NOTIFICATION_OPTIONS</h4>
-<pre>public static&nbsp;java.lang.String[] NOTIFICATION_OPTIONS</pre>
 </li>
 </ul>
 <a name="emailOptIn">
@@ -502,24 +429,6 @@ implements <a href="../../../../../com/centurylink/mdw/translator/SelfSerializab
 <li class="blockList">
 <h4>getUserId</h4>
 <pre>public&nbsp;long&nbsp;getUserId()</pre>
-</li>
-</ul>
-<a name="getNotificationPreference--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNotificationPreference</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getNotificationPreference()</pre>
-</li>
-</ul>
-<a name="setNotificationPreference-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setNotificationPreference</h4>
-<pre>public&nbsp;void&nbsp;setNotificationPreference(java.lang.String&nbsp;s)</pre>
 </li>
 </ul>
 <a name="isEmailOptIn--">
