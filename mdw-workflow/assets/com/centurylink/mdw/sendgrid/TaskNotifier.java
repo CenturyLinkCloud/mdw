@@ -39,10 +39,10 @@ import com.centurylink.mdw.util.log.StandardLogger;
 public class TaskNotifier extends TemplatedNotifier {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    
+
     private TaskRuntimeContext context;
     private Asset template;
-    
+
     @Override
     public void sendNotice(TaskRuntimeContext context, String taskAction, String outcome)
             throws ObserverException {
@@ -55,10 +55,10 @@ public class TaskNotifier extends TemplatedNotifier {
         this.template = AssetCache.getAsset(getTemplateSpec());
         if (template == null)
             throw new ObserverException("Template asset not found: " + getTemplateSpec());
-        
+
         try {
             if (template.getLanguage().equals(Asset.HTML) || template.getLanguage().equals(Asset.TEXT)) {
-                
+
                 List<String> recipients = getRecipients(outcome);
                 List<String> ccRecipients = getCcRecipients(outcome);
                 if (recipients.isEmpty() && ccRecipients.isEmpty()) {
@@ -66,7 +66,7 @@ public class TaskNotifier extends TemplatedNotifier {
                 }
                 else {
                     Email email = new EmailBuilder(template, context)
-                            .from(getProperty(PropertyNames.TASK_NOTICE_EMAIL_FROM))
+                            .from(getFrom())
                             .subject(getSubject(outcome))
                             .to(recipients.toArray(new String[0]))
                             .cc(ccRecipients.toArray(new String[0]))
@@ -85,15 +85,22 @@ public class TaskNotifier extends TemplatedNotifier {
         catch (IOException ex) {
             throw new ObserverException("SendGrid error for task: " + context.getTaskInstanceId(), ex);
         }
-        
+
     }
-    
+
     protected String getProperty(String name) {
         return PackageCache.getAssetPackage(template.getId()).getProperty(name);
     }
-    
+
     protected String getSubject(String action) {
         return context.getTaskName();
+    }
+
+    protected String getFrom() {
+        String from = getProperty(PropertyNames.TASK_NOTICE_EMAIL_FROM);
+        if (from == null)
+            from = "mdw@example.com";
+        return from;
     }
 
     /**
@@ -130,7 +137,7 @@ public class TaskNotifier extends TemplatedNotifier {
             }
         }
     }
-    
+
     protected List<String> getCcRecipients(String outcome) throws ObserverException {
         if ("Assigned".equals(outcome)) {
             // send e-mail only to assignee
