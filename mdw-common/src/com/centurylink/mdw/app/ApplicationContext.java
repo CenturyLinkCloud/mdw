@@ -556,6 +556,10 @@ public class ApplicationContext {
         return "dev".equalsIgnoreCase(getRuntimeEnvironment());
     }
 
+    public static boolean isLocalhost() {
+        return "localhost".equals(getServerHost());
+    }
+
     private static String devUser;
     /**
      * Can only be set once (by AccessFilter) at deploy time.

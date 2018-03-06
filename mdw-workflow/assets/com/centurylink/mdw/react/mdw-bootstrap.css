@@ -1,6 +1,9 @@
 /**
-* Overrides certain bootstrap styles.
-*/
+ * Styles used by mdw components.
+ */
+/**
+ * Override certain bootstrap styles.
+ */
 @media (min-width: 1440px) {
   .container {
     width: 1280px;
