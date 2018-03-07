@@ -103,12 +103,16 @@ public class SpringBootApplication {
                     FileHelper.deleteRecursive(bootDir);
                 if (!bootDir.mkdirs())
                     throw new StartupException("Cannot create boot dir: " + bootDir.getAbsolutePath());
-
-                File bootJar = new File(new URI(mainLoc.substring(0, mainLoc.indexOf('!'))));
-                if (!bootJar.exists())
-                    throw new StartupException("No Spring Boot jar: " + mainLoc);
-                System.out.println("Spring Boot Jar => " + bootJar.getAbsolutePath());
-                ZipHelper.unzip(bootJar, bootDir);
+                File bootJar = null;
+                if (mainLoc.indexOf('!') > 0) {
+                    bootJar = new File(new URI(mainLoc.substring(0, mainLoc.indexOf('!'))));
+                    if (!bootJar.exists())
+                        throw new StartupException("No Spring Boot jar: " + mainLoc);
+                    System.out.println("Spring Boot Jar => " + bootJar.getAbsolutePath());
+                    ZipHelper.unzip(bootJar, bootDir);
+                }
+                else  // PCF deployment explodes the JAR already
+                    bootDir = new File(mainLoc.substring(0, mainLoc.indexOf("BOOT-INF")));
             }
             catch (IOException ex) {
                 throw new StartupException(ex.getMessage(), ex);
