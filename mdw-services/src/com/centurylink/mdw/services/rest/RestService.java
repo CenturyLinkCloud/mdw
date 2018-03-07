@@ -25,16 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
@@ -75,57 +72,29 @@ public abstract class RestService {
      *
      * @return authorized user if successful
      */
-    protected User authorize(String path, JSONObject content, Map<String,String> headers) throws AuthorizationException {
+    protected User authorize(String path, JSONObject content, Map<String,String> headers)
+    throws AuthorizationException {
         User user = null;
         String userId = headers.get(Listener.AUTHENTICATED_USER_HEADER);
         String method = headers.get(Listener.METAINFO_HTTP_METHOD);
-        try {
-            if (userId != null)
-                user = UserGroupCache.getUser(userId);
+        if (userId != null)
+            user = UserGroupCache.getUser(userId);
 
-            List<String> roles = getRoles(path, method);
-            if (roles != null && !roles.isEmpty()) {
-                if (user == null) {
-                    throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Service "
-                            + getClass().getSimpleName() + " requires authenticated user");
-                }
-                for (String role : roles) {
-                    if (user.hasRole(role)) {
-                        return user;
-                    }
-                }
-                throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                        "User: " + userId + " not authorized for: " + path);
+        List<String> roles = getRoles(path, method);
+        if (roles != null && !roles.isEmpty()) {
+            if (user == null) {
+                throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Service "
+                        + getClass().getSimpleName() + " requires authenticated user");
             }
-            List<String> workgroups = getWorkgroups(path, method);
-            if (workgroups != null && !workgroups.isEmpty()) {
-                if (user == null) {
-                    throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Service "
-                            + getClass().getSimpleName() + " requires authenticated user");
+            for (String role : roles) {
+                if (user.hasRole(role)) {
+                    return user;
                 }
-                for (String workgroup : workgroups) {
-                    if (user.belongsToGroup(workgroup)) {
-                        return user;
-                    }
-                }
-                throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
-                        "User: " + userId + " not authorized for: " + path);
             }
-            return null;
+            throw new AuthorizationException(HTTP_401_UNAUTHORIZED,
+                    "User: " + userId + " not authorized for: " + path);
         }
-        catch (CachingException | JSONException | ServiceException ex) {
-            throw new AuthorizationException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * @param content
-     * @return
-     * @throws JSONException
-     * @throws DataAccessException
-     */
-    protected List<String> getWorkgroups(String path, String method) {
-        return new ArrayList<>();
+        return null;
     }
 
     /**

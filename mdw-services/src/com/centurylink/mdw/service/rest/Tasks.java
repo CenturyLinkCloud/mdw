@@ -462,14 +462,6 @@ public class Tasks extends JsonRestService implements JsonExportable {
         return roles;
     }
 
-    /**
-     * @see com.centurylink.mdw.service.action.ActionService#getAuthorizedWorkGroups()
-     */
-    @Override
-    protected List<String> getWorkgroups(String path, String method) {
-        return null; // TODO
-    }
-
     @Override
     protected Entity getEntity(String path, Object content, Map<String, String> headers) {
         return Entity.Task;

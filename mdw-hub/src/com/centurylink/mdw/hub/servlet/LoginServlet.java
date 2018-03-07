@@ -68,7 +68,7 @@ public class LoginServlet extends HttpServlet {
                 response.setContentType("text/html");
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
                 if (!ApplicationContext.isLocalhost()
-                        && !request.getRequestURL().toString().toLowerCase().startsWith("https")) {
+                        && !request.getRequestURL().toString().toLowerCase().startsWith("https://")) {
                     StatusResponse sr = new StatusResponse(Status.FORBIDDEN, "Must use HTTPS to log in");
                     response.setStatus(sr.getStatus().getCode());
                     response.getWriter().println(sr.getJson().toString(2));
