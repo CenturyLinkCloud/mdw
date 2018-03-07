@@ -35,6 +35,7 @@ temp.dir: ../mdw/.temp
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
 discovery.url: {{discovery-url}}
+central.url: https://mdw.useast.appfog.ctl.io/mdw
 
 logging:
   level: DEBUG
