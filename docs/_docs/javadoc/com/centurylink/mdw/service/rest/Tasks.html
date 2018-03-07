@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -197,11 +197,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Tasks.html#getWorkgroups-java.lang.String-java.lang.String-">getWorkgroups</a></span>(java.lang.String&nbsp;path,
-             java.lang.String&nbsp;method)</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Tasks.html#post-java.lang.String-org.json.JSONObject-java.util.Map-">post</a></span>(java.lang.String&nbsp;path,
     org.json.JSONObject&nbsp;content,
@@ -209,7 +204,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <div class="block">For creating a new task or performing task action(s).</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Tasks.html#put-java.lang.String-org.json.JSONObject-java.util.Map-">put</a></span>(java.lang.String&nbsp;path,
    org.json.JSONObject&nbsp;content,
@@ -217,7 +212,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <div class="block">Update an existing entity with different data.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Tasks.html#toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toJsonable</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
           org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
@@ -380,23 +375,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <dd><code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html" title="class in com.centurylink.mdw.services.rest">RestService</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>list of role names or null if authorization not required</dd>
-</dl>
-</li>
-</ul>
-<a name="getWorkgroups-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getWorkgroups</h4>
-<pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getWorkgroups(java.lang.String&nbsp;path,
-                                                         java.lang.String&nbsp;method)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getWorkgroups-java.lang.String-java.lang.String-">getWorkgroups</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html" title="class in com.centurylink.mdw.services.rest">RestService</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><code>com.centurylink.mdw.service.action.ActionService#getAuthorizedWorkGroups()</code></dd>
 </dl>
 </li>
 </ul>
