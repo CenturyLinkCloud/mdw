@@ -131,7 +131,7 @@ public class VcsArchiver {
     }
 
     /**
-     * Reverses previous import from backup.
+     * Reverses previous pre-import from backup.
      *
      */
     private void revertImport(LoaderPersisterVcs newLoader, boolean deleteBackups)
@@ -175,9 +175,6 @@ public class VcsArchiver {
                     newLoader.copyPkg(tempPkgDir, archiveDest);
                 }
             }
-            else if (!archiveDir.mkdirs())
-                throw new IOException(
-                        "Unable to create archive directory: " + archiveDir.getAbsolutePath());
         }
         List<PackageDir> newPkgDirs = newLoader.getPackageDirs(false);
         VersionControlGit vcGit = versionControl instanceof VersionControlGit
