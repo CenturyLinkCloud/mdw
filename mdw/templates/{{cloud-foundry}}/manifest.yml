@@ -2,17 +2,16 @@ applications:
 - name: {{project}}
   instances: 1
   host: {{project}}
-  buildpack: https://github.com/CenturyLinkCloud/mdw-buildpack.git
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
   timeout: 180
+  path: mdw-boot-{{mdw-version}}.jar
 
 env:
-  JAVA_OPTS: -Dmdw.runtime.env=paasDev -Dmdw.property.manager=com.centurylink.mdw.config.PaaSPropertyManager 
+  JAVA_OPTS: -Dmdw.runtime.env=paasDev -Dmdw.property.manager=com.centurylink.mdw.config.PaaSPropertyManager -Dmdw.server.port=$PORT 
   
+  MDW_APP_TOKEN: 
   JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: "[enabled: false]"
-  
-  MDW_VERSION: "{{mdw-version}}"
-  MDW_OAUTH_TOKEN_LOCATION: "http://{{project}}.useast.appfog.ctl.io/oauth/token"
-  MDW_ASSET_LOCATION: "{{asset-loc}}"
+  MDW_ASSET_LOCATION: "./repo/{{asset-loc}}"
   
   mdw_seed_users: '{
     "users":  [
@@ -53,9 +52,6 @@ env:
   mdw_properties: '{
     "mdw.container.datasource_provider": "Tomcat",
     "mdw.container.jms_provider": "ActiveMQ",
-    "mdw.activemq.connector.url": "tcp://localhost:62626",
-    "mdw.activemq.connection.factory": "mdw-activemq",
-    "mdw.activemq.local.connector.url": "vm://mdw-activemq",
     "mdw.container.threadpool_provider": "MDW",
     "mdw.container.messenger": "jms",
     
@@ -63,7 +59,7 @@ env:
     "mdw.database.url": "{{database-url}}",
     "mdw.database.username": "{{database-user}}",
     "mdw.database.password": "{{database-password}}",
-    "mdw.database.poolsize": "10",
+    "mdw.database.poolsize": "20",
     "mdw.database.poolMaxIdle": "5",
     "mdw.database.validationQuery": "select 1 from dual",
     
@@ -73,7 +69,7 @@ env:
   
     "mdw.temp.dir": "../mdw/.temp",
     
-    "mdw.git.local.path": ".",
+    "mdw.git.local.path": "./repo",
     "mdw.git.remote.url": "{{git-remote-url}}",
     "mdw.git.branch": "{{git.branch}}",
     "mdw.git.user": "{{git.user}}",
@@ -81,6 +77,7 @@ env:
     "mdw.hub.url": "https://{{project}}.useast.appfog.ctl.io/mdw",
     "mdw.services.url": "http://{{project}}.useast.appfog.ctl.io:80/mdw",
     "mdw.discovery.url": "{{discovery-url}}",
+    "mdw.central.url": "https://mdw.useast.appfog.ctl.io/mdw",
       
     "mdw.application.name": "{{project}}",
     
@@ -92,8 +89,7 @@ env:
   }'
   
   mdw_access: |
-    authMethod: af 
-    authTokenLoc: http://{{project}}.useast.appfog.ctl.io/oauth/token
+    authMethod: mdw 
     
     devUser: {{user}}
     
@@ -105,17 +101,21 @@ env:
     authExclusions:
       - '/login'
       - '/error'
-      - '/offline'
-      - '/sysInfo'
+      - '/js/nav.json'
       - '/images/*'
       - '/css/*'
       - '/doc/*'
-      - '/javadoc/*'
-      - '/filepanel/*'
-      - '/services/*'
-      - '/Services/*'
       - '/api/*'
-      - '/asset/*'
+      - '/services/AppSummary'
+      - '/services/System/sysInfo'
+      - '/services/com/centurylink/mdw/slack'
+      - '*.css'
+      - '*.jsx'
+      - '*.png'
+      - '*.js'
+      - '*.woff'
+      - '*.woff2'
+      - '*.ttf'
     
     loggingOptions:
       logResponseTimes: false  
