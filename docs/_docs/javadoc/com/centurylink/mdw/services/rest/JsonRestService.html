@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -251,6 +251,12 @@ implements <a href="../../../../../com/centurylink/mdw/common/service/JsonServic
              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#notifyProcess-java.lang.String-java.lang.String-java.lang.String-">notifyProcess</a></span>(java.lang.String&nbsp;packageName,
+             java.lang.String&nbsp;eventId,
+             java.lang.String&nbsp;eventMessage)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#patch-java.lang.String-org.json.JSONObject-java.util.Map-">patch</a></span>(java.lang.String&nbsp;path,
      org.json.JSONObject&nbsp;content,
@@ -258,7 +264,7 @@ implements <a href="../../../../../com/centurylink/mdw/common/service/JsonServic
 <div class="block">Incrementally update an existing entity.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#post-java.lang.String-org.json.JSONObject-java.util.Map-">post</a></span>(java.lang.String&nbsp;path,
     org.json.JSONObject&nbsp;content,
@@ -266,17 +272,17 @@ implements <a href="../../../../../com/centurylink/mdw/common/service/JsonServic
 <div class="block">Create a new entity or relationship.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#propagatePost-org.json.JSONObject-java.util.Map-">propagatePost</a></span>(org.json.JSONObject&nbsp;content,
              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#propagatePut-org.json.JSONObject-java.util.Map-">propagatePut</a></span>(org.json.JSONObject&nbsp;content,
             java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#put-java.lang.String-org.json.JSONObject-java.util.Map-">put</a></span>(java.lang.String&nbsp;path,
    org.json.JSONObject&nbsp;content,
@@ -284,13 +290,13 @@ implements <a href="../../../../../com/centurylink/mdw/common/service/JsonServic
 <div class="block">Update an existing entity with different data.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#service-java.lang.String-org.json.JSONObject-java.util.Map-">service</a></span>(java.lang.String&nbsp;path,
        org.json.JSONObject&nbsp;content,
        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/JsonRestService.html#validateResponse-java.lang.String-">validateResponse</a></span>(java.lang.String&nbsp;response)</code>&nbsp;</td>
 </tr>
@@ -683,12 +689,28 @@ implements <a href="../../../../../com/centurylink/mdw/common/service/JsonServic
 <a name="notifyProcess-java.lang.String-java.lang.String-java.util.Map-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>notifyProcess</h4>
 <pre>protected&nbsp;int&nbsp;notifyProcess(java.lang.String&nbsp;packageName,
                             java.lang.String&nbsp;eventId,
                             java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
+                     throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="notifyProcess-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>notifyProcess</h4>
+<pre>protected&nbsp;int&nbsp;notifyProcess(java.lang.String&nbsp;packageName,
+                            java.lang.String&nbsp;eventId,
+                            java.lang.String&nbsp;eventMessage)
                      throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
