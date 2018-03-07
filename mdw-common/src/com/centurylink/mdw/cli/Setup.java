@@ -56,7 +56,8 @@ public abstract class Setup implements Operation {
     public String getMdwVersion() { return mdwVersion; }
     public void setMdwVersion(String version) {
         this.mdwVersion = version;
-        Props.Gradle.MDW_VERSION.specified = true;
+        if (Props.Gradle.MDW_VERSION != null)
+            Props.Gradle.MDW_VERSION.specified = true;
     }
     public String findMdwVersion() throws IOException {
         if (getMdwVersion() == null) {
@@ -83,9 +84,11 @@ public abstract class Setup implements Operation {
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "http://repo.maven.apache.org/maven2";
     public String getDiscoveryUrl() { return discoveryUrl; }
+
     public void setDiscoveryUrl(String url) {
         this.discoveryUrl = url;
-        Props.DISCOVERY_URL.specified = true;
+        if (Props.DISCOVERY_URL != null)
+            Props.DISCOVERY_URL.specified = true;
     }
 
     @Parameter(names="--releases-url", description="MDW releases Maven repo URL")
@@ -327,7 +330,11 @@ public abstract class Setup implements Operation {
     }
 
     public File getAssetRoot() throws IOException {
-        String assetLoc = new Props(this).get(Props.ASSET_LOC, false);
+        String assetLoc;
+        if (Props.ASSET_LOC != null)
+            assetLoc = new Props(this).get(Props.ASSET_LOC, false);
+        else
+            assetLoc = getAssetLoc();
         File assetRoot = new File(assetLoc);
         if (assetRoot.isAbsolute())
             return assetRoot;

@@ -49,7 +49,11 @@ public class Update extends Setup {
 
     public Update run(ProgressMonitor... monitors) throws IOException {
         Props props = new Props(this);
-        String discoveryUrl = props.get(Props.DISCOVERY_URL);
+        String discoveryUrl;
+        if (Props.DISCOVERY_URL != null)
+            discoveryUrl = props.get(Props.DISCOVERY_URL);
+        else
+            discoveryUrl = getDiscoveryUrl();
 
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
