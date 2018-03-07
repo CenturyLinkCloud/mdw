@@ -286,4 +286,10 @@ public abstract class JsonRestService extends RestService implements JsonService
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         return workflowServices.notify(PackageCache.getPackage(packageName), eventId, JsonUtil.getJson(headers));
     }
+
+    protected int notifyProcess(String packageName, String eventId, String eventMessage) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        return workflowServices.notify(PackageCache.getPackage(packageName), eventId, eventMessage);
+    }
+
 }
