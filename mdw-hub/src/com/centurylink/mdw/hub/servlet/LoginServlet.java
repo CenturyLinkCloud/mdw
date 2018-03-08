@@ -124,12 +124,12 @@ public class LoginServlet extends HttpServlet {
                     else {
                         request.getSession().setAttribute(MDW_AUTH_MSG, SECURITY_ERR_MSG);
                     }
-                    response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                    response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/login");
                 }
             }
             else {
                 request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
-                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/login");
             }
         }
         else {
