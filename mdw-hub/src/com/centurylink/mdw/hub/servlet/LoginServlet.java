@@ -61,7 +61,7 @@ public class LoginServlet extends HttpServlet {
         String authMethod = WebAppContext.getMdw().getAuthMethod();
         if ("ct".equals(authMethod) || "mdw".equals(authMethod)) {
             if (request.getServletPath().equalsIgnoreCase("/logout")) {
-                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/login");
                 return;
             }
             else {
@@ -118,7 +118,7 @@ public class LoginServlet extends HttpServlet {
                     }
                     else {
                         request.getSession().setAttribute("authenticatedUser", authUser);
-                        response.sendRedirect(WebAppContext.getMdw().getHubRoot());
+                        response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
                     }
 
                 }

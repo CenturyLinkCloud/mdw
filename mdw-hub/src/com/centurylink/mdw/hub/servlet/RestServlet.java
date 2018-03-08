@@ -55,7 +55,7 @@ public class RestServlet extends ServiceServlet {
 
         if (request.getPathInfo() == null) {
             // redirect to html documentation
-            response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/doc/webServices.html");
+            response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/doc/webServices.html");
             return;
         }
         else if (request.getPathInfo().startsWith("/SOAP")) {

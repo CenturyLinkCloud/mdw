@@ -287,7 +287,7 @@ public class AccessFilter implements Filter {
                                 response.getWriter().println(new Status(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Required").getJson().toString(2));
                             }
                             else
-                                response.sendRedirect(WebAppContext.getMdw().getHubRoot() + "/login");
+                                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/login");
 
                             return;
                         }

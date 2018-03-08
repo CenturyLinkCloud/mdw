@@ -212,13 +212,12 @@ public class DatabaseAccess {
         try {
             DataSource dataSource = ApplicationContext.getDataSourceProvider().getDataSource(database_name);
 
-            // Only need to load driver the first time, which creates the connection factory.  All JDBC drivers are provided as assets in a package
+            // Only need to load driver the first time, which creates the connection factory.  All JDBC drivers except for MariaDB are provided as assets in a package
             if (loadedDataSources.get(database_name) == null || !loadedDataSources.get(database_name).equals(dataSource)) {
                 List<com.centurylink.mdw.model.workflow.Package> pkgList = PackageCache.getPackages();
-                if (pkgList == null || pkgList.size() <= 0)
-                    throw new SQLException("MDW asset package containing JDBC driver is required");
-
-                ClassLoader origCL = ApplicationContext.setContextCloudClassLoader(pkgList.get(0));
+                ClassLoader origCL = null;
+                if (pkgList != null && pkgList.size() > 0)
+                    origCL = ApplicationContext.setContextCloudClassLoader(pkgList.get(0));
                 connection = dataSource.getConnection();
                 loadedDataSources.put(database_name, dataSource);
                 ApplicationContext.resetContextClassLoader(origCL);

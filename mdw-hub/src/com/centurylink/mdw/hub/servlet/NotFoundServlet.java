@@ -48,11 +48,11 @@ public class NotFoundServlet extends HttpServlet {
         String path = (String)request.getAttribute("javax.servlet.forward.servlet_path");
         if (path != null) {
             if (path.endsWith("/images/tab_sel.png")) {  // hack for nav back from Task UI
-                response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/images/tab_sel.png");
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/tab_sel.png");
                 return;
             }
             if (path.endsWith("/mdw.ico")) {  // hack for nav back from Task UI
-                response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/mdw.ico");
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/mdw.ico");
                 return;
             }
             if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && path.startsWith("/tasks")) {
@@ -60,7 +60,7 @@ public class NotFoundServlet extends HttpServlet {
                 String[] pathSegs = path.substring(1).split("/");
                 if (pathSegs.length > 2)
                     redirectPath = "/" + pathSegs[0] + "/" + pathSegs[1];
-                response.sendRedirect("/" + ApplicationContext.getMdwHubContextRoot() + "/#" + redirectPath);
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + redirectPath);
                 return;
             }
 
