@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.catalina.Context;
+import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
@@ -82,6 +83,26 @@ public class SpringBootApplication {
             @Override
             public void customize(Context context) {
                 context.addApplicationListener("org.apache.tomcat.websocket.server.WsContextListener");
+                context.addErrorPage(new ErrorPage() {
+                    @Override
+                    public int getErrorCode() {
+                        return 404;
+                    }
+                    @Override
+                    public String getLocation() {
+                        return "/404";
+                    }
+                });
+                context.addErrorPage(new ErrorPage() {
+                    @Override
+                    public int getErrorCode() {
+                        return 500;
+                    }
+                    @Override
+                    public String getLocation() {
+                        return "/error";
+                    }
+                });
             }
         };
     }
@@ -123,9 +144,4 @@ public class SpringBootApplication {
         }
         return bootDir;
     }
-
-//    @Bean
-//    public ServerEndpointExporter serverEndpointExporter() {
-//        return new ServerEndpointExporter();
-//    }
 }
