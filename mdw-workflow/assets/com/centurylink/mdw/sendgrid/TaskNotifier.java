@@ -119,7 +119,7 @@ public class TaskNotifier extends TemplatedNotifier {
             try {
                 ContextEmailRecipients contextRecipients = new ContextEmailRecipients(context);
                 String groups = context.getAttribute(TaskAttributeConstant.NOTICE_GROUPS);
-                if (groups != null && !groups.isEmpty()) {
+                if (groups != null && !groups.isEmpty() && !groups.equals("[]")) {
                     return contextRecipients.getRecipients(TaskAttributeConstant.NOTICE_GROUPS,
                         TaskAttributeConstant.RECIPIENT_EMAILS);
                 }

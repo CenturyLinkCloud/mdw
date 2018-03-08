@@ -1,5 +1,7 @@
  // Initializes values for user-entry
 const values = {
+  maxLines: 20,  // for doc vars
+  minLines: 8,  // for doc vars
   toArray: function(valuesObj) {
     var vals = [];
     Object.keys(valuesObj).forEach(key => {
@@ -7,12 +9,12 @@ const values = {
       val.name = key;
       val.isDocument = val.type && $mdwUi.DOCUMENT_TYPES[val.type];
       if (val.isDocument) {
-        val.showLines = this.showLines;
+        val.showLines = this.minLines;
         if (val.value && val.value.lineCount) {
           var lineCount = val.value.lineCount();
           if (lineCount > this.maxLines)
             val.showLines = this.maxLines;
-          else if (lineCount > this.showLines)
+          else if (lineCount > val.showLines)
             val.showLines = lineCount;
         }
       }
