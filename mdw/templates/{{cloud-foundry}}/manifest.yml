@@ -93,6 +93,9 @@ env:
     
     devUser: {{user}}
     
+    requireHttps:
+     - '/login'
+    
     responseHeaders:  
       X-UA-Compatible: IE=Edge
       

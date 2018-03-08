@@ -18,6 +18,9 @@ authMethod: mdw
 # user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
 devUser: {{user}}
 
+requireHttps:
+  - '/login'
+
 # Auth exclusions are patterns that can be accessed directly
 # without authentication even when running with protection 
 # (upstreamHosts != null & not in dev mode). 

@@ -62,8 +62,10 @@ public class AccessFilter implements Filter {
     private static String authMethod = "mdw";
     private static String authUserHeader;
     private static String forwardingHeader;  // x-forwarded-for
+    private static String forwardedProtoHeader; // x-forwarded-proto
     private static String authTokenLoc;
     private static List<AuthExcludePattern> authExclusions = new ArrayList<AuthExcludePattern>();
+    private static List<AuthExcludePattern> requireHttps = new ArrayList<AuthExcludePattern>();
     private static Map<String,String> responseHeaders;
     private static boolean devMode;
     private static boolean allowAnyAuthenticatedUser;
@@ -114,6 +116,9 @@ public class AccessFilter implements Filter {
             // forwardingHeader
             forwardingHeader = yamlLoader.get("forwardingHeader", topMap);
 
+            // forwardProto
+            forwardedProtoHeader = yamlLoader.get("forwardedProtoHeader", topMap);
+
             // authTokenLoc
             authTokenLoc = yamlLoader.get("authTokenLoc", topMap);
             WebAppContext.getMdw().setAuthTokenLoc(authTokenLoc);
@@ -123,6 +128,13 @@ public class AccessFilter implements Filter {
             if (authExclusionsList != null) {
                 for (Object authExclude : authExclusionsList)
                     authExclusions.add(new AuthExcludePattern(authExclude.toString()));
+            }
+
+            // requireHttps
+            List<?> requireHttpsList = yamlLoader.getList("requireHttps", topMap);
+            if (requireHttpsList != null) {
+                for (Object reqHttps : requireHttpsList)
+                    requireHttps.add(new AuthExcludePattern(reqHttps.toString()));
             }
 
             // responseHeaders
@@ -229,6 +241,10 @@ public class AccessFilter implements Filter {
                 authUser = request.getHeader(authUserHeader);
             }
 
+            if (isHttpsRequired(path) && !isHttps(request)) {
+                throw new MdwSecurityException("HTTPS required: " + path);
+            }
+
             // check authentication
             AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
@@ -318,6 +334,28 @@ public class AccessFilter implements Filter {
                 if (authExclude.match(path))
                     return true;
             }
+        }
+        return false;
+    }
+
+    public boolean isHttpsRequired(String path) {
+        if (requireHttps != null) {
+            for (AuthExcludePattern reqHttps : requireHttps) {
+                if (reqHttps.match(path))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isHttps(HttpServletRequest request) {
+        if (request.getProtocol().toLowerCase().equals("https")) {
+            return true;
+        }
+        else if (forwardedProtoHeader != null) {
+            String forwardedProto = request.getHeader(forwardedProtoHeader);
+            if (forwardedProto != null && forwardedProto.toLowerCase().equals("https"))
+                return true;
         }
         return false;
     }

@@ -67,19 +67,11 @@ public class LoginServlet extends HttpServlet {
             else {
                 response.setContentType("text/html");
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
-                if (!ApplicationContext.isLocalhost()
-                        && !request.getRequestURL().toString().toLowerCase().startsWith("https://")) {
-                    StatusResponse sr = new StatusResponse(Status.FORBIDDEN, "Must use HTTPS to log in");
-                    response.setStatus(sr.getStatus().getCode());
-                    response.getWriter().println(sr.getJson().toString(2));
-                }
-                else {
-                    String contents = readContent(request, authMethod);
-                    response.getWriter().println("<!-- processed by MDW Login servlet -->");
-                    for (String line : contents.split("\\r?\\n")) {
-                        String retLine = processLine(line, authError);
-                        response.getWriter().println(retLine);
-                    }
+                String contents = readContent(request, authMethod);
+                response.getWriter().println("<!-- processed by MDW Login servlet -->");
+                for (String line : contents.split("\\r?\\n")) {
+                    String retLine = processLine(line, authError);
+                    response.getWriter().println(retLine);
                 }
                 response.getWriter().close();
             }
@@ -101,8 +93,6 @@ public class LoginServlet extends HttpServlet {
             String password = request.getParameter("password");
             if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
                 try {
-                    if (!request.getRequestURL().toString().toLowerCase().startsWith("https"))
-                        throw new Exception("HTTPS is required");
                     Authenticator authenticator = new JwtAuthenticator();
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
