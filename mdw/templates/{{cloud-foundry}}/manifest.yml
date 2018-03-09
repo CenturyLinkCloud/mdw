@@ -105,6 +105,7 @@ env:
       - '/login'
       - '/error'
       - '/js/nav.json'
+      - '/noIe.html'
       - '/images/*'
       - '/css/*'
       - '/doc/*'
