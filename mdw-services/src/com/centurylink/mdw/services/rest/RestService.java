@@ -219,6 +219,8 @@ public abstract class RestService {
     protected Map<String,String> getParameters(Map<String,String> headers) {
         Map<String,String> params = new HashMap<String,String>();
         String query = headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
+        if (query == null)
+            query = headers.get("request-query-string");
         if (query != null && !query.isEmpty()) {
             for (String pair : query.split("&")) {
                 int idx = pair.indexOf("=");
