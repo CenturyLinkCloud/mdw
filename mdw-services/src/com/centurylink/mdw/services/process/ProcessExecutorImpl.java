@@ -434,6 +434,8 @@ class ProcessExecutorImpl {
 
     boolean deleteInternalEvent(String eventName)
     throws DataAccessException {
+        if (eventName == null)
+            return false;
         try {
             int count = getDataAccess().deleteEventInstance(eventName);
             return count > 0;
