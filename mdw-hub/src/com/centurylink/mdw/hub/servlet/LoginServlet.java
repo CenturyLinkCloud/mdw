@@ -30,9 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthenticationException;
 import com.centurylink.mdw.auth.Authenticator;
-import com.centurylink.mdw.auth.JwtAuthenticator;
+import com.centurylink.mdw.auth.MdwAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
@@ -49,8 +50,8 @@ public class LoginServlet extends HttpServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final String MDW_MSG_TAG = "<div id=\"mdwAuthError\"></div>";
-    private static final String AUTHENTICATION_FAILED_MSG = "Authentication failed, Invalid credentials";
-    private static final String AUTHORIZATION_FAILED_MSG = "User not Authorized";
+    private static final String AUTHENTICATION_FAILED_MSG = "Invalid user/password";
+    private static final String AUTHORIZATION_FAILED_MSG = "User not authorized";
     private static final String SECURITY_ERR_MSG = "Security Exception occured";
     private static final String MDW_AUTH_MSG = "mdwAuthError";
 
@@ -98,7 +99,10 @@ public class LoginServlet extends HttpServlet {
             String password = request.getParameter("password");
             if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
                 try {
-                    Authenticator authenticator = new JwtAuthenticator();
+                    String appId = ApplicationContext.getAppId();
+                    if (appId == null)
+                        throw new PropertyException("Missing property: mdw.app.id");
+                    Authenticator authenticator = new MdwAuthenticator(appId);
                     authenticator.authenticate(user, password);
                     logger.info("User logged in: " + user);
                     AuthenticatedUser authUser = null;
@@ -107,8 +111,7 @@ public class LoginServlet extends HttpServlet {
                       authUser = new AuthenticatedUser(u, u.getAttributes());
                     if (authUser == null) {
                         if (!WebAppContext.getMdw().isAllowAnyAuthenticatedUser()) {
-                            throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(),
-                                    AUTHORIZATION_FAILED_MSG);
+                            throw new MdwSecurityException((Status.UNAUTHORIZED).getCode(), AUTHORIZATION_FAILED_MSG);
                         }
                     }
                     else {
@@ -185,13 +188,11 @@ public class LoginServlet extends HttpServlet {
     private String processLine(String line, String replacementText) throws IOException {
         String newLine;
         if (line.trim().equals(MDW_MSG_TAG)) {
-            newLine = "<div id=\"mdwAuthError\" class=\"mdw_hubMessage\">" + replacementText
-                    + "</div>";
+            newLine = "<div id=\"mdwAuthError\" class=\"mdw_hubMessage\">" + replacementText + "</div>";
             return newLine;
         }
-        else
+        else {
             return line;
-
+        }
     }
-
 }
