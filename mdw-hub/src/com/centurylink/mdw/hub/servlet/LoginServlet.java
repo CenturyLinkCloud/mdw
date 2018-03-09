@@ -69,9 +69,14 @@ public class LoginServlet extends HttpServlet {
                 request.getSession().removeAttribute(MDW_AUTH_MSG);
                 String contents = readContent(request, authMethod);
                 response.getWriter().println("<!-- processed by MDW Login servlet -->");
-                for (String line : contents.split("\\r?\\n")) {
-                    String retLine = processLine(line, authError);
-                    response.getWriter().println(retLine);
+                if (authError != null) {
+                    for (String line : contents.split("\\r?\\n")) {
+                        String retLine = processLine(line, authError);
+                        response.getWriter().println(retLine);
+                    }
+                }
+                else {
+                    response.getWriter().print(contents);
                 }
                 response.getWriter().close();
             }
