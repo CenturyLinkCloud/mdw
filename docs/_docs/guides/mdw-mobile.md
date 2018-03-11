@@ -11,7 +11,10 @@ To install on your device, follow these steps to enroll in the beta program.
   - Send an email to <mdw.support@centurylink.com> requesting beta access<br/>
     (specify Android, and provide the **email you use for your Play account**).
   - Await the invitation email from the MDW dev team.
-  - (On your device) open the invitation email and follow its instructions.
+  - (On your device):
+     - Open the invitation email and follow its instructions.
+     - Or access the opt-in URL:   
+       <https://play.google.com/apps/testing/io.mdw_mobile>
 
 ### iOS
   - Send an email to <mdw.support@centurylink.com> requesting beta access<br/>
