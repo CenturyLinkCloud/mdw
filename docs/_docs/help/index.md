@@ -6,7 +6,7 @@ permalink: /docs/help/
 <div class="grid">
 <h3>General Information</h3>
 <ul>
-  <li><a href='../release-notes'>Release Notes</a></li>
+  <li><a href='../releases'>Releases</a></li>
 </ul>
 <h3>Web Services</h3>
 <ul>

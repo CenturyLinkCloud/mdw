@@ -1,5 +1,5 @@
 ---
-permalink: /docs/guides/docker-guide/
+permalink: /docs/guides/docker/
 title: Docker Guide
 ---
 

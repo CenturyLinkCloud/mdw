@@ -1,5 +1,5 @@
 ---
-permalink: /docs/guides/tomcat-guide/
+permalink: /docs/guides/tomcat/
 title: Tomcat Setup Guide
 ---
 

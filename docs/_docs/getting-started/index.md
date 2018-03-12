@@ -18,12 +18,12 @@ permalink: /docs/getting-started/
 	  <p>The quick start guide provides a quick instruction to setup and run with MDW in no time.</p>
     </div>
     <div class="unit one-third">
-      <a href="mdw-tutorial">TAKE a TUTORIAL &rarr;</a>
-      <p>The tutorial provides step-by-step instructions to setup and run with MDW Demo.</p>
+      <a href="cli">MDW CLI &rarr;</a>
+      <p>Use the MDW command-line interface to create a project, to install and run MDW, and lots more.</p>
     </div>
     <div class="unit one-third">
       <a href="{{ site.baseurl }}/docs/guides/">GUIDES &rarr;</a>
-      <p>The guides provide detailed, step-by-step instructions to setup and run with full-fledged MDW.</p>
+      <p>The guides provide detailed, step-by-step instructions for supported containers.</p>
     </div>
     <div class="clear"></div>
   </div>

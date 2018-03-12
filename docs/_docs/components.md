@@ -1,6 +1,6 @@
 ---
 title: Components
-permalink: /docs/mdw-components/
+permalink: /docs/components/
 overview: true
 ---
 

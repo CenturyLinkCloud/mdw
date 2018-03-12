@@ -1,6 +1,6 @@
 ---
-title: Overview of MDW
-permalink: /docs/mdw-overview/
+title: Overview
+permalink: /docs/overview/
 overview: true
 ---
 
@@ -33,21 +33,24 @@ MDW Framework comes with many built-in components:
 - Designer component gives an environment for building processes and tasks with a graphical runtime view and a simple mechanism for exporting and importing workflow assets. 
 - Web component with a built-in, ready-to-use web app for end users for handling manual tasks, with supervisor tools, charts and graphs as well as integrated reports.    
 
-## Terminologies used in MDW Framework
+## Terminology
 
-  Terminology     | Description    |
+  Term            | Definition     |
   ----------------|:---------------|
-  [Activity](http://centurylinkcloud.github.io/mdw/docs/help/implementor.html) | Activity is implemented by Java class(s), called activity implementors. For a complete listing of the activity implementors, see [Built-In Activities](http://centurylinkcloud.github.io/mdw/docs/development/built-in-activities/).
-  [Adapter](http://centurylinkcloud.github.io/mdw/docs/help/AdapterActivityBase.html) | Sends outgoing messages to an external system (service invocation)
-  [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html) | Along with process definitions, assets include many other types of design-time artifacts. 
-  [Attribute](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Configurable aspect of an activity or process.  
-  Note | Text-based annotations attached to workflow entities such as Orders or Tasks.  
-  Package | The top-level branch in the project tree that represents a workflow package, which is like a java package that contains processes, activity implementors, test cases, event handler configurations and other resources. Your work should be incorporated in a dedicated package, which will be used for managing resources and for insulating your work from that of other users.  Package also facilitates importing/exporting between environments.
-  [Process](http://centurylinkcloud.github.io/mdw/docs/help/process.html) | It consists of a number of (automated or manual) work items or steps (called activities) that should be performed in a sequential order. 
-  [Task](http://centurylinkcloud.github.io/mdw/docs/help/taskAction.html) | Task is used to express the more general concept that we call activity (both manual and automated) in MDW.
-  Transition |Transition is the link between activities that model dependencies between steps. 
-  [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A variable has a name and will be give a specific value at runtime. 
-
+  [Process](http://centurylinkcloud.github.io/mdw/docs/help/process.html) | A series of linked steps (or **activities**), either automated or human, designed to deliver business value. 
+  [Activity](http://centurylinkcloud.github.io/mdw/docs/help/implementor.html) | A single step in a process flow.  Every activity is implemented as a Java class, and configured through **attributes**.
+  [Adapter](http://centurylinkcloud.github.io/mdw/docs/help/AdapterActivityBase.html) | A specialized **activity** to send outgoing messages to an external system (service invocation).
+  [Task](http://centurylinkcloud.github.io/mdw/docs/help/taskTemplates.html) | A specialized **activity** that designates human interaction.
+  [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html) | A versionable resource (such as a **process** definition), that's maintained as an artifact of an MDW app. 
+  [Attribute]() | Configurable aspect of an activity, process, user or asset.  
+  [Documentation]() | Markdown-based information attached to a process to describe its operation or requirements.  
+  [Package]() | Bundles assets for discovery and reuse.  Also provides Java-standard namespace resolution for source code assets.
+  [Transition]() | A link between **activities** indicating direction of flow. 
+  [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A named value in a **process** design which holds individual runtime data. 
+  [Document]() | A specialized variable for large values (such as a JSON request).  Document variables are passed by reference, so updates are reflected everywhere thoughout a workflow. 
+  [Implementor]() | The template for an activity in the Designer toolbox.  Specifies its Java class and attribute options.
+  [Handler]() | Responds to incoming requests from external systems (service implementation).
+  [Process Instance]() | One particular execution of a workflow process, with its unique runtime values.
   
   
   

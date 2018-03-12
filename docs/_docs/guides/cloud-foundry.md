@@ -8,7 +8,7 @@ title: Cloud Foundry Setup Guide
 ### Prerequisite
  - Eclipse with the [MDW Designer Plugin](../../getting-started/install-designer)
  - An MDW Project, which can be created by following the [quick-start guide](../../getting-started/quick-start)
- - For running MDW locally in Tomcat, refer to the [Tomcat Setup Guide](../tomcat-guide) 
+ - For running MDW locally in Tomcat, refer to the [Tomcat Setup Guide](../tomcat) 
  
 ### Running in the Cloud
 

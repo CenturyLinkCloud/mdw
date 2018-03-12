@@ -25,12 +25,12 @@ permalink: /docs/guides/
       <p>
         Deploying on Tomcat
        </p>
-      <a href="tomcat-guide/">Tomcat Setup Guide&rarr;</a>
+      <a href="tomcat/">Tomcat Setup Guide&rarr;</a>
     </div>
     <div class="unit one-third">
       <h2>Cloud Foundry Setup Guide</h2>
       <p>Deploying on Cloud Foundry</p>
-      <a href="SetupGuideForCloudFoundry/">Cloud Foundry Setup Guide&rarr;</a>
+      <a href="cloud-foundry/">Cloud Foundry Setup Guide&rarr;</a>
     </div>
     <div class="clear"></div>
   </div>
