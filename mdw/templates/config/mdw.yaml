@@ -30,7 +30,7 @@ git:
   remote.url: {{git-remote-url}}
   branch: {{git-branch}}
 
-temp.dir: ../mdw/.temp
+temp.dir: {{asset-loc}}/../temp
 
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw

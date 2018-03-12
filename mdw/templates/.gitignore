@@ -4,7 +4,7 @@ target/
 .metadata/
 data/
 .gradle
-.temp
+temp
 *.launch
 testResults
 {{asset-loc}}/Archive/
