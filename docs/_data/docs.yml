@@ -29,6 +29,7 @@
 
 - title: Workflow
   docs:
+  - workflow/terminology
   - workflow/built-in-activities
   - workflow/built-in-variable-types
   - help

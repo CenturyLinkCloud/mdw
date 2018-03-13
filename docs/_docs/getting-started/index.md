@@ -19,7 +19,7 @@ permalink: /docs/getting-started/
     </div>
     <div class="unit one-third">
       <a href="../guides/mdw-cookbook">Cookbook &rarr;</a>
-      <p>A step-by-step walkthrough of MDW's essential features.</p>
+      <p>A step-by-step tutorial on MDW's essential features.</p>
     </div>
     <div class="unit one-third">
       <a href="{{ site.baseurl }}/docs/guides/">Guides &rarr;</a>
