@@ -17,8 +17,13 @@ overview: true
 - End-to-end business intelligence and reporting tools that reflect business-defined milestones
 - A discoverable repository of prebuilt workflow assets that can be used as-is or extended 
 
-### Microservice Orchestration
-TODO
+### Microservice Orchestration:
+MDW helps you make sense of your microservices.
+Included is a easy to use toolkit for stitching together REST services into an overall flow that's dynamic yet structured.  
+MDW provides the means, through MDWHub, to visualize the relationships and dependencies among microservices.
+And to expose a REST entry point so you can deliver maximum value from disparate services.  
+By adopting MDW's lightweight pattern to expose your REST API,
+you'll get automatic data binding and your services become self-documenting via Swagger.
 
 ### Extensibility:
 The road to empowering business users goes through MDW.
@@ -31,16 +36,16 @@ specialized features and encourages reuse among the community.
 Plus, for cases where custom logic needs to be made especially agile, the dynamic Java, Script and jar assets 
 allow controlled, versioned, auditable and repeatable code changes with no app redeployment. 
 
-### Service Orientation: 
-MDW comes with built-in protocol support for many of the most common service transports in use here at CenturyLink.
-This enables developers and analysts to focus on the business purpose of their workflows rather than getting bogged down 
-in the arcane lexicon of specific wire protocols.  Service orchestration is simply a matter of drag and drop.  
-Also, MDW readily interoperates with Spring and Camel to unleash existing industry-standard skillsets. 
- 
 ### BPM in The Cloud:
 Using MDW's docker image, it's ridiculously easy to spin up and scale a deployment space 
 where users can collaborate on design assets. Authentication is through OAuth, authorization is role-based, 
 and assets are version controlled in Git.  This rigorous chain of ownership, plus the built-in automated testing 
 capabilities, ensure the accountability and reproducibility you need to confidently adapt to changing business demands.
+ 
+### Service Orientation: 
+MDW comes with built-in protocol support for many of the most common service transports in use here at CenturyLink.
+This enables developers and analysts to focus on the business purpose of their workflows rather than getting bogged down 
+in the arcane lexicon of specific wire protocols.  Service orchestration is simply a matter of drag and drop.  
+Also, MDW readily interoperates with Spring and Camel to unleash existing industry-standard skillsets. 
  
  
