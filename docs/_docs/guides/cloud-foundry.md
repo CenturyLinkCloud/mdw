@@ -61,7 +61,7 @@ Note: The following examples use the MDW demo deployment in CenturyLink's AppFog
    [https://mdw-demo.useast.appfog.ctl.io/mdw](https://mdw-demo.useast.appfog.ctl.io/mdw)
 
 ##### Make a Change and Push Again:
--	In Eclipse switch to MDW Designer perspective and expand the MyServices.  Open the Employees.java, Dynamic Java asset and edit the get() method of this REST service to expect your ID and return your employee information:
+-	In Eclipse switch to MDW Designer perspective and expand the MyServices.  Open the Employees.java asset and edit the get() method of this REST service to expect your ID and return your employee information:
 -	Save the file, incrementing its version, and type the `cf push` command again.
 -	Once the push has completed, access the service in your browser through a URL like the following: 
      - http://mdw-demo.useast.appfog.ctl.io/mdw/Services/MyServices/Employees/your-cuid

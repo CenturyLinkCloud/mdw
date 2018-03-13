@@ -34,19 +34,22 @@ adapter activity from the toolbox and setting its endpoint URL).  This is how th
 many different flows.
 
 MDW provides quite a number of prebuilt activities to choose from:<br/>
-[MDW Activities](../workflow/built-in-activities)
+ - [MDW Activities](../workflow/built-in-activities)
 
 Furthermore, you can [create your own](../guides/mdw-cookbook/#21-implement-a-custom-activity) reusable activities 
 as first class citizens in the toolbox.
 
 We've touched on processes, activities, and variables.  Some of the other frequently used terms in MDW are summarized here:
-[MDW Terminology](../workflow/terminology)
+ - [MDW Terminology](../workflow/terminology)
+ 
+ And here's an exhaustive list of built-in variable types:
+ - [Variable Types](../workflow/built-in-variables)
 
 ### Assets
 A process in MDW is one type of [asset](../help/assets.html).  There are many others.  In fact, **everything**
 you develop is some form of asset.  Rules, scripts, templates, pages, test cases: they're all assets to MDW.
 More importantly if you're a developer: your Java, Groovy or Kotlin source files are assets (or they're
-bundled into JAR file assets).  The significance of this is in how they're deployed.  Assets are versioned in Git.
+bundled into JAR assets).  The significance of this is in how they're deployed.  Assets are versioned in Git.
 So the "MDW way" is that you'll never deploy your own WAR or JAR directly into any container.  Whether you're in 
 Tomcat, Spring Boot, Docker, or Cloud Foundry -- MDW takes care of loading your assets.  And in non-development
 environments these assets always come from one branch or another in Git.
@@ -64,5 +67,44 @@ With great power comes great responsibility.  MDW enforces a solid role-based au
 who's allowed to perform asset imports.  This privilege should be granted sparingly; in DevOps terms consider
 this equivalent to *Deploy* permission.
 
-### Components
+Assets are bundled into [packages]() for distribution and discovery.  For Java, Groovy and Kotlin source code assets,
+the package also provides Java-standard namespace resolution.  Every package is technically optional,
+but to derive much benefit from MDW you'll want to include at least `com.centurylink.mdw.base`.
+The best way to visualize asset packages is through Designer or MDWHub. But in case you're curious, the raw resources live here:
+  - Source in GitHub:
+    https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets
+  - Published builds in Maven Central:
+    http://repo1.maven.org/maven2/com/centurylink/mdw/assets/
+    
+Designer, MDWHub and the CLI all include asset discovery/import features that can grab selected packages from Maven Central.
+App teams can publish their own asset libraries and make them discoverable through this standard MDW distribution mechanism.
+    
+### MDW Components
+
+The MDW stack is aligned into these major components:
+ - Engine 
+ -- The behind-the-scenes nerve center in the cloud that executes all your workflow processes.   
+ - Designer 
+ -- Eclipse plugin for building processes, tasks, and other assets; with a graphical runtime view.  
+ - MDWHub 
+ -- The end-user webapp featuring a dashboard, runtime UI, task management, supervisor tools and asset editor. 
+ - Microservices
+ -- The extensible orchestration component for consuming and producing microservices. 
+ - Intelligence 
+ -- The design facility for identifying milestones and authoring reports to aggregate collected metrics.
+
+ ![MDW Components](../../img/MdwComponents.png)
+
+### Task Management
+  TODO
+  
+### Error Handling
+  TODO
+  
+### Automated Tests
+  TODO
+  
+### Event Handlers
+  TODO
+
 

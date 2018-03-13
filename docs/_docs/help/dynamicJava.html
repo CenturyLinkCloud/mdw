@@ -19,21 +19,20 @@ see the <a href="http://centurylinkcloud.github.io/mdw/docs/guides/SetupGuideFor
 Dynamic Java takes advantage of the runtime compilation and execution framework built into JDK1.8.
 Compiled class definitions are lazily cached in the CompiledJavaCache as specified in the application cache configuration.
 <br/><br/>
-An important aspect of the Dynamic Java is that it enables you to transparently edit Java Code in a local
+An important aspect of the dynamic Java is that it enables you to transparently edit Java Code in a local
 or remote environment without needing to redeploy or restart your server.  You can also debug your code without
 regard to where the workflow is hosted, setting breakpoints and viewing/changing variable values during process execution.
 <br/><br/>
-For MDW running in <a href='mdwCloudModeConsiderations.html'>Cloud Mode</a>,
-there is no client-app Jar or War, so Dynamic Java is used to implement Custom Activities, Event Handlers and Variable Translators.
-Other capabilities that can be implemented in Dynamic Java include Activity/Adapter/Process/Service Monitors, <a href="scheduledJobs.html">Scheduled Jobs</a>,
+Dynamic Java is used to implement Custom Activities, Event Handlers and Variable Translators.
+Other capabilities that can be implemented in dynamic Java include Activity/Adapter/Process/Service Monitors, <a href="scheduledJobs.html">Scheduled Jobs</a>,
 Cache Services, Startup Services, and custom JSON or XML based service implementations that can be exposed through any of the supported MDW protocols 
-(SOAP, REST, etc).  For Manual Tasks Dynamic Java customizations include Manual Task custom Routing Strategies, AutoAssign Strategies, 
+(SOAP, REST, etc).  For Manual Tasks dynamic Java customizations include Manual Task custom Routing Strategies, AutoAssign Strategies, 
 Prioritization Strategies, SubTask Strategies and Task Notifiers. 
 <br/><br/>
 
 <h3>Usage</h3>
-To create a custom Dynamic Java Activity Implementor or Event Handler, use the appropriate Eclipse wizards and select Dynamic Java for the code generation option.
-For other types of custom code, you can create a Dynamic Java asset by right-clicking on the desired workflow package location in Process Explorer
+To create a custom dynamic Java Activity Implementor or Event Handler, use the appropriate Eclipse wizards and select dynamic Java for the code generation option.
+For other types of custom code, you can create a dynamic Java asset by right-clicking on the desired workflow package location in Process Explorer
 view and selecting New > Java Source.  Then you can customize the generated skeleton code.
 <br/><br/> 
 Note: If your workflow project is remote or cloud-based and it's the first time you've edited Java content in the project, you'll
@@ -45,7 +44,7 @@ and autocomplete for the JDK classes as well as the classes provided by MDW itse
 <img src="images/dynamicJavaLibs.jpg" />
 <br/><br/>
 <h3>Running and Debugging</h3>
-When you're ready to test your Dynamic Java, there's no need to compile or deploy; simply saving the artifact is sufficient.
+When you're ready to test your dynamic Java, there's no need to compile or deploy; simply saving the artifact is sufficient.
 As with all types of <a href="assets.html">MDW assets</a>, when you open the .java file you're actually opening a local
 temporary copy, and this is persisted to the database once you save the file (you'll be promted whether to increment the version and so forth).
 <br/><br/>

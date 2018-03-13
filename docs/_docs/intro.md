@@ -20,4 +20,4 @@ Through the happy path a bug object is saved, a subflow is launched asynchronous
 to the caller. 
 
 Ready to find out more?  Click Next to continue to the high-level [Overview](../overview/), 
-or dive straight in to the [Cookbook](../guides/mdw-cookbook) to walk through how this workflow was built..   
+or dive straight in to the [Cookbook](../guides/mdw-cookbook) to walk through how this workflow was built.

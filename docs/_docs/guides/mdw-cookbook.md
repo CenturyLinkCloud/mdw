@@ -635,7 +635,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     @RegisteredService(PrioritizationStrategy.class)
     public class Prioritization ...
     ```
-    The @RegisteredService annotation gives your Dynamic Java code an extensibility hook into MDW.  To see the available implementations
+    The @RegisteredService annotation gives your dynamic Java code an extensibility hook into MDW.  To see the available implementations
     you can plug in, have a look at the [All Known Subinterfaces](../../javadoc/com/centurylink/mdw/common/service/RegisteredService.html) 
     section of the javadoc.
     

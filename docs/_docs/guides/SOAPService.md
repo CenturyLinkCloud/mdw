@@ -88,7 +88,7 @@ A local project is useful if you want to debug your custom Java source code and 
   
   ![alt text](../images/saveProcess.png "saveProcess")
  
-##### Create a Dynamic Java Custom Activity:
+##### Create a dynamic Java Custom Activity:
 - Right-click on your package in Process Explorer and select New > Activity > General Activity.  
   On the first page of the wizard, enter a label to identify your activity in the Toolbox view.
   
@@ -98,9 +98,9 @@ A local project is useful if you want to debug your custom Java source code and 
 
   ![alt text](../images/addActivity2.png "addActivity2")
  
-- When you click Finish the Java code for a skeleton implementation is generated.  You will also see the Java class under your package in Process Explorer.  This source code resides under src/main/workflow and is known as a Dynamic Java workflow asset.  It is dynamic because it can be changed without needing any kind of application deployment.  Naturally there are rigorous controls in place to prevent unauthorized modifications.  
+- When you click Finish the Java code for a skeleton implementation is generated.  You will also see the Java class under your package in Process Explorer.  This source code resides under src/main/workflow and is known as a dynamic Java workflow asset.  It is dynamic because it can be changed without needing any kind of application deployment.  Naturally there are rigorous controls in place to prevent unauthorized modifications.  
  
-- In step 1 you were granted permissions in the MDW Demo environment to create and modify workflow assets.  With Dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
+- In step 1 you were granted permissions in the MDW Demo environment to create and modify workflow assets.  With dynamic Java, as with all types of workflow assets, MDW provides facilities for versioning, rollback and import/export for migrating between environments.
 
 - Update the generated Java source code to resemble the following:
 
@@ -217,7 +217,7 @@ A local project is useful if you want to debug your custom Java source code and 
 - Save your changes and run your process again to confirm that this time it fails validation with the appropriate validationResult message.  Note: In the real world Order IDs would likely be 
   unique for each request, so you may want to change the XML input on the process launch Variables tab to something other than the value remembered from the last launch.
   
-- Let us assume that we don't know why validation is failing, so we would  like to debug our Dynamic Java source code.  Set a breakpoint on the line with the if condition by double-clicking on the
+- Let us assume that we don't know why validation is failing, so we would  like to debug our dynamic Java source code.  Set a breakpoint on the line with the if condition by double-clicking on the
   marker bar on the left side of Eclipse's Java editor.
   
 - Run your process again, but this time uncheck `Monitor Runtime Log` on the Process tab in the launch dialog so that Live View doesn't steal focus while you're debugging.  After clicking Run, 
@@ -438,7 +438,7 @@ MDW comes with the Document Web Service Activity for consuming document-style se
   On the Design tab of the service, set the Endpoint/WSDL URL to: [http://localhost:8080/mdw/Services/SOAP](http://localhost:8080/mdw/Services/SOAP).
 
 ##### Add Pre and Post Script:
-- To customize the behavior of the Document Web Service activity, you could extend the framework class in a custom Dynamic Java activity as we did for the validator.  However, for service 
+- To customize the behavior of the Document Web Service activity, you could extend the framework class in a custom dynamic Java activity as we did for the validator.  However, for service 
   invocation activities (known in MDW as adapter activities), you can also associate script to be executed before and after the service call.  This can sometimes be a quick alternative to 
   creating your own custom activity.  Double-click on the Check Employee activity and select the Script property tab.  Edit the prescript, adding the Groovy code below to return a request that
   includes employeeId (notice that in your script you can refer to variables directly by their name):

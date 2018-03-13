@@ -1,5 +1,5 @@
 ---
-title: MDW Features
+title: Features
 permalink: /docs/features/
 overview: true
 ---
