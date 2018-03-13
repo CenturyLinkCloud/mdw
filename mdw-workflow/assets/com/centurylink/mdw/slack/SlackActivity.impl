@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "slack.png",
+  "implementorClass": "com.centurylink.mdw.slack.SlackActivity",
+  "label": "Slack Notify",
+  "pagelet": "<PAGELET>\r\n  <HYPERLINK NAME='EndpointUri' LABEL='Slack Webhook URL' DEFAULT=\"#{props['mdw.slack.webhook']}\"/>\r\n  <TEXT NAME='slackMessage' LABEL='Slack Message' VW='200'/>\r\n <BOOLEAN NAME='ContinueDespiteMessagingException' LABEL='Continue Despite Messaging Exception'/>  <TEXT LABEL='Max tries' NAME='max_tries' VW='60'/>\r\n  <TEXT LABEL='Retry Interval (sec)' NAME='retry_interval' VW='80'/>\r\n  <TEXT LABEL='Response Timeout (sec)' NAME='timeout' VW='80'/>\r\n  <DROPDOWN NAME='REQUEST_VARIABLE' LABEL='Exception Variable' SOURCE='Variables' VW='200'/>\r\n  <HYPERLINK URL='/MDWWeb/doc/SlackActivity.html'>Slack Notification Activity Help<\/HYPERLINK>\r\n<\/PAGELET>"
+}

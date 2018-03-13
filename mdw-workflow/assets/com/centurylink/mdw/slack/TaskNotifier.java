@@ -53,9 +53,9 @@ public class TaskNotifier extends TemplatedNotifier {
         try {
             Map<String,String> hdrs = new HashMap<>();
             hdrs.put(Listener.METAINFO_CLOUD_ROUTING, "SlackWebHook");
-            hdrs.put(Listener.METAINFO_MDW_APP_ID, ApplicationContext.getAppId());
+            hdrs.put(Listener.METAINFO_MDW_APP_ID,  ApplicationContext.getAppId());
             hdrs.put(Listener.METAINFO_MDW_APP_TOKEN, System.getenv("MDW_APP_TOKEN"));   // Add the application specific MDW provided token
-            HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getMdwCloudRoutingUrl() + "/slack"));
+            HttpHelper helper = new HttpHelper(new URL(getWebhookUrl()));
             helper.setHeaders(hdrs);
             String response = helper.post(getMessage().toString(2));
             if (helper.getResponseCode() != 200)
