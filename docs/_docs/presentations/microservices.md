@@ -51,7 +51,7 @@ title: Microservices in MDW
   - [Validation](https://limberest.io/limberest/topics/validation)
 
 ### Deployment and Testing
-  - [Tomcat Guide](../../guides/tomcat-guide/)
+  - [Tomcat Guide](../../guides/tomcat/)
   - [Spring Boot](http://127.0.0.1:4000/docs/getting-started/quick-start/)
   - [Hyperion platform](https://hyperion-ui-test1.pcfomactl.dev.intranet/home.html)
   - [Cloud Foundry setup](../../guides/SetupGuideForCloudFoundry/)

@@ -51,10 +51,9 @@ public class AuthenticatedUser extends JsonRestService {
      * Retrieve the current authenticated user.
      */
     @Override
-    @ApiOperation(value="Retrieves the user as authenticated by MDW",
-        response=User.class)
+    @ApiOperation(value="Retrieves the user as authenticated by MDW", response=User.class)
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-        // we trust this header value because only MDW set it
+        // we trust this header value because only MDW can set it
         String authUser = (String)headers.get(Listener.AUTHENTICATED_USER_HEADER);
         try {
             if (authUser == null)

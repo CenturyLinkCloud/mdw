@@ -14,23 +14,25 @@ permalink: /docs/guides/
 <section class="features">
   <div class="grid">
     <div class="unit one-third">
-      <h2>MDW Cookbook</h2>
+      <h2>Apache Tomcat</h2>
       <p>
-        Walk through the essential features of MDW 
+        Deploy MDW on Tomcat, locally or on a server 
       </p>
-      <a href="mdw-cookbook/">MDW Cookbook &rarr;</a>
+      <a href="tomcat/">Tomcat Guide &rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Tomcat Setup Guide</h2>
+      <h2>Spring Boot</h2>
       <p>
-        Deploying on Tomcat
+        MDW as a standalone executable jar
        </p>
-      <a href="tomcat-guide/">Tomcat Setup Guide&rarr;</a>
+      <a href="spring-boot/">Spring Boot Guide &rarr;</a>
     </div>
     <div class="unit one-third">
-      <h2>Cloud Foundry Setup Guide</h2>
-      <p>Deploying on Cloud Foundry</p>
-      <a href="SetupGuideForCloudFoundry/">Cloud Foundry Setup Guide&rarr;</a>
+      <h2>Docker</h2>
+      <p>
+        Install the MDW Docker image from dockerhub.com
+      </p>
+      <a href="docker/">Docker Guide &rarr;</a>
     </div>
     <div class="clear"></div>
   </div>

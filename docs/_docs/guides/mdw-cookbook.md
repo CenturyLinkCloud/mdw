@@ -7,7 +7,7 @@ Let's walk through the essential features of MDW.  All the source code reference
 is available to clone in its completed state from the [mdw-demo repository](https://github.com/CenturyLinkCloud/mdw-demo).  
 
 ## Sections in this Guide
-  MDW is a [workflow](../../features-guide) framework specializing in [microservice orchestration](../../presentations/microservices).
+  MDW is a [workflow framework](../../intro-to-mdw) specializing in [microservice orchestration](../../presentations/microservices).
   We'll focus these topics, and dive into other key features like manual task handling and web UI development.
   Our use case is a bug management workflow.
   1. [Implement a REST Service](#1-implement-a-rest-service)
@@ -77,7 +77,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
 
 #### Add a script activity
   The Designer Toolbox view contains the available activities for building our process.  In MDW, an *activity* is an individual step in a workflow,
-  and an *activity implementor* is a Java class that defines an activity's behavior.  MDW comes with a boatload of [prebuilt activities](../../development/built-in-activities).
+  and an *activity implementor* is a Java class that defines an activity's behavior.  MDW comes with a boatload of [prebuilt activities](../../workflow/built-in-activities).
   Quite possibly you'll want to extend the toolbox with your own custom activities.  We'll cover that in another section of the cookbook.
   
   - In the Toolbox view locate the activity labeled "Execute Script" and drag it onto the Designer canvas.  Double-click the activity in the canvas,
@@ -234,7 +234,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     responses will automatically be bound to our variables.  Also change the types of both "request" and "response" to com.centurylink.mdw.model.Jsonable.
 
   - Back on the Script property tab for Validate Request, under the Documents section select the "response" variable and move it from Read-Only to
-    Writable.  The reason we have to do this is that so-called [document variables](../../development/built-in-variable-types) in MDW are passed by reference
+    Writable.  The reason we have to do this is that so-called [document variables](../../workflow/built-in-variable-types) in MDW are passed by reference
     (whereas strings and native types are passed by value).  Passing by reference is nice because we can update the same document from many different subflows.
     But a byproduct of this is that the engine needs to lock this variable for update when our activity is invoked.  Hence the need to mark "response" as writable.
     ![writable doc](../images/writable-doc.png) 

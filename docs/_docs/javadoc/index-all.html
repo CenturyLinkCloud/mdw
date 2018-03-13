@@ -537,8 +537,6 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/task/AllowableTaskActions.html#AllowableTaskActions--">AllowableTaskActions()</a></span> - Constructor for class com.centurylink.mdw.services.task.<a href="com/centurylink/mdw/services/task/AllowableTaskActions.html" title="class in com.centurylink.mdw.services.task">AllowableTaskActions</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/MiscConstants.html#AllowAnyAuthenticatedUser">AllowAnyAuthenticatedUser</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/MiscConstants.html" title="interface in com.centurylink.mdw.constant">MiscConstants</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/process/InvokeProcessActivityBase.html#allowInput-com.centurylink.mdw.model.variable.Variable-">allowInput(Variable)</a></span> - Method in class com.centurylink.mdw.workflow.activity.process.<a href="com/centurylink/mdw/workflow/activity/process/InvokeProcessActivityBase.html" title="class in com.centurylink.mdw.workflow.activity.process">InvokeProcessActivityBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskStatus.html#allStatusCodes">allStatusCodes</a></span> - Static variable in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskStatus.html" title="class in com.centurylink.mdw.model.task">TaskStatus</a></dt>
@@ -974,13 +972,11 @@
 <div class="block">AuthenticationException indicates bad credentials, whereas general MdwSecurityException
  indicates some other type of error.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#authenticate-java.lang.String-java.lang.String-">authenticate(String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>
-<div class="block">Supports existing api with just cuid and pass</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/LdapAuthenticator.html#authenticate-java.lang.String-java.lang.String-">authenticate(String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/LdapAuthenticator.html" title="class in com.centurylink.mdw.auth">LdapAuthenticator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/LdapAuthenticator.html#authenticate-java.lang.String-java.lang.String-java.lang.String-">authenticate(String, String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/LdapAuthenticator.html" title="class in com.centurylink.mdw.auth">LdapAuthenticator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/MdwAuthenticator.html#authenticate-java.lang.String-java.lang.String-">authenticate(String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/MdwAuthenticator.html" title="class in com.centurylink.mdw.auth">MdwAuthenticator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/NoOpAuthenticator.html#authenticate-java.lang.String-java.lang.String-">authenticate(String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/NoOpAuthenticator.html" title="class in com.centurylink.mdw.auth">NoOpAuthenticator</a></dt>
 <dd>&nbsp;</dd>
@@ -991,8 +987,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/util/AuthUtils.html#authenticate-java.lang.String-java.util.Map-java.lang.String-">authenticate(String, Map&lt;String, String&gt;, String)</a></span> - Static method in class com.centurylink.mdw.services.util.<a href="com/centurylink/mdw/services/util/AuthUtils.html" title="class in com.centurylink.mdw.services.util">AuthUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/listener/Listener.html#AUTHENTICATED_USER_HEADER">AUTHENTICATED_USER_HEADER</a></span> - Static variable in interface com.centurylink.mdw.model.listener.<a href="com/centurylink/mdw/model/listener/Listener.html" title="interface in com.centurylink.mdw.model.listener">Listener</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/MiscConstants.html#authenticatedUser">authenticatedUser</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/MiscConstants.html" title="interface in com.centurylink.mdw.constant">MiscConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/user/AuthenticatedUser.html" title="class in com.centurylink.mdw.model.user"><span class="typeNameLink">AuthenticatedUser</span></a> - Class in <a href="com/centurylink/mdw/model/user/package-summary.html">com.centurylink.mdw.model.user</a></dt>
 <dd>
@@ -3205,11 +3199,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#DO_LOGGING">DO_LOGGING</a></span> - Static variable in class com.centurylink.mdw.workflow.adapter.<a href="com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#doAuthentication-java.lang.String-java.lang.String-">doAuthentication(String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>
-<div class="block">
- Takes a cuid and pass combination and authenticates against JWT.</div>
-</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/MdwAuthenticator.html#doAuthentication-java.lang.String-java.lang.String-">doAuthentication(String, String)</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/MdwAuthenticator.html" title="class in com.centurylink.mdw.auth">MdwAuthenticator</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/GitImporter.html#doCommand-java.lang.String-">doCommand(String)</a></span> - Method in class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/GitImporter.html" title="class in com.centurylink.mdw.util">GitImporter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCompare.html#doCompare-com.centurylink.mdw.model.asset.Asset-com.centurylink.mdw.test.TestCaseFile-">doCompare(Asset, TestCaseFile)</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCompare.html" title="class in com.centurylink.mdw.test">TestCompare</a></dt>
@@ -4740,8 +4731,6 @@
 <dd>
 <div class="block">Returns the application name</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#getAppId--">getAppId()</a></span> - Static method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/context/Mdw.html#getAppId--">getAppId()</a></span> - Method in class com.centurylink.mdw.hub.context.<a href="com/centurylink/mdw/hub/context/Mdw.html" title="class in com.centurylink.mdw.hub.context">Mdw</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/AppSummary.html#getAppId--">getAppId()</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/AppSummary.html" title="class in com.centurylink.mdw.model">AppSummary</a></dt>
@@ -7206,13 +7195,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/user/User.html#getJsonWithRoles-boolean-">getJsonWithRoles(boolean)</a></span> - Method in class com.centurylink.mdw.model.user.<a href="com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#getJwtTokenLocation--">getJwtTokenLocation()</a></span> - Static method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/Authenticator.html#getKey--">getKey()</a></span> - Method in interface com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/Authenticator.html" title="interface in com.centurylink.mdw.auth">Authenticator</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#getKey--">getKey()</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/LdapAuthenticator.html#getKey--">getKey()</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/LdapAuthenticator.html" title="class in com.centurylink.mdw.auth">LdapAuthenticator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/MdwAuthenticator.html#getKey--">getKey()</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/MdwAuthenticator.html" title="class in com.centurylink.mdw.auth">MdwAuthenticator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/NoOpAuthenticator.html#getKey--">getKey()</a></span> - Method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/NoOpAuthenticator.html" title="class in com.centurylink.mdw.auth">NoOpAuthenticator</a></dt>
 <dd>&nbsp;</dd>
@@ -12610,16 +12597,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/servlet/JsxServlet.html#JsxServlet--">JsxServlet()</a></span> - Constructor for class com.centurylink.mdw.hub.servlet.<a href="com/centurylink/mdw/hub/servlet/JsxServlet.html" title="class in com.centurylink.mdw.hub.servlet">JsxServlet</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth"><span class="typeNameLink">JwtAuthenticator</span></a> - Class in <a href="com/centurylink/mdw/auth/package-summary.html">com.centurylink.mdw.auth</a></dt>
-<dd>
-<div class="block">
- Authenticates using JWT - normally used in the PaaS space
- <br/></div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#JwtAuthenticator--">JwtAuthenticator()</a></span> - Constructor for class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#JwtAuthenticator-java.lang.String-">JwtAuthenticator(String)</a></span> - Constructor for class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
 </dl>
 <a name="I:K">
 <!--   -->
@@ -12927,7 +12904,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#logexception-java.lang.String-java.lang.Exception-">logexception(String, Exception)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/MdwAuthenticator.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/MdwAuthenticator.html" title="class in com.centurylink.mdw.auth">MdwAuthenticator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/event/DefaultExternalEventHandler.html#logger">logger</a></span> - Static variable in class com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/DefaultExternalEventHandler.html" title="class in com.centurylink.mdw.event">DefaultExternalEventHandler</a></dt>
 <dd>&nbsp;</dd>
@@ -12976,8 +12953,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/RuntimeContextAdapter.html#logInfo-java.lang.String-">logInfo(String)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/RuntimeContextAdapter.html" title="class in com.centurylink.mdw.model.workflow">RuntimeContextAdapter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#loginfo-java.lang.String-">loginfo(String)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/MiscConstants.html#LoginPage">LoginPage</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/MiscConstants.html" title="interface in com.centurylink.mdw.constant">MiscConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/hub/servlet/LoginServlet.html" title="class in com.centurylink.mdw.hub.servlet"><span class="typeNameLink">LoginServlet</span></a> - Class in <a href="com/centurylink/mdw/hub/servlet/package-summary.html">com.centurylink.mdw.hub.servlet</a></dt>
 <dd>&nbsp;</dd>
@@ -13067,8 +13042,6 @@
 </a>
 <h2 class="title">M</h2>
 <dl>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#main-java.lang.String:A-">main(String[])</a></span> - Static method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/LdapAuthenticator.html#main-java.lang.String:A-">main(String[])</a></span> - Static method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/LdapAuthenticator.html" title="class in com.centurylink.mdw.auth">LdapAuthenticator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Archive.html#main-java.lang.String:A-">main(String[])</a></span> - Static method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Archive.html" title="class in com.centurylink.mdw.cli">Archive</a></dt>
@@ -13597,6 +13570,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WEBSOCKET_URL">MDW_WEBSOCKET_URL</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/auth/MdwAuthenticator.html" title="class in com.centurylink.mdw.auth"><span class="typeNameLink">MdwAuthenticator</span></a> - Class in <a href="com/centurylink/mdw/auth/package-summary.html">com.centurylink.mdw.auth</a></dt>
+<dd>
+<div class="block">Authenticates using MDW auth via JSON Web Tokens.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/MdwAuthenticator.html#MdwAuthenticator-java.lang.String-">MdwAuthenticator(String)</a></span> - Constructor for class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/MdwAuthenticator.html" title="class in com.centurylink.mdw.auth">MdwAuthenticator</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/dataaccess/file/MdwBaselineData.html" title="class in com.centurylink.mdw.dataaccess.file"><span class="typeNameLink">MdwBaselineData</span></a> - Class in <a href="com/centurylink/mdw/dataaccess/file/package-summary.html">com.centurylink.mdw.dataaccess.file</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/MdwBaselineData.html#MdwBaselineData--">MdwBaselineData()</a></span> - Constructor for class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/MdwBaselineData.html" title="class in com.centurylink.mdw.dataaccess.file">MdwBaselineData</a></dt>
@@ -13873,8 +13852,6 @@
 <dt><a href="com/centurylink/mdw/util/MiniCrypter.html" title="class in com.centurylink.mdw.util"><span class="typeNameLink">MiniCrypter</span></a> - Class in <a href="com/centurylink/mdw/util/package-summary.html">com.centurylink.mdw.util</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/MiniCrypter.html#MiniCrypter--">MiniCrypter()</a></span> - Constructor for class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/MiniCrypter.html" title="class in com.centurylink.mdw.util">MiniCrypter</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/constant/MiscConstants.html" title="interface in com.centurylink.mdw.constant"><span class="typeNameLink">MiscConstants</span></a> - Interface in <a href="com/centurylink/mdw/constant/package-summary.html">com.centurylink.mdw.constant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/yaml/YamlLoader.html#missingYaml-java.lang.String-java.lang.String-">missingYaml(String, String)</a></span> - Method in class com.centurylink.mdw.yaml.<a href="com/centurylink/mdw/yaml/YamlLoader.html" title="class in com.centurylink.mdw.yaml">YamlLoader</a></dt>
 <dd>&nbsp;</dd>
@@ -14422,8 +14399,6 @@
 <div class="block">Retains inserted key order.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/OrderedProperties.html#OrderedProperties--">OrderedProperties()</a></span> - Constructor for class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/OrderedProperties.html" title="class in com.centurylink.mdw.config">OrderedProperties</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/MiscConstants.html#originalPath">originalPath</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/MiscConstants.html" title="interface in com.centurylink.mdw.constant">MiscConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/request/RequestList.html#OUTBOUND_REQUESTS">OUTBOUND_REQUESTS</a></span> - Static variable in class com.centurylink.mdw.model.request.<a href="com/centurylink/mdw/model/request/RequestList.html" title="class in com.centurylink.mdw.model.request">RequestList</a></dt>
 <dd>&nbsp;</dd>
@@ -17144,8 +17119,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/context/Mdw.html#setAllowAnyAuthenticatedUser-boolean-">setAllowAnyAuthenticatedUser(boolean)</a></span> - Method in class com.centurylink.mdw.hub.context.<a href="com/centurylink/mdw/hub/context/Mdw.html" title="class in com.centurylink.mdw.hub.context">Mdw</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#setAppId-java.lang.String-">setAppId(String)</a></span> - Static method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/context/Mdw.html#setAppId-java.lang.String-">setAppId(String)</a></span> - Method in class com.centurylink.mdw.hub.context.<a href="com/centurylink/mdw/hub/context/Mdw.html" title="class in com.centurylink.mdw.hub.context">Mdw</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/AppSummary.html#setAppId-java.lang.String-">setAppId(String)</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/AppSummary.html" title="class in com.centurylink.mdw.model">AppSummary</a></dt>
@@ -17943,8 +17916,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/app/ApplicationContext.html#setJmsProvider-com.centurylink.mdw.container.JmsProvider-">setJmsProvider(JmsProvider)</a></span> - Method in class com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ApplicationContext.html" title="class in com.centurylink.mdw.app">ApplicationContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Test.html#setJson-boolean-">setJson(boolean)</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Test.html" title="class in com.centurylink.mdw.cli">Test</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/auth/JwtAuthenticator.html#setJwtTokenLoc-java.lang.String-">setJwtTokenLoc(String)</a></span> - Static method in class com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/JwtAuthenticator.html" title="class in com.centurylink.mdw.auth">JwtAuthenticator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/Value.html#setLabel-java.lang.String-">setLabel(String)</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a></dt>
 <dd>&nbsp;</dd>

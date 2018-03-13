@@ -1,48 +1,45 @@
 - title: Introduction
   docs:
-  - mdw-intro
-  - mdw-overview
+  - intro
+  - overview
+  - features
   - differentiators
-  - features-guide
-  - mdw-components
+  - components
+  - in-depth
   
 - title: Getting Started
   docs:
   - getting-started/quick-start
   - getting-started/cli
-  - help
+  - guides/mdw-cookbook
   
 - title: Guides
   docs:
-  - guides/mdw-cookbook
-  - guides/tomcat-guide
-  - guides/SetupGuideForCloudFoundry
+  - guides/tomcat
+  - guides/spring-boot
+  - guides/cloud-foundry
+  - guides/docker
   - guides/configuration
-  - guides/docker-guide
   - guides/mdw-mobile
-  - guides/tuning
   
 - title: Designer
   docs:
   - getting-started/install-designer
   - designer/user-guide
 
+- title: Workflow
+  docs:
+  - workflow/built-in-activities
+  - workflow/built-in-variable-types
+  - help
+
 - title: Development
   docs:
-  - development/built-in-activities
-  - development/built-in-variable-types
-  - getting-started/spring-boot
   - link-to-javadoc
-
-- title: Demo
-  docs:
   - link-to-demo
+  - guides/tuning
+  - releases
 
 - title: Presentations
   docs:
   - presentations/microservices
-  
-- title: Miscellaneous
-  docs:
-  - release-notes
-  - db/MdwDatabaseTables
