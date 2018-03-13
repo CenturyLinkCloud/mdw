@@ -1,5 +1,5 @@
 ---
-permalink: /docs/getting-started/spring-boot/
+permalink: /docs/guides/spring-boot/
 title: Spring Boot
 ---
 

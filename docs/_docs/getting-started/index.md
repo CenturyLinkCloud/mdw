@@ -14,16 +14,16 @@ permalink: /docs/getting-started/
 <section class="features">
   <div class="grid">
     <div class="unit one-third">
-      <a href="quick-start">QUICK START &rarr;</a>
-	  <p>The quick start guide provides a quick instruction to setup and run with MDW in no time.</p>
+      <a href="quick-start">Quick Start &rarr;</a>
+	  <p>Super brief instructions to get up and running with MDW.</p>
     </div>
     <div class="unit one-third">
-      <a href="cli">MDW CLI &rarr;</a>
-      <p>Use the MDW command-line interface to create a project, to install and run MDW, and lots more.</p>
+      <a href="../guides/mdw-cookbook">Cookbook &rarr;</a>
+      <p>A step-by-step walkthrough of MDW's essential features.</p>
     </div>
     <div class="unit one-third">
-      <a href="{{ site.baseurl }}/docs/guides/">GUIDES &rarr;</a>
-      <p>The guides provide detailed, step-by-step instructions for supported containers.</p>
+      <a href="{{ site.baseurl }}/docs/guides/">Guides &rarr;</a>
+      <p>Container-specific setup with all the detail you'll ever want.</p>
     </div>
     <div class="clear"></div>
   </div>
