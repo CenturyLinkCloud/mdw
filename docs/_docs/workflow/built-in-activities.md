@@ -29,7 +29,7 @@ permalink: /docs/development/built-in-activities/
   [Process Start](http://centurylinkcloud.github.io/mdw/docs/help/ProcessStartActivity.html) | Used to start the first activity any process executes.
   [Publish Event](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for synchronization between independent process instances.
   [RESTful service adapter activity](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | Used to invoke a RESTful Web Service from a workflow process.
-  [Slack Notification Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for sending notifications.
+  [Slack Notification Adapter](http://centurylinkcloud.github.io/mdw/docs/help/SlackActivity.html) | Used for sending notifications.
   [Synchronization Activity](http://centurylinkcloud.github.io/mdw/docs/help/synchronization.html) | Used to coordinate two parallel execution paths.
   [Text Note](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Used for text note.
   [Timer Wait](http://centurylinkcloud.github.io/mdw/docs/help/TimerWaitActivity.html) | Used to put a process on pause for a certain period of time.
