@@ -13,5 +13,23 @@
     <error-code>500</error-code>
     <location>/error</location>
   </error-page>
+  
+  <filter>
+    <filter-name>CorsFilter</filter-name>
+      <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+      <init-param>
+    	<param-name>cors.allowed.methods</param-name>
+    	<param-value>GET,OPTIONS</param-value>
+  	  </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/services/AppSummary</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/services/com/centurylink/mdw/central/users</url-pattern>
+  </filter-mapping>
+  
     
 </web-app>

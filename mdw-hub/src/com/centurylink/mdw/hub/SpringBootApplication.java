@@ -22,6 +22,8 @@ import java.net.URISyntaxException;
 
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
@@ -103,6 +105,20 @@ public class SpringBootApplication {
                         return "/error";
                     }
                 });
+                FilterDef corsFilter = new FilterDef();
+                corsFilter.setFilterName("CorsFilter");
+                corsFilter.setFilterClass("org.apache.catalina.filters.CorsFilter");
+         //       corsFilter.addInitParameter("cors.allowed.methods", "GET,OPTIONS");
+         //       corsFilter.addInitParameter("cors.allowed.headers", "Content-Type,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Accept-Encoding,Accept-Language,Cache-Control,Connection,Host,Pragma,Referer,User-Agent");
+         //       corsFilter.addInitParameter("cors.exposed.headers", "authorization");
+         //       corsFilter.addInitParameter("cors.allowed.origins", "*");
+                context.addFilterDef(corsFilter);
+                FilterMap filterMap = new FilterMap();
+                filterMap.setFilterName(corsFilter.getFilterName());
+                filterMap.addURLPattern("*");
+        //        filterMap.addURLPattern("/services/AppSummary");
+        //        filterMap.addURLPattern("/services/com/centurylink/mdw/central/users");
+                context.addFilterMap(filterMap);
             }
         };
     }

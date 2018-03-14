@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
         request.getSession().removeAttribute("authenticatedUser");
         String authError = (String) request.getSession().getAttribute(MDW_AUTH_MSG);
         String authMethod = WebAppContext.getMdw().getAuthMethod();
-        if ("ct".equals(authMethod) || "mdw".equals(authMethod)) {
+        if ("ct".equals(authMethod)) {
             if (request.getServletPath().equalsIgnoreCase("/logout")) {
                 response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/login");
                 return;
@@ -81,6 +81,9 @@ public class LoginServlet extends HttpServlet {
                 }
                 response.getWriter().close();
             }
+        }
+        else if ("mdw".equals(authMethod)) {  // MDW Auth - Redirect to mdw-central to log in
+            response.sendRedirect(ApplicationContext.getMdwCentralUrl() + "/central/login?returnURL=" + ApplicationContext.getMdwHubUrl() + "&appID=" + ApplicationContext.getAppId());
         }
         else {
             StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,

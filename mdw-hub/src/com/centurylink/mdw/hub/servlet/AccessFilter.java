@@ -250,6 +250,8 @@ public class AccessFilter implements Filter {
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
                 user = null;
                 String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
+                if (authHdr == null && ApplicationContext.isMdwAuth() && "GET".equals(request.getMethod()))
+                    authHdr = request.getParameter(Listener.AUTHORIZATION_HEADER_NAME);
                 if (authHdr != null) {
                     Map<String,String> headers = new HashMap<String,String>();
                     headers.put(Listener.AUTHORIZATION_HEADER_NAME, authHdr);
@@ -310,6 +312,9 @@ public class AccessFilter implements Filter {
                     }
                 }
             }
+            // This throws an illegalStateException - need to figure out why....
+     //       if (user != null && "/login".equals(request.getServletPath()))
+     //           response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
 
             if (responseHeaders != null || logHeaders) {
                 chain.doFilter(request, new ResponseWrapper(response));
