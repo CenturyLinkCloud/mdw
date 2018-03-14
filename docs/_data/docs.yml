@@ -14,8 +14,8 @@
   docs:
   - guides/tomcat
   - guides/spring-boot
-  - guides/cloud-foundry
   - guides/docker
+  - guides/cloud-foundry
   - guides/configuration
   - guides/mdw-mobile
   
