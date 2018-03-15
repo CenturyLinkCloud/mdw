@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.cache.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +110,20 @@ public class AssetRefCache implements CacheService {
         }
 
         return null;
+    }
+
+    public static List<AssetRef> getAllProcessRefs() throws CachingException {
+        if (assetRefs == null)
+            load();
+
+        List<AssetRef> refList = new ArrayList<AssetRef>();
+        String name = ".proc v";
+        for (AssetRef curRef : assetRefs.values()) {
+            if (curRef.getName().contains(name)) {
+                refList.add(curRef);
+            }
+        }
+        return refList;
     }
 
     private static AssetRef loadAssetRef(String name) throws CachingException {
