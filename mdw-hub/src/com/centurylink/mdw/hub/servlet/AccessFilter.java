@@ -312,9 +312,11 @@ public class AccessFilter implements Filter {
                     }
                 }
             }
-            // This throws an illegalStateException - need to figure out why....
-     //       if (user != null && "/login".equals(request.getServletPath()))
-     //           response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
+            // This is to remove the JWT from QueryString
+            if (user != null && "GET".equals(request.getMethod()) && request.getParameter(Listener.AUTHORIZATION_HEADER_NAME) != null) {
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
+                return;
+            }
 
             if (responseHeaders != null || logHeaders) {
                 chain.doFilter(request, new ResponseWrapper(response));
