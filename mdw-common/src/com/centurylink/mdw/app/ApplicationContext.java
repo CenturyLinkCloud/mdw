@@ -750,8 +750,8 @@ public class ApplicationContext {
         List<URL> serverUrls = new ArrayList<URL>();
         // Due to different domains for same servers in some environments
         // (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
-        String thisHost = thisUrl.getHost().indexOf(".") > 0 ? thisUrl.getHost().substring(0, thisUrl.getHost().indexOf(".")) : thisUrl.getHost();
-        int thisPort = thisUrl.getPort() == 80 || thisUrl.getPort() == 443 ? -1 : thisUrl.getPort();
+        String thisHost = getServerHost().indexOf(".") > 0 ? getServerHost().substring(0, getServerHost().indexOf(".")) : getServerHost();
+        int thisPort = getServerPort() == 80 || getServerPort() == 443 ? -1 : getServerPort();
         for (Server server : getCompleteServerList().getServers()) {
             String serviceUrl = "http://" + server.toString() + thisUrl.getPath();
             URL otherUrl = new URL(serviceUrl);
