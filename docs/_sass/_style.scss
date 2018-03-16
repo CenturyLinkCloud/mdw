@@ -13,7 +13,7 @@
 body {
   font: 300 21px Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #ddd;
-  background-color: #333;
+  background-color: #263238;
   border-top: 5px solid #34d058;
   @include box-shadow(inset 0 3px 30px rgba(0,0,0,.3));
   text-shadow: 0 1px 3px rgba(0,0,0,.5);
@@ -120,7 +120,7 @@ nav {
   a {
     float: left;
     width: 100%;
-    background-color: #333;
+    background-color: #263238;
     color: #34d058;
     text-align: center;
     text-transform: uppercase;
@@ -525,7 +525,7 @@ aside {
     font-weight: 700;
     padding: 8px 12px 10px;
     @include border-radius(5px);
-    /*border: 1px solid #333;*/
+    /*border: 1px solid #263238;*/
     @include box-shadow(0 1px 3px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.5));
     background-color: #767676;
   }
@@ -700,7 +700,7 @@ h5 > code,
 }
 
 .note code {
-  background-color: #333;
+  background-color: #263238;
   background-color: rgba(0,0,0,0.2);
   margin-left: 2.5px;
   margin-right: 2.5px;

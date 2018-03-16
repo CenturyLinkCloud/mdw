@@ -212,7 +212,7 @@ public class DataAccess {
 
     public static void updateAssetRefs() throws DataAccessException {
         StandardLogger logger = LoggerUtil.getStandardLogger();
-        if (assetVersionControl != null && !ApplicationContext.isDevelopment() && !"true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))){
+        if (assetVersionControl != null && ((!ApplicationContext.isDevelopment() && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) || PropertyManager.getBooleanProperty("mdw.assetref.force", false))) {
             // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;

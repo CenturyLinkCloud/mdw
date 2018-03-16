@@ -68,10 +68,8 @@ public class WebAppContext {
             mdw.setWebSocketUrl(ApplicationContext.getWebSocketUrl());
             mdw.setAuthMethod(ApplicationContext.getAuthMethod());
             mdw.setDocsRoot(ApplicationContext.getDocsUrl());
-            String centralRoot = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_URL);
-            if (centralRoot == null)
-                centralRoot = hubRoot;
-            mdw.setCentralRoot(centralRoot);
+
+            mdw.setCentralRoot(ApplicationContext.getMdwCentralUrl());
             String appId = PropertyManager.getProperty(PropertyNames.MDW_APP_ID);
             mdw.setAppId(appId);
 

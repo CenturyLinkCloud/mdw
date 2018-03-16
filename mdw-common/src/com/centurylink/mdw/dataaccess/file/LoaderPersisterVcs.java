@@ -40,8 +40,10 @@ import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -60,6 +62,7 @@ import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
 
@@ -820,6 +823,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             for (PackageDir pkgDir : getPackageDirs())
                 processes.addAll(loadProcesses(pkgDir, false));
+            for (AssetRef ref : AssetRefCache.getAllProcessRefs()) {
+                Process proc = AssetRefConverter.getProcess(ref);
+                if (proc != null && !processes.contains(proc))
+                    processes.add(proc);
+            }
             Collections.sort(processes);
             return processes;
         }

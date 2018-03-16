@@ -30,7 +30,7 @@ The following standards should be followed as generally accepted good programmin
 logdebug("Listener Invoked: Message is " + msg.getString());
 ```
 
-   From within Groovy script or Dynamic Java activities, access to these methods is provided via the ActivityRuntimeContext:
+   From within Groovy script or dynamic Java activities, access to these methods is provided via the ActivityRuntimeContext:
    ```java
    runtimeContext.logdebug(String)
    ```

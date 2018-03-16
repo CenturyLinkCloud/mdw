@@ -1,5 +1,5 @@
 ---
-title: MDW Features
+title: Features
 permalink: /docs/features/
 overview: true
 ---
@@ -18,11 +18,10 @@ overview: true
 - A discoverable repository of prebuilt workflow assets that can be used as-is or extended 
 
 ### Microservice Orchestration:
-MDW helps you make sense of your microservices.
-Included is a easy to use toolkit for stitching together REST services into an overall flow that's dynamic yet structured.  
-MDW provides the means, through MDWHub, to visualize the relationships and dependencies among microservices.
-And to expose a REST entry point so you can deliver maximum value from disparate services.  
-By adopting MDW's lightweight pattern to expose your REST API,
+MDW helps you make sense of your microservices.  Included is a easy to use toolkit for stitching together REST 
+services into an overall flow that's dynamic yet structured.  MDW provides the means, through MDWHub, to visualize
+the relationships and dependencies among microservices. And to expose a REST entry point so you can deliver 
+maximum value from disparate services. By adopting MDW's lightweight pattern to expose your REST API,
 you'll get automatic data binding and your services become self-documenting via Swagger.
 
 ### Extensibility:

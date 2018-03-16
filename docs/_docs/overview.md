@@ -4,68 +4,107 @@ permalink: /docs/overview/
 overview: true
 ---
 
-The main goal of MDW was designed to provide a framework for IT Business Process Workflow for CenturyLink businesses. With this in mind, the framework was implemented using the latest technologies and languages such Java, Spring/Spring Boot, RESTFul/SOAP-based Web services, Camel, Tomcat and CloudFoundry to name a few.  The framework comes with many built-in, ready-to-use APIs and Services, which can be used without implementing any code. To see what MDW looks like in action, try out our [MDW Demo](https://github.com/CenturyLinkCloud/mdw-demo). To see the source code for the MDW Demo project, which is hosted in CenturyLink's GitHub repository, follow [this link](https://github.com/CenturyLinkCloud/mdw-demo).
+### MDW Basics
+A [process](../help/process.html) is a series of steps (or [activities](../help/implementor.html)) required 
+to achieve some objective.  Its definition artifact is a .proc file in JSON format that spells out these flow 
+instructions.  It also specifies named values ([variables](../help/variable.html)) that may be applied.  Variables
+are strongly typed, meaning at runtime MDW insists that they fit the expected form (java.lang.String, for example).
 
-## MDW Features    
-The chief feature of the MDW Frame is, it is Cloud-ready with built-in Microservices and its ability to use design-time tools for creating and simulating workflow processes quickly. It has many built-in features with adapters, services and tools to build a workflow process in no time and be able to run it to watch the process flow in real-time. By use of Dynamic Java workflow asset, it can be changed without needing to re-deploying and re-starting the server.  
+A key benefit of workflow is that it enables this process definition to be applied as a template for repeatedly
+executing many flows (creating what we call process instances).  And a hallmark of MDW is its flexibility in
+enforcing the constraints of the process while allowing it to be designed in such a way as to account for deviations
+in conditions.
 
-##### Service Orchestration
-MDW comes with built-in protocol support for common service transports used at CenturyLink. This enables IT architects and business analysts to focus on designing and creating workflow processes for their business needs without worrying about specific wire protocols. In MDW, the Service Orchestration is simply a matter of dragging and dropping built-in adapters and activities from the toolbox. With built-in Microservices, you can create, expose and consume services through a RESTFul Web Service easily and quickly.  
+When a flow executes you'll be able to watch it (in real time, if you'd like) in the MDWHub webapp.  Here's what a
+Create Bug flow instance looks like:
 
-##### MDWHub
-MDWHub is the web front-end tool for users and administrators to perform and manage manual tasks integrated into their workflows. It supports common functionalities such as charts and graphs for visual analysis of the throughput, task searching and fallouts, a list of service APIs, user and group management, system environment info and messaging with Http Poster for sending and receiving Web Service calls, and much more. 
+![create bug instance](../../img/create_bug_instance.png)
 
-##### Auto Discovery of Pre-Built Workflow Assets
-MDW provides a distribution mechanism to encourage reuse of workflow assets. MDW framework base distribution offers a number of commonly-used asset categories and 
-users can discover pre-built workflow assets through the standard MDW distribution mechanism, which can be used as-is or extended them to meet their business needs. 
+This shows the path that this specific execution took, as well as its runtime values and timeframes.
+If you had this open in MDWHub you'd be able to click the `request` document link to see its incoming JSON payload.
+And you'd be able to drill in to Invoke Bug Workflow to investigate this subflow in the same manner.
 
-##### Monitoring and Recovery Mechanism
-MDW provides easy to use/read logging with a runtime monitoring mechanism with the ability to drill down and graphically view runtime state for a particular workflow process instance. As well, MDW provides an automated or manual retry and fall-out handling of recovery of the process.
+This is the essential ingredient provided by workflow: a visual representation of what's taking place.
 
-##### Business Rules Engine 
-There are many types of design-time artifacts that are maintained in MDW. For business rules engine and firing the rules, the framework uses JBoss Drools and declarative business rules.
+Under the hood, every activity equates to a Java class.  It appears in the Designer toolbox by virtue of its
+association in a .impl asset (an [activity implementor](../help/implementor.html) in MDW's lexicon).
+Along with the implementing Java class, an .impl asset's JSON specifies an activity's toolbox label and
+any [attributes]() it supports.  Attributes are configurable aspects of an activity (picture dragging a REST
+adapter activity from the toolbox and setting its endpoint URL).  This is how the same activity can be used in
+many different flows.
 
+MDW provides quite a number of prebuilt activities to choose from:<br/>
+ - [MDW Activities](../workflow/built-in-activities)
 
-## MDW Framework Components
-MDW Framework comes with many built-in components:
-- Runtime Engine component, which is the behind-the-scenes nerve center in the cloud that executes all workflow processes.  This runtime engine is responsible for executing and communicating with various components within the MDW framework. 
-- Service component supports extensible Service-Oriented foundation for interacting with external systems.
-- Designer component gives an environment for building processes and tasks with a graphical runtime view and a simple mechanism for exporting and importing workflow assets. 
-- Web component with a built-in, ready-to-use web app for end users for handling manual tasks, with supervisor tools, charts and graphs as well as integrated reports.    
+Furthermore, you can [create your own](../guides/mdw-cookbook/#21-implement-a-custom-activity) reusable activities 
+as first class citizens in the toolbox.
 
-## Terminology
-
-  Term            | Definition     |
-  ----------------|:---------------|
-  [Process](http://centurylinkcloud.github.io/mdw/docs/help/process.html) | A series of linked steps (or **activities**), either automated or human, designed to deliver business value. 
-  [Activity](http://centurylinkcloud.github.io/mdw/docs/help/implementor.html) | A single step in a process flow.  Every activity is implemented as a Java class, and configured through **attributes**.
-  [Adapter](http://centurylinkcloud.github.io/mdw/docs/help/AdapterActivityBase.html) | A specialized **activity** to send outgoing messages to an external system (service invocation).
-  [Task](http://centurylinkcloud.github.io/mdw/docs/help/taskTemplates.html) | A specialized **activity** that designates human interaction.
-  [Asset](http://centurylinkcloud.github.io/mdw/docs/help/assets.html) | A versionable resource (such as a **process** definition), that's maintained as an artifact of an MDW app. 
-  [Attribute]() | Configurable aspect of an activity, process, user or asset.  
-  [Documentation]() | Markdown-based information attached to a process to describe its operation or requirements.  
-  [Package]() | Bundles assets for discovery and reuse.  Also provides Java-standard namespace resolution for source code assets.
-  [Transition]() | A link between **activities** indicating direction of flow. 
-  [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A named value in a **process** design which holds individual runtime data. 
-  [Document]() | A specialized variable for large values (such as a JSON request).  Document variables are passed by reference, so updates are reflected everywhere thoughout a workflow. 
-  [Implementor]() | The template for an activity in the Designer toolbox.  Specifies its Java class and attribute options.
-  [Handler]() | Responds to incoming requests from external systems (service implementation).
-  [Process Instance]() | One particular execution of a workflow process, with its unique runtime values.
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+We've touched on processes, activities, and variables.  Some of the other frequently used terms in MDW are summarized here:
+ - [MDW Terminology](../workflow/terminology)
  
+ And here's an exhaustive list of built-in variable types:
+ - [Variable Types](../workflow/built-in-variables)
+
+### Assets
+A process in MDW is one type of [asset](../help/assets.html).  There are many others.  In fact, **everything**
+you develop is some form of asset.  Rules, scripts, templates, pages, test cases: they're all assets to MDW.
+More importantly if you're a developer: your Java, Groovy or Kotlin source files are assets (or they're
+bundled into JAR assets).  The significance of this is in how they're deployed.  Assets are versioned in Git.
+So the "MDW way" is that you'll never deploy your own WAR or JAR directly into any container.  Whether you're in 
+Tomcat, Spring Boot, Docker, or Cloud Foundry -- MDW takes care of loading your assets.  And in non-development
+environments these assets always come from one branch or another in Git.
+
+The advantage of this is dynamicism.  Take a look at the asset import page:
+
+![hub assets](../../img/hub_assets.png)
+
+The Import popup menu gives you an inkling of MDW's lightweight and flexible deployment mechanism.
+Once the assets on the designated branch have been proven, you'll import them into the target environment
+directly from Git.  No build step required!  Not only that; when you elect to refresh MDW's cache on
+the import confirmation page, your Java assets will be dynamically compiled without a server restart. 
+
+With great power comes great responsibility.  MDW enforces a solid role-based authorization regime restricting
+who's allowed to perform asset imports.  This privilege should be granted sparingly; in DevOps terms consider
+this equivalent to *Deploy* permission.
+
+Assets are bundled into [packages]() for distribution and discovery.  For Java, Groovy and Kotlin source code assets,
+the package also provides Java-standard namespace resolution.  Every package is technically optional,
+but to derive much benefit from MDW you'll want to include at least `com.centurylink.mdw.base`.
+The best way to visualize asset packages is through Designer or MDWHub. But in case you're curious, the raw resources live here:
+  - Source in GitHub:
+    https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets
+  - Published builds in Maven Central:
+    http://repo1.maven.org/maven2/com/centurylink/mdw/assets/
+    
+Designer, MDWHub and the CLI all include asset discovery/import features that can grab selected packages from Maven Central.
+App teams can publish their own asset libraries and make them discoverable through this standard MDW distribution mechanism.
+    
+### MDW Components
+
+The MDW stack is aligned into these major components:
+ - Engine 
+ -- The behind-the-scenes nerve center in the cloud that executes all your workflow processes.   
+ - Designer 
+ -- Eclipse plugin for building processes, tasks, and other assets; with a graphical runtime view.  
+ - MDWHub 
+ -- The end-user webapp featuring a dashboard, runtime UI, task management, supervisor tools and asset editor. 
+ - Microservices
+ -- The extensible orchestration component for consuming and producing microservices. 
+ - Intelligence 
+ -- The design facility for identifying milestones and authoring reports to aggregate collected metrics.
+
+ ![MDW Components](../../img/MdwComponents.png)
+
+### Task Management
+  TODO
+  
+### Error Handling
+  TODO
+  
+### Automated Tests
+  TODO
+  
+### Event Handlers
+  TODO
+
+

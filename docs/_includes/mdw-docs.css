@@ -33,7 +33,9 @@ article h4 {
 }
 
 .highlighter-rouge {
-	margin-bottom: 12px;
+  position: relative;
+  top: 2px;
+	margin-bottom: 8px;
 }
 
 li .highlighter-rouge {

@@ -3,9 +3,6 @@
   - intro
   - overview
   - features
-  - differentiators
-  - components
-  - in-depth
   
 - title: Getting Started
   docs:
@@ -17,8 +14,8 @@
   docs:
   - guides/tomcat
   - guides/spring-boot
-  - guides/cloud-foundry
   - guides/docker
+  - guides/cloud-foundry
   - guides/configuration
   - guides/mdw-mobile
   
@@ -29,6 +26,7 @@
 
 - title: Workflow
   docs:
+  - workflow/terminology
   - workflow/built-in-activities
   - workflow/built-in-variable-types
   - help
