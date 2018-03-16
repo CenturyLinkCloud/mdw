@@ -44,6 +44,23 @@ public class SlackActivity extends DefaultActivityImpl {
 
     public static String SLACK_WEBHOOK_URL = "mdw.slack.webhook.url";
     public static final String SLACK_MESSAGE = "slackMessage";
+    // Prefix that identifies where the Slack message came from
+    private String slackPrefix = "MDW-APP: ";
+
+    /**
+     * @return the slackPrefix
+     */
+    public String getSlackPrefix() {
+        return slackPrefix;
+    }
+
+    /**
+     * @param slackPrefix the slackPrefix to set
+     */
+    public void setSlackPrefix(String slackPrefix) {
+        this.slackPrefix = slackPrefix;
+    }
+
     private ActivityRuntimeContext context;
 
     /*
@@ -52,10 +69,7 @@ public class SlackActivity extends DefaultActivityImpl {
     public Map<String, String> getRequestHeaders() {
         Map<String, String> hdrs = new HashMap<>();
         hdrs.put("Content-Type", "application/json");
-        hdrs.put(Listener.METAINFO_CLOUD_ROUTING, "SlackWebHook");
-        hdrs.put(Listener.METAINFO_MDW_APP_ID, ApplicationContext.getAppId());
-        // Add the application specific MDW provided token
-        hdrs.put(Listener.METAINFO_MDW_APP_TOKEN, System.getenv("MDW_APP_TOKEN"));
+        hdrs.put("environment", getSlackPrefix());
         return hdrs;
     }
 

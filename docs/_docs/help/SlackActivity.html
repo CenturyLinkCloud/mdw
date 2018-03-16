@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>Slack Activity</h1>
-This activity helps to integrate <a href="https://slack.com/">Slack</a> into an MDW workflow.This is a simple activity which enables user to post messages into Slack using <b>Incoming Webhooks</b>.
+This activity helps to integrate <a href="https://slack.com/">Slack</a> into an MDW workflow.This is a simple activity which enables user to post messages into Slack using <a href="https://api.slack.com/incoming-webhooks">Incoming Webhooks</a>.
 They make use of normal HTTP requests with a JSON payload, which includes the message. It allows simple one-way interaction with friendly Slack messages.This activity does not require MDW Slack app. Instead, User creates their own Incoming Slack WebHook and provides the URL in the SLACK_WEBHOOK_URL environment variable.
 In this section we'll explore the steps to integrate Slack into an MDW workflow.<br/>
 <h3>Slack Channel creation and Integration with incoming-webhook</h3>
@@ -38,8 +38,10 @@ Slack Web hook URL is configured as environment variable in mdw.yaml.
 Slack message should be in JSON format which can be selected from any existing asset packages.</br>
 Note that it should be in the format  package/asset name</br> 
 For Ex: com.centurylink.mdw.slack/slackNotice.json</br>
-Refer to Json Asset SlackNotice.json located in com.centurylink.mdw.slack package.</br></br>    
-Below Screen shot illustrates about  message received from MDW workflow into Slack channel by using Slack Activity.</br>
+Refer to Json Asset SlackNotice.json located in com.centurylink.mdw.slack package.</br></br>  
+Refer to <a href="https://api.slack.com/incoming-webhooks">Json Payload</a>  for advanced message formatting using incoming webhook. The api getMessage() can be overriden to enhance message
+by adding username, application prefix,links, attachments etc </br>
+Below Screen shot illustrates how a sample message received from MDW workflow into Slack channel looks like using Slack Activity.</br>
 <br/><br/>
 <img src="images/SlackIncomingMessage.jpg" />
 <br/><br/><br/>
