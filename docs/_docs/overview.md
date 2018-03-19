@@ -27,7 +27,7 @@ And you'd be able to drill in to Invoke Bug Workflow to investigate this subflow
 This is the essential ingredient provided by workflow: a visual representation of what's taking place.
 
 Under the hood, every activity equates to a Java class.  It appears in the Designer toolbox by virtue of its
-association in a .impl asset (an [activity implementor](../help/implementor.html) in MDW's lexicon).
+declaration in an asset (specifically, its .impl file -- an [activity implementor](../help/implementor.html) in MDW's lexicon).
 Along with the implementing Java class, an .impl asset's JSON specifies an activity's toolbox label and
 any [attributes]() it supports.  Attributes are configurable aspects of an activity (picture dragging a REST
 adapter activity from the toolbox and setting its endpoint URL).  This is how the same activity can be used in
