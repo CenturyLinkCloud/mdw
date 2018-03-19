@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.limberest.json.Jsonator;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Replaces {@link com.centurylink.mdw.common.service.Jsonable}
@@ -36,4 +37,13 @@ public interface Jsonable extends io.limberest.json.Jsonable {
     default JSONObject create() {
         return new JsonObject();
     }
+
+    /**
+     * May be overridden to name the JSON object returned from {@link #getJson()}.
+     */
+    @ApiModelProperty(hidden=true)
+    default String getJsonName() {
+        return jsonName();
+    }
+
 }
