@@ -223,7 +223,9 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getJsonName--">getJsonName</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getJsonName--">getJsonName</a></span>()</code>
+<div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
+</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,javax.el.ValueExpression&gt;</code></td>
@@ -267,7 +269,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;io.limberest.json.Jsonable</h3>
-<code>bind, toJson</code></li>
+<code>bind, jsonName, toJson</code></li>
 </ul>
 </li>
 </ul>
@@ -453,10 +455,8 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>getJsonName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getJsonName()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>getJsonName</code>&nbsp;in interface&nbsp;<code>io.limberest.json.Jsonable</code></dd>
-</dl>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">Jsonable</a></code></span></div>
+<div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </li>
 </ul>
 </li>
