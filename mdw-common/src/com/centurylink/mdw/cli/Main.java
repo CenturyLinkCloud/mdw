@@ -57,6 +57,7 @@ public class Main {
         Status status = new Status();
         Version version = new Version();
         Convert convert = new Convert();
+        Codegen codegen = new Codegen();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -73,6 +74,7 @@ public class Main {
             .addCommand("archive", archive)
             .addCommand("test", test)
             .addCommand("convert", convert)
+            .addCommand("codegen", codegen)
             .build();
 
         cmd.setProgramName("mdw");
@@ -117,6 +119,9 @@ public class Main {
                 }
                 else if (command.equals("convert")) {
                     op = convert;
+                }
+                else if (command.equals("codegen")) {
+                    op = codegen;
                 }
 
                 if (op == null) {

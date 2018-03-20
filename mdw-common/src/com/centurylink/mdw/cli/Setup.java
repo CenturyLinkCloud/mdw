@@ -373,6 +373,42 @@ public abstract class Setup implements Operation {
         return mdwConfig;
     }
 
+    public File getMdwHome() throws IOException {
+        String mdwHome = System.getenv("MDW_HOME");
+        if (mdwHome == null)
+            mdwHome = System.getProperty("mdw.home");
+        if (mdwHome == null)
+            throw new IOException("Missing environment variable: MDW_HOME");
+        File mdwDir = new File(mdwHome);
+        if (!mdwDir.isDirectory())
+            throw new IOException("MDW_HOME is not a directory: " + mdwDir.getAbsolutePath());
+        return mdwDir;
+    }
+
+    public String getTemplatesUrl() throws IOException {
+        String mdwVer = getMdwVersion();
+        if (mdwVer == null)
+            mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
+        String templates = "mdw-templates-" + mdwVer + ".zip";
+        String templatesUrl;
+        String templatesLoc = System.getProperty("mdw.templates.url");
+        if (templatesLoc != null) {
+            // allows loading templates from a directory for testing
+            templatesUrl = templatesLoc;
+        }
+        else {
+            if (isSnapshots()) {
+                templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect"
+                        + "?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
+            }
+            else {
+                templatesUrl = getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/"
+                        + mdwVer + "/" + templates;
+            }
+        }
+        return templatesUrl;
+    }
+
     /**
      * Override for extended debug info (always calling super.debug()).
      */

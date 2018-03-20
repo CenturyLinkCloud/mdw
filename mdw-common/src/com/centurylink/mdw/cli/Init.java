@@ -15,10 +15,14 @@
  */
 package com.centurylink.mdw.cli;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -87,36 +91,31 @@ public class Init extends Setup {
 
         findMdwVersion();
 
-        String templates = "mdw-templates-" + getMdwVersion() + ".zip";
-        String templatesUrl;
-        String templatesLoc = System.getProperty("mdw.templates.url");
-        if (templatesLoc != null) {
-            // allows loading templates from a directory for testing
-            templatesUrl = templatesLoc;
-        }
-        else {
-            if (isSnapshots()) {
-                templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect"
-                        + "?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
-            }
-            else {
-                templatesUrl = getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/"
-                        + getMdwVersion() + "/" + templates;
-            }
-        }
-        System.out.println("Retrieving templates: " + templates);
+        String templatesUrl = getTemplatesUrl();
+        System.out.println("Retrieving templates: " + templatesUrl);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
         new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
         new Unzip(tempZip, getProjectDir(), false, opt -> {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
+        moveCodegenTemplates();
         System.out.println("Writing: ");
         subst(getProjectDir());
         new File(getProjectDir() + "/src/main/java").mkdirs();
-
         new Update(getProjectDir()).run(progressMonitors);
         return this;
+    }
+
+    private void moveCodegenTemplates() throws IOException {
+        File libDir = new File(getMdwHome() + "/lib/codegen-" + getMdwVersion());
+        if (!libDir.exists()) {
+            File codegenDir = new File(getProjectDir() + "/codegen");
+            if (codegenDir.exists()) {
+                Path codegenPath = Paths.get(codegenDir.getPath());
+                Files.move(codegenPath, Paths.get(libDir.getPath()), REPLACE_EXISTING);
+            }
+        }
     }
 
     protected boolean needsConfig() { return false; }

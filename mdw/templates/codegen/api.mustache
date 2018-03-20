@@ -1,0 +1,60 @@
+{{>licenseInfo}}
+package {{package}};
+
+{{#imports}}
+import {{import}};
+{{/imports}}
+
+{{#operations}}
+@Path("{{baseName}}")
+@Api("{{classname}}")
+public class {{classname}} extends JsonRestService {
+  {{#operation}}
+
+  {{#isDeprecated}}
+  @Deprecated
+  {{/isDeprecated}}
+  {{#squashApiPaths}}{{^path.empty}}@Path("{{{path}}}"){{/path.empty}}{{/squashApiPaths}}
+  @ApiOperation(value="{{summary}}"{{#notes}},
+      notes="{{notes}}"{{/notes}}{{#returnType}},
+      response={{returnBaseType}}.class{{#returnContainer}}, responseContainer="{{returnContainer}}"{{/returnContainer}}{{/returnType}})
+  {{#implicitParams}}{{#hasParams}}  @ApiImplicitParams({
+  {{#allParams}}
+      @ApiImplicitParam(name="{{{paramName}}}", paramType="{{example}}", dataType="{{{dataType}}}"{{#description}}, value="{{description}}"{{/description}}{{#required}}{{^squashApiPaths}}, required=true{{/squashApiPaths}}{{/required}}{{#required}}{{#squashApiPaths}}{{^isPathParam}}, required=true{{/isPathParam}}{{/squashApiPaths}}{{/required}}{{#defaultValue}}, defaultValue="{{defaultValue}}"{{/defaultValue}}),
+  {{/allParams}}
+  }){{/hasParams}}{{/implicitParams}}
+  public Response<JSONObject> {{operationId}}(Request<JSONObject> request) throws ServiceException {
+  
+    {{#validateRequest}}
+    Result result = new SwaggerValidator(request).validate(request, true);
+    if (result.isError())
+      throw new ValidationException(result);
+      
+    {{/validateRequest}}
+    {{#bodyParam}}
+    {{bodyParam.dataType}} {{bodyParam.paramName}} = new {{bodyParam.dataType}}(request.getBody());
+    {{/bodyParam}}
+    {{#isRestfulCreate}}
+    return new Response<>({{bodyParam.paramName}}.toJson());
+    {{/isRestfulCreate}}
+    {{^isRestfulCreate}}
+    {{#isListContainer}}
+    JsonList<{{returnBaseType}}> jsonList = new JsonList<>(new ArrayList<{{returnBaseType}}>(), "{{baseName}}");
+    return new Response<>(jsonList.toJson());
+    {{/isListContainer}}
+    {{#isMapContainer}}
+    return new Response<>(new JSONObject());
+    {{/isMapContainer}}
+    {{^returnContainer}}
+    {{#returnBaseType}}
+    return new Response<>(new {{returnBaseType}}().toJson());
+    {{/returnBaseType}}
+    {{^returnBaseType}}
+    return new Response<>();
+    {{/returnBaseType}}
+    {{/returnContainer}}
+    {{/isRestfulCreate}}
+  }
+  {{/operation}}
+}
+{{/operations}}
