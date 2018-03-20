@@ -74,8 +74,8 @@ public class WebSocketMessenger {
 
     @OnError
     public void onError(Session session, Throwable t) {
-        if (t instanceof IOException && t.getMessage().startsWith(
-                "java.io.IOException: An established connection was aborted")) {
+        if (t instanceof IOException && t.getMessage() != null && t.getMessage().startsWith(
+                "An established connection was aborted")) {
             // avoid nuisance logging when browser closes connection
             if (logger.isMdwDebugEnabled())
                 logger.severeException(t.getMessage(), t);
