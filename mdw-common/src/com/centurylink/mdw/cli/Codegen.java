@@ -15,14 +15,10 @@
  */
 package com.centurylink.mdw.cli;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,8 +109,8 @@ public class Codegen extends Setup {
             new Download(new URL(templatesUrl), tempZip).run(monitors);
             File tempDir = Files.createTempDirectory("mdw-templates-").toFile();
             new Unzip(tempZip, tempDir, false).run();
-            Path codegenPath = Paths.get(new File(tempDir + "/codegen").getPath());
-            Files.move(codegenPath, Paths.get(templateDir.getPath()), REPLACE_EXISTING);
+            templateDir.getParentFile().mkdirs();
+            new Copy(new File(tempDir + "/codegen"), templateDir, true).run();
         }
     }
 

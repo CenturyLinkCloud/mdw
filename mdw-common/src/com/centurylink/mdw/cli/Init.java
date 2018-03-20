@@ -15,14 +15,10 @@
  */
 package com.centurylink.mdw.cli;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -112,8 +108,7 @@ public class Init extends Setup {
         if (!libDir.exists()) {
             File codegenDir = new File(getProjectDir() + "/codegen");
             if (codegenDir.exists()) {
-                Path codegenPath = Paths.get(codegenDir.getPath());
-                Files.move(codegenPath, Paths.get(libDir.getPath()), REPLACE_EXISTING);
+                new Copy(codegenDir, libDir, true).run();
             }
         }
     }
