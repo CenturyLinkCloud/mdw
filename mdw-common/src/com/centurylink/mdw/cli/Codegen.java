@@ -73,11 +73,20 @@ public class Codegen extends Setup {
 
         // TODO options for -i and -o
         args.add("-i");
-        args.add("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json");
+        args.add("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore.json");
 
         args.add("-o");
-        String projName = new File(System.getProperty("user.dir")).getName();
-        args.add(new File(getAssetRoot() + "/com/example/" + projName + "/api").getAbsolutePath());
+        args.add(getAssetLoc());
+
+        args.add("-c");
+        args.add(getTemplateDir() + "/config.json");
+
+        String pkgBase = "com.example"; // TODO
+        String pkg = pkgBase + "." + new File(System.getProperty("user.dir")).getName() + ".api";
+        args.add("--model-package");
+        args.add(pkg);
+        args.add("--api-package");
+        args.add(pkg);
 
         String version = Version.readVersionFromResources();
         @SuppressWarnings("unchecked")
