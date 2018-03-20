@@ -147,7 +147,10 @@ public class DataAccess {
                             if (!vcGit.localRepoExists()) {
                                 logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
                                 vcGit.cloneNoCheckout();
-                                vcGit.hardCheckout(branch);
+                                if (PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
+                                    logger.info("Performing checkout...");
+                                    vcGit.hardCheckout(branch);
+                                }
                             }
 
                             // sanity checks

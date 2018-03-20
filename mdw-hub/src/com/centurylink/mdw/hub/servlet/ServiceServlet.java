@@ -149,23 +149,38 @@ public abstract class ServiceServlet extends HttpServlet {
                         return;
                     else {
                         List<InetAddress> mdwCentral = null;
+                        String forwardIps = null;
                         InetAddress remote = null;
                         try {
                             remote = InetAddress.getByName(request.getRemoteHost());
+                        }
+                        catch (IOException e) {}
+                        try {
                             mdwCentral = Arrays.asList(InetAddress.getAllByName(ApplicationContext.getMdwCentralHost()));
+                            if (request.getHeader("x-forwarded-for") != null)
+                                forwardIps = request.getHeader("x-forwarded-for");
+
+                            if (mdwCentral != null) {
+                                if (mdwCentral.contains(remote)) {
+                                    headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
+                                    return;
+                                }
+                                else {
+                                    for (String ip : forwardIps.split("[,\\s]+")) {
+                                        if (mdwCentral.contains(InetAddress.getByName(ip))) {
+                                            headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
                         }
                         catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                        if (mdwCentral != null && mdwCentral.contains(remote)) {
-                            headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
-                            return;
-                        }
-                        else {
-                            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
-                            throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
-                        }
+                        headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
+                        throw new ServiceException(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failure");
                     }
                 }
                 else if (request.getRequestURI().startsWith("/" + ApplicationContext.getMdwHubContextRoot() + "/services/routing")) {
