@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18};
+var methods = {"i0":18,"i1":18,"i2":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -137,13 +137,19 @@ extends io.limberest.json.Jsonable</pre>
 <td class="colFirst"><code>default org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>default java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">getJsonName</a></span>()</code>
+<div class="block">May be overridden to name the JSON object returned from <a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>getJson()</code></a>.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.io.limberest.json.Jsonable">
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;io.limberest.json.Jsonable</h3>
-<code>bind, getJsonName, toJson</code></li>
+<code>bind, jsonName, toJson</code></li>
 </ul>
 </li>
 </ul>
@@ -176,7 +182,7 @@ extends io.limberest.json.Jsonable</pre>
 <a name="create--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>create</h4>
 <pre>default&nbsp;org.json.JSONObject&nbsp;create()</pre>
@@ -184,6 +190,16 @@ extends io.limberest.json.Jsonable</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a JSONObject implementation with predictable property ordering.</dd>
 </dl>
+</li>
+</ul>
+<a name="getJsonName--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getJsonName</h4>
+<pre>default&nbsp;java.lang.String&nbsp;getJsonName()</pre>
+<div class="block">May be overridden to name the JSON object returned from <a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>getJson()</code></a>.</div>
 </li>
 </ul>
 </li>
