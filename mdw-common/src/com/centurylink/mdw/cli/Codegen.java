@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import io.airlift.airline.Cli;
@@ -37,19 +38,51 @@ import io.swagger.codegen.cmd.Version;
 @Parameters(commandNames="codegen", commandDescription="Create MDW source code assets", separators="=")
 public class Codegen extends Setup {
 
+    @Parameter(names="--code-type", description="Supported types: swagger", required=true)
+    private String codeType;
+    public String getCodeType() {
+        return codeType;
+    }
+
+    @Parameter(names="--input-spec", description="Input swagger specification")
+    private String inputSpec;
+    public String getInputSpec() {
+        return inputSpec;
+    }
+
+    @Parameter(names="--config", description="Config file")
+    private String config;
+    public String getConfig() {
+        return config;
+    }
+
+    @Parameter(names="--template-dir", description="Template Directory")
+    private String templateDir;
+
+    @Parameter(names="--flow-methods", description="HTTP methods that invoke processes (comma separated)")
+    private List<String> flowMethods;
+    public List<String> getFlowMethods() {
+        return flowMethods;
+    }
+
     @Override
     public Codegen run(ProgressMonitor... monitors) throws IOException {
 
-        downloadTemplates();
+        if (templateDir == null)
+            downloadTemplates();
 
-        boolean swagger = true; // TODO non-swagger codegen
-        if (swagger) {
+        if (codeType.equals("swagger")) {
+            if (inputSpec == null)
+                throw new IOException("Missing required parameter: input-spec");
             String mavenUrl = "http://repo.maven.apache.org/maven2";
             Map<String,Long> swaggerDependencies = getSwaggerDependencies();
             for (String dep : swaggerDependencies.keySet()) {
                 new Dependency(mavenUrl, dep, swaggerDependencies.get(dep)).run(monitors);
             }
             swaggerGen();
+            if (flowMethods != null && !flowMethods.isEmpty()) {
+                // TODO
+            }
         }
         else {
             // TODO
@@ -64,21 +97,20 @@ public class Codegen extends Setup {
         args.add("generate");
         args.add("-l");
         args.add("com.centurylink.mdw.cli.SwaggerCodegen");
-        args.add("--template-dir");
-        args.add(getTemplateDir().getAbsolutePath());
 
-        // TODO options for -i and -o
+        args.add("--template-dir");
+        args.add(templateDir == null ? getTemplateDir().getAbsolutePath() : templateDir);
+
         args.add("-i");
-        args.add("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore.json");
+        args.add(inputSpec);
 
         args.add("-o");
         args.add(getAssetLoc());
 
         args.add("-c");
-        args.add(getTemplateDir() + "/config.json");
+        args.add(config == null ? getTemplateDir() + "/config.json" : config);
 
-        String pkgBase = "com.example"; // TODO
-        String pkg = pkgBase + "." + new File(System.getProperty("user.dir")).getName() + ".api";
+        String pkg = new File(System.getProperty("user.dir")).getName() + ".api";
         args.add("--model-package");
         args.add(pkg);
         args.add("--api-package");

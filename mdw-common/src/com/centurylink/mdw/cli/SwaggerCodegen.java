@@ -15,8 +15,14 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.util.Map;
+
 import io.swagger.codegen.CliOption;
 import io.swagger.codegen.CodegenConstants;
+import io.swagger.codegen.CodegenOperation;
+import io.swagger.models.Model;
+import io.swagger.models.Operation;
+import io.swagger.models.Swagger;
 
 public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
 
@@ -49,6 +55,24 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     @Override
     public void processOpts() {
         super.processOpts();
-        importMapping.put("Jsonable", "com.centurylink.mdw.model");
+        importMapping.put("Jsonable", "com.centurylink.mdw.model.Jsonable");
+        importMapping.put("JsonRestService", "com.centurylink.mdw.services.rest.JsonRestService");
+        importMapping.put("ServiceException", "com.centurylink.mdw.common.service.ServiceException");
+        importMapping.put("Map", "java.util.Map");
+        importMapping.put("SwaggerValidator", "com.centurylink.mdw.service.api.validator.SwaggerModelValidator");
+        importMapping.put("ValidationException", "com.centurylink.mdw.service.api.validator.ValidationException");
+        importMapping.put("JsonList", "com.centurylink.mdw.model.JsonArray");
+    }
+
+    @Override
+    public CodegenOperation fromOperation(String path, String httpMethod, Operation operation, Map<String,Model> definitions, Swagger swagger) {
+        CodegenOperation op = super.fromOperation(path, httpMethod, operation, definitions, swagger);
+        op.imports.add("Map");
+        op.imports.remove("Request");
+        op.imports.remove("Response");
+        if (validateRequest) {
+            op.imports.remove("Result");
+        }
+        return op;
     }
 }
