@@ -194,6 +194,10 @@ jar {
         zipTree(it)
     }
     
+    into("META-INF/mdw/templates") {
+      from "../mdw/templates"
+    }
+    
     manifest {
         attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))

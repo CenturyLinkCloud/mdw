@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.workflow;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
+import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
@@ -45,7 +47,6 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
@@ -1365,11 +1366,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public void createProcess(String assetPath) throws ServiceException, JSONException {
+    public void createProcess(String assetPath, Query query) throws ServiceException, IOException {
         if (!assetPath.endsWith(".proc"))
             assetPath += ".proc";
-        Process newProc = ProcessCache.getProcess(ProcessLoader.MDW_BASE_PACKAGE + "/new");
-        ServiceLocator.getAssetServices().createAsset(assetPath, newProc.getJson().toString(2).getBytes());
+        String template = query.getFilter("template");
+        if (template == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: template");
+        byte[] content = Templates.getBytes("assets/" + template + ".proc");
+        if (content == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Template not found: " + template);
+        ServiceLocator.getAssetServices().createAsset(assetPath, content);
     }
 
 }

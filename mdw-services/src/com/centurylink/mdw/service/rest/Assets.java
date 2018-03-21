@@ -16,6 +16,7 @@
 package com.centurylink.mdw.service.rest;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -249,10 +250,20 @@ public class Assets extends JsonRestService {
         }
         else if (segments.length == 3) {
             String asset = segments[1] + '/' + segments[2];
-            if (segments[2].endsWith(".proc"))
-                ServiceLocator.getWorkflowServices().createProcess(asset);
-            else
+            if (segments[2].endsWith(".proc")) {
+                try {
+                    Query query = getQuery(path, headers);
+                    if (query.getFilter("template") == null)
+                        query.setFilter("template", "new");
+                    ServiceLocator.getWorkflowServices().createProcess(asset, query);
+                }
+                catch (IOException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+                }
+            }
+            else {
                 ServiceLocator.getAssetServices().createAsset(asset);
+            }
         }
         else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);

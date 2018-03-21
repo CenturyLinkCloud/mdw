@@ -23,7 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -477,4 +479,14 @@ public abstract class Setup implements Operation {
             Files.write(Paths.get(pkgFile.getPath()), pkgJson.toString(2).getBytes());
         }
     }
+
+    protected Map<String,String> parseMap(String parameter) {
+        Map<String,String> map = new HashMap<>();
+        for (String nameVal : parameter.split(",")) {
+            int eq = nameVal.indexOf("=");
+            map.put(nameVal.substring(0, eq), nameVal.substring(eq + 1));
+        }
+        return map;
+    }
+
 }

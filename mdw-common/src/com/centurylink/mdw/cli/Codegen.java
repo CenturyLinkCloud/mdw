@@ -59,10 +59,10 @@ public class Codegen extends Setup {
     @Parameter(names="--template-dir", description="Template Directory")
     private String templateDir;
 
-    @Parameter(names="--flow-methods", description="HTTP methods that invoke processes (comma separated)")
-    private List<String> flowMethods;
-    public List<String> getFlowMethods() {
-        return flowMethods;
+    @Parameter(names="--method-flow-mappings", description="e.g.: post=MyCreateProcess,get=MyRetrieveProcess")
+    private String methodFlowMappings;
+    public String getMethodFlowMappings() {
+        return methodFlowMappings;
     }
 
     @Override
@@ -80,7 +80,12 @@ public class Codegen extends Setup {
                 new Dependency(mavenUrl, dep, swaggerDependencies.get(dep)).run(monitors);
             }
             swaggerGen();
-            if (flowMethods != null && !flowMethods.isEmpty()) {
+            if (methodFlowMappings != null) {
+                Map<String,String> methodFlows = parseMap(methodFlowMappings);
+                for (String method : methodFlows.keySet()) {
+
+                    System.out.println(" MAPPING: " + method + "=" + methodFlows.get(method));
+                }
                 // TODO
             }
         }

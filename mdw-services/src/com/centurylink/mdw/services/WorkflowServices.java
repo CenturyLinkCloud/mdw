@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -204,6 +205,6 @@ public interface WorkflowServices {
 
     public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
 
-    public void createProcess(String assetPath) throws ServiceException, JSONException;
+    public void createProcess(String assetPath, Query query) throws ServiceException, IOException;
 
 }
