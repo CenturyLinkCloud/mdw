@@ -110,7 +110,8 @@ public class Codegen extends Setup {
         args.add("-c");
         args.add(config == null ? getTemplateDir() + "/config.json" : config);
 
-        String pkg = new File(System.getProperty("user.dir")).getName() + ".api";
+        String pkg = new File(System.getProperty("user.dir")).getName().replace('-', '_') + ".api";
+        mkPackage(pkg);
         args.add("--model-package");
         args.add(pkg);
         args.add("--api-package");

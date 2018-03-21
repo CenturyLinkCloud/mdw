@@ -25,7 +25,7 @@ Install the MDW Designer Eclipse Plugin
   These plugins are optional (although Groovy is highly recommended).
   They can be installed through Help > Install New Software... the same as above.
   - Groovy:<br>
-    `http://dist.springsource.org/snapshot/GRECLIPSE/e4.6`
+    `http://dist.springsource.org/release/GRECLIPSE/e4.7`
   - Yaml Editor:<br>
     `http://dadacoalition.org/yedit`
 

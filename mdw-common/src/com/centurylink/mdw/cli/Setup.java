@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONObject;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.CommaParameterSplitter;
 
@@ -457,5 +459,22 @@ public abstract class Setup implements Operation {
         System.out.println("Config Root:\n " + getConfigRoot());
         System.out.println("Asset Root:\n  " + getAssetRoot());
         System.out.println("Git Root:\n  " + getGitRoot());
+    }
+
+    /**
+     * Creates a package if it doesn't exist.
+     */
+    public void mkPackage(String name) throws IOException {
+        File metaDir = new File(getAssetLoc() + "/" + name.replace('.', '/') + "/.mdw");
+        if (!metaDir.exists() && !metaDir.mkdirs())
+            throw new IOException("Cannot create directory: " + metaDir.getAbsolutePath());
+        File pkgFile = new File(metaDir + "/package.json");
+        if (!pkgFile.exists()) {
+            JSONObject pkgJson = new JSONObject();
+            pkgJson.put("name", name);
+            pkgJson.put("version", "1.0.01");
+            pkgJson.put("schemaVersion", "6.0");
+            Files.write(Paths.get(pkgFile.getPath()), pkgJson.toString(2).getBytes());
+        }
     }
 }

@@ -57,6 +57,9 @@ title: Command Line Interface
     archive   Asset ref info (--show for contents)
       Usage: archive [options]
       
+    codegen   Generate source code
+      Usage: codegen --code-type=swagger --input-spec=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json
+      
     General Options ("mdw help" for command-specific options):
       --asset-loc
         Asset location
