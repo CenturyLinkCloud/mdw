@@ -155,7 +155,8 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#createProcess-java.lang.String-">createProcess</a></span>(java.lang.String&nbsp;assetPath)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#createProcess-java.lang.String-com.centurylink.mdw.common.service.Query-">createProcess</a></span>(java.lang.String&nbsp;assetPath,
+             <a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a></code></td>
@@ -1362,19 +1363,20 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="createProcess-java.lang.String-">
+<a name="createProcess-java.lang.String-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>createProcess</h4>
-<pre>void&nbsp;createProcess(java.lang.String&nbsp;assetPath)
+<pre>void&nbsp;createProcess(java.lang.String&nbsp;assetPath,
+                   <a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
             throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
-                   org.json.JSONException</pre>
+                   java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
-<dd><code>org.json.JSONException</code></dd>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
