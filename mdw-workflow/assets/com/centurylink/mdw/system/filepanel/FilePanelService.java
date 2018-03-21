@@ -262,7 +262,7 @@ public class FilePanelService extends JsonRestService {
         if (hostServers == null) {
             hostServers = new HashMap<>();
             for (Server server : ApplicationContext.getServerList()) {
-                if (server.getConfig().containsKey("filepanel")) {
+                if (server.getConfig() != null && server.getConfig().containsKey("filepanel")) {
                     if (!hostServers.containsKey(server.getHost()))
                         hostServers.put(server.getHost(), server);
                 }
