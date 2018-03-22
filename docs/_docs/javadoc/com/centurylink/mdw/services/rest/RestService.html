@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -227,18 +227,25 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#generateRequestId--">generateRequestId</a></span>()</code>
+<div class="block">If you have a unique id that's meaningful (e.g.: order number), it's recommended that
+ you use that for requestId.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/model/user/UserAction.Action.html" title="enum in com.centurylink.mdw.model.user">UserAction.Action</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAction-java.lang.String-java.lang.Object-java.util.Map-">getAction</a></span>(java.lang.String&nbsp;path,
          java.lang.Object&nbsp;content,
          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAuthUser-java.util.Map-">getAuthUser</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
 <div class="block">returns authenticated user cuid</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/model/user/UserAction.Entity.html" title="enum in com.centurylink.mdw.model.user">UserAction.Entity</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntity-java.lang.String-java.lang.Object-java.util.Map-">getEntity</a></span>(java.lang.String&nbsp;path,
          java.lang.Object&nbsp;content,
@@ -246,13 +253,13 @@ extends java.lang.Object</pre>
 <div class="block">Should be overridden.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityDescription-java.lang.String-java.lang.Object-java.util.Map-">getEntityDescription</a></span>(java.lang.String&nbsp;path,
                     java.lang.Object&nbsp;content,
                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityId-java.lang.String-java.lang.Object-java.util.Map-">getEntityId</a></span>(java.lang.String&nbsp;path,
            java.lang.Object&nbsp;content,
@@ -260,63 +267,63 @@ extends java.lang.Object</pre>
 <div class="block">Override if entity has a meaningful ID.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>protected java.util.List&lt;java.net.URL&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getOtherServerUrls-java.lang.String-">getOtherServerUrls</a></span>(java.lang.String&nbsp;requestUrl)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getParameters-java.util.Map-">getParameters</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getQuery-java.lang.String-java.util.Map-">getQuery</a></span>(java.lang.String&nbsp;path,
         java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected java.net.URL</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequestUrl-java.util.Map-">getRequestUrl</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
 <div class="block">Includes query string.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a></span>(java.lang.String&nbsp;propName)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path)</code>
 <div class="block">A user who belongs to any role in the returned list is allowed
  to perform this action/method.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path,
         java.lang.String&nbsp;method)</code>
 <div class="block">Default impl pays no attention to method (for compatibility).</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegment-java.lang.String-int-">getSegment</a></span>(java.lang.String&nbsp;path,
           int&nbsp;segment)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegments-java.lang.String-">getSegments</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSource--">getSource</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSub-java.lang.String-">getSub</a></span>(java.lang.String&nbsp;path)</code>
 <div class="block">Minus the base path that triggered this service.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/model/user/UserAction.html" title="class in com.centurylink.mdw.model.user">UserAction</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getUserAction-com.centurylink.mdw.model.user.User-java.lang.String-java.lang.Object-java.util.Map-">getUserAction</a></span>(<a href="../../../../../com/centurylink/mdw/model/user/User.html" title="class in com.centurylink.mdw.model.user">User</a>&nbsp;user,
              java.lang.String&nbsp;path,
@@ -325,13 +332,13 @@ extends java.lang.Object</pre>
 <div class="block">For audit logging.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#propagate-java.lang.String-java.lang.String-java.util.Map-">propagate</a></span>(java.lang.String&nbsp;method,
          java.lang.String&nbsp;request,
          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#validateResponse-java.lang.String-">validateResponse</a></span>(java.lang.String&nbsp;response)</code>&nbsp;</td>
 </tr>
@@ -789,7 +796,7 @@ extends java.lang.Object</pre>
 <a name="authorizeExport-java.util.Map-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>authorizeExport</h4>
 <pre>protected&nbsp;void&nbsp;authorizeExport(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
@@ -799,6 +806,17 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/AuthorizationException.html" title="class in com.centurylink.mdw.common.service">AuthorizationException</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="generateRequestId--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>generateRequestId</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;generateRequestId()</pre>
+<div class="block">If you have a unique id that's meaningful (e.g.: order number), it's recommended that
+ you use that for requestId.  However we can generate one if you'd like.</div>
 </li>
 </ul>
 </li>
