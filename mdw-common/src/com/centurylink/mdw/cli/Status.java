@@ -28,4 +28,6 @@ public class Status extends Setup {
         return this;
     }
 
+    @Override
+    protected boolean needsConfig() { return false; }
 }
