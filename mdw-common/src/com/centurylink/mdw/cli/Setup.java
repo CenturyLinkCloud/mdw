@@ -425,12 +425,6 @@ public abstract class Setup implements Operation {
         String projPath = getProjectDir().getCanonicalPath();
         String assetPath = getAssetRoot().getCanonicalPath();
 
-        // normalize windows drive letter
-    /*    if (projPath.charAt(1) == ':')
-            projPath = projPath.substring(0, 1).toLowerCase() + projPath.substring(1);
-        if (assetPath.charAt(1) == ':')
-            assetPath = assetPath.substring(0, 1).toLowerCase() + assetPath.substring(1);
-*/
         if (!assetPath.startsWith(projPath)) {
             System.err.println("Error: Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
             return false;
