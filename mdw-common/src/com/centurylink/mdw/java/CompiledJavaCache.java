@@ -137,11 +137,11 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                             if (pathAnnotation != null) {
                                 String resourcePath = pathAnnotation.value() == null ? clazz.getPackage().getName() + "/" + clazz.getSimpleName() : pathAnnotation.value();
                                 if (JsonService.class.isAssignableFrom(clazz)) {
-                                    logger.info("Dynamic Java JAX-RS JSON Service: " + clazz);
+                                    logger.info("JAX-RS JSON Service: " + resourcePath + " --> '" + clazz + "'");
                                     DynamicJavaServiceRegistry.addRegisteredService(JsonService.class.getName(), clazz.getName(), resourcePath);
                                 }
                                 if (XmlService.class.isAssignableFrom(clazz)) {
-                                    logger.info("Dynamic Java JAX-RS XML Service: " + clazz);
+                                    logger.info("JAX-RS XML Service: " + resourcePath + " --> '" + clazz + "'");
                                     DynamicJavaServiceRegistry.addRegisteredService(XmlService.class.getName(), clazz.getName(), resourcePath);
                                 }
                             }
@@ -149,7 +149,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                         else {
                             for (int i = 0; i < registeredService.value().length; i++) {
                                 String serviceName = registeredService.value()[i].getName();
-                                logger.info("Dynamic Java @RegisteredService: " + serviceName + " Class: " + clazz);
+                                logger.info("@RegisteredService: " + serviceName + " Class: " + clazz);
                                 DynamicJavaServiceRegistry.addRegisteredService(serviceName, clazz.getName());
                             }
                         }

@@ -480,6 +480,32 @@ public abstract class Setup implements Operation {
         }
     }
 
+    protected File getTemplateDir() throws IOException {
+        String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
+        return new File(getMdwHome() + "/lib/" + mdwVer);
+    }
+
+    /**
+     * Downloads asset templates for codegen, etc.
+     */
+    protected void downloadTemplates(ProgressMonitor... monitors) throws IOException {
+        File templateDir = getTemplateDir();
+        if (!templateDir.exists()) {
+            if (!templateDir.mkdirs())
+                throw new IOException("Unable to create directory: " + templateDir.getAbsolutePath());
+            String templatesUrl = getTemplatesUrl();
+            System.out.println("Retrieving templates: " + templatesUrl);
+            File tempZip = Files.createTempFile("mdw-templates-", ".zip").toFile();
+            new Download(new URL(templatesUrl), tempZip).run(monitors);
+            File tempDir = Files.createTempDirectory("mdw-templates-").toFile();
+            new Unzip(tempZip, tempDir, false).run();
+            File codegenDir = new File(templateDir + "/codegen");
+            new Copy(new File(tempDir + "/codegen"), codegenDir, true).run();
+            File assetsDir = new File(templateDir + "/assets");
+            new Copy(new File(tempDir + "/assets"), assetsDir, true).run();
+        }
+    }
+
     protected Map<String,String> parseMap(String parameter) {
         Map<String,String> map = new HashMap<>();
         for (String nameVal : parameter.split(",")) {

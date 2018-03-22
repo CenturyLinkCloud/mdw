@@ -294,4 +294,12 @@ public abstract class RestService {
         exportAction.setSource(getSource());
         auditLog(exportAction);
     }
+
+    /**
+     * If you have a unique id that's meaningful (e.g.: order number), it's recommended that
+     * you use that for requestId.  However we can generate one if you'd like.
+     */
+    protected String generateRequestId() {
+        return Long.toHexString(System.nanoTime());
+    }
 }

@@ -95,7 +95,7 @@ public class Init extends Setup {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
-        moveCodegenTemplates();
+        deleteAssetTemplates();
         System.out.println("Writing: ");
         subst(getProjectDir());
         new File(getProjectDir() + "/src/main/java").mkdirs();
@@ -103,13 +103,19 @@ public class Init extends Setup {
         return this;
     }
 
-    private void moveCodegenTemplates() throws IOException {
-        File libDir = new File(getMdwHome() + "/lib/codegen-" + getMdwVersion());
-        if (!libDir.exists()) {
-            File codegenDir = new File(getProjectDir() + "/codegen");
-            if (codegenDir.exists()) {
-                new Copy(codegenDir, libDir, true).run();
-            }
+    /**
+     * These will be retrieved just-in-time based on current mdw version.
+     */
+    private void deleteAssetTemplates() throws IOException {
+        File codegenDir = new File(getProjectDir() + "/codegen");
+        if (codegenDir.exists()) {
+            System.out.println("Deleting " + codegenDir);
+            new Delete(codegenDir, true).run();
+        }
+        File assetsDir = new File(getProjectDir() + "/assets");
+        if (assetsDir.exists()) {
+            System.out.println("Deleting " + assetsDir);
+            new Delete(assetsDir, true).run();
         }
     }
 

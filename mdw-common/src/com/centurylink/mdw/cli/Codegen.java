@@ -17,8 +17,9 @@ package com.centurylink.mdw.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,8 @@ import io.swagger.codegen.cmd.Langs;
 import io.swagger.codegen.cmd.Meta;
 import io.swagger.codegen.cmd.Validate;
 import io.swagger.codegen.cmd.Version;
+import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerParser;
 
 @Parameters(commandNames="codegen", commandDescription="Create MDW source code assets", separators="=")
 public class Codegen extends Setup {
@@ -59,10 +62,10 @@ public class Codegen extends Setup {
     @Parameter(names="--template-dir", description="Template Directory")
     private String templateDir;
 
-    @Parameter(names="--method-flow-mappings", description="e.g.: post=MyCreateProcess,get=MyRetrieveProcess")
-    private String methodFlowMappings;
-    public String getMethodFlowMappings() {
-        return methodFlowMappings;
+    @Parameter(names="--generate-orchestration-flows", description="create a process for each endpoint")
+    private boolean generateOrchestrationFlows;
+    public boolean isGenerateOrchestrationFlows() {
+        return generateOrchestrationFlows;
     }
 
     @Override
@@ -79,14 +82,29 @@ public class Codegen extends Setup {
             for (String dep : swaggerDependencies.keySet()) {
                 new Dependency(mavenUrl, dep, swaggerDependencies.get(dep)).run(monitors);
             }
-            swaggerGen();
-            if (methodFlowMappings != null) {
-                Map<String,String> methodFlows = parseMap(methodFlowMappings);
-                for (String method : methodFlows.keySet()) {
 
-                    System.out.println(" MAPPING: " + method + "=" + methodFlows.get(method));
+            // TODO: this is not right
+            String pkg = new File(System.getProperty("user.dir")).getName().replace('-', '_') + ".api";
+            // package name comes from service path
+            Swagger swagger = new SwaggerParser().read(inputSpec);
+            mkPackage(pkg);
+            swaggerGen(pkg);
+            if (generateOrchestrationFlows) {
+                System.out.println("Creating processes for paths:");
+                Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());
+                byte[] serviceProcBytes = Files.readAllBytes(templatePath);
+                System.out.println("Generating processes for ");
+                for (String path : swagger.getPaths().keySet()) {
+                    System.out.println("  -> " + path);
                 }
-                // TODO
+//                for (String method : methodFlows.keySet()) {
+//                    String processName = methodFlows.get(method);
+//                    if (!processName.endsWith(".proc"))
+//                        processName += ".proc";
+//                    Path processPath = Paths.get(new File(getAssetLoc() + "/" + pkg.replace('.', '/') + "/" + processName).getPath());
+//                    System.out.println("  Creating process " + processPath.toAbsolutePath());
+//                    Files.write(processPath, serviceProcBytes);
+//                }
             }
         }
         else {
@@ -96,15 +114,17 @@ public class Codegen extends Setup {
         return this;
     }
 
-    protected void swaggerGen() throws IOException {
+    protected void swaggerGen(String pkg) throws IOException {
         List<String> args = new ArrayList<>();
 
         args.add("generate");
         args.add("-l");
         args.add("com.centurylink.mdw.cli.SwaggerCodegen");
 
+        String codegenTemplateDir = new File(getTemplateDir() + "/codegen").getAbsolutePath();
+
         args.add("--template-dir");
-        args.add(templateDir == null ? getTemplateDir().getAbsolutePath() : templateDir);
+        args.add(templateDir == null ? codegenTemplateDir : templateDir);
 
         args.add("-i");
         args.add(inputSpec);
@@ -113,10 +133,8 @@ public class Codegen extends Setup {
         args.add(getAssetLoc());
 
         args.add("-c");
-        args.add(config == null ? getTemplateDir() + "/config.json" : config);
+        args.add(config == null ? codegenTemplateDir + "/config.json" : config);
 
-        String pkg = new File(System.getProperty("user.dir")).getName().replace('-', '_') + ".api";
-        mkPackage(pkg);
         args.add("--model-package");
         args.add(pkg);
         args.add("--api-package");
@@ -131,25 +149,6 @@ public class Codegen extends Setup {
                         Langs.class, Help.class, ConfigHelp.class, Validate.class, Version.class);
 
         builder.build().parse(args).run();
-    }
-
-    protected File getTemplateDir() throws IOException {
-        String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
-        return new File(getMdwHome() + "/lib/codegen-" + mdwVer);
-    }
-
-    protected void downloadTemplates(ProgressMonitor... monitors) throws IOException {
-        File templateDir = getTemplateDir();
-        if (!templateDir.exists()) {
-            String templatesUrl = getTemplatesUrl();
-            System.out.println("Retrieving templates: " + templatesUrl);
-            File tempZip = Files.createTempFile("mdw-templates-", ".zip").toFile();
-            new Download(new URL(templatesUrl), tempZip).run(monitors);
-            File tempDir = Files.createTempDirectory("mdw-templates-").toFile();
-            new Unzip(tempZip, tempDir, false).run();
-            templateDir.getParentFile().mkdirs();
-            new Copy(new File(tempDir + "/codegen"), templateDir, true).run();
-        }
     }
 
     public static Map<String,Long> getSwaggerDependencies() {
@@ -171,5 +170,25 @@ public class Codegen extends Setup {
         dependencies.put("com/fasterxml/jackson/core/jackson-annotations/2.8.9/jackson-annotations-2.8.9.jar", 55784L);
         dependencies.put("joda-time/joda-time/2.9.9/joda-time-2.9.9.jar", 634048L);
         return dependencies;
+    }
+
+    public static String longestCommonPath(String[] paths) {
+        String cum = "";
+
+        String[] firstSegs = paths[0].split("/");
+        for (int prefixLen = 0; prefixLen < firstSegs.length; prefixLen++) {
+            String seg = firstSegs[prefixLen];
+            for (int i = 1; i < paths.length; i++) {
+                String[] segs = paths[i].split("/");
+                if (prefixLen >= segs.length || !segs[prefixLen].equals(seg)) {
+                    // mismatch found
+                    return cum;
+                }
+                else {
+                    cum += "/" + seg;
+                }
+            }
+        }
+        return cum;
     }
 }

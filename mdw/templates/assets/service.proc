@@ -39,7 +39,7 @@
   "attributes": {
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
+    "PROCESS_VISIBILITY": "SERVICE",
     "WORK_DISPLAY_INFO": "x=50,y=38,w=69,h=27"
   },
   "variables": {
