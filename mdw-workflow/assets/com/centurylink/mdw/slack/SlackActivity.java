@@ -20,16 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -42,25 +38,10 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  */
 public class SlackActivity extends DefaultActivityImpl {
 
-    public static String SLACK_WEBHOOK_URL = "mdw.slack.webhook.url";
+    public static String END_POINT_URI = "endpointUri";
     public static final String SLACK_MESSAGE = "slackMessage";
     // Prefix that identifies where the Slack message came from
-    private String slackPrefix = "MDW-APP: ";
-
-    /**
-     * @return the slackPrefix
-     */
-    public String getSlackPrefix() {
-        return slackPrefix;
-    }
-
-    /**
-     * @param slackPrefix the slackPrefix to set
-     */
-    public void setSlackPrefix(String slackPrefix) {
-        this.slackPrefix = slackPrefix;
-    }
-
+    private static String SLACK_PREFIX = "slackPrefix";
     private ActivityRuntimeContext context;
 
     /*
@@ -72,6 +53,15 @@ public class SlackActivity extends DefaultActivityImpl {
         hdrs.put("environment", getSlackPrefix());
         return hdrs;
     }
+    /*
+     * if slackPrefix attribute is not set, it uses default "MDW-APP"
+     */
+    public String getSlackPrefix(){
+        String slackPrefix=getAttributeValueSmart(SLACK_PREFIX);
+        if(slackPrefix==null)
+            slackPrefix="MDW-APP";
+        return slackPrefix;
+    }
 
     public JSONObject getMessage()throws ActivityException {
         String slackmessageAsset = getAttributeValueSmart(SLACK_MESSAGE);
@@ -82,13 +72,15 @@ public class SlackActivity extends DefaultActivityImpl {
             throw new ActivityException("Slack Message JSON asset could not be found "+slackmessageAsset);
 
         String message = context.evaluateToString(template.getStringContent());
-        JSONObject json;
+        JSONObject json=new JSONObject();
+        String env = ApplicationContext.getRuntimeEnvironment().toUpperCase();
         if (template.getLanguage().equals(Asset.JSON)) {
-            json = new JSONObject(message);
+            json.put("text", env + " - " + getSlackPrefix() + message);
+
         }
         else {
             json = new JSONObject();
-            json.put("text", message);
+            json.put("text", env + " - " + getSlackPrefix() + message);
         }
         String altText = null;
         if (json.has("text")) {
@@ -101,10 +93,10 @@ public class SlackActivity extends DefaultActivityImpl {
         return json;
     }
 
-    public String getWebhookUrl() throws PropertyException {
-        String url = PropertyManager.getProperty(SLACK_WEBHOOK_URL);
+    public String getWebhookUrl() throws ActivityException {
+        String url = getAttributeValueSmart(END_POINT_URI);
         if (url == null)
-            throw new PropertyException("Missing configuration: mdw.slack.webhook.url");
+            throw new ActivityException("Missing configuration: Slack End Point uri");
         return url;
     }
 
