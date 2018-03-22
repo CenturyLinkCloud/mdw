@@ -1,0 +1,4 @@
+workgroup: Common
+schemaVersion: '6.0'
+name: com.centurylink.mdw.tests.workflow
+version: 6.0.14

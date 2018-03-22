@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Compatibility;
@@ -43,6 +44,8 @@ import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Package implements Serializable, Jsonable {
 
@@ -374,15 +377,19 @@ public class Package implements Serializable, Jsonable {
         this.metaContent = metaContent;
     }
 
-    public List<Attribute> getMetaAttributes() throws JSONException, XmlException {
+    public List<Attribute> getMetaAttributes() throws XmlException {
         if (metaContent == null || metaContent.isEmpty())
             return null;
-        List<Attribute> metaAttributes = new ArrayList<Attribute>();
+        List<Attribute> metaAttributes = new ArrayList<>();
         if (metaContent.trim().startsWith("{")) {
             Package metaPkg = new Package(new JsonObject(metaContent));
             return metaPkg.getAttributes();
+        } else {
+            Yaml yaml= new Yaml();
+            Map<String,Object> map= (Map<String, Object>) yaml.load(metaContent);
+            Package metaPkg = new Package(map);
+            return metaPkg.getAttributes();
         }
-        return metaAttributes;
     }
 
     public String getVersionString() {
@@ -540,6 +547,26 @@ public class Package implements Serializable, Jsonable {
     @Override
     public String toString() {
         return getLabel();
+    }
+
+    public Package(Map<?, ?> map) {
+        if (map.get("name") != null)
+            this.setName((String)map.get("name"));
+        if (map.get("version") != null)
+            this.setVersion(parseVersion((String)map.get("version")));
+        if (map.get("schemaVersion") != null)
+            this.setVersion(Asset.parseVersion((String)map.get("schemaVersion")));
+        if (map.get("workgroup") != null)
+            this.setGroup((String)map.get("workgroup"));
+        if (map.get("attributes") != null) {
+            List<Attribute> attributes = new ArrayList<Attribute>();
+            Map<String, Object> attrs =  (Map<String, Object>) map.get("attributes");
+            for (Map.Entry<String, Object> entry : attrs.entrySet()) {
+                Attribute attr = new Attribute(entry.getKey(), entry.getValue().toString());
+                attributes.add(attr);
+            }
+            this.attributes = attributes;
+        }
     }
 
     public Package(JSONObject json) throws JSONException {

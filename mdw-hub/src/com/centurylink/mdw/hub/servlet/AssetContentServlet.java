@@ -232,6 +232,7 @@ public class AssetContentServlet extends HttpServlet {
                             if (pkgDir == null) {
                                 // new pkg
                                 pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg, persisterVcs.getVersionControl());
+                                pkgDir.setYaml(true);
                             }
                             persisterVcs.save(pkg, pkgDir, true);
                             pkgDir.parse(); // sync
