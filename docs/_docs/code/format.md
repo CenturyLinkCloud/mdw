@@ -14,8 +14,8 @@ title: Code Format
      These have to be configured manually in Eclipse.  For all formats we use **spaces instead of tabs**.
      The following screenshots illustrate how to set these:  
      - XML:                                                    
-      ![alt text](../images/xmlformat.png "xmlformat")
+      ![alt text](./images/xmlformat.png "xmlformat")
      - HTML:                                                           
-      ![alt text](../images/htmlformat.png "htmlformat")
+      ![alt text](./images/htmlformat.png "htmlformat")
      - YAML:                                           
-      ![alt text](../images/yamlformat.png "yamlformat")
+      ![alt text](./images/yamlformat.png "yamlformat")
