@@ -375,6 +375,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     // FileSystemAccess methods
 
+    @SuppressWarnings("unchecked")
     public Package loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         Package packageVO = new Package();
 
