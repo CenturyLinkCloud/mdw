@@ -26,6 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
@@ -87,7 +89,8 @@ public class Codegen extends Setup {
             // package name comes from service path
             Map<String,String> pathPkgs = new LinkedHashMap<>();
             Swagger swagger = new SwaggerParser().read(inputSpec);
-            swaggerGen(pathPkgs);
+
+            swaggerGen(swagger);
             if (generateOrchestrationFlows) {
                 System.out.println("Creating processes for paths:");
                 Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());
@@ -110,7 +113,7 @@ public class Codegen extends Setup {
         return this;
     }
 
-    protected void swaggerGen(Map<String,String> pathPkgs) throws IOException {
+    protected void swaggerGen(Swagger swagger) throws IOException {
         List<String> args = new ArrayList<>();
 
         args.add("generate");
@@ -131,11 +134,15 @@ public class Codegen extends Setup {
         args.add("-c");
         args.add(config == null ? codegenTemplateDir + "/config.json" : config);
 
+        File configFile = config == null ? new File(codegenTemplateDir + "/config.json") : new File(config);
+        JSONObject configJson = new JSONObject(new String(Files.readAllBytes(Paths.get(configFile.getPath()))));
+        boolean trimApiPaths = configJson.optBoolean("trimApiPaths", true);
+
         String basePkg = new File(System.getProperty("user.dir")).getName().replace('-', '_');
         args.add("--model-package");
         args.add(basePkg + ".model");
         args.add("--api-package");
-        args.add(basePkg + ".api");
+        args.add(trimApiPaths ? "" : swagger.getBasePath().substring(1).replace('/', '.'));
 
         String version = Version.readVersionFromResources();
         @SuppressWarnings("unchecked")

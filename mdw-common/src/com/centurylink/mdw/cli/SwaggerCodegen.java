@@ -15,13 +15,16 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.swagger.codegen.CliOption;
 import io.swagger.codegen.CodegenConstants;
+import io.swagger.codegen.CodegenModel;
 import io.swagger.codegen.CodegenOperation;
+import io.swagger.codegen.DefaultCodegen;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
@@ -65,6 +68,8 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         if (additionalProperties.containsKey(TRIM_API_PATHS)) {
             this.setTrimApiPaths(convertPropertyToBoolean(TRIM_API_PATHS));
         }
+        if (trimApiPaths)
+            apiPackage = "";
 
         importMapping.put("Jsonable", "com.centurylink.mdw.model.Jsonable");
         importMapping.put("JsonRestService", "com.centurylink.mdw.services.rest.JsonRestService");
@@ -72,7 +77,55 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         importMapping.put("Map", "java.util.Map");
         importMapping.put("SwaggerValidator", "com.centurylink.mdw.service.api.validator.SwaggerModelValidator");
         importMapping.put("ValidationException", "com.centurylink.mdw.service.api.validator.ValidationException");
-        importMapping.put("JsonList", "com.centurylink.mdw.model.JsonArray");
+        importMapping.put("JsonList", "com.centurylink.mdw.model.JsonList");
+    }
+
+    @Override
+    public String toApiName(String name) {
+        if (trimApiPaths) {
+            String apiName = DefaultCodegen.camelize(name).replaceAll("\\{", "").replaceAll("\\}", "");
+            if (modelNames.contains(apiName))
+                apiName += "Api"; // avoid collisions
+            return apiName;
+        }
+        else {
+            return super.toApiName(name);
+        }
+    }
+
+    private List<String> modelNames = new ArrayList<>();
+
+    @Override
+    public CodegenModel fromModel(String name, Model model, Map<String,Model> allDefinitions) {
+        CodegenModel codegenModel = super.fromModel(name, model, allDefinitions);
+        if (!modelNames.contains(name))
+            modelNames.add(name);
+        codegenModel.imports.add("JSONObject");
+        codegenModel.imports.add("Jsonable");
+        return codegenModel;
+    }
+
+    @Override
+    public String toApiFilename(String name) {
+        if (trimApiPaths) {
+            return trimmedPaths.get(name) + "/" + super.toApiFilename(name);
+        }
+        else {
+            return super.toApiFilename(name);
+        }
+    }
+
+    /**
+     * We use this for API package in our templates when trimmedPaths is true.
+     */
+    @Override
+    public String toApiImport(String name) {
+        if (trimApiPaths) {
+            return trimmedPaths.get(name).substring(1).replace('/', '.');
+        }
+        else {
+            return super.toApiImport(name);
+        }
     }
 
     @Override
@@ -84,34 +137,50 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         if (validateRequest) {
             op.imports.remove("Result");
         }
+
         return op;
     }
+
+    Map<String,String> trimmedPaths;
 
     @Override
     public void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co,
             Map<String,List<CodegenOperation>> operations) {
         super.addOperationToGroup(tag, resourcePath, operation, co, operations);
         if (trimApiPaths) {
+            if (trimmedPaths == null)
+                trimmedPaths = new LinkedHashMap<>();
             Map<String,List<CodegenOperation>> ops = new LinkedHashMap<>();
             for (String path : operations.keySet()) {
                 String pkgPath = path;
                 int slashCurly = pkgPath.lastIndexOf("/{");
                 if (slashCurly > 0)
                     pkgPath = pkgPath.substring(0, slashCurly);
+                String baseName = pkgPath;
                 int slash = pkgPath.lastIndexOf("/");
-                if (slash > 0)
+                if (slash > 0) {
                     pkgPath = pkgPath.substring(0, slash);
-                List<CodegenOperation> opList = ops.get(path);
-                for (CodegenOperation op : opList) {
-                    // unfortunately we're using nickname
-                    op.nickname = apiPackage;
-                    if (!pkgPath.equals(path)) {
-                        op.baseName = path.substring(pkgPath.length());
-                        op.nickname = pkgPath.replace('/', '.');
-                    }
+                    baseName = path.substring(pkgPath.length());
                 }
-                ops.put(pkgPath, opList);
+                trimmedPaths.put(baseName, pkgPath);
+                ops.put(baseName, operations.get(path));
             }
+            operations.clear();
+            operations.putAll(ops);
+        }
+        for (String path : operations.keySet()) {
+            List<CodegenOperation> ops = operations.get(path);
+            for (CodegenOperation op : ops) {
+                // set restfulness according to our rules
+                op.isRestfulCreate = op.httpMethod.equalsIgnoreCase("POST");
+                op.isRestfulUpdate = op.httpMethod.equalsIgnoreCase("PUT") || op.httpMethod.equalsIgnoreCase("PATCH");
+                op.isRestfulShow = op.httpMethod.equalsIgnoreCase("GET");
+                op.isRestfulDestroy = op.httpMethod.equalsIgnoreCase("DELETE");
+
+                // we use nickname for content param -- ugh (unable to override isRestfulUpdate behavior)
+                op.nickname = op.isRestfulCreate || op.isRestfulUpdate ? "hasBody" : null;
+            }
+
         }
     }
 

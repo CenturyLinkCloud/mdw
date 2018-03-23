@@ -1,5 +1,5 @@
 {{>licenseInfo}}
-package {{package}};
+package {{#trimApiPaths}}{{importPath}}{{/trimApiPaths}}{{^trimApiPaths}}{{package}}{{/trimApiPaths}};
 
 {{#imports}}
 import {{import}};
@@ -23,12 +23,11 @@ public class {{classname}} extends JsonRestService {
       @ApiImplicitParam(name="{{{paramName}}}", paramType="{{example}}", dataType="{{{dataType}}}"{{#description}}, value="{{description}}"{{/description}}{{#required}}{{^squashApiPaths}}, required=true{{/squashApiPaths}}{{/required}}{{#required}}{{#squashApiPaths}}{{^isPathParam}}, required=true{{/isPathParam}}{{/squashApiPaths}}{{/required}}{{#defaultValue}}, defaultValue="{{defaultValue}}"{{/defaultValue}}),
   {{/allParams}}
   }){{/hasParams}}{{/implicitParams}}
-  public JSONObject {{operationId}}(String path, {{#isRestfulCreate}}JSONObject content, {{/isRestfulCreate}}{{#isRestfulUpdate}}JSONObject content, {{/isRestfulUpdate}}Map<String,String> headers) throws ServiceException {
-  
+  public JSONObject {{operationId}}(String path, {{#nickname}}JSONObject content, {{/nickname}}Map<String,String> headers) throws ServiceException {
     {{#validateRequest}}
     try {
       SwaggerModelValidator validator = new SwaggerModelValidator(headers.get("HttpMethod"), path);
-      validator.validate(path, getQuery(path, headers), {{#isRestfulCreate}}content{{/isRestfulCreate}}{{#isRestfulUpdate}}content{{/isRestfulUpdate}}{{^isRestfulCreate}}{{^isRestfulUpdate}}null{{/isRestfulUpdate}}{{/isRestfulCreate}}, headers);
+      validator.validate(path, getQuery(path, headers), {{#nickname}}content{{/nickname}}{{^nickname}}null{{/nickname}}, headers);
     }
     catch (ValidationException ex) {
       throw new ServiceException(ex.getCode(), ex.getMessage());
@@ -36,10 +35,15 @@ public class {{classname}} extends JsonRestService {
       
     {{/validateRequest}}
     {{#bodyParam}}
-    {{bodyParam.dataType}} {{bodyParam.paramName}} = new {{bodyParam.dataType}}(content);
+    {{{bodyParam.dataType}}} {{bodyParam.paramName}} = new {{{bodyParam.dataType}}}(content);
     {{/bodyParam}}
     {{#isRestfulCreate}}
+    {{#hasBodyParam}}
     return {{bodyParam.paramName}}.getJson();
+    {{/hasBodyParam}}
+    {{^hasBodyParam}}
+    return new JSONObject();
+    {{/hasBodyParam}}
     {{/isRestfulCreate}}
     {{^isRestfulCreate}}
     {{#isListContainer}}
