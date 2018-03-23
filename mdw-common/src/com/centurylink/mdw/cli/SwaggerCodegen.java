@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.cli;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.swagger.codegen.CliOption;
@@ -27,6 +29,7 @@ import io.swagger.models.Swagger;
 public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
 
     public static final String NAME = "mdw";
+    public static final String TRIM_API_PATHS = "trimApiPaths";
 
     public SwaggerCodegen() {
         super();
@@ -36,6 +39,9 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         outputFolder = ".";
         apiPackage = "com.centurylink.api.service";
         modelPackage = "com.centurylink.api.model";
+
+        cliOptions.add(CliOption.newString(TRIM_API_PATHS, "Trim API paths and adjust package names accordingly").defaultValue(Boolean.TRUE.toString()));
+        additionalProperties.put(TRIM_API_PATHS, true);
 
         // relevant once we submit a PR to swagger-code to become an official java library
         supportedLibraries.put(NAME, getHelp());
@@ -55,6 +61,11 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     @Override
     public void processOpts() {
         super.processOpts();
+
+        if (additionalProperties.containsKey(TRIM_API_PATHS)) {
+            this.setTrimApiPaths(convertPropertyToBoolean(TRIM_API_PATHS));
+        }
+
         importMapping.put("Jsonable", "com.centurylink.mdw.model.Jsonable");
         importMapping.put("JsonRestService", "com.centurylink.mdw.services.rest.JsonRestService");
         importMapping.put("ServiceException", "com.centurylink.mdw.common.service.ServiceException");
@@ -75,4 +86,36 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         }
         return op;
     }
+
+    @Override
+    public void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co,
+            Map<String,List<CodegenOperation>> operations) {
+        super.addOperationToGroup(tag, resourcePath, operation, co, operations);
+        if (trimApiPaths) {
+            Map<String,List<CodegenOperation>> ops = new LinkedHashMap<>();
+            for (String path : operations.keySet()) {
+                String pkgPath = path;
+                int slashCurly = pkgPath.lastIndexOf("/{");
+                if (slashCurly > 0)
+                    pkgPath = pkgPath.substring(0, slashCurly);
+                int slash = pkgPath.lastIndexOf("/");
+                if (slash > 0)
+                    pkgPath = pkgPath.substring(0, slash);
+                List<CodegenOperation> opList = ops.get(path);
+                for (CodegenOperation op : opList) {
+                    // unfortunately we're using nickname
+                    op.nickname = apiPackage;
+                    if (!pkgPath.equals(path)) {
+                        op.baseName = path.substring(pkgPath.length());
+                        op.nickname = pkgPath.replace('/', '.');
+                    }
+                }
+                ops.put(pkgPath, opList);
+            }
+        }
+    }
+
+    protected boolean trimApiPaths = true;
+    public void setTrimApiPaths(boolean trimApiPaths) { this.trimApiPaths = trimApiPaths; }
+
 }

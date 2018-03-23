@@ -14,7 +14,7 @@ public class {{classname}} extends JsonRestService {
   {{#isDeprecated}}
   @Deprecated
   {{/isDeprecated}}
-  {{#squashApiPaths}}{{^path.empty}}@Path("{{{path}}}"){{/path.empty}}{{/squashApiPaths}}
+  {{^path.empty}}@Path("{{{path}}}"){{/path.empty}}
   @ApiOperation(value="{{summary}}"{{#notes}},
       notes="{{notes}}"{{/notes}}{{#returnType}},
       response={{returnBaseType}}.class{{#returnContainer}}, responseContainer="{{returnContainer}}"{{/returnContainer}}{{/returnType}})

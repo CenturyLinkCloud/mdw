@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,20 +84,15 @@ public class Codegen extends Setup {
                 new Dependency(mavenUrl, dep, swaggerDependencies.get(dep)).run(monitors);
             }
 
-            // TODO: this is not right
-            String pkg = new File(System.getProperty("user.dir")).getName().replace('-', '_') + ".api";
             // package name comes from service path
+            Map<String,String> pathPkgs = new LinkedHashMap<>();
             Swagger swagger = new SwaggerParser().read(inputSpec);
-            mkPackage(pkg);
-            swaggerGen(pkg);
+            swaggerGen(pathPkgs);
             if (generateOrchestrationFlows) {
                 System.out.println("Creating processes for paths:");
                 Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());
                 byte[] serviceProcBytes = Files.readAllBytes(templatePath);
                 System.out.println("Generating processes for ");
-                for (String path : swagger.getPaths().keySet()) {
-                    System.out.println("  -> " + path);
-                }
 //                for (String method : methodFlows.keySet()) {
 //                    String processName = methodFlows.get(method);
 //                    if (!processName.endsWith(".proc"))
@@ -114,7 +110,7 @@ public class Codegen extends Setup {
         return this;
     }
 
-    protected void swaggerGen(String pkg) throws IOException {
+    protected void swaggerGen(Map<String,String> pathPkgs) throws IOException {
         List<String> args = new ArrayList<>();
 
         args.add("generate");
@@ -135,10 +131,11 @@ public class Codegen extends Setup {
         args.add("-c");
         args.add(config == null ? codegenTemplateDir + "/config.json" : config);
 
+        String basePkg = new File(System.getProperty("user.dir")).getName().replace('-', '_');
         args.add("--model-package");
-        args.add(pkg);
+        args.add(basePkg + ".model");
         args.add("--api-package");
-        args.add(pkg);
+        args.add(basePkg + ".api");
 
         String version = Version.readVersionFromResources();
         @SuppressWarnings("unchecked")
