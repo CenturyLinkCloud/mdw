@@ -96,6 +96,7 @@ public class PackageDir extends File {
         parse(yaml);
     }
 
+    @SuppressWarnings("rawtypes")
     public void parse(boolean yaml) throws DataAccessException {
         try {
             this.yaml = yaml;

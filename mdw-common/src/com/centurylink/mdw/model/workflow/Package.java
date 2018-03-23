@@ -44,8 +44,6 @@ import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.JsonUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Package implements Serializable, Jsonable {
 
@@ -118,12 +116,12 @@ public class Package implements Serializable, Jsonable {
     public Map<String,List<Attribute>> getAttributesByGroup() {
         if (attributes == null)
             return null;
-        Map<String,List<Attribute>> grouped = new HashMap<String,List<Attribute>>();
+        Map<String,List<Attribute>> grouped = new HashMap<>();
         for (Attribute attribute : attributes) {
             String group = attribute.getAttributeGroup();
             List<Attribute> groupAttrs = grouped.get(group);
             if (groupAttrs == null) {
-                groupAttrs = new ArrayList<Attribute>();
+                groupAttrs = new ArrayList<>();
                 grouped.put(group, groupAttrs);
             }
             groupAttrs.add(attribute);
@@ -377,10 +375,10 @@ public class Package implements Serializable, Jsonable {
         this.metaContent = metaContent;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Attribute> getMetaAttributes() throws XmlException {
         if (metaContent == null || metaContent.isEmpty())
             return null;
-        List<Attribute> metaAttributes = new ArrayList<>();
         if (metaContent.trim().startsWith("{")) {
             Package metaPkg = new Package(new JsonObject(metaContent));
             return metaPkg.getAttributes();
@@ -421,7 +419,7 @@ public class Package implements Serializable, Jsonable {
     }
 
     public void hashProperties() {
-        properties = new HashMap<String,String>();
+        properties = new HashMap<>();
         if (attributes!=null) {
             for (Attribute attr: attributes) {
                 properties.put(attr.getAttributeName(), attr.getAttributeValue());
@@ -549,6 +547,7 @@ public class Package implements Serializable, Jsonable {
         return getLabel();
     }
 
+    @SuppressWarnings("unchecked")
     public Package(Map<?, ?> map) {
         if (map.get("name") != null)
             this.setName((String)map.get("name"));
