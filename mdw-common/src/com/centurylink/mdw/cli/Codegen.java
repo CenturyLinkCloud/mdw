@@ -87,10 +87,8 @@ public class Codegen extends Setup {
             }
 
             // package name comes from service path
-            Map<String,String> pathPkgs = new LinkedHashMap<>();
             Swagger swagger = new SwaggerParser().read(inputSpec);
-
-            swaggerGen(swagger);
+            swaggerGen(swagger.getBasePath());
             if (generateOrchestrationFlows) {
                 System.out.println("Creating processes for paths:");
                 Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());
@@ -113,7 +111,7 @@ public class Codegen extends Setup {
         return this;
     }
 
-    protected void swaggerGen(Swagger swagger) throws IOException {
+    protected void swaggerGen(String basePath) throws IOException {
         List<String> args = new ArrayList<>();
 
         args.add("generate");
@@ -142,7 +140,7 @@ public class Codegen extends Setup {
         args.add("--model-package");
         args.add(basePkg + ".model");
         args.add("--api-package");
-        args.add(trimApiPaths ? "" : swagger.getBasePath().substring(1).replace('/', '.'));
+        args.add(trimApiPaths ? "" : basePath.substring(1).replace('/', '.'));
 
         String version = Version.readVersionFromResources();
         @SuppressWarnings("unchecked")
