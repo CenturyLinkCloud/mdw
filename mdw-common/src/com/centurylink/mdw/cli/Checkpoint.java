@@ -199,7 +199,7 @@ public class Checkpoint extends Setup {
                                     updateStmt.setString(1, ref.getRef());
                                     updateStmt.setLong(2, ref.getDefinitionId());
                                     updateStmt.executeUpdate();
-                                    conn.commit();
+                                    if (!conn.getAutoCommit()) conn.commit();
                                 }
                             }
                         }
@@ -210,7 +210,7 @@ public class Checkpoint extends Setup {
                                 insertStmt.setString(2, ref.getName());
                                 insertStmt.setString(3, ref.getRef());
                                 insertStmt.executeUpdate();
-                                conn.commit();
+                                if (!conn.getAutoCommit()) conn.commit();
                             }
                         }
                     }
@@ -232,7 +232,7 @@ public class Checkpoint extends Setup {
                         updateStmt.setString(2, ref.getRef());
                         updateStmt.setString(3, ref.getName());
                         updateStmt.executeUpdate();
-                        conn.commit();
+                        if (!conn.getAutoCommit()) conn.commit();
                     }
                 }
                 else {
@@ -242,7 +242,7 @@ public class Checkpoint extends Setup {
                         insertStmt.setString(2, ref.getName());
                         insertStmt.setString(3, ref.getRef());
                         insertStmt.executeUpdate();
-                        conn.commit();
+                        if (!conn.getAutoCommit()) conn.commit();
                     }
                 }
             }
