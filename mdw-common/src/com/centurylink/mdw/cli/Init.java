@@ -86,6 +86,8 @@ public class Init extends Setup {
         }
 
         findMdwVersion();
+        if (sourceGroup == null)
+            sourceGroup = "com.example." + getProjectDir().getName();
 
         String templatesUrl = getTemplatesUrl();
         System.out.println("Retrieving templates: " + templatesUrl);

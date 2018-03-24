@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,11 +70,21 @@ public class Codegen extends Setup {
         return generateOrchestrationFlows;
     }
 
+    // only relevant for swagger
+    private boolean trimApiPaths = true;
+
+    private String basePackage;
+
     @Override
     public Codegen run(ProgressMonitor... monitors) throws IOException {
 
         if (templateDir == null)
             downloadTemplates();
+
+        basePackage = new Props(this).get(Props.Gradle.SOURCE_GROUP, false);
+        if (basePackage == null)
+            basePackage = new File(System.getProperty("user.dir")).getName();
+        basePackage.replace('-', '_');
 
         if (codeType.equals("swagger")) {
             if (inputSpec == null)
@@ -86,6 +95,12 @@ public class Codegen extends Setup {
                 new Dependency(mavenUrl, dep, swaggerDependencies.get(dep)).run(monitors);
             }
 
+            // trimApiPaths is set from codegen config.json
+            String codegenTemplateDir = new File(getTemplateDir() + "/codegen").getAbsolutePath();
+            File configFile = config == null ? new File(codegenTemplateDir + "/config.json") : new File(config);
+            JSONObject configJson = new JSONObject(new String(Files.readAllBytes(Paths.get(configFile.getPath()))));
+            trimApiPaths = configJson.optBoolean("trimApiPaths", true);
+
             // package name comes from service path
             Swagger swagger = new SwaggerParser().read(inputSpec);
             swaggerGen(swagger.getBasePath());
@@ -94,6 +109,28 @@ public class Codegen extends Setup {
                 Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());
                 byte[] serviceProcBytes = Files.readAllBytes(templatePath);
                 System.out.println("Generating processes for ");
+                Map<String,io.swagger.models.Path> swaggerPaths = swagger.getPaths();
+                for (String path : swaggerPaths.keySet()) {
+                    System.out.println("\n" + path);
+
+                    String pkgPath = path;
+                    int slashCurly = pkgPath.lastIndexOf("/{");
+                    if (slashCurly > 0)
+                        pkgPath = pkgPath.substring(0, slashCurly);
+                    String procName = pkgPath;
+                    if (trimApiPaths) {
+                        int slash = pkgPath.lastIndexOf("/");
+                        if (slash > 0) {
+                            pkgPath = pkgPath.substring(0, slash);
+                            procName = path.substring(pkgPath.length());
+                        }
+                    }
+
+                    System.out.println(" pkg: " + pkgPath);
+                    System.out.println(" proc: " + procName);
+                    io.swagger.models.Path swaggerPath = swaggerPaths.get(path);
+                    System.out.println(swaggerPath);
+                }
 //                for (String method : methodFlows.keySet()) {
 //                    String processName = methodFlows.get(method);
 //                    if (!processName.endsWith(".proc"))
@@ -132,13 +169,8 @@ public class Codegen extends Setup {
         args.add("-c");
         args.add(config == null ? codegenTemplateDir + "/config.json" : config);
 
-        File configFile = config == null ? new File(codegenTemplateDir + "/config.json") : new File(config);
-        JSONObject configJson = new JSONObject(new String(Files.readAllBytes(Paths.get(configFile.getPath()))));
-        boolean trimApiPaths = configJson.optBoolean("trimApiPaths", true);
-
-        String basePkg = new File(System.getProperty("user.dir")).getName().replace('-', '_');
         args.add("--model-package");
-        args.add(basePkg + ".model");
+        args.add(basePackage + ".model");
         args.add("--api-package");
         args.add(trimApiPaths ? "" : basePath.substring(1).replace('/', '.'));
 

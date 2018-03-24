@@ -36,7 +36,7 @@ eclipse {
     }
 }
 
-group = 'com.example.{{project}}'
+group = "${sourceGroup}"
 version = '1.0.01'
 
 description = "{{project}}"

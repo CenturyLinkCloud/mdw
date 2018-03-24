@@ -197,6 +197,16 @@ public abstract class Setup implements Operation {
     }
     public void setDatabaseDriver(String driver) { this.databaseDriver = driver; }
 
+    @Parameter(names="--source-group", description="Source code group name")
+    protected String sourceGroup;
+    public String getSourceGroup() {
+        return sourceGroup == null ? "com.example." + getProjectDir().getName() : sourceGroup;
+    }
+    public void setSourceGroup(String sourceGroup) {
+        this.sourceGroup = sourceGroup;
+        Props.Gradle.SOURCE_GROUP.specified = true;
+    }
+
     /**
      * Checks for any existing packages.  If none present, adds the defaults.
      */
