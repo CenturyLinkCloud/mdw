@@ -37,6 +37,7 @@ import io.swagger.codegen.cmd.Langs;
 import io.swagger.codegen.cmd.Meta;
 import io.swagger.codegen.cmd.Validate;
 import io.swagger.codegen.cmd.Version;
+import io.swagger.models.HttpMethod;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 
@@ -111,34 +112,17 @@ public class Codegen extends Setup {
                 System.out.println("Generating processes for ");
                 Map<String,io.swagger.models.Path> swaggerPaths = swagger.getPaths();
                 for (String path : swaggerPaths.keySet()) {
+
                     System.out.println("\n" + path);
-
-                    String pkgPath = path;
-                    int slashCurly = pkgPath.lastIndexOf("/{");
-                    if (slashCurly > 0)
-                        pkgPath = pkgPath.substring(0, slashCurly);
-                    String procName = pkgPath;
-                    if (trimApiPaths) {
-                        int slash = pkgPath.lastIndexOf("/");
-                        if (slash > 0) {
-                            pkgPath = pkgPath.substring(0, slash);
-                            procName = path.substring(pkgPath.length());
-                        }
-                    }
-
-                    System.out.println(" pkg: " + pkgPath);
-                    System.out.println(" proc: " + procName);
+                    ProcessNamer namer = new ProcessNamer(basePackage, path);
+                    System.out.println(" pkg: " + namer.getPackage());
+                    System.out.println("  procs:");
                     io.swagger.models.Path swaggerPath = swaggerPaths.get(path);
-                    System.out.println(swaggerPath);
+                    for (HttpMethod httpMethod : swaggerPath.getOperationMap().keySet()) {
+                        String processName = namer.getName(httpMethod.toString());
+                        System.out.println("    " + processName);
+                    }
                 }
-//                for (String method : methodFlows.keySet()) {
-//                    String processName = methodFlows.get(method);
-//                    if (!processName.endsWith(".proc"))
-//                        processName += ".proc";
-//                    Path processPath = Paths.get(new File(getAssetLoc() + "/" + pkg.replace('.', '/') + "/" + processName).getPath());
-//                    System.out.println("  Creating process " + processPath.toAbsolutePath());
-//                    Files.write(processPath, serviceProcBytes);
-//                }
             }
         }
         else {

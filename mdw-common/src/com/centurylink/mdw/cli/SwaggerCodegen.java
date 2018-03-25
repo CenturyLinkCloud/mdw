@@ -153,13 +153,15 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
             Map<String,List<CodegenOperation>> ops = new LinkedHashMap<>();
             for (String path : operations.keySet()) {
                 String pkgPath = path;
+                String baseName = path;
                 int slashCurly = pkgPath.lastIndexOf("/{");
-                if (slashCurly > 0)
+                if (slashCurly > 0) {
                     pkgPath = pkgPath.substring(0, slashCurly);
-                String baseName = pkgPath;
-                int slash = pkgPath.lastIndexOf("/");
-                if (slash > 0) {
-                    pkgPath = pkgPath.substring(0, slash);
+                    baseName = path.substring(0, slashCurly) + camelize(path.substring(slashCurly + 1, path.lastIndexOf("}")));
+                }
+                int pkgSlash = pkgPath.lastIndexOf("/");
+                if (pkgSlash > 0) {
+                    pkgPath = pkgPath.substring(0, pkgSlash);
                     baseName = path.substring(pkgPath.length());
                 }
                 trimmedPaths.put(baseName, pkgPath);
