@@ -250,8 +250,7 @@
             "label": "MDW Docs",
             "path": "system/docs",
             "href": "https://centurylinkcloud.github.io/mdw/",
-            "target": "_blank",
-            "priority": 1
+            "target": "_blank"
           }
         ]
       },
