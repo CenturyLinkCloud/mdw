@@ -34,6 +34,7 @@ public interface RequestServices {
 
     public Request getRequest(Long id) throws ServiceException;
     public Request getRequestResponse(Long requestId) throws ServiceException;
+    public Request getRequestAndResponse(Long requestId) throws ServiceException;
 
     public Request getMasterRequest(String masterRequestId) throws ServiceException;
     public Request getMasterRequestResponse(String masterReqeustId) throws ServiceException;

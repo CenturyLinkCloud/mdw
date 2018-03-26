@@ -95,6 +95,18 @@ public class RequestServicesImpl implements RequestServices {
          }
     }
 
+    public Request getRequestAndResponse(Long requestId) throws ServiceException {
+        try {
+            Request request = getDAO().getRequest(requestId, true, true);
+            if (request == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Request not found: " + requestId);
+            return request;
+         }
+         catch (DataAccessException ex) {
+             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to get response for requestId: " + requestId, ex);
+         }
+    }
+
     public Request getMasterRequestResponse(String masterRequestId) throws ServiceException {
         try {
             Request request = getDAO().getMasterRequest(masterRequestId, false, true);

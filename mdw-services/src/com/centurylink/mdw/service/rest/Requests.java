@@ -95,7 +95,9 @@ public class Requests extends JsonRestService implements JsonExportable {
                         }
                         else {
                             Long requestId = Long.valueOf(segOne);
-                            if (query.getBooleanFilter("response"))
+                            if (query.getBooleanFilter("request") && query.getBooleanFilter("response"))
+                                return requestServices.getRequestAndResponse(requestId).getJson();
+                            else if (query.getBooleanFilter("response"))
                                 return requestServices.getRequestResponse(requestId).getJson();
                             else
                                 return requestServices.getRequest(requestId).getJson();
@@ -107,7 +109,15 @@ public class Requests extends JsonRestService implements JsonExportable {
                 }
             }
             else {
-                return requestServices.getRequests(query).getJson();
+                if (query.getLongFilter("ownerId") >= 0L) {
+                    RequestList reqList = requestServices.getRequests(query);
+                    if (!reqList.getItems().isEmpty())
+                        return requestServices.getRequestAndResponse(reqList.getItems().get(0).getId()).getJson();
+                    else
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Request not found for ownerId: " + query.getLongFilter("ownerId"));
+                }
+                else
+                    return requestServices.getRequests(query).getJson();
             }
         }
         catch (ServiceException ex) {
