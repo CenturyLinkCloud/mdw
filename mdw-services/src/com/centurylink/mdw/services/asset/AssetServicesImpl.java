@@ -36,6 +36,7 @@ import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -304,7 +305,7 @@ public class AssetServicesImpl implements AssetServices {
         try {
             JSONObject json = pkg.getJson();
             json.put("name", packageName);
-            FileHelper.writeToFile(new ByteArrayInputStream(json.toString(2).getBytes()), new File(metaDir + "/package.json"));
+            FileHelper.writeToFile(new ByteArrayInputStream(new YamlBuilder(json).toString().getBytes()), new File(metaDir + "/package.yaml"));
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());

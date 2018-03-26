@@ -19,9 +19,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -39,6 +43,7 @@ public class PackageDir extends File {
 
     public static final String META_DIR = ".mdw";
     public static final String PACKAGE_JSON_PATH = META_DIR + "/package.json";
+    public static final String PACKAGE_YAML_PATH = META_DIR + "/package.yaml";
     public static final String VERSIONS_PATH = META_DIR + "/versions";
     public static final String ARCHIVE_SUBDIR = "Archive";
 
@@ -74,30 +79,54 @@ public class PackageDir extends File {
     private long pkgId;
     public long getId() { return pkgId; }
 
+    private Boolean yaml;
+    public boolean isYaml() { return yaml == null ? false : yaml; }
+    public void setYaml(boolean yaml) { this.yaml = yaml; }
+
     private File metaFile;
     public File getMetaFile() {
-        metaFile = new File(toString() + "/" + PACKAGE_JSON_PATH);
+        metaFile = new File(toString() + "/" + PACKAGE_YAML_PATH);
+        if (!isYaml() && !metaFile.exists())
+            metaFile = new File(toString() + "/" + PACKAGE_JSON_PATH);
         return metaFile;
     }
 
     public void parse() throws DataAccessException {
+        yaml = new File(toString() + "/" + PACKAGE_YAML_PATH).exists();
+        parse(yaml);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void parse(boolean yaml) throws DataAccessException {
         try {
+            this.yaml = yaml;
             File pkgFile = getMetaFile();
             if (!pkgFile.exists())
                 throw new FileNotFoundException(pkgFile.getAbsolutePath());
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(pkgFile);
-                byte[] bytes = new byte[(int) pkgFile.length()];
-                fis.read(bytes);
-                Package pkgVo = new Package(new JsonObject(new String(bytes)));
-                pkgName = pkgVo.getName();
-                pkgVersion = pkgVo.getVersionString();
-                schemaVersion = Asset.formatVersion(pkgVo.getSchemaVersion());
+            if (yaml) {
+                Yaml yamlLoader = new Yaml();
+                Map map = (Map) yamlLoader
+                        .load(new String(Files.readAllBytes(Paths.get(pkgFile.getPath()))));
+                pkgName = (String) map.get("name");
+                pkgVersion = (String) map.get("version");
+                schemaVersion = (String) map.get("schemaVersion");
             }
-            finally {
-                if (fis != null)
-                    fis.close();;
+            else {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(pkgFile);
+                    byte[] bytes = new byte[(int) pkgFile.length()];
+                    fis.read(bytes);
+                    Package pkgVo = new Package(new JsonObject(new String(bytes)));
+                    pkgName = pkgVo.getName();
+                    pkgVersion = pkgVo.getVersionString();
+                    schemaVersion = Asset.formatVersion(pkgVo.getSchemaVersion());
+                }
+                finally {
+                    if (fis != null)
+                        fis.close();
+                    ;
+                }
             }
             String archivePath = new File(storageDir.toString() + "/Archive/").toString();
             if (toString().startsWith(archivePath)) {

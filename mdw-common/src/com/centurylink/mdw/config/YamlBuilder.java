@@ -17,6 +17,7 @@ package com.centurylink.mdw.config;
 
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -34,6 +35,12 @@ public class YamlBuilder {
     public YamlBuilder(Map<?,?> map) {
         this();
         append(map);
+    }
+
+    public YamlBuilder(JSONObject json) {
+        this();
+        Yaml yaml= new Yaml();
+        append((Map<?,?>)yaml.load(json.toString()));
     }
 
     public YamlBuilder append(Map<?,?> map) {

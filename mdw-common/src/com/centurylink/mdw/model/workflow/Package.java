@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Compatibility;
@@ -115,12 +116,12 @@ public class Package implements Serializable, Jsonable {
     public Map<String,List<Attribute>> getAttributesByGroup() {
         if (attributes == null)
             return null;
-        Map<String,List<Attribute>> grouped = new HashMap<String,List<Attribute>>();
+        Map<String,List<Attribute>> grouped = new HashMap<>();
         for (Attribute attribute : attributes) {
             String group = attribute.getAttributeGroup();
             List<Attribute> groupAttrs = grouped.get(group);
             if (groupAttrs == null) {
-                groupAttrs = new ArrayList<Attribute>();
+                groupAttrs = new ArrayList<>();
                 grouped.put(group, groupAttrs);
             }
             groupAttrs.add(attribute);
@@ -374,15 +375,19 @@ public class Package implements Serializable, Jsonable {
         this.metaContent = metaContent;
     }
 
-    public List<Attribute> getMetaAttributes() throws JSONException, XmlException {
+    @SuppressWarnings("unchecked")
+    public List<Attribute> getMetaAttributes() throws XmlException {
         if (metaContent == null || metaContent.isEmpty())
             return null;
-        List<Attribute> metaAttributes = new ArrayList<Attribute>();
         if (metaContent.trim().startsWith("{")) {
             Package metaPkg = new Package(new JsonObject(metaContent));
             return metaPkg.getAttributes();
+        } else {
+            Yaml yaml= new Yaml();
+            Map<String,Object> map= (Map<String, Object>) yaml.load(metaContent);
+            Package metaPkg = new Package(map);
+            return metaPkg.getAttributes();
         }
-        return metaAttributes;
     }
 
     public String getVersionString() {
@@ -414,7 +419,7 @@ public class Package implements Serializable, Jsonable {
     }
 
     public void hashProperties() {
-        properties = new HashMap<String,String>();
+        properties = new HashMap<>();
         if (attributes!=null) {
             for (Attribute attr: attributes) {
                 properties.put(attr.getAttributeName(), attr.getAttributeValue());
@@ -540,6 +545,27 @@ public class Package implements Serializable, Jsonable {
     @Override
     public String toString() {
         return getLabel();
+    }
+
+    @SuppressWarnings("unchecked")
+    public Package(Map<?, ?> map) {
+        if (map.get("name") != null)
+            this.setName((String)map.get("name"));
+        if (map.get("version") != null)
+            this.setVersion(parseVersion((String)map.get("version")));
+        if (map.get("schemaVersion") != null)
+            this.setVersion(Asset.parseVersion((String)map.get("schemaVersion")));
+        if (map.get("workgroup") != null)
+            this.setGroup((String)map.get("workgroup"));
+        if (map.get("attributes") != null) {
+            List<Attribute> attributes = new ArrayList<Attribute>();
+            Map<String, Object> attrs =  (Map<String, Object>) map.get("attributes");
+            for (Map.Entry<String, Object> entry : attrs.entrySet()) {
+                Attribute attr = new Attribute(entry.getKey(), entry.getValue().toString());
+                attributes.add(attr);
+            }
+            this.attributes = attributes;
+        }
     }
 
     public Package(JSONObject json) throws JSONException {

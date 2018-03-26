@@ -38,9 +38,11 @@ import java.util.regex.Pattern;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
+import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
+import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.AssetRef;
@@ -373,6 +375,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     // FileSystemAccess methods
 
+    @SuppressWarnings("unchecked")
     public Package loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
         Package packageVO = new Package();
 
@@ -383,10 +386,20 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         packageVO.setSchemaVersion(DataAccess.currentSchemaVersion);
 
         String pkgJson = new String(read(pkgDir.getMetaFile()));
-        Package jsonPkg = new Package(new JsonObject(pkgJson));
-        packageVO.setGroup(jsonPkg.getGroup());
-        packageVO.setAttributes(jsonPkg.getAttributes());
-        packageVO.setMetaContent(pkgJson);
+        if (pkgDir.isYaml()) {
+            Yaml yaml= new Yaml();
+            Map<String,Object> map= (Map<String, Object>) yaml.load(pkgJson);
+            Package jsonPkg = new Package(map);
+            packageVO.setGroup(jsonPkg.getGroup());
+            packageVO.setAttributes(jsonPkg.getAttributes());
+            packageVO.setMetaContent(pkgJson);
+        }
+        else {
+            Package jsonPkg = new Package(new JsonObject(pkgJson));
+            packageVO.setGroup(jsonPkg.getGroup());
+            packageVO.setAttributes(jsonPkg.getAttributes());
+            packageVO.setMetaContent(pkgJson);
+        }
 
         packageVO.setProcesses(loadProcesses(pkgDir, deep));
         packageVO.setAssets(loadAssets(pkgDir, deep));
@@ -406,7 +419,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 throw new IOException("Unable to create metadata directory under: " + pkgDir);
         }
 
-        String pkgContent = packageVO.getJson(false).toString(2);
+        String pkgContent = new YamlBuilder(packageVO.getJson(false)).toString();
+
         write(pkgContent.getBytes(), pkgDir.getMetaFile());
 
         packageVO.setId(versionControl.getId(pkgDir.getLogicalDir()));
@@ -1180,6 +1194,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             else {
                 pkgDir = getTopLevelPackageDir(packageVO.getName());
             }
+            pkgDir.setYaml(true);
             Long id = save(packageVO, pkgDir, persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON);
             pkgDir.parse();  // sync
             return id;

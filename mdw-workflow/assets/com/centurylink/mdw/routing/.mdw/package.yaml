@@ -1,0 +1,5 @@
+schemaVersion: '6.1'
+name: com.centurylink.mdw.routing
+attributes:
+  ExclusionRoutingList: AppSummary,SystemInfo,AuthenticatedUser,Packages,Assets,GitVcs,Users,System
+version: 6.1.01
