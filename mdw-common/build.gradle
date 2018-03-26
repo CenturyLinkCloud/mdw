@@ -123,7 +123,7 @@ task cliJar(type: Jar) {
               + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
               + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
               + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
-              + " ./lib/joda-time-2.9.9.jar");
+              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar");
     }
     
     from("build/classes") {
