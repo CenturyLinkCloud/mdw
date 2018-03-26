@@ -22,9 +22,9 @@ Create a new channel
 <br/><br/><br/>
 Once the above setup is complete, it generates incoming- Webhook URL which looks like this:<br/>
 <I>Web Hook URL:</I> https://hooks.slack.com/services/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<br/>
-Add to mdw.yaml<br/> 
+Configure this is as an environment variable so that messages can be sent using SlackActivity.<br/> 
  mdw.slack.webhook.url=https://hooks.slack.com/services/XXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX
-Then restart your server or refresh its cache. <br/>
+Then restart your server. <br/>
 <h3>Using Slack Activity</h3>
 Using Designer or MDWHub, import the necessary Slack asset package dependency.  In MDWHub, for example, on the Admin tab click the Assets nav link and
 then Import > Discover and select the `com.centurylink.mdw.slack` package in the discovered list.<br/>
@@ -34,14 +34,20 @@ The basic design parameters for configuring a Slack Activity are illustrated in 
 <br/><br/>
 <img src="images/SlackActivity.jpg" />
 <br/><br/><br/>
-Slack Web hook URL is configured as environment variable in mdw.yaml.
-Slack message should be in JSON format which can be selected from any existing asset packages.</br>
-Note that it should be in the format  package/asset name</br> 
-For Ex: com.centurylink.mdw.slack/slackNotice.json</br>
-Refer to Json Asset SlackNotice.json located in com.centurylink.mdw.slack package.</br></br>  
-Refer to <a href="https://api.slack.com/incoming-webhooks">Json Payload</a>  for advanced message formatting using incoming webhook. The api getMessage() can be overriden to enhance message
-by adding username, application prefix,links, attachments etc </br>
-Slack Message Prefix can be given which is appended to the message sent along with environment information.</br>
+<ul>
+ <li><code>Slack Web hook URL</code> has to be configured as environment variable. 
+    The name of the environment variable is configurable using Slack Web hook URL attribute</li> 
+ <li><code>Slack message</code> Can be either in JSON format or as process variable.
+          For Json format, Note that it should be in the format  package/asset name. 
+          For Ex: com.centurylink.mdw.slack/slackNotice.json</br>
+          The process variable containing message or exception details can be directly assigned to slack message. 
+          For Ex: $errorMessage</br>
+          Refer to Json Asset SlackNotice.json located in com.centurylink.mdw.slack package for sample Json Payload.</br>  
+          Refer to <a href="https://api.slack.com/incoming-webhooks">Incoming Webhooks</a>  
+          for advanced message formatting using incoming webhook.</li>
+ <li><code>Slack Message Prefix</code> allows user to append application name prefix to Json message</br></li>
+ <li><code>Continue despite messaging exception</code> Checking this attribute allows the workflow process to continue in case any exception in slack Activity occurs.</li>
+</ul>
 Below Screen shot illustrates how a sample message received from MDW workflow into Slack channel looks like using Slack Activity.</br>
 <br/><br/>
 <img src="images/SlackIncomingMessage.jpg" />

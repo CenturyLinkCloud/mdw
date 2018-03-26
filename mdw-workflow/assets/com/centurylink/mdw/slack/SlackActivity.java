@@ -53,35 +53,38 @@ public class SlackActivity extends DefaultActivityImpl {
         hdrs.put("environment", getSlackPrefix());
         return hdrs;
     }
+
     /*
      * if slackPrefix attribute is not set, it uses default "MDW-APP"
      */
-    public String getSlackPrefix(){
-        String slackPrefix=getAttributeValueSmart(SLACK_PREFIX);
-        if(slackPrefix==null)
-            slackPrefix="MDW-APP";
+    public String getSlackPrefix() {
+        String slackPrefix = getAttributeValueSmart(SLACK_PREFIX);
+        if (slackPrefix == null)
+            slackPrefix = "MDW-APP";
         return slackPrefix;
     }
 
-    public JSONObject getMessage()throws ActivityException {
-        String slackmessageAsset = getAttributeValueSmart(SLACK_MESSAGE);
-        if(slackmessageAsset==null)
-          throw new ActivityException("slack message is not set");
-        Asset template = AssetCache.getAsset(slackmessageAsset);
-        if(template==null)
-            throw new ActivityException("Slack Message JSON asset could not be found "+slackmessageAsset);
+    /*
+     * The source of Slack message can be either Json asset or  process variable.
+     */
+    public JSONObject getMessage() throws ActivityException {
+        String message = null;
+        String slackMessageName = getAttributeValueSmart(SLACK_MESSAGE);
+        if (slackMessageName == null)
+            throw new ActivityException("slack message attribute is not set");
+        Asset template = AssetCache.getAsset(slackMessageName);
 
-        String message = context.evaluateToString(template.getStringContent());
-        JSONObject json=new JSONObject();
-        String env = ApplicationContext.getRuntimeEnvironment().toUpperCase();
-        if (template.getLanguage().equals(Asset.JSON)) {
-            json.put("text", env + " - " + getSlackPrefix() + message);
-
+        if (template == null) {
+            message = slackMessageName;
         }
         else {
-            json = new JSONObject();
-            json.put("text", env + " - " + getSlackPrefix() + message);
+            message = context.evaluateToString(template.getStringContent());
         }
+
+        JSONObject json = new JSONObject();
+        String env = ApplicationContext.getRuntimeEnvironment().toUpperCase();
+        json.put("text", env + " - " + getSlackPrefix() + " - " + message);
+
         String altText = null;
         if (json.has("text")) {
             String text = json.getString("text");
@@ -93,8 +96,12 @@ public class SlackActivity extends DefaultActivityImpl {
         return json;
     }
 
+    /*
+     * Reads Slack URL which is an environment variable configured as attribute
+     * END_POINT_URI.
+     */
     public String getWebhookUrl() throws ActivityException {
-        String url = getAttributeValueSmart(END_POINT_URI);
+        String url = System.getenv(getAttributeValueSmart(END_POINT_URI));
         if (url == null)
             throw new ActivityException("Missing configuration: Slack End Point uri");
         return url;
