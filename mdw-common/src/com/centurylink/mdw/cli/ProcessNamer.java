@@ -27,22 +27,18 @@ public class ProcessNamer {
         int slashCurly = pkgPath.lastIndexOf("/{");
         if (slashCurly > 0) {
             pkgPath = pkgPath.substring(0, slashCurly);
-            String firstSeg = path.substring(0, slashCurly);
-            String lastSeg = path.substring(slashCurly + 2, path.lastIndexOf("}"));
-            if (firstSeg.endsWith("s")) // TODO check if unique
-                baseName = firstSeg.substring(0, firstSeg.length() - 1);
-            else
-                baseName = firstSeg + "By" + Character.toUpperCase(lastSeg.charAt(0)) + lastSeg.substring(1);
         }
-        int pkgSlash = pkgPath.lastIndexOf("/");
-        if (pkgSlash > 0) {
-            pkgPath = pkgPath.substring(0, pkgSlash);
-            baseName = path.substring(pkgPath.length());
+        int lastSlash = pkgPath.lastIndexOf("/");
+        if (lastSlash > 0) {
+            if (lastSlash < pkgPath.length() - 2)
+                baseName = pkgPath.substring(lastSlash + 1);
+            pkgPath = pkgPath.substring(0, lastSlash);
         }
         if (baseName.startsWith("/"))
             baseName = baseName.substring(1);
+        pkgPath = pkgPath.replaceAll("[{}]", "");
         baseName = Character.toUpperCase(baseName.charAt(0)) + baseName.substring(1);
-        baseName.replace('/', '_');
+        baseName = baseName.replace('/', '_').replaceAll("[{}]", "");
     }
 
     public String getPackage() {

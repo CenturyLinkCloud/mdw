@@ -85,7 +85,7 @@ public class Codegen extends Setup {
         basePackage = new Props(this).get(Props.Gradle.SOURCE_GROUP, false);
         if (basePackage == null)
             basePackage = new File(System.getProperty("user.dir")).getName();
-        basePackage.replace('-', '_');
+        basePackage = basePackage.replace('-', '_');
 
         if (codeType.equals("swagger")) {
             if (inputSpec == null)
@@ -106,21 +106,18 @@ public class Codegen extends Setup {
             Swagger swagger = new SwaggerParser().read(inputSpec);
             swaggerGen(swagger.getBasePath());
             if (generateOrchestrationFlows) {
-                System.out.println("Creating processes for paths:");
                 Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());
                 byte[] serviceProcBytes = Files.readAllBytes(templatePath);
-                System.out.println("Generating processes for ");
                 Map<String,io.swagger.models.Path> swaggerPaths = swagger.getPaths();
                 for (String path : swaggerPaths.keySet()) {
-
-                    System.out.println("\n" + path);
+                    System.out.println("\nGenerating processes for path: " + path);
                     ProcessNamer namer = new ProcessNamer(basePackage, path);
-                    System.out.println(" pkg: " + namer.getPackage());
-                    System.out.println("  procs:");
                     io.swagger.models.Path swaggerPath = swaggerPaths.get(path);
                     for (HttpMethod httpMethod : swaggerPath.getOperationMap().keySet()) {
                         String processName = namer.getName(httpMethod.toString());
-                        System.out.println("    " + processName);
+                        String assetPath = namer.getPackage() + "/" + processName + ".proc";
+                        System.out.println("  " + httpMethod + " -> " + assetPath);
+                        createAsset(assetPath, serviceProcBytes);
                     }
                 }
             }
@@ -158,6 +155,11 @@ public class Codegen extends Setup {
         args.add("--api-package");
         args.add(trimApiPaths ? "" : basePath.substring(1).replace('/', '.'));
 
+        if (generateOrchestrationFlows) {
+            args.add("--generated-flow-base-package");
+            args.add(basePackage);
+        }
+
         String version = Version.readVersionFromResources();
         @SuppressWarnings("unchecked")
         Cli.CliBuilder<Runnable> builder = Cli.<Runnable> builder("swagger-codegen-cli")
@@ -188,25 +190,5 @@ public class Codegen extends Setup {
         dependencies.put("com/fasterxml/jackson/core/jackson-annotations/2.8.9/jackson-annotations-2.8.9.jar", 55784L);
         dependencies.put("joda-time/joda-time/2.9.9/joda-time-2.9.9.jar", 634048L);
         return dependencies;
-    }
-
-    public static String longestCommonPath(String[] paths) {
-        String cum = "";
-
-        String[] firstSegs = paths[0].split("/");
-        for (int prefixLen = 0; prefixLen < firstSegs.length; prefixLen++) {
-            String seg = firstSegs[prefixLen];
-            for (int i = 1; i < paths.length; i++) {
-                String[] segs = paths[i].split("/");
-                if (prefixLen >= segs.length || !segs[prefixLen].equals(seg)) {
-                    // mismatch found
-                    return cum;
-                }
-                else {
-                    cum += "/" + seg;
-                }
-            }
-        }
-        return cum;
     }
 }

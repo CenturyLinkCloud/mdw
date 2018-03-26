@@ -340,6 +340,10 @@ public abstract class Setup implements Operation {
         int lastSlash = assetPath.lastIndexOf('/');
         return lastSlash < assetPath.length() ? assetPath.substring(lastSlash + 1) : assetPath;
     }
+    public File getAssetFile(String assetPath) throws IOException {
+        return new File(getAssetRoot() + "/" + getPackageName(assetPath).replace('.', '/') + "/"
+                + getAssetName(assetPath));
+    }
 
     public File getAssetRoot() throws IOException {
         String assetLoc;
@@ -477,9 +481,18 @@ public abstract class Setup implements Operation {
             JSONObject pkgJson = new JSONObject();
             pkgJson.put("name", name);
             pkgJson.put("version", "1.0.01");
-            pkgJson.put("schemaVersion", "6.0");
+            pkgJson.put("schemaVersion", "6.1");
             Files.write(Paths.get(pkgFile.getPath()), pkgJson.toString(2).getBytes());
         }
+    }
+
+    public void createAsset(String assetPath, byte[] content) throws IOException {
+        int lastSlash = assetPath.lastIndexOf("/");
+        if (lastSlash < 0 || lastSlash > assetPath.length() - 2)
+            throw new IOException("Invalid asset path: " + assetPath);
+        mkPackage(getPackageName(assetPath));
+        Path filePath = Paths.get(getAssetFile(assetPath).getPath());
+        Files.write(filePath, content);
     }
 
     protected File getTemplateDir() throws IOException {

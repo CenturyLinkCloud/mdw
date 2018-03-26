@@ -34,6 +34,12 @@ public class {{classname}} extends JsonRestService {
     }
       
     {{/validateRequest}}
+    {{#vendorExtensions.generatedFlow}}
+    // invoke orchestration workflow process
+    String requestId = generateRequestId();
+    return invokeServiceProcess("{{vendorExtensions.generatedFlow}}", {{#bodyParam}}new {{{bodyParam.dataType}}}(content){{/bodyParam}}{{^bodyParam}}null{{/bodyParam}}, requestId, null, headers);
+    {{/vendorExtensions.generatedFlow}}
+    {{^vendorExtensions.generatedFlow}}
     {{#bodyParam}}
     {{{bodyParam.dataType}}} {{bodyParam.paramName}} = new {{{bodyParam.dataType}}}(content);
     {{/bodyParam}}
@@ -62,6 +68,7 @@ public class {{classname}} extends JsonRestService {
     {{/returnBaseType}}
     {{/returnContainer}}
     {{/isRestfulCreate}}
+    {{/vendorExtensions.generatedFlow}}
   }
   {{/operation}}
 }

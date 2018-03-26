@@ -16,7 +16,9 @@
 package com.centurylink.mdw.cli;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.airlift.airline.Option;
 import io.swagger.codegen.ClientOptInput;
@@ -26,8 +28,11 @@ import io.swagger.codegen.config.CodegenConfigurator;
 
 /**
  * This whole class is reproduced just so we can suppress swagger meta output.
+ * And also to support --generated-flow-base-package.
  */
 public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
+
+    public static final String GENERATED_FLOW_BASE_PACKAGE = "generatedFlowBasePackage";
 
     @Option(name = {"-v", "--verbose"}, description = "verbose mode")
     private Boolean verbose;
@@ -177,6 +182,10 @@ public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
             description = CodegenConstants.REMOVE_OPERATION_ID_PREFIX_DESC)
     private Boolean removeOperationIdPrefix;
 
+    @Option(name = {"--generated-flow-base-package"}, title = "generate microservice orchestration workflow processes with this base package",
+            description = GENERATED_FLOW_BASE_PACKAGE)
+    private String generatedFlowBasePackage;
+
     @Override
     public void run() {
 
@@ -276,6 +285,12 @@ public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
 
         if (removeOperationIdPrefix != null) {
             configurator.setRemoveOperationIdPrefix(removeOperationIdPrefix);
+        }
+
+        if (generatedFlowBasePackage != null) {
+            Map<String,Object> addlProps = new LinkedHashMap<>();
+            addlProps.put(GENERATED_FLOW_BASE_PACKAGE, generatedFlowBasePackage);
+            configurator.setAdditionalProperties(addlProps);
         }
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();

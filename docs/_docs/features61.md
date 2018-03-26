@@ -1,5 +1,5 @@
 ---
-permalink: /docs/61features/
+permalink: /docs/features61/
 title: MDW 6.1 New Features
 ---
 
