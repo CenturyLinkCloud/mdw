@@ -189,6 +189,7 @@ public class Codegen extends Setup {
         dependencies.put("com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.4/jackson-dataformat-yaml-2.9.4.jar", 41123L);
         dependencies.put("com/fasterxml/jackson/core/jackson-annotations/2.8.9/jackson-annotations-2.8.9.jar", 55784L);
         dependencies.put("joda-time/joda-time/2.9.9/joda-time-2.9.9.jar", 634048L);
+        dependencies.put("commons-io/commons-io/2.4/commons-io-2.4.jar", 185140L);
         return dependencies;
     }
 }

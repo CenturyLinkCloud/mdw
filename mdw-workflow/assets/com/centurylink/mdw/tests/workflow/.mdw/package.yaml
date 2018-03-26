@@ -1,4 +1,3 @@
-workgroup: Common
 schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.workflow
 version: 6.1.01

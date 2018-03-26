@@ -227,14 +227,14 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     public void setGeneratedFlowBasePackage(String basePackage) { this.generatedFlowBasePackage = basePackage; }
 
     /**
-     * Creates a package if it doesn't exist.
+     * Creates a package if it doesn't exist.  Only works from 6.1.
      */
     public void mkPackage(String pkgName, File dir) {
         try {
             File metaDir = new File(dir + "/.mdw");
             if (!metaDir.exists() && !metaDir.mkdirs())
                 throw new IOException("Cannot create directory: " + metaDir.getAbsolutePath());
-            File pkgFile = new File(metaDir + "/package.json");
+            File pkgFile = new File(metaDir + "/package.yaml");
             if (!pkgFile.exists()) {
                 JSONObject pkgJson = new JSONObject();
                 pkgJson.put("name", pkgName);

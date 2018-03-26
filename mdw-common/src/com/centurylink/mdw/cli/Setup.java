@@ -223,7 +223,7 @@ public abstract class Setup implements Operation {
         if (!dir.isDirectory())
             throw new IOException("Expected directory: " + dir.getAbsolutePath());
 
-        if (new File(dir + "/.mdw/package.json").isFile()) {
+        if (new File(dir + "/.mdw/package.json").isFile() || new File(dir + "/.mdw/package.yaml").isFile()) {
             String pkg = getAssetPath(dir).replace('/', '.');
             if (pkg.startsWith("com.centurylink.mdw."))
                 baseAssetPackages.add(pkg);
@@ -470,13 +470,13 @@ public abstract class Setup implements Operation {
     }
 
     /**
-     * Creates a package if it doesn't exist.
+     * Creates a package if it doesn't exist.  Only works from 6.1.
      */
     public void mkPackage(String name) throws IOException {
         File metaDir = new File(getAssetLoc() + "/" + name.replace('.', '/') + "/.mdw");
         if (!metaDir.exists() && !metaDir.mkdirs())
             throw new IOException("Cannot create directory: " + metaDir.getAbsolutePath());
-        File pkgFile = new File(metaDir + "/package.json");
+        File pkgFile = new File(metaDir + "/package.yaml");
         if (!pkgFile.exists()) {
             JSONObject pkgJson = new JSONObject();
             pkgJson.put("name", name);

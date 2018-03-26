@@ -42,7 +42,7 @@ public class Copy implements Operation {
         Files.copy(Paths.get(from.getPath()), Paths.get(to.getPath()));
         if (from.isDirectory()) {
             for (File childFrom : from.listFiles()) {
-                if (includeSubpackages || !new File(childFrom + "/.mdw/package.json").isFile()) {
+                if (includeSubpackages || !new File(childFrom + "/.mdw/package.json").isFile() || !new File(childFrom + "/.mdw/package.yaml").isFile()) {
                     File childTo = new File(to + "/" + childFrom.getName());
                     new Copy(childFrom, childTo, includeSubpackages).run();
                 }

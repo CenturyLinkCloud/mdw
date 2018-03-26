@@ -186,7 +186,7 @@ public class GitVcs extends JsonRestService {
                         if (query.getBooleanFilter("includeMeta")) {
                             String metaPath = pkgPath + "/.mdw";
                             commitPaths.add(metaPath + "/versions");
-                            commitPaths.add(metaPath + "/package.json");
+                            commitPaths.add(metaPath + "/package.yaml");
                         }
                         vcGit.commit(commitPaths, comment);
                         vcGit.push();

@@ -38,7 +38,7 @@ public class Delete implements Operation {
     public Delete run(ProgressMonitor... progressMonitors) throws IOException {
         if (file.isDirectory()) {
             for (File child : file.listFiles()) {
-                if (includeSubs || !new File(child + "/.mdw/package.json").isFile())
+                if (includeSubs || !new File(child + "/.mdw/package.json").isFile() || !new File(child + "/.mdw/package.yaml").isFile())
                     new Delete(child, includeSubs).run();
             }
         }
