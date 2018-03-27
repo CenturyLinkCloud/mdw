@@ -32,7 +32,6 @@ import java.util.stream.Stream;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.bpm.PackageDocument;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -618,8 +617,7 @@ public class AssetServicesImpl implements AssetServices {
                         pkgDir.setPackageVersion(pkgVO.getVersionString());
                     }
                     else {
-                        PackageDocument pkgDoc = PackageDocument.Factory.parse(metaContent);
-                        pkgDir.setPackageVersion(pkgDoc.getPackage().getVersion());
+                        throw new IOException("Unsupported package content: " + pkgMetaFilePath);
                     }
                 }
             }

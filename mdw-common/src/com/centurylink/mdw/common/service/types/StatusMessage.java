@@ -15,43 +15,30 @@
  */
 package com.centurylink.mdw.common.service.types;
 
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
-import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.xml.XmlBeanWrapper;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value="StatusMessage", description="MDW service response (embedded as 'status' object)")
-public class StatusMessage extends XmlBeanWrapper implements Jsonable {
+public class StatusMessage implements Jsonable {
+
+    private Integer code;
+    private String message;
+    private String requestId;
 
     public StatusMessage() {
-        super(MDWStatusMessageDocument.Factory.newInstance());
-    }
-
-    public StatusMessage(MDWStatusMessageDocument statusDoc) {
-        super(statusDoc);
-    }
-
-    public StatusMessage(String statusXml) throws XmlException {
-        super();
-        fromXml(statusXml);
     }
 
     public StatusMessage(int code, String message) {
-        super(MDWStatusMessageDocument.Factory.newInstance());
         setCode(code);
         setMessage(message);
     }
 
-    public StatusMessage(JSONObject jsonObj) throws JSONException, XmlException {
-        this();
+    public StatusMessage(JSONObject jsonObj) throws JSONException {
         JSONObject status = jsonObj.getJSONObject("status");
         if (status.has("code"))
             this.setCode(status.getInt("code"));
@@ -61,76 +48,42 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
             this.setRequestId(status.getString("requestId"));
     }
 
-    public StatusMessage(Throwable t) throws XmlException {
-        this();
-        setCode(-1);
+    public StatusMessage(Throwable t) {
+        setCode(500);
         setMessage(t.toString());
     }
 
-    public StatusMessage(Throwable t, String serverName) throws XmlException {
-        this();
-        setCode(-1);
+    public StatusMessage(Throwable t, String serverName) {
+        setCode(500);
         setMessage(serverName);
     }
 
-    public void fromXml(String xml) throws XmlException {
-        XmlOptions xmlOptions = super.getXmlLoadOptions();
-        xmlOptions.setDocumentType(MDWStatusMessageDocument.type);
-        setXmlBean(MDWStatusMessageDocument.Factory.parse(xml, xmlOptions));
-    }
-
-    @ApiModelProperty(hidden=true)
-    public MDWStatusMessageDocument getStatusDocument() {
-        return (MDWStatusMessageDocument) getXmlBean();
-    }
-
-    @ApiModelProperty(hidden=true)
-    public MDWStatusMessage getStatus() {
-        return getStatusDocument().getMDWStatusMessage();
-    }
-
     public String getMessage() {
-        if (getStatus() == null)
-            return null;
-        return getStatus().getStatusMessage();
+        return message;
     }
 
     public String getRequestId() {
-        if (getStatus() == null)
-            return null;
-        return getStatus().getRequestID();
+        return requestId;
     }
 
     public Integer getCode() {
-        if (getStatus() == null)
-            return null;
-        return getStatus().getStatusCode();
+        return code;
     }
 
     public boolean isSuccess() {
         return getCode() != null && getCode() == 0;
     }
 
-    public void setStatus(MDWStatusMessage status) {
-        getStatusDocument().setMDWStatusMessage(status);
-    }
-
     public void setMessage(String message) {
-        if (getStatus() == null)
-            getStatusDocument().addNewMDWStatusMessage();
-        getStatus().setStatusMessage(message);
+        this.message = message;
     }
 
     public void setCode(int code) {
-        if (getStatus() == null)
-            getStatusDocument().addNewMDWStatusMessage();
-        getStatus().setStatusCode(code);
+        this.code = code;
     }
 
     public void setRequestId(String requestId) {
-        if (getStatus() == null)
-            getStatusDocument().addNewMDWStatusMessage();
-        getStatus().setRequestID(requestId);
+        this.requestId = requestId;
     }
 
     @ApiModelProperty(hidden=true)
@@ -163,7 +116,14 @@ public class StatusMessage extends XmlBeanWrapper implements Jsonable {
     @ApiModelProperty(hidden=true)
     public String getJsonName() { return "status"; }
 
-    public String toXml() {
-        return getXml();
+    public String getXml() {
+        StringBuilder xml = new StringBuilder();
+        xml.append("<bpm:MDWStatusMessage xmlns:bpm=\"http://mdw.centurylink.com/bpm\">\n");
+        if (code != null)
+            xml.append("<StatusCode>404</StatusCode>\n");
+        if (message != null)
+            xml.append("<bpm:StatusMessage>Not found bucko</bpm:StatusMessage>\n");
+        xml.append("</bpm:MDWStatusMessage>");
+        return xml.toString();
     }
 }

@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.ResponseCodes;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -92,7 +91,7 @@ public class UnitTest implements JsonService {
         JSONObject resp = new JsonObject();
         JSONObject status = new JsonObject();
         resp.put("status", status);
-        status.put("code", ResponseCodes.UNIT_TEST_FAILED);
+        status.put("code", 1001);
         status.put("message", err.toString());
         if (scriptTraceElement != null)
             status.put("location", scriptTraceElement.toString());

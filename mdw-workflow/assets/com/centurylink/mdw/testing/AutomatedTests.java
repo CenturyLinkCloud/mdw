@@ -26,7 +26,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.ResponseCodes;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
@@ -225,7 +224,7 @@ public class AutomatedTests extends JsonRestService {
         JSONObject resp = new JsonObject();
         JSONObject status = new JsonObject();
         resp.put("status", status);
-        status.put("code", ResponseCodes.UNIT_TEST_FAILED);
+        status.put("code", 1001);
         status.put("message", err.toString());
         if (scriptTraceElement != null)
             status.put("location", scriptTraceElement.toString());

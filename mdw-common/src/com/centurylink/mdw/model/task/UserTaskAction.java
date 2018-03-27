@@ -25,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.common.service.types.TaskAction;
 import com.centurylink.mdw.model.user.UserAction;
 
 public class UserTaskAction extends UserAction implements Jsonable {
@@ -68,15 +67,6 @@ public class UserTaskAction extends UserAction implements Jsonable {
         }
         if (json.has("comment"))
             setComment(json.getString("comment"));
-    }
-
-    public UserTaskAction(TaskAction taskAction) {
-        setTaskInstanceId(taskAction.getInstanceId());
-        setTaskAction(taskAction.getAction());
-        setUser(taskAction.getUser());
-        setAssignee(taskAction.getAssignee());
-        setDestination(taskAction.getDestination());
-        setComment(taskAction.getComments());
     }
 
     @Override

@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
-import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
@@ -54,10 +52,8 @@ public abstract class LoadBalancedScheduledJob implements ScheduledJob {
             // submit the request
             httpHelper = new HttpHelper(new URL(remoteUrl));
             String response = httpHelper.post(actionRequestDoc.xmlText());
-            MDWStatusMessageDocument statusMessageDoc = MDWStatusMessageDocument.Factory.parse(response);
-            MDWStatusMessage statusMessage = statusMessageDoc.getMDWStatusMessage();
-            if (statusMessage.getStatusCode() != 0) {
-                logger.severe("Response Status message from instance"+ remoteHostPort +" ScheduledJob."+this.getClass().getName()+" : "+statusMessage.getStatusMessage());
+            if (httpHelper.getResponseCode() != 200) {
+                logger.severe("Response Status message from instance"+ remoteHostPort +" ScheduledJob."+this.getClass().getName()+" : "+response);
             }
         }
         catch (IOException ex) {
