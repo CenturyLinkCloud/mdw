@@ -40,7 +40,8 @@ import com.centurylink.mdw.util.timer.SystemOutProgressMonitor;
 public class DataAccess {
 
     public final static int schemaVersion60 = 6000;
-    public final static int currentSchemaVersion = schemaVersion60;
+    public final static int schemaVersion61 = 6001;
+    public final static int currentSchemaVersion = schemaVersion61;
     public static int supportedSchemaVersion = currentSchemaVersion;
     public static boolean isPackageLevelAuthorization = true;
 
@@ -262,7 +263,7 @@ public class DataAccess {
      * TODO differentiate version 6
      */
     public static int[] getDatabaseSchemaVersion(DatabaseAccess db) throws DataAccessException {
-        return new int[] {schemaVersion60, schemaVersion60};
+        return new int[] {schemaVersion60, schemaVersion61};
     }
 
 }
