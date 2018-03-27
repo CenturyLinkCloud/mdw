@@ -3,6 +3,16 @@ permalink: /docs/getting-started/install-designer/
 title: Install MDW Designer
 ---
 
+<script>
+function copyToClipboard() {
+  console.log("COPY TO CLIPBOARD");
+  // var element = document.getElementById('input');
+  // element.select();
+  // document.execCommand('copy');
+  // element.blur();
+}
+</script>
+
 Install the MDW Designer Eclipse Plugin
 
 ### Prerequisites
@@ -17,17 +27,14 @@ Install the MDW Designer Eclipse Plugin
   
 ### Install Designer from our Update Site
   - Launch Eclipse and from the menu select Help > Install New Software...
-  - Add the update site URL:<br>
-    `http://centurylinkcloud.github.io/mdw/designer/updateSite`
+  - Add the update site URL: {% include copyToClipboard.html text="http://centurylinkcloud.github.io/mdw/designer/updateSite" %}
   ![install designer plugin](../images/designerPlugin.png "designerPlugin")
   
 ### Recommended Plugins
   These plugins are optional (although Groovy is highly recommended).
   They can be installed through Help > Install New Software... the same as above.
-  - Groovy:<br>
-    `http://dist.springsource.org/release/GRECLIPSE/e4.7`
-  - Yaml Editor:<br>
-    `http://dadacoalition.org/yedit`
+  - Groovy: {% include copyToClipboard.html text="http://dist.springsource.org/release/GRECLIPSE/e4.7" %}
+  - Yaml Editor: {% include copyToClipboard.html text="http://dadacoalition.org/yedit" %}
 
 ### Designer User Guide
   To learn about creating workflows and assets using MDW Designer in Eclipse,

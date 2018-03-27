@@ -42,3 +42,34 @@ li .highlighter-rouge {
 	margin-top: 0;
 	margin-bottom: 0;
 }
+.copy-txt {
+  font-family: monospace;
+	font-size: 14px;
+	padding: 4px 6px;
+	border: 1px solid gray;
+	border-radius: 3px 0 0 3px;
+}
+.copy-btn {
+  font-family: monospace;
+  background-color: #eff3f6;
+  border: 1px solid gray;
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0 0 0 10px;
+  -webkit-padding-after: 1px;
+  position: relative;
+  top: 2px;
+}
+.copy-adj {
+	position: relative;
+	top: 1px;
+}
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.copy-adj {
+	  position: relative;
+	  top: 1px;
+	  left: -4px;
+	}
+}
