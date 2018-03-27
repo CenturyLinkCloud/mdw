@@ -197,6 +197,11 @@ task springBootJar(type: Jar) {
         entryCompression = org.gradle.api.tasks.bundling.ZipEntryCompression.STORED
         from configurations.compile.minus(configurations.providedCompile).plus(configurations.springBoot)
     }
+    into("web") {
+        from "web"
+        exclude "WEB-INF/"
+    }
+
 
     from configurations.springBootLoader.asFileTree.files.collect {
         zipTree(it)
