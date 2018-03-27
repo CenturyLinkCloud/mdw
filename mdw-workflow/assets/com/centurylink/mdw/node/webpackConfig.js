@@ -1,8 +1,7 @@
 'use strict';
+/* eslint-disable no-undef */
 
-var fs = require('fs');
 var path = require('path');
-
 var nodeLoc = path.dirname(require.resolve('./webpackConfig'));
 
 module.exports = {
@@ -63,9 +62,9 @@ module.exports = {
         // uncomment for prod build
         new (require('webpack')).DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify('production')
-        })        
+        })       
       ]
-    }
+    };
   },
   bareStats: {
     // Add asset Information

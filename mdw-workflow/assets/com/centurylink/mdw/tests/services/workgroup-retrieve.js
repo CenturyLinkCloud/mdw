@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable no-console */
 
 const wsLoc = '../../../../../../../..';
 const limberest = require('../../node/node_modules/limberest');

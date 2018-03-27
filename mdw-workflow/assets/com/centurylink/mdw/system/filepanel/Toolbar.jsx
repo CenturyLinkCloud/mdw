@@ -1,5 +1,4 @@
 import React from '../../node/node_modules/react';
-import PropTypes from '../../node/node_modules/prop-types';
 import {Popover, OverlayTrigger, Button, Glyphicon} from '../../node/node_modules/react-bootstrap';
 import Search from './Search.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
@@ -58,7 +57,7 @@ function Toolbar(props) {
   
   const handleClick = event => {
     props.onAction(event.currentTarget.name);
-  }
+  };
   
   const optionsPopover = (
     <Popover id="options-pop">

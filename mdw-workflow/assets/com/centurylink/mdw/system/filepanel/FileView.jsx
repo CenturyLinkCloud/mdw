@@ -1,11 +1,11 @@
 import React, {Component} from '../../node/node_modules/react';
 import PropTypes from '../../node/node_modules/prop-types';
 import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
-// import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
 import Toolbar from './Toolbar.jsx';
 import DirListing from './DirListing.jsx';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
+/* eslint-disable react/no-direct-mutation-state */
 class FileView extends Component {
   constructor(...args) {
     super(...args);
@@ -54,7 +54,7 @@ class FileView extends Component {
   
   componentDidUpdate() {
     if (this.beforeRender) {
-      console.log('Render time: ' + (Date.now() - this.beforeRender) + ' ms');
+      console.log('Render time: ' + (Date.now() - this.beforeRender) + ' ms'); //eslint-disable-line no-console
     }
   }
   
@@ -85,8 +85,7 @@ class FileView extends Component {
     }
     else if (action === 'find') {
       this.stopTail();
-      var search = Object.assign({}, this.state.search, params, {message: null});
-      this.find(search);
+      this.find(Object.assign({}, this.state.search, params, {message: null}));
     }
     else if (action === 'search') {
       this.stopTail();
@@ -210,7 +209,7 @@ class FileView extends Component {
             }
             else if (typeof(this.rememberedSearchStart) !== 'undefined') {
               // may have scrolled for buffering after scroll due to search
-              this.search(Object.assign(this.state.search), {start: this.rememberedSearchStart})
+              this.search(Object.assign(this.state.search), {start: this.rememberedSearchStart});
             }
           }
         }
@@ -219,7 +218,7 @@ class FileView extends Component {
         // dir listing
         this.setState({
           item: json.info
-        })
+        });
       }
       
       this.props.onInfo(json.info);
@@ -559,14 +558,14 @@ class FileView extends Component {
         $mdwUi.hubLoading(false);
         return response.json();
       })
-      .then(responseJson => {
+      .then(() => {
         if (this.state.tailOn) {
           const fileView = this;
           this.webSocket = new WebSocket(webSocketUrl);
-            this.webSocket.addEventListener('open', function(event) {
+            this.webSocket.addEventListener('open', function() {
               fileView.webSocket.send(fileView.props.item.path);
             });
-            this.webSocket.addEventListener('message', function(event) {
+            this.webSocket.addEventListener('message', function() {
               const json = JSON.parse(event.data);
               if (json.buffer.length) {
                 const buffer = fileView.state.buffer;
@@ -614,7 +613,7 @@ class FileView extends Component {
     if (this.scrollbars) {
       var thumbVerticalY = 0;
       if (this.lineIndex > 0) {
-        const values = this.scrollbars.getValues();
+        const values = this.scrollbars.getValues();  // eslint-disable-line no-unused-vars
         const trackVerticalHeight = this.getInnerHeight(this.scrollbars.trackVertical);
         const frac = this.lineIndex / (this.state.item.lineCount - this.getClientLines());
         thumbVerticalY = frac * (trackVerticalHeight - FileView.THUMB_SIZE);

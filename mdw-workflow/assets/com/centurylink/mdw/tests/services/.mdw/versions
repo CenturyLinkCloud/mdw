@@ -93,5 +93,5 @@ process-values.json=7
 processContext.spring=1
 processJaxb.xsd=1
 serviceContext.spring=3
-workgroup-create.js=1
-workgroup-retrieve.js=1
+workgroup-create.js=2
+workgroup-retrieve.js=2

@@ -124,12 +124,12 @@ class Index extends Component {
     var ok = false;
     var path = this.state.selected.path;
     if (this.state.selected.isFile) {
-      path = path.substring(0, path.length - this.state.selected.name.length - 1)
+      path = path.substring(0, path.length - this.state.selected.name.length - 1);
     }
     var url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/system/filepanel';
     url += '?path=' + encodeURIComponent(path) + '&grep=' + find + '&glob=' + glob;
     if (this.state.selected.host) {
-      url += '&host=' + this.state.selected.host
+      url += '&host=' + this.state.selected.host;
     }
     fetch(new Request(url, {
       method: 'GET',

@@ -24,6 +24,6 @@ var test = group.getTest('POST', 'workgroups');
 var values = Object.assign({}, env);
 values['group-name'] = 'GroupA';
 
-test.run(options, values, (error, response) => {
+test.run(options, values, (error, response) => { // eslint-disable-line no-unused-vars
   test.verify(values);
 });

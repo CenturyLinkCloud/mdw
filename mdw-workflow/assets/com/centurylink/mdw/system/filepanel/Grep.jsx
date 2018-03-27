@@ -1,5 +1,4 @@
 import React, {Component} from '../../node/node_modules/react';
-import {Button, Glyphicon} from '../../node/node_modules/react-bootstrap';
 import '../../node/node_modules/style-loader!./filepanel.css';
 
 class Grep extends Component {
@@ -53,8 +52,8 @@ class Grep extends Component {
           </button>
         </div>
       </div>
-    )
-  };
+    );
+  }
 }
 
 export default Grep; 

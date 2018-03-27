@@ -24,15 +24,12 @@
      Import the projects into your Eclipse workspace:  
      File > Import > General > Existing Projects into Workspace
    
-3. Set up npm and bower (One-time step)
+3. Set up npm (One-time step)
    - Install NodeJS:                                                                     
-     [https://nodejs.org/en/download/current](https://nodejs.org/en/download/current)
+     [https://docs.npmjs.com/getting-started/installing-node](https://docs.npmjs.com/getting-started/installing-node)
    - Open a command prompt in the mdw-hub project directory
     ```
-    npm install -g grunt-cli
-    npm install -g bower
     npm install
-    bower install
    ```
 4. Build the Projects (Initial, non-incremental build)
    - Window > Show View > Other > Gradle  > Gradle Tasks.

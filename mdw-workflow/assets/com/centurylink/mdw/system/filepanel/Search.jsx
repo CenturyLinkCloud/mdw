@@ -88,8 +88,8 @@ class Search extends Component {
           </span>
         </div>
       </div>
-    )
-  };
+    );
+  }
 }
 
 export default Search;

@@ -1,5 +1,4 @@
 import React from '../../node/node_modules/react';
-import PropTypes from '../../node/node_modules/prop-types';
 import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
 // import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
 import '../../node/node_modules/style-loader!./filepanel.css';
@@ -22,7 +21,7 @@ function DirListing(props) {
     }
     items.sort((item1, item2) => {
       return new Date(item1.modified).getTime() - new Date(item2.modified).getTime();
-    })
+    });
     
     var sizes = [];
     var longestSize = 0;
@@ -59,9 +58,10 @@ function DirListing(props) {
     var now = new Date();
     items.forEach((item, i) => {
       const mod = new Date(item.modified);
+      var line;
       if (dirItem.permissions) {
         // linux-style
-        var line = (item.isFile ? '-' : 'd') + item.permissions + ' ';
+        line = (item.isFile ? '-' : 'd') + item.permissions + ' ';
         var numLinks = item.numLinks ? item.numLinks.toString() : (item.isFile ? '1' : '');
         line += numLinks.padStart(longestNumLinks) + ' ';
         line += (item.owner ? item.owner : '').padEnd(longestOwner) + ' ';
@@ -70,7 +70,7 @@ function DirListing(props) {
         line += DirListing.MONTHS[mod.getMonth()] + ' ';
         line += mod.getDate().toString().padStart(2) + ' ';
         if (mod.getFullYear() === now.getFullYear()) {
-          line += mod.getHours().toString().padStart(2, '0') + ':' 
+          line += mod.getHours().toString().padStart(2, '0') + ':'; 
           line += mod.getMinutes().toString().padStart(2, '0') + ' ';
         }
         else {
@@ -80,7 +80,7 @@ function DirListing(props) {
       }
       else {
         // non-posix (windows)
-        var line = (mod.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+        line = (mod.getMonth() + 1).toString().padStart(2, '0') + '/' + 
               mod.getDate().toString().padStart(2, '0') + '/' + mod.getFullYear() + '  ';
         const hours = mod.getHours();
         if (hours === 0 || hours === 12) {
@@ -101,7 +101,7 @@ function DirListing(props) {
       lines.push(line);
     });
     return dirItem.absolutePath + '/\n\n' + lines.join('\n');
-  }
+  };
   
   return (
     <Scrollbars

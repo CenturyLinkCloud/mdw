@@ -1,5 +1,4 @@
 import React from '../../node/node_modules/react';
-import PropTypes from '../../node/node_modules/prop-types';
 import {Scrollbars} from '../../node/node_modules/react-custom-scrollbars';
 // import {Scrollbars} from '../../../../../../../../react-custom-scrollbars';
 import '../../node/node_modules/style-loader!./filepanel.css';
@@ -10,7 +9,7 @@ function ResultLine(props) {
   
   var pos = 0;
   var segments = [];
-  lineMatch.matches.forEach((match, i) => {
+  lineMatch.matches.forEach((match) => {
     if (match.start > pos) {
       segments.push({
         text: lineMatch.line.substring(pos, match.start)
@@ -44,7 +43,7 @@ function ResultLine(props) {
               {segment.match &&
                 <a className="fp-grep-hit"
                   href="#/system/filepanel"
-                  onClick={e => props.onResultClick(props.file, {index: lineMatch.index, match: segment.match})}>
+                  onClick={() => props.onResultClick(props.file, {index: lineMatch.index, match: segment.match})}>
                   {segment.text}
                 </a>
               }
@@ -60,7 +59,7 @@ function GrepResults(props) {
 
   var path = props.item.path;
   if (props.item.isFile) {
-    path = path.substring(0, path.length - props.item.name.length - 1)
+    path = path.substring(0, path.length - props.item.name.length - 1);
   }
 
   var pad = 2;

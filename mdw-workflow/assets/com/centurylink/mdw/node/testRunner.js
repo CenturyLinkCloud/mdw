@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable no-console, no-undef */
 
 // prevent unhandled errors from crashing the VM
 process.on('unhandledRejection', (err) => {

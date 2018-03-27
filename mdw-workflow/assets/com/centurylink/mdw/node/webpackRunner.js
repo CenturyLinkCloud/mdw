@@ -1,4 +1,5 @@
 'use strict';
+/* eslint-disable no-console, no-undef */
 
 // prevent unhandled errors from crashing the VM
 process.on('unhandledRejection', (err) => {
@@ -14,9 +15,7 @@ if (err.stack)
 
 // Compile using webpack.
 try {
-  
-  var fs = require('fs');
-  var path = require('path');
+
   var webpack = require('webpack');
   var webpackConfig = require('./webpackConfig');
 
