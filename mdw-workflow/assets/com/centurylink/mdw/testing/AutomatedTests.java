@@ -26,7 +26,9 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.types.ResponseCodes;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -37,6 +39,9 @@ import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -99,12 +104,48 @@ public class AutomatedTests extends JsonRestService {
             TestExecConfig config = testingServices.getTestExecConfig();
             String user = getAuthUser(headers);
             String[] segments = getSegments(path);
-            if (segments[5].equals("cancel")) {
+            if ("cancel".equals(segments[5])) {
                 testingServices.cancelTestExecution(user);
+            }
+            else if ("unit".equals(segments[5])) {
+                if (content == null)
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing body");
+                String testName = null;
+                try {
+                    testName = content.getString("name");
+                    String groovy = content.getString("groovy");
+                    Binding binding = new Binding();
+                    binding.setVariable("unitTest", this);
+                    binding.setVariable("onServer", true);
+                    GroovyShell shell = new GroovyShell(this.getClass().getClassLoader(), binding);
+                    Script gScript = shell.parse(groovy);
+                    gScript.run();
+
+                    return null;
+                }
+                catch (JSONException ex) {
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required fields name and/or groovy");
+                }
+                catch (Exception ex) {
+                    try {
+                        return createAssertionErrorResponse(testName, ex);
+                    }
+                    catch (JSONException jex) {
+                        throw new ServiceException(jex.getMessage(), jex);
+                    }
+                }
+                catch (AssertionError err) {
+                    try {
+                        return createAssertionErrorResponse(testName, err);
+                    }
+                    catch (JSONException ex) {
+                        throw new ServiceException(ex.getMessage(), ex);
+                    }
+                }
             }
             else {
                 try {
-                    if (segments.length > 6 && segments[6].equals("allTests")) {
+                    if (segments.length > 6 && "allTests".equals(segments[6])) {
                         config.setStubbing(true);
                         testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
                         return null;
@@ -169,5 +210,25 @@ public class AutomatedTests extends JsonRestService {
         else {
             return masterServerPut(path, content);
         }
+    }
+
+    private JSONObject createAssertionErrorResponse(String testName, Throwable err) throws JSONException {
+        StackTraceElement[] stes = err.getStackTrace();
+        int i = 0;
+        StackTraceElement scriptTraceElement = null;
+        while (i < stes.length && scriptTraceElement == null) {
+            StackTraceElement ste = stes[i];
+            if (ste.getClassName() != null && ste.getClassName().startsWith("Script"))
+              scriptTraceElement = ste;
+            i++;
+        }
+        JSONObject resp = new JsonObject();
+        JSONObject status = new JsonObject();
+        resp.put("status", status);
+        status.put("code", ResponseCodes.UNIT_TEST_FAILED);
+        status.put("message", err.toString());
+        if (scriptTraceElement != null)
+            status.put("location", scriptTraceElement.toString());
+        return resp;
     }
 }

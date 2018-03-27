@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -139,7 +141,13 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return summary;
                     }
                     else {
-                        JSONObject json = workflowServices.getProcess(id, true).getJson();
+                        JSONObject json = null;
+                        if ("true".equals(query.getBooleanFilter("shallow")))
+                            json = ServiceLocator.getProcessServices().getInstanceShallow(id).getJson();
+                        else if ("true".equals(query.getBooleanFilter("nosubs")))
+                            json = workflowServices.getProcess(id).getJson();
+                        else
+                            json = workflowServices.getProcess(id, true).getJson();
                         json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         return json;
                     }
@@ -243,6 +251,32 @@ public class Processes extends JsonRestService implements JsonExportable {
                     summary.put("masterRequestId", process.getMasterRequestId());
                     summary.put("definitionId", process.getProcessId());
                     return summary;
+                }
+                else if ("designer".equals(query.getFilter("mdw-app"))) {
+                    try {
+                        ProcessServices processServices = ServiceLocator.getProcessServices();
+                        Object callHierarchyFor = headers.get("callHierarchyFor");
+                        if (callHierarchyFor != null) {
+                            long instanceId = Long.parseLong(callHierarchyFor.toString());
+                            LinkedProcessInstance linkedInstance = processServices.getCallHierearchy(instanceId);
+                            return linkedInstance.getJson();
+                        }
+                        else {
+                            Map<String,String> criteria = getCriteria(headers);
+                            Map<String,String> variables = getParameters(headers);
+                            variables = getVariables(variables);
+
+                            int pageIndex = headers.get("pageIndex") == null ? 0 : Integer.parseInt((String)headers.get("pageIndex"));
+                            int pageSize = headers.get("pageSize") == null ? 0 : Integer.parseInt((String)headers.get("pageSize"));
+                            String orderBy = (String)headers.get("orderBy");
+
+                            ProcessList procList = processServices.getInstances(criteria, variables, pageIndex, pageSize, orderBy);
+                            return procList.getJson();
+                        }
+                    }
+                    catch (Exception ex) {
+                        throw new ServiceException(ex.getMessage(), ex);
+                    }
                 }
                 else {
                     ProcessList processList = workflowServices.getProcesses(query);
@@ -452,4 +486,48 @@ public class Processes extends JsonRestService implements JsonExportable {
             throw new JSONException(ex);
         }
     }
+
+    private Map<String,String> getVariables(Map<String,String> params) {
+        Map<String,String> variables = new HashMap<String,String>();
+        for (String key : params.keySet()) {
+            if (!processParams.contains(key) && !standardParams.contains(key)) {
+                variables.put(key, (String)params.get(key));
+            }
+        }
+        return variables.isEmpty() ? null : variables;
+    }
+
+    private Map<String,String> getCriteria(Map<String,String> params) {
+        Map<String,String> criteria = new HashMap<String,String>();
+        for (String key : params.keySet()) {
+            if (processParams.contains(key))
+                criteria.put(key, (String)params.get(key));
+        }
+        return criteria.isEmpty() ? null : criteria;
+    }
+
+    private static List<String> processParams = Arrays.asList(new String[] {
+            "processId",
+            "processIdList",
+            "processName",
+            "id",
+            "ownerId",
+            "owner",
+            "masterRequestId",
+            "masterRequestIdIgnoreCase",
+            "statusCode",
+            "startDateFrom",
+            "startDatefrom",
+            "startDateTo",
+            "startDateto",
+            "endDateFrom",
+            "endDatefrom",
+            "endDateTo",
+            "endDateto" });
+
+        private static List<String> standardParams = Arrays.asList(new String[] {
+                "pageIndex",
+                "pageSize",
+                "orderBy",
+                "format"});
 }

@@ -13,24 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.service.action;
+package com.centurylink.mdw.service.rest;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.Path;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
+import com.centurylink.mdw.services.rest.JsonRestService;
 
-public class AuditLog implements JsonService {
+import io.swagger.annotations.Api;
 
-    public String getJson(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
+@Path("/AuditLog")
+@Api("Log Event")
+public class AuditLog extends JsonRestService {
+
+    @Override
+    public List<String> getRoles(String path) {
+        List<String> roles = super.getRoles(path);
+        roles.add(Role.PROCESS_EXECUTION);
+        return roles;
+    }
+
+    public String post(JSONObject request, Map<String,String> metaInfo) throws ServiceException {
         try {
             if (request == null)
-                throw new ServiceException("Missing parameter: 'userAction'.");
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Missing body");
             UserAction userAction = new UserAction(request);
             UserServices userServices = ServiceLocator.getUserServices();
             userServices.auditLog(userAction);
@@ -39,9 +54,5 @@ public class AuditLog implements JsonService {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-    }
-
-    public String getText(Object request, Map<String,String> metaInfo) throws ServiceException {
-        return getJson((JSONObject)request, metaInfo);
     }
 }

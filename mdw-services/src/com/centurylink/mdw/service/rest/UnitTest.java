@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.service.action;
+package com.centurylink.mdw.service.rest;
 
 import java.util.Map;
 

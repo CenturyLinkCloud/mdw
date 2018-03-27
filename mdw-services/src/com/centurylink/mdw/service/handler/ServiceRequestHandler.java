@@ -42,8 +42,6 @@ import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
 import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.service.action.InstanceLevelActionHandler;
-import com.centurylink.mdw.service.rest.Users;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -77,11 +75,6 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
         Format format = getFormat(metaInfo);
 
         try {
-            // compatibility - START
-            if ("User".equals(path)) {
-                service = new Users();
-            }
-
             if (requestObj instanceof XmlObject) {
                 // XML request
                 format = Format.xml;
@@ -96,11 +89,6 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                     // compatibility for regression test handler
                     if (action.getName().equals("RegressionTest")) {
                         RegressionTestEventHandler handler = new RegressionTestEventHandler();
-                        return new Response(handler.handleEventMessage(request, requestObj, metaInfo));
-                    }
-                    // compatibility for instance level handler
-                    if (action.getName().equals("PerformInstanceLevelAction")) {
-                        InstanceLevelActionHandler handler = new InstanceLevelActionHandler();
                         return new Response(handler.handleEventMessage(request, requestObj, metaInfo));
                     }
 
