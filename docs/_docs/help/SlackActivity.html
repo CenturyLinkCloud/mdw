@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>Slack Activity Help</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Slack Activity</h1>
+This activity helps to integrate <a href="https://slack.com/">Slack</a> into an MDW workflow.This is a simple activity which enables user to post messages into Slack using <a href="https://api.slack.com/incoming-webhooks">Incoming Webhooks</a>.
+They make use of normal HTTP requests with a JSON payload, which includes the message. It allows simple one-way interaction with friendly Slack messages.This activity does not require MDW Slack app. Instead, User creates their own Incoming Slack WebHook and provides the URL in the SLACK_WEBHOOK_URL environment variable.
+In this section we'll explore the steps to integrate Slack into MDW workflow.<br/>
+<h3>Slack Channel creation and Integration with incoming-webhook</h3>
+Go to https://slack.com/get-started  to either find your existing workspace or create a new workspace. 
+Click on Launch button which opens your current workspace where you can invite people and/or add one or more channels.
+Your Slack workspace is comprised of channels. You’ll use channels to hold most of your conversations with other members.
+Create a new channel
+<br/><br/>
+<img src="images/SlackChannelCreation.jpg" />
+<br/><br/><br/>
+ Once the channel is created, Click on <Strong>+Add an APP</Strong> to  add the application <Strong>Incoming WebHooks</Strong> and click on <Strong>Add Configuration</Strong> to configure the selected channel.
+<br/><br/>
+<img src="images/SlackWebHookIntegration.jpg" />
+<br/><br/><br/>
+Once the above setup is complete, it generates incoming- Webhook URL which looks like this:<br/>
+<I>Web Hook URL:</I> https://hooks.slack.com/services/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<br/>
+Configure this is as an environment variable so that messages can be sent using SlackActivity.<br/> 
+ mdw.slack.webhook.url=https://hooks.slack.com/services/XXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX
+Then restart your server. <br/>
+<h3>Using Slack Activity</h3>
+Using Designer or MDWHub, import the necessary Slack asset package dependency.  In MDWHub, for example, on the Admin tab click the Assets nav link and
+then Import > Discover and select the `com.centurylink.mdw.slack` package in the discovered list.<br/>
+Refresh Cache,In designer view, You will find <Strong>Slack Notify</Strong> activity in the Toolbox.
+<h4>Design Attributes</h4>
+The basic design parameters for configuring a Slack Activity are illustrated in the screenshot below. 
+<br/><br/>
+<img src="images/SlackActivity.jpg" />
+<br/><br/><br/>
+<ul>
+ <li><code>Slack Web hook URL</code> has to be configured as environment variable. 
+    The name of the environment variable is configurable using Slack Web hook URL attribute</li> 
+ <li><code>Slack message</code> Can be either in JSON format or as process variable.
+          For Json format, Note that it should be in the format  package/asset name. 
+          For Ex: com.centurylink.mdw.slack/slackNotice.json</br>
+          The process variable containing message or exception details can be directly assigned to slack message. 
+          For Ex: $errorMessage</br>
+          Refer to Json Asset SlackNotice.json located in com.centurylink.mdw.slack package for sample Json Payload.</br>  
+          Refer to <a href="https://api.slack.com/incoming-webhooks">Incoming Webhooks</a>  
+          for advanced message formatting using incoming webhook.</li>
+ <li><code>Slack Message Prefix</code> allows user to append application name prefix to Json message</br></li>
+ <li><code>Continue despite messaging exception</code> Checking this attribute allows the workflow process to continue in case any exception in slack Activity occurs.</li>
+</ul>
+Below Screen shot illustrates how a sample message received from MDW workflow into Slack channel looks like using Slack Activity.</br>
+<br/><br/>
+<img src="images/SlackIncomingMessage.jpg" />
+<br/><br/><br/>
+</body>
+</html>
+ 

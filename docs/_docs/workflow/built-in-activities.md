@@ -37,7 +37,7 @@ These are the activities that ship with MDW out-of-the-box.
   [RPC Adapter](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | Consume a SOAP RPC-based service.
   [SendGrid Email](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Send an email through SendGrid.
   [Service Summary Event](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Publish microservice event update.
-  [Slack Activity](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Send a Slack notification.
+  [Slack Activity](http://centurylinkcloud.github.io/mdw/docs/help/SlackActivity.html) | Send a Slack notification.
   [Synchronization Activity](http://centurylinkcloud.github.io/mdw/docs/help/synchronization.html) | Coordinate parallel execution paths.
   [Timer Wait](http://centurylinkcloud.github.io/mdw/docs/help/TimerWaitActivity.html) | Wait for a specified interval.
   [Velocity Template](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Apply a Velocity template.

@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "slack.png",
+  "implementorClass": "com.centurylink.mdw.slack.SlackActivity",
+  "label": "Slack Notify",
+  "pagelet": "<PAGELET>\r\n  <TEXT NAME='endpointUri' LABEL='Slack Webhook URL' VW='200' />\r\n  <TEXT NAME='slackMessage' LABEL='Slack Message' VW='200'/>\r\n <TEXT NAME='slackPrefix' LABEL='Slack Message Prefix' VW='200'/>\r\n<BOOLEAN NAME='ContinueDespiteMessagingException' LABEL='Continue Despite Messaging Exception'/>\r\n  <HYPERLINK URL='/MDWWeb/doc/SlackActivity.html'>Slack Notification Activity Help<\/HYPERLINK>\r\n<\/PAGELET>"
+}
