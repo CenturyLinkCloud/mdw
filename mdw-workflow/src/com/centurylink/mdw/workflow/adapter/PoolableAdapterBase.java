@@ -70,7 +70,7 @@ public abstract class PoolableAdapterBase extends DefaultActivityImpl
 implements AdapterActivity, PoolableAdapter, AdapterInvocationError {
     static final String PROP_RETRY_EXCEPTIONS = "RETRY_EXCEPTIONS";
     private static Random random = null;
-    boolean isStubbing;        // expose only to allow CompositeSynchronousAdapter to access
+    private boolean isStubbing;
 
     /**
      * Timeout value for waiting for responses. Used for synchronous mode only.

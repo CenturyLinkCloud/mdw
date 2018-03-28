@@ -57,7 +57,6 @@ import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.CollectionUtil;
 import com.centurylink.mdw.util.ServiceLocatorException;
 import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
@@ -452,7 +451,7 @@ public class ProcessEngineDriver {
         Process processVO = getProcessDefinition(processInstance);
         List<Transition> workTransitionVOs = processVO.getTransitions(event.getWorkId(),
                 EventType.DELAY, event.getCompletionCode());
-        if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
+        if (workTransitionVOs != null && !workTransitionVOs.isEmpty()) {
             engine.createTransitionInstances(processInstance, workTransitionVOs,
                     event.isProcess()?null:event.getWorkInstanceId());
         } else {
@@ -620,7 +619,7 @@ public class ProcessEngineDriver {
                     procInst.setProcessName(processVO.getName());
                     List<Transition> workTransitionVOs = processVO.getTransitions(event.getWorkId(),
                             event.getEventType(), event.getCompletionCode());
-                    if (CollectionUtil.isNotEmpty(workTransitionVOs)) {
+                    if (workTransitionVOs != null && !workTransitionVOs.isEmpty()) {
                         engine.createTransitionInstances(procInst, workTransitionVOs,
                                 event.isProcess()?null:event.getWorkInstanceId());
                     } else if (event.getEventType().equals(EventType.FINISH)) {

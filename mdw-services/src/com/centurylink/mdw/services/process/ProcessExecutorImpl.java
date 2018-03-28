@@ -77,7 +77,6 @@ import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.CollectionUtil;
 import com.centurylink.mdw.util.ServiceLocatorException;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -1560,7 +1559,7 @@ class ProcessExecutorImpl {
                 }
             } else {
                 List<ProcessInstance> coll = edao.getProcessInstances(processId, processOwner, processOwnerId);
-                if (CollectionUtil.isEmpty(coll)) {
+                if (coll == null || coll.isEmpty()) {
                     logger.info("No Process Instances for the Process and Owner");
                     return;
                 }

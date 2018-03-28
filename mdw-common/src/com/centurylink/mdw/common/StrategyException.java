@@ -17,12 +17,10 @@ package com.centurylink.mdw.common;
 
 public class StrategyException extends MdwException {
 
-    private static final long serialVersionUID = 1L;
-
     public StrategyException(String message) {
         super(message);
     }
-    
+
     public StrategyException(int code, String message) {
         super(code, message);
     }

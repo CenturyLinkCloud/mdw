@@ -74,19 +74,4 @@ public class ObjectFactory {
         return new ActionRequest();
     }
 
-    /**
-     * Create an instance of {@link ResourceRequest }
-     *
-     */
-    public ResourceRequest createResourceRequest() {
-        return new ResourceRequest();
-    }
-
-    /**
-     * Create an instance of {@link Resource }
-     *
-     */
-    public Resource createResource() {
-        return new Resource();
-    }
 }
