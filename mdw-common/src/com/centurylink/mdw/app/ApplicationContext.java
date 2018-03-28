@@ -45,7 +45,6 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlPropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.container.ContainerContextAware;
 import com.centurylink.mdw.container.DataSourceProvider;
 import com.centurylink.mdw.container.JmsProvider;
 import com.centurylink.mdw.container.NamingProvider;
@@ -134,8 +133,6 @@ public class ApplicationContext {
             String pluginPackage = MdwDataSource.class.getPackage().getName() + "." + containerName.toLowerCase();
             String namingProviderClass = pluginPackage + "." + containerName + "Naming";
             namingProvider = Class.forName(namingProviderClass).asSubclass(NamingProvider.class).newInstance();
-            if (namingProvider instanceof ContainerContextAware)
-                ((ContainerContextAware)namingProvider).setContainerContext(containerContext);
             logger.info("Naming Provider: " + namingProvider.getClass().getName());
 
             String ds = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_DATASOURCE_PROVIDER);
@@ -150,8 +147,6 @@ public class ApplicationContext {
                 String dsProviderClass = pluginPackage + "." + ds + "DataSource";
                 dataSourceProvider = Class.forName(dsProviderClass).asSubclass(DataSourceProvider.class).newInstance();
             }
-            if (dataSourceProvider instanceof ContainerContextAware)
-                ((ContainerContextAware)dataSourceProvider).setContainerContext(containerContext);
             logger.info("Data Source Provider: " + dataSourceProvider.getClass().getName());
 
             String jms = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_JMS_PROVIDER);
@@ -170,8 +165,6 @@ public class ApplicationContext {
                 jmsProvider = Class.forName(jmsProviderClass).asSubclass(JmsProvider.class).newInstance();
             }
 
-            if (jmsProvider instanceof ContainerContextAware)
-                ((ContainerContextAware)jmsProvider).setContainerContext(containerContext);
             logger.info("JMS Provider: " + (jmsProvider==null?"none":jmsProvider.getClass().getName()));
 
             String tp = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_THREADPOOL_PROVIDER);
@@ -188,8 +181,6 @@ public class ApplicationContext {
                 String tpProviderClass = pluginPackage + "." + tp + "ThreadPool";
                 threadPoolProvider = Class.forName(tpProviderClass).asSubclass(ThreadPoolProvider.class).newInstance();
             }
-            if (threadPoolProvider instanceof ContainerContextAware)
-                ((ContainerContextAware)threadPoolProvider).setContainerContext(containerContext);
             logger.info("Thread Pool Provider: " + threadPoolProvider.getClass().getName());
 
             startedUp = true;

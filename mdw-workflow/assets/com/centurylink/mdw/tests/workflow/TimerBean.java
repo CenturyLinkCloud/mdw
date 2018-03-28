@@ -20,6 +20,8 @@ package com.centurylink.mdw.tests.workflow;
  */
 public class TimerBean implements java.io.Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private int timerDelaySeconds;
     /**
      * Does a calculation simulating dueDate calc.

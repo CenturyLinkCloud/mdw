@@ -17,7 +17,6 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.services.event.EventManagerBean;
-import com.centurylink.mdw.services.history.HistoryServicesImpl;
 import com.centurylink.mdw.services.project.CollaborationServicesImpl;
 import com.centurylink.mdw.services.project.SolutionServicesImpl;
 import com.centurylink.mdw.services.request.RequestServicesImpl;
@@ -68,10 +67,6 @@ public class ServiceLocator {
 
     public static TestingServices getTestingServices() {
         return new TestingServicesImpl();
-    }
-
-    public static HistoryServices getHistoryServices() {
-        return new HistoryServicesImpl();
     }
 
     public static WorkflowServices getWorkflowServices() {

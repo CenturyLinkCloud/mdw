@@ -26,15 +26,10 @@ import javax.naming.NamingException;
 
 import org.apache.activemq.ScheduledMessage;
 
-import com.centurylink.mdw.container.ContainerContextAware;
 import com.centurylink.mdw.container.JmsProvider;
 import com.centurylink.mdw.container.NamingProvider;
 
-public class RabbitMqJms implements JmsProvider, ContainerContextAware {
-
-    @Override
-    public void setContainerContext(Object context) {
-    }
+public class RabbitMqJms implements JmsProvider {
 
     @Override
     public QueueConnectionFactory getQueueConnectionFactory(NamingProvider namingProvider,

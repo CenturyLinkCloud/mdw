@@ -19,7 +19,6 @@ import java.rmi.Remote;
 
 import javax.naming.NamingException;
 
-
 /**
  * JNDI-naming provider
  */

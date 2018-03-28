@@ -26,7 +26,6 @@ import javax.naming.NamingException;
 
 public interface JmsProvider {
 
-    String JBOSS = "JBoss";
     String ACTIVEMQ = "ActiveMQ";
     String NONE = "none";
 

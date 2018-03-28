@@ -45,26 +45,6 @@ public class ProviderRegistry {
         return list;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<PackageAwareProvider<T>> getPackageAwareProviders(Class<? extends Provider<?>> providerType) {
-        List<PackageAwareProvider<T>> list = new ArrayList<PackageAwareProvider<T>>();
-        for (Provider<?> provider : providers.get(providerType.getName())) {
-            if (provider instanceof PackageAwareProvider)
-              list.add((PackageAwareProvider<T>)provider);
-        }
-        return list;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> List<Provider<T>> getNonPackageAwareProviders(Class<? extends Provider<?>> providerType) {
-        List<Provider<T>> list = new ArrayList<Provider<T>>();
-        for (Provider<?> provider : providers.get(providerType.getName())) {
-            if (!(provider instanceof PackageAwareProvider))
-              list.add((Provider<T>)provider);
-        }
-        return list;
-    }
-
     protected ProviderRegistry() {
     }
 
@@ -101,29 +81,6 @@ public class ProviderRegistry {
 
     public Map<String,Set<String>> getDynamicProviders() {
         return dynamicProviders;
-    }
-
-    /**
-     * To get all dynamic java Registered service providers
-     * @param providerType
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public <T> List<Provider<T>> getDynamicProviders(Class<? extends Provider<?>> providerType) {
-        List<Provider<T>> list = new ArrayList<Provider<T>>();
-        if (dynamicProviders.containsKey(providerType.getName())) {
-            for (String dynamicProviderName : dynamicProviders.get(providerType.getName())) {
-                try {
-                    Class<?> clazz = CompiledJavaCache.getClassFromAssetName(getClass().getClassLoader(), dynamicProviderName);
-                    if (clazz != null)
-                        list.add((Provider<T>) (clazz).newInstance());
-                }
-                catch (Exception ex) {
-                    logger.severeException("Failed to get the dynamic provider type: " +providerType.getName() +" class: " + dynamicProviderName + " \n " + ex.getMessage(), ex);
-                }
-            }
-        }
-        return list;
     }
 
     /**

@@ -19,7 +19,6 @@ import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
 
-import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -38,7 +37,6 @@ import org.bson.json.JsonWriterSettings;
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DataAccessOfflineException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
@@ -602,35 +600,6 @@ public class CommonDataAccess {
         ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
-    }
-
-    private DataAccessOfflineException dbOfflineException;
-    public DataAccessOfflineException getDataAccessOfflineException() { return dbOfflineException; }
-
-    private Boolean dbOnline;
-    public boolean isOnline() throws DataAccessException {
-        if (dbOnline == null) {
-            try {
-                db.openConnection();
-                db.runSelect(db.isMySQL() ? "select now()" : "select sysdate from dual").next();
-                dbOnline = true;
-            }
-            catch (SQLException ex) {
-                // avoid vendor dependencies
-                if ( (db.isMySQL() && ex.getCause() instanceof ConnectException)
-                        || (db.isOracle() && ex.getCause() != null && "oracle.net.ns.NetException".equals(ex.getCause().getClass().getName())) ) {
-                    dbOnline = false;
-                    dbOfflineException = new DataAccessOfflineException("Database unavailable: " + db, ex);
-                }
-                else {
-                    throw new DataAccessException(ex.getMessage(), ex);
-                }
-            }
-            finally {
-                db.closeConnection();
-            }
-        }
-        return dbOnline;
     }
 
     public List<String> getValueNames(String ownerType) throws DataAccessException {

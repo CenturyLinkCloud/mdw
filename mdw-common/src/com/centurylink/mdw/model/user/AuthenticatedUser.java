@@ -19,12 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.translator.SelfSerializable;
 
 /**
  * Contains the information provided by the Portal.
  */
-public class AuthenticatedUser extends User implements SelfSerializable {
+public class AuthenticatedUser extends User {
     public static final String NOTIFICATION_PREF = "notificationPref";
 
     public long getUserId() {
@@ -215,26 +214,6 @@ public class AuthenticatedUser extends User implements SelfSerializable {
         if (otherUser.getCuid() == null)
             return getCuid() == null;
         return otherUser.getCuid().equals(getCuid());
-    }
-
-    /**
-     * Currently this method is only used for testing SelfSerializable. Need to
-     * complete it if it is really needed
-     */
-    @Override
-    public void fromString(String str) {
-        String[] fields = str.split(",[\\n\\r\\s]*");
-        for (String field : fields) {
-            int k = field.indexOf(":");
-            if (k > 0) {
-                String name = field.substring(0, k).trim();
-                String value = field.substring(k + 1).trim();
-                if (name.equals("cuid")) {
-                    setCuid(value);
-                }
-            }
-        }
-
     }
 
     // these are only used for the samples demo

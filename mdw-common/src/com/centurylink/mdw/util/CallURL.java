@@ -23,10 +23,10 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class CallURL {
-    
+
     private String action;
     private Map<String,String> params;
-    
+
     public CallURL(String url) {
         int k = url.indexOf('?');
         if (k>0) {
@@ -41,11 +41,10 @@ public class CallURL {
             params = new HashMap<String,String>();
         }
     }
-    
-    private Map<String,String> parseUrlParameters(String urlstring) 
+
+    private Map<String,String> parseUrlParameters(String urlstring)
         throws MalformedURLException, UnsupportedEncodingException {
         URL url = new URL("http://site/"+urlstring);
-    //  String path = url.getPath();
         String query = url.getQuery();
         Hashtable<String,String> params = new Hashtable<String,String>();
         if (query!=null) {
@@ -67,11 +66,11 @@ public class CallURL {
         }
         return params;
     }
- 
+
     public void setParameter(String name, String value) {
         params.put(name, value);
     }
-    
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -94,7 +93,7 @@ public class CallURL {
     public String getAction() {
         return action;
     }
-    
+
     public void setAction(String v) {
         action = v;
     }
@@ -102,7 +101,7 @@ public class CallURL {
     public Map<String, String> getParameters() {
         return params;
     }
-    
+
     public String getParameter(String name) {
         return params.get(name);
     }

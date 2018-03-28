@@ -39,7 +39,7 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 /**
- * For MDW 6 we'll factor an interface from this.
+ * For MDW 6.2 we'll factor an interface from this.
  */
 public class AggregateDataAccessVcs extends CommonDataAccess {
 

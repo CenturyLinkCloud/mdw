@@ -29,14 +29,14 @@ process: # 13575
   variable: # 20426
     name: assetDefinedJaxb
     value: |
-      <JaxbAsset optionalAttribute="updatedOptionalAttr" requiredAttribute="x" xmlns:ns2="http://mdw.centurylink.com/services">
+      <JaxbAsset optionalAttribute="updatedOptionalAttr" requiredAttribute="x">
           <RequiredElement>inputDocRequiredElement</RequiredElement>
           <OptionalElement>updatedOptionalElem</OptionalElement>
       </JaxbAsset>
   variable: # 20428
     name: locallyCreatedJaxb
     value: |
-      <JaxbAsset optionalAttribute="mdw" requiredAttribute="from" xmlns:ns2="http://mdw.centurylink.com/services">
+      <JaxbAsset optionalAttribute="mdw" requiredAttribute="from">
           <RequiredElement>hello</RequiredElement>
           <OptionalElement>jaxb</OptionalElement>
       </JaxbAsset>

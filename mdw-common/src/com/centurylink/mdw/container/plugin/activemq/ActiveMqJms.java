@@ -32,14 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
 
-import com.centurylink.mdw.container.ContainerContextAware;
 import com.centurylink.mdw.container.JmsProvider;
 import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class ActiveMqJms implements JmsProvider, ContainerContextAware {
+public class ActiveMqJms implements JmsProvider {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -104,11 +103,5 @@ public class ActiveMqJms implements JmsProvider, ContainerContextAware {
                 throw new JMSException("JMS ConnectionFactory not found: " + name);
             }
         }
-    }
-
-    @SuppressWarnings("unused")
-    private Object containerContext; // not used since osgi support retired
-    public void setContainerContext(Object context) {
-        this.containerContext = context;
     }
 }
