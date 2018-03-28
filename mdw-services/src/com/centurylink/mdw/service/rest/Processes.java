@@ -529,5 +529,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                 "pageIndex",
                 "pageSize",
                 "orderBy",
+                "mdw-app",
                 "format"});
 }
