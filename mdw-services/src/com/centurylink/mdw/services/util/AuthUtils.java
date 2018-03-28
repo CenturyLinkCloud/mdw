@@ -227,8 +227,10 @@ public class AuthUtils {
                 throw new Exception("Invalid JWT Issuer");
         }
         catch (Throwable ex) {
-            headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for JWT '" + authHeader + "' " + ex.getMessage());
-            logger.severeException("Authentication failed for JWT '"+authHeader+"'" + ex.getMessage(), ex);
+            if (!ApplicationContext.isDevelopment()) {
+                headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for JWT '" + authHeader + "' " + ex.getMessage());
+                logger.severeException("Authentication failed for JWT '"+authHeader+"'" + ex.getMessage(), ex);
+            }
             return false;
         }
         if (logger.isDebugEnabled()) {
@@ -301,8 +303,10 @@ public class AuthUtils {
             }
         }
         catch (Exception ex) {
-            headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '"+user+"' "+ex.getMessage());
-            logger.severeException("Authentication failed for user '"+user+"'" + ex.getMessage(), ex);
+            if (!ApplicationContext.isDevelopment()) {
+                headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '"+user+"'. "+ex.getMessage());
+                logger.severeException("Authentication failed for user '"+user+"'. " + ex.getMessage(), ex);
+            }
             return false;
         }
         return true;
