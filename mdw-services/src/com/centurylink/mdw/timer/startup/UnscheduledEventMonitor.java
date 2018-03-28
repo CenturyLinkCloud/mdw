@@ -24,9 +24,8 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -70,10 +69,10 @@ public class UnscheduledEventMonitor  extends TimerTask {
     private int processUnscheduledEvents(Date olderThan, int max) throws DataAccessException {
         // load a batch of unscheduled events
         hasRun = true;
-        EventManager eventManager = ServiceLocator.getEventManager();
+        EventServices eventManager = ServiceLocator.getEventServices();
         List<UnscheduledEvent> unscheduledEvents = eventManager.getUnscheduledEventList(olderThan, max);
         List<UnscheduledEvent> leftover = eventManager.processInternalEvents(unscheduledEvents);
-        ConnectionPoolRegistration.processUnscheduledEvents(unscheduledEvents);
+        // ConnectionPoolRegistration.processUnscheduledEvents(unscheduledEvents);
         return unscheduledEvents.size() - leftover.size();
     }
 }

@@ -53,7 +53,7 @@ import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -64,7 +64,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
-public class EventManagerBean implements EventManager {
+public class EventServicesImpl implements EventServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -865,5 +865,4 @@ public class EventManagerBean implements EventManager {
         Process process = processInst != null ? ProcessCache.getProcess(processInst.getProcessId()) : null;
         return process;
     }
-
 }

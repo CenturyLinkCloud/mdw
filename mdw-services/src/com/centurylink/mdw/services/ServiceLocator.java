@@ -16,7 +16,7 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
-import com.centurylink.mdw.services.event.EventManagerBean;
+import com.centurylink.mdw.services.event.EventServicesImpl;
 import com.centurylink.mdw.services.project.CollaborationServicesImpl;
 import com.centurylink.mdw.services.project.SolutionServicesImpl;
 import com.centurylink.mdw.services.request.RequestServicesImpl;
@@ -29,12 +29,12 @@ import com.centurylink.mdw.services.workflow.ProcessServicesImpl;
 import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
 
 /**
- * TODO: Bean instances should be provided by Spring.
+ * TODO: Instances should be injected.
  */
 public class ServiceLocator {
 
-    public static EventManager getEventManager() {
-        return new EventManagerBean();
+    public static EventServices getEventServices() {
+        return new EventServicesImpl();
     }
 
     public static TaskServices getTaskServices() {

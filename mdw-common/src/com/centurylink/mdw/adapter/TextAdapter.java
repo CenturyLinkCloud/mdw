@@ -16,7 +16,6 @@
 package com.centurylink.mdw.adapter;
 
 import java.util.Map;
-import java.util.Properties;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
@@ -24,24 +23,12 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
 
 /**
- * This class is an interface for defining poolable adapters
- * which can be used as activities as well as by connection pools.
- * A connection pool manages a set of connections, represented
- * by instances of the class PooledConnection, and each connection
- * manages an instance of PoolableAdapter.
- *
- *
+ * Interface for text-based adapter activities.
  */
-public interface PoolableAdapter {
+public interface TextAdapter {
 
     /**
-     * Initialization when used by a connection pool
-     * @param parameters
-     */
-    void init(Properties parameters);
-
-    /**
-     * Initialization when used by an adapter
+     * Initialization.
      */
     void init()
     throws ConnectionException, AdapterException;
@@ -100,20 +87,7 @@ public interface PoolableAdapter {
     throws AdapterException,ConnectionException;
 
     /**
-     * This method is used for auto-shutdown and restart in a connection pool,
-     * so need only to be implemented appropriately if you intend to use auto-restart feature.
-     * The method is only used by connection pools, not by activities.
-     *
-     * @param timeout timeout in seconds. The value is obtained from
-     *         the property PingTimeout in the pool configuration.
-     *         If PingTimeout is not specified, the value of the property "timeout" is used.
-     *         If "timeout" is not specified either, then -1 is passed in.
-     * @return true if the connection is up, and false if it is still down.
-     */
-    boolean ping(int timeout);
-
-    /**
-     * This method is only used by activities, not by connection pools.
+     * Handle success response.
      * @param response
      * @throws ActivityException
      * @throws ConnectionException
@@ -123,7 +97,7 @@ public interface PoolableAdapter {
     throws ActivityException, ConnectionException, AdapterException;
 
     /**
-     * This method is only used by activities, not by connection pools.
+     * Handle failure response.
      * @param errorCause
      * @return completion code
      * @throws AdapterException

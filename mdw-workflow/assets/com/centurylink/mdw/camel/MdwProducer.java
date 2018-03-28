@@ -33,7 +33,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.xml.DomHelper;
 
@@ -213,7 +213,7 @@ public class MdwProducer extends DefaultProducer {
     }
 
     protected DocumentReference storeDocument(String docType, Object document, Package pkg) throws MdwCamelException {
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         try {
             String ownerType = OwnerType.LISTENER_REQUEST;
             Long ownerId = 0L;

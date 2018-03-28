@@ -57,7 +57,7 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -531,7 +531,7 @@ public class TaskServicesImpl implements TaskServices {
             // audit log
             UserAction userAction = new UserAction(userCuid, Action.Change, Entity.TaskInstance, instanceId, "summary");
             userAction.setSource("Task Services");
-            ServiceLocator.getEventManager().createAuditLog(userAction);
+            ServiceLocator.getEventServices().createAuditLog(userAction);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -578,7 +578,7 @@ public class TaskServicesImpl implements TaskServices {
     @Override
     public List<EventLog> getHistory(Long taskInstanceId) throws ServiceException {
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             return eventManager.getEventLogs(null, null, "TaskInstance", taskInstanceId);
         }
         catch (DataAccessException ex) {

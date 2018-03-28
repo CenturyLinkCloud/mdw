@@ -25,10 +25,10 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
+import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
 @Tracked(LogLevel.TRACE)
-public class FileWriterAdapter extends AdapterActivityBase {
+public class FileWriterAdapter extends ObjectAdapterActivity {
 
     public static final String OUTPUT_FILEPATH = "OutputFilepath";
     public static final String APPEND_TO_FILE = "AppendToFile";

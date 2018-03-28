@@ -21,12 +21,12 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.WorkflowHandler;
-import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
+import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
-public class CamelRouteAdapter extends AdapterActivityBase {
+public class CamelRouteAdapter extends ObjectAdapterActivity {
 
     private static final String ROUTE_DEF = "RouteDefinition";
     private static final String ROUTE_DEF_VER = "RouteDefinition_assetVersion";
@@ -116,7 +116,7 @@ public class CamelRouteAdapter extends AdapterActivityBase {
     }
 
     protected WorkflowHandler getWorkflowHandler(String assetName) throws EventException {
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         return eventMgr.getWorkflowHandler(assetName, getHandlerParameters());
     }
 

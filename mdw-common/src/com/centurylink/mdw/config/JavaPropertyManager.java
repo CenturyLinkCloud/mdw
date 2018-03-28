@@ -33,19 +33,19 @@ public class JavaPropertyManager extends PropertyManager {
     public static final String APP_CONFIG_NAME = "mdw.application.config.name";
 
     /**
-     * This method loads mdw.properties, application.properties and any property file defined for {@link #APP_CONFIG_NAME}
+     * This method loads mdw.yaml, any app yaml files defined for {@link #APP_CONFIG_NAME}
      * The property mdw.application.config.name takes property file names seperated by , without the .properties extension
      */
     public JavaPropertyManager() throws StartupException {
         mainPropertyFileName = getMainPropertyFileName();
         if (mainPropertyFileName == null) {
-            throw new StartupException("Cannot find mdw.properties");
+            throw new StartupException("Cannot find mdw.yaml or mdw.properties");
         }
 
         loadPropertiesFromFile(null, mainPropertyFileName, true, true);
         loadPropertiesFromFile(null, APPLICATION_PROPERTIES_FILE_NAME, true, false);
 
-        // Application config files should be in same place as mdw.properties.
+        // Application config files should be in same place as mdw.yaml.
         String appPropertyFiles = this.getStringProperty(APP_CONFIG_NAME);
         if (appPropertyFiles != null) {
             for (String fileName : appPropertyFiles.split(",")) {
@@ -96,13 +96,13 @@ public class JavaPropertyManager extends PropertyManager {
         Properties tempProperties = new Properties();
         getSources().clear();
 
-        // 1. load properties from mdw.properties or ApplicationProperties.xml from configuration directory
+        // 1. load properties from mdw.yaml or mdw.properties from configuration directory
         loadPropertiesFromFile(tempProperties, mainPropertyFileName, true, true);
 
-        // 2. load properties from application.properties
+        // 2. load properties from application yaml configs
         loadPropertiesFromFile(tempProperties, APPLICATION_PROPERTIES_FILE_NAME, true, false);
 
-        // Application config files should be in same place as mdw.properties.
+        // app config files should be in same place as mdw.yaml.
         String appPropertyFiles = this.getStringProperty(APP_CONFIG_NAME);
         if (appPropertyFiles != null) {
             for (String fileName : appPropertyFiles.split(",")) {

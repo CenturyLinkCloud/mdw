@@ -10,7 +10,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import com.centurylink.mdw.camel.MdwEndpoint.RequestType;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 
 public class MdwConsumer extends DefaultConsumer {
@@ -30,13 +30,13 @@ public class MdwConsumer extends DefaultConsumer {
         if (endpoint.getRequestType().equals(RequestType.service)) {
             serviceHandler = new CamelServiceHandler(endpoint, getProcessor());
             logger.info("Registering ServiceHandler:" + endpoint);
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             eventMgr.registerServiceHandler(serviceHandler);
         }
         else if (endpoint.getRequestType().equals(RequestType.workflow)) {
             workflowHandler = new CamelWorkflowHandler(endpoint, getProcessor());
             logger.info("Registering WorkflowHandler: " + endpoint);
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             eventMgr.registerWorkflowHandler(workflowHandler);
         }
 
@@ -45,7 +45,7 @@ public class MdwConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         if (serviceHandler != null) {
             logger.info("Unregistering ServiceHandler mdw:" + serviceHandler.getProtocol() + (serviceHandler.getPath() == null ? "" : "/" + serviceHandler.getPath()));
             eventMgr.unregisterServiceHandler(serviceHandler);

@@ -52,13 +52,10 @@ import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 /**
- * New implementation of Web Service Adapter which can be
- * configured through Designer and does not implement
- * ControlledAdapterActivity interface.
- *
+ * Adapter activity for services with object-based request/response content.
  */
 @Tracked(LogLevel.TRACE)
-public abstract class AdapterActivityBase extends DefaultActivityImpl implements AdapterActivity, AdapterInvocationError
+public abstract class ObjectAdapterActivity extends DefaultActivityImpl implements AdapterActivity, AdapterInvocationError
 {
     protected static final String DO_LOGGING = "DO_LOGGING";
     protected static final String REQUEST_VARIABLE = "REQUEST_VARIABLE";

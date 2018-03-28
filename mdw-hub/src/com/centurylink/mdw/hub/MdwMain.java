@@ -36,7 +36,6 @@ import com.centurylink.mdw.listeners.startup.StartupRegistry;
 import com.centurylink.mdw.model.listener.RMIListener;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.services.pooling.ConnectionPoolRegistration;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
@@ -110,9 +109,6 @@ public class MdwMain {
                 throw new StartupException("Failed to start RMI listener", e);
             }
 
-            logger.info("Initialize " + ConnectionPoolRegistration.class.getName()) ;
-            (new ConnectionPoolRegistration()).onStartup();
-
             if (MessengerFactory.internalMessageUsingJms()) {
                 internalEventListener = new InternalEventListener(threadPool);
                 internalEventListener.start();
@@ -183,9 +179,6 @@ public class MdwMain {
                 intraMdwEventListener.stop();
             if (internalEventListener != null )
                 internalEventListener.stop();
-
-            logger.info("Shutdown " + ConnectionPoolRegistration.class.getName());
-            (new ConnectionPoolRegistration()).onShutdown();
 
             Thread.sleep(2000); // give the listeners a few seconds
             SpringAppContext.getInstance().shutDown();

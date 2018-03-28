@@ -27,7 +27,7 @@ public class Response implements Jsonable {
     public void setContent(String content) { this.content = content; }
 
     /**
-     * Response content as object (for non-Poolable Adapter).
+     * Response content as object (for non-Text Adapter).
      */
     private Object object;
     public Object getObject() { return object; }

@@ -85,7 +85,7 @@ import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -353,7 +353,7 @@ public class TaskWorkflowHelper {
     void updateDue(Instant due, String cuid, String comment)
     throws ServiceException, DataAccessException {
         boolean hasOldSlaInstance;
-        EventManager eventManager = ServiceLocator.getEventManager();
+        EventServices eventManager = ServiceLocator.getEventServices();
         EventInstance event = eventManager.getEventInstance(ScheduledEvent.SPECIAL_EVENT_PREFIX + "TaskDueDate." + taskInstance.getId());
         boolean isEventExist = event == null ? false : true;
         hasOldSlaInstance = !isEventExist;
@@ -653,7 +653,7 @@ public class TaskWorkflowHelper {
 
     private void notifyProcess(String eventName, Long eventInstId,
             String message, int delay) throws DataAccessException, EventException {
-        EventManager eventManager = ServiceLocator.getEventManager();
+        EventServices eventManager = ServiceLocator.getEventServices();
         eventManager.notifyProcess(eventName, eventInstId, message, delay);
     }
 
@@ -665,7 +665,7 @@ public class TaskWorkflowHelper {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         ProcessInstance proc = workflowServices.getProcess(taskInstance.getOwnerId());
         Package pkg = PackageCache.getProcessPackage(proc.getProcessId());
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         return eventMgr.createDocument(type, OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), value, pkg);
     }
 
@@ -691,7 +691,7 @@ public class TaskWorkflowHelper {
             }
             // task instance secondary owner is work transition instance
             Long workTransInstId = taskInst.getSecondaryOwnerId();
-            TransitionInstance workTransInst = ServiceLocator.getEventManager().getWorkTransitionInstance(workTransInstId);
+            TransitionInstance workTransInst = ServiceLocator.getEventServices().getWorkTransitionInstance(workTransInstId);
             activityInstanceId = workTransInst.getDestinationID();
         }
       }
@@ -706,7 +706,7 @@ public class TaskWorkflowHelper {
             Long activityInstanceId = getActivityInstanceId(sourceActInst);
             if (activityInstanceId == null)
                 return null;
-            return ServiceLocator.getEventManager().getActivityInstance(activityInstanceId);
+            return ServiceLocator.getEventServices().getActivityInstance(activityInstanceId);
         }
         catch (ProcessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
@@ -1305,7 +1305,7 @@ public class TaskWorkflowHelper {
             }
         }
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             eventManager.createAuditLog(userAction);
         }
         catch (DataAccessException ex) {

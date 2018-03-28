@@ -43,7 +43,7 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
@@ -169,7 +169,7 @@ public class FallbackEventHandler implements ExternalEventHandler {
             String documentId = XmlPath.evaluate(msgdoc, "/_mdw_document_content/document_id");
             String type = XmlPath.evaluate(msgdoc, "/_mdw_document_content/type");
             try {
-                EventManager eventMgr = ServiceLocator.getEventManager();
+                EventServices eventMgr = ServiceLocator.getEventServices();
                 Document docvo = eventMgr.getDocumentVO(new Long(documentId));
                 if (type.equals(Object.class.getName())) {
                     Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent(getPackageVO(docvo)));
@@ -230,7 +230,7 @@ public class FallbackEventHandler implements ExternalEventHandler {
 
     private Package getPackageVO(Document docVO) throws ServiceException {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             Long procInstId = null;
             if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {
                 VariableInstance varInstInf = eventMgr.getVariableInstance(docVO.getOwnerId());

@@ -85,7 +85,7 @@ import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -278,11 +278,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public void actionActivity(String activityInstanceId, String action, String completionCode) throws ServiceException {
         try {
             if (action != null && (action.equalsIgnoreCase(Action.Proceed.toString()))){
-                ServiceLocator.getEventManager().skipActivity(null, new Long(activityInstanceId).longValue(), completionCode);
+                ServiceLocator.getEventServices().skipActivity(null, new Long(activityInstanceId).longValue(), completionCode);
             }
             else if (action != null && (action.equalsIgnoreCase(Action.Retry.toString()))){
-                ActivityInstance activityVo = ServiceLocator.getEventManager().getActivityInstance(new Long(activityInstanceId).longValue());
-                ServiceLocator.getEventManager().retryActivity(activityVo.getActivityId(), new Long(activityInstanceId).longValue());
+                ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(new Long(activityInstanceId).longValue());
+                ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), new Long(activityInstanceId).longValue());
             }
         }
         catch (Exception ex) {
@@ -956,7 +956,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             Package pkg = PackageCache.getProcessPackage(processVO.getId());
             if (masterRequest != null) {
                 String docType = getDocType(masterRequest);
-                EventManager eventMgr = ServiceLocator.getEventManager();
+                EventServices eventMgr = ServiceLocator.getEventServices();
                 docId = eventMgr.createDocument(docType, OwnerType.LISTENER_REQUEST, 0L, masterRequest, pkg);
                 request = VariableTranslator.realToString(pkg, docType, masterRequest);
                 if (headers == null)
@@ -1024,7 +1024,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      */
     public Integer notify(String event, String message, int delay) throws ServiceException {
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L, message, null);
             return eventManager.notifyProcess(event, docId, message, delay);
         }
@@ -1044,11 +1044,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
             String message = null;
             if (eventMessage != null) {
                 String docType = getDocType(eventMessage);
-                EventManager eventMgr = ServiceLocator.getEventManager();
+                EventServices eventMgr = ServiceLocator.getEventServices();
                 docId = eventMgr.createDocument(docType, OwnerType.LISTENER_REQUEST, 0L, eventMessage, runtimePackage);
                 message = VariableTranslator.realToString(runtimePackage, docType, eventMessage);
             }
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             return eventManager.notifyProcess(eventName, docId, message, delay);
         }
         catch (ServiceException ex) {
@@ -1158,7 +1158,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      */
     public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
         String type = context.getProcess().getVariable(varName).getType();
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         Long procInstId = context.getProcessInstanceId();
         try {
             Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, value, context.getPackage());
@@ -1195,7 +1195,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (ownerType == null) {
             if (ownerId != null)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "ownerId not allowed without ownerType");
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             try {
                 ownerType = OwnerType.DOCUMENT;
                 actualRun.setOwnerType(ownerType);
@@ -1232,7 +1232,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         VariableInstance varInst = context.getProcessInstance().getVariable(varName);
         if (varInst == null)
             throw new ServiceException(ServiceException.NOT_FOUND, varName + " not found for process: " + context.getProcessInstanceId());
@@ -1340,7 +1340,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private Package getPackage(Document docVO) throws ServiceException {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             if (docVO.getOwnerId() == 0) // eg: sdwf request headers
                 return null;
             if (docVO.getOwnerType().equals(OwnerType.VARIABLE_INSTANCE)) {

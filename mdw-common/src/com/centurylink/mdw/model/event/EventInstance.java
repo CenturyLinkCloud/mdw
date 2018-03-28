@@ -35,9 +35,7 @@ public class EventInstance implements Serializable {
     //            consumeDate is not null, reference can be null or others,
     //            event name is often InternalEvent.<actInstId> when the event is for notifying an activity instance
     //            or InternalEvent.<procInstId>start<activityId> when the event is to start an activity instance
-    //      b) resume message due to connection pool down:
-    //            consumerDate is null, reference is "pool:poolname", event name is InternalEvent.<actInstId>
-    //      c) active message: consumeDate is null, reference is "active"
+    //      b) active message: consumeDate is null, reference is "active"
     public static final Integer STATUS_INTERNAL_EVENT = 7;
     // certified messages
     public static final Integer STATUS_CERTIFIED_MESSAGE = 6;

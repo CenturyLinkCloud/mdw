@@ -31,7 +31,7 @@ import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.TaskNotifier;
 import com.centurylink.mdw.observer.task.TemplatedNotifier;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.task.types.TaskServiceRegistry;
 import com.centurylink.mdw.util.StringHelper;
@@ -77,7 +77,7 @@ public class TaskInstanceNotifierFactory {
      */
     public List<String> getNotifierSpecs(Long taskId, Long processInstanceId, String outcome) throws ObserverException {
         String noticesAttr = null;
-        EventManager eventManager = ServiceLocator.getEventManager();
+        EventServices eventManager = ServiceLocator.getEventServices();
         try {
             if (processInstanceId != null) {
                 Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
@@ -171,7 +171,7 @@ public class TaskInstanceNotifierFactory {
 
         try {
             if (processInstanceId != null) {
-                EventManager eventManager = ServiceLocator.getEventManager();
+                EventServices eventManager = ServiceLocator.getEventServices();
                 Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
                 packageVO = PackageCache.getProcessPackage(process.getId());
             }

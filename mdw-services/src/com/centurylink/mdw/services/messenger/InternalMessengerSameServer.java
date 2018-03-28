@@ -21,10 +21,10 @@ import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
+import com.centurylink.mdw.services.MessageServices;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.event.BroadcastHelper;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
-import com.centurylink.mdw.services.process.EventServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -40,7 +40,7 @@ public class InternalMessengerSameServer extends InternalMessenger {
         try {
             String msgid = addMessage(msg, edao);
             if (msgid==null) return;    // cached
-            if (!EventServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_LISTENER, msgid, "InternalMessengerSingleServer", msg.toXml()))
+            if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_LISTENER, msgid, "InternalMessengerSingleServer", msg.toXml()))
                 throw new Exception("No thread available to send internal message");
         } catch (Exception e) {
             throw new ProcessException(-1, "Failed to send internal event", e);
@@ -53,7 +53,7 @@ public class InternalMessengerSameServer extends InternalMessenger {
         if (delaySeconds<=0) {
             try {
                 addMessageNoCaching(msg, edao, msgid);
-                if (!EventServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_LISTENER, msgid, "InternalMessengerSingleServer", msg.toXml()))
+                if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_LISTENER, msgid, "InternalMessengerSingleServer", msg.toXml()))
                     throw new Exception("No thread available to send internal message");
             } catch (Exception e) {
                 throw new ProcessException(-1, "Failed to send internal event", e);

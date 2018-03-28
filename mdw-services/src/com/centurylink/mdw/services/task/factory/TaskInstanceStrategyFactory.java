@@ -24,7 +24,7 @@ import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.observer.task.PrioritizationStrategy;
 import com.centurylink.mdw.observer.task.RoutingStrategy;
 import com.centurylink.mdw.observer.task.SubTaskStrategy;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.task.types.TaskServiceRegistry;
 
@@ -195,7 +195,7 @@ public class TaskInstanceStrategyFactory {
      */
     private static Package getPackage(Long processInstanceId) {
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
             Package packageVO = PackageCache.getProcessPackage(process.getId());
             return packageVO;

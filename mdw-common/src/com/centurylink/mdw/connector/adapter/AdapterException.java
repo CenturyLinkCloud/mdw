@@ -20,7 +20,6 @@ import com.centurylink.mdw.common.MdwException;
 public class AdapterException extends MdwException {
 
     public static final int EXCEED_MAXTRIES = 41282;
-    public static final int CONFIGURATION_WRONG = ConnectionException.CONFIGURATION_WRONG;
 
     private boolean retryable;
 

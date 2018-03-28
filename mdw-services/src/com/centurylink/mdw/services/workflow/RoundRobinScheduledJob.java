@@ -22,7 +22,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.StringHelper;
@@ -37,7 +37,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
     public void runOnLoadBalancedInstance(CallURL args) {
         try {
             List<String> serverList = ApplicationContext.getServerList().getHostPortList(); // host:8181,host:8282,host:8383,host:8484
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             String eventName = "ScheduledJob." + this.getClass().getName();
             boolean runOnCurrentInstance = true;
 

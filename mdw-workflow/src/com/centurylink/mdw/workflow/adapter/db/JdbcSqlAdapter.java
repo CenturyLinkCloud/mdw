@@ -25,10 +25,10 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
+import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
 @Tracked(LogLevel.TRACE)
-public class JdbcSqlAdapter extends AdapterActivityBase {
+public class JdbcSqlAdapter extends ObjectAdapterActivity {
 
     public enum QueryType {
         Select,

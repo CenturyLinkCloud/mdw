@@ -257,7 +257,8 @@ CREATE TABLE DOCUMENT
   MODIFY_DT           TIMESTAMP(6),
   STATUS_CODE         SMALLINT,
   STATUS_MESSAGE      VARCHAR(1000),
-  PATH                VARCHAR(1000)
+  PATH                VARCHAR(1000),
+  RESPONSE_MICROS     DATETIME(6)
 ) auto_increment=10000;
 
 -- not used when mongodb is present
@@ -275,19 +276,19 @@ CREATE TABLE TASK_INST_GRP_MAPP (
 );
 
 CREATE TABLE INSTANCE_INDEX (
-  INSTANCE_ID    	  BIGINT                    NOT NULL,
-  OWNER_TYPE		  VARCHAR(30)				NOT NULL,
-  INDEX_KEY           VARCHAR(64)               NOT NULL,
-  INDEX_VALUE         VARCHAR(256)              NOT NULL,
-  CREATE_DT           DATETIME                  NOT NULL,
+  INSTANCE_ID        BIGINT                    NOT NULL,
+  OWNER_TYPE         VARCHAR(30)               NOT NULL,
+  INDEX_KEY          VARCHAR(64)               NOT NULL,
+  INDEX_VALUE        VARCHAR(256)              NOT NULL,
+  CREATE_DT          DATETIME                  NOT NULL,
   PRIMARY KEY (INSTANCE_ID,OWNER_TYPE,INDEX_KEY)
 );
 
 CREATE TABLE ASSET_REF (
-  DEFINITION_ID    	  BIGINT                    NOT NULL,
-  NAME	 		          VARCHAR(512)              NOT NULL,
-  REF           	    VARCHAR(64)               NOT NULL,
-  ARCHIVE_DT          TIMESTAMP					        NOT NULL,
+  DEFINITION_ID       BIGINT                    NOT NULL,
+  NAME                VARCHAR(512)              NOT NULL,
+  REF                 VARCHAR(64)               NOT NULL,
+  ARCHIVE_DT          TIMESTAMP                 NOT NULL,
   PRIMARY KEY (DEFINITION_ID)
 );
 

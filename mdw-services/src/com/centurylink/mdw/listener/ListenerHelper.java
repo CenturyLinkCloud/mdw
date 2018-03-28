@@ -58,7 +58,7 @@ import com.centurylink.mdw.service.data.event.EventHandlerCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.rest.RestService;
@@ -729,7 +729,7 @@ public class ListenerHelper {
     public DocumentReference createDocument(String docType, Object document, Package pkg,
             String ownerType, Long ownerId) throws EventHandlerException {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             Long docid = eventMgr.createDocument(docType, ownerType, ownerId, document, pkg);
             return new DocumentReference(docid);
         }
@@ -742,7 +742,7 @@ public class ListenerHelper {
     public void updateDocumentContent(DocumentReference docref, Object doc, String type, Package pkg)
             throws ActivityException {
         try {
-            EventManager eventMgr = ServiceLocator.getEventManager();
+            EventServices eventMgr = ServiceLocator.getEventServices();
             eventMgr.updateDocumentContent(docref.getDocumentId(), doc, type, pkg);
         }
         catch (Exception ex) {
@@ -753,7 +753,7 @@ public class ListenerHelper {
 
     public ServiceHandler getServiceHandler(String request, Map<String, String> metaInfo)
             throws EventException {
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         String protocol = metaInfo.get(Listener.METAINFO_PROTOCOL);
         if (protocol == null)
             return null; // at a minimum must match on protocol

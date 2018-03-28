@@ -38,13 +38,13 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
+import com.centurylink.mdw.services.MessageServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.services.process.EventServices;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -72,7 +72,7 @@ public class ScheduledEventQueue implements CacheService {
     private synchronized void loadScheduledEvents() {
         eventQueue = new PriorityQueue<ScheduledEvent>();
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             List<ScheduledEvent> eventlist = eventManager.getScheduledEventList(cutoffTime);
             for (ScheduledEvent event: eventlist) {
                 logger.info("Previously scheduled event " + event.getName() + " at "
@@ -103,7 +103,7 @@ public class ScheduledEventQueue implements CacheService {
 
     public void processEvent(ScheduledEvent event, Date now) {
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             eventManager.processScheduledEvent(event.getName(), now);
         } catch (Exception e) {
             if (e.getCause() instanceof SQLRecoverableException) {
@@ -131,7 +131,7 @@ public class ScheduledEventQueue implements CacheService {
             if (event.isInternalEvent()) {
                 // long-delayed internal events, form timer/event wait activities
                 if (processInternalEventInThisJVM) {
-                    if (!EventServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER, null, event.getName(), event.getMessage()))
+                    if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER, null, event.getName(), event.getMessage()))
                         return false;  // Don't remove event from DB since it couldn't be processed (no thread available)
                 } else {
                     InternalMessenger msgbroker = MessengerFactory.newInternalMessenger();
@@ -206,7 +206,7 @@ public class ScheduledEventQueue implements CacheService {
         event.setMessage(message);
         event.setReference(reference);
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             eventManager.offerScheduledEvent(event);
             if (time!=null) {
                 eventQueue.offer(event);
@@ -243,7 +243,7 @@ public class ScheduledEventQueue implements CacheService {
         event.setScheduledTime(time);
         event.setMessage(message);
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             eventManager.updateEventInstance(name, null, null,
                     time, message, null, 0);
             removeEvent(name);

@@ -45,7 +45,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
+import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
 
 /**
@@ -54,7 +54,7 @@ import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
  * ControlledAdapterActivity interface.
  */
 @Tracked(LogLevel.TRACE)
-public class JmsAdapter extends AdapterActivityBase {
+public class JmsAdapter extends ObjectAdapterActivity {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String SERVER_URL = "JNDI Server URL";

@@ -44,7 +44,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
@@ -147,7 +147,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
     private String handleTimeout(ActionRequestDocument xmlbean, String message,  Map<String,String> metaInfo)
     throws Exception {
         String masterRequestId = getParameter(xmlbean, "MasterRequestId", true);
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         eventMgr.sendDelayEventsToWaitActivities(masterRequestId);
         return createSuccessResponse(null);
     }
@@ -157,7 +157,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
     throws Exception {
         String eventName = getParameter(xmlbean, "EventName", true);
         String msgContent = getParameter(xmlbean, "Message", true);
-        EventManager eventMgr = ServiceLocator.getEventManager();
+        EventServices eventMgr = ServiceLocator.getEventServices();
         eventName = translatePlaceHolder(eventName, xmlbean, eventMgr);
         Long docid = eventMgr.createDocument(StringDocument.class.getName(), OwnerType.DOCUMENT,
                 new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), msgContent, null);
@@ -166,7 +166,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         return createSuccessResponse(null);
     }
 
-    private String getProcessInstanceId(ActionRequestDocument xmlbean, EventManager eventMgr) throws Exception {
+    private String getProcessInstanceId(ActionRequestDocument xmlbean, EventServices eventMgr) throws Exception {
         String masterRequestId=getParameter(xmlbean, "MasterRequestId", true);
         String processName=getParameter(xmlbean, "ProcessName", true);
         List<ProcessInstance> procInstList = eventMgr.getProcessInstances(masterRequestId, processName);
@@ -175,7 +175,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         else return "$ProcessInstanceId";
     }
 
-    private String getActivityInstanceId(ActionRequestDocument xmlbean, EventManager eventMgr) throws Exception {
+    private String getActivityInstanceId(ActionRequestDocument xmlbean, EventServices eventMgr) throws Exception {
         String masterRequestId=getParameter(xmlbean, "MasterRequestId", true);
         String processName=getParameter(xmlbean, "ProcessName", true);
         String activityLogicalId=getParameter(xmlbean, "ActivityLogicalId", true);
@@ -185,7 +185,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         else return "$ActivityInstanceId";
     }
 
-    private String getVariableValue(ActionRequestDocument xmlbean, EventManager eventMgr, String varname) throws Exception {
+    private String getVariableValue(ActionRequestDocument xmlbean, EventServices eventMgr, String varname) throws Exception {
         String masterRequestId=getParameter(xmlbean, "MasterRequestId", true);
         String processName=getParameter(xmlbean, "ProcessName", true);
         List<ProcessInstance> procInstList = eventMgr.getProcessInstances(masterRequestId, processName);
@@ -195,7 +195,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         return varinst.getStringValue();
     }
 
-    private String translatePlaceHolder(String eventName, ActionRequestDocument xmlbean, EventManager eventMgr)
+    private String translatePlaceHolder(String eventName, ActionRequestDocument xmlbean, EventServices eventMgr)
     throws Exception {
         int k, i, n;
         StringBuffer sb = new StringBuffer();
@@ -292,7 +292,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         if (params!=null && !params.isEmpty()) {
             TaskInstance taskInst = ServiceLocator.getTaskServices().getInstance(taskInstId);
             if (taskInst.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
-                EventManager eventManager = ServiceLocator.getEventManager();
+                EventServices eventManager = ServiceLocator.getEventServices();
                 Long procInstId = taskInst.getOwnerId();
                 ProcessInstance procInst = eventManager.getProcessInstance(procInstId);
                 Process procdef = super.getProcessDefinition(procInst.getProcessId());

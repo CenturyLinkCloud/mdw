@@ -28,7 +28,7 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
+import com.centurylink.mdw.workflow.adapter.TextAdapterActivity;
 
 /**
  * Provides a base implementation for SOAP and Rest adapters
@@ -36,7 +36,7 @@ import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
  * @author aa70413
  *
  */
-public class HttpServiceAdapter extends PoolableAdapterBase {
+public class HttpServiceAdapter extends TextAdapterActivity {
 
     public static final String PROP_USER = "USER";
     public static final String PROP_PASS = "PASS";
@@ -122,10 +122,6 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     }
 
     @Override
-    public void init(Properties parameters) {
-    }
-
-    @Override
     public void init() throws ConnectionException, AdapterException {
 
     }
@@ -141,17 +137,12 @@ public class HttpServiceAdapter extends PoolableAdapterBase {
     }
 
     /**
-     * @see com.centurylink.mdw.adapter.PoolableAdapter#invoke(java.lang.Object, java.lang.String, int, java.util.Map)
+     * @see com.centurylink.mdw.adapter.TextAdapter#invoke(java.lang.Object, java.lang.String, int, java.util.Map)
      */
     @Override
     public String invoke(Object connection, String request, int timeout, Map<String, String> headers)
     throws AdapterException, ConnectionException {
         return null;
-    }
-
-    @Override
-    public boolean ping(int timeout) {
-         return false;
     }
 
     @Override

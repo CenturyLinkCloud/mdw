@@ -45,10 +45,10 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.AdapterActivityBase;
+import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
 @Tracked(LogLevel.TRACE)
-public class LdapAdapter extends AdapterActivityBase {
+public class LdapAdapter extends ObjectAdapterActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 

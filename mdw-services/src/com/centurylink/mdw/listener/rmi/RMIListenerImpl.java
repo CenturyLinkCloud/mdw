@@ -25,8 +25,8 @@ import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.listener.RMIListener;
+import com.centurylink.mdw.services.MessageServices;
 import com.centurylink.mdw.services.event.BroadcastHelper;
-import com.centurylink.mdw.services.process.EventServices;
 import com.centurylink.mdw.services.util.AuthUtils;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -64,7 +64,7 @@ public class RMIListenerImpl implements RMIListener {
         StandardLogger logger = LoggerUtil.getStandardLogger();
         if (message.startsWith("<EventMessage ")) {
             try {
-                if(!EventServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_ENGINE, meta, "RMIListener", message))
+                if(!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_ENGINE, meta, "RMIListener", message))
                     throw new JMSException("No thread available to send internal message");
             }
             catch (JMSException e) {

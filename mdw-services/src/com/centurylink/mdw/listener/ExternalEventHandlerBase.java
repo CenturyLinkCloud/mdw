@@ -35,7 +35,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.EventManager;
+import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.spring.SpringAppContext;
@@ -142,7 +142,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler, 
     {
         Integer status;
         try {
-            EventManager eventManager = ServiceLocator.getEventManager();
+            EventServices eventManager = ServiceLocator.getEventServices();
             status = eventManager.notifyProcess(
                     eventName,
                     eventInstId,            // document ID

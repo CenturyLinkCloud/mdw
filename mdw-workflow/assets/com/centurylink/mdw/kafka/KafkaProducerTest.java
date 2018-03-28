@@ -51,7 +51,8 @@ public class KafkaProducerTest {
 
         String request= "KafkaTest-Request:" + key;
         try {
-            kAdapter.directInvoke(producerProps, request, 0, recordProps);
+            kAdapter.init(producerProps);
+            kAdapter.directInvoke(request, 0, recordProps);
         }
         catch (AdapterException | ConnectionException e) {
             // TODO Auto-generated catch block

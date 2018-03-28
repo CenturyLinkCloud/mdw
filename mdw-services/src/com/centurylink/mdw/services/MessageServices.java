@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.services.process;
+package com.centurylink.mdw.services;
 
 import javax.jms.JMSException;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.services.process.InternalEventDriver;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.MessageProducer;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -26,19 +27,16 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * This class is used in the services project to send messages
- *
- * @author aa70413
- *
  */
-public class EventServices {
+public class MessageServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static EventServices instance;
+    private static MessageServices instance;
 
     private MessageProducer mdwMessageProducer;
 
-    private EventServices() {
+    private MessageServices() {
         try {
             mdwMessageProducer = (MessageProducer) SpringAppContext.getInstance().getBean(
                     SpringAppContext.MDW_SPRING_MESSAGE_PRODUCER);
@@ -49,9 +47,9 @@ public class EventServices {
         }
     }
 
-    public static EventServices getInstance() {
+    public static MessageServices getInstance() {
         if (instance == null)
-            instance = new EventServices();
+            instance = new MessageServices();
         return instance;
     }
 

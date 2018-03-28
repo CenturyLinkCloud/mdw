@@ -18,9 +18,6 @@ package com.centurylink.mdw.connector.adapter;
 public class ConnectionException extends Exception {
 
     public static final int CONNECTION_DOWN = 41290;
-    public static final int POOL_DISABLED = 41291;    // try to be unique, along with AdapterException codes
-    public static final int POOL_EXHAUSTED = 41292;
-    public static final int POOL_BORROW = 41293;
     public static final int CONFIGURATION_WRONG = 41286;
 
     private int code;

@@ -27,13 +27,13 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
+import com.centurylink.mdw.workflow.adapter.TextAdapterActivity;
 
 /**
  * Dynamic Java workflow asset.
  */
 @Tracked(LogLevel.TRACE)
-public class KafkaAdapter extends PoolableAdapterBase {
+public class KafkaAdapter extends TextAdapterActivity {
 
     public static final String KAFKA_TOPIC_NAME = "topic";
     public static final String RECORD_KEY = "key";
@@ -49,8 +49,6 @@ public class KafkaAdapter extends PoolableAdapterBase {
     private Properties recordProps;
     private static Map<String, KafkaProducer<Object, Object>> producerMap = new ConcurrentHashMap<String, KafkaProducer<Object, Object>>();
 
-
-    @Override
     public void init(Properties parameters) {
         bootstrap_servers = parameters.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG);
         // This is so that all dependent class from kafka-clients jar are found during consumer creation
@@ -203,11 +201,6 @@ public class KafkaAdapter extends PoolableAdapterBase {
             logger.severeException(ex.getMessage(), ex);
             return properties;
         }
-    }
-
-    @Override
-    public boolean ping(int timeout) {
-        return false;
     }
 
     @Override

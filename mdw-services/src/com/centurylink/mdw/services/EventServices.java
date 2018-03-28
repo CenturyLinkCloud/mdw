@@ -35,7 +35,7 @@ import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.event.WorkflowHandler;
 
-public interface EventManager {
+public interface EventServices {
 
     public void createAuditLog(UserAction userAction)
     throws DataAccessException, EventException;

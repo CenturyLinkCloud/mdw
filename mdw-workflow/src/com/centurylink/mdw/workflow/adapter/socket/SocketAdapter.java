@@ -24,14 +24,14 @@ import com.centurylink.mdw.soccom.SoccomClient;
 import com.centurylink.mdw.soccom.SoccomException;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.PoolableAdapterBase;
+import com.centurylink.mdw.workflow.adapter.TextAdapterActivity;
 
 
 /**
  * Socket adapter using soccom extended socket protocol
  */
 @Tracked(LogLevel.TRACE)
-public class SocketAdapter extends PoolableAdapterBase {
+public class SocketAdapter extends TextAdapterActivity {
 
     public static final String PROP_HOSTPORT = "hostport";
 
@@ -61,7 +61,6 @@ public class SocketAdapter extends PoolableAdapterBase {
     /**
      * This method must be implemented for PoolableAdapter
      */
-    @Override
     public void init(Properties parameters) {
         hostport = parameters.getProperty(PROP_HOSTPORT);
     }
@@ -114,14 +113,4 @@ public class SocketAdapter extends PoolableAdapterBase {
             connection = null;
         }
     }
-
-    /**
-     * This method must be implemented for PoolableAdapter
-     */
-    @Override
-    public boolean ping(int timeout) {
-        return false;    // this needs to be overridden for specific application connector
-    }
-
-
 }
