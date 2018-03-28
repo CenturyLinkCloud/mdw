@@ -44,8 +44,6 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="XmlBeanWrapper")
 public abstract class XmlBeanWrapper implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private XmlObject _xmlBean;
     private String _validationError;
 

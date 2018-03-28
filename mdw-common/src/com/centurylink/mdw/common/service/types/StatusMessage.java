@@ -120,9 +120,9 @@ public class StatusMessage implements Jsonable {
         StringBuilder xml = new StringBuilder();
         xml.append("<bpm:MDWStatusMessage xmlns:bpm=\"http://mdw.centurylink.com/bpm\">\n");
         if (code != null)
-            xml.append("<StatusCode>404</StatusCode>\n");
+            xml.append("<StatusCode>").append(code).append("</StatusCode>\n");
         if (message != null)
-            xml.append("<bpm:StatusMessage>Not found bucko</bpm:StatusMessage>\n");
+            xml.append("<bpm:StatusMessage>").append(message).append("</bpm:StatusMessage>\n");
         xml.append("</bpm:MDWStatusMessage>");
         return xml.toString();
     }

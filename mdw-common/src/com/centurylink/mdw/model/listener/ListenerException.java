@@ -15,50 +15,23 @@
  */
 package com.centurylink.mdw.model.listener;
 
-
 import java.io.Serializable;
 
 import com.centurylink.mdw.common.MdwException;
 
-// JAVA IMPORTS -------------------------------------------------------
+public class ListenerException extends MdwException implements Serializable {
 
-
-public class ListenerException extends MdwException implements Serializable{
-
-    // CONSTANTS ------------------------------------------------------
-
-    // CLASS VARIABLES ------------------------------------------------
-    public static final long serialVersionUID = 1L;
-    // INSTANCE VARIABLES ---------------------------------------------
-
-    // CONSTRUCTORS ---------------------------------------------------
-    public ListenerException(String pMessage){
-        super(pMessage);
+    public ListenerException(String message){
+        super(message);
     }
 
-    /**
-     * @param pCode
-     * @param pMEssage
-     */
-    public ListenerException(int pCode, String pMessage){
-        super(pCode, pMessage);
+    public ListenerException(int code, String message){
+        super(code, message);
 
     }
 
-    /**
-     * @param pCode
-     * @param pMessage
-     * @param pTh
-     */
-    public ListenerException(int pCode, String pMessage, Throwable pTh){
-        super(pCode, pMessage, pTh);
+    public ListenerException(int code, String message, Throwable cause){
+        super(code, message, cause);
 
     }
-    // PUBLIC AND PROTECTED METHODS -----------------------------------
-
-    // PRIVATE METHODS ------------------------------------------------
-
-    // ACCESSOR METHODS -----------------------------------------------
-
-    // INNER CLASSES --------------------------------------------------
 }

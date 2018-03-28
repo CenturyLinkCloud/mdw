@@ -34,7 +34,6 @@ import javax.sql.DataSource;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -47,6 +46,8 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 
 public class DatabaseAccess {
+
+    public static final String MDW_DATA_SOURCE = "MDWDataSource";
 
     private String database_name; // JDBC url or a connection pool name
     private static String INTERNAL_DATA_SOURCE = null;
@@ -118,7 +119,7 @@ public class DatabaseAccess {
     public DatabaseAccess(String database_name) {
         if (database_name == null) {
             if (INTERNAL_DATA_SOURCE == null) {
-                INTERNAL_DATA_SOURCE = ApplicationConstants.MDW_FRAMEWORK_DATA_SOURCE_NAME;
+                INTERNAL_DATA_SOURCE = MDW_DATA_SOURCE;
             }
             this.database_name = INTERNAL_DATA_SOURCE;
         }

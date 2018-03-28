@@ -1554,8 +1554,7 @@ class ProcessExecutorImpl {
                 ProcessInstance pi = edao.getProcessInstance(processInstId);
                 cancelProcessInstanceTree(pi);
                 if (logger.isInfoEnabled()) {
-                    logger.info(logtag(pi.getProcessId(), pi.getId(), pi.getMasterRequestId()),
-                            "Process cancelled");
+                    logger.info(logtag(pi.getProcessId(), pi.getId(), pi.getMasterRequestId()), "Process cancelled");
                 }
             } else {
                 List<ProcessInstance> coll = edao.getProcessInstances(processId, processOwner, processOwnerId);

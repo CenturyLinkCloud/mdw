@@ -22,16 +22,13 @@ import com.centurylink.mdw.constant.OwnerType;
 
 public class ServiceLevelAgreementInstance implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     public static final Integer SLA_BREAK_REPORTED_YES = new Integer(1);
     public static final Integer SLA_BREAK_REPORTED_NO = new Integer(2);
-
 
     public static final String OWNER_PROCESS_INSTANCE = OwnerType.PROCESS_INSTANCE;
     public static final String OWNER_ACTIVITY_INSTANCE = OwnerType.ACTIVITY_INSTANCE;
     public static final String OWNER_TASK_INSTANCE = OwnerType.TASK_INSTANCE;
-    
+
     private Integer breakReportedIndicator;
     private Date estimatedCompletionDate;
     private Long id;
@@ -93,5 +90,5 @@ public class ServiceLevelAgreementInstance implements Serializable {
         this.ownerId = ownerId;
     }
 
-    
+
 }

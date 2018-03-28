@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.model.event;
 
-// CUSTOM IMPORTS -----------------------------------------------------
-
 import java.io.Serializable;
 
 import org.json.JSONException;
@@ -25,20 +23,14 @@ import org.json.JSONObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 
-
 /**
  * EventLog
  *
  * This used to be an interface for hibernate class EventLogImpl.
  * It is now converted to a VO class. We did not name it EventLogVO
  * because there are too many references to EventLog.
- *
- * @version 1.0
  */
 public class EventLog implements Serializable, Jsonable {
-
-
-    public static final long serialVersionUID = 1L;
 
     public static final String CATEGORY_AUDIT = "AUDIT";
     public static final String CATEGORY_EVENT_HISTORY = "EVENT_HISTORY";

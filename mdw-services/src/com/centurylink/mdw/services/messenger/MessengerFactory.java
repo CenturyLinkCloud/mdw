@@ -19,7 +19,6 @@ import javax.naming.NamingException;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.ApplicationConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -64,7 +63,7 @@ public class MessengerFactory {
      */
     public static IntraMDWMessenger newIntraMDWMessenger(String serverSpec)
         throws NamingException {
-        if (serverSpec==null || serverSpec.equals(ApplicationConstants.THIS_APPLICATION)) {
+        if (serverSpec==null || serverSpec.equals("@")) {
             if (internalMessenger.equals(RMI))
                 return new IntraMDWMessengerRmi(null);
             else if (internalMessenger.equals(JMS))

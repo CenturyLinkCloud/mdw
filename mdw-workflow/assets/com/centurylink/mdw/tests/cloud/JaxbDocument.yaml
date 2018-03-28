@@ -20,7 +20,7 @@ process: # 13575
   variable: # 20427
     name: actionRequest
     value: |
-      <ActionRequest xmlns:ns2="http://mdw.centurylink.com/services">
+      <ActionRequest>
           <Action Name="updatedAction">
               <Parameter name="appName">MDW</Parameter>
               <Parameter name="insertedParam">insertedValue</Parameter>

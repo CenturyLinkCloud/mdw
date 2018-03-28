@@ -17,32 +17,24 @@ package com.centurylink.mdw.observer;
 
 import com.centurylink.mdw.common.MdwException;
 
-/**
- * ObserverException
- *
-  */
 public class ObserverException extends MdwException {
 
-    private static final long serialVersionUID = 1L;
-
-    public ObserverException(String pMessage){
-        super(pMessage);
+    public ObserverException(String message){
+        super(message);
     }
 
-    public ObserverException(int pCode, String pMessage){
-        super(pCode, pMessage);
-
-    }
-
-    public ObserverException(String pMessage, Throwable pTh){
-        super(pMessage, pTh);
-    }
-
-    public ObserverException(int pCode, String pMessage, Throwable pTh){
-        super(pCode, pMessage, pTh);
+    public ObserverException(int code, String message){
+        super(code, message);
 
     }
 
+    public ObserverException(String message, Throwable cause){
+        super(message, cause);
+    }
 
+    public ObserverException(int code, String message, Throwable cause){
+        super(code, message, cause);
+
+    }
 
 }

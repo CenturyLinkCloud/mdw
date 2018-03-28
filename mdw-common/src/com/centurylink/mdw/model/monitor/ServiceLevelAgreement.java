@@ -23,8 +23,6 @@ import java.util.Date;
 
 public class ServiceLevelAgreement implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String OWNER_PROCESS =  OwnerType.PROCESS;
     public static final String OWNER_ACTIVITY =  OwnerType.ACTIVITY;
     public static final String OWNER_ACTIVITY_IMPLEMENTOR =  OwnerType.ACTIVITY_IMPLEMENTOR;
@@ -34,7 +32,7 @@ public class ServiceLevelAgreement implements Serializable {
     public static final String INTERVAL_MINUTES = "Minutes";
     public static final String INTERVAL_HOURS = "Hours";
     public static final String INTERVAL_DAYS = "Days";
-    
+
     private float hours;
     private Date startDate, endDate;
     private Long id;
@@ -45,25 +43,24 @@ public class ServiceLevelAgreement implements Serializable {
     */
     public Float getSLAInHours() { return hours; }
 
-
     /**
     * Sets the SLA in hrs
     * @param pHrs
     */
    public void setSLAInHours(Float pHrs) { hours = pHrs; }
-   
+
    public Date getSlaStartDate() { return startDate; }
-   
+
    public Date getSlaEndDate() { return endDate; }
-   
+
    public void setSlaStartDate(Date startDate) { this.startDate = startDate; }
-   
+
    public void setSlaEndDate(Date endDate) { this.endDate = endDate; }
 
    public Long getId() { return id; }
 
    public void setId(Long id) { this.id = id; }
-   
+
    /**
     * Convert interval of specified unit to seconds
     * @param interval
@@ -78,7 +75,7 @@ public class ServiceLevelAgreement implements Serializable {
        else if (unit.equals(INTERVAL_MINUTES)) return (int)(Double.parseDouble(interval)*60);
        else return (int)(Double.parseDouble(interval));
    }
-   
+
    /**
     * Convert seconds to specified units
     * @param seconds

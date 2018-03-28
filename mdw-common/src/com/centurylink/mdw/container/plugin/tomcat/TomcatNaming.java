@@ -26,12 +26,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.constant.PaaSConstants;
 import com.centurylink.mdw.container.JmsProvider;
 import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.plugin.MdwTransactionManager;
 import com.centurylink.mdw.container.plugin.activemq.ActiveMqJms;
-
 
 public class TomcatNaming implements NamingProvider {
 
@@ -65,7 +63,7 @@ public class TomcatNaming implements NamingProvider {
 
     public int getServerPort() throws Exception {
         // paas and spring boot configs checked first
-        String portStr = PaaSConstants.PAAS_INSTANCE_PORT;
+        String portStr = System.getenv("CF_INSTANCE_PORT");
         if (portStr == null)
             portStr = System.getProperty("mdw.server.port");
         if (portStr == null)

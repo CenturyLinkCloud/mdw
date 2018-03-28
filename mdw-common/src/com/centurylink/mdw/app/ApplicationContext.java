@@ -44,8 +44,6 @@ import javax.sql.DataSource;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlPropertyManager;
-import com.centurylink.mdw.constant.ApplicationConstants;
-import com.centurylink.mdw.constant.PaaSConstants;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ContainerContextAware;
 import com.centurylink.mdw.container.DataSourceProvider;
@@ -54,6 +52,7 @@ import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.container.plugin.MdwDataSource;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.model.system.ServerList;
 import com.centurylink.mdw.startup.StartupException;
@@ -109,7 +108,7 @@ public class ApplicationContext {
 
     public static DataSource getMdwDataSource() {
         try {
-            return dataSourceProvider.getDataSource(ApplicationConstants.MDW_FRAMEWORK_DATA_SOURCE_NAME);
+            return dataSourceProvider.getDataSource(DatabaseAccess.MDW_DATA_SOURCE);
         } catch (NamingException e) {
             logger.severeException("Failed to get MDWDataSource", e);
             return null;
@@ -595,7 +594,7 @@ public class ApplicationContext {
     }
 
     public static boolean isPaaS() {
-         return PaaSConstants.PAAS_VCAP_APPLICATION != null;
+         return System.getenv("VCAP_APPLICATION") != null;
     }
 
     public static boolean isSpringBoot() {
