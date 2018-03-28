@@ -55,12 +55,12 @@ public class SlackActivity extends DefaultActivityImpl {
     }
 
     /*
-     * if slackPrefix attribute is not set, it uses default "MDW-APP"
+     * if slackPrefix attribute is not set, it uses app name.
      */
     public String getSlackPrefix() {
         String slackPrefix = getAttributeValueSmart(SLACK_PREFIX);
         if (slackPrefix == null)
-            slackPrefix = "MDW-APP";
+            slackPrefix = ApplicationContext.getAppId();
         return slackPrefix;
     }
 
