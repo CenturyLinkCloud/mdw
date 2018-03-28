@@ -24,4 +24,5 @@ title: MDW 6.1 New Features
   6. **All** service access requires authentication by default (unless excluded in access.yaml).
   7. DB [autocommit](https://github.com/CenturyLinkCloud/mdw/issues/330) defaults to `true`.
   8. A [Designer](../getting-started/install-designer/) upgrade is required with this release.
-  9. Minor DB schema changes are covered through an in-place upgrade script (no migration required). 
+  9. Minor DB schema changes are covered through an in-place upgrade script (no migration required).
+  10. Any customized application-context.xml needs to be updated to remove obsolete JAXB objects.

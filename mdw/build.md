@@ -38,7 +38,7 @@
     `gem install github_changelog_generator`
   - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
   - Run following command in root of your workspace
-  github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.0.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
+  github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
   - git commit CHANGELOG.md -m "Release notes [skip ci]" 
   - git push (commits and pushes generated CHANGELOG.md to GitHub)

@@ -118,7 +118,7 @@ title: Command Line Interface
 ### Examples
   - Install mdw.war for Tomcat on Linux
   ```
-  mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.0.08
+  mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.1.01
   ```
   - MDW status
   ```

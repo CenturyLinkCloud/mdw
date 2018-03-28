@@ -172,6 +172,6 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
 
     @Override
     public String getMdwVersion() {
-        return "6.0";
+        return "6.1";
     }
 }
