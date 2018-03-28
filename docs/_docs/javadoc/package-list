@@ -71,7 +71,6 @@ com.centurylink.mdw.services.bundle
 com.centurylink.mdw.services.cache
 com.centurylink.mdw.services.event
 com.centurylink.mdw.services.messenger
-com.centurylink.mdw.services.pooling
 com.centurylink.mdw.services.process
 com.centurylink.mdw.services.project
 com.centurylink.mdw.services.request
