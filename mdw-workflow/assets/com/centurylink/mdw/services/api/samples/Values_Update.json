@@ -1,6 +1,0 @@
-// PUT Request to Services/Values/PROCESS/1002/updateOnly
-// PUT Request to Services/Values/PROCESS/1002
-{
-  "MyValue1": "One",
-  "MyValue2": "Two"
-}

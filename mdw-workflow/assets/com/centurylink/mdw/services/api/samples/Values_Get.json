@@ -1,5 +1,0 @@
-// GET Request to Services/Solutions/dons1001?app=appId
-{
-  "MyValue1": "One",
-  "MyValue2": "Two"
-}

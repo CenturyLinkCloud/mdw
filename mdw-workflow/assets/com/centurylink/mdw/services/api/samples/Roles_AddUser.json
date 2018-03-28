@@ -1,4 +1,0 @@
-// POST request to Services/Roles/A%20New%20Role/users/dxoakes?app=appId
-{ 
-  "name": "A New Role" // body not required
-}

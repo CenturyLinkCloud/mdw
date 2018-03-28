@@ -1,5 +1,0 @@
-// POST request to Services/Workgroups/A%20New%20Workgroup?app=appId
-{
-  "name": "A New Workgroup",
-  "description": "Description for a new workgroup."
-}

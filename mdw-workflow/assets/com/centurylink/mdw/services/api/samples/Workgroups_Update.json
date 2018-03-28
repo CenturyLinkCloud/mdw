@@ -1,5 +1,0 @@
-// PUT request to Services/Workgroups/A%20New%20Workgroup?app=appId
-{
-  "name": "An Existing Workgroup",
-  "description": "Updated description for workgroup."
-}

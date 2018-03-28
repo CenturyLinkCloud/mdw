@@ -1,8 +1,0 @@
-// POST request to Services/Users/newuser?app=appId
-{
-  "cuid": "newuser",
-  "name": "A New User",
-  "attributes": {
-    "Email": "anewuser@centurylink.com",
-  }
-}

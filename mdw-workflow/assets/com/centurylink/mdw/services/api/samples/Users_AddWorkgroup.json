@@ -1,4 +1,0 @@
-// POST request to Services/Users/newuser/workgroups/MDW%20Support?app=appId
-{
-  "cuid": "newuser" // body not required
-}

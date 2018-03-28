@@ -1,8 +1,0 @@
-// POST request to services/Tasks/action?app=appId
-{
-  "taskAction" : "Assign",
-  "user": "aa70413",
-  "assignee": "dxoakes", // assignee only for Assign action
-  "taskInstanceIds": [22962, 22963, 22964]
-}
- 

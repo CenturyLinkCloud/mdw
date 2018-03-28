@@ -1,4 +1,0 @@
-// POST request to Services/Users/newuser/roles/Process%20Design?app=appId
-{  
-  "cuid": "newuser"  // body not required
-}

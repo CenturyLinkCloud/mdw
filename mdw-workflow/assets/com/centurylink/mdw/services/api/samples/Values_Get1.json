@@ -1,4 +1,0 @@
-// GET request to Services/Values/{ownerType}/{ownerId}}
-{
-  "MyValue1": "One"
-}
