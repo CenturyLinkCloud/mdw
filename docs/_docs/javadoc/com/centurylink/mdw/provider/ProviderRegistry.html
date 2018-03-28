@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -179,31 +179,17 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getDynamicProviders--">getDynamicProviders</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;T&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getDynamicProviders-java.lang.Class-">getDynamicProviders</a></span>(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</code>
-<div class="block">To get all dynamic java Registered service providers</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getDynamicVariableTranslator-java.lang.String-java.lang.ClassLoader-">getDynamicVariableTranslator</a></span>(java.lang.String&nbsp;className,
                             java.lang.ClassLoader&nbsp;parentLoader)</code>
 <div class="block">To get dynamic java variable translator</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html" title="class in com.centurylink.mdw.provider">ProviderRegistry</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;T&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getNonPackageAwareProviders-java.lang.Class-">getNonPackageAwareProviders</a></span>(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/PackageAwareProvider.html" title="interface in com.centurylink.mdw.provider">PackageAwareProvider</a>&lt;T&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getPackageAwareProviders-java.lang.Class-">getPackageAwareProviders</a></span>(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;T&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/provider/ProviderRegistry.html#getProviders-java.lang.Class-">getProviders</a></span>(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</code>&nbsp;</td>
 </tr>
@@ -272,24 +258,6 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;T&gt;&gt;&nbsp;getProviders(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</pre>
 </li>
 </ul>
-<a name="getPackageAwareProviders-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackageAwareProviders</h4>
-<pre>public&nbsp;&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/PackageAwareProvider.html" title="interface in com.centurylink.mdw.provider">PackageAwareProvider</a>&lt;T&gt;&gt;&nbsp;getPackageAwareProviders(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</pre>
-</li>
-</ul>
-<a name="getNonPackageAwareProviders-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNonPackageAwareProviders</h4>
-<pre>public&nbsp;&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;T&gt;&gt;&nbsp;getNonPackageAwareProviders(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</pre>
-</li>
-</ul>
 <a name="getInstance--">
 <!--   -->
 </a>
@@ -330,21 +298,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDynamicProviders</h4>
 <pre>public&nbsp;java.util.Map&lt;java.lang.String,java.util.Set&lt;java.lang.String&gt;&gt;&nbsp;getDynamicProviders()</pre>
-</li>
-</ul>
-<a name="getDynamicProviders-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDynamicProviders</h4>
-<pre>public&nbsp;&lt;T&gt;&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;T&gt;&gt;&nbsp;getDynamicProviders(java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a>&lt;?&gt;&gt;&nbsp;providerType)</pre>
-<div class="block">To get all dynamic java Registered service providers</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>providerType</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-</dl>
 </li>
 </ul>
 <a name="getDynamicVariableTranslator-java.lang.String-java.lang.ClassLoader-">

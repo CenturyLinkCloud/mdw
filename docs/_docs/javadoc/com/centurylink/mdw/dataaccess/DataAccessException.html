@@ -42,7 +42,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/dataaccess/DataAccess.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessOfflineException.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/dataaccess/DataAccessException.html" target="_top">Frames</a></li>
@@ -118,10 +118,6 @@
 <dt>All Implemented Interfaces:</dt>
 <dd>io.limberest.json.Jsonable, java.io.Serializable</dd>
 </dl>
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessOfflineException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessOfflineException</a>, <a href="../../../../com/centurylink/mdw/service/data/task/TaskDataException.html" title="class in com.centurylink.mdw.service.data.task">TaskDataException</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">DataAccessException</span>
@@ -148,16 +144,16 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-int-java.lang.String-">DataAccessException</a></span>(int&nbsp;pCode,
-                   java.lang.String&nbsp;pMessage)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-int-java.lang.String-">DataAccessException</a></span>(int&nbsp;code,
+                   java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-int-java.lang.String-java.lang.Throwable-">DataAccessException</a></span>(int&nbsp;pCode,
-                   java.lang.String&nbsp;pMessage,
-                   java.lang.Throwable&nbsp;pTh)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-int-java.lang.String-java.lang.Throwable-">DataAccessException</a></span>(int&nbsp;code,
+                   java.lang.String&nbsp;message,
+                   java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-java.lang.String-">DataAccessException</a></span>(java.lang.String&nbsp;pMessage)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-java.lang.String-">DataAccessException</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html#DataAccessException-java.lang.String-java.lang.Throwable-">DataAccessException</a></span>(java.lang.String&nbsp;message,
@@ -227,11 +223,7 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <ul class="blockList">
 <li class="blockList">
 <h4>DataAccessException</h4>
-<pre>public&nbsp;DataAccessException(java.lang.String&nbsp;pMessage)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pMessage</code> - </dd>
-</dl>
+<pre>public&nbsp;DataAccessException(java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="DataAccessException-int-java.lang.String-">
@@ -240,13 +232,8 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <ul class="blockList">
 <li class="blockList">
 <h4>DataAccessException</h4>
-<pre>public&nbsp;DataAccessException(int&nbsp;pCode,
-                           java.lang.String&nbsp;pMessage)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pCode</code> - </dd>
-<dd><code>pMessage</code> - </dd>
-</dl>
+<pre>public&nbsp;DataAccessException(int&nbsp;code,
+                           java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="DataAccessException-int-java.lang.String-java.lang.Throwable-">
@@ -255,15 +242,9 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <ul class="blockList">
 <li class="blockList">
 <h4>DataAccessException</h4>
-<pre>public&nbsp;DataAccessException(int&nbsp;pCode,
-                           java.lang.String&nbsp;pMessage,
-                           java.lang.Throwable&nbsp;pTh)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pCode</code> - </dd>
-<dd><code>pMessage</code> - </dd>
-<dd><code>pTh</code> - </dd>
-</dl>
+<pre>public&nbsp;DataAccessException(int&nbsp;code,
+                           java.lang.String&nbsp;message,
+                           java.lang.Throwable&nbsp;cause)</pre>
 </li>
 </ul>
 <a name="DataAccessException-java.lang.String-java.lang.Throwable-">
@@ -304,7 +285,7 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/dataaccess/DataAccess.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessOfflineException.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/dataaccess/DataAccessException.html" target="_top">Frames</a></li>

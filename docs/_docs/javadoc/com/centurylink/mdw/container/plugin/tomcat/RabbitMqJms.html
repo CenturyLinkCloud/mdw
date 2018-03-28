@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -107,13 +107,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../com/centurylink/mdw/container/ContainerContextAware.html" title="interface in com.centurylink.mdw.container">ContainerContextAware</a>, <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></dd>
+<dd><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">RabbitMqJms</span>
 extends java.lang.Object
-implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a>, <a href="../../../../../../com/centurylink/mdw/container/ContainerContextAware.html" title="interface in com.centurylink.mdw.container">ContainerContextAware</a></pre>
+implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></pre>
 </li>
 </ul>
 </div>
@@ -131,7 +131,7 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 <!--   -->
 </a>
 <h3>Fields inherited from interface&nbsp;com.centurylink.mdw.container.<a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#ACTIVEMQ">ACTIVEMQ</a>, <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#JBOSS">JBOSS</a>, <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#NONE">NONE</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#ACTIVEMQ">ACTIVEMQ</a>, <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#NONE">NONE</a></code></li>
 </ul>
 </li>
 </ul>
@@ -182,10 +182,6 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/tomcat/RabbitMqJms.html#setContainerContext-java.lang.Object-">setContainerContext</a></span>(java.lang.Object&nbsp;context)</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/tomcat/RabbitMqJms.html#setMessageDelay-javax.jms.QueueSender-javax.jms.Message-long-">setMessageDelay</a></span>(javax.jms.QueueSender&nbsp;sender,
                javax.jms.Message&nbsp;message,
                long&nbsp;delaySeconds)</code>&nbsp;</td>
@@ -229,19 +225,6 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="setContainerContext-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setContainerContext</h4>
-<pre>public&nbsp;void&nbsp;setContainerContext(java.lang.Object&nbsp;context)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/container/ContainerContextAware.html#setContainerContext-java.lang.Object-">setContainerContext</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/ContainerContextAware.html" title="interface in com.centurylink.mdw.container">ContainerContextAware</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="getQueueConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">
 <!--   -->
 </a>
