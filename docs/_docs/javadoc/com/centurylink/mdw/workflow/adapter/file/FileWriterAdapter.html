@@ -104,7 +104,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="../../../../../../com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html" title="class in com.centurylink.mdw.workflow.activity">com.centurylink.mdw.workflow.activity.DefaultActivityImpl</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">com.centurylink.mdw.workflow.adapter.AdapterActivityBase</a></li>
+<li><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity</a></li>
 <li>
 <ul class="inheritance">
 <li>com.centurylink.mdw.workflow.adapter.file.FileWriterAdapter</li>
@@ -128,7 +128,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre><a href="../../../../../../com/centurylink/mdw/util/timer/Tracked.html" title="annotation in com.centurylink.mdw.util.timer">@Tracked</a>(<a href="../../../../../../com/centurylink/mdw/util/timer/Tracked.html#value--">value</a>=<a href="../../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html#TRACE">TRACE</a>)
 public class <span class="typeNameLabel">FileWriterAdapter</span>
-extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></pre>
+extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></pre>
 </li>
 </ul>
 </div>
@@ -161,11 +161,11 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.workflow.adapter.AdapterActivityBase">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity">
 <!--   -->
 </a>
-<h3>Fields inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#DO_LOGGING">DO_LOGGING</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#REQUEST_VARIABLE">REQUEST_VARIABLE</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#REQUEST_XSD">REQUEST_XSD</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#RESPONSE_VARIABLE">RESPONSE_VARIABLE</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#RESPONSE_XSD">RESPONSE_XSD</a></code></li>
+<h3>Fields inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#DO_LOGGING">DO_LOGGING</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#REQUEST_VARIABLE">REQUEST_VARIABLE</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#REQUEST_XSD">REQUEST_XSD</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#RESPONSE_VARIABLE">RESPONSE_VARIABLE</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#RESPONSE_XSD">RESPONSE_XSD</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.services.process.BaseActivity">
@@ -255,11 +255,11 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.adapter.AdapterActivityBase">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#directInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-">directInvoke</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#doLogging--">doLogging</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#execute--">execute</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#executePostScript-java.lang.Object-">executePostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#executePreScript-java.lang.Object-">executePreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#externalRequestToString-java.lang.Object-">externalRequestToString</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#externalResponseFromString-java.lang.String-">externalResponseFromString</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#externalResponseToString-java.lang.Object-">externalResponseToString</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getAdapterInvocationErrorMessage--">getAdapterInvocationErrorMessage</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getPostScript--">getPostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getPostScriptBindings-java.lang.Object-">getPostScriptBindings</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getPreScript--">getPreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getPreScriptBindings-java.lang.Object-">getPreScriptBindings</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getResponse-java.lang.Object-java.lang.Object-">getResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getStubbedResponse-java.lang.Object-">getStubbedResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getStubRequest-java.lang.String-">getStubRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getStubResponse-java.lang.String-">getStubResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#handleAdapterFailure-int-java.lang.Throwable-">handleAdapterFailure</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#handleAdapterInvocationError-java.lang.Throwable-">handleAdapterInvocationError</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#handleAdapterSuccess-java.lang.Object-">handleAdapterSuccess</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#isStubMode--">isStubMode</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#logRequest-java.lang.String-">logRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#logResponse-java.lang.String-">logResponse</a></code></li>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#directInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-">directInvoke</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#doLogging--">doLogging</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#execute--">execute</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#executePostScript-java.lang.Object-">executePostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#executePreScript-java.lang.Object-">executePreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#externalRequestToString-java.lang.Object-">externalRequestToString</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#externalResponseFromString-java.lang.String-">externalResponseFromString</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#externalResponseToString-java.lang.Object-">externalResponseToString</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getAdapterInvocationErrorMessage--">getAdapterInvocationErrorMessage</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getPostScript--">getPostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getPostScriptBindings-java.lang.Object-">getPostScriptBindings</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getPreScript--">getPreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getPreScriptBindings-java.lang.Object-">getPreScriptBindings</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getResponse-java.lang.Object-java.lang.Object-">getResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubbedResponse-java.lang.Object-">getStubbedResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubRequest-java.lang.String-">getStubRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-">getStubResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#handleAdapterFailure-int-java.lang.Throwable-">handleAdapterFailure</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#handleAdapterInvocationError-java.lang.Throwable-">handleAdapterInvocationError</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#handleAdapterSuccess-java.lang.Object-">handleAdapterSuccess</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#isStubMode--">isStubMode</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logRequest-java.lang.String-">logRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-java.lang.String-">logResponse</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.activity.DefaultActivityImpl">
@@ -374,14 +374,14 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
 <li class="blockList">
 <h4>isSynchronous</h4>
 <pre>public&nbsp;boolean&nbsp;isSynchronous()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#isSynchronous--">AdapterActivityBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#isSynchronous--">ObjectAdapterActivity</a></code></span></div>
 <div class="block">Determine if the adapter itself is synchronous, i.e.
  waiting for responses.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#isSynchronous--">isSynchronous</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html" title="interface in com.centurylink.mdw.activity.types">AdapterActivity</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#isSynchronous--">isSynchronous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#isSynchronous--">isSynchronous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if it needs to wait for responses</dd>
 </dl>
@@ -396,13 +396,13 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
 <pre>protected&nbsp;java.lang.Object&nbsp;openConnection()
                                    throws <a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a>,
                                           <a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#openConnection--">AdapterActivityBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#openConnection--">ObjectAdapterActivity</a></code></span></div>
 <div class="block">Open a connection to the external system.
  You may implement this through a connection pool you implement,
  then this method is to get an instance from the pool.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#openConnection--">openConnection</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#openConnection--">openConnection</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></code> - retriable connection failure</dd>
@@ -417,14 +417,14 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
 <li class="blockList">
 <h4>closeConnection</h4>
 <pre>protected&nbsp;void&nbsp;closeConnection(java.lang.Object&nbsp;connection)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#closeConnection-java.lang.Object-">AdapterActivityBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#closeConnection-java.lang.Object-">ObjectAdapterActivity</a></code></span></div>
 <div class="block">Close a connection opened.
  If you have implemented your connection pool, then
  this method should return the connection instance
  to the pool.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#closeConnection-java.lang.Object-">closeConnection</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#closeConnection-java.lang.Object-">closeConnection</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -436,7 +436,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
 <h4>getRequestData</h4>
 <pre>protected&nbsp;java.lang.Object&nbsp;getRequestData()
                                    throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getRequestData--">AdapterActivityBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getRequestData--">ObjectAdapterActivity</a></code></span></div>
 <div class="block">Override this method if need to translate data from variable
  or need to get data elsewhere. The default
  method assumes the data is in the variable REQUEST_VARIABLE
@@ -446,7 +446,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
  for doing it.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#getRequestData--">getRequestData</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getRequestData--">getRequestData</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code> - when the attribute cannot be
@@ -464,7 +464,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
                                   java.lang.Object&nbsp;requestData)
                            throws <a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a>,
                                   <a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#invoke-java.lang.Object-java.lang.Object-">AdapterActivityBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#invoke-java.lang.Object-java.lang.Object-">ObjectAdapterActivity</a></code></span></div>
 <div class="block">This method must be implemented to perform the
  real invocation of external system service.
 
@@ -487,7 +487,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterA
  adapter instance table for later use.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html#invoke-java.lang.Object-java.lang.Object-">invoke</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/AdapterActivityBase.html" title="class in com.centurylink.mdw.workflow.adapter">AdapterActivityBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#invoke-java.lang.Object-java.lang.Object-">invoke</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">ObjectAdapterActivity</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>response if the adapter is synchronous,
     or the underlying protocol is synchronous. Return null

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -104,7 +104,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="../../../../../../com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html" title="class in com.centurylink.mdw.workflow.activity">com.centurylink.mdw.workflow.activity.DefaultActivityImpl</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">com.centurylink.mdw.workflow.adapter.PoolableAdapterBase</a></li>
+<li><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">com.centurylink.mdw.workflow.adapter.TextAdapterActivity</a></li>
 <li>
 <ul class="inheritance">
 <li>com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter</li>
@@ -122,7 +122,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html" title="interface in com.centurylink.mdw.activity.types">AdapterActivity</a>, <a href="../../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>, <a href="../../../../../../com/centurylink/mdw/adapter/AdapterInvocationError.html" title="interface in com.centurylink.mdw.adapter">AdapterInvocationError</a>, <a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html" title="interface in com.centurylink.mdw.adapter">PoolableAdapter</a></dd>
+<dd><a href="../../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html" title="interface in com.centurylink.mdw.activity.types">AdapterActivity</a>, <a href="../../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>, <a href="../../../../../../com/centurylink/mdw/adapter/AdapterInvocationError.html" title="interface in com.centurylink.mdw.adapter">AdapterInvocationError</a>, <a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html" title="interface in com.centurylink.mdw.adapter">TextAdapter</a></dd>
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
@@ -131,7 +131,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">HttpServiceAdapter</span>
-extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a></pre>
+extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></pre>
 <div class="block">Provides a base implementation for SOAP and Rest adapters</div>
 </li>
 </ul>
@@ -266,16 +266,10 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#init--">init</a></span>()</code>
-<div class="block">Initialization when used by an adapter</div>
+<div class="block">Initialization.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#init-java.util.Properties-">init</a></span>(java.util.Properties&nbsp;parameters)</code>
-<div class="block">Initialization when used by a connection pool</div>
-</td>
-</tr>
-<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-">invoke</a></span>(java.lang.Object&nbsp;connection,
       java.lang.String&nbsp;request,
@@ -286,30 +280,23 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
  response is returned.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#openConnection--">openConnection</a></span>()</code>
 <div class="block">Open connection</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#ping-int-">ping</a></span>(int&nbsp;timeout)</code>
-<div class="block">This method is used for auto-shutdown and restart in a connection pool,
- so need only to be implemented appropriately if you intend to use auto-restart feature.</div>
-</td>
-</tr>
-<tr id="i13" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#setRequestHeaders-java.util.Map-">setRequestHeaders</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.adapter.PoolableAdapterBase">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.adapter.TextAdapterActivity">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#canBeCertified--">canBeCertified</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#directInvoke-java.util.Properties-java.lang.String-int-java.util.Map-">directInvoke</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#doInvoke-java.lang.Object-java.lang.String-int-java.util.Map-">doInvoke</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#doLogging--">doLogging</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#execute--">execute</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#executePostScript--">executePostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#executePreScript-java.lang.Object-">executePreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#filterStubResponse-java.lang.String-java.lang.Object-">filterStubResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getAdapterInvocationErrorMessage--">getAdapterInvocationErrorMessage</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getAttribute-java.lang.String-java.lang.String-boolean-">getAttribute</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getErrorCode-java.lang.Throwable-">getErrorCode</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getMaxTries--">getMaxTries</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getRequestData--">getRequestData</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getRequestMeta--">getRequestMeta</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getResponseHeaders--">getResponseHeaders</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getResponseMeta--">getResponseMeta</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getRetryInterval--">getRetryInterval</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getStubbedResponse-java.lang.String-">getStubbedResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getStubRequest-java.lang.String-">getStubRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getStubResponse-java.lang.String-">getStubResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getTimeoutForResponse--">getTimeoutForResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#handleConnectionException-int-java.lang.Throwable-">handleConnectionException</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#handleException-java.lang.Throwable-">handleException</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#handleRetry-int-java.lang.Throwable-">handleRetry</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#hasPostScript--">hasPostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#hasPreScript--">hasPreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#isRetryable-java.lang.Throwable-">isRetryable</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#isStubMode--">isStubMode</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#isSynchronous--">isSynchronous</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#logRequest-java.lang.String-">logRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#logResponse-java.lang.String-">logResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#onFailure-java.lang.Throwable-">onFailure</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#onSuccess-java.lang.String-">onSuccess</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#setResponseHeaders-java.util.Map-">setResponseHeaders</a></code></li>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#canBeCertified--">canBeCertified</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#directInvoke-java.lang.String-int-java.util.Map-">directInvoke</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#doInvoke-java.lang.Object-java.lang.String-int-java.util.Map-">doInvoke</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#doLogging--">doLogging</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#execute--">execute</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#executePostScript--">executePostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#executePreScript-java.lang.Object-">executePreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#filterStubResponse-java.lang.String-java.lang.Object-">filterStubResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getAdapterInvocationErrorMessage--">getAdapterInvocationErrorMessage</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getAttribute-java.lang.String-java.lang.String-boolean-">getAttribute</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getErrorCode-java.lang.Throwable-">getErrorCode</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getMaxTries--">getMaxTries</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRequestData--">getRequestData</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRequestMeta--">getRequestMeta</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getResponseHeaders--">getResponseHeaders</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getResponseMeta--">getResponseMeta</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRetryInterval--">getRetryInterval</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubbedResponse-java.lang.String-">getStubbedResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubRequest-java.lang.String-">getStubRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubResponse-java.lang.String-">getStubResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getTimeoutForResponse--">getTimeoutForResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleConnectionException-int-java.lang.Throwable-">handleConnectionException</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleException-java.lang.Throwable-">handleException</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleRetry-int-java.lang.Throwable-">handleRetry</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#hasPostScript--">hasPostScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#hasPreScript--">hasPreScript</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isRetryable-java.lang.Throwable-">isRetryable</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isStubMode--">isStubMode</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isSynchronous--">isSynchronous</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logRequest-java.lang.String-">logRequest</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logResponse-java.lang.String-">logResponse</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#onFailure-java.lang.Throwable-">onFailure</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#onSuccess-java.lang.String-">onSuccess</a>, <a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#setResponseHeaders-java.util.Map-">setResponseHeaders</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.activity.DefaultActivityImpl">
@@ -459,12 +446,12 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <li class="blockList">
 <h4>getRequestHeaders</h4>
 <pre>protected&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getRequestHeaders()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getRequestHeaders--">PoolableAdapterBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRequestHeaders--">TextAdapterActivity</a></code></span></div>
 <div class="block">Override to return protocol-specific headers to be included on the request.
  Protocol adapter must have logic to make use of these values.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getRequestHeaders--">getRequestHeaders</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRequestHeaders--">getRequestHeaders</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -505,25 +492,14 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <pre>protected&nbsp;<a href="../../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;getResponse(java.lang.Object&nbsp;connection,
                                java.lang.String&nbsp;responseString)
                         throws java.io.IOException</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getResponse-java.lang.Object-java.lang.String-">PoolableAdapterBase</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getResponse-java.lang.Object-java.lang.String-">TextAdapterActivity</a></code></span></div>
 <div class="block">Override to set protocol response status/message.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#getResponse-java.lang.Object-java.lang.String-">getResponse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getResponse-java.lang.Object-java.lang.String-">getResponse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>
-</li>
-</ul>
-<a name="init-java.util.Properties-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>init</h4>
-<pre>public&nbsp;void&nbsp;init(java.util.Properties&nbsp;parameters)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#init-java.util.Properties-">PoolableAdapter</a></code></span></div>
-<div class="block">Initialization when used by a connection pool</div>
 </li>
 </ul>
 <a name="init--">
@@ -535,8 +511,8 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <pre>public&nbsp;void&nbsp;init()
           throws <a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a>,
                  <a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#init--">PoolableAdapter</a></code></span></div>
-<div class="block">Initialization when used by an adapter</div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html#init--">TextAdapter</a></code></span></div>
+<div class="block">Initialization.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></code></dd>
@@ -553,7 +529,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <pre>public&nbsp;java.lang.Object&nbsp;openConnection()
                                 throws <a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a>,
                                        <a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#openConnection--">PoolableAdapter</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html#openConnection--">TextAdapter</a></code></span></div>
 <div class="block">Open connection</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -574,7 +550,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <li class="blockList">
 <h4>closeConnection</h4>
 <pre>public&nbsp;void&nbsp;closeConnection(java.lang.Object&nbsp;connection)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#closeConnection-java.lang.Object-">PoolableAdapter</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html#closeConnection-java.lang.Object-">TextAdapter</a></code></span></div>
 <div class="block">Close a connection opened.</div>
 </li>
 </ul>
@@ -590,7 +566,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
                                java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
                         throws <a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a>,
                                <a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-">PoolableAdapter</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-">TextAdapter</a></code></span></div>
 <div class="block">send a message to external system, and if the underlying
  protocol is synchronous (WebService, EJB, etc), the
  response is returned.
@@ -612,29 +588,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <dd><code><a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></code> - non-retriable exception</dd>
 <dd><code><a href="../../../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></code> - retriable exception</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-"><code>PoolableAdapter.invoke(java.lang.Object, java.lang.String, int, java.util.Map)</code></a></dd>
-</dl>
-</li>
-</ul>
-<a name="ping-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>ping</h4>
-<pre>public&nbsp;boolean&nbsp;ping(int&nbsp;timeout)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/adapter/PoolableAdapter.html#ping-int-">PoolableAdapter</a></code></span></div>
-<div class="block">This method is used for auto-shutdown and restart in a connection pool,
- so need only to be implemented appropriately if you intend to use auto-restart feature.
- The method is only used by connection pools, not by activities.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>timeout</code> - timeout in seconds. The value is obtained from
-         the property PingTimeout in the pool configuration.
-         If PingTimeout is not specified, the value of the property "timeout" is used.
-         If "timeout" is not specified either, then -1 is passed in.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the connection is up, and false if it is still down.</dd>
+<dd><a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-"><code>TextAdapter.invoke(java.lang.Object, java.lang.String, int, java.util.Map)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -647,7 +601,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <pre>protected&nbsp;boolean&nbsp;canBeSynchronous()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#canBeSynchronous--">canBeSynchronous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#canBeSynchronous--">canBeSynchronous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -660,7 +614,7 @@ extends <a href="../../../../../../com/centurylink/mdw/workflow/adapter/Poolable
 <pre>protected&nbsp;boolean&nbsp;canBeAsynchronous()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html#canBeAsynchronous--">canBeAsynchronous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#canBeAsynchronous--">canBeAsynchronous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></code></dd>
 </dl>
 </li>
 </ul>
