@@ -55,7 +55,6 @@ com.centurylink.mdw.observer.task
 com.centurylink.mdw.provider
 com.centurylink.mdw.rules
 com.centurylink.mdw.script
-com.centurylink.mdw.service.action
 com.centurylink.mdw.service.api
 com.centurylink.mdw.service.api.validator
 com.centurylink.mdw.service.data
