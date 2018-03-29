@@ -66,7 +66,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
                 if (nextServerInst.equals(ApplicationContext.getServer().toString())) {
                     break;
                 } else {
-                    success = super.runOnDifferentManagedServer(nextServerInst); // if one instance is offline, user next in the queue
+                    success = super.runOnDifferentManagedServer(args, nextServerInst); // if one instance is offline, user next in the queue
                     if (success) {
                         runOnCurrentInstance = false;
                         break;

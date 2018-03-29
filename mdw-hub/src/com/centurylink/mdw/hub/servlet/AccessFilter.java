@@ -250,7 +250,7 @@ public class AccessFilter implements Filter {
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
                 user = null;
                 String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
-                if (authHdr == null && ApplicationContext.isMdwAuth() && "GET".equals(request.getMethod()))
+                if (authHdr == null && ApplicationContext.isMdwAuth() && "GET".equals(request.getMethod())) //JWT coming in on URL query string
                     authHdr = request.getParameter(Listener.AUTHORIZATION_HEADER_NAME);
                 if (authHdr != null) {
                     Map<String,String> headers = new HashMap<String,String>();
@@ -292,7 +292,8 @@ public class AccessFilter implements Filter {
                     // user not authenticated
                     if (remoteHost == null)
                         remoteHost = InetAddress.getByName(request.getRemoteHost());
-                    if (!isAuthExclude(path) && !IsIntraRequest(remoteHost)) {
+                    boolean internalRequest = IsIntraRequest(remoteHost);
+                    if (!isAuthExclude(path) && !internalRequest) {
                         if ("ct".equals(authMethod)) {
                             // redirect to login page is performed upstream (CT web agent)
                             throw new MdwSecurityException("Authentication required");
@@ -310,10 +311,20 @@ public class AccessFilter implements Filter {
                             return;
                         }
                     }
+                    else if (internalRequest) {
+                        User u = ServiceLocator.getUserServices().getUser(ApplicationContext.getServiceUser() == null ? "mdwapp" : ApplicationContext.getServiceUser());
+                        if (u != null) {
+                            user = new AuthenticatedUser(u, u.getAttributes());
+                            session.setAttribute("authenticatedUser", user);
+                        }
+                        else
+                            logger.warn("Cannot identify a valid service user for internal MDW request.  Please create mdwapp user or specify another user.");
+                    }
                 }
             }
+
             // This is to remove the JWT from QueryString
-            if (user != null && "GET".equals(request.getMethod()) && request.getParameter(Listener.AUTHORIZATION_HEADER_NAME) != null) {
+            if ((user != null || authUser != null)  && "GET".equals(request.getMethod()) && request.getParameter(Listener.AUTHORIZATION_HEADER_NAME) != null) {
                 response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
                 return;
             }

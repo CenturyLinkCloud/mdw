@@ -119,8 +119,6 @@ public class FallbackEventHandler implements ExternalEventHandler {
             String propname = XmlPath.getRootNodeValue(msgdoc);
             response = PropertyManager.getProperty(propname);
             if (response==null) response = "";
-        } else if (rootNodeName.equals("_mdw_version")) {
-            response = ApplicationContext.getMdwVersion();
         } else if (rootNodeName.equals("_mdw_run_job")) {
             String classNameAndArgs = XmlPath.getRootNodeValue(msgdoc);
             CallURL url = new CallURL(classNameAndArgs);

@@ -18,7 +18,6 @@ package com.centurylink.mdw.service.handler;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -31,22 +30,16 @@ import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
-import com.centurylink.mdw.listener.RegressionTestEventHandler;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.PackageAware;
-import com.centurylink.mdw.service.Action;
-import com.centurylink.mdw.service.ActionRequestDocument;
-import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
-import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.xml.XmlPath;
 
 public class ServiceRequestHandler implements EventHandler, PackageAware {
 
@@ -67,8 +60,6 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
     public Response handleEventMessage(Request req, Object requestObj, Map<String,String> metaInfo)
     throws EventHandlerException {
 
-        String request = req.getContent();
-
         TextService service = null;
         String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
 
@@ -79,78 +70,12 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                 // XML request
                 format = Format.xml;
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "text/xml");
-                if ("ActionRequest".equals(XmlPath.getRootNodeName((XmlObject)requestObj))) {
-                    ActionRequestDocument actionRequestDoc = (ActionRequestDocument) ((XmlObject)requestObj).changeType(ActionRequestDocument.type);
-                    ActionRequest actionRequest = actionRequestDoc.getActionRequest();
-
-                    Action action = actionRequest.getAction();
-                    if (action == null || action.getName() == null)
-                        throw new EventHandlerException("Missing Action in request");
-                    // compatibility for regression test handler
-                    if (action.getName().equals("RegressionTest")) {
-                        RegressionTestEventHandler handler = new RegressionTestEventHandler();
-                        return new Response(handler.handleEventMessage(request, requestObj, metaInfo));
-                    }
-
-                    for (Parameter param : actionRequest.getAction().getParameterList())
-                        metaInfo.put(param.getName(), param.getStringValue());
-                    requestObj = actionRequest.getContent();
-
-                    metaInfo.put(Listener.METAINFO_REQUEST_PATH, action.getName());
-                }
             }
             else if (requestObj instanceof JSONObject) {
                 // JSON request
                 format = Format.json;
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "application/json");
-                JSONObject jsonObj = (JSONObject) requestObj;
-                String action = null;
-                if ((jsonObj.has("Action") && jsonObj.get("Action") instanceof JSONObject) ||
-                        (jsonObj.has("action") && jsonObj.get("action") instanceof JSONObject)) {
-                    JSONObject actionObj = jsonObj.has("Action") ? jsonObj.getJSONObject("Action") : jsonObj.getJSONObject("action");
-                    if (actionObj.has("name")) {
-                        action = actionObj.getString("name");
-                        if (actionObj.has("parameters")) {
-                            Object paramsObj = actionObj.get("parameters");
-                            if (paramsObj instanceof JSONArray) {
-                                JSONArray params = (JSONArray) paramsObj;
-                                // TODO: does this ever really work?
-                                for (int i = 0; i < params.length(); i++) {
-                                    JSONObject param = params.getJSONObject(i);
-                                    String paramName = JSONObject.getNames(param)[0];
-                                    String value = param.getString(paramName);
-                                    metaInfo.put(paramName, value);
-                                }
-                            }
-                            else {
-                                // params is a JSONObject
-                                JSONObject params = (JSONObject) paramsObj;
-                                String[] names = JSONObject.getNames(params);
-                                if (names != null) {
-                                    for (String name : names)
-                                        metaInfo.put(name, params.getString(name));
-                                }
-                            }
-                        }
-                        // top level entity
-                        String[] jsonNames = JSONObject.getNames(jsonObj);
-                        if (jsonNames != null) {
-                            if (jsonNames.length > 1) {
-                                for (int i = 0; i < jsonNames.length; i++) {
-                                    String paramName = jsonNames[i];
-                                    if (!paramName.equals("Action") && !paramName.equals("action")) {
-                                        JSONObject value = jsonObj.getJSONObject(paramName);
-                                        requestObj = value;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (action != null)
-                        metaInfo.put(Listener.METAINFO_REQUEST_PATH, action);
-                }
             }
-            // compatibility - END
 
             if (service == null) {
                 service = getServiceInstance(metaInfo);
@@ -310,18 +235,6 @@ public class ServiceRequestHandler implements EventHandler, PackageAware {
                     TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/");
                     if (service != null)
                         return service;
-                }
-                if (pathSegments.length == 1) {
-                    // fall back to old-style REST handlers
-                    String cl = pathSegments[0];
-                    try {
-                        Class<? extends TextService> serviceClass = Class.forName("com.centurylink.mdw.service.resource." + cl).asSubclass(TextService.class);
-                        return serviceClass.newInstance();
-                    }
-                    catch (ClassNotFoundException cnfe) {
-                        Class<? extends TextService> serviceClass = Class.forName("com.centurylink.mdw.service.action." + cl).asSubclass(TextService.class);
-                        return serviceClass.newInstance();
-                    }
                 }
                 return null;
             }

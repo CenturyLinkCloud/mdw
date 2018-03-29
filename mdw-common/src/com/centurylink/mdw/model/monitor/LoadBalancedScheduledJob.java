@@ -17,16 +17,17 @@ package com.centurylink.mdw.model.monitor;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.service.Action;
-import com.centurylink.mdw.service.ActionRequestDocument;
-import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.service.Parameter;
 
 public abstract class LoadBalancedScheduledJob implements ScheduledJob {
 
@@ -34,26 +35,28 @@ public abstract class LoadBalancedScheduledJob implements ScheduledJob {
 
     public abstract void runOnLoadBalancedInstance(CallURL args);
 
-    protected boolean runOnDifferentManagedServer(String remoteHostPort) {
+    protected boolean runOnDifferentManagedServer(CallURL url, String remoteHostPort) {
         boolean isSuccess = true;
         // needs to be run on a different server instance
-        String remoteUrl = "http://" + remoteHostPort + "/" + ApplicationContext.getServicesContextRoot() + "/Services/REST";
+        String remoteUrl = "http://" + remoteHostPort + "/" + ApplicationContext.getServicesContextRoot() + "/services/ScheduledJobs/run";
 
-        ActionRequestDocument actionRequestDoc = ActionRequestDocument.Factory.newInstance();
-        ActionRequest actionRequest = actionRequestDoc.addNewActionRequest();
-        Action action = actionRequest.addNewAction();
-        action.setName("RunScheduledJob");
-        Parameter param = action.addNewParameter();
-        param.setName("className");
-        param.setStringValue(this.getClass().getName());
+        JSONObject json = new JSONObject();
+        json.put("className", url.getAction());
+        for (String key : url.getParameters().keySet()) {
+            if (!StringHelper.isEmpty(url.getParameter(key)))
+                json.put(key, url.getParameter(key));
+        }
 
         HttpHelper httpHelper = null;
         try {
             // submit the request
             httpHelper = new HttpHelper(new URL(remoteUrl));
-            String response = httpHelper.post(actionRequestDoc.xmlText());
+            Map<String,String> hdrs = new HashMap<>();
+            hdrs.put("Content-Type", "application/json");
+            httpHelper.setHeaders(hdrs);
+            String response = httpHelper.post(json.toString());
             if (httpHelper.getResponseCode() != 200) {
-                logger.severe("Response Status message from instance"+ remoteHostPort +" ScheduledJob."+this.getClass().getName()+" : "+response);
+                logger.severe("Response Status message from instance "+ remoteHostPort +" ScheduledJob."+this.getClass().getName()+" : "+ response);
             }
         }
         catch (IOException ex) {

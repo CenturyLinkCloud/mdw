@@ -32,6 +32,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cloud.CloudClassLoader;
+import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
@@ -48,6 +49,7 @@ import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.PackageAware;
@@ -56,6 +58,7 @@ import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.service.data.event.EventHandlerCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventServices;
@@ -103,29 +106,17 @@ public class ListenerHelper {
             String rootname = XmlPath.getRootNodeName(xmlBean);
             if (rootname.startsWith("_mdw_"))
                 return null; // internal request
+            else if ("ActionRequest".equals(rootname)) {
+                String v = EventHandlerCache.regressionTestHandler.getXpath().evaluate(xmlBean);
+                if (v != null)
+                    return EventHandlerCache.regressionTestHandler;
+            }
             List<ExternalEvent> bucket = EventHandlerCache.getExternalEvents(rootname);
             if (bucket != null) {
-                if ("ActionRequest".equals(rootname)) {
-                    // compatibility for ESOWF -- prefer qualified matches
-                    ExternalEvent frameworkActionHandler = null;
-                    for (ExternalEvent e : bucket) {
-                        String v = e.getXpath().evaluate(xmlBean);
-                        if (v != null) {
-                            if ("ActionRequest".equals(e.getEventName()))
-                                frameworkActionHandler = e;
-                            else
-                                return e;
-                        }
-                    }
-                    if (frameworkActionHandler != null)
-                        return frameworkActionHandler;
-                }
-                else {
-                    for (ExternalEvent e : bucket) {
-                        String v = e.getXpath().evaluate(xmlBean);
-                        if (v != null)
-                            return e;
-                    }
+                for (ExternalEvent e : bucket) {
+                    String v = e.getXpath().evaluate(xmlBean);
+                    if (v != null)
+                        return e;
                 }
             }
             bucket = EventHandlerCache.getExternalEvents("*");
@@ -161,6 +152,38 @@ public class ListenerHelper {
             }
         }
         return clsname;
+    }
+
+    /**
+     * The user identified in the AuthenticatedUser headers must be authorized to
+     * perform this action.  For HTTP, MDW removes this header (if it exists) from
+     * every request and then populates based on session authentication or HTTP Basic/Bearer.
+     * @param content
+     *
+     * @return authorized user if successful
+     */
+    private boolean isAuthorized(EventHandler handler, Map<String,String> headers)
+    throws AuthorizationException {
+        // Exclude unless it is REST or SOAP (i.e. HTTP)
+        if (!Listener.METAINFO_PROTOCOL_REST.equals(headers.get(Listener.METAINFO_PROTOCOL)) && !Listener.METAINFO_PROTOCOL_SOAP.equals(headers.get(Listener.METAINFO_PROTOCOL)))
+            return true;
+
+        String userId = headers.get(Listener.AUTHENTICATED_USER_HEADER);
+        User user = null;
+
+        List<String> roles = handler.getRoles();
+        if (roles != null && !roles.isEmpty()) {
+            if (userId != null)
+                user = UserGroupCache.getUser(userId);
+            if (user == null)
+                throw new AuthorizationException(ServiceException.NOT_AUTHORIZED, "Event Handler " + handler.getClass().getSimpleName() + " requires authenticated user");
+            for (String role : roles) {
+                if (user.hasRole(role))
+                    return true;
+            }
+            throw new AuthorizationException(ServiceException.NOT_AUTHORIZED, "User: " + userId + " not authorized for: " + handler.getClass().getSimpleName());
+        }
+        return true;
     }
 
     /**
@@ -345,7 +368,9 @@ public class ListenerHelper {
 
             if (eventHandler == null) {
                 FallbackEventHandler defaultHandler = new FallbackEventHandler();
-                return defaultHandler.handleSpecialEventMessage((XmlObject) msgdoc);
+                if (isAuthorized(defaultHandler, metaInfo))  // Throws exception if not authorized
+                    // Need authorization for incoming HTTP requests
+                    return defaultHandler.handleSpecialEventMessage((XmlObject) msgdoc);
             }
 
             // parse handler specification - must before checking persistence flag
@@ -381,6 +406,10 @@ public class ListenerHelper {
 
             if (handler == null)
                 throw new EventHandlerException("Unable to create event handler for class: " + clsname);
+
+            // Content based (XPATH) external event handler request - Need to authorize
+            if (!EventHandlerCache.serviceHandler.equals(eventHandler))
+                isAuthorized(handler, metaInfo);  // Throws exception if not authorized
 
             requestDoc.setContent(request);
             Response response = handler.handleEventMessage(requestDoc, msgdoc, metaInfo);

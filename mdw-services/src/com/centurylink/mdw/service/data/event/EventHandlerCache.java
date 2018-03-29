@@ -75,6 +75,15 @@ public class EventHandlerCache implements PreloadableCache {
         serviceHandler.setId(new Long(0));
     }
 
+    public static ExternalEvent regressionTestHandler = new ExternalEvent();
+    static {
+        regressionTestHandler.setEventName("RegressionTestHandler");
+        regressionTestHandler.setEventHandler("com.centurylink.mdw.listener.RegressionTestEventHandler");
+        regressionTestHandler.setPackageName(ProcessLoader.MDW_BASE_PACKAGE);
+        regressionTestHandler.setId(new Long(0));
+        regressionTestHandler.setMessagePattern("ActionRequest/Action[@Name=RegressionTest]");
+    }
+
     public synchronized void refreshCache() throws CachingException {
         loadCache();
     }
