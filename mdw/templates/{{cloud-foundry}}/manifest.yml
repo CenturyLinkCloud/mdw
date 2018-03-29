@@ -71,9 +71,9 @@ env:
     
     "mdw.git.local.path": "./repo",
     "mdw.git.remote.url": "{{git-remote-url}}",
-    "mdw.git.branch": "{{git.branch}}",
-    "mdw.git.user": "{{git.user}}",
-    "mdw.git.password": "{{git.password}}",
+    "mdw.git.branch": "{{git-branch}}",
+    "mdw.git.user": "{{git-user}}",
+    "mdw.git.password": "{{git-password}}",
   
     "mdw.hub.url": "https://{{project}}.useast.appfog.ctl.io/mdw",
     "mdw.services.url": "http://{{project}}.useast.appfog.ctl.io:80/mdw",
