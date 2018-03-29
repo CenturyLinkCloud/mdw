@@ -3,6 +3,6 @@ KafkaProducer.proc=5
 KafkaProducer.test=1
 KafkaProducer.yaml=3 Auto-created
 MDWKafkaListener.java=1
-MDWKafkaListenerRegistration.java=2
+MDWKafkaListenerRegistration.java=3
 kafka-clients-1.0.0.jar=1
 readme.md=2

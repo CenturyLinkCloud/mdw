@@ -796,7 +796,7 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
-    protected ScriptEvaluator getScriptEvaluator(String name, String language) throws PropertyException {
+    protected ScriptEvaluator getScriptEvaluator(String name, String language) throws ExecutionException {
         if (language == null)
             throw new NullPointerException("Missing script evaluator language");
 
@@ -811,8 +811,16 @@ public abstract class BaseActivity implements GeneralActivity {
             else
                 throw new PropertyException("No script executor property value found: " + propName);
         }
-        else
-            evalImpl = (ScriptEvaluator) ApplicationContext.getClassInstance(evalImplClassName);
+        else {
+            try {
+                Class<? extends ScriptEvaluator> evalClass = getPackage().getCloudClassLoader()
+                        .loadClass(evalImplClassName).asSubclass(ScriptEvaluator.class);
+                evalImpl = evalClass.newInstance();
+            }
+            catch (ReflectiveOperationException ex) {
+                throw new ExecutionException("Cannot instantiate " + evalImplClassName + " (needs an optional asset package?)", ex);
+            }
+        }
         evalImpl.setName(name);
         return evalImpl;
     }
@@ -1306,8 +1314,16 @@ public abstract class BaseActivity implements GeneralActivity {
             else
                 throw new PropertyException("No script executor property value found: " + propName);
         }
-        else
-            exeImpl = (ScriptExecutor) ApplicationContext.getClassInstance(exeImplClassName);
+        else {
+            try {
+                Class<? extends ScriptExecutor> exeClass = getPackage().getCloudClassLoader()
+                        .loadClass(exeImplClassName).asSubclass(ScriptExecutor.class);
+                exeImpl = exeClass.newInstance();
+            }
+            catch (ReflectiveOperationException ex) {
+                throw new ExecutionException("Cannot instantiate " + exeImplClassName + " (needs an optional asset package?)", ex);
+            }
+        }
         exeImpl.setName(getScriptExecClassName(qualifier));
         return exeImpl;
     }

@@ -34,12 +34,8 @@ import com.centurylink.mdw.util.file.FileHelper;
 
 public class Asset implements Serializable, Comparable<Asset>, Jsonable {
 
-    public static final String MILESTONE_REPORT = "MILESTONE_REPORT";
+    public static final String KOTLIN = "KOTLIN";
     public static final String GROOVY = "GROOVY";
-    public static final String FORM = "FORM";
-    public static final String USECASE = "USECASE";
-    public static final String FACELET = "FACELET";
-    public static final String JSP = "JSP";
     public static final String PAGELET = "PAGELET";
     public static final String VELOCITY = "VELOCITY";
     public static final String IMAGE_JPEG = "IMAGE_JPEG";
@@ -58,7 +54,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String EXCEL_2007 = "EXCEL_2007";
     public static final String MS_WORD = "MS_WORD";
     public static final String CSV = "CSV";
-    public static final String BIRT = "BIRT";
     public static final String HTML = "HTML";
     public static final String TESTDATA = "TESTDATA";
     public static final String JAR = "JAR";
@@ -83,13 +78,9 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String GENERAL_BINARY = "GENERAL_BINARY";
 
     public static final String[] FORMATS = {
-        MILESTONE_REPORT,
+        KOTLIN,
         GROOVY,
-        FORM,
-        USECASE,
-        FACELET,
         PAGELET,
-        JSP,
         VELOCITY,
         IMAGE_JPEG,
         IMAGE_GIF,
@@ -106,7 +97,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         EXCEL_2007,
         MS_WORD,
         CSV,
-        BIRT,
         HTML,
         TESTDATA,
         JAR,
@@ -141,8 +131,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     private Date createDate, modifyDate, loadDate;
     private int version;
     private String comment;
-    private Asset nextVersion;          // for designer use
-    private Asset prevVersion;          // for designer use
     private List<Attribute> attributes;
     private Long ownerId;
     private String ownerType;
@@ -165,8 +153,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         this.modifyDate = cloneFrom.modifyDate;
         this.version = cloneFrom.version;
         this.comment = cloneFrom.comment;
-        this.nextVersion = cloneFrom.nextVersion;
-        this.prevVersion = cloneFrom.prevVersion;
         if (cloneFrom.attributes != null) {
             this.attributes = new ArrayList<Attribute>();
             for (Attribute attr : cloneFrom.attributes) {
@@ -346,7 +332,6 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public String getContentType() {
         if (contentTypes == null) {
             contentTypes = new HashMap<String,String>();
-            contentTypes.put(BIRT, "text/xml");
             contentTypes.put(SPRING, "text/xml");
             contentTypes.put(CAMEL_ROUTE, "text/xml");
             contentTypes.put(CSS, "text/css");
@@ -355,9 +340,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             contentTypes.put(XLSX, "application/vnd.ms-excel");
             contentTypes.put(EXCEL_2007, "application/vnd.ms-excel");
             contentTypes.put(MS_WORD, "application/vnd.ms-word");
-            contentTypes.put(FACELET, "text/xml");
             contentTypes.put(PAGELET, "text/xml");
-            contentTypes.put(FORM, "text/html");
             contentTypes.put(HTML, "text/html");
             contentTypes.put(IMAGE_GIF, "image/gif");
             contentTypes.put(IMAGE_JPEG, "image/jpeg");
@@ -575,22 +558,18 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         if (languageToExtension == null) {
             languageToExtension = new HashMap<String,String>();
             // TODO map should be driven from properties
+            languageToExtension.put("Kotlin", ".kt");
+            languageToExtension.put("KOTLIN", ".kt");
             languageToExtension.put("Groovy", ".groovy");
             languageToExtension.put("GROOVY", ".groovy");
             languageToExtension.put("JavaScript", ".js");
             languageToExtension.put("JAVASCRIPT", ".js");
             languageToExtension.put("JSX", ".jsx");
             languageToExtension.put("WEBSCRIPT", ".js");
-            languageToExtension.put("MagicBox", ".mb");
-            languageToExtension.put("MAGICBOX", ".mb");
             languageToExtension.put("GPath", ".groovy");
             languageToExtension.put("GPATH", ".groovy");
             languageToExtension.put("xslt", ".xsl");
             languageToExtension.put("XSLT", ".xsl");
-            languageToExtension.put("facelet", ".xhtml");
-            languageToExtension.put("Facelet", ".xhtml");
-            languageToExtension.put("FACELET", ".xhtml");
-            languageToExtension.put("JSP", ".jsp");
             languageToExtension.put("PAGELET", ".xml");
             languageToExtension.put("Pagelet", ".xml");
             languageToExtension.put("Drools", ".drl");
@@ -600,16 +579,13 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             languageToExtension.put("CSS", ".css");
             languageToExtension.put("VELOCITY", ".vsl");
             languageToExtension.put("Velocity", ".vsl");
-            languageToExtension.put("BIRT", ".rptdesign");
             languageToExtension.put("EXCEL", ".xls");
             languageToExtension.put("EXCEL_2007", ".xlsx");
             languageToExtension.put("MS_WORD", ".docx");
             languageToExtension.put("MS Word", ".docx");
             languageToExtension.put("HTML", ".html");
-            languageToExtension.put("FORM", ".xml");
             languageToExtension.put("Java", ".java");
             languageToExtension.put("CONFIG", ".xml");
-            languageToExtension.put("USECASE", ".doc");
             languageToExtension.put("TESTDATA", ".tst");
             languageToExtension.put("JAR", ".jar");
             languageToExtension.put("TEXT", ".txt");
@@ -649,16 +625,14 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         if (extensionToLanguage == null) {
             extensionToLanguage = new HashMap<String,String>();
             // TODO map should be driven from properties
+            extensionToLanguage.put(".kt", KOTLIN);
             extensionToLanguage.put(".groovy", GROOVY);
             extensionToLanguage.put(".js", JAVASCRIPT);
             extensionToLanguage.put(".jsx", JSX);
-            extensionToLanguage.put(".xhtml", FACELET);
-            extensionToLanguage.put(".jsp", JSP);
             extensionToLanguage.put(".drl", DROOLS);
             extensionToLanguage.put(".brl", GUIDED);
             extensionToLanguage.put(".css", CSS);
             extensionToLanguage.put(".vsl", VELOCITY);
-            extensionToLanguage.put(".rptdesign", BIRT);
             extensionToLanguage.put(".xls", EXCEL);
             extensionToLanguage.put(".xlsx", EXCEL_2007);
             extensionToLanguage.put(".docx", MS_WORD);

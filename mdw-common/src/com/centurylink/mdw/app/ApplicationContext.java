@@ -28,9 +28,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -80,7 +78,6 @@ public class ApplicationContext {
     private static String serverHost;
     private static StandardLogger logger;
     private static String containerName="";
-    private static String engineContextPath = null;
 
     public static NamingProvider getNamingProvider() {
         return namingProvider;
@@ -208,37 +205,6 @@ public class ApplicationContext {
         catch (Exception ex) {
           logger.severeException("ApplicationContext: verifyClass(): General Exception occurred: " + ex.getMessage(), ex);
           return false;
-        }
-    }
-
-    /**
-     * Instantiates a class
-     * @param className
-     * @return boolean status
-     */
-    public static Object getClassInstance(String className){
-        try{
-            Class<?> cl = Class.forName(className);
-            return cl.newInstance();
-        }
-        catch (Exception ex) {
-            logger.severeException("ApplicationContext: getClassInstance(): General Exception occurred: " + ex.getMessage(), ex);
-            return null;
-        }
-    }
-
-    /**
-     * Gets a class based on its name
-     * @param className
-     * @return the class
-     */
-    public static Class<?> getClass(String className){
-        try {
-             return Class.forName(className);
-        }
-        catch (Exception ex) {
-          logger.severeException("ApplicationContext: getClass(): General Exception occurred: " + ex.getMessage(), ex);
-          return null;
         }
     }
 
@@ -495,14 +461,6 @@ public class ApplicationContext {
         return getContextRoot(getServicesUrl());
     }
 
-    public static void setEngineContextPath(String v) {
-        engineContextPath = v;
-    }
-
-    public static String getEngineContextPath() {
-        return engineContextPath;
-    }
-
     public static Server getServer() {
         return new Server(getServerHost(), getServerPort());
     }
@@ -651,16 +609,6 @@ public class ApplicationContext {
             completeServerList = new ServerList(getServerList(), getRoutingServerList());
         }
         return completeServerList;
-    }
-
-    private static Map<String,Date> mdwBundleActivationTimes;
-    public static void setBundleActivationTime(String name, Date time) {
-        getMdwBundleActivationTimes().put(name, time);
-    }
-    public static Map<String,Date> getMdwBundleActivationTimes() {
-        if (mdwBundleActivationTimes == null)
-            mdwBundleActivationTimes = new LinkedHashMap<String,Date>();
-        return mdwBundleActivationTimes;
     }
 
     public static boolean isFileBasedAssetPersist() {

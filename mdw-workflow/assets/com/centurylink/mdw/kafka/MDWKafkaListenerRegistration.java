@@ -9,14 +9,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyUtil;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
-import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.config.PropertyUtil;
 
 /**
  * Dynamic Java workflow asset.
@@ -52,7 +51,14 @@ public class MDWKafkaListenerRegistration implements StartupService {
                 Properties props = listenerSpecs.get(listenerName);
                 String clsname = props.getProperty(MDWKafkaListener.KAFKAPOOL_CLASS_NAME);
                 final MDWKafkaListener listener;
-                if (clsname!=null) listener = (MDWKafkaListener)ApplicationContext.getClassInstance(clsname);
+                if (clsname!=null)  {
+                    try {
+                        listener = (MDWKafkaListener)Class.forName(clsname).newInstance();
+                    }
+                    catch (ReflectiveOperationException ex) {
+                        throw new StartupException("Cannot instantiate " + clsname, ex);
+                    }
+                }
                 else listener = new MDWKafkaListener();
                 if (listener!=null) {
                     listeners.put(listenerName, listener);

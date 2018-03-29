@@ -3,5 +3,5 @@
   "icon": "shape:decision",
   "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
   "label": "Expression Evaluator",
-  "pagelet": "<PAGELET>\n  <RULE NAME='Expression' TYPE='EXPRESSION' LANGUAGES='Groovy,javax.el,JavaScript'/>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <RULE NAME='Expression' TYPE='EXPRESSION' LANGUAGES='Groovy,javax.el,Kotlin,JavaScript'/>\n<\/PAGELET>"
 }

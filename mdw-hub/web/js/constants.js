@@ -68,6 +68,7 @@ constantsMod.constant('ASSET_TYPES', {
   Jar: 'jar',
   JPG: 'jpg',
   JSON: 'json',
+  Kotlin: 'kt',
   Markdown: 'md',  
   PNG: 'png',
   Process: 'proc',

@@ -3,5 +3,5 @@
   "icon": "script.gif",
   "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
   "label": "Execute Script",
-  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Groovy,JavaScript'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='/MDWWeb/doc/scriptActivity.html'>Script Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Groovy,Kotlin,JavaScript'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='/MDWWeb/doc/scriptActivity.html'>Script Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }
