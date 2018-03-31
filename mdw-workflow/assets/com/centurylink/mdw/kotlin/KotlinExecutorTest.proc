@@ -6,7 +6,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=117,ly=169,type=Elbow,xs=97&154,ys=128&216"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=117,ly=172,type=Elbow,xs=97&154,ys=128&231"},
         "event": "FINISH",
         "id": "T7",
         "to": "A10"
@@ -20,6 +20,7 @@
     },
     {
       "attributes": {
+        "Rule": "println(\"testCase: ${testCase}\")",
         "SCRIPT": "Kotlin",
         "WORK_DISPLAY_INFO": "x=348,y=198,w=100,h=60"
       },
@@ -51,6 +52,7 @@
     },
     {
       "attributes": {
+        "Rule": "println(\"testCase: ${testCase}\")",
         "SCRIPT": "Kotlin",
         "WORK_DISPLAY_INFO": "x=347,y=94,w=100,h=60"
       },
@@ -87,23 +89,23 @@
     },
     {
       "attributes": {
-        "Expression": "${testCase}",
+        "Expression": "bindings[\"testCase\"]",
         "SCRIPT": "Kotlin",
-        "WORK_DISPLAY_INFO": "x=158,y=196,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=158,y=196,w=74,h=70"
       },
       "id": "A10",
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
       "name": "Which",
       "transitions": [
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=294,ly=220,type=Elbow,xs=222&344,ys=217&217"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=297,ly=231,type=Elbow,xs=236&344,ys=228&228"},
           "event": "FINISH",
           "id": "T1",
           "resultCode": "decide",
           "to": "A3"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=300,ly=128,type=Elbow,xs=222&343,ys=216&124"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=300,ly=133,type=Elbow,xs=236&343,ys=231&124"},
           "event": "FINISH",
           "id": "T4",
           "resultCode": "exec",

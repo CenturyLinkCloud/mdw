@@ -40,17 +40,14 @@ dependencies {
     compile fileTree(dir: "assets/com/centurylink/mdw/camel", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/node", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
-    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    compile fileTree(dir: "assets/com/centurylink/mdw/kotlin", includes: ["*.jar"])
     
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
     compile group: "org.apache.velocity", name: "velocity", version: "1.7"
     
     compile group: "junit", name: "junit", version:"4.8.1"
     compile group: "oro", name: "oro", version: "2.0.8"   
     
-    
-    // Un-comment below if you add the tibco and/or ibmmq package(s) in your workspace's assets
-    //  compile fileTree(dir: "assets/com/centurylink/mdw/tibco", includes: ["*.jar"])
-    //  compile fileTree(dir: "assets/com/centurylink/mdw/ibmmq", includes: ["*.jar"])
 }
 
 task cleanJar {

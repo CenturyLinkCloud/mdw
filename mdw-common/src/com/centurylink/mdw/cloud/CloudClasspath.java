@@ -120,6 +120,35 @@ public class CloudClasspath {
         }
     }
 
+    public List<File> getFiles() {
+        List<File> files = new ArrayList<>();
+        String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_CLASSPATH);
+        if (compilerClasspath != null) {
+            for (String file : compilerClasspath.split(PATH_SEP)) {
+                files.add(new File(file));
+            }
+        }
+        files.addAll(tomcatBaseLibJars);
+        files.addAll(webappJars);
+        if (webInfClasses != null) {
+            files.add(webInfClasses);
+        }
+        files.addAll(tomcatHomeLibJars);
+        if (cloudClasspath != null) {
+            for (String file : cloudClasspath.split(PATH_SEP)) {
+                files.add(new File(file));
+            }
+        }
+        files.addAll(jarAssetFiles);
+        if (configPath != null) {
+            for (String file : configPath.split(PATH_SEP)) {
+                files.add(new File(file));
+            }
+        }
+
+        return files;
+    }
+
     @Override
     public String toString() {
         StringBuffer classpath = new StringBuffer(systemClasspath);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@ package com.centurylink.mdw.kotlin;
 
 import java.util.Map;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+
+import com.centurylink.mdw.kotlin.script.KotlinScriptEngineFactory;
 import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.script.ScriptEvaluator;
 import com.centurylink.mdw.script.ScriptExecutor;
@@ -43,7 +47,21 @@ public class KotlinExecutor implements ScriptExecutor, ScriptEvaluator {
     @Override
     public Object evaluate(String expression, Map<String,Object> bindings)
             throws ExecutionException {
-        logger.info("Evaluating script: " + name);
-        return null;
+        try {
+            ScriptEngine engine = getScriptEngine();
+            for (String bindName : bindings.keySet()) {
+                engine.put(bindName, bindings.get(bindName));
+            }
+            return engine.eval(expression);
+        }
+        catch (ScriptException ex) {
+            throw new ExecutionException("Kotlin evaluation error: " + ex.getMessage(), ex);
+        }
+    }
+
+    // TODO reuse engine
+    private ScriptEngine scriptEngine;
+    protected ScriptEngine getScriptEngine() {
+        return new KotlinScriptEngineFactory().getScriptEngine();
     }
 }
