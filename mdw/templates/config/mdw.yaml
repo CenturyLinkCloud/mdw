@@ -40,11 +40,6 @@ central.url: https://mdw.useast.appfog.ctl.io/mdw
 logging:
   level: DEBUG
 
-script:
-  executors:
-    groovy: com.centurylink.mdw.script.GroovyExecutor
-    javascript: com.centurylink.mdw.script.JavaScriptExecutor
-
 mail:
   smtp.host: mymailhost
   smtp.port: 25

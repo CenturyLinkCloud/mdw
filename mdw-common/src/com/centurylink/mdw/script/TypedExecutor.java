@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@ package com.centurylink.mdw.script;
 
 import java.util.Map;
 
-import com.centurylink.mdw.common.service.RegisteredService;
+public interface TypedExecutor extends ScriptExecutor {
 
-public interface ScriptExecutor extends RegisteredService {
+    public Object execute(String script, Map<String,Object> bindings, Map<String,String> types)
+            throws ExecutionException;
 
-    public String getName();
-    public void setName(String name);
-
-    public Object execute(String script, Map<String,Object> bindings) throws ExecutionException;
 }

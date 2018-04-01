@@ -48,12 +48,6 @@ app:
 logging:
   level: DEBUG
 
-# script executors
-script:
-  executors:
-    groovy: com.centurylink.mdw.script.GroovyExecutor
-    javascript: com.centurylink.mdw.script.JavaScriptExecutor
-
 # email notifications
 mail:
   smtp.host: mymailhost

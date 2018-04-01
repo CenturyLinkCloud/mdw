@@ -12,8 +12,6 @@ assert yamlProps.getString('mdw.hub.url') == 'http://localhost:8080/mdw'
 assert yamlProps.getString('mdw.garbage.prop') == null
 assert yamlProps.getString('not.even.mdw') == null
 
-assert yamlProps.getString('mdw.script.executors.groovy') == 'com.centurylink.mdw.script.GroovyExecutor'
-
 assert String.valueOf(yamlProps.getList('mdw.filepanel.root.dirs')) == '[/etc/mdw/config, /var/log/mdw]'
 assert String.valueOf(yamlProps.getList("mdw.filepanel.exclude.patterns"))  == '[**/empty, **/*.txt]'
 

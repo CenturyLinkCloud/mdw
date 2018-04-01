@@ -23,6 +23,7 @@ import java.util.Set;
 import com.centurylink.mdw.event.EventHandlerRegistry;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.provider.ProviderRegistry;
+import com.centurylink.mdw.script.ExecutorRegistry;
 import com.centurylink.mdw.task.types.TaskServiceRegistry;
 
 public class DynamicJavaServiceRegistry {
@@ -45,8 +46,11 @@ public class DynamicJavaServiceRegistry {
         else if (ProviderRegistry.providerServices.contains(serviceInterface)) {
             ProviderRegistry.getInstance().addDynamicProvider(serviceInterface, className);
         }
+        else if (ExecutorRegistry.scriptServices.contains(serviceInterface)) {
+            ExecutorRegistry.getInstance().addDynamicService(serviceInterface, className);
+        }
         else {
-            // To handle CacheRegistry and StartupRegistry services
+            // handle Cache, Startup and other services
             Set<String> serviceClass = registeredServices.get(serviceInterface);
             if (serviceClass == null)
                 serviceClass = new HashSet<String>();

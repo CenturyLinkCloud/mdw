@@ -17,51 +17,56 @@ package com.centurylink.mdw.kotlin;
 
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
+import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.CompiledKotlinScript;
 
+import com.centurylink.mdw.annotations.Parameter;
+import com.centurylink.mdw.annotations.RegisteredService;
+import com.centurylink.mdw.kotlin.script.KotlinScriptEngine;
 import com.centurylink.mdw.kotlin.script.KotlinScriptEngineFactory;
 import com.centurylink.mdw.script.ExecutionException;
-import com.centurylink.mdw.script.ScriptEvaluator;
 import com.centurylink.mdw.script.ScriptExecutor;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.script.TypedExecutor;
 
 /**
  * Kotlin script support.
+ * TODO: Precompile
+ * TODO: Reuse engine
+ * TODO: Show line numbers for script errors
  */
-public class KotlinExecutor implements ScriptExecutor, ScriptEvaluator {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+@RegisteredService(value=ScriptExecutor.class,
+parameters={@Parameter(name="language", value="Kotlin")})
+public class KotlinExecutor implements TypedExecutor {
 
     private String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    @Override
-    public Object execute(String script, Map<String,Object> bindings) throws ExecutionException {
-        logger.info("Executing script: " + name);
-        return null;
-    }
+    // TODO cache precompiled scripts
 
     @Override
-    public Object evaluate(String expression, Map<String,Object> bindings)
+    public Object execute(String script, Map<String,Object> bindings)
+            throws ExecutionException {
+        return execute(script, bindings, null);
+    }
+
+    public Object execute(String script, Map<String,Object> bindings, Map<String,String> types)
             throws ExecutionException {
         try {
-            ScriptEngine engine = getScriptEngine();
+            KotlinScriptEngine engine = getScriptEngine();
             for (String bindName : bindings.keySet()) {
                 engine.put(bindName, bindings.get(bindName));
             }
-            return engine.eval(expression);
+            CompiledKotlinScript compiled = (CompiledKotlinScript) engine.compile(script, types);
+            return engine.eval(compiled);
         }
-        catch (ScriptException ex) {
-            throw new ExecutionException("Kotlin evaluation error: " + ex.getMessage(), ex);
+        catch (Exception ex) {
+            throw new ExecutionException("Kotlin error: " + ex.getMessage(), ex);
         }
     }
 
     // TODO reuse engine
-    private ScriptEngine scriptEngine;
-    protected ScriptEngine getScriptEngine() {
-        return new KotlinScriptEngineFactory().getScriptEngine();
+    private KotlinScriptEngine scriptEngine;
+    protected KotlinScriptEngine getScriptEngine() {
+        return (KotlinScriptEngine) new KotlinScriptEngineFactory().getScriptEngine();
     }
 }

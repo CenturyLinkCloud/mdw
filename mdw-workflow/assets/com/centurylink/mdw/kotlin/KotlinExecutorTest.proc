@@ -89,7 +89,7 @@
     },
     {
       "attributes": {
-        "Expression": "bindings[\"testCase\"]",
+        "Expression": "testCase",
         "SCRIPT": "Kotlin",
         "WORK_DISPLAY_INFO": "x=158,y=196,w=74,h=70"
       },

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.groovy;
+package com.centurylink.mdw.script;
 
-import com.centurylink.mdw.java.JavaNaming;
+import java.util.Map;
 
-public class GroovyNaming {
+public interface TypedEvaluator extends ScriptEvaluator {
 
-    /**
-     * http://jira.codehaus.org/browse/GROOVY-3054
-     */
-    public static String getValidClassName(String raw) {
-        return JavaNaming.getValidClassName(raw).replace('-', '_');
-    }
-
+    public Object evaluate(String expression, Map<String,Object> bindings, Map<String,String> types)
+            throws ExecutionException;
 }

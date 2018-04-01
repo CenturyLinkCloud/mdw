@@ -29,24 +29,26 @@ import com.centurylink.mdw.cache.impl.PackageCache
 import com.centurylink.mdw.cloud.CloudClasspath
 import com.centurylink.mdw.model.workflow.Package
 
+/**
+ * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
+ */
 class KotlinScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     public override fun getScriptEngine(): ScriptEngine {
         setIdeaIoUseFallback()
         return KotlinScriptEngine(
             this,
-            getCompilerClasspath(),
-            KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
+            compilerClasspath,
+            KotlinScriptTemplate::class.qualifiedName!!,
             { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
             arrayOf(Bindings::class)
         )
     }
 
-    // TODO 'by lazy'    
-    fun getCompilerClasspath() : List<File> {
+    val compilerClasspath : List<File> by lazy {
         val kotlinPackage = PackageCache.getPackage("com.centurylink.mdw.kotlin")
         val cloudClasspath = CloudClasspath(kotlinPackage.getCloudClassLoader())
         cloudClasspath.read()
-        return cloudClasspath.getFiles()
+        cloudClasspath.getFiles()
     }
 }

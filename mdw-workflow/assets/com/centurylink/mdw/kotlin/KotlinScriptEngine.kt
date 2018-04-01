@@ -31,8 +31,13 @@ import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
+import javax.script.ScriptException
+import javax.script.CompiledScript
 import kotlin.reflect.KClass
 
+/**
+ * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
+ */
 class KotlinScriptEngine(
         factory: ScriptEngineFactory,
         val templateClasspath: List<File>,
@@ -56,8 +61,58 @@ class KotlinScriptEngine(
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
-    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? {
+        return getScriptArgs(context, scriptArgsTypes)
+    }
+  
+    /**
+     * Injects binding declarations into script content (TODO: better way once this is finalized:
+     * https://github.com/Kotlin/KEEP/blob/scripting/proposals/scripting-support.md)
+     */
+    fun compile(script: String, types: Map<String,String>?) : CompiledScript {
+        var pre = ""
+        if (types != null) {
+            for ((key, value) in types) {
+                val type = mapType(value)
+                pre += "var ${key}: ${type}? = bindings[\"${key}\"] as ${type}?\n";
+            }
+        }
+        return compile(pre + script, getContext());
+    }
+  
+    /**
+     * Evaluate separately from compile to allow precompilation.
+     * Shows how to implement an InvokeWrapper that has access to the script class instance.
+     */
+    fun eval(compiledScript: CompiledKotlinScript) : Any? {
+        val context = getContext()
+        val state = getCurrentState(context)
+        val result = try {
+            replEvaluator.eval(state, compiledScript.compiledData, overrideScriptArgs(context), object : InvokeWrapper {
+                override fun <T> invoke(body: () -> T): T {
+                    val instance = body()
+                    return instance
+                }
+            })
+        }
+        catch (e: Exception) {
+            throw ScriptException(e)
+        }
 
+        return when (result) {
+            is ReplEvalResult.ValueResult -> result.value
+            is ReplEvalResult.UnitResult -> null
+            is ReplEvalResult.Error -> throw ScriptException(result.message)
+            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
+        }      
+    }
+  
+    private fun mapType(type: String) : String {
+        // TODO: map primitive types (but make sure values can be set through reflection)
+        return type
+    }
+  
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
         val cls = classloader.loadClass(templateClassName)

@@ -32,10 +32,8 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.groovy.GroovyNaming;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
@@ -56,9 +54,12 @@ import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.script.ExecutionException;
-import com.centurylink.mdw.script.GroovyExecutor;
+import com.centurylink.mdw.script.ExecutorRegistry;
 import com.centurylink.mdw.script.ScriptEvaluator;
 import com.centurylink.mdw.script.ScriptExecutor;
+import com.centurylink.mdw.script.ScriptNaming;
+import com.centurylink.mdw.script.TypedEvaluator;
+import com.centurylink.mdw.script.TypedExecutor;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -706,7 +707,7 @@ public abstract class BaseActivity implements GeneralActivity {
         } else if (value.startsWith("string:")) {
             value = value.substring(7);
         } else if (value.startsWith("groovy:") || value.startsWith("g:") || value.startsWith("javascript:") || value.startsWith("js:")) {
-            String name = GroovyNaming.getValidClassName(getActivityName() + "_" + getActivityId() + "_" + tag);
+            String name = ScriptNaming.getValidName(getActivityName() + "_" + getActivityId() + "_" + tag);
             Object obj = evaluateExpression(name, value.startsWith("j") ? JAVASCRIPT : GROOVY, value.substring(value.indexOf(':') + 1));
             value = obj == null ? null : obj.toString();
         } else if (valueIsPlaceHolder(value)) {
@@ -735,7 +736,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
     /**
      * General-purpose expression evaluation.
-     * Language is one of MagicBox, Groovy or JavaScript.
+     * Language is one of Groovy, JavaScript or (optionally) Kotlin.
      * Variables for this activity instance are bound.
      */
     protected Object evaluateExpression(String name, String language, String expression)
@@ -747,7 +748,8 @@ public abstract class BaseActivity implements GeneralActivity {
             ScriptEvaluator evaluator = getScriptEvaluator(name, language);
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
-            Map<String,Object> bindings = new HashMap<String,Object>();
+            Map<String,Object> bindings = new HashMap<>();
+            Map<String,String> types = new HashMap<>();
             for (Variable varVO: varVOs) {
                 Object value = getParameterValue(varVO.getName());
                 if (value instanceof DocumentReference) {
@@ -755,41 +757,14 @@ public abstract class BaseActivity implements GeneralActivity {
                     value = getDocument(docref, varVO.getType());
                 }
                 bindings.put(varVO.getName(), value);
+                types.put(varVO.getName(), varVO.getType());
             }
-            bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
-            return evaluator.evaluate(expression, bindings);
-        }
-        catch (ActivityException ex) {
-            throw new ExecutionException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * General-purpose expression evaluation.
-     * Language is one of Groovy or JavaScript.
-     * Variables for this activity instance are bound.
-     * Overridden this method to keep backward compatibility
-     */
-    protected Object evaluateExpression(String name, String language, String expression,
-            Map<String,Object> addlBinding) throws ExecutionException {
-
-        try {
-            ScriptEvaluator evaluator = getScriptEvaluator(name, language);
-            Process processVO = getMainProcessDefinition();
-            List<Variable> varVOs = processVO.getVariables();
-            for (Variable varVO: varVOs) {
-                Object value = getParameterValue(varVO.getName());
-                if (value instanceof DocumentReference) {
-                    DocumentReference docref = (DocumentReference) value;
-                    value = getDocument(docref, varVO.getType());
-                }
-                addlBinding.put(varVO.getName(), value);
+            if (evaluator instanceof TypedEvaluator) {
+                return ((TypedEvaluator)evaluator).evaluate(expression, bindings, types);
             }
-            addlBinding.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
-            return evaluator.evaluate(expression, addlBinding);
-        }
-        catch (PropertyException ex) {
-            throw new ExecutionException(ex.getMessage(), ex);
+            else {
+                return evaluator.evaluate(expression, bindings);
+            }
         }
         catch (ActivityException ex) {
             throw new ExecutionException(ex.getMessage(), ex);
@@ -799,30 +774,9 @@ public abstract class BaseActivity implements GeneralActivity {
     protected ScriptEvaluator getScriptEvaluator(String name, String language) throws ExecutionException {
         if (language == null)
             throw new NullPointerException("Missing script evaluator language");
-
-        ScriptEvaluator evalImpl = null;
-        String propName = PropertyNames.MDW_SCRIPT_EXECUTORS + "." + language.toLowerCase();
-        String evalImplClassName = getProperty(propName);
-        if (evalImplClassName == null)
-            evalImplClassName = getProperty("mdw.script.executor." + language); // compatibility
-        if (evalImplClassName == null) {
-            if ("Groovy".equals(language))
-                evalImpl = new GroovyExecutor();  // don't require property for default language
-            else
-                throw new PropertyException("No script executor property value found: " + propName);
-        }
-        else {
-            try {
-                Class<? extends ScriptEvaluator> evalClass = getPackage().getCloudClassLoader()
-                        .loadClass(evalImplClassName).asSubclass(ScriptEvaluator.class);
-                evalImpl = evalClass.newInstance();
-            }
-            catch (ReflectiveOperationException ex) {
-                throw new ExecutionException("Cannot instantiate " + evalImplClassName + " (needs an optional asset package?)", ex);
-            }
-        }
-        evalImpl.setName(name);
-        return evalImpl;
+        ScriptEvaluator evaluator = ExecutorRegistry.getInstance().getEvaluator(language);
+        evaluator.setName(name);
+        return evaluator;
     }
 
     /**
@@ -1270,18 +1224,26 @@ public abstract class BaseActivity implements GeneralActivity {
 
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
-            Map<String,Object> bindings = new HashMap<String,Object>();
+            Map<String,Object> bindings = new HashMap<>();
+            Map<String,String> types = new HashMap<>();
             for (Variable varVO: varVOs) {
                 bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
+                types.put(varVO.getName(), varVO.getType());
             }
             bindings.put("runtimeContext", _runtimeContext);
-            bindings.put(Variable.MASTER_REQUEST_ID, getMasterRequestId());
+            types.put("runtimeContext", ActivityRuntimeContext.class.getName());
+
             if (addlBindings != null) {
                 bindings.putAll(addlBindings);
             }
 
             ScriptExecutor executor = getScriptExecutor(language, qualifier);
-            retObj = executor.execute(script, bindings);
+            if (executor instanceof TypedExecutor) {
+                ((TypedExecutor)executor).execute(script, bindings, types);
+            }
+            else {
+                retObj = executor.execute(script, bindings);
+            }
 
             for (Variable variableVO: varVOs) {
                 String variableName = variableVO.getName();
@@ -1302,37 +1264,16 @@ public abstract class BaseActivity implements GeneralActivity {
     protected ScriptExecutor getScriptExecutor(String language, String qualifier) throws PropertyException {
         if (language == null)
             throw new NullPointerException("Missing script executor language");
-
-        ScriptExecutor exeImpl = null;
-        String propName = PropertyNames.MDW_SCRIPT_EXECUTORS + "." + language.toLowerCase();
-        String exeImplClassName = getProperty(propName);
-        if (exeImplClassName == null)
-            exeImplClassName = getProperty("mdw.script.executor." + language.toLowerCase()); // compatibility
-        if (exeImplClassName == null) {
-            if ("Groovy".equals(language))
-                exeImpl = new GroovyExecutor();  // don't require property for default language
-            else
-                throw new PropertyException("No script executor property value found: " + propName);
-        }
-        else {
-            try {
-                Class<? extends ScriptExecutor> exeClass = getPackage().getCloudClassLoader()
-                        .loadClass(exeImplClassName).asSubclass(ScriptExecutor.class);
-                exeImpl = exeClass.newInstance();
-            }
-            catch (ReflectiveOperationException ex) {
-                throw new ExecutionException("Cannot instantiate " + exeImplClassName + " (needs an optional asset package?)", ex);
-            }
-        }
-        exeImpl.setName(getScriptExecClassName(qualifier));
-        return exeImpl;
+        ScriptExecutor executor = ExecutorRegistry.getInstance().getExecutor(language);
+        executor.setName(getScriptExecClassName(qualifier));
+        return executor;
     }
 
     protected String getScriptExecClassName(String qualifier) {
         String name = getProcessDefinition().getLabel() + "_" + getActivityName() + "_" + getActivityId();
         if (qualifier != null)
             name += "_" + qualifier;
-        return GroovyNaming.getValidClassName(name);
+        return ScriptNaming.getValidName(name);
     }
 
     /**

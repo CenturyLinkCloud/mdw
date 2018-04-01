@@ -15,13 +15,10 @@
  */
 package com.centurylink.mdw.workflow.activity.script;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.groovy.GroovyNaming;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.script.ExecutionException;
+import com.centurylink.mdw.script.ScriptNaming;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -48,7 +45,6 @@ public class ScriptEvaluator extends AbstractEvaluator  {
      */
     @Override
     public Object evaluate() throws ActivityException {
-
         try {
             scriptLanguage = getAttributeValue(SCRIPT_LANGUAGE);
             expression = getAttributeValue(EXPRESSION);
@@ -56,20 +52,10 @@ public class ScriptEvaluator extends AbstractEvaluator  {
                 throw new ActivityException("Expression content has not been defined");
             }
 
-            String name = GroovyNaming.getValidClassName(getActivityName() + "_" + getActivityId());
-            String executor = getProperty("MDWFramework.ScriptExecutors/Groovy");
-            Object obj = null;
-            if ("com.centurylink.mdw.script.GroovyExecutorCompatible".equals(executor)) {
-                Map<String,Object> addlBindings = new HashMap<String,Object>();
-                addlBindings.put("activity", this);
-                obj = evaluateExpression(name, scriptLanguage, expression, addlBindings);
-            }
-            else {
-                obj = evaluateExpression(name, scriptLanguage, expression);
-                if ((obj == null || obj.toString().isEmpty()) && isBooleanExpression(scriptLanguage, expression))
-                    obj = Boolean.FALSE;
-            }
-
+            String name = ScriptNaming.getValidName(getActivityName() + "_" + getActivityId());
+            Object obj = evaluateExpression(name, scriptLanguage, expression);
+            if ((obj == null || obj.toString().isEmpty()) && isBooleanExpression(scriptLanguage, expression))
+                obj = Boolean.FALSE;
             return obj;
         }
         catch (ExecutionException ex) {

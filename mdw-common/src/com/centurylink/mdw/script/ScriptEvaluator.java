@@ -17,8 +17,10 @@ package com.centurylink.mdw.script;
 
 import java.util.Map;
 
-public interface ScriptEvaluator {
-    
+import com.centurylink.mdw.common.service.RegisteredService;
+
+public interface ScriptEvaluator extends RegisteredService {
+
     public String getName();
     public void setName(String name);
 

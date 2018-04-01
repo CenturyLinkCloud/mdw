@@ -22,11 +22,6 @@ application:
     - myapp.yaml
     - myapp.properties
 
-script:
-  executors:
-    groovy: com.centurylink.mdw.script.GroovyExecutor
-    javascript: com.centurylink.mdw.script.JavaScriptExecutor
-
 filepanel:
   root.dirs:
     - /etc/mdw/config

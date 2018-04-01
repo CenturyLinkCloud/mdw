@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package com.centurylink.mdw.script;
 
-import java.util.Map;
+import com.centurylink.mdw.java.JavaNaming;
 
-import com.centurylink.mdw.common.service.RegisteredService;
+public class ScriptNaming {
 
-public interface ScriptExecutor extends RegisteredService {
-
-    public String getName();
-    public void setName(String name);
-
-    public Object execute(String script, Map<String,Object> bindings) throws ExecutionException;
+    /**
+     * http://jira.codehaus.org/browse/GROOVY-3054
+     */
+    public static String getValidName(String raw) {
+        return JavaNaming.getValidClassName(raw).replace('-', '_');
+    }
 }

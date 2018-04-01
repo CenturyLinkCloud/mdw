@@ -124,8 +124,6 @@ public class PropertyNames {
     public static final String MDW_TASK_ACTION_DEF = "mdw.hub.action.definition";
     public static final String MDW_HUB_OVERRIDE_PACKAGE = "mdw.hub.override.package";
 
-    public static final String MDW_SCRIPT_EXECUTORS = "mdw.script.executors";
-
     // XmlOptions properties
     public static final String MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS = "mdw.translator.xmlbeans.load.options";
     public static final String MDW_TRANSLATOR_XMLBEANS_SAVE_OPTIONS = "mdw.translator.xmlbeans.save.options";
