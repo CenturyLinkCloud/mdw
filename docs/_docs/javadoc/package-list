@@ -24,7 +24,6 @@ com.centurylink.mdw.dataaccess.db
 com.centurylink.mdw.dataaccess.file
 com.centurylink.mdw.email
 com.centurylink.mdw.event
-com.centurylink.mdw.groovy
 com.centurylink.mdw.hub
 com.centurylink.mdw.hub.context
 com.centurylink.mdw.hub.servlet

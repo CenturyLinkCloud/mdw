@@ -97,7 +97,6 @@
 <li><a href="com/centurylink/mdw/dataaccess/file/package-tree.html">com.centurylink.mdw.dataaccess.file</a>, </li>
 <li><a href="com/centurylink/mdw/email/package-tree.html">com.centurylink.mdw.email</a>, </li>
 <li><a href="com/centurylink/mdw/event/package-tree.html">com.centurylink.mdw.event</a>, </li>
-<li><a href="com/centurylink/mdw/groovy/package-tree.html">com.centurylink.mdw.groovy</a>, </li>
 <li><a href="com/centurylink/mdw/hub/package-tree.html">com.centurylink.mdw.hub</a>, </li>
 <li><a href="com/centurylink/mdw/hub/context/package-tree.html">com.centurylink.mdw.hub.context</a>, </li>
 <li><a href="com/centurylink/mdw/hub/servlet/package-tree.html">com.centurylink.mdw.hub.servlet</a>, </li>
@@ -580,7 +579,6 @@
 <li type="circle">com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/Grep.LineMatch.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Grep.LineMatch</span></a> (implements com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>)</li>
 <li type="circle">com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/Grep.LineMatches.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Grep.LineMatches</span></a> (implements com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>)</li>
 <li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/GroovyExecutor.html" title="class in com.centurylink.mdw.script"><span class="typeNameLink">GroovyExecutor</span></a> (implements com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptEvaluator.html" title="interface in com.centurylink.mdw.script">ScriptEvaluator</a>, com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptExecutor.html" title="interface in com.centurylink.mdw.script">ScriptExecutor</a>)</li>
-<li type="circle">com.centurylink.mdw.groovy.<a href="com/centurylink/mdw/groovy/GroovyNaming.html" title="class in com.centurylink.mdw.groovy"><span class="typeNameLink">GroovyNaming</span></a></li>
 <li type="circle">groovy.lang.GroovyObjectSupport (implements groovy.lang.GroovyObject)
 <ul>
 <li type="circle">groovy.json.JsonBuilder (implements groovy.lang.Writable)
@@ -836,6 +834,7 @@
 </ul>
 </li>
 <li type="circle">com.centurylink.mdw.services.event.<a href="com/centurylink/mdw/services/event/ScheduledEventQueue.html" title="class in com.centurylink.mdw.services.event"><span class="typeNameLink">ScheduledEventQueue</span></a> (implements com.centurylink.mdw.cache.<a href="com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>)</li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptNaming.html" title="class in com.centurylink.mdw.script"><span class="typeNameLink">ScriptNaming</span></a></li>
 <li type="circle">com.centurylink.mdw.timer.cleanup.<a href="com/centurylink/mdw/timer/cleanup/ScriptRunner.html" title="class in com.centurylink.mdw.timer.cleanup"><span class="typeNameLink">ScriptRunner</span></a></li>
 <li type="circle">com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Server.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">Server</span></a></li>
 <li type="circle">com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/ServerList.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">ServerList</span></a> (implements java.lang.Iterable&lt;T&gt;, com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/YamlPropertyTranslator.html" title="interface in com.centurylink.mdw.config">YamlPropertyTranslator</a>)</li>
@@ -856,6 +855,7 @@
 <ul>
 <li type="circle">com.centurylink.mdw.services.bundle.<a href="com/centurylink/mdw/services/bundle/CacheRegistry.html" title="class in com.centurylink.mdw.services.bundle"><span class="typeNameLink">CacheRegistry</span></a></li>
 <li type="circle">com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/EventHandlerRegistry.html" title="class in com.centurylink.mdw.event"><span class="typeNameLink">EventHandlerRegistry</span></a></li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script"><span class="typeNameLink">ExecutorRegistry</span></a></li>
 <li type="circle">com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/MdwServiceRegistry.html" title="class in com.centurylink.mdw.common.service"><span class="typeNameLink">MdwServiceRegistry</span></a></li>
 <li type="circle">com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">MonitorRegistry</span></a></li>
 <li type="circle">com.centurylink.mdw.listeners.startup.<a href="com/centurylink/mdw/listeners/startup/StartupRegistry.html" title="class in com.centurylink.mdw.listeners.startup"><span class="typeNameLink">StartupRegistry</span></a></li>
@@ -1259,11 +1259,23 @@
 <li type="circle">com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/RequestRoutingStrategy.html" title="interface in com.centurylink.mdw.common.service"><span class="typeNameLink">RequestRoutingStrategy</span></a></li>
 <li type="circle">com.centurylink.mdw.observer.task.<a href="com/centurylink/mdw/observer/task/RoutingStrategy.html" title="interface in com.centurylink.mdw.observer.task"><span class="typeNameLink">RoutingStrategy</span></a></li>
 <li type="circle">com.centurylink.mdw.model.monitor.<a href="com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor"><span class="typeNameLink">ScheduledJob</span></a></li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptEvaluator.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">ScriptEvaluator</span></a>
+<ul>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/TypedEvaluator.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">TypedEvaluator</span></a></li>
+</ul>
+</li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptExecutor.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">ScriptExecutor</span></a>
+<ul>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/TypedExecutor.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">TypedExecutor</span></a></li>
+</ul>
+</li>
 <li type="circle">com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ServiceMonitor</span></a></li>
 <li type="circle">com.centurylink.mdw.startup.<a href="com/centurylink/mdw/startup/StartupService.html" title="interface in com.centurylink.mdw.startup"><span class="typeNameLink">StartupService</span></a></li>
 <li type="circle">com.centurylink.mdw.observer.task.<a href="com/centurylink/mdw/observer/task/SubTaskStrategy.html" title="interface in com.centurylink.mdw.observer.task"><span class="typeNameLink">SubTaskStrategy</span></a></li>
 <li type="circle">com.centurylink.mdw.observer.task.<a href="com/centurylink/mdw/observer/task/TaskIndexProvider.html" title="interface in com.centurylink.mdw.observer.task"><span class="typeNameLink">TaskIndexProvider</span></a></li>
 <li type="circle">com.centurylink.mdw.observer.task.<a href="com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task"><span class="typeNameLink">TaskNotifier</span></a></li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/TypedEvaluator.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">TypedEvaluator</span></a></li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/TypedExecutor.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">TypedExecutor</span></a></li>
 <li type="circle">com.centurylink.mdw.provider.<a href="com/centurylink/mdw/provider/VariableTranslatorProvider.html" title="interface in com.centurylink.mdw.provider"><span class="typeNameLink">VariableTranslatorProvider</span></a></li>
 <li type="circle">com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/XmlService.html" title="interface in com.centurylink.mdw.common.service"><span class="typeNameLink">XmlService</span></a> (also extends com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/TextService.html" title="interface in com.centurylink.mdw.common.service">TextService</a>)</li>
 </ul>
@@ -1280,8 +1292,6 @@
 <li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/RulesServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">RulesServices</span></a></li>
 <li type="circle">com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow"><span class="typeNameLink">RuntimeContext</span></a></li>
 <li type="circle">com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/RuntimeDataAccess.html" title="interface in com.centurylink.mdw.dataaccess"><span class="typeNameLink">RuntimeDataAccess</span></a></li>
-<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptEvaluator.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">ScriptEvaluator</span></a></li>
-<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptExecutor.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">ScriptExecutor</span></a></li>
 <li type="circle">java.io.Serializable
 <ul>
 <li type="circle">com.centurylink.mdw.util.log.<a href="com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log"><span class="typeNameLink">StandardLogger</span></a></li>

@@ -1616,8 +1616,6 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/event/package-summary.html">com.centurylink.mdw.event</a> - package com.centurylink.mdw.event</dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/groovy/package-summary.html">com.centurylink.mdw.groovy</a> - package com.centurylink.mdw.groovy</dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/hub/package-summary.html">com.centurylink.mdw.hub</a> - package com.centurylink.mdw.hub</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/hub/context/package-summary.html">com.centurylink.mdw.hub.context</a> - package com.centurylink.mdw.hub.context</dt>
@@ -3377,6 +3375,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ScriptEvaluator.html#evaluate-java.lang.String-java.util.Map-">evaluate(String, Map&lt;String, Object&gt;)</a></span> - Method in interface com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptEvaluator.html" title="interface in com.centurylink.mdw.script">ScriptEvaluator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/TypedEvaluator.html#evaluate-java.lang.String-java.util.Map-java.util.Map-">evaluate(String, Map&lt;String, Object&gt;, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/TypedEvaluator.html" title="interface in com.centurylink.mdw.script">TypedEvaluator</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/sync/SyncExpressionEvaluator.html#evaluate-java.util.List-java.util.List-">evaluate(List&lt;String&gt;, List&lt;VariableInstance&gt;)</a></span> - Method in class com.centurylink.mdw.sync.<a href="com/centurylink/mdw/sync/SyncExpressionEvaluator.html" title="class in com.centurylink.mdw.sync">SyncExpressionEvaluator</a></dt>
 <dd>
 <div class="block">Checks whether the synchronization criteria can be considered to be met
@@ -3395,10 +3395,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/process/InvokeProcessActivityBase.html#evaluateBindingValue-com.centurylink.mdw.model.variable.Variable-java.lang.String-">evaluateBindingValue(Variable, String)</a></span> - Method in class com.centurylink.mdw.workflow.activity.process.<a href="com/centurylink/mdw/workflow/activity/process/InvokeProcessActivityBase.html" title="class in com.centurylink.mdw.workflow.activity.process">InvokeProcessActivityBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#evaluateExpression-java.lang.String-java.lang.String-java.lang.String-">evaluateExpression(String, String, String)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
-<dd>
-<div class="block">General-purpose expression evaluation.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#evaluateExpression-java.lang.String-java.lang.String-java.lang.String-java.util.Map-">evaluateExpression(String, String, String, Map&lt;String, Object&gt;)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
 <dd>
 <div class="block">General-purpose expression evaluation.</div>
 </dd>
@@ -3563,6 +3559,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ScriptExecutor.html#execute-java.lang.String-java.util.Map-">execute(String, Map&lt;String, Object&gt;)</a></span> - Method in interface com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptExecutor.html" title="interface in com.centurylink.mdw.script">ScriptExecutor</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/TypedExecutor.html#execute-java.lang.String-java.util.Map-java.util.Map-">execute(String, Map&lt;String, Object&gt;, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/TypedExecutor.html" title="interface in com.centurylink.mdw.script">TypedExecutor</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#execute-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">execute(ActivityRuntimeContext)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
 <dd>
 <div class="block">Executes the workflow activity.</div>
@@ -3690,6 +3688,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/ExecutionPlan.html#ExecutionPlan--">ExecutionPlan()</a></span> - Constructor for class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/ExecutionPlan.html" title="class in com.centurylink.mdw.model">ExecutionPlan</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/java/DynamicJavaActivity.html#executorInstance">executorInstance</a></span> - Variable in class com.centurylink.mdw.workflow.activity.java.<a href="com/centurylink/mdw/workflow/activity/java/DynamicJavaActivity.html" title="class in com.centurylink.mdw.workflow.activity.java">DynamicJavaActivity</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script"><span class="typeNameLink">ExecutorRegistry</span></a> - Class in <a href="com/centurylink/mdw/script/package-summary.html">com.centurylink.mdw.script</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#ExecutorRegistry-java.util.List-">ExecutorRegistry(List&lt;Class&lt;? extends RegisteredService&gt;&gt;)</a></span> - Constructor for class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html#exists--">exists()</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html" title="class in com.centurylink.mdw.dataaccess.file">VersionControlGit</a></dt>
 <dd>&nbsp;</dd>
@@ -3951,6 +3953,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/SystemServices.html#findClass-java.lang.String-">findClass(String)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/SystemServices.html" title="interface in com.centurylink.mdw.services">SystemServices</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Process.html#findEmbeddedProcess-java.lang.String-">findEmbeddedProcess(String)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#findEvaluatorClass-java.lang.String-">findEvaluatorClass(String)</a></span> - Method in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#findExecutorClass-java.lang.String-">findExecutorClass(String)</a></span> - Method in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html#findInvoked-com.centurylink.mdw.model.workflow.Process-java.util.List-">findInvoked(Process, List&lt;Process&gt;)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html" title="class in com.centurylink.mdw.dataaccess.file">LoaderPersisterVcs</a></dt>
 <dd>&nbsp;</dd>
@@ -5866,6 +5872,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/AssetInfo.html#getETag--">getETag()</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#getEvaluator-java.lang.String-">getEvaluator(String)</a></span> - Method in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/event/ExternalEventInstance.html#getEventData--">getEventData()</a></span> - Method in class com.centurylink.mdw.model.event.<a href="com/centurylink/mdw/model/event/ExternalEventInstance.html" title="class in com.centurylink.mdw.model.event">ExternalEventInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/event/PublishEventMessage.html#getEventDelay--">getEventDelay()</a></span> - Method in class com.centurylink.mdw.workflow.activity.event.<a href="com/centurylink/mdw/workflow/activity/event/PublishEventMessage.html" title="class in com.centurylink.mdw.workflow.activity.event">PublishEventMessage</a></dt>
@@ -5944,6 +5952,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCase.html#getExecuteLog--">getExecuteLog()</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCase.html" title="class in com.centurylink.mdw.test">TestCase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCaseItem.html#getExecuteLog--">getExecuteLog()</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCaseItem.html" title="class in com.centurylink.mdw.test">TestCaseItem</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#getExecutor-java.lang.String-">getExecutor(String)</a></span> - Method in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/rest/Rules.html#getExecutor-java.util.Map-">getExecutor(Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.service.rest.<a href="com/centurylink/mdw/service/rest/Rules.html" title="class in com.centurylink.mdw.service.rest">Rules</a></dt>
 <dd>&nbsp;</dd>
@@ -6376,6 +6386,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/provider/ProviderRegistry.html#getInstance--">getInstance()</a></span> - Static method in class com.centurylink.mdw.provider.<a href="com/centurylink/mdw/provider/ProviderRegistry.html" title="class in com.centurylink.mdw.provider">ProviderRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/provider/VariableTranslatorProvider.html#getInstance-java.lang.String-">getInstance(String)</a></span> - Method in interface com.centurylink.mdw.provider.<a href="com/centurylink/mdw/provider/VariableTranslatorProvider.html" title="interface in com.centurylink.mdw.provider">VariableTranslatorProvider</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#getInstance--">getInstance()</a></span> - Static method in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#getInstance-boolean-int-">getInstance(boolean, int)</a></span> - Static method in class com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccessCache.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessCache</a></dt>
 <dd>&nbsp;</dd>
@@ -10093,12 +10105,12 @@
 <dd>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/groovy/GroovyNaming.html#getValidClassName-java.lang.String-">getValidClassName(String)</a></span> - Static method in class com.centurylink.mdw.groovy.<a href="com/centurylink/mdw/groovy/GroovyNaming.html" title="class in com.centurylink.mdw.groovy">GroovyNaming</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/java/JavaNaming.html#getValidClassName-java.lang.String-">getValidClassName(String)</a></span> - Static method in class com.centurylink.mdw.java.<a href="com/centurylink/mdw/java/JavaNaming.html" title="class in com.centurylink.mdw.java">JavaNaming</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ScriptNaming.html#getValidName-java.lang.String-">getValidName(String)</a></span> - Static method in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptNaming.html" title="class in com.centurylink.mdw.script">ScriptNaming</a></dt>
 <dd>
 <div class="block">http://jira.codehaus.org/browse/GROOVY-3054</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/java/JavaNaming.html#getValidClassName-java.lang.String-">getValidClassName(String)</a></span> - Static method in class com.centurylink.mdw.java.<a href="com/centurylink/mdw/java/JavaNaming.html" title="class in com.centurylink.mdw.java">JavaNaming</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/java/JavaNaming.html#getValidPackageName-java.lang.String-">getValidPackageName(String)</a></span> - Static method in class com.centurylink.mdw.java.<a href="com/centurylink/mdw/java/JavaNaming.html" title="class in com.centurylink.mdw.java">JavaNaming</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Setup.html#getValue-java.lang.String-">getValue(String)</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></dt>
@@ -10595,10 +10607,6 @@
 <dt><a href="com/centurylink/mdw/script/GroovyExecutor.html" title="class in com.centurylink.mdw.script"><span class="typeNameLink">GroovyExecutor</span></a> - Class in <a href="com/centurylink/mdw/script/package-summary.html">com.centurylink.mdw.script</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/GroovyExecutor.html#GroovyExecutor--">GroovyExecutor()</a></span> - Constructor for class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/GroovyExecutor.html" title="class in com.centurylink.mdw.script">GroovyExecutor</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/groovy/GroovyNaming.html" title="class in com.centurylink.mdw.groovy"><span class="typeNameLink">GroovyNaming</span></a> - Class in <a href="com/centurylink/mdw/groovy/package-summary.html">com.centurylink.mdw.groovy</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/groovy/GroovyNaming.html#GroovyNaming--">GroovyNaming()</a></span> - Constructor for class com.centurylink.mdw.groovy.<a href="com/centurylink/mdw/groovy/GroovyNaming.html" title="class in com.centurylink.mdw.groovy">GroovyNaming</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/common/translator/impl/GroovyNodeTranslator.html" title="class in com.centurylink.mdw.common.translator.impl"><span class="typeNameLink">GroovyNodeTranslator</span></a> - Class in <a href="com/centurylink/mdw/common/translator/impl/package-summary.html">com.centurylink.mdw.common.translator.impl</a></dt>
 <dd>&nbsp;</dd>
@@ -12995,8 +13003,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_ROUTING_SERVER_LIST">MDW_ROUTING_SERVER_LIST</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_ROUTING_SERVERS">MDW_ROUTING_SERVERS</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SCRIPT_EXECUTORS">MDW_SCRIPT_EXECUTORS</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_SERVER_LIST">MDW_SERVER_LIST</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/PropertyNames.html" title="class in com.centurylink.mdw.constant">PropertyNames</a></dt>
 <dd>&nbsp;</dd>
@@ -16019,6 +16025,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/script/ScriptExecutorActivity.html#ScriptExecutorActivity--">ScriptExecutorActivity()</a></span> - Constructor for class com.centurylink.mdw.workflow.activity.script.<a href="com/centurylink/mdw/workflow/activity/script/ScriptExecutorActivity.html" title="class in com.centurylink.mdw.workflow.activity.script">ScriptExecutorActivity</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/script/ScriptNaming.html" title="class in com.centurylink.mdw.script"><span class="typeNameLink">ScriptNaming</span></a> - Class in <a href="com/centurylink/mdw/script/package-summary.html">com.centurylink.mdw.script</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ScriptNaming.html#ScriptNaming--">ScriptNaming()</a></span> - Constructor for class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ScriptNaming.html" title="class in com.centurylink.mdw.script">ScriptNaming</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/timer/cleanup/ScriptRunner.html" title="class in com.centurylink.mdw.timer.cleanup"><span class="typeNameLink">ScriptRunner</span></a> - Class in <a href="com/centurylink/mdw/timer/cleanup/package-summary.html">com.centurylink.mdw.timer.cleanup</a></dt>
 <dd>
 <div class="block">Tool to run database scripts</div>
@@ -16027,6 +16037,8 @@
 <dd>
 <div class="block">Default constructor</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/script/ExecutorRegistry.html#scriptServices">scriptServices</a></span> - Static variable in class com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/ExecutorRegistry.html" title="class in com.centurylink.mdw.script">ExecutorRegistry</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/file/Grep.html#search-java.nio.file.Path-java.util.regex.Pattern-">search(Path, Pattern)</a></span> - Method in class com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/Grep.html" title="class in com.centurylink.mdw.util.file">Grep</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/adapter/ldap/LdapAdapter.html#SEARCH_CONTEXT">SEARCH_CONTEXT</a></span> - Static variable in class com.centurylink.mdw.workflow.adapter.ldap.<a href="com/centurylink/mdw/workflow/adapter/ldap/LdapAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.ldap">LdapAdapter</a></dt>
@@ -20066,6 +20078,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/SwaggerCodegen.html#trimApiPaths">trimApiPaths</a></span> - Variable in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/SwaggerCodegen.html" title="class in com.centurylink.mdw.cli">SwaggerCodegen</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/types/Parameter.html#type">type</a></span> - Variable in class com.centurylink.mdw.common.service.types.<a href="com/centurylink/mdw/common/service/types/Parameter.html" title="class in com.centurylink.mdw.common.service.types">Parameter</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/script/TypedEvaluator.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">TypedEvaluator</span></a> - Interface in <a href="com/centurylink/mdw/script/package-summary.html">com.centurylink.mdw.script</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/script/TypedExecutor.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">TypedExecutor</span></a> - Interface in <a href="com/centurylink/mdw/script/package-summary.html">com.centurylink.mdw.script</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a name="I:U">
