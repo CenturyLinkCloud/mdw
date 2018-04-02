@@ -49,7 +49,7 @@ public class DbInfo {
     public static Map<String,Long> getDependencies(String dbUrl) {
         Map<String,Long> map = new HashMap<>();
         if (dbUrl.startsWith("jdbc:mariadb"))
-            map.put("org/mariadb/jdbc/mariadb-java-client/1.2.2/mariadb-java-client-1.2.2.jar", 300713L);
+            map.put("org/mariadb/jdbc/mariadb-java-client/2.2.3/mariadb-java-client-2.2.3.jar", 566457L);
         else if (dbUrl.startsWith("jdbc:mysql"))
             map.put("mysql/mysql-connector-java/5.1.29/mysql-connector-java-5.1.29.jar", 876730L);
         else if (dbUrl.startsWith("jdbc:oracle"))

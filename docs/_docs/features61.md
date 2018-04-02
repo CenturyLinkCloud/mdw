@@ -28,3 +28,4 @@ title: MDW 6.1 New Features
   11. Script access to masterRequestId is through runtimeContext.
   12. Customize service error responses through a ServiceMonitor.
   13. Deprecated Swagger validators must be replaced with references to new implementation.
+  14. Due to MariaDB4j upgrade, embedded db data directories should be deleted/recreated.

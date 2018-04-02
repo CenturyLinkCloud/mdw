@@ -42,7 +42,7 @@ dependencies {
     compile fileTree(dir: "assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/kotlin", includes: ["*.jar"])
     
-    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.1"
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.3"
     compile group: "org.apache.velocity", name: "velocity", version: "1.7"
     
     compile group: "junit", name: "junit", version:"4.8.1"

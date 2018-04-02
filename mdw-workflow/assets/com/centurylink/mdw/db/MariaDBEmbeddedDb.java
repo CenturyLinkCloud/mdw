@@ -39,8 +39,6 @@ import ch.vorburger.mariadb4j.Util;
 
 public class MariaDBEmbeddedDb implements EmbeddedDb {
 
-    private static final String MARIADB4J_VERSION = "2.1.9";
-
     private String url;
     private int port;
     private String dbName;
@@ -67,7 +65,7 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
         configBuilder.setDataDir(dataLocation);
         String os = configBuilder.getOS();
         String dbVer = configBuilder.getDbVersion();
-        dbJar = new File(assetLocation + "/" + DB_ASSET_PACKAGE.replace('.', '/') + "/mariaDB4j-db-" + os + "-" + MARIADB4J_VERSION + ".jar");
+        dbJar = new File(assetLocation + "/" + DB_ASSET_PACKAGE.replace('.', '/') + "/mariaDB4j-db-" + os + "-" + dbVer.substring(8) + ".jar");
         binariesSubLoc = DBConfigurationBuilder.class.getPackage().getName().replace('.', '/') + "/" + dbVer + "/" + os;
         configBuilder.setUnpackingFromClasspath(false); // we'll unpack it ourselves
         configBuilder.addArg("--lower-case-table-names=1");
@@ -103,14 +101,15 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
             db = DB.newEmbeddedDB(config);
             db.start();
             if (firstTime) {
-                String rootPass = "mdwchangeme";  // can only connect from localhost, so hardwired is okay
+                String rootPass = System.getenv("MDW_EMBEDDED_DB_ROOT_PASSWORD");
+                if (rootPass == null)
+                    rootPass = "mdwchangeme";  // can only connect from localhost, so hardwired is okay
                 db.run("CREATE DATABASE IF NOT EXISTS `" + dbName + "`;", "root", null, null);
                 // set a password on the root account
                 db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + rootPass + "');", "root", null, null);
                 // create the app user account and grant permissions
                 db.run("GRANT ALL ON " + dbName + ".* to '" + user + "'@'%' IDENTIFIED BY '" + password + "'", "root", rootPass, null);
                 db.run("GRANT ALL ON " + dbName + ".* to '" + user + "'@'localhost' IDENTIFIED BY '" + password + "'", "root", rootPass, null);
-                // db.createDB(dbName);
             }
         }
         catch (Exception ex) {
