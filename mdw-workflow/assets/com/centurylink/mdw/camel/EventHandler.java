@@ -4,6 +4,7 @@
 package com.centurylink.mdw.camel;
 
 import org.apache.camel.Message;
+import com.centurylink.mdw.model.workflow.Package;
 
 public interface EventHandler {
 
@@ -28,4 +29,7 @@ public interface EventHandler {
      * @return the string response
      */
     public String getResponse(int code, String message);
+
+    public Package getPackage();
+    void setPackage(Package pkg);
 }

@@ -42,7 +42,6 @@ public interface Listener {
     public static final String METAINFO_EVENT_ID = "EventID";
     public static final String METAINFO_HEX_CORRELATION_ID = "HexadecimalCorrelationID";
     public static final String METAINFO_HEX_REQUEST_ID = "HexadecimalRequestID";
-    public static final String METAINFO_PACKAGE_NAME = "PackageName";
     public static final String METAINFO_NO_PERSISTENCE = "NoPersistence";
     public static final String METAINFO_NO_META_PERSISTENCE = "NoMetaPersistence";
     public static final String METAINFO_REQUEST_PAYLOAD = "RequestPayload"; // for altering/extracting payload

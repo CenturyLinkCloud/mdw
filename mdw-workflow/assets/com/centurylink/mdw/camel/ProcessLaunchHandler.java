@@ -59,5 +59,4 @@ public interface ProcessLaunchHandler extends EventHandler {
      */
     public Object invoke(Long processId, Long owningDocId, String masterRequestId, Message request,
             Map<String,Object> parameters) throws Exception;
-
 }

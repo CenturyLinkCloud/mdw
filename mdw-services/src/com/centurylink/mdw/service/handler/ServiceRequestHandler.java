@@ -35,13 +35,12 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class ServiceRequestHandler implements EventHandler, PackageAware {
+public class ServiceRequestHandler implements EventHandler {
 
     protected static final String MDW_REST_SERVICE_PROVIDER_PACKAGE = "com.centurylink.mdw.service.rest";
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

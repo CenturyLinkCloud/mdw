@@ -9,10 +9,9 @@ import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.w3c.dom.Node;
 
-import com.centurylink.mdw.camel.MdwCamelException;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.common.service.types.Status;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
 import com.centurylink.mdw.model.StringDocument;
@@ -95,5 +94,4 @@ public class DefaultNotifyHandler extends ExternalEventHandlerBase implements No
     public String handleEventMessage(String message, Object messageObj, Map<String,String> metaInfo) throws EventHandlerException {
         return null;
     }
-
 }

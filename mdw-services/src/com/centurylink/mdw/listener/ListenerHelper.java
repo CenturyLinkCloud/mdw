@@ -37,12 +37,8 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.event.DefaultExternalEventHandler;
 import com.centurylink.mdw.event.EventHandler;
-import com.centurylink.mdw.event.EventHandlerErrorResponse;
 import com.centurylink.mdw.event.EventHandlerException;
-import com.centurylink.mdw.event.EventHandlerRegistry;
-import com.centurylink.mdw.event.UnparseableMessageException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.ExternalEvent;
@@ -52,7 +48,6 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
@@ -389,9 +384,7 @@ public class ListenerHelper {
                 handler = new FallbackEventHandler();
             }
             else {
-                String packageName = metaInfo.get(Listener.METAINFO_PACKAGE_NAME);
-                if (packageName == null)
-                    packageName = eventHandler.getPackageName(); // currently only populated for VCS assets
+                String packageName = eventHandler.getPackageName();
                 Package pkg = PackageCache.getPackage(packageName);
                 if (pkg == null && ServiceRequestHandler.class.getName().equals(clsname)) {
                     // can happen during bootstrap scenario -- just try regular reflection
@@ -399,8 +392,8 @@ public class ListenerHelper {
                 }
                 else {
                     handler = pkg.getEventHandler(clsname, request, metaInfo);
-                    if (!pkg.isDefaultPackage() && handler instanceof PackageAware)
-                        ((PackageAware) handler).setPackage(pkg);
+                    if (!pkg.isDefaultPackage() && handler instanceof ExternalEventHandlerBase)
+                        ((ExternalEventHandlerBase)handler).setPackage(pkg);
                 }
             }
 
@@ -468,13 +461,8 @@ public class ListenerHelper {
             }
 
             if (response == null) {
-                if (handler instanceof EventHandlerErrorResponse) {
-                    metaInfo.put(Listener.METAINFO_ERROR_RESPONSE, Listener.METAINFO_ERROR_RESPONSE_VALUE);
-                    response = ((EventHandlerErrorResponse)handler).createErrorResponse(requestDoc, metaInfo, e);
-                }
-                else {
-                    response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
-                }
+                response = createErrorResponse(request, metaInfo,
+                        new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
             }
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
@@ -591,30 +579,12 @@ public class ListenerHelper {
     }
 
     /**
-     * <p>
-     * Performs the following:
-     * <li>Looks up any defined DefaultEventHandler to determine the error
-     * message to send back</li>
-     * <li>If one is found, then return any custom response</li>
-     * </p>
-     *
-     * @param request
-     * @param jsonMessage
-     * @param metaInfo
-     * @return String with the error response
+     * Create a default error message.  To customized this response use a ServiceMonitor.
+     * @see com.centurylink.mdw.monitor.ServiceMonitor.
      */
     public Response createErrorResponse(String req, Map<String,String> metaInfo, ServiceException ex) {
         Request request = new Request(0L);
         request.setContent(req);
-
-        /**
-         * First check for a default event handler custom error response
-         */
-        EventHandlerErrorResponse errorResponseHandler = getDefaultEventHandlerService();
-        if (errorResponseHandler != null) {
-            return errorResponseHandler.createErrorResponse(request, metaInfo,
-                    new UnparseableMessageException("Unable to parse request : " + request));
-        }
 
         Response response = new Response();
         String contentType = metaInfo.get(Listener.METAINFO_CONTENT_TYPE);
@@ -680,25 +650,6 @@ public class ListenerHelper {
             msgdoc = parseXmlBean(request);
         }
         return msgdoc;
-    }
-
-    /**
-     * <p>
-     * Looks up any registered services for DefaultEventHandler and returns any
-     * that implement EventHandlerErrorResponse
-     * </p>
-     *
-     * @return EventHandlerErrorResponse
-     */
-    private EventHandlerErrorResponse getDefaultEventHandlerService() {
-        List<DefaultExternalEventHandler> defaultHandlers = EventHandlerRegistry.getInstance()
-                .getDefaultEventHandlers();
-        for (DefaultExternalEventHandler defaultHandler : defaultHandlers) {
-            if (defaultHandler instanceof EventHandlerErrorResponse) {
-                return (EventHandlerErrorResponse) defaultHandler;
-            }
-        }
-        return null;
     }
 
     private XmlObject parseXmlBean(String request) {

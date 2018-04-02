@@ -28,7 +28,6 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -112,8 +111,7 @@ public class MdwProducer extends DefaultProducer {
                     throw ex;
             }
         }
-        if (launchHandler instanceof PackageAware)
-            ((PackageAware)launchHandler).setPackage(pkg);
+        launchHandler.setPackage(pkg);
 
         try {
             String docType = launchHandler.getRequestDocumentType(request);
@@ -181,8 +179,7 @@ public class MdwProducer extends DefaultProducer {
             }
         }
 
-        if (notifyHandler instanceof PackageAware)
-            ((PackageAware)notifyHandler).setPackage(pkg);
+        notifyHandler.setPackage(pkg);
 
         try {
             String docType = notifyHandler.getRequestDocumentType(request);

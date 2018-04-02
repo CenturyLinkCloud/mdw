@@ -15,10 +15,8 @@
  */
 package com.centurylink.mdw.service.api.validator;
 
-import java.util.List;
 import java.util.Map;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
@@ -106,49 +104,4 @@ public class SwaggerModelValidator extends SwaggerValidator {
             throw new ValidationException(ex.getCode(), ex.getMessage());
         }
     }
-
-
-
-    // everything below is for compatibility
-
-    /**
-     * @deprecated Only for compatibility.
-     */
-    @Deprecated
-    public SwaggerModelValidator() {
-        this(true);
-    }
-
-    private CompatibleValidator compatibleValidator;
-    @Deprecated
-    public List<Validator> getValidators() { return compatibleValidator.getValidators(); }
-
-    /**
-     * @deprecated Do NOT specify compatibility.
-     */
-    @Deprecated
-    public SwaggerModelValidator(boolean compatibility) {
-        super((SwaggerRequest)null);
-        if (compatibility)
-            compatibleValidator = new CompatibleValidator();
-    }
-
-    /**
-     * @deprecated use {@link #g
-     */
-    @Deprecated
-    public void addValidator(Validator newValidator) {
-        compatibleValidator.addValidator(newValidator);
-    }
-
-
-    /**
-     * @deprecated use one of the specify validate methods for headers, body, etc
-     */
-    @Deprecated
-    public ValidationResult validateModel(JSONObject json, Class<?> type, boolean strict)
-            throws ValidationException, JSONException {
-        return compatibleValidator.validateModel(json, type, strict);
-    }
-
 }

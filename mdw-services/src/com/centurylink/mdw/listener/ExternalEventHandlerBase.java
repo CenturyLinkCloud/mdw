@@ -32,7 +32,6 @@ import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.PackageAware;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventServices;
@@ -45,16 +44,12 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
 
-
 /**
  * This class provides API functions for external event handlers.
  * All external event handlers should extend this base class if they need to access
  * framework components.
- *
- * @version 1.0
  */
-
-public abstract class ExternalEventHandlerBase implements ExternalEventHandler, PackageAware {
+public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 

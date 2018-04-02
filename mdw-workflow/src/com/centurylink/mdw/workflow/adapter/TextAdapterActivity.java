@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 
 import org.json.JSONObject;
@@ -28,8 +27,8 @@ import org.json.JSONObject;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
-import com.centurylink.mdw.adapter.TextAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
+import com.centurylink.mdw.adapter.TextAdapter;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyException;

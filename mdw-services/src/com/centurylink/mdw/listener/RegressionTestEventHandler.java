@@ -307,7 +307,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
                         if (var==null) {
                             Variable vardef = procdef.getVariable(varname);
                             if (vardef==null) throw new Exception("The variable is not defined: " + varname);
-                            if (VariableTranslator.isDocumentReferenceVariable(vardef.getType())) {
+                            if (VariableTranslator.isDocumentReferenceVariable(getPackage(), vardef.getType())) {
                                 Long docid = eventManager.createDocument(vardef.getType(),
                                     OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue(), null);
                                 eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid));

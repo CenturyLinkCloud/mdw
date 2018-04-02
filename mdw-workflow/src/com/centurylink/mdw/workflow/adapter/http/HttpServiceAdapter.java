@@ -17,7 +17,6 @@ package com.centurylink.mdw.workflow.adapter.http;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;

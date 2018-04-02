@@ -126,15 +126,14 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
 
     public String toString(){
         StringBuffer sb = new StringBuffer("");
-        sb.append(" Variable Name ");
+        sb.append(" name: ");
         sb.append(this.name);
-        sb.append(", Variable Data ");
+        sb.append(", value: ");
         sb.append(getStringValue());
         return sb.toString();
     }
 
-    public int compareTo(VariableInstance other)
-    {
+    public int compareTo(VariableInstance other) {
       return getName().compareTo(other.getName());
     }
 
