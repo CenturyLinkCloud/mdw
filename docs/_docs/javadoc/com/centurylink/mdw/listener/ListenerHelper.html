@@ -222,11 +222,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#createErrorResponse-java.lang.String-java.util.Map-com.centurylink.mdw.common.service.ServiceException-">createErrorResponse</a></span>(java.lang.String&nbsp;req,
                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo,
                    <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>&nbsp;ex)</code>
-<div class="block">
- Performs the following:
- Looks up any defined DefaultEventHandler to determine the error
- message to send back
- If one is found, then return any custom response</div>
+<div class="block">Create a default error message.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -423,19 +419,10 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;createErrorResponse(java.lang.String&nbsp;req,
                                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo,
                                     <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>&nbsp;ex)</pre>
-<div class="block"><p>
- Performs the following:
- <li>Looks up any defined DefaultEventHandler to determine the error
- message to send back</li>
- <li>If one is found, then return any custom response</li>
- </p></div>
+<div class="block">Create a default error message.  To customized this response use a ServiceMonitor.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>request</code> - </dd>
-<dd><code>jsonMessage</code> - </dd>
-<dd><code>metaInfo</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>String with the error response</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>com.centurylink.mdw.monitor.ServiceMonitor.</code></dd>
 </dl>
 </li>
 </ul>
