@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.cli.Run.SpaceParameterSplitter;
 
 import io.airlift.airline.Cli;
 import io.airlift.airline.Help;
@@ -70,6 +71,12 @@ public class Codegen extends Setup {
     public boolean isGenerateOrchestrationFlows() {
         return generateOrchestrationFlows;
     }
+
+    @Parameter(names="--swagger-codegen-args", description="Swagger codegen passthrough arguments (enclose in quotes)",
+            splitter=SpaceParameterSplitter.class)
+    private List<String> swaggerCodegenArgs;
+    public List<String> getSwaggerCodegenArgs() { return swaggerCodegenArgs; }
+    public void setVmArgs(List<String> args) { this.swaggerCodegenArgs = args; }
 
     // only relevant for swagger
     private boolean trimApiPaths = true;
@@ -158,6 +165,11 @@ public class Codegen extends Setup {
         if (generateOrchestrationFlows) {
             args.add("--generated-flow-base-package");
             args.add(basePackage);
+        }
+
+        if (swaggerCodegenArgs != null) {
+            for (String arg : swaggerCodegenArgs)
+                args.add(arg);
         }
 
         String version = Version.readVersionFromResources();
