@@ -25,8 +25,8 @@ after_failure:
 notifications:
   slack:
     rooms:
-    - mdwcore: mdwcore:${SLACK_TRAVIS_TOKEN}#devops
-    on_success: always
+      secure: cTOn+lrnYwMvP/NGHy8toMqo0rHnKPVHwFNib757prdgQmbQRuzLizQt05mp0aRumtQ+5DPcyIxBSv3laA09HM4bSuP+uQVtgHtZ5kYsSIyI/2Tig7+lbh1Ad43ly9SV+4jDdUosNakKPg8E/7c/oevnTA2Na1MRzUUaL9yUoJ9k7+uEemohQF5P6gIAhto4sgnXQZf7bRAVyZ1JFVM+HNnnXRC79E9f1qoB/NtV1BWZc+4EfF036T0MvVsQ5AU66PYo/33Jci/828KRTJ2UYr5l1XI+5gGDqoHxSUoFpeTYYmQuPJPep4tR20pfEVc3LCVfN6prCOtE8tzYqlsFDeG0e4vrjwofE2wICJ1qzX7eLhpJh5TIw3Ovey6zEeCODdTdg5Zg1rF9jxbhoCGi6mPQkWx6iRSv28N9JFK5ByQf8yZTFQG4LmbP4ofEGWrJGuCDqPQM/5PbK2fiOXqH9sPYjKX5lfaJAp6eE4Zh/+EZL/2nZYnN33YlFAMWNApqrsEbmj+FNitc7x5INbYhRTcNxDYTccS+ICiKO6E745XKmJ4VZhLuLrZpa6iHs4w1fyLIklEeYUqrIaah+EqlM/kbkNm3S/bqBJZVYYGYZBHSLk3tItyb8StxFxd1QJfkVmPbpqiyr9NBg2yd9FeRI3Hml9ESEedPw4gCDluGQdE=
+    on_success: change
     on_failure: always
   email:
     recipients:
@@ -40,16 +40,16 @@ deploy:
   provider: releases
   api_key:
     secure: GEqYvjwbCQq+pElMBmnBnGNJRwEOlZ6QDrQbB6ZMaN8sPlaWHMg3M12CUB/IETBF3pozrv94eIHLmCnKx+QTv9DxSTscckhEM6i/fUUYSqR1ANP4PTu6q/QgTrQj2YqtJa6OKD/C9f3zoHPCNhQsNJ7LkKQLdS47zYnOKGT8XNPDi6JqitpEVPrfsG6VZqABEbQu9heqqOqk/61c6Q8xQkUsreUTwLdgp79hu4hDZLjmnEy3iklNCJiXBEyqRQTvPNzwDtetYuG0KapHPlj1sqV4OLY24I2twqRwzPH2X1/06Ud4hv0EbRAh8OlhnBzh5CGV4XupO9CuYz2yXCjCTCPz2tuAmfSGbQpr8n225rfj1IxU40ZS4qqwebp70D2zw2E4EvCJ4Tyu2BMXnOHZw/ppGwCZ+RdlHtFDDAU30ywgnQ4pvJvhIjbETTLIS69Qt0my3khwCtHXUG95YTbWkJho9UIP1cb5aQ1gTotFTN9mbtnuL0u49LiAYxs6fMWLvucRfsu1liJnONdeIrxyOMlmOFQz3hKy5xqbYED1xYesg97UeiKvLxVv+Y8CFwSBPiitGf5YsPeiJUyN4Hq2P4drFQ5UXfWtxfZoc7rO6Ic+b3dUfVHLblOeMnvUH1MIvjpCWzvsHC45KDouWHBfi8tRR5+9n3N1Quo3qQXyW9s=
-  file: 
-    - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-cli-$mdwVersion.zip"
-    - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$mdwVersion.jar"
+  file:
+  - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-cli-$mdwVersion.zip"
+  - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$mdwVersion.jar"
   overwrite: true
   skip_cleanup: true
 after_deploy:
-  - git config --local user.name magrawa
-  - git config --local user.email manoj.a.agrawal@gmail.com
-  - cd ..
+- git config --local user.name magrawa
+- git config --local user.email manoj.a.agrawal@gmail.com
+- cd ..
   # publish javadoc
-  - git add -A docs/_docs/javadoc
+- git add -A docs/_docs/javadoc
   - git commit -a -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed [skip ci]"
-  - git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git HEAD:master
+- git push https://${GITHUB_TOKEN}@github.com/CenturyLinkCloud/mdw.git HEAD:master
