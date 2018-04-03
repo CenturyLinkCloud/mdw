@@ -15,7 +15,7 @@ process: # 10014
     status: Completed
   variable: # 10054
     name: completionDate
-    value: Fri Dec 25 00:00:00 ${~...} 2015
+    value: ${~.*} 2015
   variable: # 10053
     name: dispensation
     value: <dispensation outcome="Escalation"/>

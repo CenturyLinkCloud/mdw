@@ -27,7 +27,7 @@ after_failure:
 notifications:
   slack:
     rooms:
-    - mdwcore: ${SLACK_TRAVIS_TOKEN}#devops
+    - mdwcore: mdwcore:${SLACK_TRAVIS_TOKEN}#devops
     on_success: change
     on_failure: always
   email:
