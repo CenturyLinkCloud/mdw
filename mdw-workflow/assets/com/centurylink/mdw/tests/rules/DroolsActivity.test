@@ -1,4 +1,4 @@
-package com.centurylink.mdw.tests.workflow
+package com.centurylink.mdw.tests.rules
 
 cal = Calendar.getInstance()
 cal.add(Calendar.DATE, -1)

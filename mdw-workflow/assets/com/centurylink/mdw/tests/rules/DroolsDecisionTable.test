@@ -1,4 +1,4 @@
-package com.centurylink.mdw.tests.workflow
+package com.centurylink.mdw.tests.rules
 
 start process("DroolsDecisionTable") {
     variables = [dueDate: "Thu Mar 20 12:30:00 MDT 2015",

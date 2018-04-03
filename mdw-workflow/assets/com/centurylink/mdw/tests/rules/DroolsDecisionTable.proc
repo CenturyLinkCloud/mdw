@@ -32,8 +32,8 @@
     },
     {
       "attributes": {
-        "KnowledgeBase": "com.centurylink.mdw.tests.workflow/drools-orderRoutingDecisionTable.xlsx",
-        "KnowledgeBase_assetVersion": "[0.1,1)",
+        "KnowledgeBase": "com.centurylink.mdw.tests.rules/drools-orderRoutingDecisionTable.xlsx",
+        "KnowledgeBase_assetVersion": "[0.2,1)",
         "Logging": "true",
         "Output Documents": "xmlBeanVar",
         "RuleVersionVar": "ruleVersion",

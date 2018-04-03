@@ -1,4 +1,4 @@
-package com.centurylink.mdw.tests.workflow
+package com.centurylink.mdw.tests.script
 
 start process("PrePostGroovyScript") {
     variables = [orderDoc: '''<order>

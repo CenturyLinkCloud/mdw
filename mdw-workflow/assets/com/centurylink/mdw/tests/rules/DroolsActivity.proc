@@ -15,8 +15,8 @@
     {
       "attributes": {
         "Facts": "dueDate#region",
-        "KnowledgeBase": "com.centurylink.mdw.tests.workflow/drools-orderRoutingDrool.drl",
-        "KnowledgeBase_assetVersion": "[0.1,1)",
+        "KnowledgeBase": "com.centurylink.mdw.tests.rules/drools-orderRoutingDrool.drl",
+        "KnowledgeBase_assetVersion": "[0.2,1)",
         "Logging": "TRUE",
         "Rules Language": "Drools",
         "Stateful": "FALSE",

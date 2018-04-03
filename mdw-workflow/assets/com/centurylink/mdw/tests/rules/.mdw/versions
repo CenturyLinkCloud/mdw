@@ -1,0 +1,12 @@
+DroolsActivity.proc=16
+DroolsActivity.test=3
+DroolsActivity.yaml=1
+DroolsDecisionTable.proc=4
+DroolsDecisionTable.test=3
+DroolsDecisionTable.yaml=2
+DroolsDecisionTableMultisheet.proc=4
+DroolsMultisheetDecisionTable.test=3
+DroolsMultisheetDecisionTable.yaml=1
+drools-multiSheetDecisionTable.xlsx=2
+drools-orderRoutingDecisionTable.xlsx=2
+drools-orderRoutingDrool.drl=2
