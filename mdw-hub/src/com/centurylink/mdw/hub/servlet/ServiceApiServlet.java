@@ -31,6 +31,9 @@ import com.centurylink.mdw.service.api.MdwSwaggerCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import io.swagger.models.HttpMethod;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -84,6 +87,16 @@ public class ServiceApiServlet extends HttpServlet {
             try {
                 boolean pretty = !"false".equals(request.getParameter(PRETTY_PRINT_PARAM));
                 Swagger swagger = MdwSwaggerCache.getSwagger(svcPath, pretty);
+                Path nullPath = swagger.getPaths().get(null);
+                if (nullPath != null) {
+                    logger.severe("WARNING: Swagger spec null path: ");
+                    for (HttpMethod meth : nullPath.getOperationMap().keySet()) {
+                        Operation op = nullPath.getOperationMap().get(meth);
+                        String info = (op.getSummary() == null ? "" : op.getSummary()) + op.getDescription();
+                        logger.severe("  - " + meth + ": " + info);
+                    }
+                    swagger.getPaths().remove(null);
+                }
 
                 if (ext.equals(JSON_EXT)) {
                     response.setContentType("application/json");

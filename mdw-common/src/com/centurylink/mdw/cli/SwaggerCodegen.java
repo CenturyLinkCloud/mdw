@@ -96,7 +96,15 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     @Override
     public String toApiName(String name) {
         if (trimApiPaths) {
-            String apiName = DefaultCodegen.camelize(name).replaceAll("\\{", "").replaceAll("\\}", "");
+            String camelized = DefaultCodegen.camelize(name);
+            String apiName = "";
+            for (String seg : camelized.split("\\{")) {
+                if (seg.length() > 0)
+                    apiName += Character.toUpperCase(seg.charAt(0));
+                if (seg.length() > 1)
+                    apiName += seg.substring(1);
+            }
+            apiName = apiName.replaceAll("\\}", "");
             if (modelNames.contains(apiName))
                 apiName += "Api"; // avoid collisions
             return apiName;
@@ -123,7 +131,7 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         String filename;
         String pkgName;
         if (trimApiPaths) {
-            filename = trimmedPaths.get(name) + "/" + super.toApiFilename(name);
+            filename = trimmedPaths.get(name) + "/" + toApiName(name);
             pkgName = apiPackage() + trimmedPaths.get(name).replace('/', '.').substring(1);
         }
         else {
@@ -176,6 +184,7 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     }
 
     Map<String,String> trimmedPaths;
+    Map<String,String> trimmedNames;
 
     @Override
     public void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co,
@@ -184,14 +193,17 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         if (trimApiPaths) {
             if (trimmedPaths == null)
                 trimmedPaths = new LinkedHashMap<>();
+            if (trimmedNames == null)
+                trimmedNames = new LinkedHashMap<>();
             Map<String,List<CodegenOperation>> ops = new LinkedHashMap<>();
             for (String path : operations.keySet()) {
                 String pkgPath = path;
                 String baseName = path;
+                String className = path;
                 int slashCurly = pkgPath.lastIndexOf("/{");
                 if (slashCurly > 0) {
                     pkgPath = pkgPath.substring(0, slashCurly);
-                    baseName = path.substring(0, slashCurly) + camelize(path.substring(slashCurly + 1, path.lastIndexOf("}")));
+                    className = path.substring(0, slashCurly) + camelize(path.substring(slashCurly + 2, path.lastIndexOf("}")));
                 }
                 int pkgSlash = pkgPath.lastIndexOf("/");
                 if (pkgSlash > 0) {
@@ -199,6 +211,7 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
                     baseName = path.substring(pkgPath.length());
                 }
                 trimmedPaths.put(baseName, pkgPath);
+                trimmedNames.put(baseName, className);
                 ops.put(baseName, operations.get(path));
             }
             operations.clear();
