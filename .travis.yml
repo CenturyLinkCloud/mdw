@@ -26,7 +26,7 @@ notifications:
   slack:
     rooms:
       secure: cTOn+lrnYwMvP/NGHy8toMqo0rHnKPVHwFNib757prdgQmbQRuzLizQt05mp0aRumtQ+5DPcyIxBSv3laA09HM4bSuP+uQVtgHtZ5kYsSIyI/2Tig7+lbh1Ad43ly9SV+4jDdUosNakKPg8E/7c/oevnTA2Na1MRzUUaL9yUoJ9k7+uEemohQF5P6gIAhto4sgnXQZf7bRAVyZ1JFVM+HNnnXRC79E9f1qoB/NtV1BWZc+4EfF036T0MvVsQ5AU66PYo/33Jci/828KRTJ2UYr5l1XI+5gGDqoHxSUoFpeTYYmQuPJPep4tR20pfEVc3LCVfN6prCOtE8tzYqlsFDeG0e4vrjwofE2wICJ1qzX7eLhpJh5TIw3Ovey6zEeCODdTdg5Zg1rF9jxbhoCGi6mPQkWx6iRSv28N9JFK5ByQf8yZTFQG4LmbP4ofEGWrJGuCDqPQM/5PbK2fiOXqH9sPYjKX5lfaJAp6eE4Zh/+EZL/2nZYnN33YlFAMWNApqrsEbmj+FNitc7x5INbYhRTcNxDYTccS+ICiKO6E745XKmJ4VZhLuLrZpa6iHs4w1fyLIklEeYUqrIaah+EqlM/kbkNm3S/bqBJZVYYGYZBHSLk3tItyb8StxFxd1QJfkVmPbpqiyr9NBg2yd9FeRI3Hml9ESEedPw4gCDluGQdE=
-    on_success: always
+    on_success: change
     on_failure: always
   email:
     recipients:
