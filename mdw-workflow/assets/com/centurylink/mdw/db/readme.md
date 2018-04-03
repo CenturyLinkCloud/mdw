@@ -89,6 +89,7 @@ MDW when it first creates the db.  **Note**: this is only invoked when the data 
 above is empty or missing.
 
 ## Source Fork on GitHub:
-https://github.com/mdw-dev/MariaDB4j
+https://github.com/mdw-dev/MariaDB4j   
+branch is mdw6 (from tag mariaDB4j-2.2.3)
 
 
