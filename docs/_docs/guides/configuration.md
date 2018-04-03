@@ -20,10 +20,10 @@ title: MDW Configuration
     
     # container settings (leave these properties as shown except for unusual scenarios)    
     container:
-      datasource.provider: Tomcat  # required
+      datasource_provider: Tomcat  # required
       messenger: jms  # required
-      jms.provider: ActiveMQ  # required 
-      threadpool.provider: MDW  # required
+      jms_provider: ActiveMQ  # required 
+      threadpool_provider: MDW  # required
     
     # database connection information (below is typical for embedded db)
     database:
