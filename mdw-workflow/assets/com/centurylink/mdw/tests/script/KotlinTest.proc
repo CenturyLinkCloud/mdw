@@ -1,0 +1,170 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=33,y=108,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=111,ly=150,type=Elbow,xs=97&134,ys=128&191"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=387,y=404,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Right"
+    },
+    {
+      "attributes": {
+        "Rule": "println(\"testCase: ${testCase}\")\r\n\r\ncheck(numFlavs == 31) { \"Invalid value for variable numFlavs: ${numFlavs}\" }\r\n\r\nflavor",
+        "SCRIPT": "Kotlin",
+        "WORK_DISPLAY_INFO": "x=126,y=391,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Decide",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=281,ly=406,type=Elbow,xs=230&383,ys=424&424"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "Chocolate",
+          "to": "A2"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=183,ly=480,type=Elbow,xs=176&176,ys=455&518"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "Vanilla",
+          "to": "A4"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=146,y=522,w=60,h=40"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Wrong"
+    },
+    {
+      "attributes": {
+        "Rule": "println(\"testCase: ${testCase}\")",
+        "SCRIPT": "Kotlin",
+        "WORK_DISPLAY_INFO": "x=318,y=161,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Exec",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=458,ly=188,type=Elbow,xs=422&509,ys=189&189"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "SCRIPT": "Kotlin",
+        "WORK_DISPLAY_INFO": "x=513,y=158,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Call Lib",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=649,ly=169,type=Elbow,xs=617&709,ys=189&189"},
+        "event": "FINISH",
+        "id": "T6",
+        "resultCode": "true",
+        "to": "A9"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=713,y=169,w=60,h=40"},
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Finish"
+    },
+    {
+      "attributes": {
+        "Expression": "testCase",
+        "SCRIPT": "Kotlin",
+        "WORK_DISPLAY_INFO": "x=138,y=156,w=74,h=70"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Which",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=188,ly=254,type=Elbow,xs=175&175,ys=230&283"},
+          "event": "FINISH",
+          "id": "T1",
+          "resultCode": "decide",
+          "to": "A11"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=251,ly=173,type=Elbow,xs=216&314,ys=191&191"},
+          "event": "FINISH",
+          "id": "T4",
+          "resultCode": "exec",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Expression": "testCase == 'decide'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=129,y=287,w=89,h=57"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Boolean",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=179,ly=352,type=Elbow,xs=173&173,ys=348&387"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "true",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=234,ly=298,type=Elbow,xs=222&281,ys=316&316"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "false",
+          "to": "A12"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=285,y=296,w=60,h=40"},
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "No Way"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=41,y=46,w=93,h=27"
+  },
+  "variables": {
+    "flavor": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "numFlavs": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

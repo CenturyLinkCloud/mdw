@@ -108,10 +108,18 @@ class KotlinScriptEngine(
         }      
     }
   
+    /**
+     * Translates from variable type to Kotlin basic type.
+     */
     private fun mapType(type: String) : String {
-        // TODO: map primitive types (but make sure values can be set through reflection)
-        return type
-    }
+        return when (type) {
+            "java.lang.String" -> "String"
+            "java.lang.Integer" -> "Int"
+			"java.lang.Long" -> "Long"
+            "java.lang.Boolean" -> "Boolean"
+            else -> type
+		}
+	}
   
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)

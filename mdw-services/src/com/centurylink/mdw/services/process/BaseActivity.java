@@ -1239,7 +1239,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
             ScriptExecutor executor = getScriptExecutor(language, qualifier);
             if (executor instanceof TypedExecutor) {
-                ((TypedExecutor)executor).execute(script, bindings, types);
+                retObj = ((TypedExecutor)executor).execute(script, bindings, types);
             }
             else {
                 retObj = executor.execute(script, bindings);
