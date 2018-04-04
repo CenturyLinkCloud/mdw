@@ -43,6 +43,7 @@ deploy:
   file:
   - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-cli-$mdwVersion.zip"
   - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-boot-$mdwVersion.jar"
+  - "$TRAVIS_BUILD_DIR/mdw/deploy/app/mdw-$mdwVersion.war"
   overwrite: true
   skip_cleanup: true
 after_deploy:
