@@ -2,6 +2,7 @@ DECLARE
   t_exists NUMBER;
   c_exists NUMBER;
   def_value varchar2(14) := 'TASK INSTANCE';
+  nullCheck varchar2(1);
 BEGIN
   SELECT COUNT(*) INTO t_exists FROM user_tables WHERE table_name ='ASSET_REF';
   IF t_exists = 0 THEN
@@ -17,10 +18,20 @@ BEGIN
     USING INDEX)';
     EXECUTE IMMEDIATE 'CREATE INDEX ASSET_REF_NAME_IDX   
     ON ASSET_REF(NAME)';
-    EXECUTE IMMEDIATE 'CREATE IN	DEX ASSET_REF_ARCHIVE_DT_IDX   
+    EXECUTE IMMEDIATE 'CREATE INDEX ASSET_REF_ARCHIVE_DT_IDX   
     ON ASSET_REF (ARCHIVE_DT)';
     DBMS_OUTPUT.put_line ('ASSET_REF table created');
-  END IF;
+  ELSE 
+    SELECT count(*)
+    INTO c_exists FROM
+    user_indexes WHERE table_name = 'ASSET_REF' and index_name='ASSET_REF_PK';
+    IF c_exists = 0 THEN
+      EXECUTE IMMEDIATE 'ALTER TABLE ASSET_REF ADD (  
+      CONSTRAINT ASSET_REF_PK  
+      PRIMARY KEY (DEFINITION_ID)  
+      USING INDEX)';
+    END IF;
+  END IF;  
   SELECT COUNT(*)
   INTO c_exists
   FROM user_tab_columns
@@ -86,25 +97,27 @@ BEGIN
     DBMS_OUTPUT.put_line ('INSTANCE_NOTE table altered');
   END IF;
   --Check for not null constraint,otherwise it throws ORA-01442: column to be modified to NOT NULL is already NOT NULL
-  SELECT count(*)
-  INTO c_exists FROM
-  ATTACHMENT WHERE CREATE_USR is not null and MOD_USR is not null;
-  IF c_exists = 1 THEN
+  SELECT nullable 
+  INTO nullCheck
+  FROM user_tab_cols
+  WHERE table_name = 'ATTACHMENT'
+  AND column_name = 'CREATE_USR';
+  IF nullCheck = 'Y' THEN
     EXECUTE IMMEDIATE 'ALTER TABLE ATTACHMENT 
     MODIFY (CREATE_USR VARCHAR2(100 BYTE) NOT NULL,
-            MOD_USR VARCHAR2(100 BYTE) NOT NULL,
-            ATTACHMENT_CONTENT_TYPE VARCHAR2(1000)';
+           ATTACHMENT_CONTENT_TYPE VARCHAR2(1000))';
     DBMS_OUTPUT.put_line ('ATTACHMENT table altered');
   END IF;
   
-  SELECT count(*)
-  INTO c_exists FROM
-  INSTANCE_NOTE WHERE CREATE_USR is not null and MOD_USR is not null;
-  IF c_exists = 1 THEN
+  SELECT nullable 
+  INTO nullCheck
+  FROM user_tab_cols
+  WHERE table_name = 'INSTANCE_NOTE'
+  AND column_name = 'CREATE_USR';
+  IF nullCheck = 'Y' THEN
     EXECUTE IMMEDIATE 'ALTER TABLE INSTANCE_NOTE 
     MODIFY (CREATE_USR VARCHAR2(100 BYTE) NOT NULL,
-            INSTANCE_NOTE_NAME VARCHAR2(256 BYTE),
-            MOD_USR VARCHAR2(100 BYTE) NOT NULL';        
+            INSTANCE_NOTE_NAME VARCHAR2(256 BYTE))';               
     DBMS_OUTPUT.put_line ('INSTANCE_NOTE table altered');
   END IF;
   
