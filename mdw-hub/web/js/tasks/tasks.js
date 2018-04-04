@@ -3,8 +3,8 @@
 var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 
 // task list controller
-tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
-                                       function($scope, $window, $http, $location, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
+tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location','$cookieStore', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
+                                       function($scope, $window, $http, $location, $cookieStore, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
   
   // If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can 
   // break two-way binding, so taskList is a field in the top-level model object
@@ -12,13 +12,16 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.model = {};
   $scope.model.taskList = {};
-  $scope.model.taskFilter = {
-    workgroups: '[My Workgroups]',
-    status: '[Active]',
-    advisory: '[Not Invalid]',
-    sort: 'startDate',
-    descending: true
-  };
+  $scope.model.taskFilter = $cookieStore.get('taskFilter');
+  if (!$scope.model.taskFilter) {
+    $scope.model.taskFilter = {
+        workgroups: '[My Workgroups]',
+        status: '[Active]',
+        advisory: '[Not Invalid]',
+        sort: 'startDate',
+        descending: true
+     };
+  }
   
   $scope.taskAdvisories = ['[Not Invalid]'].concat(TASK_ADVISORIES);
   
@@ -38,6 +41,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       .then(function(response) {
         $scope.taskActions = response.data;
       });
+    $cookieStore.put('taskFilter', $scope.model.taskFilter);
   });
   
   // must match actions wrap width in tasks.html
@@ -119,7 +123,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.model.typeaheadUser = null;
   $scope.findTypeaheadAssignees = function(typed) {
-    return $http.get(mdw.roots.services + '/services/Tasks/assignees' + '?app=mdw-admin&find=' + typed).then(function(response) {
+      return $http.get(mdw.roots.services + '/services/Tasks/assignees' + '?app=mdw-admin&find=' + typed).then(function(response) {
       var users = response.data.users;
       if ('[My Tasks]'.startsWith(typed))
         users.unshift({name: '[My Tasks'});
@@ -175,7 +179,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   };
   
   $scope.typeaheadChange = function() {
-    if ($scope.model.typeaheadMatchSelection === null)
+      if ($scope.model.typeaheadMatchSelection === null)
       $scope.clearTypeaheadFilters();
   };
   
@@ -196,8 +200,9 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   };
   
   $scope.model.newTaskTemplate = null;
+ 
   $scope.findTaskTemplate = function(typed) {
-    return $http.get(mdw.roots.services + '/services/Tasks/templates' + '?app=mdw-admin&find=' + typed).then(function(response) {
+     return $http.get(mdw.roots.services + '/services/Tasks/templates' + '?app=mdw-admin&find=' + typed).then(function(response) {
       // services matches on task name or package name
       if (response.data.length > 0) {
         var matches = [];
@@ -234,6 +239,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         $scope.task.message = error.data.status.message;
       });
   };
+  
 }]);
 
 tasksMod.factory('TaskAction', ['$resource', 'mdw', function($resource, mdw) {
