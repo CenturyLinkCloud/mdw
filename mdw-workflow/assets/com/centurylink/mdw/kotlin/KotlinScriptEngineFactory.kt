@@ -27,7 +27,6 @@ import javax.script.ScriptEngineFactory
 import java.io.File
 import com.centurylink.mdw.cache.impl.PackageCache
 import com.centurylink.mdw.cloud.CloudClasspath
-import com.centurylink.mdw.model.workflow.Package
 
 /**
  * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory

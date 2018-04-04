@@ -45,6 +45,7 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
             String name = jsonable.getJsonName();
             if (name == null)
                 name = jsonable.getClass().getSimpleName().substring(0, 1).toLowerCase() + jsonable.getClass().getSimpleName().substring(1);
+
             json.put(name, jsonable.getJson());
             return json.toString(2);
         }

@@ -21,11 +21,11 @@
     {
       "attributes": {
         "Rule": "println(\"testCase: ${testCase}\")\r\n\r\ncheck(numFlavs == 31) { \"Invalid value for variable numFlavs: ${numFlavs}\" }\r\n\r\nflavor",
-        "SCRIPT": "Kotlin",
+        "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=126,y=391,w=100,h=60"
       },
       "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Decide",
       "transitions": [
         {
@@ -52,38 +52,23 @@
     },
     {
       "attributes": {
-        "Rule": "println(\"testCase: ${testCase}\")",
-        "SCRIPT": "Kotlin",
-        "WORK_DISPLAY_INFO": "x=318,y=161,w=100,h=60"
+        "Output Documents": "[\"person\"]",
+        "Rule": "// import com.centurylink.mdw.tests.workflow.Person\r\n\r\nprintln(\"testCase: ${testCase}\")\r\nprintln(\"json: ${person!!.getJson()}\")\r\n",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=289,y=160,w=100,h=65"
       },
       "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Exec",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=458,ly=188,type=Elbow,xs=422&509,ys=189&189"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=425,ly=193,type=Elbow,xs=393&448,ys=193&193"},
         "event": "FINISH",
-        "id": "T5",
-        "to": "A6"
+        "id": "T10",
+        "to": "A13"
       }]
     },
     {
-      "attributes": {
-        "SCRIPT": "Kotlin",
-        "WORK_DISPLAY_INFO": "x=513,y=158,w=100,h=60"
-      },
-      "id": "A6",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Call Lib",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=649,ly=169,type=Elbow,xs=617&709,ys=189&189"},
-        "event": "FINISH",
-        "id": "T6",
-        "resultCode": "true",
-        "to": "A9"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=713,y=169,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=616,y=172,w=60,h=40"},
       "id": "A9",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Finish"
@@ -106,7 +91,7 @@
           "to": "A11"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=251,ly=173,type=Elbow,xs=216&314,ys=191&191"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=245,ly=175,type=Elbow,xs=216&285,ys=192&192"},
           "event": "FINISH",
           "id": "T4",
           "resultCode": "exec",
@@ -145,6 +130,22 @@
       "id": "A12",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "No Way"
+    },
+    {
+      "attributes": {
+        "Rule": "println(\"HELLO\")",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=452,y=162,w=100,h=62"
+      },
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Use Class",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=586,ly=192,type=Elbow,xs=556&612,ys=192&192"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A9"
+      }]
     }
   ],
   "attributes": {
@@ -158,9 +159,21 @@
       "category": "INPUT",
       "type": "java.lang.String"
     },
+    "jsonobject": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "name": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
     "numFlavs": {
       "category": "INPUT",
       "type": "java.lang.Integer"
+    },
+    "person": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
     },
     "testCase": {
       "category": "INPUT",

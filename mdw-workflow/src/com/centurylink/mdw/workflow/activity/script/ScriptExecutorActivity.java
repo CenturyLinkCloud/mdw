@@ -36,22 +36,13 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
     public static final String SCRIPT_LANGUAGE = "SCRIPT";
 
    /**
-     * Execute rules in Magic Box rule language.
-     *
-     * @throws ActivityException
+     * Execute scripts in supported languages.
      */
     public void execute() throws ActivityException {
 
         try {
-            String language = getAttributeValue(SCRIPT_LANGUAGE);
-            if (language == null)
-                language = GROOVY;
-            String script = getAttributeValue(RULE);
-
-            if (StringHelper.isEmpty(script)){
-                throw new  ActivityException("Script content has not been defined");
-            }
-
+            String language = getLanguage();
+            String script = getScript();
             Object retObj = executeScript(script, language, null, null);
 
             if (retObj != null)
@@ -64,5 +55,20 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
+    }
+
+    protected String getLanguage() {
+        String language = getAttributeValue(SCRIPT_LANGUAGE);
+        if (language == null)
+            language = GROOVY;
+        return language;
+    }
+
+    protected String getScript() throws ActivityException {
+        String script = getAttributeValue(RULE);
+        if (StringHelper.isEmpty(script)){
+            throw new  ActivityException("Script content has not been defined");
+        }
+        return script;
     }
 }

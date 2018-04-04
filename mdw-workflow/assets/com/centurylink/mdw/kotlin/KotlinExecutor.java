@@ -17,6 +17,8 @@ package com.centurylink.mdw.kotlin;
 
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.CompiledKotlinScript;
 
 import com.centurylink.mdw.annotations.Parameter;
@@ -34,7 +36,7 @@ import com.centurylink.mdw.script.TypedExecutor;
  * TODO: Show line numbers for script errors
  */
 @RegisteredService(value=ScriptExecutor.class,
-parameters={@Parameter(name="language", value="Kotlin")})
+parameters={@Parameter(name="languages", value="kotlin,kotlin_script")})
 public class KotlinExecutor implements TypedExecutor {
 
     private String name;
@@ -56,10 +58,10 @@ public class KotlinExecutor implements TypedExecutor {
             for (String bindName : bindings.keySet()) {
                 engine.put(bindName, bindings.get(bindName));
             }
-            CompiledKotlinScript compiled = (CompiledKotlinScript) engine.compile(script, types);
+            CompiledKotlinScript compiled = (CompiledKotlinScript) engine.compile(script, bindings, types);
             return engine.eval(compiled);
         }
-        catch (Exception ex) {
+        catch (ScriptException ex) {
             throw new ExecutionException("Kotlin error: " + ex.getMessage(), ex);
         }
     }

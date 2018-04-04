@@ -34,8 +34,9 @@ import com.centurylink.mdw.util.file.FileHelper;
 
 public class Asset implements Serializable, Comparable<Asset>, Jsonable {
 
-    public static final String KOTLIN = "KOTLIN";
     public static final String GROOVY = "GROOVY";
+    public static final String KOTLIN = "KOTLIN";
+    public static final String KOTLIN_SCRIPT = "KOTLIN_SCRIPT";
     public static final String PAGELET = "PAGELET";
     public static final String VELOCITY = "VELOCITY";
     public static final String IMAGE_JPEG = "IMAGE_JPEG";
@@ -78,8 +79,9 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     public static final String GENERAL_BINARY = "GENERAL_BINARY";
 
     public static final String[] FORMATS = {
-        KOTLIN,
         GROOVY,
+        KOTLIN,
+        KOTLIN_SCRIPT,
         PAGELET,
         VELOCITY,
         IMAGE_JPEG,
@@ -558,10 +560,12 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         if (languageToExtension == null) {
             languageToExtension = new HashMap<String,String>();
             // TODO map should be driven from properties
-            languageToExtension.put("Kotlin", ".kt");
-            languageToExtension.put("KOTLIN", ".kt");
             languageToExtension.put("Groovy", ".groovy");
             languageToExtension.put("GROOVY", ".groovy");
+            languageToExtension.put("Kotlin", ".kt");
+            languageToExtension.put("KOTLIN", ".kt");
+            languageToExtension.put("Kotlin Script", ".kts");
+            languageToExtension.put("KOTLIN_SCRIPT", ".kts");
             languageToExtension.put("JavaScript", ".js");
             languageToExtension.put("JAVASCRIPT", ".js");
             languageToExtension.put("JSX", ".jsx");
@@ -625,8 +629,9 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
         if (extensionToLanguage == null) {
             extensionToLanguage = new HashMap<String,String>();
             // TODO map should be driven from properties
-            extensionToLanguage.put(".kt", KOTLIN);
             extensionToLanguage.put(".groovy", GROOVY);
+            extensionToLanguage.put(".kt", KOTLIN);
+            extensionToLanguage.put(".kts", KOTLIN_SCRIPT);
             extensionToLanguage.put(".js", JAVASCRIPT);
             extensionToLanguage.put(".jsx", JSX);
             extensionToLanguage.put(".drl", DROOLS);

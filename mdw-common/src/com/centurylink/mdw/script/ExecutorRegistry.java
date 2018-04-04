@@ -77,8 +77,14 @@ public class ExecutorRegistry extends ServiceRegistry {
                     .getAnnotation(com.centurylink.mdw.annotations.RegisteredService.class);
             if (annotation.parameters() != null) {
                 for (Parameter param : annotation.parameters()) {
-                    if ("language".equals(param.name()) && language.equals(param.value())) {
+                    if ("language".equals(param.name()) && language.equalsIgnoreCase(param.value())) {
                         return execClass;
+                    }
+                    else if ("languages".equals(param.name())) {
+                        for (String lang : param.value().split(",")) {
+                            if (language.equalsIgnoreCase(lang))
+                                return execClass;
+                        }
                     }
                 }
             }
@@ -118,8 +124,14 @@ public class ExecutorRegistry extends ServiceRegistry {
                     .getAnnotation(com.centurylink.mdw.annotations.RegisteredService.class);
             if (annotation.parameters() != null) {
                 for (Parameter param : annotation.parameters()) {
-                    if ("language".equals(param.name()) && language.equals(param.value())) {
+                    if ("language".equals(param.name()) && language.equalsIgnoreCase(param.value())) {
                         return evalClass;
+                    }
+                    else if ("languages".equals(param.name())) {
+                        for (String lang : param.value().split(",")) {
+                            if (language.equalsIgnoreCase(lang))
+                                return evalClass;
+                        }
                     }
                 }
             }

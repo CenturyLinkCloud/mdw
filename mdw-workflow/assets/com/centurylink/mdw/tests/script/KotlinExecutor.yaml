@@ -1,1 +1,16 @@
- 
+process: # 10458
+  name: KotlinTest
+  instance: 1
+  activity: # 1 "2018-04-04 11:24:16"
+    name: Start
+    status: Completed
+  activity: # 10 "2018-04-04 11:24:16"
+    name: Which
+    status: In Progress
+  variable: # 11069
+    name: jsonable
+    value: |
+      {
+        "firstName": "linus",
+        "lastName": "torvalds"
+      }

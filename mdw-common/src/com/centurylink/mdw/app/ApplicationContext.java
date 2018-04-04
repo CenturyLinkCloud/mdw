@@ -611,10 +611,6 @@ public class ApplicationContext {
         return completeServerList;
     }
 
-    public static boolean isFileBasedAssetPersist() {
-        return PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) != null;
-    }
-
     private static ClassLoader defaultClassLoader = ApplicationContext.class.getClassLoader();
     public static ClassLoader setContextCloudClassLoader() {
         return setContextCloudClassLoader(null);

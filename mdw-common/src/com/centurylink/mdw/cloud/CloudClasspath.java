@@ -64,23 +64,7 @@ public class CloudClasspath {
             }
             List<Asset> jarAssets = cloudClassLoader.getJarAssets();
             if (jarAssets != null) {
-                if (ApplicationContext.isFileBasedAssetPersist()) {
-                    String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
-                    jarAssetFiles.addAll(Arrays.asList(ClasspathUtil.listJarFiles(new File(assetLoc), true)));
-                }
-                else {
-                    // write them to the temp dir (unfortunately needed for Groovy asset dependencies)
-                    File tempLibDir = new File(ApplicationContext.getTempDirectory() + "/lib");
-                    if (!tempLibDir.exists()) {
-                        if (!tempLibDir.mkdirs())
-                            throw new IOException("Unable to create directory: " + tempLibDir);
-                        for (Asset jarAsset : jarAssets) {
-                            String name = jarAsset.getName().endsWith(".jar") ? jarAsset.getName() : jarAsset.getName() + ".jar";
-                            File destFile = new File(tempLibDir + "/" + jarAsset.getPackageName() + "/" + name);
-                            jarAssetFiles.add(destFile);
-                        }
-                    }
-                }
+                jarAssetFiles.addAll(Arrays.asList(ClasspathUtil.listJarFiles(ApplicationContext.getAssetRoot(), true)));
             }
         }
 
@@ -120,6 +104,9 @@ public class CloudClasspath {
         }
     }
 
+    /**
+     * Includes the asset root (useful for Kotlin script compilation).
+     */
     public List<File> getFiles() {
         List<File> files = new ArrayList<>();
         String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_CLASSPATH);
@@ -128,6 +115,7 @@ public class CloudClasspath {
                 files.add(new File(file));
             }
         }
+        files.add(ApplicationContext.getAssetRoot());
         files.addAll(tomcatBaseLibJars);
         files.addAll(webappJars);
         if (webInfClasses != null) {

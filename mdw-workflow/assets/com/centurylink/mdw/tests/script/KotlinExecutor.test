@@ -1,3 +1,16 @@
 package com.centurylink.mdw.tests.script
 
-println 'KotlinExecutor'
+start process('KotlinTest') {
+  variables = [
+    testCase: 'exec',
+    person: '''{
+  "_type": "com.centurylink.mdw.tests.workflow.Person",
+  "person": {
+    "firstName": "Linus",
+    "lastName": "Torvalds"
+  }
+}'''
+  ]
+}
+// wait process
+// verify process

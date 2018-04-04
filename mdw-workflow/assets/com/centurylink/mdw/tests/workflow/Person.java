@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 
-
 /**
  * JavaBean for testing Jsonable and Yaml variables.
  */

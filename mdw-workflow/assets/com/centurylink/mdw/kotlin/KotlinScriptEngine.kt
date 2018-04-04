@@ -69,21 +69,37 @@ class KotlinScriptEngine(
      * Injects binding declarations into script content (TODO: better way once this is finalized:
      * https://github.com/Kotlin/KEEP/blob/scripting/proposals/scripting-support.md)
      */
-    fun compile(script: String, types: Map<String,String>?) : CompiledScript {
+	@Throws(ScriptException::class)
+    fun compile(script: String, bindings: Map<String,Any?>, types: Map<String,String>?) : CompiledScript {
         var pre = ""
         if (types != null) {
             for ((key, value) in types) {
-                val type = mapType(value)
-                pre += "var ${key}: ${type}? = bindings[\"${key}\"] as ${type}?\n";
+                var type = mapType(value)
+				var obj = bindings[key]
+				if (obj != null) {
+				    type = obj::class.qualifiedName!!	
+				}
+                pre += "var ${key}: ${type}? = bindings[\"${key}\"] as ${type}?\n"
             }
         }
-        return compile(pre + script, getContext());
+		try {
+            return compile(pre + script, getContext())
+		}
+		catch (e: ScriptException) {
+			println("Compilation error in source script:=====\n${pre + script}\n=====")
+            val kotlinPackage = com.centurylink.mdw.cache.impl.PackageCache.getPackage("com.centurylink.mdw.kotlin")
+            val cloudClasspath = com.centurylink.mdw.cloud.CloudClasspath(kotlinPackage.getCloudClassLoader())
+            cloudClasspath.read()
+			println("Compilation classpath: ${cloudClasspath.getFiles()}")
+			throw e
+		}
     }
   
     /**
      * Evaluate separately from compile to allow precompilation.
      * Shows how to implement an InvokeWrapper that has access to the script class instance.
      */
+	@Throws(ScriptException::class)
     fun eval(compiledScript: CompiledKotlinScript) : Any? {
         val context = getContext()
         val state = getCurrentState(context)
@@ -110,6 +126,7 @@ class KotlinScriptEngine(
   
     /**
      * Translates from variable type to Kotlin basic type.
+	 * TODO: org.yaml.snakeyaml.Yaml vars cannot be cast to expected type (need Yamlable).
      */
     private fun mapType(type: String) : String {
         return when (type) {
