@@ -160,7 +160,6 @@ public abstract class PropertyManager implements CacheService {
                 if (ApplicationContext.isPaaS() && cls.getName().equals(YamlPropertyManager.class.getName())) {
                     String yamlSettings = System.getenv("mdw_settings");
                     instance = new YamlPropertyManager(yamlSettings);
-
                 }
                 else {
                     instance = (PropertyManager) cls.newInstance();

@@ -187,15 +187,4 @@ public class PropertyNames {
 
     public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
 
-
-    // deprecated props (TODO: remove)
-    @Deprecated
-    public static final String MDW_LISTENER_BUS = "mdw.listener.bus";   // prefix for bus listener properties
-    @Deprecated
-    public static final String MDW_LISTENER_MQ = "mdw.listener.mq";
-    @Deprecated
-    public static final String MDW_BUS_ACCOUNT = "mdw.bus.account";
-    @Deprecated
-    public static final String MDW_BUS_URI = "mdw.bus.uri";
-
 }

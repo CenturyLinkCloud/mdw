@@ -100,9 +100,4 @@ public interface Listener {
     public static final String METAINFO_CLOUD_ROUTING = "cloud-routing";
     public static final String METAINFO_MDW_APP_ID = "mdw-app-id";
     public static final String METAINFO_MDW_APP_TOKEN = "mdw-app-token";
-
-    @Deprecated
-    public static final String METAINFO_PROTOCOL_BUS = "Bus";
-    @Deprecated
-    public static final String METAINFO_PROTOCOL_MQSERIES = "MqSeries";
 }

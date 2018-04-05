@@ -441,12 +441,4 @@ public final class FileHelper {
             throw new IOException(directory + " is not a directory");
         return directory.list().length == 0;
     }
-
-    /**
-     * @deprecated use {@link ZipHelper#unzip(File, File, String, List, boolean)}
-     */
-    @Deprecated
-    public static void unzipFile(File zipFile, File destDir, String baseLoc, List<String> excludes, boolean overwrite) throws IOException {
-        ZipHelper.unzip(zipFile, destDir, baseLoc, excludes, overwrite);
-    }
 }

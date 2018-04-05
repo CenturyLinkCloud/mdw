@@ -22,8 +22,7 @@ import io.limberest.json.Jsonator;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Replaces {@link com.centurylink.mdw.common.service.Jsonable}
- * to provide auto-serialization.
+ * Extends Limberest Jsonable for MDW compatibility.
  */
 public interface Jsonable extends io.limberest.json.Jsonable {
 

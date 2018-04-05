@@ -21,7 +21,7 @@ title: MDW 6.1 New Features
   4. The MDW Cloud Foundry buildpack is discontinued and replaced by [Spring Boot](../guides/spring-boot/).
   5. HTTP status codes are now standardized (no longer returning -1 for server errors).
   6. **All** service access requires authentication by default (unless excluded in access.yaml).
-  7. DB [autocommit](https://github.com/CenturyLinkCloud/mdw/issues/330) defaults to `true`.
+  7. Non-engine DB [autocommit](https://github.com/CenturyLinkCloud/mdw/issues/330) defaults to `true`.
   8. A [Designer](../getting-started/install-designer/) upgrade is required with this release.
   9. Minor DB schema changes are covered through an in-place upgrade script (no migration required).
   10. File-system based asset archiving is replaced by ASSET_REF Git commit references.
@@ -29,3 +29,4 @@ title: MDW 6.1 New Features
   12. Customize service error responses through a ServiceMonitor.
   13. Deprecated Swagger validators must be replaced with references to new implementation.
   14. Due to MariaDB4j upgrade, embedded db data directories should be deleted/recreated.
+  15. Various deprecated classes and methods removed (compiler will find these).

@@ -130,17 +130,6 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     }
 
     /**
-     * @deprecated use realToString(PackageVO, String, Object)
-     */
-     @Deprecated
-     public static String realToString(String type, Object value) {
-         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(type);
-         if (trans instanceof DocumentReferenceTranslator)
-             return ((DocumentReferenceTranslator)trans).realToString(value);
-         else return trans.toString(value);
-     }
-
-    /**
      * Serializes a runtime variable object to its string value.  Documents are expanded.
      * @param pkg workflow package
      * @param type variable type
@@ -171,22 +160,12 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
             return trans.toObject(value);
     }
 
-    @Deprecated
-    public static boolean isDocumentReferenceVariable(String type) {
-        return isDocumentReferenceVariable(null, type);
-    }
-
     /**
      * If pkg is null then will use any available bundle to provide the translator.
      */
     public static boolean isDocumentReferenceVariable(Package pkg, String type) {
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
         return (trans instanceof DocumentReferenceTranslator);
-    }
-
-    @Deprecated
-    public static boolean isXmlDocumentTranslator(String type) {
-        return isXmlDocumentTranslator(null, type);
     }
 
     /**

@@ -34,15 +34,6 @@ public class Document implements Serializable {
     private String content;        // content in string format
     private Object object;        // content in object format
 
-    /**
-     * This is deprecated; use getObject(String type, PackageVO pkg)
-     * @return
-     */
-    @Deprecated
-    public Object getObject(String type) {
-        return getObject(type, null);
-    }
-
     public Object getObject(String type, Package pkg) {
         if (type==null || type.equals(documentType)) {
             if (object==null && content!=null) {
