@@ -243,15 +243,15 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
 }]);
 
 tasksMod.controller('TemplatesController', ['$scope', '$cookieStore', 'mdw', 'util', 'Templates',
-										   function($scope, $cookieStore, mdw, util, Templates) {
+                       function($scope, $cookieStore, mdw, util, Templates) {
   $scope.templateList = Templates.retrieve({grouped:true}, function success() {
-	var pkgs = $scope.templateList.packages;
-	pkgs.forEach(function(pkg) {
-	  pkg.templates.forEach(function(template) {
-		template.baseName = template.name.substring(0, template.name.lastIndexOf('.'));
-	  });
-	  $scope.applyPkgCollapsedState();
-	});
+  var pkgs = $scope.templateList.packages;
+  pkgs.forEach(function(pkg) {
+    pkg.templates.forEach(function(template) {
+    template.baseName = template.name.substring(0, template.name.lastIndexOf('.'));
+    });
+    $scope.applyPkgCollapsedState();
+  });
   });
 
   $scope.collapse = function(pkg) {
@@ -259,20 +259,20 @@ tasksMod.controller('TemplatesController', ['$scope', '$cookieStore', 'mdw', 'ut
     $scope.savePkgCollapsedState();
   };
   $scope.collapseAll = function() {
-	$scope.templateList.packages.forEach(function(pkg) {
-	  pkg.collapsed = true;
-	});
-	$scope.savePkgCollapsedState();
+  $scope.templateList.packages.forEach(function(pkg) {
+    pkg.collapsed = true;
+  });
+  $scope.savePkgCollapsedState();
   };
   $scope.expand = function(pkg) {
-	pkg.collapsed = false;
-	$scope.savePkgCollapsedState();
+  pkg.collapsed = false;
+  $scope.savePkgCollapsedState();
   };
   $scope.expandAll = function() {
-	$scope.templateList.packages.forEach(function(pkg) {
-	  pkg.collapsed = false;
-	});
-	$scope.savePkgCollapsedState();
+  $scope.templateList.packages.forEach(function(pkg) {
+    pkg.collapsed = false;
+  });
+  $scope.savePkgCollapsedState();
   };
   $scope.savePkgCollapsedState = function() {
     var st = {};
@@ -283,20 +283,20 @@ tasksMod.controller('TemplatesController', ['$scope', '$cookieStore', 'mdw', 'ut
     $cookieStore.put('procsPkgCollapsedState', st);
   };
   $scope.applyPkgCollapsedState = function() {
-	var st = $cookieStore.get('procsPkgCollapsedState');
-	if (st) {
-	  util.getProperties(st).forEach(function(pkgName) {
-		var col = st[pkgName];
-		if (col === true) {
-		  for (var i = 0; i < $scope.templateList.packages.length; i++) {
-			if (pkgName == $scope.templateList.packages[i].name) {
-			  $scope.templateList.packages[i].collapsed = true;
-			  	break;
-			}
-		  }
-		}
-	  });
-	}
+  var st = $cookieStore.get('procsPkgCollapsedState');
+  if (st) {
+    util.getProperties(st).forEach(function(pkgName) {
+    var col = st[pkgName];
+    if (col === true) {
+      for (var i = 0; i < $scope.templateList.packages.length; i++) {
+      if (pkgName == $scope.templateList.packages[i].name) {
+        $scope.templateList.packages[i].collapsed = true;
+          break;
+      }
+      }
+    }
+    });
+  }
   };
 }]);
 
