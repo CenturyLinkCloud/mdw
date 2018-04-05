@@ -13,7 +13,7 @@
           </a> 
         </div>
       </div>
-      <div class="mdw-sub" ng-repeat="pkg in templateList.packages">
+      <div class="mdw-sub" ng-repeat="pkg in templateList.packages | orderBy : 'name'">
         <div class="panel-heading mdw-sub-heading">
           <div class="mdw-heading">
             {{pkg.name}} v{{pkg.version}}
