@@ -477,6 +477,25 @@ public class TaskServicesImpl implements TaskServices {
         return templates;
     }
 
+    public Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query)
+            throws ServiceException {
+        List<TaskTemplate> taskVOs = getTaskTemplates(query);
+        Map<String, List<TaskTemplate>> templates = new HashMap<>();
+        for (TaskTemplate taskVO : taskVOs) {
+            if (templates.get(taskVO.getPackageName()) == null) {
+                List<TaskTemplate> templateList = new ArrayList<>();
+                templateList.add(taskVO);
+                templates.put(taskVO.getPackageName(), templateList);
+            }
+            else {
+                List<TaskTemplate> templateList = templates.get(taskVO.getPackageName());
+                templateList.add(taskVO);
+                templates.put(taskVO.getPackageName(), templateList);
+            }
+        }
+        return templates;
+    }
+
     public void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException {
         try {
             Long instanceId = taskInstance.getTaskInstanceId();

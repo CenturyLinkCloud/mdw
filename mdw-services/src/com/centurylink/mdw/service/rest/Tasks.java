@@ -32,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -67,6 +68,7 @@ import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.model.workflow.Package;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -100,18 +102,24 @@ public class Tasks extends JsonRestService implements JsonExportable {
             }
             else {
                 if (segOne.equals("templates")) {
-                    List<TaskTemplate> taskVOs = taskServices.getTaskTemplates(query);
-                    JSONArray jsonTasks = new JSONArray();
-                    for (TaskTemplate taskVO : taskVOs) {
-                        JSONObject jsonTask = new JsonObject();
-                        jsonTask.put("packageName", taskVO.getPackageName());
-                        jsonTask.put("taskId", taskVO.getId());
-                        jsonTask.put("name", taskVO.getName());
-                        jsonTask.put("version", taskVO.getVersionString());
-                        jsonTask.put("logicalId", taskVO.getLogicalId());
-                        jsonTasks.put(jsonTask);
+                    boolean grouped = query.getBooleanFilter("grouped");
+                    if (grouped) {
+                        return getPackageTemplatesJson(taskServices.getTaskTemplatesByPackage(query));
                     }
-                    return new JsonArray(jsonTasks).getJson();
+                    else {
+                        List<TaskTemplate> taskVOs = taskServices.getTaskTemplates(query);
+                        JSONArray jsonTasks = new JSONArray();
+                        for (TaskTemplate taskVO : taskVOs) {
+                            JSONObject jsonTask = new JsonObject();
+                            jsonTask.put("packageName", taskVO.getPackageName());
+                            jsonTask.put("taskId", taskVO.getId());
+                            jsonTask.put("name", taskVO.getName());
+                            jsonTask.put("version", taskVO.getVersionString());
+                            jsonTask.put("logicalId", taskVO.getLogicalId());
+                            jsonTasks.put(jsonTask);
+                        }
+                        return new JsonArray(jsonTasks).getJson();
+                    }
                 }
                 else if (segOne.equals("categories")) {
                     Map<Integer, TaskCategory> categories = DataAccess.getBaselineData()
@@ -465,5 +473,30 @@ public class Tasks extends JsonRestService implements JsonExportable {
     @Override
     protected Entity getEntity(String path, Object content, Map<String, String> headers) {
         return Entity.Task;
+    }
+
+    private JSONObject getPackageTemplatesJson(Map<String, List<TaskTemplate>> templates) {
+        JSONObject templatesJson = new JSONObject();
+        JSONArray pkgsArray = new JSONArray();
+        for (Map.Entry<String, List<TaskTemplate>> entry : templates.entrySet()) {
+            JSONObject json = new JSONObject();
+            json.put("name",  entry.getKey());
+            List<TaskTemplate> taskVOs = entry.getValue();
+            Package taskPkg = PackageCache.getTaskTemplatePackage(taskVOs.get(0).getId());
+            json.put("version", taskPkg.getVersionString());
+            JSONArray jsonTasks = new JSONArray();
+            for (TaskTemplate taskVO : taskVOs) {
+                JSONObject jsonTask = new JsonObject();
+                jsonTask.put("taskId", taskVO.getId());
+                jsonTask.put("name", taskVO.getName());
+                jsonTask.put("version", taskVO.getVersionString());
+                jsonTask.put("logicalId", taskVO.getLogicalId());
+                jsonTasks.put(jsonTask);
+            }
+            json.put("templates", jsonTasks);
+            pkgsArray.put(json);
+        }
+        templatesJson.put("packages", pkgsArray);
+        return templatesJson;
     }
 }

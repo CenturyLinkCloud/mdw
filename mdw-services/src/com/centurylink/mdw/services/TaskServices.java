@@ -109,4 +109,6 @@ public interface TaskServices {
     public void updateTaskInstanceState(Long taskInstId, boolean isAlert)
             throws DataAccessException, ServiceException;
 
+    public Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query) throws ServiceException;
+
 }

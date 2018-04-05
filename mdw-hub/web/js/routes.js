@@ -96,6 +96,11 @@ routesSvc.factory('routes', function() {
         controller: 'TasksController'
       },
       {
+        path: '/tasks/templates',
+        templateUrl: 'tasks/templates.html',
+        controller: 'TemplatesController'
+      },
+      {
         path: '/tasks/:taskInstanceId',
         templateUrl: 'tasks/task.html'
       },

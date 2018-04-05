@@ -140,8 +140,8 @@
           },
           {
             "label": "Templates",
-            "path": "taskTemplates/*",
-            "href": "#/taskTemplates",
+            "path": "tasks/templates",
+            "href": "#/tasks/templates",
             "priority": 1
           }
         ]
