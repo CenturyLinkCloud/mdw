@@ -4,6 +4,7 @@ DECLARE
   def_value varchar2(14) := 'TASK INSTANCE';
   nullCheck varchar2(1);
 BEGIN
+  DBMS_OUTPUT.put_line ('Script to convert mdw schema from 6.0.x to 6.1 version');	
   SELECT COUNT(*) INTO t_exists FROM user_tables WHERE table_name ='ASSET_REF';
   IF t_exists = 0 THEN
     EXECUTE IMMEDIATE 'CREATE TABLE ASSET_REF(      
@@ -101,10 +102,10 @@ BEGIN
   INTO nullCheck
   FROM user_tab_cols
   WHERE table_name = 'ATTACHMENT'
-  AND column_name = 'CREATE_USR';
-  IF nullCheck = 'Y' THEN
+  AND column_name = 'ATTACHMENT_CONTENT_TYPE';
+  IF nullCheck = 'N' THEN
     EXECUTE IMMEDIATE 'ALTER TABLE ATTACHMENT 
-    MODIFY (CREATE_USR VARCHAR2(100 BYTE) NOT NULL,
+    MODIFY (CREATE_USR VARCHAR2(100 BYTE),
            ATTACHMENT_CONTENT_TYPE VARCHAR2(1000))';
     DBMS_OUTPUT.put_line ('ATTACHMENT table altered');
   END IF;
@@ -113,10 +114,10 @@ BEGIN
   INTO nullCheck
   FROM user_tab_cols
   WHERE table_name = 'INSTANCE_NOTE'
-  AND column_name = 'CREATE_USR';
-  IF nullCheck = 'Y' THEN
+  AND column_name = 'INSTANCE_NOTE_NAME';
+  IF nullCheck = 'N' THEN
     EXECUTE IMMEDIATE 'ALTER TABLE INSTANCE_NOTE 
-    MODIFY (CREATE_USR VARCHAR2(100 BYTE) NOT NULL,
+    MODIFY (CREATE_USR VARCHAR2(100 BYTE),
             INSTANCE_NOTE_NAME VARCHAR2(256 BYTE))';               
     DBMS_OUTPUT.put_line ('INSTANCE_NOTE table altered');
   END IF;
