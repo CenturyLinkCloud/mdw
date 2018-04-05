@@ -15,11 +15,7 @@ RUN ["rm", "-fr", "/usr/local/tomcat/webapps/ROOT"]
 
 # Download correct version of MDW WAR and place it in Tomcat webapps directory 
 RUN set -eux; \
-if echo "$version" | grep -q SNAPSHOT; then \
 wget -O mdw.war http://github.com/CenturyLinkCloud/mdw/releases/download/$version/mdw-$version.war; \
-else \
-wget -O mdw.war http://central.maven.org/maven2/com/centurylink/mdw/mdw/$version/mdw-$version.war; \
-fi; \
 mv mdw.war /usr/local/tomcat/webapps/;
 
 # Provide context and server XML files from MDW's Git Repo (Part of Docker Daemon Context)

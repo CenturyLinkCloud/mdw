@@ -67,3 +67,13 @@
    -  cf push
   
 11 - Run task 1,2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+
+12 - Create and publish Docker image
+	- Log into 143new server and sudo su - mdwapp, then go to directory with cloned Git repo.
+	- git pull
+	- Create docker image with following command:
+		docker build --build-arg version=6.1.01 -t mdwcore/mdw:6.1.01 .   (update with actual MDW version)
+	- Log into docker using the following command (use your Docker Hub credentials when it prompts you)
+		docker login
+	- Publish image to Docker repository with command
+		docker push mdwcore/mdw:6.1.01   (update with actual MDW version)
