@@ -3,8 +3,10 @@ package com.centurylink.mdw.tests.script
 start process("KotlinTest") {
     variables = [ testCase: 'decide', flavor: 'Chocolate', numFlavs: 31 ]
 }
-sleep 30
-wait process
+
+wait process("KotlinTest") {
+    timeout = 90
+}
 
 verify process {
     resultsById = true

@@ -45,7 +45,7 @@ task zipAssetPackages {
    
     println "Exporting asset packages from " + assetRootPath + ":"
     
-    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.json', exclude:'Archive/**/*').each { pkgFile ->
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
         def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('\\','/')      
         def pkgCat = pkgName.replace('com/centurylink/mdw/','').replace('/', '-')
            
@@ -137,7 +137,7 @@ task updateMDWVerInAssetPackages {
     fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
-            println "        setting package.json version: ${mdwPkgVer} for ${pkgName}"
+            println "        setting package.yaml version: ${mdwPkgVer} for ${pkgName}"
             pkgFile.setWritable(true)
             def pkgJson = pkgFile.text
             pkgFile.withWriter { w ->
