@@ -3,7 +3,7 @@ package com.centurylink.mdw.tests.script
 start process("KotlinTest") {
     variables = [ testCase: 'decide', flavor: 'Chocolate', numFlavs: 31 ]
 }
-
+sleep 30
 wait process
 
 verify process {
