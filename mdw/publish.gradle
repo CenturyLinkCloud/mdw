@@ -134,14 +134,14 @@ task updateMDWVerInAssetPackages {
     if (mdwVersion.endsWith("-SNAPSHOT"))
         mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
     println "Update MDW version in asset packages in asstRoot: " + assetRootPath + ":"
-    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.json', exclude:'Archive/**/*').each { pkgFile ->
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
             println "        setting package.json version: ${mdwPkgVer} for ${pkgName}"
             pkgFile.setWritable(true)
             def pkgJson = pkgFile.text
             pkgFile.withWriter { w ->
-                w << pkgJson.replaceAll("\\\"version\\\": \\\".*?\\\"", "\"version\": \"${mdwPkgVer}\"");
+                w << pkgJson.replaceAll("version: [0-9]\\.[0-9]\\.[0-9][0-9]", "version: ${mdwPkgVer}");
             }
         }
     }
