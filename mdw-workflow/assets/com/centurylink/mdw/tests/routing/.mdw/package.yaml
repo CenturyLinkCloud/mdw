@@ -2,4 +2,4 @@ schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.routing
 attributes:
   mdw.task.resume.notify.endpoint: http://mdwapp:ldap_012@localhost:8989/mdw
-version: 1.0.01
+version: 6.1.01
