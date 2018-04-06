@@ -1,3 +1,6 @@
+DROP procedure IF EXISTS `upgrade`;
+
+DELIMITER $$
 CREATE PROCEDURE `upgrade`()
 BEGIN
   DECLARE t_exists   INT;
@@ -8,7 +11,7 @@ BEGIN
   select ("MDW 6.1 Upgrade Script");
 SELECT 
     COUNT(*)
-INTO t_exists FROM
+INTO t_exists FROM   
     information_schema.tables
 WHERE
     table_name = 'ASSET_REF';
@@ -167,4 +170,6 @@ modify column  MODIFY_DT TIMESTAMP(6),
 modify column  STATUS_CODE SMALLINT;
 END;
 
- END
+ END$$
+
+DELIMITER ;
