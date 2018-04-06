@@ -112,7 +112,7 @@ task updateJson {
       def mdwPkgVer = mdwVersion;
       if (mdwVersion.endsWith("-SNAPSHOT"))
           mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
-      fileTree(dir: "../mdw-hub", include:"*.json").each { pkgFile ->
+      fileTree(dir: "../mdw-hub", include:"package.json").each { pkgFile ->
           println "Updating file  " + pkgFile.name + " with version= " + mdwPkgVer
           
           doLast {
