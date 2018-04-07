@@ -1,5 +1,53 @@
 # Change Log
 
+## [6.1.04](https://github.com/CenturyLinkCloud/mdw/tree/6.1.04) (2018-04-06)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.0.13-SNAPSHOT...6.1.04)
+
+**Implemented enhancements:**
+
+- Remove Archive directory creation from Import [\#338](https://github.com/CenturyLinkCloud/mdw/issues/338)
+- REST services - support for DELETE that includes a body [\#336](https://github.com/CenturyLinkCloud/mdw/issues/336)
+- More flexibility in access.yaml [\#329](https://github.com/CenturyLinkCloud/mdw/issues/329)
+- MDWHub - show server name of activity instance/process instance [\#278](https://github.com/CenturyLinkCloud/mdw/issues/278)
+- Refine com.centurylink.mdw.slack/SlackActivity [\#270](https://github.com/CenturyLinkCloud/mdw/issues/270)
+- Task features in MDWHub [\#112](https://github.com/CenturyLinkCloud/mdw/issues/112)
+- OpenID Connect authentication [\#69](https://github.com/CenturyLinkCloud/mdw/issues/69)
+- DB upgrade scripts for 6.1 [\#366](https://github.com/CenturyLinkCloud/mdw/issues/366)
+- Retain filter selections in the MDWHub task list [\#364](https://github.com/CenturyLinkCloud/mdw/issues/364)
+- Remove old-style Action and Resource services [\#361](https://github.com/CenturyLinkCloud/mdw/issues/361)
+- Codegen for CLI [\#356](https://github.com/CenturyLinkCloud/mdw/issues/356)
+- Retire mdw-buildpack [\#353](https://github.com/CenturyLinkCloud/mdw/issues/353)
+- Ability to display ASSET\_REFed previous version instance list [\#352](https://github.com/CenturyLinkCloud/mdw/issues/352)
+- Support Sendgrid for email notifications [\#345](https://github.com/CenturyLinkCloud/mdw/issues/345)
+- Replace package.json in .mdw folder with package.yaml [\#339](https://github.com/CenturyLinkCloud/mdw/issues/339)
+- Change MDW DB connections' AutoCommit default to true [\#330](https://github.com/CenturyLinkCloud/mdw/issues/330)
+- Better CLI support for yaml config [\#325](https://github.com/CenturyLinkCloud/mdw/issues/325)
+- FilePanel download with multiserver config [\#321](https://github.com/CenturyLinkCloud/mdw/issues/321)
+- FilePanel grep [\#319](https://github.com/CenturyLinkCloud/mdw/issues/319)
+- Add memory and top functionality in system tab [\#304](https://github.com/CenturyLinkCloud/mdw/issues/304)
+- Move mdw-hub off of bower [\#272](https://github.com/CenturyLinkCloud/mdw/issues/272)
+- Enhance MySQL and Oracle clean-up scripts [\#244](https://github.com/CenturyLinkCloud/mdw/issues/244)
+- JWT Authentication for services [\#222](https://github.com/CenturyLinkCloud/mdw/issues/222)
+- Need to upgrade Linux and OSX JARs for our embedded MariaDB to support issue \#178 [\#211](https://github.com/CenturyLinkCloud/mdw/issues/211)
+- Kotlin ScriptExecutor implementation [\#123](https://github.com/CenturyLinkCloud/mdw/issues/123)
+- Docker image for mdw6 [\#12](https://github.com/CenturyLinkCloud/mdw/issues/12)
+
+**Closed issues:**
+
+- CLI Install does not find latest snapshot version [\#368](https://github.com/CenturyLinkCloud/mdw/issues/368)
+- POST\_run test in process-apis.postman REST API test broken [\#259](https://github.com/CenturyLinkCloud/mdw/issues/259)
+- Fix Task Templates nav link [\#363](https://github.com/CenturyLinkCloud/mdw/issues/363)
+- Redirect to login page when navigating in MDWHub when session expires [\#355](https://github.com/CenturyLinkCloud/mdw/issues/355)
+- Require that Process definition lookups are fully qualified [\#350](https://github.com/CenturyLinkCloud/mdw/issues/350)
+- Remove all unauthenticated service access [\#349](https://github.com/CenturyLinkCloud/mdw/issues/349)
+- Activity timeout invalid event instance delete query [\#348](https://github.com/CenturyLinkCloud/mdw/issues/348)
+- Standard HTTP response codes for unhandled REST service exceptions [\#340](https://github.com/CenturyLinkCloud/mdw/issues/340)
+- Central discovery import fails [\#333](https://github.com/CenturyLinkCloud/mdw/issues/333)
+- Custom app DB data source doesn't work after a cache refresh [\#328](https://github.com/CenturyLinkCloud/mdw/issues/328)
+- MDWHub CLI command console without MDW\_HOME [\#327](https://github.com/CenturyLinkCloud/mdw/issues/327)
+- Encrypt Slack Channel in travis yaml [\#303](https://github.com/CenturyLinkCloud/mdw/issues/303)
+- Removing support for AdapterConnectionPool [\#173](https://github.com/CenturyLinkCloud/mdw/issues/173)
+
 ## [6.0.13-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/6.0.13-SNAPSHOT) (2018-02-02)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.0.12...6.0.13-SNAPSHOT)
 
@@ -36,7 +84,7 @@
 - Activity implementor source link broken [\#240](https://github.com/CenturyLinkCloud/mdw/issues/240)
 
 ## [v6.0.11](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.11) (2018-01-06)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.11-SNAPSHOT...v6.0.11)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.10...v6.0.11)
 
 **Implemented enhancements:**
 
@@ -44,17 +92,11 @@
 
 **Closed issues:**
 
+- Process instance retrieval by name should handle missing package version in comments [\#283](https://github.com/CenturyLinkCloud/mdw/issues/283)
 - Recent changes in AggregateDataAccessVcs have broken Requests, Tasks and Activities charts [\#282](https://github.com/CenturyLinkCloud/mdw/issues/282)
 
-## [v6.0.11-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.11-SNAPSHOT) (2017-12-29)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.10...v6.0.11-SNAPSHOT)
-
-**Closed issues:**
-
-- Process instance retrieval by name should handle missing package version in comments [\#283](https://github.com/CenturyLinkCloud/mdw/issues/283)
-
 ## [v6.0.10](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.10) (2017-12-22)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.10-SNAPSHOT...v6.0.10)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09...v6.0.10)
 
 **Implemented enhancements:**
 
@@ -71,9 +113,6 @@
 - ASSET\_REF update issue on non-dev embedded db environment [\#276](https://github.com/CenturyLinkCloud/mdw/issues/276)
 - Fix Attachments API and integrate with Slack [\#274](https://github.com/CenturyLinkCloud/mdw/issues/274)
 - Editing a new file in MDW Hub [\#252](https://github.com/CenturyLinkCloud/mdw/issues/252)
-
-## [v6.0.10-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.10-SNAPSHOT) (2017-11-29)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09...v6.0.10-SNAPSHOT)
 
 ## [v6.0.09](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.09) (2017-11-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.09-SNAPSHOT...v6.0.09)
