@@ -6,7 +6,6 @@
 2 - Run Gradle task updateMdwVerInFiles to update these files: 
   - mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
   - mdw-hub/package.json
-  - mdw-hub/bower.json
   - RestApiDefinition.java
   - **/.mdw/package.json
 
@@ -22,10 +21,8 @@
 5 - After success, verify release artifacts are published to Maven Central (https://oss.sonatype.org/#stagingRepositories)
   - Formal build:       http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
   - SNAPHOT:            https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
-  - Assets:             http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (10 min)
-  - SNAPSHOT Assets:             https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/assets/tests-workflow/
-  - Buildpack:          https://github.com/CenturyLinkCloud/mdw-buildpack/tree/master/resources/mdw
-  - Internal buildpack: https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack/tree/master/resources/mdw
+  - Assets:             http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
+  - Internal buildpack: https://ne1itcprhas62.ne1.savvis.net/PCF_Buildpacks_PUB_DEV/mdw-buildpack/tree/master/resources/mdw (last version 6.0.12) 
 
 6 - (Formal builds only) On GitHub:
   - Make sure all the closed issues have milestone assigned otherwise they will not be reported in release notes.
@@ -41,9 +38,8 @@
   github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
   - git commit CHANGELOG.md -m "Release notes [skip ci]" 
-  - git push (commits and pushes generated CHANGELOG.md to GitHub)
+  - git push (pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, copy the notes from updated CHANGELOG.md
-  - Check if mdw-cli-{{version}}.zip and mdw-boot-{{version}}.jar binaries are uploaded, Jenkins publish task should have done that.
 
 8 - Update any support items delivered with this build to Resolved status.
   - Delete any obsolete branches on GitHub that were merged as part of this build.
@@ -51,22 +47,21 @@
 9a - Update mdw-demo
   - git pull 
   - In framework workspace Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder (update mdwDemoDir based on your local setup) 
-  - make sure you have curl.exe in your path
+  - make sure you have curl.exe in your path --TODO
   - Run the Gradle task mdw/updateMDWDemo to copy latest framework assets, update gradle.properties, manifest file in mdw-demo workspace
-  - copy mdw60_internal/assets/com/centurylink/mdw/cloud
    
 9b - Upgrade mdw-demo to new version of mdw by clicking on project properties and selecting new version
   - Refresh Gradle dependencies
   - Commit and push new version of com.centurylink.mdw.plugin.xml to git
   - Commit and push to git (manifest.yml and cloud package should not be committed)
 
-10 - Publishing to AppFog  
-   -  go to root of mdw-demo project (check correct dev/prod manifest.yml is there)
+10 - Run task 1,2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+
+11 - Publishing to AppFog Prod (mdw-central) and AppFog Dev
+   -  go to root of mdw-central project (check correct dev/prod manifest.yml is there)
    -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
    -  Select a space: Prod for formal, and Dev for snapshots
    -  cf push
-  
-11 - Run task 1,2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
 
 12 - Create and publish Docker image
 	- Log into 143new server and sudo su - mdwapp, then go to directory with cloned Git repo.
