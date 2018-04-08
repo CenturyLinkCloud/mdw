@@ -80,12 +80,6 @@ public class ExecutorRegistry extends ServiceRegistry {
                     if ("language".equals(param.name()) && language.equalsIgnoreCase(param.value())) {
                         return execClass;
                     }
-                    else if ("languages".equals(param.name())) {
-                        for (String lang : param.value().split(",")) {
-                            if (language.equalsIgnoreCase(lang))
-                                return execClass;
-                        }
-                    }
                 }
             }
         }
@@ -126,12 +120,6 @@ public class ExecutorRegistry extends ServiceRegistry {
                 for (Parameter param : annotation.parameters()) {
                     if ("language".equals(param.name()) && language.equalsIgnoreCase(param.value())) {
                         return evalClass;
-                    }
-                    else if ("languages".equals(param.name())) {
-                        for (String lang : param.value().split(",")) {
-                            if (language.equalsIgnoreCase(lang))
-                                return evalClass;
-                        }
                     }
                 }
             }

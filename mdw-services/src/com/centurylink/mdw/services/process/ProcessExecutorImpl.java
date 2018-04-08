@@ -574,7 +574,7 @@ class ProcessExecutorImpl {
             } else {
                 Activity startActivity = process.getStartActivity();
                 if (startActivity == null) {
-                    throw new ProcessException("WorkTransition has not been defined for START event! ProcessID = " + process.getId());
+                    throw new ProcessException("Transition has not been defined for START event! ProcessID = " + process.getId());
                 }
                 startActivityId = startActivity.getId();
             }

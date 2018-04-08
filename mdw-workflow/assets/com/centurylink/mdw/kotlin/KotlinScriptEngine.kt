@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.kotlin.script
+package com.centurylink.mdw.kotlin
 
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -33,10 +33,15 @@ import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
 import javax.script.CompiledScript
+import javax.script.Bindings
 import kotlin.reflect.KClass
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
+import com.centurylink.mdw.util.log.LoggerUtil
+
 
 /**
  * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
+ * TODO: figure out how this will work with https://github.com/Kotlin/KEEP/blob/scripting/proposals/scripting-support.md
  */
 class KotlinScriptEngine(
         factory: ScriptEngineFactory,
@@ -46,6 +51,8 @@ class KotlinScriptEngine(
         val scriptArgsTypes: Array<out KClass<out Any>>?
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
+    val logger = LoggerUtil.getStandardLogger()
+  
     override val replCompiler: ReplCompiler by lazy {
        GenericReplCompiler(
                makeScriptDefinition(templateClasspath, templateClassName),
@@ -62,44 +69,51 @@ class KotlinScriptEngine(
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? {
-        return getScriptArgs(context, scriptArgsTypes)
-    }
-  
-    /**
-     * Injects binding declarations into script content (TODO: better way once this is finalized:
-     * https://github.com/Kotlin/KEEP/blob/scripting/proposals/scripting-support.md)
-     */
-	@Throws(ScriptException::class)
-    fun compile(script: String, bindings: Map<String,Any?>, types: Map<String,String>?) : CompiledScript {
-        var pre = ""
-        if (types != null) {
-            for ((key, value) in types) {
-                var type = mapType(value)
-				var obj = bindings[key]
-				if (obj != null) {
-				    type = obj::class.qualifiedName!!	
-				}
-                pre += "var ${key}: ${type}? = bindings[\"${key}\"] as ${type}?\n"
+        var scriptArgs = getScriptArgs(context, scriptArgsTypes)
+        if (scriptArgs != null) {
+            var args = scriptArgs.scriptArgs.toMutableList()
+            if (args.size > 0 && args[0] != null && args[0] is Bindings) {
+                var argTypes = scriptArgs.scriptArgsTypes.toMutableList()
+                val bindings: Bindings = args[0] as Bindings;
+                var variables = mutableMapOf<String,Any?>()
+                args.add(variables)
+                argTypes.add(MutableMap::class)
+                for (key in bindings.keys) {
+                    if ("runtimeContext".equals(key)) {
+                      args.add(bindings[key])
+                      argTypes.add(ActivityRuntimeContext::class)
+                    }
+                    else {
+                        variables[key] = bindings[key]
+                    }
+                }
+                val argsArray = Array<Any?>(args.size) { args[it] }
+                val argTypesArray = Array<KClass<out Any>>(argTypes.size) { argTypes[it] }
+                return ScriptArgsWithTypes(argsArray, argTypesArray)
             }
         }
-		try {
-            return compile(pre + script, getContext())
-		}
-		catch (e: ScriptException) {
-			println("Compilation error in source script:=====\n${pre + script}\n=====")
-            val kotlinPackage = com.centurylink.mdw.cache.impl.PackageCache.getPackage("com.centurylink.mdw.kotlin")
-            val cloudClasspath = com.centurylink.mdw.cloud.CloudClasspath(kotlinPackage.getCloudClassLoader())
-            cloudClasspath.read()
-			println("Compilation classpath: ${cloudClasspath.getFiles()}")
-			throw e
-		}
+        return scriptArgs
     }
   
-    /**
+    @Throws(ScriptException::class)
+    override fun compile(script: String) : CompiledScript {
+        try {
+            return compile(script, getContext())
+        }
+        catch (e: ScriptException) {
+            logger.severe("Compilation classpath:\n=====\n${KotlinClasspath().asString}\n=====")
+            if (logger.isDebugEnabled()) {
+                logger.severe("Compilation error in source script:\n=====\n${script}\n=====")
+            }
+            throw e
+        }
+    }
+  
+   /**
      * Evaluate separately from compile to allow precompilation.
      * Shows how to implement an InvokeWrapper that has access to the script class instance.
      */
-	@Throws(ScriptException::class)
+    @Throws(ScriptException::class)
     fun eval(compiledScript: CompiledKotlinScript) : Any? {
         val context = getContext()
         val state = getCurrentState(context)
@@ -123,20 +137,6 @@ class KotlinScriptEngine(
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }      
     }
-  
-    /**
-     * Translates from variable type to Kotlin basic type.
-	 * TODO: org.yaml.snakeyaml.Yaml vars cannot be cast to expected type (need Yamlable).
-     */
-    private fun mapType(type: String) : String {
-        return when (type) {
-            "java.lang.String" -> "String"
-            "java.lang.Integer" -> "Int"
-			"java.lang.Long" -> "Long"
-            "java.lang.Boolean" -> "Boolean"
-            else -> type
-		}
-	}
   
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)

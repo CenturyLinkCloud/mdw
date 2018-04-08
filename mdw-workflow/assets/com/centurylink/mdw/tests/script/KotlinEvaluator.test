@@ -5,7 +5,7 @@ start process("KotlinTest") {
 }
 
 wait process("KotlinTest") {
-    timeout = 90
+    timeout = 90 // in dev, lazy kotlin compilation can take a while
 }
 
 verify process {

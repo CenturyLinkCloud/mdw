@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.kotlin.script
+package com.centurylink.mdw.kotlin
 
 import org.jetbrains.kotlin.script.jsr223.KotlinStandardJsr223ScriptTemplate
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
@@ -24,9 +24,6 @@ import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineFactory
-import java.io.File
-import com.centurylink.mdw.cache.impl.PackageCache
-import com.centurylink.mdw.cloud.CloudClasspath
 
 /**
  * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
@@ -37,17 +34,11 @@ class KotlinScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
         setIdeaIoUseFallback()
         return KotlinScriptEngine(
             this,
-            compilerClasspath,
+            KotlinClasspath().asFiles,
             KotlinScriptTemplate::class.qualifiedName!!,
             { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
             arrayOf(Bindings::class)
         )
     }
 
-    val compilerClasspath : List<File> by lazy {
-        val kotlinPackage = PackageCache.getPackage("com.centurylink.mdw.kotlin")
-        val cloudClasspath = CloudClasspath(kotlinPackage.getCloudClassLoader())
-        cloudClasspath.read()
-        cloudClasspath.getFiles()
-    }
 }

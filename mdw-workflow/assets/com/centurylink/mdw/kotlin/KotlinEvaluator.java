@@ -21,21 +21,14 @@ import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.script.ScriptEvaluator;
-import com.centurylink.mdw.script.TypedEvaluator;
 
 @RegisteredService(value=ScriptEvaluator.class,
-parameters={@Parameter(name="language", value="Kotlin")})
-public class KotlinEvaluator extends KotlinExecutor implements TypedEvaluator {
+parameters={@Parameter(name="language", value="Kotlin Script")})
+public class KotlinEvaluator extends KotlinExecutor implements ScriptEvaluator {
 
     @Override
     public Object evaluate(String script, Map<String,Object> bindings)
             throws ExecutionException {
-        return evaluate(script, bindings, null);
-    }
-
-    @Override
-    public Object evaluate(String script, Map<String,Object> bindings, Map<String,String> types)
-            throws ExecutionException {
-        return execute(script, bindings, types);
+        return execute(script, bindings);
     }
 }

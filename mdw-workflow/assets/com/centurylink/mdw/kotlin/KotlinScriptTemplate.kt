@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.kotlin.script
+package com.centurylink.mdw.kotlin
 
 import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY
 import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
@@ -21,19 +21,23 @@ import javax.script.Bindings
 import javax.script.ScriptEngine
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
 
 /**
  * From org.jetbrains.kotlin.script.jsr223.KotlinStandardJsr223ScriptTemplate
+ * Constructor params 'variables' and 'runtimeContext' are additional values are passed for direct access
  */
 @Suppress("unused")
 @ScriptTemplateDefinition
-abstract class KotlinScriptTemplate(val jsr223Bindings: Bindings) : ScriptTemplateWithBindings(jsr223Bindings) {
+abstract class KotlinScriptTemplate(val jsr223Bindings: Bindings, var variables: MutableMap<String,Any?>, val runtimeContext: ActivityRuntimeContext)
+  : ScriptTemplateWithBindings(jsr223Bindings) {
 
     private val myEngine: ScriptEngine? get() = bindings[KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY]?.let { it as? ScriptEngine }
 
-    private inline fun<T> withMyEngine(body: (ScriptEngine) -> T): T =
-            myEngine?.let(body) ?: throw IllegalStateException("Script engine for `eval` call is not found")
-
+    private inline fun<T> withMyEngine(body: (ScriptEngine) -> T): T {
+        return myEngine?.let(body) ?: throw IllegalStateException("Script engine for `eval` call is not found")
+    }
+  
     fun eval(script: String, newBindings: Bindings): Any? =
             withMyEngine {
                 val savedState = newBindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY]?.takeIf { it === this.jsr223Bindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY] }?.apply {
@@ -56,5 +60,8 @@ abstract class KotlinScriptTemplate(val jsr223Bindings: Bindings) : ScriptTempla
                 res
             }
 
-    fun createBindings(): Bindings = withMyEngine { it.createBindings() }
+    fun createBindings(): Bindings =
+            withMyEngine {
+              it.createBindings()
+            }
 }

@@ -23,52 +23,38 @@ import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.Comp
 
 import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.kotlin.script.KotlinScriptEngine;
-import com.centurylink.mdw.kotlin.script.KotlinScriptEngineFactory;
 import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.script.ScriptExecutor;
-import com.centurylink.mdw.script.TypedExecutor;
 
 /**
  * Kotlin script support.
- * TODO: Precompile
- * TODO: Reuse engine
  * TODO: Show line numbers for script errors
  */
 @RegisteredService(value=ScriptExecutor.class,
-parameters={@Parameter(name="languages", value="kotlin,kotlin_script")})
-public class KotlinExecutor implements TypedExecutor {
+parameters={@Parameter(name="language", value="Kotlin Script")})
+public class KotlinExecutor implements ScriptExecutor {
 
     private String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    // TODO cache precompiled scripts
-
     @Override
     public Object execute(String script, Map<String,Object> bindings)
             throws ExecutionException {
-        return execute(script, bindings, null);
-    }
-
-    public Object execute(String script, Map<String,Object> bindings, Map<String,String> types)
-            throws ExecutionException {
         try {
-            KotlinScriptEngine engine = getScriptEngine();
+            KotlinScriptEngine engine = KotlinAccess.getInstance().getScriptEngine();
             for (String bindName : bindings.keySet()) {
                 engine.put(bindName, bindings.get(bindName));
             }
-            CompiledKotlinScript compiled = (CompiledKotlinScript) engine.compile(script, bindings, types);
+            CompiledKotlinScript compiled = KotlinAccess.getScript(name);
+            if (compiled == null) {
+                compiled = (CompiledKotlinScript) engine.compile(script);
+                KotlinAccess.putScript(name, compiled);
+            }
             return engine.eval(compiled);
         }
         catch (ScriptException ex) {
-            throw new ExecutionException("Kotlin error: " + ex.getMessage(), ex);
+            throw new ExecutionException(ex.getMessage(), ex);
         }
-    }
-
-    // TODO reuse engine
-    private KotlinScriptEngine scriptEngine;
-    protected KotlinScriptEngine getScriptEngine() {
-        return (KotlinScriptEngine) new KotlinScriptEngineFactory().getScriptEngine();
     }
 }
