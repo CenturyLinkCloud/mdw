@@ -1,3 +1,2 @@
 **/*
-!deploy/app/mdw-*.war
 !tomcat/*
