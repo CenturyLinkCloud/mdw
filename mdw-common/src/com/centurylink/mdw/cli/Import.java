@@ -168,7 +168,7 @@ public class Import extends Setup {
         System.out.println("Importing from Maven into: " + assetDir + "...");
         String url = "http://search.maven.org/remotecontent?filepath=";
         List<String> pkgs = new ArrayList<>();
-        pkgs.add(groupId.replace("assets", "") + "." + artifactId.replace('-', '.'));
+        pkgs.add(groupId.replace("assets", "") + artifactId.replace('-', '.'));
         File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
         new Download(new URL(url + groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + artifactId + "-" + version + ".zip"), tempZip).run(monitors);
