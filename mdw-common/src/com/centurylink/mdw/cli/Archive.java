@@ -26,9 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -36,16 +38,16 @@ import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.AssetRef;
 
 /**
- * Serves two functions: 1) as command, show asset ref with Git archive info;
- * 2) as utility, perform old-style Archiving (backup()/archive()) when importing
- * through discovery (local import).
- * Provides no recovery of deleted Archive packages as does VcsArchiver.
+ * Serves two functions: 1) as command, show asset ref with Git archive info; 2)
+ * as utility, perform old-style Archiving (backup()/archive()) when importing
+ * through discovery (local import). Provides no recovery of deleted Archive
+ * packages as does VcsArchiver.
  */
-@Parameters(commandNames="archive", commandDescription="Asset ref info (--show for contents)")
+@Parameters(commandNames = "archive", commandDescription = "Asset ref info (--show for contents)")
 public class Archive extends Setup {
 
     private static final String ARCHIVE = "Archive";
-    private static final String PKG_META = ".mdw/package.json";
+    private static final String PKG_META = ".mdw/package.yaml";
     private static final String VERSIONS_FILE = ".mdw/versions";
 
     private File tempDir;
@@ -71,7 +73,7 @@ public class Archive extends Setup {
             else if (args[i].startsWith("--config-loc="))
                 configLoc = args[i].substring(13);
             else
-              archiveArgs.add(args[i]);
+                archiveArgs.add(args[i]);
         }
         Archive archive = new Archive(show);
         if (configLoc != null)
@@ -91,6 +93,7 @@ public class Archive extends Setup {
     }
 
     private boolean show;
+
     public Archive(boolean show) {
         this.show = show;
     }
@@ -98,7 +101,7 @@ public class Archive extends Setup {
     /**
      * Command arguments = list of asset specs.
      */
-    @Parameter(names="args", description="Asset spec(s)", variableArity=true)
+    @Parameter(names = "args", description = "Asset spec(s)", variableArity = true)
     public List<String> args = new ArrayList<>();
 
     /**
@@ -116,7 +119,8 @@ public class Archive extends Setup {
         VcInfo vcInfo = new VcInfo(getGitRoot(), props);
         DbInfo dbInfo = new DbInfo(props);
         String assetLoc = props.get(Props.ASSET_LOC);
-        Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, getAssetRoot(), dbInfo);
+        Checkpoint checkpoint = new Checkpoint(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo,
+                getAssetRoot(), dbInfo);
         if (getConfigLoc() != null)
             checkpoint.setConfigLoc(getConfigLoc());
         try {
@@ -134,7 +138,8 @@ public class Archive extends Setup {
                 }
                 if (ref != null && show) {
                     String assetPath = getGitPath(new File(assetLoc)) + "/" + ref.getPath();
-                    Git git = new Git(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, "readFromCommit", ref.getRef(), assetPath);
+                    Git git = new Git(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo,
+                            "readFromCommit", ref.getRef(), assetPath);
                     git.run(progressMonitors); // connect
                     byte[] bytes = (byte[]) git.getResult();
                     if (isBinary(bytes))
@@ -175,8 +180,9 @@ public class Archive extends Setup {
     }
 
     /**
-     * Move replaced package(s) to Archive folder from temp (those not found in updated asset folder).
-     * Intended only for local development in-flight support (other environments use Git archiving -- run()).
+     * Move replaced package(s) to Archive folder from temp (those not found in
+     * updated asset folder). Intended only for local development in-flight
+     * support (other environments use Git archiving -- run()).
      */
     public void archive(boolean deleteBackups) throws IOException {
         if (tempPkgDirs == null)
@@ -188,13 +194,17 @@ public class Archive extends Setup {
             for (Pkg newPkg : newPkgs) {
                 if (prevPkg.name.equals(newPkg.name)) {
                     for (String key : prevPkg.assetsVer.stringPropertyNames()) {
-                        if (newPkg.assetsVer.getProperty(key) != null ) {
+                        if (newPkg.assetsVer.getProperty(key) != null) {
                             String propVal = prevPkg.assetsVer.getProperty(key);
                             int firstSpace = propVal.indexOf(' ');
-                            int oldVer = firstSpace > 0 ? Integer.parseInt(propVal.substring(0, firstSpace)) : Integer.parseInt(propVal);
+                            int oldVer = firstSpace > 0
+                                    ? Integer.parseInt(propVal.substring(0, firstSpace))
+                                    : Integer.parseInt(propVal);
                             propVal = newPkg.assetsVer.getProperty(key);
                             firstSpace = propVal.indexOf(' ');
-                            int newVer = firstSpace > 0 ? Integer.parseInt(propVal.substring(0, firstSpace)) : Integer.parseInt(propVal);
+                            int newVer = firstSpace > 0
+                                    ? Integer.parseInt(propVal.substring(0, firstSpace))
+                                    : Integer.parseInt(propVal);
                             if (oldVer > newVer)
                                 flaggedAsset = newPkg.dir + "/" + key;
                         }
@@ -220,7 +230,8 @@ public class Archive extends Setup {
             if (deleteBackups) {
                 removeBackups();
             }
-            throw new IOException("Cannot perform asset import, asset " + flaggedAsset + " cannot be an older version than existing");
+            throw new IOException("Cannot perform asset import, asset " + flaggedAsset
+                    + " cannot be an older version than existing");
         }
 
         System.out.println("Archiving....");
@@ -238,7 +249,7 @@ public class Archive extends Setup {
                 if (archiveDest.exists())
                     new Delete(archiveDest).run();
                 new Copy(tempPkgDir, archiveDest).run();
-                // TODO:  Insert assets from pkg into ASSET_REF DB table
+                // TODO: Insert assets from pkg into ASSET_REF DB table
             }
         }
 
@@ -252,14 +263,26 @@ public class Archive extends Setup {
         new Delete(tempDir, true).run();
     }
 
+    @SuppressWarnings("rawtypes")
     private List<Pkg> getPkgs(List<String> packages) throws IOException {
         List<Pkg> pkgs = new ArrayList<>();
         for (String pkgName : packages) {
             File dir = new File(assetDir + "/" + pkgName.replace('.', '/'));
             if (dir.isDirectory()) {
                 File pkgMeta = new File(dir + "/" + PKG_META);
-                JSONObject pkgJson = new JSONObject(new String(Files.readAllBytes(Paths.get(pkgMeta.getPath()))));
-                String ver = pkgJson.getString("version");
+                String ver;
+                if (!pkgMeta.exists()) {
+                    pkgMeta = new File(dir + "/.mdw/package.json");
+                    JSONObject pkgJson = new JSONObject(
+                            new String(Files.readAllBytes(Paths.get(pkgMeta.getPath()))));
+                    ver = pkgJson.getString("version");
+                }
+                else {
+                    Yaml yamlLoader = new Yaml();
+                    Map map = (Map) yamlLoader
+                            .load(new String(Files.readAllBytes(Paths.get(pkgMeta.getPath()))));
+                    ver = (String) map.get("version");
+                }
                 Properties assetsVer = new Properties();
                 File propFile = new File(dir + "/" + VERSIONS_FILE);
                 if (propFile.exists()) {
@@ -322,17 +345,23 @@ public class Archive extends Setup {
         for (int i = 0; i < bytes.length; i++) {
             if ((bytes[i] & 0b10000000) == 0b00000000) {
                 expectedLength = 1;
-            } else if ((bytes[i] & 0b11100000) == 0b11000000) {
+            }
+            else if ((bytes[i] & 0b11100000) == 0b11000000) {
                 expectedLength = 2;
-            } else if ((bytes[i] & 0b11110000) == 0b11100000) {
+            }
+            else if ((bytes[i] & 0b11110000) == 0b11100000) {
                 expectedLength = 3;
-            } else if ((bytes[i] & 0b11111000) == 0b11110000) {
+            }
+            else if ((bytes[i] & 0b11111000) == 0b11110000) {
                 expectedLength = 4;
-            } else if ((bytes[i] & 0b11111100) == 0b11111000) {
+            }
+            else if ((bytes[i] & 0b11111100) == 0b11111000) {
                 expectedLength = 5;
-            } else if ((bytes[i] & 0b11111110) == 0b11111100) {
+            }
+            else if ((bytes[i] & 0b11111110) == 0b11111100) {
                 expectedLength = 6;
-            } else {
+            }
+            else {
                 return true;
             }
             while (--expectedLength > 0) {
