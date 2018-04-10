@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
@@ -38,9 +39,11 @@ import com.centurylink.mdw.bpm.PropertyDocument.Property;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.ExcludableCache;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.spring.SpringAppContext;
@@ -51,7 +54,6 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-
 
 /**
  * Startup class that manages registration of all the caches
@@ -82,6 +84,7 @@ public class CacheRegistration implements StartupService {
     public void onStartup() {
         try {
             preloadCache();
+            validateAssetVersion();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             preloadDynamicCache();
             performInitialRequest();
@@ -90,6 +93,32 @@ public class CacheRegistration implements StartupService {
             String message = "Failed to load caches";
             logger.severeException(message, ex);
             throw new StartupException(message, ex);
+        }
+    }
+
+    /**
+     * Method that gets invoked when the server comes up. It checks if the
+     * framework asset packages and current MDW build versions are the same.
+     * Otherwise logs a warning message.
+     */
+    private void validateAssetVersion() {
+        final String exceptions = ".*\\b(oracle|tibco|demo)\\b.*";
+        String version = ApplicationContext.getMdwVersion();
+        String mdwVersion = version.split("\\-")[0];
+        List<Package> packages = PackageCache.getPackages();
+        List<Package> filteredPackages = packages.stream()
+                .filter(e -> !mdwVersion.equals(e.getVersionString())
+                        && e.getPackageName().startsWith("com.centurylink.mdw"))
+                .collect(Collectors.toList());
+        boolean flagWarning = filteredPackages.stream()
+                .anyMatch(p2 -> !(p2.getPackageName().matches(exceptions)));
+
+        if (flagWarning){
+            String message = "\n****************************************\n"
+                    + "** WARNING: MDW Framework asset packages do not match current build Version "
+                    + mdwVersion + "\n" + "** Please import correct version packages. \n"
+                    + "******************************************\n";
+            logger.warn(message);
         }
     }
 
