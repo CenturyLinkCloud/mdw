@@ -3,13 +3,16 @@ package com.centurylink.mdw.tests.script
 start process('KotlinTest') {
   variables = [
     testCase: 'exec',
-    person: '''{
-  "_type": "com.centurylink.mdw.tests.workflow.Person",
+    jsonablePerson: '''{
+  "_type": "com.centurylink.mdw.tests.script.Person",
   "person": {
-    "firstName": "Linus",
-    "lastName": "Torvalds"
+    "firstName": "Douglas",
+    "lastName": "Crockford"
   }
-}'''
+}''',
+    yamlPerson: '''!!com.centurylink.mdw.tests.workflow.Person
+      firstName: Tim
+      lastName: Berners-Lee'''
   ]
 }
 // wait process

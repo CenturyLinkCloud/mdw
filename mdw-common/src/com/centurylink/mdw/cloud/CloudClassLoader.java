@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -114,6 +115,9 @@ public class CloudClassLoader extends ClassLoader {
             }
         }
 
+        // add kotlin classes dir in case it exists
+        classpath.add(new File(ApplicationContext.getTempDirectory() + "/kotlin/classes"));
+
         String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
         if (assetLoc != null)
             assetRoot = new File(assetLoc);
@@ -178,7 +182,7 @@ public class CloudClassLoader extends ClassLoader {
             if (file.isDirectory()) {
                 b = findInDirectory(file, path);
             }
-            else {
+            else if (file.isFile()) {
                 String filepath = file.getPath();
                 if (filepath.endsWith(".jar")) {
                     b = findInJarFile(file, path);

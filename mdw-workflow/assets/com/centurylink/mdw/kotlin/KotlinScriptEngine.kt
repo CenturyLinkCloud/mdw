@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.jsr223.*
 import org.jetbrains.kotlin.utils.PathUtil
+import java.lang.reflect.InvocationTargetException
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -37,7 +38,6 @@ import javax.script.Bindings
 import kotlin.reflect.KClass
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
 import com.centurylink.mdw.util.log.LoggerUtil
-
 
 /**
  * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
@@ -117,13 +117,28 @@ class KotlinScriptEngine(
     fun eval(compiledScript: CompiledKotlinScript) : Any? {
         val context = getContext()
         val state = getCurrentState(context)
+        var errorLineNum: Int = 0
         val result = try {
             replEvaluator.eval(state, compiledScript.compiledData, overrideScriptArgs(context), object : InvokeWrapper {
                 override fun <T> invoke(body: () -> T): T {
-                    val instance = body()
-                    return instance
+                    try {
+                        val instance = body()
+                        return instance
+                    }
+                    catch (e: InvocationTargetException) {
+                        if (e.cause is Throwable) {
+                            val th = e.cause as Throwable
+                            if (th.stackTrace != null && th.stackTrace.size > 0) {
+                                errorLineNum =  th.stackTrace[0].lineNumber
+                            }
+                        }
+                        throw e
+                    }
                 }
             })
+        }
+        catch (e: ScriptException) {
+            throw e
         }
         catch (e: Exception) {
             throw ScriptException(e)
@@ -132,9 +147,15 @@ class KotlinScriptEngine(
         return when (result) {
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
-            is ReplEvalResult.Error -> throw ScriptException(result.message)
-            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
-            is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
+            is ReplEvalResult.Error -> {
+                throw KotlinScriptException(result.message, null, errorLineNum)    
+            }
+            is ReplEvalResult.Incomplete -> {
+                throw KotlinScriptException("error: incomplete code", null, errorLineNum)    
+            }
+            is ReplEvalResult.HistoryMismatch -> {
+                throw ScriptException("Repl history mismatch at line: ${result.lineNo}")    
+            }
         }      
     }
   

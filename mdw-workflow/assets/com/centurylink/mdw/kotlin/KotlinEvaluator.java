@@ -17,6 +17,10 @@ package com.centurylink.mdw.kotlin;
 
 import java.util.Map;
 
+import javax.script.ScriptException;
+
+import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.CompiledKotlinScript;
+
 import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.script.ExecutionException;
@@ -24,11 +28,33 @@ import com.centurylink.mdw.script.ScriptEvaluator;
 
 @RegisteredService(value=ScriptEvaluator.class,
 parameters={@Parameter(name="language", value="Kotlin Script")})
-public class KotlinEvaluator extends KotlinExecutor implements ScriptEvaluator {
+public class KotlinEvaluator implements ScriptEvaluator {
+
+    private String name;
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     @Override
     public Object evaluate(String script, Map<String,Object> bindings)
             throws ExecutionException {
-        return execute(script, bindings);
+        try {
+            KotlinScriptEngine engine = KotlinAccess.getInstance().getScriptEngine();
+            for (String bindName : bindings.keySet()) {
+                engine.put(bindName, bindings.get(bindName));
+            }
+            CompiledKotlinScript compiled = KotlinAccess.getScript(name);
+            if (compiled == null) {
+                compiled = (CompiledKotlinScript) engine.compile(script);
+                KotlinAccess.putScript(name, compiled);
+            }
+            return engine.eval(compiled);
+        }
+        catch (KotlinScriptException ex) {
+            Exception withName = new KotlinScriptException(ex.getMessage(), name, ex.getLineNumber());
+            throw new ExecutionException(withName.getMessage(), withName);
+        }
+        catch (ScriptException ex) {
+            throw new ExecutionException(ex.getMessage(), ex);
+        }
     }
 }

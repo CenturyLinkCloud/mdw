@@ -20,7 +20,7 @@
     },
     {
       "attributes": {
-        "Rule": "println(\"incomplete?\")\r\nval flavors = variables[\"numFlavs\"]\r\n\r\ncheck(flavors == 31) { \"Invalid value for variable numFlavs: ${flavors}\" }\r\n\r\nvariables[\"flavor\"]",
+        "Rule": "println(\"kotlin eval testing...\")\r\n\r\ncheck(variables[\"numFlavs\"] == 31) { \"Invalid value for variable numFlavs\" }\r\n\r\nvariables[\"flavor\"]",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=126,y=391,w=100,h=60"
       },
@@ -53,7 +53,7 @@
     {
       "attributes": {
         "Output Documents": "[\"person\"]",
-        "Rule": "// import com.centurylink.mdw.tests.workflow.Person\r\n\r\nprintln(\"testCase: ${testCase}\")\r\nprintln(\"json: ${person!!.getJson()}\")\r\n",
+        "Rule": "import com.centurylink.mdw.tests.script.Person\r\n\r\nval personKt: Person = Person()\r\nprintln(\"KOTLINCL: ${personKt::class.java.getClassLoader()}\")\r\n\r\nval person = variables[\"jsonablePerson\"] as Person\r\nprintln(\"JAVACL: ${person::class.java.getClassLoader()}\")\r\n\r\n// var person: Person = variables[\"jsonablePerson\"] as Person\r\n\r\n// null\r\n\r\n// simple set variable\r\n// variables[\"jsonablePersonName\"] = person.getName()\r\n\r\n// update json content\r\n// person.firstName = \"Linus\"\r\n// person.lastName = \"Torvalds\"",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=289,y=160,w=100,h=65"
       },
@@ -159,11 +159,23 @@
       "category": "INPUT",
       "type": "java.lang.String"
     },
+    "jsonObject": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "jsonablePerson": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "jsonablePersonName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
     "jsonobject": {
       "category": "LOCAL",
       "type": "org.json.JSONObject"
     },
-    "name": {
+    "mrid": {
       "category": "LOCAL",
       "type": "java.lang.String"
     },
@@ -171,13 +183,13 @@
       "category": "INPUT",
       "type": "java.lang.Integer"
     },
-    "person": {
-      "category": "INPUT",
-      "type": "com.centurylink.mdw.model.Jsonable"
-    },
     "testCase": {
       "category": "INPUT",
       "type": "java.lang.String"
+    },
+    "yamlPerson": {
+      "category": "INPUT",
+      "type": "org.yaml.snakeyaml.Yaml"
     }
   }
 }
