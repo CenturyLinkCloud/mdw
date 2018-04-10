@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.zip.ZipEntry;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.java.CompiledJavaCache;
@@ -151,8 +153,25 @@ public class CloudClassLoader extends ClassLoader {
             logger.severeException(ex.getMessage(),  ex);
         }
 
-        if (b == null)
+        if (b == null) {
+            String kotlinPkg = "com.centurylink.mdw.kotlin";
+            if (ApplicationContext.isDevelopment() && !name.equals(kotlinPkg + ".KotlinAccess")) {
+                // In dev, since kotlin assets are lazily compiled, trigger compilation if package is present.
+                Package kotlinPackage = PackageCache.getPackage(kotlinPkg);
+                if (kotlinPackage != null) {
+                    try {
+                        Class<?> kotlinAccess = CompiledJavaCache.getClassFromAssetName(this, kotlinPkg + ".KotlinAccess");
+                        Method getInstance = kotlinAccess.getMethod("getInstance");
+                        getInstance.invoke(null);
+                    }
+                    catch (Exception ex) {
+                        logger.severeException("Error initializing KotlinAccess: " + ex.getMessage(), ex);
+                        throw new ClassNotFoundException(name);
+                    }
+                }
+            }
             throw new ClassNotFoundException(name);
+        }
 
         if (logger.isMdwDebugEnabled())
             logger.mdwDebug("Class " + name + " loaded by Cloud classloader for package: " + mdwPackage.getLabel());
