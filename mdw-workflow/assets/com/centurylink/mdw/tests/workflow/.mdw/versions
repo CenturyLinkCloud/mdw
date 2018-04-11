@@ -173,10 +173,8 @@ jsonToJson.groovy=1
 jsonToXml.groovy=2
 service-heteroproc-parallel-action.xml=3
 service-heteroproc-parallel-response.xml=1
-test=1SubprocessVariable.test=1
 tester-ping.json=1
 tester-ping.xml=2
 tester-pong.json=1
 tester-pong.xml=2
 xslt-transform-request.xml=2
-yaml=1SubprocessVariable.yaml=1

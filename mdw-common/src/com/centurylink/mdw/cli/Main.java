@@ -147,6 +147,9 @@ public class Main {
                     if (op instanceof Test && !((Test)op).isSuccess()) {
                         System.exit(-1);  // success visible to build script
                     }
+                    if (op instanceof Vercheck) {
+                        System.exit(((Vercheck)op).getErrorCount());
+                    }
                 }
             }
         }
