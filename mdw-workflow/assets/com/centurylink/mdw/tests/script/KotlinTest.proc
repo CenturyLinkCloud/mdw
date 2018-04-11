@@ -36,7 +36,7 @@
           "to": "A2"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=183,ly=480,type=Elbow,xs=176&176,ys=455&518"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=183,ly=480,type=Elbow,xs=176&176,ys=455&515"},
           "event": "FINISH",
           "id": "T3",
           "resultCode": "Vanilla",
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=146,y=522,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=146,y=519,w=60,h=40"},
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Wrong"
@@ -53,7 +53,7 @@
     {
       "attributes": {
         "Output Documents": "[\"person\"]",
-        "Rule": "import com.centurylink.mdw.tests.script.Person\r\n\r\nval personKt: Person = Person()\r\nprintln(\"KOTLINCL: ${personKt::class.java.getClassLoader()}\")\r\n\r\nval person = variables[\"jsonablePerson\"] as Person\r\nprintln(\"JAVACL: ${person::class.java.getClassLoader()}\")\r\n\r\n// var person: Person = variables[\"jsonablePerson\"] as Person\r\n\r\n// null\r\n\r\n// simple set variable\r\n// variables[\"jsonablePersonName\"] = person.getName()\r\n\r\n// update json content\r\n// person.firstName = \"Linus\"\r\n// person.lastName = \"Torvalds\"",
+        "Rule": "import com.centurylink.mdw.tests.script.Person\r\n\r\nvar person: Person = variables[\"jsonablePerson\"] as Person\r\n\r\n// simple set variable\r\nvariables[\"jsonablePersonName\"] = person.getName()\r\n\r\n// update json content\r\nperson.firstName = \"Linus\"\r\nperson.lastName = \"Torvalds\"",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=289,y=160,w=100,h=65"
       },
