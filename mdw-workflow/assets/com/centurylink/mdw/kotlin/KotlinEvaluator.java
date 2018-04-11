@@ -45,9 +45,11 @@ public class KotlinEvaluator implements ScriptEvaluator {
             CompiledKotlinScript compiled = KotlinAccess.getScript(name);
             if (compiled == null) {
                 compiled = (CompiledKotlinScript) engine.compile(script);
-                KotlinAccess.putScript(name, compiled);
+                // TODO reusing causes issue in kotlin repl compile/eval
+                // KotlinAccess.putScript(name, compiled);
             }
-            return engine.eval(compiled);
+            Object result = engine.eval(compiled);
+            return result;
         }
         catch (KotlinScriptException ex) {
             Exception withName = new KotlinScriptException(ex.getMessage(), name, ex.getLineNumber());

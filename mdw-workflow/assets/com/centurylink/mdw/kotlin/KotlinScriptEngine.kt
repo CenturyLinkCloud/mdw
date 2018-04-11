@@ -59,14 +59,26 @@ class KotlinScriptEngine(
                makeCompilerConfiguration(),
                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
     }
+
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
-    private val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
+    private val localEvaluator by lazy {
+        GenericReplCompilingEvaluator(
+                replCompiler,
+                templateClasspath,
+                this::class.java.getClassLoader(),
+                getScriptArgs(getContext(), scriptArgsTypes),
+                ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT)
+    }
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 
-    override val state: IReplStageState<*> get() = getCurrentState(getContext())
+    override val state: IReplStageState<*> get() {
+        return getCurrentState(getContext())
+    } 
 
-    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
+        return replEvaluator.createState(lock)
+    } 
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? {
         var scriptArgs = getScriptArgs(context, scriptArgsTypes)
@@ -98,7 +110,15 @@ class KotlinScriptEngine(
     @Throws(ScriptException::class)
     override fun compile(script: String) : CompiledScript {
         try {
-            return compile(script, getContext())
+            if (logger.isDebugEnabled()) {
+                val start = System.currentTimeMillis()
+                val compiled = compile(script, getContext())
+                logger.debug("Kotlin script compile time: ${System.currentTimeMillis() - start} ms")
+                return compiled
+            }
+          else {
+              return compile(script, getContext())
+          }
         }
         catch (e: ScriptException) {
             logger.severe("Compilation classpath:\n=====\n${KotlinClasspath().asString}\n=====")
