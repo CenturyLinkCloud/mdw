@@ -23,6 +23,7 @@ ErrorHandlerDelegation1.test=2
 ErrorHandlerDelegation1.yaml=1
 ErrorHandlerDelegation2.test=2
 ErrorHandlerDelegation2.yaml=1
+Event\ Loop\ Fallout\ Task.task=1
 EventCheck.proc=5
 EventCheckBeforeComplete.test=2
 EventCheckBeforeComplete.yaml=1

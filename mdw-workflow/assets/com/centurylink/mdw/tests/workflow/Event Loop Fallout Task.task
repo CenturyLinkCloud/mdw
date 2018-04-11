@@ -1,12 +1,7 @@
-{
-  "attributes": {
-    "FormName": "Autoform",
-    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-    "Notices": "$DefaultNotices",
-    "Variables": "N,N,Not Displayed,0,,java.lang.String;comp,comp,Not Displayed,0,,java.lang.String"
-  },
-  "category": "COM",
-  "logicalId": "MDWTestLoopBackWaiting:Activity6",
-  "name": "Event Loop Fallout Task",
-  "version": "0"
-}
+<task:taskTemplate logicalId="MDWTestLoopBackWaiting:Activity6" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Event Loop Fallout Task</task:name>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.AutoFormTaskIndexProvider</task:attribute>
+  <task:attribute name="Variables">N,N,Not Displayed,0,,java.lang.String;comp,comp,Not Displayed,0,,java.lang.String</task:attribute>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="FormName">Autoform</task:attribute>
+</task:taskTemplate>
