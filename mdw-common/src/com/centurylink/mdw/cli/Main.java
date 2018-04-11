@@ -43,6 +43,7 @@ public class Main {
             }
         }
 
+        // TODO: user reflection to instantiate appropriate command
         Help help = new Help();
         Main main = new Main();
         Init init = new Init();
@@ -58,6 +59,7 @@ public class Main {
         Version version = new Version();
         Convert convert = new Convert();
         Codegen codegen = new Codegen();
+        Vercheck vercheck = new Vercheck();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -75,6 +77,7 @@ public class Main {
             .addCommand("test", test)
             .addCommand("convert", convert)
             .addCommand("codegen", codegen)
+            .addCommand("vercheck", vercheck)
             .build();
 
         cmd.setProgramName("mdw");
@@ -122,6 +125,9 @@ public class Main {
                 }
                 else if (command.equals("codegen")) {
                     op = codegen;
+                }
+                else if (command.equals("vercheck")) {
+                    op = vercheck;
                 }
 
                 if (op == null) {

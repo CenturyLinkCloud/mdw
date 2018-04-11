@@ -23,7 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +35,9 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.CommaParameterSplitter;
 
 public abstract class Setup implements Operation {
+
+    protected static final String META_DIR = ".mdw";
+    protected static final String IGNORE = ".mdwignore";
 
     protected static List<String> defaultBasePackages = new ArrayList<>();
     static {
@@ -519,5 +524,55 @@ public abstract class Setup implements Operation {
             File assetsDir = new File(templateDir + "/assets");
             new Copy(new File(tempDir + "/assets"), assetsDir, true).run();
         }
+    }
+
+    protected Map<String,File> getAssetPackageDirs() throws IOException {
+        List<File> packageDirs = new ArrayList<>();
+        findAssetPackageDirs(getAssetRoot(), packageDirs);
+        Map<String,File> assetPackageDirs = new HashMap<>();
+        for (File packageDir : packageDirs) {
+            String packageName = getAssetPath(packageDir).replace('/', '.').replace('\\', '.');
+            assetPackageDirs.put(packageName, packageDir);
+        }
+        return assetPackageDirs;
+    }
+
+    private void findAssetPackageDirs(File from, List<File> into) throws IOException {
+        for (File file : from.listFiles()) {
+            if (file.isDirectory() && !file.getName().equals(META_DIR)) {
+                if (new File(file + "/" + META_DIR).isDirectory()) {
+                    List<File> excludes = getExcludes(from);
+                    if (!excludes.contains(file))
+                        into.add(file);
+                }
+                findAssetPackageDirs(file, into);
+            }
+        }
+    }
+
+    protected List<File> getAssetFiles(String packageName) throws IOException {
+        List<File> assetFiles = new ArrayList<>();
+        File packageDir = new File(getAssetRoot() + "/" + packageName.replace('.', '/'));
+        List<File> excludes = getExcludes(packageDir);
+        for (File file : packageDir.listFiles()) {
+            if (file.isFile() && !excludes.contains(file))
+                assetFiles.add(file);
+        }
+        return assetFiles;
+    }
+
+    private List<File> getExcludes(File dir) throws IOException {
+        List<File> excludes = new ArrayList<>();
+        File mdwIgnore = new File(dir + "/" + IGNORE);
+        if (mdwIgnore.exists()) {
+            // currently only supports a straight directory list (no wildcards)
+            List<String> lines = Files.readAllLines(Paths.get(mdwIgnore.getPath()));
+            for (String line : lines) {
+                String exclude = line.trim();
+                if (!exclude.isEmpty() && !exclude.startsWith("#"))
+                    excludes.add(new File(exclude));
+            }
+        }
+        return excludes;
     }
 }
