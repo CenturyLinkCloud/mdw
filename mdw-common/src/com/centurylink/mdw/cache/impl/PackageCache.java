@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
@@ -89,6 +90,10 @@ public class PackageCache implements PreloadableCache {
                 }
             });
             timer.stopAndLogTiming("Load package list");
+
+            if(packageListTemp!=null && !packageListTemp.isEmpty())
+                validatePackageVersion(packageListTemp);
+
             return packageListTemp;
         }
         catch (DataAccessException ex) {
@@ -96,6 +101,36 @@ public class PackageCache implements PreloadableCache {
         }
     }
 
+    /**
+     * Method that gets invoked from load(). It checks if the
+     * framework asset packages and current MDW build versions are the same.
+     * Otherwise logs a warning message.
+     */
+    private static void validatePackageVersion(List<Package> packages) {
+        final String exceptions = ".*\\b(oracle|tibco|demo)\\b.*";
+        String version = ApplicationContext.getMdwVersion();
+        String mdwVersion = version.split("\\-")[0];
+
+        List<Package> filteredPackages = packages.stream()
+                .filter(e -> !mdwVersion.equals(e.getVersionString())
+                        && e.getPackageName().startsWith("com.centurylink.mdw"))
+                .collect(Collectors.toList());
+        List<Package> obsoletePackages = filteredPackages.stream()
+                .filter(p2 -> !(p2.getPackageName().matches(exceptions)))
+                .collect(Collectors.toList());
+
+        if (!obsoletePackages.isEmpty()){
+            StringBuilder message=new StringBuilder();
+            message.append( "\n****************************************\n"
+                    + "** WARNING: Following MDW Framework asset packages do not match current build Version "
+                    + mdwVersion + "\n" + "** Please import correct version packages. \n");
+            for (Package p1 : obsoletePackages) {
+                message.append("**   "+p1.getLabel()+"\n");
+            }
+            message.append("******************************************\n");
+            logger.warn(message.toString());
+        }
+    }
     @Override
     public void clearCache() {}
 

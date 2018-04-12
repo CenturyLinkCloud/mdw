@@ -52,7 +52,6 @@ import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-
 /**
  * Startup class that manages registration of all the caches
  */
