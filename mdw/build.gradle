@@ -13,6 +13,12 @@ if ('true'.equals(findProperty('devBuild'))) {
     }
 }
 
+task env {
+    tasks.withType(Exec) {
+        environment << [MDW_HOME: 'cli']
+    }
+}
+
 subprojects {
     apply plugin: "java"
     apply plugin: "eclipse-wtp"
@@ -240,7 +246,6 @@ task buildDev(type: GradleBuild) {
 }
 
 task javaNoTabs(type: JavaExec) {
-    dependsOn buildAll
     classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
     main = 'com.centurylink.mdw.util.file.Grep'
     args = ['\t', '**/*.java']
@@ -248,7 +253,6 @@ task javaNoTabs(type: JavaExec) {
 }
 
 task jsNoTabs(type: JavaExec) {
-    dependsOn buildAll
     classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
     main = 'com.centurylink.mdw.util.file.Grep'
     args = ['\t', 'mdw-hub/web/js/**/*.js']
@@ -256,7 +260,6 @@ task jsNoTabs(type: JavaExec) {
 }
 
 task jsxNoTabs(type: JavaExec) {
-    dependsOn buildAll
     classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
     main = 'com.centurylink.mdw.util.file.Grep'
     args = ['\t', 'mdw-workflow/assets/**/*.jsx']
@@ -268,7 +271,6 @@ task codeFormat {
 }
 
 task checkAssetVersions(type: Exec) {
-    dependsOn buildAll
     def mdwCmd
     if (System.properties['os.name'].startsWith('Windows')) {
         mdwCmd = 'cli\\bin\\mdw.bat'
