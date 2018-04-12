@@ -74,18 +74,27 @@ public class Discover extends Setup {
             JSONObject response = json.getJSONObject("response");
             if (response.has("docs")) {
                 JSONArray artifactsArr = response.getJSONArray("docs");
-                for (int i = 0; i < artifactsArr.length(); i++) {
-                    JSONObject artifact = artifactsArr.getJSONObject(i);
-                    JSONArray array = packages.getJSONArray("packages");
-                    JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("name", artifact.getString("g").replace("assets", "")
-                            + artifact.getString("a").replace("-", "."));
-                    jsonObj.put("artifact", artifact.getString("a"));
-                    if (!latest)
-                        jsonObj.put("version", artifact.getString("v"));
+                if (artifactsArr.length() == 0) {
+                    if (getMdwVersion() != null && getMdwVersion().startsWith("6.0"))
+                        setMdwVersion("6.0.12");
                     else
-                        jsonObj.put("version", artifact.getString("latestVersion"));
-                    array.put(jsonObj);
+                        latest = true;
+                    discoverMaven(groupId, monitors);
+                }
+                else {
+                    for (int i = 0; i < artifactsArr.length(); i++) {
+                        JSONObject artifact = artifactsArr.getJSONObject(i);
+                        JSONArray array = packages.getJSONArray("packages");
+                        JSONObject jsonObj = new JSONObject();
+                        jsonObj.put("name", artifact.getString("g").replace("assets", "")
+                                + artifact.getString("a").replace("-", "."));
+                        jsonObj.put("artifact", artifact.getString("a"));
+                        if (!latest)
+                            jsonObj.put("version", artifact.getString("v"));
+                        else
+                            jsonObj.put("version", artifact.getString("latestVersion"));
+                        array.put(jsonObj);
+                    }
                 }
             }
         }
@@ -100,11 +109,15 @@ public class Discover extends Setup {
     protected String searchArtifacts(String groupId) throws IOException {
         StringBuilder query = new StringBuilder(
                 "http://search.maven.org/solrsearch/select?wt=json&rows=50");
-        if (!latest)
-            query.append("&core=gav");
         query.append("&q=");
         if (groupId != null)
             query.append("g:").append(groupId);
+        if (!latest)
+            if (getMdwVersion() != null)
+                query.append("+AND+v:").append(getMdwVersion().split("-")[0]);
+            else
+                query.append("&core=gav");
+
         String url = query.toString();
 
         System.out.println("Discovering assets from: " + url);

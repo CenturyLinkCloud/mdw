@@ -61,7 +61,7 @@ public class Update extends Setup {
 
         Map<String,String> discovered = new HashMap<>();
         Discover discover = new Discover();
-        discover.setLatest(true);
+        discover.setMdwVersion(getMdwVersion());
         boolean isMdw = discoveryUrl.endsWith("/services") || discoveryUrl.endsWith("/Services");
         if (isMdw)
             discover.discoverMdw(discoveryUrl, monitors);
