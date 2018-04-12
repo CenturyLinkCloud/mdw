@@ -75,14 +75,11 @@ public class Discover extends Setup {
             if (response.has("docs")) {
                 JSONArray artifactsArr = response.getJSONArray("docs");
                 if (artifactsArr.length() == 0) {
-                    if (getMdwVersion() != null && getMdwVersion().startsWith("6.0")) {
+                    if (getMdwVersion() != null && getMdwVersion().startsWith("6.0"))
                         setMdwVersion("6.0.12");
-                        discoverMaven(groupId, monitors);
-                    }
-                    else {
+                    else
                         latest = true;
-                        discoverMaven(groupId, monitors);
-                    }
+                    discoverMaven(groupId, monitors);
                 }
                 else {
                     for (int i = 0; i < artifactsArr.length(); i++) {
