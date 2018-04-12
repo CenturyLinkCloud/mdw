@@ -1,11 +1,6 @@
-{
-  "attributes": {
-    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
-    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
-    "Variables": "scriptActivityExecuted,scriptActivityExecuted,Not Displayed,0,,java.lang.Boolean"
-  },
-  "category": "COM",
-  "logicalId": "TestActivityStub:A7",
-  "name": "TestActivityStub Fallout",
-  "version": "0"
-}
+<task:taskTemplate logicalId="TestActivityStub:A7" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>TestActivityStub Fallout</task:name>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.CustomTaskIndexProvider</task:attribute>
+  <task:attribute name="Variables">scriptActivityExecuted,scriptActivityExecuted,Not Displayed,0,,java.lang.Boolean</task:attribute>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+</task:taskTemplate>

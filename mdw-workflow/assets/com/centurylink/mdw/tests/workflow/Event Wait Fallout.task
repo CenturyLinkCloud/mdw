@@ -1,11 +1,6 @@
-{
-  "attributes": {
-    "FormName": "Autoform",
-    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-    "Notices": "$DefaultNotices"
-  },
-  "category": "COM",
-  "logicalId": "MDWTestEventWaitTimeout:A7",
-  "name": "Event Wait Fallout",
-  "version": "0"
-}
+<task:taskTemplate logicalId="MDWTestEventWaitTimeout:A7" category="COM" xmlns:task="http://mdw.centurylink.com/task">
+  <task:name>Event Wait Fallout</task:name>
+  <task:attribute name="IndexProvider">com.centurylink.mdw.services.task.AutoFormTaskIndexProvider</task:attribute>
+  <task:attribute name="Notices">Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;</task:attribute>
+  <task:attribute name="FormName">Autoform</task:attribute>
+</task:taskTemplate>

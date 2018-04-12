@@ -2,6 +2,7 @@
 
 1 - Edit gradle.properties to set the new build numbers.
     - mdwVersion
+    - mdwPrevTag
     
 2 - Run Gradle task updateMdwVerInFiles to update these files: 
   - mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
@@ -55,7 +56,7 @@
   - Commit and push new version of com.centurylink.mdw.plugin.xml to git
   - Commit and push to git (manifest.yml and cloud package should not be committed)
 
-10 - Run task 1,2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+10 - Run task 1, 2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
 
 11 - Publishing to AppFog Prod (mdw-central) and AppFog Dev
    -  go to root of mdw-central project (check correct dev/prod manifest.yml is there)
