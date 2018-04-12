@@ -7,5 +7,5 @@
   "category": "COM",
   "logicalId": "MDWTestEventWaitTimeout:A7",
   "name": "Event Wait Fallout",
-  "version": "0"
+  "version": "0.1"
 }

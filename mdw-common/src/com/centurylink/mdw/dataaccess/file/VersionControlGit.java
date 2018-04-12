@@ -68,6 +68,7 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.notes.Note;
 import org.eclipse.jgit.notes.NoteMap;
+import org.eclipse.jgit.pgm.Main;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -81,7 +82,6 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.WorkingTreeIterator;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
-import org.eclipse.jgit.pgm.Main;
 
 import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.dataaccess.AssetRevision;
@@ -416,7 +416,7 @@ public class VersionControlGit implements VersionControl {
      * Use git hashing algorithm.
      * http://stackoverflow.com/questions/7225313/how-does-git-compute-file-hashes
      */
-    protected Long gitHash(File input) throws IOException {
+    public Long gitHash(File input) throws IOException {
         String path = getLogicalPath(input);
         String blob = "blob " + path.length() + "\0" + path;
         MessageDigest md = null;
@@ -484,6 +484,16 @@ public class VersionControlGit implements VersionControl {
             return head.getName();
         else
             return null;
+    }
+
+    public String getCommitForTag(String tag) throws Exception {
+        List<Ref> tagRefs = git.tagList().call();
+        for (Ref tagRef : tagRefs) {
+            if (tagRef.getName().equals("refs/tags/" + tag))
+                return tagRef.getObjectId().name();
+        }
+
+        return null;
     }
 
     /**

@@ -257,8 +257,7 @@ CREATE TABLE DOCUMENT
   MODIFY_DT           TIMESTAMP(6),
   STATUS_CODE         SMALLINT,
   STATUS_MESSAGE      VARCHAR(1000),
-  PATH                VARCHAR(1000),
-  RESPONSE_MICROS     DATETIME(6)
+  PATH                VARCHAR(1000)
 ) auto_increment=10000;
 
 -- not used when mongodb is present

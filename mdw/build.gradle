@@ -13,6 +13,12 @@ if ('true'.equals(findProperty('devBuild'))) {
     }
 }
 
+task env {
+    tasks.withType(Exec) {
+        environment << [MDW_HOME: 'cli']
+    }
+}
+
 subprojects {
     apply plugin: "java"
     apply plugin: "eclipse-wtp"
@@ -228,15 +234,14 @@ uploadArchives {
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn packageSources
-    dependsOn zipTemplates
+    dependsOn(packageSources, zipTemplates)
     buildFile = "build.gradle"
     tasks = ["build"]
 }
 
 task buildDev(type: GradleBuild) {
-	buildFile = "build.gradle"
-	tasks = ["build"]
+    buildFile = "build.gradle"
+    tasks = ["build"]
     startParameter.projectProperties = [devBuild: 'true']
 }
 
@@ -265,8 +270,20 @@ task codeFormat {
     dependsOn(javaNoTabs, jsNoTabs, jsxNoTabs)
 }
 
+task checkAssetVersions(type: Exec) {
+    def mdwCmd
+    if (System.properties['os.name'].startsWith('Windows')) {
+        mdwCmd = 'cli\\bin\\mdw.bat'
+    }
+    else {
+        mdwCmd = 'cli/bin/mdw'
+    }
+    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn']
+    commandLine cmds
+}
+
 task testAll(type: GradleBuild) {
-    dependsOn(buildAll, codeFormat)
+    dependsOn(buildAll, codeFormat, checkAssetVersions)
     buildFile = "test.gradle"
     tasks = ["test"]
     startParameter.projectProperties = [include: '**/*.test',

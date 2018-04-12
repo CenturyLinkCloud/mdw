@@ -30,3 +30,5 @@ title: MDW 6.1 New Features
   13. Deprecated Swagger validators must be replaced with references to new implementation.
   14. Due to MariaDB4j upgrade, embedded db data directories should be deleted/recreated.
   15. Various deprecated classes and methods removed (compiler will find these).
+  16. EventManager API replaced by EventServices (accessed via ServiceLocator).
+  17. PoolableAdapterBase is now deprecated in favor of TextAdapterActivity.

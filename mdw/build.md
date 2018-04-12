@@ -2,6 +2,7 @@
 
 1 - Edit gradle.properties to set the new build numbers.
     - mdwVersion
+    - mdwPrevTag
     
 2 - Run Gradle task updateMdwVerInFiles to update these files: 
   - mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
@@ -57,18 +58,30 @@
 
 10 - Run task 1,2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
 
-11 - Publishing to AppFog Prod (mdw-central) and AppFog Dev
-   -  go to root of mdw-central project (check correct dev/prod manifest.yml is there)
+11 - Create and publish Docker image
+    - Log into 143new server and sudo su - mdwapp, then go to directory with cloned Git repo.
+    - git pull
+    - Create docker image with following command:
+        docker build --build-arg version=6.1.04 -t mdwcore/mdw:6.1.04 .   (update with actual MDW version)
+    - Log into docker using the following command (use your Docker Hub credentials when it prompts you)
+        docker login
+    - Publish image to Docker repository with command
+        docker push mdwcore/mdw:6.1.04   (update with actual MDW version)
+        
+# Optional
+12 - Publishing to AppFog Prod (mdw-central)
+   -  go to root of mdw-central project and update mdwVersion in gradle.properties
+   -  Download mdw-boot jar from https://github.com/CenturyLinkCloud/mdw/releases
+   -  Remove old mdw-boot.jar file
+   -  push changes to GitLab
+   -  run prepareDeploy
    -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
-   -  Select a space: Prod for formal, and Dev for snapshots
+   -  Select a space: Prod
    -  cf push
+ 13 - Publishing to AppFog Dev
+   -  go to root of mdw-demo project (check correct dev manifest.yml is there)
+   -  cf login -a https://api.useast.appfog.ctl.io -o MDWF -u manoj.agrawal@centurylink.com
+   -  Select a space: Dev
+   -  cf push
+   
 
-12 - Create and publish Docker image
-	- Log into 143new server and sudo su - mdwapp, then go to directory with cloned Git repo.
-	- git pull
-	- Create docker image with following command:
-		docker build --build-arg version=6.1.01 -t mdwcore/mdw:6.1.01 .   (update with actual MDW version)
-	- Log into docker using the following command (use your Docker Hub credentials when it prompts you)
-		docker login
-	- Publish image to Docker repository with command
-		docker push mdwcore/mdw:6.1.01   (update with actual MDW version)

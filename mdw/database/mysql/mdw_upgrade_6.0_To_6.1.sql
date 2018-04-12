@@ -6,7 +6,7 @@ BEGIN
   DECLARE t_exists   INT;
   DECLARE c_exists INT;
   DECLARE def_value varchar(14)  DEFAULT  'TASK INSTANCE';
-  DECLARE nullCheck varchar(1);
+  DECLARE nullCheck varchar(3);
 BEGIN
   select ("MDW 6.1 Upgrade Script");
 SELECT 

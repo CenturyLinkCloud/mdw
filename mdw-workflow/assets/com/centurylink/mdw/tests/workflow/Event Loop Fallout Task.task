@@ -8,5 +8,5 @@
   "category": "COM",
   "logicalId": "MDWTestLoopBackWaiting:Activity6",
   "name": "Event Loop Fallout Task",
-  "version": "0"
+  "version": "0.1"
 }
