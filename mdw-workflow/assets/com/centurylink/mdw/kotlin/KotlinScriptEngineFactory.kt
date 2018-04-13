@@ -15,19 +15,13 @@
  */
 package com.centurylink.mdw.kotlin
 
-import org.jetbrains.kotlin.script.jsr223.KotlinStandardJsr223ScriptTemplate
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
-import org.jetbrains.kotlin.script.util.*
-import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
-import javax.script.ScriptEngineFactory
 
-/**
- * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
- */
 class KotlinScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     public override fun getScriptEngine(): ScriptEngine {

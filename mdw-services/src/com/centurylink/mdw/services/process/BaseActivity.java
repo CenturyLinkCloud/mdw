@@ -76,11 +76,8 @@ import com.centurylink.mdw.util.timer.TrackingTimer;
 public abstract class BaseActivity implements GeneralActivity {
 
     protected static StandardLogger logger = null;
-    // Note 1: do not use static initializer for logger, so that
-    //   unit tester can set unit test property manager
-    // Note 2: logger should be private as we expect applications to use canned methods
-    //   such as logsevere. It is left as "protected" to avoid a lot of changes
-    //   for older applications to upgrade
+    // TODO: logger should be private as we expect applications to use canned methods
+    // such as logsevere(). It is left as "protected" to avoid compatibility issues.
 
     public static final String JAVASCRIPT = "JavaScript";
     public static final String GROOVY = "Groovy";
@@ -935,7 +932,7 @@ public abstract class BaseActivity implements GeneralActivity {
         Document docvo;
         try {
             docvo = engine.getDocument(docref, true);
-            // deserialize here to support package aware translator providers
+            // deserialize here (why?)
             docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

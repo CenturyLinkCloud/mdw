@@ -31,14 +31,6 @@ public class JavaNaming {
             if (!Character.isJavaIdentifierPart(out.charAt(i)))
                 out = out.replace(out.charAt(i), '_');
         }
-        return out;
+        return Character.toUpperCase(out.charAt(0)) + out.substring(1);
     }
-    // To get the class name from qualified name
-    public static String getClassName(String qualifiedName) {
-        if (qualifiedName.lastIndexOf(".") > 0 )
-            return qualifiedName.substring(qualifiedName.lastIndexOf(".")+1);
-        else
-            return qualifiedName;
-    }
-
 }

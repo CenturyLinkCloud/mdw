@@ -15,72 +15,69 @@
  */
 package com.centurylink.mdw.kotlin
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.common.repl.InvokeWrapper
+import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmSdkRoots
-import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.jsr223.*
 import org.jetbrains.kotlin.utils.PathUtil
-import java.lang.reflect.InvocationTargetException
 import java.io.File
+import java.io.Reader
+import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import javax.script.ScriptContext
-import javax.script.ScriptEngineFactory
-import javax.script.ScriptException
-import javax.script.CompiledScript
-import javax.script.Bindings
+import javax.script.*
 import kotlin.reflect.KClass
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
 import com.centurylink.mdw.util.log.LoggerUtil
 
 /**
- * From org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
- * TODO: figure out how this will work with https://github.com/Kotlin/KEEP/blob/scripting/proposals/scripting-support.md
+ * TODO: Figure out whether this changes with:
+ * https://github.com/Kotlin/KEEP/blob/scripting/proposals/scripting-support.md
  */
-class KotlinScriptEngine(
-        factory: ScriptEngineFactory,
+open class KotlinScriptEngine(
+        val kotlinFactory: ScriptEngineFactory,
         val templateClasspath: List<File>,
         templateClassName: String,
         val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
         val scriptArgsTypes: Array<out KClass<out Any>>?
-) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
+) : AbstractScriptEngine(), ScriptEngine {
 
     val logger = LoggerUtil.getStandardLogger()
-  
-    override val replCompiler: ReplCompiler by lazy {
-       GenericReplCompiler(
-               makeScriptDefinition(templateClasspath, templateClassName),
-               makeCompilerConfiguration(),
-               PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+    
+    override fun getFactory(): ScriptEngineFactory = kotlinFactory
+
+    val scriptCompiler: ScriptCompiler by lazy {
+        ScriptCompiler(
+                makeScriptDefinition(templateClasspath, templateClassName),
+                makeCompilerConfiguration(),
+                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
     }
 
-    // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
-    private val localEvaluator by lazy {
-        GenericReplCompilingEvaluator(
-                replCompiler,
+    val scriptEvaluator: ScriptEvaluator by lazy {
+        ScriptEvaluator(
                 templateClasspath,
                 this::class.java.getClassLoader(),
-                getScriptArgs(getContext(), scriptArgsTypes),
-                ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT)
+                getScriptArgs(getContext(), scriptArgsTypes))
     }
 
-    override val replEvaluator: ReplFullEvaluator get() = localEvaluator
+    override fun createBindings(): Bindings = SimpleBindings().apply { put(KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY, this) }
 
-    override val state: IReplStageState<*> get() {
-        return getCurrentState(getContext())
-    } 
+    override fun eval(reader: Reader, context: ScriptContext): Any? {
+        return eval(reader.readText(), context)
+    }
 
-    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
-        return replEvaluator.createState(lock)
-    } 
+    override fun eval(script: String, context: ScriptContext): Any? {
+        return eval((compile(java.lang.Integer.toHexString(script.hashCode()), script) as KotlinCompiledScript), context)
+    }
 
-    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? {
+    fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? {
         var scriptArgs = getScriptArgs(context, scriptArgsTypes)
         if (scriptArgs != null) {
             var args = scriptArgs.scriptArgs.toMutableList()
@@ -106,46 +103,42 @@ class KotlinScriptEngine(
         }
         return scriptArgs
     }
-  
+
     @Throws(ScriptException::class)
-    override fun compile(script: String) : CompiledScript {
-        try {
-            if (logger.isDebugEnabled()) {
-                val start = System.currentTimeMillis()
-                val compiled = compile(script, getContext())
-                logger.debug("Kotlin script compile time: ${System.currentTimeMillis() - start} ms")
-                return compiled
-            }
-          else {
-              return compile(script, getContext())
-          }
+    fun compile(name: String, script: String) : CompiledScript {
+		val result = if (logger.isDebugEnabled()) {
+            val start = System.currentTimeMillis()
+            var res = scriptCompiler.compile(name, script)
+            logger.debug("Kotlin script compile time: ${System.currentTimeMillis() - start} ms")
+			res
+		} else {
+		    scriptCompiler.compile(name, script)
+		}
+        val compiled = when (result) {
+            is ScriptCompileResult.Error -> throw ScriptException("Error${locationString(result)}: ${result.message}")
+            is ScriptCompileResult.Incomplete -> throw ScriptException("error: incomplete code")
+            is ScriptCompileResult.CompiledClasses -> result
         }
-        catch (e: ScriptException) {
-            logger.severe("Compilation classpath:\n=====\n${KotlinClasspath().asString}\n=====")
-            if (logger.isDebugEnabled()) {
-                logger.severe("Compilation error in source script:\n=====\n${script}\n=====")
-            }
-            throw e
-        }
+        return KotlinCompiledScript(this, compiled)
     }
-  
-   /**
-     * Evaluate separately from compile to allow precompilation.
-     * Shows how to implement an InvokeWrapper that has access to the script class instance.
-     */
-    @Throws(ScriptException::class)
-    fun eval(compiledScript: CompiledKotlinScript) : Any? {
-        val context = getContext()
-        val state = getCurrentState(context)
+
+    fun eval(compiledScript: KotlinCompiledScript) : Any? {
+        return eval(compiledScript, getContext())
+    }
+
+    fun eval(compiledScript: KotlinCompiledScript, context: ScriptContext) : Any? {
         var errorLineNum: Int = 0
         val result = try {
-            replEvaluator.eval(state, compiledScript.compiledData, overrideScriptArgs(context), object : InvokeWrapper {
+            scriptEvaluator.eval(compiledScript.compiledData, overrideScriptArgs(context), object : InvokeWrapper {
                 override fun <T> invoke(body: () -> T): T {
                     try {
                         val instance = body()
                         return instance
                     }
                     catch (e: InvocationTargetException) {
+						if (logger.isMdwDebugEnabled) {
+							logger.severeException(e.message, e)
+						}
                         if (e.cause is Throwable) {
                             val th = e.cause as Throwable
                             if (th.stackTrace != null && th.stackTrace.size > 0) {
@@ -168,17 +161,25 @@ class KotlinScriptEngine(
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
             is ReplEvalResult.Error -> {
-                throw KotlinScriptException(result.message, null, errorLineNum)    
+                throw KotlinScriptException(result.message, null, errorLineNum)
             }
             is ReplEvalResult.Incomplete -> {
-                throw KotlinScriptException("error: incomplete code", null, errorLineNum)    
+                throw KotlinScriptException("error: incomplete code", null, errorLineNum)
             }
             is ReplEvalResult.HistoryMismatch -> {
-                throw ScriptException("Repl history mismatch at line: ${result.lineNo}")    
+                throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
             }
-        }      
+        }
     }
-  
+
+    fun locationString(result: ScriptCompileResult.Error): String {
+        if (result.location == null)
+            return ""
+        else
+            return " at ${result.location.line}:${result.location.column}"
+    }
+
+
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
         val cls = classloader.loadClass(templateClassName)
@@ -193,4 +194,9 @@ class KotlinScriptEngine(
                 LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.skipMetadataVersionCheck to true)
         )
     }
+}
+
+public class KotlinCompiledScript(val engine: KotlinScriptEngine, val compiledData: ScriptCompileResult.CompiledClasses) : CompiledScript() {
+    override fun eval(context: ScriptContext): Any? = engine.eval(this, context)
+    override fun getEngine(): ScriptEngine = engine
 }

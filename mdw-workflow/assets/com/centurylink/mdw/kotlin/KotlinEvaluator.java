@@ -18,6 +18,7 @@ package com.centurylink.mdw.kotlin;
 import java.util.Map;
 
 import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.CompiledKotlinScript;
 
@@ -38,18 +39,12 @@ public class KotlinEvaluator implements ScriptEvaluator {
     public Object evaluate(String script, Map<String,Object> bindings)
             throws ExecutionException {
         try {
-            KotlinScriptEngine engine = KotlinAccess.getInstance().getScriptEngine();
-            for (String bindName : bindings.keySet()) {
-                engine.put(bindName, bindings.get(bindName));
-            }
             CompiledKotlinScript compiled = KotlinAccess.getScript(name);
             if (compiled == null) {
-                compiled = (CompiledKotlinScript) engine.compile(script);
-                // TODO reusing causes issue in kotlin repl compile/eval
-                // KotlinAccess.putScript(name, compiled);
+                KotlinAccess.putScript(name, compiled);
             }
-            Object result = engine.eval(compiled);
-            return result;
+            // TODO handle bindings output
+            return compiled.eval(new SimpleBindings(bindings));
         }
         catch (KotlinScriptException ex) {
             Exception withName = new KotlinScriptException(ex.getMessage(), name, ex.getLineNumber());
