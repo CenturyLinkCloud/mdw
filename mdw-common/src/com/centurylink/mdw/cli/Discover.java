@@ -108,7 +108,7 @@ public class Discover extends Setup {
 
     protected String searchArtifacts(String groupId) throws IOException {
         StringBuilder query = new StringBuilder(
-                "http://search.maven.org/solrsearch/select?wt=json&rows=50");
+                "http://search.maven.org/solrsearch/select?wt=json&rows=1000");
         query.append("&q=");
         if (groupId != null)
             query.append("g:").append(groupId);

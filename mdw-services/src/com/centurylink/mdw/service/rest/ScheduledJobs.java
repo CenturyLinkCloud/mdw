@@ -55,27 +55,28 @@ public class ScheduledJobs extends JsonRestService {
         try {
             String[] segments = getSegments(path);
             if (segments.length > 1 && segments[1].equals("run")) {
-                if (!content.has(JOB_CLASS_NAME) && segments[2] == null)
+                String className = null;
+                if (!content.has(JOB_CLASS_NAME) && (segments.length < 3 || segments[2] == null))
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Cannot identify Scheduled Job to run");
-                else {
-                    String className = segments[2];
-                    if (className == null)
-                        className = content.getString(JOB_CLASS_NAME);
-                    CallURL url = new CallURL(className);
-                    for (String param : content.keySet()) {
-                        if (!param.equals(JOB_CLASS_NAME))
-                            url.setParameter(param,  content.getString(param));
-                    }
-                    ScheduledJob job = MdwServiceRegistry.getInstance().getScheduledJob(className);
-                    if (job == null) {
-                        Class<? extends ScheduledJob> jobClass = Class.forName(className).asSubclass(ScheduledJob.class);
-                        job = jobClass.newInstance();
-                    }
-                    if (logger.isDebugEnabled())
-                        logger.debug("Starting Scheduled Job via REST Service: " + className);
-                    job.run(url);
-                    return null;
+                if (segments.length > 2)
+                    className = segments[2];
+
+                if (className == null)
+                    className = content.getString(JOB_CLASS_NAME);
+                CallURL url = new CallURL(className);
+                for (String param : content.keySet()) {
+                    if (!param.equals(JOB_CLASS_NAME))
+                        url.setParameter(param,  content.getString(param));
                 }
+                ScheduledJob job = MdwServiceRegistry.getInstance().getScheduledJob(className);
+                if (job == null) {
+                    Class<? extends ScheduledJob> jobClass = Class.forName(className).asSubclass(ScheduledJob.class);
+                    job = jobClass.newInstance();
+                }
+                if (logger.isDebugEnabled())
+                    logger.debug("Starting Scheduled Job via REST Service: " + className);
+                job.run(url);
+                return null;
             }
             else
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path: " + path);

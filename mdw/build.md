@@ -48,7 +48,6 @@
 9a - Update mdw-demo
   - git pull 
   - In framework workspace Copy https://ne1itcprhas62.ne1.savvis.net/MDW_DEV/mdw60_internal/blob/master/local.gradle to mdw folder (update mdwDemoDir based on your local setup) 
-  - make sure you have curl.exe in your path --TODO
   - Run the Gradle task mdw/updateMDWDemo to copy latest framework assets, update gradle.properties, manifest file in mdw-demo workspace
    
 9b - Upgrade mdw-demo to new version of mdw by clicking on project properties and selecting new version
@@ -59,7 +58,7 @@
 10 - Run task 1,2 & 4 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
 
 11 - Create and publish Docker image
-    - Log into 143new server and sudo su - mdwapp, then go to directory with cloned Git repo.
+    - Log into 143new server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
     - git pull
     - Create docker image with following command:
         docker build --build-arg version=6.1.04 -t mdwcore/mdw:6.1.04 .   (update with actual MDW version)
@@ -84,4 +83,4 @@
    -  Select a space: Dev
    -  cf push
    
-
+14 - Internal Assets
