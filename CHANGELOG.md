@@ -1,7 +1,21 @@
 # Change Log
 
+## [6.1.05](https://github.com/CenturyLinkCloud/mdw/tree/6.1.05) (2018-04-13)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.04...6.1.05)
+
+**Implemented enhancements:**
+
+- Startup validation of framework asset packages [\#378](https://github.com/CenturyLinkCloud/mdw/issues/378)
+- Refine com.centurylink.mdw.slack/SlackActivity [\#270](https://github.com/CenturyLinkCloud/mdw/issues/270)
+
+**Closed issues:**
+
+- CLI archive should parse package.yaml [\#381](https://github.com/CenturyLinkCloud/mdw/issues/381)
+- CLI command to validate asset versions [\#372](https://github.com/CenturyLinkCloud/mdw/issues/372)
+- CLI Install does not find latest snapshot version [\#368](https://github.com/CenturyLinkCloud/mdw/issues/368)
+
 ## [6.1.04](https://github.com/CenturyLinkCloud/mdw/tree/6.1.04) (2018-04-06)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.0.13-SNAPSHOT...6.1.04)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.0.12...6.1.04)
 
 **Implemented enhancements:**
 
@@ -9,7 +23,6 @@
 - REST services - support for DELETE that includes a body [\#336](https://github.com/CenturyLinkCloud/mdw/issues/336)
 - More flexibility in access.yaml [\#329](https://github.com/CenturyLinkCloud/mdw/issues/329)
 - MDWHub - show server name of activity instance/process instance [\#278](https://github.com/CenturyLinkCloud/mdw/issues/278)
-- Refine com.centurylink.mdw.slack/SlackActivity [\#270](https://github.com/CenturyLinkCloud/mdw/issues/270)
 - Task features in MDWHub [\#112](https://github.com/CenturyLinkCloud/mdw/issues/112)
 - OpenID Connect authentication [\#69](https://github.com/CenturyLinkCloud/mdw/issues/69)
 - DB upgrade scripts for 6.1 [\#366](https://github.com/CenturyLinkCloud/mdw/issues/366)
@@ -34,7 +47,6 @@
 
 **Closed issues:**
 
-- CLI Install does not find latest snapshot version [\#368](https://github.com/CenturyLinkCloud/mdw/issues/368)
 - POST\_run test in process-apis.postman REST API test broken [\#259](https://github.com/CenturyLinkCloud/mdw/issues/259)
 - Fix Task Templates nav link [\#363](https://github.com/CenturyLinkCloud/mdw/issues/363)
 - Redirect to login page when navigating in MDWHub when session expires [\#355](https://github.com/CenturyLinkCloud/mdw/issues/355)
@@ -47,9 +59,6 @@
 - MDWHub CLI command console without MDW\_HOME [\#327](https://github.com/CenturyLinkCloud/mdw/issues/327)
 - Encrypt Slack Channel in travis yaml [\#303](https://github.com/CenturyLinkCloud/mdw/issues/303)
 - Removing support for AdapterConnectionPool [\#173](https://github.com/CenturyLinkCloud/mdw/issues/173)
-
-## [6.0.13-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/6.0.13-SNAPSHOT) (2018-02-02)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.0.12...6.0.13-SNAPSHOT)
 
 ## [6.0.12](https://github.com/CenturyLinkCloud/mdw/tree/6.0.12) (2018-02-02)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.11...6.0.12)
