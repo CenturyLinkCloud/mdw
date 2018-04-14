@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.CompiledKotlinScript;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import com.centurylink.mdw.annotations.RegisteredService;
@@ -64,14 +63,14 @@ public class KotlinAccess implements CacheService {
         return scriptEngine;
     }
 
-    private Map<String,CompiledKotlinScript> scripts;
-    public static CompiledKotlinScript getScript(String name) {
+    private Map<String,KotlinCompiledScript> scripts;
+    public static KotlinCompiledScript getScript(String name) {
         return getInstance().scripts.get(name);
     }
     /**
      * Must be public for access from Kotlin.
      */
-    public static void putScript(String name, CompiledKotlinScript script) {
+    public static void putScript(String name, KotlinCompiledScript script) {
         getInstance().scripts.put(name, script);
     }
 

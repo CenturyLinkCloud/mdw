@@ -20,8 +20,6 @@ import java.util.Map;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase.CompiledKotlinScript;
-
 import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.script.ExecutionException;
@@ -39,8 +37,10 @@ public class KotlinEvaluator implements ScriptEvaluator {
     public Object evaluate(String script, Map<String,Object> bindings)
             throws ExecutionException {
         try {
-            CompiledKotlinScript compiled = KotlinAccess.getScript(name);
+            KotlinCompiledScript compiled = KotlinAccess.getScript(name);
             if (compiled == null) {
+                KotlinScriptEngine scriptEngine = KotlinAccess.getInstance().getScriptEngine();
+                compiled = (KotlinCompiledScript) scriptEngine.compile(name, script);
                 KotlinAccess.putScript(name, compiled);
             }
             // TODO handle bindings output

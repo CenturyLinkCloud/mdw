@@ -1,5 +1,5 @@
 Archive/
-out/
+.mdwignore
 com/centurylink/mdw/ibmmq
 com/centurylink/mdw/tests/ibmmq
 com/centurylink/mdw/tibco

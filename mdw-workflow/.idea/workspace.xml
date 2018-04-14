@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d311a01-c55e-4e42-8281-b511b8e49117" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.wst.common.component" beforeDir="false" afterPath="$PROJECT_DIR$/.settings/org.eclipse.wst.common.component" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/assets/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinAccess.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinEvaluator.java" beforeDir="false" afterPath="$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinEvaluator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../mdw/config/access.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../mdw/config/access.yaml" afterDir="false" />
@@ -21,7 +20,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -45,9 +44,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -57,58 +56,7 @@
             </path>
             <path>
               <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-              <item name="mdw" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi:3.15" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi:3.15" type="70bed36:NamedLibraryElementNode" />
-              <item name="poi-3.15.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi-ooxml:3.15" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi-ooxml:3.15" type="70bed36:NamedLibraryElementNode" />
-              <item name="poi-ooxml-3.15.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi-ooxml:3.15" type="70bed36:NamedLibraryElementNode" />
-              <item name="poi-ooxml-3.15.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="poi" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi-ooxml:3.15" type="70bed36:NamedLibraryElementNode" />
-              <item name="poi-ooxml-3.15.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="poi" type="462c0819:PsiDirectoryNode" />
-              <item name="xssf" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="org.apache.poi:poi-ooxml:3.15" type="70bed36:NamedLibraryElementNode" />
-              <item name="poi-ooxml-3.15.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="poi" type="462c0819:PsiDirectoryNode" />
-              <item name="xssf" type="462c0819:PsiDirectoryNode" />
-              <item name="usermodel" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mdw-workflow" type="b2602c69:ProjectViewProjectNode" />
@@ -125,7 +73,7 @@
     <property name="Downloaded.Files.Path.Enabled" value="false" />
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/assets/com/centurylink/mdw/camel/camel-spring-2.18.3.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../kotlin" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -204,7 +152,7 @@
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info active="true" anchor="bottom" id="Messages" order="7" visible="true" weight="0.2832569" />
+      <window_info anchor="bottom" id="Messages" order="7" visible="true" weight="0.2832569" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
       <window_info id="Image Layers" order="2" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
@@ -215,7 +163,7 @@
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25305623" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2591687" />
       <window_info anchor="right" id="Gradle" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -251,9 +199,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="10" column="2" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-          <folding>
-            <element signature="e#44#112#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -296,9 +241,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="40" column="18" selection-start-line="40" selection-start-column="18" selection-end-line="40" selection-end-column="18" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -313,20 +255,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinScriptEngine.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="36" column="27" selection-start-line="36" selection-start-column="27" selection-end-line="36" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinClasspath.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="18" column="27" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
         </state>
       </provider>
     </entry>
@@ -377,9 +305,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="2" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-          <folding>
-            <element signature="e#44#112#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -387,9 +312,48 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="263">
           <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinClasspath.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="28" column="33" selection-start-line="28" selection-start-column="20" selection-end-line="28" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/jdk1.8.0_111/src.zip!/javax/script/AbstractScriptEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="61" column="11" selection-start-line="61" selection-start-column="11" selection-end-line="61" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/kotlin-compiler.jar!/org/jetbrains/kotlin/script/KotlinScriptDefinition.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../kotlin/compiler/frontend.script/src/org/jetbrains/kotlin/script/KotlinScriptDefinitionFromAnnotatedTemplate.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="35" column="11" selection-start-line="35" selection-start-column="11" selection-end-line="35" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/com/centurylink/mdw/kotlin/KotlinScriptEngine.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="27" column="57" selection-start-line="27" selection-start-column="35" selection-end-line="27" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../kotlin/compiler/frontend/src/org/jetbrains/kotlin/script/KotlinScriptDefinition.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="28" column="11" selection-start-line="28" selection-start-column="11" selection-end-line="28" selection-end-column="11" />
         </state>
       </provider>
     </entry>
