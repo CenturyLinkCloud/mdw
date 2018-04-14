@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="org.glassfish:javax.el:3.0.0" type="repository">
+    <properties maven-id="org.glassfish:javax.el:3.0.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/javax.el/3.0.0/javax.el-3.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
