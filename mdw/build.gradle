@@ -138,9 +138,9 @@ task versions {
 task deployTomcatMdwDev(type: GradleBuild) {
     buildFile = "deploy.gradle"
     tasks = ["deployMdw"]
-    startParameter.projectProperties = [deployWarDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/webapps",
-                                        tomcatBinDir: "/prod/ecom2/local/apps/tomcat/tomcat7-mdw6/bin",
-                                        testServerUrl: "http://lxdenvmtc143.dev.qintra.com:8515/mdw/Services/AppSummary"]
+    startParameter.projectProperties = [deployWarDir: "/app/prod/tomcat/tomcat8-mdw6/webapps",
+                                        tomcatBinDir: "/app/prod/tomcat/tomcat8-mdw6/bin",
+                                        testServerUrl: "http://lxdenvmtc143new.dev.qintra.com:8515/mdw/Services/AppSummary"]
 }
 
 allprojects {
