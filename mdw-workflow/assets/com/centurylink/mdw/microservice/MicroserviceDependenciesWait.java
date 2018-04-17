@@ -222,12 +222,11 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
                                 .findFirst().orElse(null);
     }
 
-    public ServiceSummary getServiceSummary() throws ActivityException {
+    protected ServiceSummary getServiceSummary() throws ActivityException {
         String[] outDocs = new String[1];
         outDocs[0] = ServiceSummary.SERVICE_SUMMARY;
         setOutputDocuments(outDocs);
-        ServiceSummary serviceSummary = (ServiceSummary) getVariableValue(
-                ServiceSummary.SERVICE_SUMMARY);
+        ServiceSummary serviceSummary = (ServiceSummary) getVariableValue(ServiceSummary.SERVICE_SUMMARY);
         if (serviceSummary == null) {
             logger.severe(ServiceSummary.SERVICE_SUMMARY + " not found");
             return null;

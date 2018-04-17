@@ -17,12 +17,10 @@ package com.centurylink.mdw.microservice;
 
 import java.util.Date;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.util.StringHelper;
 
 /**
  * A single invocation of a microservice.
@@ -56,35 +54,8 @@ public class Invocation implements Jsonable {
         this.status = status;
         this.sent = sent;
     }
-    public Invocation(JSONObject json) throws JSONException {
-        if (json.has("requestId"))
-            this.requestId = json.getLong("requestId");
-        if (json.has("status"))
-            this.status = new Status(json.getJSONObject("status"));
-        if (json.has("sent"))
-            this.sent = StringHelper.stringToDate(json.getString("sent"));
-        if (json.has("responseId"))
-            this.responseId = json.getLong("responseId");
-    }
 
-    /**
-     * Microservice is name, so not included.
-     */
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = create();
-        if (requestId != null)
-            json.put("requestId", requestId);
-        if (status != null)
-            json.put("status", status.getJson());
-        if (sent != null)
-            json.put("sent", StringHelper.dateToString(sent));
-        if (responseId != null) {
-            json.put("responseId", responseId);
-        }
-        return json;
-    }
-
-    public String getJsonName() {
-        return "invocation";
+    public Invocation(JSONObject json) {
+        bind(json);
     }
 }

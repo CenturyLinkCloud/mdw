@@ -1,8 +1,10 @@
-Invocation.java=1
-Microservice.java=1
+Invocation.java=2
+Microservice.java=2
 MicroserviceDependenciesWait.java=7
+MicroserviceHistory.java=1 Renamed from e:\workspaces\mdw6\mdw-workflow\assets\com\centurylink\mdw\microservice\MicroserviceSummary.java
 MicroserviceRestAdapter.java=3
-ServiceSummary.java=1
+MicroserviceSummary.java=1
+ServiceSummary.java=2
 ServiceSummaryEventPublish.java=2
 ServiceSummaryLockCache.java=1
-Update.java=1
+Update.java=2
