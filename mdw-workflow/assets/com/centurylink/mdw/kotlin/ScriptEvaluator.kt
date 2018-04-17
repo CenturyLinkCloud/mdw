@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
+import javax.script.Bindings
 
 open class ScriptEvaluator(
         val baseClasspath: Iterable<File>,
@@ -72,6 +73,14 @@ open class ScriptEvaluator(
         val resultField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
         val resultValue: Any? = resultField.get(scriptInstance)
 
+        if (currentScriptArgs != null) {
+            val bindings = currentScriptArgs.scriptArgs[0] as Bindings
+            val vars = currentScriptArgs.scriptArgs[1] as Map<String,Any?>
+            for ((key, value) in vars) {
+                bindings[key] = value
+            }
+        }
+
         return if (compileResult.hasResult) ReplEvalResult.ValueResult(resultValue, compileResult.type)
         else ReplEvalResult.UnitResult()
     }
@@ -91,7 +100,7 @@ open class ScriptEvaluator(
                 .forEach {
                     val className = classNameFromPath(it.path)
                     if (className.internalName == expectedClassName || className.internalName.endsWith("/$expectedClassName")) {
-                        mainLineClassName = className.internalName.replace('/', '.')
+                         mainLineClassName = className.internalName.replace('/', '.')
                     }
                     classLoader.addClass(className, it.bytes)
                 }

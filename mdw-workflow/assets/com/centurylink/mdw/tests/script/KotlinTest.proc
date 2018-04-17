@@ -52,8 +52,8 @@
     },
     {
       "attributes": {
-        "Output Documents": "[\"person\"]",
-        "Rule": "import com.centurylink.mdw.tests.script.Person\r\n\r\nvar person: Person = variables[\"jsonablePerson\"] as Person\r\n\r\n// simple set variable\r\nvariables[\"jsonablePersonName\"] = person.getName()\r\n\r\n// update json content\r\nperson.firstName = \"Linus\"\r\nperson.lastName = \"Torvalds\"",
+        "Output Documents": "[\"jsonablePerson\"]",
+        "Rule": "import com.centurylink.mdw.tests.script.Person\r\n\r\nvar person: Person = variables[\"jsonablePerson\"] as Person\r\n\r\n// simple set variable\r\nvariables[\"jsonablePersonName\"] = person.getName()\r\nvariables[\"mrid\"] = runtimeContext.masterRequestId\r\n\r\n// update json content\r\nperson.firstName = \"Linus\"\r\nperson.lastName = \"Torvalds\"\r\n\r\n",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=289,y=160,w=100,h=65"
       },
@@ -68,7 +68,7 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=616,y=172,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=620,y=286,w=60,h=40"},
       "id": "A9",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Finish"
@@ -133,7 +133,8 @@
     },
     {
       "attributes": {
-        "Rule": "println(\"HELLO\")",
+        "Output Documents": "[\"jsonObject\"]",
+        "Rule": "import com.centurylink.mdw.tests.script.Person\r\nimport com.centurylink.mdw.tests.script.PersonLookup\r\n\r\n// update document value, and reflect changes made previously\r\nval person = variables[\"jsonablePerson\"] as Person\r\nvariables[\"jsonObject\"] = PersonLookup.find(person.lastName!!).getJson()",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=452,y=162,w=100,h=62"
       },
@@ -141,9 +142,25 @@
       "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Use Class",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=586,ly=192,type=Elbow,xs=556&612,ys=192&192"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=552,ly=253,type=Elbow,xs=504&504,ys=228&273"},
         "event": "FINISH",
         "id": "T11",
+        "to": "A14"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "package com.centurylink.mdw.tests.script;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\n/**\n * Access kotlin from java.\n */\npublic class AccessfromJava_A14 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\n        variables.put(\"unfound\", PersonLookup.find(\"Brin\").getJson());\n        return null;\n    }\n}\n",
+        "Output Documents": "[\"unfound\"]",
+        "WORK_DISPLAY_INFO": "x=457,y=277,w=99,h=66"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Access\r\nfrom Java",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=589,ly=306,type=Elbow,xs=560&616,ys=306&306"},
+        "event": "FINISH",
+        "id": "T12",
         "to": "A9"
       }]
     }
@@ -171,10 +188,6 @@
       "category": "LOCAL",
       "type": "java.lang.String"
     },
-    "jsonobject": {
-      "category": "LOCAL",
-      "type": "org.json.JSONObject"
-    },
     "mrid": {
       "category": "LOCAL",
       "type": "java.lang.String"
@@ -186,6 +199,10 @@
     "testCase": {
       "category": "INPUT",
       "type": "java.lang.String"
+    },
+    "unfound": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
     },
     "yamlPerson": {
       "category": "INPUT",

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.java.CompilationException;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -147,14 +148,15 @@ public class KotlinAccess implements CacheService {
 
     private List<File> getSources() throws IOException {
         Path assetRoot = Paths.get(ApplicationContext.getAssetRoot().getPath().replace('\\', '/'));
-        Path omitPath = Paths.get(new File(assetRoot + "/" + KotlinClasspathKt.KOTLIN_PACKAGE.replace('.', '/')).getPath());
+        Path enginePath = Paths.get(new File(assetRoot + "/" + KotlinClasspathKt.KOTLIN_PACKAGE.replace('.', '/')).getPath());
+        Path archivePath = Paths.get(new File(assetRoot + "/" + PackageDir.ARCHIVE_SUBDIR).getPath());
 
         PathMatcher ktMatcher = FileSystems.getDefault().getPathMatcher("glob:**/*.kt");
         List<File> files = new ArrayList<>();
         Files.walkFileTree(assetRoot,
             EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                    if (ktMatcher.matches(path) && !path.startsWith(omitPath)) {
+                    if (ktMatcher.matches(path) && !path.startsWith(enginePath) && !path.startsWith(archivePath)) {
                         files.add(path.toFile());
                     }
                     return FileVisitResult.CONTINUE;

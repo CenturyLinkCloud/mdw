@@ -15,5 +15,10 @@ start process('KotlinTest') {
       lastName: Berners-Lee'''
   ]
 }
-// wait process
-// verify process
+wait process('KotlinTest') {
+    timeout = 90 // in dev, lazy kotlin compilation can take a while
+}
+
+verify process {
+    resultsById = true
+}
