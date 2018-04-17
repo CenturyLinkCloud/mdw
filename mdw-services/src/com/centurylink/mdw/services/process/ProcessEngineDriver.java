@@ -826,7 +826,7 @@ public class ProcessEngineDriver {
                 masterRequestId, parameters);
         mainProcessInstanceId = mainProcessInst.getId();
         engine.updateProcessInstanceStatus(mainProcessInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
-        if (OwnerType.DOCUMENT.equals(ownerType)) {
+        if (OwnerType.DOCUMENT.equals(ownerType) && ownerId.longValue() != 0L) {
             setOwnerDocumentProcessInstanceId(engine, ownerId, mainProcessInst.getId(), masterRequestId);
             bindRequestVariable(procdef, ownerId, engine, mainProcessInst);
         }
@@ -962,7 +962,7 @@ public class ProcessEngineDriver {
         ProcessInstance processInst = engine.createProcessInstance(processId,
                 ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
                 masterRequestId, vars);
-        if (ownerType.equals(OwnerType.DOCUMENT)) {
+        if (ownerType.equals(OwnerType.DOCUMENT) && ownerId.longValue() != 0L) {
             setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
             bindRequestVariable(procdef, ownerId, engine, processInst);
         }
