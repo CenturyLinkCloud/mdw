@@ -50,17 +50,13 @@ public class ServiceRegistry {
     }
 
     /**
-     * To get the Dynamic java class for Registered Service
-     * @param processPackageVO
-     * @param serviceInterface
-     * @param className
-     * @return
+     * Get the Dynamic java instance for Registered Service
      */
-    public <T extends RegisteredService> T getDynamicService(Package processPackageVO, Class<T> serviceInterface, String className) {
+    public <T extends RegisteredService> T getDynamicService(Package pkg, Class<T> serviceInterface, String className) {
         if (dynamicServices.containsKey(serviceInterface.getName())
                 && dynamicServices.get(serviceInterface.getName()).contains(className)) {
             try {
-                ClassLoader parentClassLoader = processPackageVO == null ? getClass().getClassLoader() : processPackageVO.getClassLoader();
+                ClassLoader parentClassLoader = pkg == null ? getClass().getClassLoader() : pkg.getClassLoader();
                 Class<?> clazz = CompiledJavaCache.getClassFromAssetName(parentClassLoader, className);
                 if (clazz == null)
                     return null;

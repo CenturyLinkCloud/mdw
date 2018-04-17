@@ -36,7 +36,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
 
     public static final String GROOVY = "GROOVY";
     public static final String KOTLIN = "KOTLIN";
-    public static final String KOTLIN_SCRIPT = "KOTLIN_SCRIPT";
+    public static final String KOTLIN_SCRIPT = "KOTLIN SCRIPT";
     public static final String PAGELET = "PAGELET";
     public static final String VELOCITY = "VELOCITY";
     public static final String IMAGE_JPEG = "IMAGE_JPEG";

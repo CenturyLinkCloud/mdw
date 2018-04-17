@@ -4,8 +4,8 @@ start process("KotlinTest") {
     variables = [ testCase: 'decide', flavor: 'Chocolate', numFlavs: 31 ]
 }
 
-wait process("KotlinTest") {
-    timeout = 90
+wait process('KotlinTest') {
+    timeout = 90 // in dev, lazy kotlin compilation can take a while
 }
 
 verify process {

@@ -52,7 +52,9 @@ public class ScriptEvaluator extends AbstractEvaluator  {
                 throw new ActivityException("Expression content has not been defined");
             }
 
-            String name = ScriptNaming.getValidName(getActivityName() + "_" + getActivityId());
+            String name = ScriptNaming.getValidName(getProcessDefinition().getLabel() + "_"
+                    + getActivityName() + "_" + getActivityId());
+            name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
             Object obj = evaluateExpression(name, scriptLanguage, expression);
             if ((obj == null || obj.toString().isEmpty()) && isBooleanExpression(scriptLanguage, expression))
                 obj = Boolean.FALSE;

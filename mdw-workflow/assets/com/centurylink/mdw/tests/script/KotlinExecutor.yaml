@@ -1,16 +1,63 @@
-process: # 10458
+process: # 10076
   name: KotlinTest
   instance: 1
-  activity: # 1 "2018-04-04 11:24:16"
+  activity: # 1 "2018-04-17 13:51:14"
     name: Start
     status: Completed
-  activity: # 10 "2018-04-04 11:24:16"
+  activity: # 5 "2018-04-17 13:51:15"
+    name: Exec
+    status: Completed
+  activity: # 9 "2018-04-17 13:51:16"
+    name: Finish
+    status: Completed
+  activity: # 10 "2018-04-17 13:51:14"
     name: Which
-    status: In Progress
-  variable: # 11069
-    name: jsonable
+    status: Completed
+    result: exec
+  activity: # 13 "2018-04-17 13:51:15"
+    name: Use Class
+    status: Completed
+  activity: # 14 "2018-04-17 13:51:16"
+    name: |
+      Access
+      from Java
+    status: Completed
+  variable: # 10269
+    name: jsonablePerson
     value: |
       {
-        "firstName": "linus",
-        "lastName": "torvalds"
+        "firstName": "Linus",
+        "lastName": "Torvalds",
+        "name": "Linus Torvalds"
       }
+  variable: # 10272
+    name: jsonablePersonName
+    value: Douglas Crockford
+  variable: # 10273
+    name: jsonObject
+    value: |
+      {
+        "firstName": "Linus",
+        "lastName": "Torvalds",
+        "name": "Linus Torvalds"
+      }
+  variable: # 10271
+    name: mrid
+    value: ${masterRequestId}
+  variable: # 10270
+    name: testCase
+    value: exec
+  variable: # 10274
+    name: unfound
+    value: |
+      {
+        "firstName": "Try",
+        "lastName": "Google",
+        "name": "Try Google"
+      }
+  variable: # 10268
+    name: yamlPerson
+    value: |
+      !!com.centurylink.mdw.tests.workflow.Person
+            firstName: Tim
+            lastName: Berners-Lee

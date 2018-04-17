@@ -58,8 +58,6 @@ import com.centurylink.mdw.script.ExecutorRegistry;
 import com.centurylink.mdw.script.ScriptEvaluator;
 import com.centurylink.mdw.script.ScriptExecutor;
 import com.centurylink.mdw.script.ScriptNaming;
-import com.centurylink.mdw.script.TypedEvaluator;
-import com.centurylink.mdw.script.TypedExecutor;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -78,11 +76,8 @@ import com.centurylink.mdw.util.timer.TrackingTimer;
 public abstract class BaseActivity implements GeneralActivity {
 
     protected static StandardLogger logger = null;
-    // Note 1: do not use static initializer for logger, so that
-    //   unit tester can set unit test property manager
-    // Note 2: logger should be private as we expect applications to use canned methods
-    //   such as logsevere. It is left as "protected" to avoid a lot of changes
-    //   for older applications to upgrade
+    // TODO: logger should be private as we expect applications to use canned methods
+    // such as logsevere(). It is left as "protected" to avoid compatibility issues.
 
     public static final String JAVASCRIPT = "JavaScript";
     public static final String GROOVY = "Groovy";
@@ -749,7 +744,7 @@ public abstract class BaseActivity implements GeneralActivity {
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<>();
-            Map<String,String> types = new HashMap<>();
+            bindings.put("runtimeContext", _runtimeContext);
             for (Variable varVO: varVOs) {
                 Object value = getParameterValue(varVO.getName());
                 if (value instanceof DocumentReference) {
@@ -757,14 +752,8 @@ public abstract class BaseActivity implements GeneralActivity {
                     value = getDocument(docref, varVO.getType());
                 }
                 bindings.put(varVO.getName(), value);
-                types.put(varVO.getName(), varVO.getType());
             }
-            if (evaluator instanceof TypedEvaluator) {
-                return ((TypedEvaluator)evaluator).evaluate(expression, bindings, types);
-            }
-            else {
-                return evaluator.evaluate(expression, bindings);
-            }
+            return evaluator.evaluate(expression, bindings);
         }
         catch (ActivityException ex) {
             throw new ExecutionException(ex.getMessage(), ex);
@@ -943,7 +932,7 @@ public abstract class BaseActivity implements GeneralActivity {
         Document docvo;
         try {
             docvo = engine.getDocument(docref, true);
-            // deserialize here to support package aware translator providers
+            // deserialize here (why?)
             docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -1225,25 +1214,17 @@ public abstract class BaseActivity implements GeneralActivity {
             Process processVO = getMainProcessDefinition();
             List<Variable> varVOs = processVO.getVariables();
             Map<String,Object> bindings = new HashMap<>();
-            Map<String,String> types = new HashMap<>();
             for (Variable varVO: varVOs) {
                 bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
-                types.put(varVO.getName(), varVO.getType());
             }
             bindings.put("runtimeContext", _runtimeContext);
-            types.put("runtimeContext", ActivityRuntimeContext.class.getName());
 
             if (addlBindings != null) {
                 bindings.putAll(addlBindings);
             }
 
             ScriptExecutor executor = getScriptExecutor(language, qualifier);
-            if (executor instanceof TypedExecutor) {
-                retObj = ((TypedExecutor)executor).execute(script, bindings, types);
-            }
-            else {
-                retObj = executor.execute(script, bindings);
-            }
+            retObj = executor.execute(script, bindings);
 
             for (Variable variableVO: varVOs) {
                 String variableName = variableVO.getName();
@@ -1334,11 +1315,10 @@ public abstract class BaseActivity implements GeneralActivity {
 
                     if (changed){
                         if (!isOutputDoc) {
-                            String msg = "Attempt to change value of non-output document '" + varName + "'";
+                            String msg = "*** WARNING: Attempt to change value of non-output document '" + varName + "'";
                             if (Object.class.getName().equals(varType))
-                              msg += ".  Please make sure and implement an equals() comparator in your Object.";
-                            // Removed ActivityException, now just log it
-                            logger.debug(msg);
+                              msg += ".  Make sure to implement equals().";
+                            logwarn(msg);
                         }
                     }
                     else {
