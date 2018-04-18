@@ -24,7 +24,6 @@ import com.centurylink.mdw.script.ScriptExecutor;
 
 /**
  * Kotlin script support.
- * TODO: Show line numbers for script errors
  */
 @RegisteredService(value=ScriptExecutor.class,
 parameters={@Parameter(name="language", value="Kotlin Script")})

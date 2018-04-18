@@ -99,7 +99,6 @@ public class KotlinAccess implements CacheService {
             start = finish;
         }
 
-        // TODO: optional script precompilation
         scripts = new HashMap<>();
 
         try {
