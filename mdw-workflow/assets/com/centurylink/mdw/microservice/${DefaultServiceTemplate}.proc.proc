@@ -1,0 +1,146 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=77,y=178,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=217,ly=81,type=Elbow,xs=141&201,ys=198&198"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=728,y=179,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Input": "request",
+        "Mapper": "${requestMapper}",
+        "Mapper_assetVersion": "0",
+        "Output": "serviceRequest",
+        "WORK_DISPLAY_INFO": "x=205,y=163,w=106,h=75"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
+      "name": "Map\r\nRequest",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=344,ly=200,type=Elbow,xs=315&371,ys=200&200"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "EndpointUri": "${serviceUrl}",
+        "HeadersVariable": "requestHeaders",
+        "HttpMethod": "${serviceMethod}",
+        "Invocation Request ID": "serviceRequestId",
+        "REQUEST_VARIABLE": "serviceRequest",
+        "RESPONSE_VARIABLE": "serviceResponse",
+        "RetryHttpCodes": "500",
+        "WORK_DISPLAY_INFO": "x=375,y=163,w=101,h=75"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
+      "name": "REST\r\nInvoke",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=505,ly=199,type=Elbow,xs=480&529,ys=199&199"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=533,y=160,w=104,h=75"},
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
+      "name": "Map\r\nResponse",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=676,ly=199,type=Elbow,xs=641&724,ys=199&199"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=43,y=40,w=283,h=27"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=386,y=33,w=293,h=56"},
+    "content": "TODO:\r\n - Initial dependency check\r\n - Post-invoke serviceSummary update",
+    "id": "N3"
+  }],
+  "variables": {
+    "DefaultServiceTemplate": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "requestMapper": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "responseHeaders": {
+      "category": "LOCAL",
+      "type": "java.util.Map<String,String>"
+    },
+    "responseMapper": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "serviceMethod": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "serviceRequest": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "serviceRequestHeaders": {
+      "category": "LOCAL",
+      "type": "java.util.Map<String,String>"
+    },
+    "serviceRequestId": {
+      "category": "LOCAL",
+      "type": "java.lang.Long"
+    },
+    "serviceResponse": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "serviceResponseHeaders": {
+      "category": "LOCAL",
+      "type": "java.util.Map<String,String>"
+    },
+    "serviceSummary": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "serviceUrl": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

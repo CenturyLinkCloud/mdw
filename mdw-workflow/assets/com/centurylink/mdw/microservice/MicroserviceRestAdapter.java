@@ -141,6 +141,9 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         return responseId;
     }
 
+    /**
+     * TODO: Do we really have to save requestId var?  Or can we get it from db?
+     */
     @Override
     protected Long logRequest(String message) {
         Long requestId = super.logRequest(message);

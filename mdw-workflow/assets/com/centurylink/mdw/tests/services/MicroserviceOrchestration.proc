@@ -1,0 +1,61 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=37,y=70,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=102,ly=127,type=Elbow,xs=101&177,ys=90&181"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=510,y=157,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=342,y=144,w=103,h=75",
+        "parallel": "true",
+        "synchronous": "true"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.microservice.OrchestratorActivity",
+      "name": "Invoke\r\nServices",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=478,ly=177,type=Elbow,xs=449&506,ys=177&177"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=181,y=144,w=108,h=74"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Create\r\nPlan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=315,ly=181,type=Elbow,xs=293&338,ys=181&181"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=196,y=48,w=236,h=27"
+  },
+  "variables": {"servicePlan": {
+    "category": "LOCAL",
+    "type": "org.yaml.snakeyaml.Yaml"
+  }}
+}

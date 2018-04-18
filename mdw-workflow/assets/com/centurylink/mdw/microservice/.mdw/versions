@@ -1,3 +1,4 @@
+${DefaultServiceTemplate}.proc.proc=1
 Invocation.java=2
 Microservice.java=2
 MicroserviceDependenciesWait.java=7
