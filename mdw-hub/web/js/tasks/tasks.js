@@ -174,8 +174,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       }
     });
   };
-  
-  
   $scope.clearTypeaheadFilters = function() {
     // check if defined to avoid triggering evaluation
     if ($scope.model.taskFilter.instanceId)
@@ -186,7 +184,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       $scope.model.taskFilter.taskId = null;
     
   };
-  
   $scope.typeaheadChange = function() {
       if ($scope.model.typeaheadMatchSelection === null)
       $scope.clearTypeaheadFilters();
