@@ -180,6 +180,7 @@ task cliZip(type: Zip) {
     archiveName = "mdw-cli-${version}.zip"
     from ("../mdw/cli") {
         exclude ".gitignore"
+        exclude "lib/"
     }
 }
 
