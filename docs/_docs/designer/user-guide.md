@@ -5,7 +5,7 @@ title: Designer User Guide
 ### MDW Designer User Guide
 
 #### Getting Started with MDW Designer
-- If you haven't already, [install the MDW Designer plugin for Eclipse](../getting-started/install-designer).
+- If you haven't already, [install the MDW Designer plugin for Eclipse](../getting-started/install-designer.md).
 - In addition to this document, there is a great deal of [online help](../../help) available.
   This same help content can be accessed in Eclipse through Help > Help Contents > MDW Designer.
   Links to relevant help pages are also sprinkled throughout Designer property pages and toolsets.   
