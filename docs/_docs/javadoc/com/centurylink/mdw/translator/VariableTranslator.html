@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":9,"i3":9,"i4":41,"i5":9,"i6":41,"i7":9,"i8":9,"i9":41,"i10":10,"i11":6,"i12":9,"i13":6,"i14":9,"i15":41};
+var methods = {"i0":10,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":10,"i8":6,"i9":9,"i10":6,"i11":9,"i12":41};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -200,24 +200,12 @@ implements <a href="../../../../com/centurylink/mdw/variable/VariableTranslator.
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#isDocumentReferenceVariable-java.lang.String-">isDocumentReferenceVariable</a></span>(java.lang.String&nbsp;type)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#isXmlDocumentTranslator-com.centurylink.mdw.model.workflow.Package-java.lang.String-">isXmlDocumentTranslator</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
                        java.lang.String&nbsp;type)</code>
 <div class="block">If pkg is null then will use any available bundle to provide the translator.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#isXmlDocumentTranslator-java.lang.String-">isXmlDocumentTranslator</a></span>(java.lang.String&nbsp;type)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</td>
-</tr>
-<tr id="i7" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToObject-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.String-">realToObject</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
             java.lang.String&nbsp;type,
@@ -225,7 +213,7 @@ implements <a href="../../../../com/centurylink/mdw/variable/VariableTranslator.
 <div class="block">Deserializes variable string values to runtime objects.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">realToString</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
             java.lang.String&nbsp;type,
@@ -233,26 +221,17 @@ implements <a href="../../../../com/centurylink/mdw/variable/VariableTranslator.
 <div class="block">Serializes a runtime variable object to its string value.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToString-java.lang.String-java.lang.Object-">realToString</a></span>(java.lang.String&nbsp;type,
-            java.lang.Object&nbsp;value)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">use realToString(PackageVO, String, Object)</span></div>
-</div>
-</td>
-</tr>
-<tr id="i10" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>abstract java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#toObject-java.lang.String-">toObject</a></span>(java.lang.String&nbsp;pStr)</code>
 <div class="block">converts the passed in string to an equivalent object</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#toObject-java.lang.String-java.lang.String-">toObject</a></span>(java.lang.String&nbsp;type,
         java.lang.String&nbsp;value)</code>
@@ -260,13 +239,13 @@ implements <a href="../../../../com/centurylink/mdw/variable/VariableTranslator.
  Passed in type</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-java.lang.Object-">toString</a></span>(java.lang.Object&nbsp;pObject)</code>
 <div class="block">Converts the passed in object to a string</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">toString</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
         java.lang.String&nbsp;type,
@@ -274,7 +253,7 @@ implements <a href="../../../../com/centurylink/mdw/variable/VariableTranslator.
 <div class="block">Returns String value for the passed in Type and Value</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-java.lang.String-java.lang.Object-">toString</a></span>(java.lang.String&nbsp;type,
         java.lang.Object&nbsp;value)</code>
@@ -485,18 +464,6 @@ public static&nbsp;java.lang.String&nbsp;toString(java.lang.String&nbsp;type,
 </dl>
 </li>
 </ul>
-<a name="realToString-java.lang.String-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>realToString</h4>
-<pre>@Deprecated
-public static&nbsp;java.lang.String&nbsp;realToString(java.lang.String&nbsp;type,
-                                                        java.lang.Object&nbsp;value)</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">use realToString(PackageVO, String, Object)</span></div>
-</li>
-</ul>
 <a name="realToString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">
 <!--   -->
 </a>
@@ -537,17 +504,6 @@ public static&nbsp;java.lang.String&nbsp;realToString(java.lang.String&nbsp;type
 </dl>
 </li>
 </ul>
-<a name="isDocumentReferenceVariable-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isDocumentReferenceVariable</h4>
-<pre>@Deprecated
-public static&nbsp;boolean&nbsp;isDocumentReferenceVariable(java.lang.String&nbsp;type)</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</li>
-</ul>
 <a name="isDocumentReferenceVariable-com.centurylink.mdw.model.workflow.Package-java.lang.String-">
 <!--   -->
 </a>
@@ -557,17 +513,6 @@ public static&nbsp;boolean&nbsp;isDocumentReferenceVariable(java.lang.String&nbs
 <pre>public static&nbsp;boolean&nbsp;isDocumentReferenceVariable(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
                                                   java.lang.String&nbsp;type)</pre>
 <div class="block">If pkg is null then will use any available bundle to provide the translator.</div>
-</li>
-</ul>
-<a name="isXmlDocumentTranslator-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isXmlDocumentTranslator</h4>
-<pre>@Deprecated
-public static&nbsp;boolean&nbsp;isXmlDocumentTranslator(java.lang.String&nbsp;type)</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="isXmlDocumentTranslator-com.centurylink.mdw.model.workflow.Package-java.lang.String-">

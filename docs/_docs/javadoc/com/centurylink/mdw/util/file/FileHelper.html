@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":41,"i21":9,"i22":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -158,7 +158,7 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -262,22 +262,10 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i20" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#unzipFile-java.io.File-java.io.File-java.lang.String-java.util.List-boolean-">unzipFile</a></span>(java.io.File&nbsp;zipFile,
-         java.io.File&nbsp;destDir,
-         java.lang.String&nbsp;baseLoc,
-         java.util.List&lt;java.lang.String&gt;&nbsp;excludes,
-         boolean&nbsp;overwrite)</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">use <a href="../../../../../com/centurylink/mdw/util/file/ZipHelper.html#unzip-java.io.File-java.io.File-java.lang.String-java.util.List-boolean-"><code>ZipHelper.unzip(File, File, String, List, boolean)</code></a></span></div>
-</div>
-</td>
-</tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#writeToFile-java.io.InputStream-java.io.File-">writeToFile</a></span>(java.io.InputStream&nbsp;inputStream,
            java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/FileHelper.html#writeToFile-java.lang.String-java.lang.String-boolean-">writeToFile</a></span>(java.lang.String&nbsp;pFileName,
            java.lang.String&nbsp;pContents,
@@ -658,31 +646,11 @@ extends java.lang.Object</pre>
 <a name="isEmpty-java.io.File-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>isEmpty</h4>
 <pre>public static&nbsp;boolean&nbsp;isEmpty(java.io.File&nbsp;directory)
                        throws java.io.IOException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="unzipFile-java.io.File-java.io.File-java.lang.String-java.util.List-boolean-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>unzipFile</h4>
-<pre>@Deprecated
-public static&nbsp;void&nbsp;unzipFile(java.io.File&nbsp;zipFile,
-                                         java.io.File&nbsp;destDir,
-                                         java.lang.String&nbsp;baseLoc,
-                                         java.util.List&lt;java.lang.String&gt;&nbsp;excludes,
-                                         boolean&nbsp;overwrite)
-                                  throws java.io.IOException</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">use <a href="../../../../../com/centurylink/mdw/util/file/ZipHelper.html#unzip-java.io.File-java.io.File-java.lang.String-java.util.List-boolean-"><code>ZipHelper.unzip(File, File, String, List, boolean)</code></a></span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>

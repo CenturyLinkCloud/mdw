@@ -176,10 +176,10 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>&gt;<br>T</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/ServiceRegistry.html#getDynamicService-com.centurylink.mdw.model.workflow.Package-java.lang.Class-java.lang.String-">getDynamicService</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;processPackageVO,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/ServiceRegistry.html#getDynamicService-com.centurylink.mdw.model.workflow.Package-java.lang.Class-java.lang.String-">getDynamicService</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
                  java.lang.Class&lt;T&gt;&nbsp;serviceInterface,
                  java.lang.String&nbsp;className)</code>
-<div class="block">To get the Dynamic java class for Registered Service</div>
+<div class="block">Get the Dynamic java instance for Registered Service</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -267,17 +267,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDynamicService</h4>
-<pre>public&nbsp;&lt;T extends <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>&gt;&nbsp;T&nbsp;getDynamicService(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;processPackageVO,
+<pre>public&nbsp;&lt;T extends <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>&gt;&nbsp;T&nbsp;getDynamicService(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
                                                          java.lang.Class&lt;T&gt;&nbsp;serviceInterface,
                                                          java.lang.String&nbsp;className)</pre>
-<div class="block">To get the Dynamic java class for Registered Service</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processPackageVO</code> - </dd>
-<dd><code>serviceInterface</code> - </dd>
-<dd><code>className</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-</dl>
+<div class="block">Get the Dynamic java instance for Registered Service</div>
 </li>
 </ul>
 <a name="getDynamicServiceForPath-com.centurylink.mdw.model.workflow.Package-java.lang.Class-java.lang.String-">

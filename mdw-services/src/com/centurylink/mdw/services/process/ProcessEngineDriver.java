@@ -224,7 +224,7 @@ public class ProcessEngineDriver {
                     engine.abortProcessInstance(event);
                 }
                 else {
-                    logger.info("WorkTransition has not been defined for event of type " + eventType);
+                    logger.info("Transition has not been defined for event of type " + eventType);
                 }
             }
         }

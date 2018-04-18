@@ -6,5 +6,6 @@ bin/
 notes/
 local.gradle
 .temp/
+temp/
 mdw.log
 /deps.txt
