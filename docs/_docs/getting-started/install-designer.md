@@ -29,7 +29,12 @@ Install the MDW Designer Eclipse Plugin
   - Launch Eclipse and from the menu select Help > Eclipse Marketplace...
   - Type "MDW Designer for Eclipse" in the find text box and do search
   - Click on the install button of the displayed result
-  
+
+### Install Designer from our Update Site
+  - Launch Eclipse and from the menu select Help > Install New Software...
+  - Add the update site URL: {% include copyToClipboard.html text="http://centurylinkcloud.github.io/mdw/designer/updateSite" %}
+  ![install designer plugin](../images/designerPlugin.png "designerPlugin")
+
 ### Recommended Plugins
   These plugins are optional (although Groovy is highly recommended).
   They can be installed through Help > Install New Software... the same as above.
