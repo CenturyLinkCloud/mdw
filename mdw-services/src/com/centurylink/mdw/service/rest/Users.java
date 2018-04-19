@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -75,6 +76,8 @@ public class Users extends JsonRestService {
                 userId = parameters.get("cuid");
             if (userId == null) // use request path
                 userId = getSegment(path, 1);
+            if (userId == null && "true".equals(parameters.get("devUser")))
+                userId = ApplicationContext.getDevUser();
             if (userId != null) {
                 boolean oldStyle = "true".equals(parameters.get("withRoles")); // compatibility for old-style common roles
                 User user = userServices.getUser(userId);
