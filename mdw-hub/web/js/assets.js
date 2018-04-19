@@ -294,15 +294,17 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$routeParams', '$location', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 
-                                       function($scope, $routeParams, $location, mdw, util, uiUtil, Assets, Asset) {
+assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$location', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 
+                                       function($scope, $cookieStore, $routeParams, $location, mdw, util, uiUtil, Assets, Asset) {
   
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
+  }else if($scope.assetName.endsWith('.task')){
+    $scope.task = true;
   }
-  
+ 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
       assetName: $routeParams.assetName
@@ -344,6 +346,10 @@ assetMod.controller('AssetController', ['$scope', '$routeParams', '$location', '
     }
   );
   
+  $scope.viewInstances=function(){
+    $cookieStore.put('taskId', $scope.asset.id);
+    $location.path('/tasks/');
+  };
   $scope.deleteAsset = function() {
     var msg = 'Delete: ' + $scope.asset.name + '?';
     uiUtil.confirm('Confirm Delete', msg, function(res) {

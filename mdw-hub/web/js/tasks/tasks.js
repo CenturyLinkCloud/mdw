@@ -22,7 +22,13 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         descending: true
      };
   }
-  
+  //filter tasks based on template-id
+  $scope.taskId=$cookieStore.get('taskId');
+  if($scope.taskId)
+    $scope.model.taskFilter.taskId=$scope.taskId;
+  else
+    $scope.model.taskFilter.taskId=null;
+ 
   $scope.taskAdvisories = ['[Not Invalid]'].concat(TASK_ADVISORIES);
   
   // retrieve TaskCategories
@@ -33,6 +39,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.$on('page-retrieved', function(event, taskList) {
     // create date and due date
+    $cookieStore.remove('taskId');
     taskList.tasks.forEach(function(task) {
       TaskUtil.setTask(task);
     });
@@ -167,7 +174,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       }
     });
   };
-  
   $scope.clearTypeaheadFilters = function() {
     // check if defined to avoid triggering evaluation
     if ($scope.model.taskFilter.instanceId)
@@ -176,8 +182,8 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       $scope.model.taskFilter.masterRequestId = null;
     if ($scope.model.taskFilter.taskId)
       $scope.model.taskFilter.taskId = null;
+    
   };
-  
   $scope.typeaheadChange = function() {
       if ($scope.model.typeaheadMatchSelection === null)
       $scope.clearTypeaheadFilters();
@@ -200,7 +206,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   };
   
   $scope.model.newTaskTemplate = null;
- 
+
   $scope.findTaskTemplate = function(typed) {
      return $http.get(mdw.roots.services + '/services/Tasks/templates' + '?app=mdw-admin&find=' + typed).then(function(response) {
       // services matches on task name or package name
