@@ -9,7 +9,6 @@ OrchestratorActivity.java=1
 ServicePlan.kt=1
 ServicePlanDsl.kt=1 Renamed from e:workspacesmdw6mdw-workflowassetscomcenturylinkmdwmicroserviceServicePlanTest.kt
 ServicePlanModel.kt=1 Renamed from e:workspacesmdw6mdw-workflowassetscomcenturylinkmdwmicroserviceServicePlan.kt
-ServicePlanTest.kt=1
 ServiceSummary.java=2
 ServiceSummaryEventPublish.java=2
 ServiceSummaryLockCache.java=1

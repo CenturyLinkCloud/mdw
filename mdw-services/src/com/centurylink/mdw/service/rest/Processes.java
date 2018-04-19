@@ -90,7 +90,7 @@ public class Processes extends JsonRestService implements JsonExportable {
      * Retrieve process instance(s).
      */
     @Override
-    @Path("/{instanceId|special}/{subData}/{subId}")
+    @Path("/{instanceId}/{subData}/{subId}")
     @ApiOperation(value="Retrieve a process or process values, query many processes, or perform throughput queries",
         notes="If instanceId and special are not present, returns a page of processes that meet query criteria. "
           + "If {special} is 'run', then {subData} must be procDefId and an empty ProcessRun is returned. "

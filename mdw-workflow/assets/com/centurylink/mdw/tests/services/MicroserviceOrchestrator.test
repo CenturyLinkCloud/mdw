@@ -1,3 +1,4 @@
 package com.centurylink.mdw.tests.services
 
+// incoming request format same as seed_users.json
 start process('MicroserviceOrchestration')
