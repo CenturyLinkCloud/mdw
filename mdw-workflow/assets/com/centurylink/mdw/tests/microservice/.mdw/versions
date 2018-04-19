@@ -1,0 +1,5 @@
+MicroserviceOrchestration.proc=1
+MicroserviceOrchestrator.test=1
+TempMap.proc=1
+UserRequestMapper.groovy=1
+mainRequest.json=1

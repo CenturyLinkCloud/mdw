@@ -269,6 +269,10 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         };
     }
 
+    public Map<String,String> getProps() {
+        return getPropertyAccessorMap();
+    }
+
     public String getMdwHubUrl() {
         return ApplicationContext.getMdwHubUrl();
     }

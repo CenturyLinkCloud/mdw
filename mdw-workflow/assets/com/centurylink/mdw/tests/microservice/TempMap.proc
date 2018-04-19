@@ -1,0 +1,56 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=65,y=146,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=235,ly=207,type=Elbow,xs=129&237,ys=166&166"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=485,y=146,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Input": "request",
+        "Mapper": "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy",
+        "Mapper_assetVersion": "[0.1,1)",
+        "Output": "serviceRequest",
+        "WORK_DISPLAY_INFO": "x=241,y=139,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
+      "name": "Map",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=413,ly=166,type=Elbow,xs=345&481,ys=166&166"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=90,h=27"
+  },
+  "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
+    "serviceRequest": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    }
+  }
+}

@@ -162,6 +162,9 @@ public class KotlinAccess implements CacheService {
                 }
             }
         );
+        // TODO: temp
+        files.add(new File(assetRoot + "/com/centurylink/mdw/microservice/ServiceSummary.java"));
+        files.add(new File(assetRoot + "/com/centurylink/mdw/microservice/Consolidator.java"));
         return files;
     }
 

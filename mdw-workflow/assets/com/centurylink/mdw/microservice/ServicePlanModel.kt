@@ -7,9 +7,11 @@ data class ServicePlan(
 // TODO: dependencies
 data class Microservice(
     val name: String,
-    val template: String?,
+    val url: String,
+    val template: String,
+    val method: String,
     val enabled: Boolean,
     val count: Int,
-    val inMapper: String?,
-    val outMapper: String?
+    val requestMapper: String,
+    val responseMapper: String
 )

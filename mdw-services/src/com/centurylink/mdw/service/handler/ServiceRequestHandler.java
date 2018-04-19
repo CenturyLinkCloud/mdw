@@ -158,14 +158,6 @@ public class ServiceRequestHandler implements EventHandler {
         return createResponse(-1, cause.toString(), f);
     }
 
-    protected Response createErrorResponse(String message, Format format) throws EventHandlerException {
-        return createResponse(-1, message, format);
-    }
-
-    protected Response createSuccessResponse(String message, Format format) throws EventHandlerException {
-        return createResponse(0, message, format);
-    }
-
     protected Response createSuccessResponse(Format format) throws EventHandlerException {
         return createResponse(0, "Success", format);
     }

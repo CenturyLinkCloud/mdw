@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2017 CenturyLink, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.centurylink.mdw.microservice;
 
 import java.util.ArrayList;
@@ -43,8 +28,8 @@ public class ServiceSummary implements Jsonable {
     public void setRequestId(String id) { this.requestId = id; }
 
     private List<MicroserviceHistory> microservices = new ArrayList<>();
-    public List<MicroserviceHistory> getMicroserviceSummaries() { return microservices; }
-    public void setMicroserviceSummaries(List<MicroserviceHistory> microservices) {
+    public List<MicroserviceHistory> getMicroservices() { return microservices; }
+    public void setMicroservices(List<MicroserviceHistory> microservices) {
         this.microservices = microservices;
     }
 
@@ -73,48 +58,33 @@ public class ServiceSummary implements Jsonable {
     }
 
     /**
-     * Add a microservice without any invocations.
+     * Adds and returns a microservice.
      */
-    public List<Invocation> addMicroservice(String name) {
+    public MicroserviceHistory addMicroservice(String name) {
         MicroserviceHistory microservice = new MicroserviceHistory(name);
         microservices.add(microservice);
-        return microservice.getInvocations();
+        return microservice;
     }
 
     public void addInvocation(String microservice, Invocation invocation) {
-        List<Invocation> existing = getInvocations(microservice);
-        if (existing == null)
-            addMicroservice(microservice).add(invocation);
-        else
-            existing.add(invocation);
-    }
-    /**
-     * Dealt with slightly differently to invocations since invocation
-     * will definitely be there, update won't, so initialize only when needed
-     * @param microservice
-     * @param update
-     */
-    public void addUpdate(String microservice, Update update) {
-        MicroserviceHistory history = retrieveHistory(microservice);
-        if (history.getUpdates() == null) {
-            history.setUpdates(new ArrayList<Update>());
+        MicroserviceHistory history = getMicroservice(microservice);
+        if (history == null) {
+            history = addMicroservice(microservice);
         }
-        history.getUpdates().add(update);
+        getInvocations(microservice).add(invocation);
     }
 
-    /**
-     * Note: side effect is that if no history is found, one is created.
-     */
-    public MicroserviceHistory retrieveHistory(String microservice) {
-        for (MicroserviceHistory history : microservices) {
-            if (history.getMicroservice().equals(microservice)) {
-                return history;
-            }
+    public void addUpdate(String microservice, Update update) {
+        MicroserviceHistory history = getMicroservice(microservice);
+        if (history == null) {
+            history = addMicroservice(microservice);
         }
-        // guarantees updates will be initialized
-        MicroserviceHistory history = new MicroserviceHistory(microservice);
-        microservices.add(history);
-        return history;
+        List<Update> updates = getUpdates(microservice);
+        if (updates == null) {
+            updates = new ArrayList<Update>();
+            history.setUpdates(updates);
+        }
+        updates.add(update);
     }
 
     public ServiceSummary() {

@@ -15,7 +15,6 @@ class ServicePlanBuilder {
     }
 
     fun build(): ServicePlan = ServicePlan(services)
-
 }
 
 /*
@@ -32,20 +31,25 @@ class ServicesHelper: ArrayList<Microservice>() {
 @MicroserviceDsl
 class MicroserviceBuilder {
 
+    // required values are empty vs null or default
     var name: String = ""
-    var template: String? = null
+    var url: String = ""
+    var template: String = "com.centurylink.mdw.microservice/\${DefaultInvoke}.proc"
+    var method: String = ""
     var enabled: Boolean = true
     var count: Int = 1
-    var inMapper: String? = null
-    var outMapper: String? = null
+    var requestMapper: String = "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy"
+    var responseMapper: String = "com.centurylink.mdw.microservice/IdentityResponseMapper.groovy"
 
     fun build(): Microservice = Microservice(
-            name,
-            template,
-            enabled,
-            count,
-            inMapper,
-            outMapper
+            name = name,
+            url = url,
+            template = template,
+            method = method,
+            enabled = enabled,
+            count = count,
+            requestMapper = requestMapper,
+            responseMapper = responseMapper
     )
 
 }
