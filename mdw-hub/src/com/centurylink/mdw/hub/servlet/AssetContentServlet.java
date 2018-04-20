@@ -263,7 +263,7 @@ public class AssetContentServlet extends HttpServlet {
                         asset = persisterVcs.getProcessBase(pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
                     }
                     else if (assetName.endsWith(".task")) {
-                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(assetRoot + "/" + pkgName + "/" + assetName)));
+                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
                     }
                     else {
                         asset = persisterVcs.getAsset(pkg.getId(), assetName);
