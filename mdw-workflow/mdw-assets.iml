@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/assets/Archive" />
       <excludeFolder url="file://$MODULE_DIR$/assets/com/centurylink/mdw/kotlin/build" />
+      <excludeFolder url="file://$MODULE_DIR$/assets/com/centurylink/mdw/microservice/build" />
       <excludeFolder url="file://$MODULE_DIR$/assets/out" />
     </content>
     <orderEntry type="inheritedJdk" />

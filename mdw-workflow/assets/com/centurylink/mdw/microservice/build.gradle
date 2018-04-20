@@ -1,4 +1,4 @@
-// build script-engine.jar (as needed -- delivered as asset)
+// build service-plan.jar (as needed -- delivered as asset)
 
 apply plugin: 'kotlin'
 
@@ -12,15 +12,8 @@ buildscript {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compile fileTree(dir: '.', includes: ["kotlin-*.jar"])
-    compile files('../../../../../../mdw-common/build/classes')
-    compile 'io.limberest:limberest:1.1.5'
-
+    compile fileTree(dir: '../kotlin', includes: ["kotlin-*.jar"])
 }
 
 sourceSets {
@@ -32,5 +25,5 @@ sourceSets {
 
 jar {
     destinationDir = file('.')
-    baseName 'script-engine'
+    baseName 'service-plan'
 }

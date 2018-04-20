@@ -97,7 +97,12 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     protected void onFinish() throws ActivityException {
     }
 
-    boolean resume_on_other_event(String msg, String compCode)
+    @Deprecated
+    boolean resume_on_other_event(String msg, String compCode) throws ActivityException {
+        return resumeOnOtherEvent(msg, compCode);
+    }
+
+    protected boolean resumeOnOtherEvent(String msg, String compCode)
             throws ActivityException {
         TransactionWrapper transaction = null;
         try {
@@ -112,7 +117,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
         }
     }
 
-    abstract boolean resume_on_process_finish(InternalEvent msg, Integer status)
+    protected abstract boolean resumeOnProcessFinish(InternalEvent msg, Integer status)
     throws ActivityException;
 
     public final boolean resume(InternalEvent msg)
@@ -122,7 +127,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
             transaction = startTransaction();
             Integer status = lockActivityInstance();
             if (msg.isProcess()) {
-                boolean done = resume_on_process_finish(msg, status);
+                boolean done = resumeOnProcessFinish(msg, status);
                 if (done) onFinish();
                 return done;
             } else {
@@ -189,7 +194,6 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     }
 
     /**
-     * TODO: Smart subprocess versioning for federated workflow.
      * TODO: Allow expressions that resolve to a version/spec.
      */
     protected Process getSubProcessVO(String name, String verSpec) throws DataAccessException {

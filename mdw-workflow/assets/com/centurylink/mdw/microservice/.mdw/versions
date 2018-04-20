@@ -1,8 +1,7 @@
-${DefaultInvoke}.proc.proc=1
+${DefaultInvoke}.proc=1
 CombiningConsolidator.java=1
 Consolidator.java=1
 DependenciesWaitActivity.java=7
-DslTest.kt=1
 IdentityRequestMapper.groovy=1
 IdentityResponseMapper.groovy=1
 Invocation.java=2
@@ -18,5 +17,6 @@ ServicePlanModel.kt=1
 ServiceSummary.java=2
 Update.java=2
 WorstCaseConsolidator.java=1
+build.gradle=1
 collector.png=1
 orchestrator.png=1

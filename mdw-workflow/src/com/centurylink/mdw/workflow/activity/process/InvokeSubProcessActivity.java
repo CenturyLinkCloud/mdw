@@ -200,7 +200,12 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     }
 
-    boolean resume_on_process_finish(InternalEvent msg, Integer status)
+    @Deprecated
+    boolean resume_on_process_finish(InternalEvent msg, Integer status) throws ActivityException {
+        return resumeOnProcessFinish(msg, status);
+    }
+    
+    protected boolean resumeOnProcessFinish(InternalEvent msg, Integer status)
         throws ActivityException {
         try{
             Long subprocInstId = msg.getWorkInstanceId();
@@ -216,7 +221,6 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
-
     }
 
     private void bindVariables(Map<String,String> params, boolean passDocContent) throws ActivityException {
