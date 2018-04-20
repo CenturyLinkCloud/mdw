@@ -68,10 +68,10 @@ public class Vercheck extends Setup {
             try {
                 compareTaggedVersions();
             }
-            catch (ReflectiveOperationException ex) {
+            catch (ReflectiveOperationException | IOException ex) {
                 if (isDebug())
                     ex.printStackTrace();
-                System.out.println("ERROR: " + ex);
+                System.err.println("ERROR: " + ex + " (--debug for details)");
                 errorCount++;
             }
         }
@@ -100,8 +100,9 @@ public class Vercheck extends Setup {
         String mavenUrl = props.get(Props.Gradle.MAVEN_REPO_URL);
         Git git = new Git(mavenUrl, vcInfo, "getCommitForTag", tag);
         String tagCommit = (String) git.run().getResult();
+        if (tagCommit == null)
+            throw new IOException("No commit found for tag '" + tag + "'");
         System.out.println("Comparing content vs tag " + tag + " (" + tagCommit + ")");
-
         Map<String,Properties> tagVersions = new HashMap<>();
         VersionControl versionControl = git.getVersionControl();
         Method readFromCommit = versionControl.getClass().getMethod("readFromCommit", String.class, String.class);

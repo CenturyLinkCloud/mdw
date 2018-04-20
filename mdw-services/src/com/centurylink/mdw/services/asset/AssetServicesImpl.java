@@ -18,8 +18,6 @@ package com.centurylink.mdw.services.asset;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,6 +54,7 @@ import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -332,18 +331,9 @@ public class AssetServicesImpl implements AssetServices {
         List<File> allSubDirs = new ArrayList<File>();
 
         for (File dir : dirs) {
-            File mdwIgnore = new File(dir + "/.mdwignore");
-            if (mdwIgnore.exists()) {
-                // currently only supports a straight directory list (no wildcards)
-                String list = new String(Files.readAllBytes(Paths.get(mdwIgnore.getPath()))).trim();
-                for (String line : list.split("\n")) {
-                    line = line.trim();
-                    if (!line.startsWith("#"))
-                        excludes.add(new File(dir + "/" + line));
-                }
-            }
+            MdwIgnore mdwIgnore = new MdwIgnore(dir);
             for (File sub : dir.listFiles()) {
-                if (sub.isDirectory() && !sub.equals(getArchiveDir()) && !excludes.contains(sub)) {
+                if (sub.isDirectory() && !sub.equals(getArchiveDir()) && !excludes.contains(sub) && !mdwIgnore.isIgnore(sub)) {
                     if (new File(sub + "/.mdw").isDirectory()) {
                         PackageDir pkgSubDir = new PackageDir(getAssetRoot(), sub, getAssetVersionControl());
                         pkgSubDir.parse();

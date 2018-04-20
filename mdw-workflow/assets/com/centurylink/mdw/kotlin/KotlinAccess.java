@@ -41,6 +41,7 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.java.CompilationException;
 import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -158,16 +159,15 @@ public class KotlinAccess implements CacheService {
         Files.walkFileTree(assetRoot,
             EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                    if (ktMatcher.matches(path) && !path.startsWith(enginePath) && !path.startsWith(archivePath)) {
-                        files.add(path.toFile());
+                    File file = path.toFile();
+                    MdwIgnore mdwIgnore = new MdwIgnore(file);
+                    if (ktMatcher.matches(path) && !path.startsWith(enginePath) && !path.startsWith(archivePath) && !mdwIgnore.isIgnore(file)) {
+                        files.add(file);
                     }
                     return FileVisitResult.CONTINUE;
                 }
             }
         );
-        // TODO: temp
-        files.add(new File(assetRoot + "/com/centurylink/mdw/microservice/ServiceSummary.java"));
-        files.add(new File(assetRoot + "/com/centurylink/mdw/microservice/Consolidator.java"));
         return files;
     }
 

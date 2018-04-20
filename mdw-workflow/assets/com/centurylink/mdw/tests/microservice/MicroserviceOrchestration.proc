@@ -13,7 +13,7 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=560,y=309,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=558,y=307,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -61,7 +61,7 @@
       "implementor": "com.centurylink.mdw.microservice.ResponseCollector",
       "name": "Consolidate\r\nResponses",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=503,ly=329,type=Elbow,xs=450&556,ys=329&329"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=502,ly=327,type=Elbow,xs=450&554,ys=327&327"},
         "event": "FINISH",
         "id": "T4",
         "to": "A2"

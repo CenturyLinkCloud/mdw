@@ -33,11 +33,11 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.CommaParameterSplitter;
+import com.centurylink.mdw.util.file.MdwIgnore;
 
 public abstract class Setup implements Operation {
 
     protected static final String META_DIR = ".mdw";
-    protected static final String IGNORE = ".mdwignore";
 
     protected static List<String> defaultBasePackages = new ArrayList<>();
     static {
@@ -541,8 +541,8 @@ public abstract class Setup implements Operation {
         for (File file : from.listFiles()) {
             if (file.isDirectory() && !file.getName().equals(META_DIR)) {
                 if (new File(file + "/" + META_DIR).isDirectory()) {
-                    List<File> excludes = getExcludes(from);
-                    if (!excludes.contains(file))
+                    MdwIgnore mdwIgnore = new MdwIgnore(from);
+                    if (!mdwIgnore.isIgnore(file))
                         into.add(file);
                 }
                 findAssetPackageDirs(file, into);
@@ -553,26 +553,11 @@ public abstract class Setup implements Operation {
     protected List<File> getAssetFiles(String packageName) throws IOException {
         List<File> assetFiles = new ArrayList<>();
         File packageDir = new File(getAssetRoot() + "/" + packageName.replace('.', '/'));
-        List<File> excludes = getExcludes(packageDir);
+        MdwIgnore mdwIgnore = new MdwIgnore(packageDir);
         for (File file : packageDir.listFiles()) {
-            if (file.isFile() && !excludes.contains(file))
+            if (file.isFile() && !mdwIgnore.isIgnore(file))
                 assetFiles.add(file);
         }
         return assetFiles;
-    }
-
-    private List<File> getExcludes(File dir) throws IOException {
-        List<File> excludes = new ArrayList<>();
-        File mdwIgnore = new File(dir + "/" + IGNORE);
-        if (mdwIgnore.exists()) {
-            // currently only supports a straight directory list (no wildcards)
-            List<String> lines = Files.readAllLines(Paths.get(mdwIgnore.getPath()));
-            for (String line : lines) {
-                String exclude = line.trim();
-                if (!exclude.isEmpty() && !exclude.startsWith("#"))
-                    excludes.add(new File(exclude));
-            }
-        }
-        return excludes;
     }
 }
