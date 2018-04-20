@@ -3,5 +3,5 @@
   "icon": "collector.png",
   "implementorClass": "com.centurylink.mdw.microservice.ResponseCollector",
   "label": "Response Collector",
-  "pagelet": "<PAGELET>\n  <TEXT NAME='consolidator' LABEL='Consolidator' DEFAULT='com.centurylink.mdw.microservice.CombiningConsolidator' />\n  <HYPERLINK URL='/MDWWeb/doc/ResponseCollector.html'>Response Collector Help</HYPERLINK>\n</PAGELET>"
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='consolidator' LABEL='Consolidator' DEFAULT='com.centurylink.mdw.microservice.CombiningConsolidator'>\n    <OPTION>com.centurylink.mdw.microservice.CombiningConsolidator<\/OPTION>\n    <OPTION>com.centurylink.mdw.microservice.WorstCaseConsolidator</OPTION>\n  </DROPDOWN>  \n  <HYPERLINK URL='/MDWWeb/doc/ResponseCollector.html'>Response Collector Help</HYPERLINK>\n</PAGELET>"
 }

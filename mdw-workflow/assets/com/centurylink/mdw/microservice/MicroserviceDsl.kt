@@ -31,21 +31,23 @@ class ServicesHelper: ArrayList<Microservice>() {
 @MicroserviceDsl
 class MicroserviceBuilder {
 
-    // required values are empty vs null or default
-    var name: String = ""
-    var url: String = ""
-    var template: String = "com.centurylink.mdw.microservice/\${DefaultInvoke}.proc"
-    var method: String = ""
-    var enabled: Boolean = true
-    var count: Int = 1
-    var requestMapper: String = "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy"
-    var responseMapper: String = "com.centurylink.mdw.microservice/IdentityResponseMapper.groovy"
+    var default = Microservice()
+
+    // values initialized via constructor defaults
+    var name = default.name
+    var url = default.url
+    var method = default.method
+    var template = default.template
+    var enabled = default.enabled
+    var count = default.count
+    var requestMapper = default.requestMapper
+    var responseMapper = default.responseMapper
 
     fun build(): Microservice = Microservice(
             name = name,
             url = url,
-            template = template,
             method = method,
+            template = template,
             enabled = enabled,
             count = count,
             requestMapper = requestMapper,

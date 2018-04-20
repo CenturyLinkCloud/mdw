@@ -115,5 +115,4 @@ public class ServiceSummary implements Jsonable {
         json.put("microservices", historiesJson);
         return json;
     }
-
 }

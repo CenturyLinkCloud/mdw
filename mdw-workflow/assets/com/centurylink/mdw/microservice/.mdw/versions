@@ -1,7 +1,6 @@
 ${DefaultInvoke}.proc.proc=1
 CombiningConsolidator.java=1
 Consolidator.java=1
-Consolidators.kt=1
 DependenciesWaitActivity.java=7
 DslTest.kt=1
 IdentityRequestMapper.groovy=1

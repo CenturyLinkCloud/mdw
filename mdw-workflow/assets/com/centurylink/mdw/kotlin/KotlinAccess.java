@@ -44,6 +44,9 @@ import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+/**
+ * TODO: Incremental compilation of kotlin assets.
+ */
 @RegisteredService(CacheService.class)
 public class KotlinAccess implements CacheService {
 
