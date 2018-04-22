@@ -36,7 +36,9 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.XPathELResolver;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -59,10 +61,25 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
     public ProcessInstance getProcessInstance() { return processInstance; }
 
     /**
-     * Purposely separate from processInstanceVO.getVariables().
+     * Purposely separate from processInstance.getVariables().
      */
     private Map<String,Object> variables;
     public Map<String,Object> getVariables() { return variables; }
+
+    /**
+     * For read-only access.
+     */
+    public Map<String,String> getDocRefs() {
+        return new HashMap<String,String>() {
+            @Override
+            public String get(Object varName) {
+                VariableInstance varInst = processInstance.getVariable((String)varName);
+                if (varInst != null && varInst.getData() instanceof DocumentReference)
+                    return varInst.getData().toString();
+                return null;
+            }
+        };
+    }
 
     public String getMasterRequestId() {
         return processInstance.getMasterRequestId();

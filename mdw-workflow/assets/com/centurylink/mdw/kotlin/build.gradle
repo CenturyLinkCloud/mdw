@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: '.', includes: ["kotlin-*.jar"])
-    compile files('../../../../../../mdw-common/build/classes')
+    compile fileTree(dir: '../../../../../../mdw/deploy/app', includes: ["mdw-*.jar"])
     compile 'io.limberest:limberest:1.1.5'
 
 }

@@ -1,4 +1,5 @@
 {
+  "_type": "com.centurylink.mdw.tests.microservice.User",
   "user": {
     "id": "torvalds",
     "firstName": "Linus",

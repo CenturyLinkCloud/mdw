@@ -48,6 +48,10 @@
     "id": "N3"
   }],
   "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
     "servicePlan": {
       "category": "LOCAL",
       "type": "org.yaml.snakeyaml.Yaml"

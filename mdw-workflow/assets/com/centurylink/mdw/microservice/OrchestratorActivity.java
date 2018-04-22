@@ -12,7 +12,6 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.constant.VariableConstants;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Jsonable;
@@ -21,7 +20,6 @@ import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
@@ -113,24 +111,24 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         return getAttribute("serviceSummaryVariable", "serviceSummary");
     }
 
-    protected Process getTemplateProcess(Microservice service) throws ActivityException {
-        AssetVersionSpec spec = new AssetVersionSpec(service.getTemplate());
+    /**
+     * Can be a process or template.
+     */
+    protected Process getSubflow(Microservice service) throws ActivityException {
+        AssetVersionSpec spec = new AssetVersionSpec(service.getSubflow());
         Process process = ProcessCache.getProcessSmart(spec);
         if (process == null)
-            throw new ActivityException("Template not found: " + service.getTemplate());
+            throw new ActivityException("Subflow not found: " + service.getSubflow());
         return process;
     }
 
     private ProcessInstance createProcessInstance(Microservice service)
             throws ActivityException, DataAccessException, ProcessException {
-        // prepare variable bindings
-        AssetVersionSpec spec = new AssetVersionSpec(service.getTemplate());
-        Process process = ProcessCache.getProcessSmart(spec);
-        if (process == null)
-            throw new ActivityException("Template not found: " + service.getTemplate());
+        Process process = getSubflow(service);
+        // create bindings
         List<Variable> childVars = process.getVariables();
-        Map<String,String> parameters = createVariableBindings(childVars, service, false);
-        // create ProcessInstance and its variable instances
+        Map<String,String> parameters = createBindings(childVars, service, false);
+        // create process instance
         return getEngine().createProcessInstance(
                 process.getId(), OwnerType.PROCESS_INSTANCE,
                 getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
@@ -138,59 +136,40 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     /**
-     * This method returns variable bindings to be passed into subprocess.
-     * The method uses the attribute "variables" values as a mapping.
-     * The binding of each variable is an expression in the Magic Box rule language.
-     * Example bindings: "var1=12*12;var2=$parent_var.LIST.LN"
-     * Subclass may override this method to obtain variable binding in other ways.
-     *
-     * @param childVars variables defined for the child process
-     * @param prMgr process manager remote EJB handle
-     * @param varMgr variable manager remote EJB handle
-     * @return a map (name-value pairs) of variable bindings
-     * @throws Exception various types of exceptions
+     * Returns variable bindings to be passed into subprocess.
      */
-    private Map<String,String> createVariableBindings(List<Variable> childVars, Microservice service,
+    protected Map<String,String> createBindings(List<Variable> childVars, Microservice service,
             boolean passDocumentContent) throws ActivityException {
+        String serviceSummaryVar = getServiceSummaryVariableName();
         Map<String,String> parameters = new HashMap<>();
         for (int i = 0; i < childVars.size(); i++) {
             Variable childVar = childVars.get(i);
-            if (!allowInput(childVar))
-                continue;
-            String subflowVarName = childVar.getName();
-            String value;
-            if (subflowVarName.equals(VariableConstants.REQUEST)) {
-                VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
-                value = varinst == null ? null : varinst.getStringValue();
-            }
-            else if (subflowVarName.equals(VariableConstants.MASTER_DOCUMENT)) {
-                VariableInstance varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
-                value = varinst == null ? null : varinst.getStringValue();
-            }
-            else {
-                String bindingExpression = getBindingExpression(service, subflowVarName);
-                value = evaluateBindingValue(childVar, bindingExpression);
-            }
-            if (value != null && value.length() > 0) {
-                if (passDocumentContent) {
-                    if (VariableTranslator.isDocumentReferenceVariable(getPackage(),
-                            childVar.getType()) && value.startsWith("DOCUMENT:")) {
-                        value = super.getDocumentContent(new DocumentReference(value));
-                    }
+            if (childVar.isInput()) {
+                String subflowVarName = childVar.getName();
+                Object value = service.getBindings().get(subflowVarName);
+                if (value == null) {
+                    // service summary
+                    if (subflowVarName.equals(serviceSummaryVar))
+                        value = getParameterStringValue(serviceSummaryVar);
                 }
-                parameters.put(subflowVarName, value);
+                if (value != null) {
+                    String stringValue = String.valueOf(value);
+                    if (passDocumentContent) {
+                        if (VariableTranslator.isDocumentReferenceVariable(getPackage(),
+                                childVar.getType()) && stringValue.startsWith("DOCUMENT:")) {
+                            stringValue = getDocumentContent(new DocumentReference(stringValue));
+                        }
+                    }
+                    parameters.put(subflowVarName, stringValue);
+                }
             }
+        }
+        String processName = getSubflow(service).getName();
+        if (processName.startsWith("$") && parameters.get(processName) == null) {
+            // template variable will populate process name
+            parameters.put(processName, service.getName());
         }
         return parameters;
-    }
-
-    protected String getBindingExpression(Microservice service, String subflowVar) {
-        for (String bindingExpression : service.getBindings().keySet()) {
-            String varName = service.getBindings().get(bindingExpression);
-            if (varName.equals(subflowVar))
-                return bindingExpression;
-        }
-        return null;
     }
 
     protected boolean resumeOnProcessFinish(InternalEvent msg, Integer status)
@@ -204,19 +183,10 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             for (Microservice service : servicePlan.getServices()) {
                 MicroserviceHistory history = summary.getMicroservice(service.getName());
                 if (history.getInstanceId().equals(procInstId)) {
-                    history.setStatusCode(WorkStatus.STATUS_COMPLETED.intValue());
-                    // TODO OUTPUT PARAMS
-                    Map<String,String> params = getOutputParameters(procInstId, msg.getWorkId());
-                    if (params != null) {
-                        for (String paramName : params.keySet()) {
-                            String bindingExpression = getBindingExpression(service, paramName);
-                            if (bindingExpression != null)
-                                bindVariable(bindingExpression, params.get(paramName), false);
-                        }
-                    }
+                    history.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
                 }
-                if (history.getStatusCode() != WorkStatus.STATUS_COMPLETED.intValue()
-                        && history.getStatusCode() != WorkStatus.STATUS_CANCELLED.intValue()) {
+                if (!history.getInstanceStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
+                        && !history.getInstanceStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
                     done = false;
                 }
             }
@@ -241,8 +211,8 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         ServiceSummary summary = getServiceSummary(false);
         for (Microservice service : plan.getServices()) {
             MicroserviceHistory history = summary.getMicroservice(service.getName());
-            if (history.getStatusCode() != WorkStatus.STATUS_COMPLETED.intValue()
-                    && history.getStatusCode() != WorkStatus.STATUS_CANCELLED.intValue()) {
+            if (!history.getInstanceStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
+                    && !history.getInstanceStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
                 return false;
             }
         }
@@ -251,21 +221,19 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     private void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
         List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
-        ServiceSummary summary = getServiceSummary(true);
+        ServiceSummary summary = new ServiceSummary();
         try {
             for (Microservice service : servicePlan.getServices()) {
-                if (summary.getMicroservice(service.getName()).getStatusCode() == WorkStatus.STATUS_PENDING_PROCESS) {
-                    MicroserviceHistory history = summary.getMicroservice(service.getName());
-                    try {
-                        ProcessInstance processInstance = createProcessInstance(service);
-                        procInstList.add(processInstance);
-                        history.setInstanceId(processInstance.getId());
-                        history.setStatusCode(WorkStatus.STATUS_IN_PROGRESS);
-                    }
-                    catch (Exception ex) {
-                        history.setStatusCode(WorkStatus.STATUS_FAILED);
-                        throw ex;
-                    }
+                MicroserviceHistory history = summary.addMicroservice(service.getName());
+                try {
+                    ProcessInstance processInstance = createProcessInstance(service);
+                    procInstList.add(processInstance);
+                    history.setInstanceId(processInstance.getId());
+                    history.setInstanceStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
+                }
+                catch (Exception ex) {
+                    history.setInstanceStatus(WorkStatus.STATUSNAME_FAILED);
+                    throw ex;
                 }
             }
         }
@@ -297,14 +265,21 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     private void executeServiceSubflowsInParallel(ServicePlan servicePlan) throws ActivityException {
+        // create runners and service summary
         List<Microservice> serviceList = servicePlan.getServices();
         SubprocessRunner[] allRunners = new SubprocessRunner[(serviceList.size())];
         List<SubprocessRunner> activeRunners = new ArrayList<SubprocessRunner>(serviceList.size());
+        ServiceSummary summary = new ServiceSummary();
         for (int i = 0; i < serviceList.size(); i++) {
-            SubprocessRunner runner = new SubprocessRunner(serviceList.get(i), i, activeRunners);
+            Microservice service = serviceList.get(i);
+            SubprocessRunner runner = new SubprocessRunner(service, i, activeRunners);
             allRunners[i] = runner;
             activeRunners.add(runner);
+            summary.addMicroservice(service.getName());
         }
+        setVariableValue(getServiceSummaryVariableName(), summary);
+
+        // spawn runner threads
         ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
         int pollInterval = PropertyManager.getIntegerProperty(
                 PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL,
@@ -332,28 +307,20 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             }
         }
 
-        ServiceSummary summary = getServiceSummary(true);
         boolean hasFailedSubprocess = false;
         for (int i = 0; i < allRunners.length; i++) {
             Microservice service = serviceList.get(i);
             Long subprocInstId = allRunners[i].procInstId;
-            Map<String,String> outParameters = allRunners[i].outParameters;
             MicroserviceHistory history = summary.getMicroservice(service.getName());
-            if (subprocInstId != null)
+            if (subprocInstId != null) {
                 history.setInstanceId(subprocInstId);
-            if (outParameters == null) {
-                hasFailedSubprocess = true;
-                history.setStatusCode(WorkStatus.STATUS_FAILED);
+            }
+            if (allRunners[i].success) {
+                history.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
             }
             else {
-                history.setStatusCode(WorkStatus.STATUS_COMPLETED);
-                for (String paramName : outParameters.keySet()) {
-                    String bindingExpression = getBindingExpression(service, paramName);
-                    if (bindingExpression != null) {
-                        bindVariable(bindingExpression, outParameters.get(paramName),
-                                (getEngine().getPerformanceLevel() >= 5 || getEngine().isInService()));
-                    }
-                }
+                hasFailedSubprocess = true;
+                history.setInstanceStatus(WorkStatus.STATUSNAME_FAILED);
             }
         }
         setVariableValue(getServiceSummaryVariableName(), summary);
@@ -362,54 +329,11 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         onFinish();
     }
 
-    private List<String> updatedOutputVariables = new ArrayList<>();
-
-    private void bindVariable(String bindingExpression, String value, boolean passDocContent) throws ActivityException {
-        Process procdef = getMainProcessDefinition();
-        if (bindingExpression.equals("$")) {
-            // TODO
-            // param.setStringValue(value);
-        }
-        else if (bindingExpression.startsWith("$")) {
-            String varName = bindingExpression.substring(1).trim();
-            if (varName.startsWith("{") && varName.endsWith("}"))
-                varName = varName.substring(1, varName.length() - 1);
-            Variable var = procdef.getVariable(varName);
-            if (var != null) {
-                Object varValue = null;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
-                    if (value != null && !value.isEmpty()) {
-                        if (value.startsWith("DOCUMENT:")) {
-                            varValue = VariableTranslator.toObject(var.getType(), value);
-                        }
-                        else {
-                            synchronized (updatedOutputVariables) {
-                                if (updatedOutputVariables.contains(varName)) {
-                                    throw new ActivityException("Output variable: " + varName + " already updated by another subflow");
-                                }
-                                else {
-                                    updatedOutputVariables.add(varName);
-                                }
-                            }
-                            DocumentReference docref = super.createDocument(var.getType(), value,
-                                    OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
-                            varValue = new DocumentReference(docref.getDocumentId());
-                        }
-                    }
-                }
-                else {
-                    varValue = VariableTranslator.toObject(var.getType(), value);
-                }
-                this.setParameterValue(varName, varValue);
-            }
-        }
-    }
-
     private class SubprocessRunner implements Runnable {
         private Microservice service;
         private List<SubprocessRunner> runners;
-        private Map<String,String> outParameters = null;
         private Long procInstId = null;
+        private boolean success;
 
         private SubprocessRunner(Microservice service, int index, List<SubprocessRunner> runners) {
             this.runners = runners;
@@ -421,13 +345,13 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             String logicalProcName = service.getName();
             try {
                 loginfo("New thread for executing service subprocess in parallel - " + logicalProcName);
-                Process process = getTemplateProcess(service);
+                Process process = getSubflow(service);
                 engineDriver = new ProcessEngineDriver();
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
-                Map<String,String> parameters = createVariableBindings(childVars, service, perfLevel >= 5);
-                outParameters = engineDriver.invokeServiceAsSubprocess(process.getId(),
-                        getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel);
+                Map<String,String> parameters = createBindings(childVars, service, perfLevel >= 5);
+                success = engineDriver.invokeServiceAsSubprocess(process.getId(),
+                        getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel) != null;
                 procInstId = engineDriver.getMainProcessInstanceId();
             }
             catch (Exception e) {

@@ -1,28 +1,32 @@
 package com.centurylink.mdw.microservice
 
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
+import com.centurylink.mdw.test.MockRuntimeContext
+
 data class ServicePlan(
     var services: MutableList<Microservice> = mutableListOf()
 )
 
 /**
  * Required values come first in constructor.
+ * Binding values do not need to be escaped when overridden since runtimeContext is available.
  * TODO: dependencies, etc
  */
 data class Microservice(
-    var name: String = "",
-    var url: String = "",
-    var method: String = "",
-    var template: String = "com.centurylink.mdw.microservice/\${DefaultInvoke}.proc",
-    var enabled: Boolean? = true,
-    var count: Int = 1,
-    var bindings: MutableMap<String,String> = mutableMapOf(
-          name to "\${DefaultInvoke}",
-          url to "serviceUrl",
-          method to "serviceMethod",
-          "\${request}" to "request",
-          "\${requestHeaders}" to "requestHeaders",
-          "\${servicePlan}" to "servicePlan",
-          "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy" to "requestMapper",
-          "com.centurylink.mdw.microservice/IdentityResponseMapper.groovy" to "responseMapper"
+        private val runtimeContext: ActivityRuntimeContext = MockRuntimeContext("dummy"),
+        var name: String = "",
+        var url: String = "",
+        var method: String = "",
+        var subflow: String = "com.centurylink.mdw.microservice/\${StandardInvoke}.proc",
+        var enabled: Boolean? = true,
+        var count: Int = 1,
+        var bindings: MutableMap<String,Any?> = mutableMapOf(
+          "serviceUrl" to url,
+          "serviceMethod" to method,
+          "request" to runtimeContext.docRefs["request"],
+          "requestHeaders" to runtimeContext.docRefs["requestHeaders"],
+          "serviceSummary" to runtimeContext.docRefs["serviceSummary"],
+          "requestMapper" to "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy",
+          "responseMapper" to "com.centurylink.mdw.microservice/IdentityResponseMapper.groovy"
     )
 )

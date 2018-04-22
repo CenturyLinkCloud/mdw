@@ -5,7 +5,6 @@ import com.centurylink.mdw.test.MockRuntimeContext
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 
-
 class ServicePlanTest {
 
     val runtimeContext = MockRuntimeContext("ServicePlan Test Activity")
@@ -13,10 +12,11 @@ class ServicePlanTest {
     init {
         runtimeContext.properties["mdw.services.url"] = "http://localhost:8080/mdw"
         runtimeContext.variables["greeting"] = "hello"
+        runtimeContext.docRefs["request"] = "DOCUMENT:12345"
     }
 
     fun defaultBindings(): ServicePlan {
-        return servicePlan {
+        return servicePlan(runtimeContext) {
             services {
                 microservice {
                     name = "admin/createUser"
@@ -33,14 +33,16 @@ class ServicePlanTest {
     }
 
     fun customBindings(): ServicePlan {
-        return servicePlan {
+        return servicePlan(runtimeContext) {
             services {
                 microservice {
                     name = "admin/createUser"
                     method = "POST"
                     url = "${runtimeContext.props["mdw.services.url"]}/services/Users"
                     bindings {
-                        "greeting" to "hello"
+                        "hello" to "greeting"
+                        "requestMapper" to "com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy"
+                        "intVar" to 123
                     }
                 }
             }
@@ -56,4 +58,10 @@ fun dumpYaml(servicePlan: ServicePlan) : String {
     options.indent = 2
 
     return Yaml(options).dump(servicePlan)
+}
+
+fun main(args : Array<String>) {
+    val servicePlanTest = ServicePlanTest()
+    val servicePlan = servicePlanTest.customBindings()
+    println(dumpYaml(servicePlan))
 }

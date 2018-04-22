@@ -79,10 +79,17 @@ public class ProcessExecutor implements RetryableTransaction {
             String masterRequestId, Map<String,String> parameters)
     throws ProcessException, DataAccessException {
         String label = null;
-        Process procVO = ProcessCache.getProcess(processId);
-        if (procVO != null) {
-            label = procVO.getLabel();
+        Process process = ProcessCache.getProcess(processId);
+        if (process != null) {
             Package pkg = PackageCache.getProcessPackage(processId);
+            if (process.getName().startsWith("$") && parameters.containsKey(process.getName())) {
+                // template process -- name is provided in params
+                label = parameters.get(process.getName());
+                parameters.remove(process.getName());
+            }
+            else {
+                label = process.getLabel();
+            }
             if (pkg != null && !pkg.isDefaultPackage())
                 label = pkg.getName() + "/" + label;
         }

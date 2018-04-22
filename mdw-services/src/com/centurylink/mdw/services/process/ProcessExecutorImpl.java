@@ -262,7 +262,7 @@ class ProcessExecutorImpl {
         }
         for (String varName : eventParams.keySet()) {
             Variable variable = process.getVariable(varName);
-            if (variable==null) {
+            if (variable == null) {
                 String msg = "there is no variable named " + varName
                     + " in process with ID " + process.getId()
                     + " for parameter binding";
@@ -325,7 +325,6 @@ class ProcessExecutorImpl {
             if (label != null)
                 pi.setComment(label);
             edao.createProcessInstance(pi);
-            // if (parameters!=null)    // do not check this, as below will initialize variables array
             createVariableInstancesFromEventMessage(pi, parameters);
         } catch (SQLException e) {
             throw new DataAccessException(-1, e.getMessage(), e);

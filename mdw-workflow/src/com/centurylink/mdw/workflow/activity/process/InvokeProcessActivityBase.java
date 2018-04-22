@@ -161,7 +161,8 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
                     VariableInstance varinst = this.getVariableInstance(v.substring(2, v.length() - 1));
                     v = varinst==null?null:varinst.getStringValue();
                 }
-                else {    try {
+                else {
+                    try {
                         if (valueIsJavaExpression(v)) {
                             Object obj = evaluateExpression(getActivityId().toString(), JAVA_EL, v);
                             v = obj == null ? null : obj.toString();

@@ -142,23 +142,18 @@ public class ProcessCache implements CacheService {
     /**
      * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
      * @see AssetVO.meetsVersionSpec().
-     * TODO: spec.packageName is ignored
      */
     public static Process getProcessSmart(AssetVersionSpec spec) {
         try {
             Process match = null;
+            String specQualifiedName = spec.getQualifiedName();
+            if (specQualifiedName.endsWith(".proc"))
+                specQualifiedName = specQualifiedName.substring(0, specQualifiedName.length() - 5);
             for (Process process : getAllProcesses()) {
-                if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getName())) {
-                        if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
-                            match = process;
-                    }
+                if (specQualifiedName.equals(process.getQualifiedName())) {
+                    if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
+                        match = process;
                 }
-                else
-                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
-                        if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
-                            match = process;
-                    }
             }
             if (match == null) {
                 return null;

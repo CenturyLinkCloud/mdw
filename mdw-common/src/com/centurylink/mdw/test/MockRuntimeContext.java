@@ -28,9 +28,9 @@ import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -124,22 +124,29 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
     @Override
     public Map<String,Object> getVariables() {
         if (variables == null)
-            variables = new HashMap<String,Object>();
+            variables = new HashMap<>();
         return variables;
+    }
+
+    protected Map<String,String> docRefs;
+    public Map<String,String> getDocRefs() {
+        if (docRefs == null)
+            docRefs = new HashMap<>();
+        return docRefs;
     }
 
     protected Map<String,String> attributes;
     @Override
     public Map<String,String> getAttributes() {
         if (attributes == null)
-            attributes = new HashMap<String,String>();
+            attributes = new HashMap<>();
         return attributes;
     }
 
     protected Map<String,String> properties;
     public Map<String,String> getProperties() {
         if (properties == null) {
-            properties = new HashMap<String,String>();
+            properties = new HashMap<>();
         }
         return properties;
     }

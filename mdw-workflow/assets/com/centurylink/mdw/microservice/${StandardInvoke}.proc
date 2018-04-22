@@ -80,11 +80,11 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=43,y=40,w=193,h=27"
+    "WORK_DISPLAY_INFO": "x=43,y=40,w=165,h=27"
   },
   "textNotes": [{
-    "attributes": {"WORK_DISPLAY_INFO": "x=386,y=33,w=293,h=56"},
-    "content": "TODO:\r\n - Initial dependency check\r\n - Post-invoke serviceSummary update",
+    "attributes": {"WORK_DISPLAY_INFO": "x=386,y=33,w=341,h=74"},
+    "content": "TODO:\r\n - Initial dependency check\r\n - Post-invoke serviceSummary update\r\n - Post-invoke serviceSummary notification",
     "id": "N3"
   }],
   "variables": {
@@ -122,7 +122,7 @@
     },
     "serviceRequest": {
       "category": "LOCAL",
-      "type": "com.centurylink.mdw.model.Jsonable"
+      "type": "org.json.JSONObject"
     },
     "serviceRequestHeaders": {
       "category": "LOCAL",
@@ -134,7 +134,7 @@
     },
     "serviceResponse": {
       "category": "LOCAL",
-      "type": "com.centurylink.mdw.model.Jsonable"
+      "type": "org.json.JSONObject"
     },
     "serviceResponseHeaders": {
       "category": "LOCAL",

@@ -1,7 +1,7 @@
 serviceRequest {
-  cuid request.user.id
-  name request.user.firstName + request.user.lastName
+  cuid request.id
+  name request.firstName + request.lastName
   attributes {
-    email request.user.emailAddress
+    email request.emailAddress
   }
 }

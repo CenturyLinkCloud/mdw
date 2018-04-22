@@ -28,9 +28,9 @@ public class MicroserviceHistory implements Jsonable {
     /**
      * Process instance status.
      */
-    private Integer statusCode;
-    public Integer getStatusCode() { return statusCode; }
-    public void setStatusCode(Integer code) { this.statusCode = code; }
+    private String instanceStatus;
+    public String getInstanceStatus() { return instanceStatus; }
+    public void setInstanceStatus(String status) { this.instanceStatus = status; }
 
     /**
      * Calls to the microservice.
