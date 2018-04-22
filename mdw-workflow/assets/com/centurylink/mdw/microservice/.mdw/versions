@@ -1,4 +1,4 @@
-${DefaultInvoke}.proc=1
+${StandardInvoke}.proc=1 Renamed from c:\mdw\workspaces\mdw6\mdw-workflow\assets\com\centurylink\mdw\microservice\${DefaultInvoke}.proc
 CombiningConsolidator.java=1
 Consolidator.java=1
 DependenciesWaitActivity.java=7

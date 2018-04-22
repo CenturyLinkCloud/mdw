@@ -7,7 +7,6 @@ data class ServicePlan(
 /**
  * Required values come first in constructor.
  * TODO: dependencies, etc
- * TODO: consider cleaner alternatives to bindings (auto/inherit?)
  */
 data class Microservice(
     var name: String = "",
@@ -16,8 +15,6 @@ data class Microservice(
     var template: String = "com.centurylink.mdw.microservice/\${DefaultInvoke}.proc",
     var enabled: Boolean? = true,
     var count: Int = 1,
-    var requestMapper: String = "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy",
-    var responseMapper: String = "com.centurylink.mdw.microservice/IdentityResponseMapper.groovy",
     var bindings: MutableMap<String,String> = mutableMapOf(
           name to "\${DefaultInvoke}",
           url to "serviceUrl",
@@ -25,10 +22,7 @@ data class Microservice(
           "\${request}" to "request",
           "\${requestHeaders}" to "requestHeaders",
           "\${servicePlan}" to "servicePlan",
-          requestMapper to "requestMapper",
-          responseMapper to "responseMapper"  )
-) {
-    // runtime values (TODO: reconsider)
-    var instanceId: Long? = null
-    var statusCode: Int? = null
-}
+          "com.centurylink.mdw.microservice/IdentityRequestMapper.groovy" to "requestMapper",
+          "com.centurylink.mdw.microservice/IdentityResponseMapper.groovy" to "responseMapper"
+    )
+)

@@ -7,6 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/assets/Archive" />
       <excludeFolder url="file://$MODULE_DIR$/assets/com/centurylink/mdw/kotlin/build" />
       <excludeFolder url="file://$MODULE_DIR$/assets/com/centurylink/mdw/microservice/build" />
+      <excludeFolder url="file://$MODULE_DIR$/assets/com/centurylink/mdw/node/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/assets/out" />
     </content>
     <orderEntry type="inheritedJdk" />

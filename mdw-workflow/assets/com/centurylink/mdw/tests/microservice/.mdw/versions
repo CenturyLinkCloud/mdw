@@ -1,5 +1,9 @@
 MicroserviceOrchestration.proc=1
 MicroserviceOrchestrator.test=1
-TempMap.proc=1
+MicroserviceOrchestrator.yaml=1
+ServicePlanDsl.test=1
+ServicePlanDsl.yaml=1
+ServicePlanTest.kt=1
+ServicePlanTest.proc=1
 UserRequestMapper.groovy=1
 mainRequest.json=1

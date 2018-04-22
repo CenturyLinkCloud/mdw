@@ -7,7 +7,6 @@ fun servicePlan(block: ServicePlanBuilder.() -> Unit): ServicePlan = ServicePlan
 
 @MicroserviceDsl
 class ServicePlanBuilder {
-
     private val services = mutableListOf<Microservice>()
 
     fun services(block: ServicesHelper.() -> Unit) {
@@ -22,10 +21,7 @@ class ServicePlanBuilder {
  */
 @MicroserviceDsl
 class ServicesHelper: ArrayList<Microservice>() {
-
-    fun microservice(block: MicroserviceBuilder.() -> Unit) {
-        add(MicroserviceBuilder().apply(block).build())
-    }
+    fun microservice(block: MicroserviceBuilder.() -> Unit) = add(MicroserviceBuilder().apply(block).build())
 }
 
 @MicroserviceDsl
@@ -40,19 +36,31 @@ class MicroserviceBuilder {
     var template = default.template
     var enabled = default.enabled
     var count = default.count
-    var requestMapper = default.requestMapper
-    var responseMapper = default.responseMapper
+    var bindings = default.bindings.toMutableMap()
 
-    fun build(): Microservice = Microservice(
-            name = name,
-            url = url,
-            method = method,
-            template = template,
-            enabled = enabled,
-            count = count,
-            requestMapper = requestMapper,
-            responseMapper = responseMapper
-    )
+    var customBindings = mutableMapOf<String,String>()
 
+    fun bindings(block: BindingsMapper.() -> Unit) {
+        BindingsMapper(customBindings).apply(block)
+    }
+
+    fun build(): Microservice {
+        val microservice = Microservice(
+                name = name,
+                url = url,
+                method = method,
+                template = template,
+                enabled = enabled,
+                count = count
+        )
+        microservice.bindings.putAll(customBindings)
+        return microservice
+    }
 }
 
+@MicroserviceDsl
+class BindingsMapper(val bindings: MutableMap<String,String>) {
+   infix fun String.to(value: String): Unit {
+       bindings.put(this, value);
+    }
+}

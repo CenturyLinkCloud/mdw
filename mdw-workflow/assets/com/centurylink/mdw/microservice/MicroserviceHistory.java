@@ -18,14 +18,30 @@ public class MicroserviceHistory implements Jsonable {
     public String getMicroservice() { return microservice; }
     public void setMicroservice(String microservice) { this.microservice = microservice; }
 
-    private String transactionId;
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String id) { this.transactionId = id; }
+    /**
+     * Process instance ID.
+     */
+    private Long instanceId;
+    public Long getInstanceId() { return instanceId; }
+    public void setInstanceId(Long instanceId) { this.instanceId = instanceId; }
 
+    /**
+     * Process instance status.
+     */
+    private Integer statusCode;
+    public Integer getStatusCode() { return statusCode; }
+    public void setStatusCode(Integer code) { this.statusCode = code; }
+
+    /**
+     * Calls to the microservice.
+     */
     private List<Invocation> invocations;
     public List<Invocation> getInvocations() { return invocations; }
     public void setInvocations(List<Invocation> invocations) { this.invocations = invocations; }
 
+    /**
+     * Async response callbacks from the microservice.
+     */
     private List<Update> updates;
     public List<Update> getUpdates() { return updates; }
     public void setUpdates(List<Update> updates) { this.updates = updates; }

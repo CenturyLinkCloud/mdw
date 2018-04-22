@@ -15,6 +15,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.VariableConstants;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -34,6 +35,8 @@ import com.centurylink.mdw.workflow.activity.process.InvokeProcessActivityBase;
 
 /**
  * Microservice orchestrator adapter activity.
+ * ServicePlan, unlike ProcessExecutionPlan, is not updated with instance data.
+ * Instead, instance info is saved to the ServiceSummary.
  */
 @Tracked(LogLevel.TRACE)
 public class OrchestratorActivity extends InvokeProcessActivityBase {
@@ -41,43 +44,17 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     private static final String SYNCHRONOUS = "synchronous";
     private static final String PARALLEL = "parallel";
     private static final String DELAY = "delay";
-    private static final String SERVICE_PLAN_VARIABLE = "servicePlanVariable";
 
     // for execute() and needSuspend() -- otherwise use getServicePlan()
     private ServicePlan servicePlan;
 
     public void execute() throws ActivityException {
         servicePlan = getServicePlan();
-
         if (getEngine().isInService() && isParallel() && isSynchronous()) {
             executeServiceSubflowsInParallel(servicePlan);
         }
         else {
-            List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
-            for (Microservice service : servicePlan.getServices()) {
-                if (service.getStatusCode() != WorkStatus.STATUS_PENDING_PROCESS)
-                    continue;
-                procInstList.add(createProcessInstance(service));
-            }
-            setVariableValue(getServicePlanVariableName(), servicePlan);
-            if (!getEngine().isInService()) {
-                EventWaitInstance received = registerWaitEvents(false, true);
-                if (received != null) {
-                    resumeOnOtherEvent(
-                        getExternalEventInstanceDetails(received.getMessageDocumentId()),
-                        received.getCompletionCode());
-                }
-            }
-            // send JMS message at the end to ensure database changes are committed
-            try {
-                int delay = getDelay();
-                for (int k = 0; k < procInstList.size(); k++) {
-                    getEngine().startProcessInstance(procInstList.get(k), delay * k + delay);
-                }
-            }
-            catch (ProcessException | DataAccessException ex) {
-                throw new ActivityException(ex.getMessage(), ex);
-            }
+            executeServiceSubflowsInSequence(servicePlan);
         }
     }
 
@@ -93,40 +70,47 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     protected int getDelay() {
-        int delay = 0;
+        int delay = getAttribute(DELAY, 0);
         if (isSynchronous() && getEngine().isInService())
-            return delay;
+            return 0;
         else if (isParallel() && delay <= 0)
             return 1;
-        String delayAttr = getAttributeValue(DELAY);
-        return (delayAttr == null) ? 0 : Integer.parseInt(delayAttr);
+        else
+            return delay;
     }
 
     protected boolean isSynchronous() {
-        String v = getAttributeValueSmart(SYNCHRONOUS);
-        return v == null || v.isEmpty() || v.equalsIgnoreCase("true");
+        return getAttribute(SYNCHRONOUS, true);
     }
 
     protected boolean isParallel() {
-        String v = getAttributeValueSmart(PARALLEL);
-        return v == null || v.isEmpty() || v.equalsIgnoreCase("true");
+        return getAttribute(PARALLEL, true);
     }
 
     protected ServicePlan getServicePlan() throws ActivityException {
-        String varName = getServicePlanVariableName();
-        if (getProcessDefinition().getVariable(varName) == null)
-            throw new ActivityException("Missing process variable: " + varName);
-        return (ServicePlan) getVariableValue(varName);
+        return (ServicePlan)getRequiredVariableValue(getServicePlanVariableName());
     }
 
     /**
-     * You'd need a custom .impl asset to set the varName through designer
+     * You'd need a custom .impl asset to set this through designer
      */
     protected String getServicePlanVariableName() {
-        String varName = getAttributeValueSmart(SERVICE_PLAN_VARIABLE);
-        if (varName == null)
-            varName = "servicePlan";
-        return varName;
+        return getAttribute("servicePlanVariable", "servicePlan");
+    }
+
+    protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
+        DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        if (forUpdate)
+            return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
+        else
+            return (ServiceSummary) getDocument(docRef, Jsonable.class.getName());
+    }
+
+    /**
+     * You'd need a custom .impl asset to set this through designer
+     */
+    protected String getServiceSummaryVariableName() {
+        return getAttribute("serviceSummaryVariable", "serviceSummary");
     }
 
     protected Process getTemplateProcess(Microservice service) throws ActivityException {
@@ -137,30 +121,20 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         return process;
     }
 
-    private ProcessInstance createProcessInstance(Microservice service) throws ActivityException {
-        try {
-            // prepare variable bindings
-            AssetVersionSpec spec = new AssetVersionSpec(service.getTemplate());
-            Process process = ProcessCache.getProcessSmart(spec);
-            if (process == null)
-                throw new Exception("Template not found: " + service.getTemplate());
-            List<Variable> childVars = process.getVariables();
-            Map<String,String> parameters = createVariableBindings(childVars, service, false);
-            // create ProcessInstance and its variable instances
-            ProcessInstance pi = getEngine().createProcessInstance(
-                    process.getId(), OwnerType.PROCESS_INSTANCE,
-                    getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
-                    getMasterRequestId(), parameters);
-            service.setInstanceId(pi.getId());
-            // create initial transition instance
-            service.setStatusCode(WorkStatus.STATUS_IN_PROGRESS);
-            return pi;
-        }
-        catch (Exception ex) {
-            service.setStatusCode(WorkStatus.STATUS_FAILED);
-            logexception(ex.getMessage(), ex);
-            throw new ActivityException(ex.getMessage());
-        }
+    private ProcessInstance createProcessInstance(Microservice service)
+            throws ActivityException, DataAccessException, ProcessException {
+        // prepare variable bindings
+        AssetVersionSpec spec = new AssetVersionSpec(service.getTemplate());
+        Process process = ProcessCache.getProcessSmart(spec);
+        if (process == null)
+            throw new ActivityException("Template not found: " + service.getTemplate());
+        List<Variable> childVars = process.getVariables();
+        Map<String,String> parameters = createVariableBindings(childVars, service, false);
+        // create ProcessInstance and its variable instances
+        return getEngine().createProcessInstance(
+                process.getId(), OwnerType.PROCESS_INSTANCE,
+                getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
+                getMasterRequestId(), parameters);
     }
 
     /**
@@ -177,7 +151,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
      * @throws Exception various types of exceptions
      */
     private Map<String,String> createVariableBindings(List<Variable> childVars, Microservice service,
-            boolean passDocumentContent) throws Exception {
+            boolean passDocumentContent) throws ActivityException {
         Map<String,String> parameters = new HashMap<>();
         for (int i = 0; i < childVars.size(); i++) {
             Variable childVar = childVars.get(i);
@@ -226,11 +200,14 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             Long procInstId = msg.getWorkInstanceId();
             ServicePlan servicePlan = getServicePlan();
             done = true;
+            ServiceSummary summary = getServiceSummary(true);
             for (Microservice service : servicePlan.getServices()) {
-                if (service.getInstanceId().equals(procInstId)) {
-                    service.setStatusCode(WorkStatus.STATUS_COMPLETED.intValue());
+                MicroserviceHistory history = summary.getMicroservice(service.getName());
+                if (history.getInstanceId().equals(procInstId)) {
+                    history.setStatusCode(WorkStatus.STATUS_COMPLETED.intValue());
+                    // TODO OUTPUT PARAMS
                     Map<String,String> params = getOutputParameters(procInstId, msg.getWorkId());
-                    if (params!=null) {
+                    if (params != null) {
                         for (String paramName : params.keySet()) {
                             String bindingExpression = getBindingExpression(service, paramName);
                             if (bindingExpression != null)
@@ -238,28 +215,85 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                         }
                     }
                 }
-                if (service.getStatusCode()!=WorkStatus.STATUS_COMPLETED.intValue()
-                        && service.getStatusCode()!=WorkStatus.STATUS_CANCELLED.intValue())
+                if (history.getStatusCode() != WorkStatus.STATUS_COMPLETED.intValue()
+                        && history.getStatusCode() != WorkStatus.STATUS_CANCELLED.intValue()) {
                     done = false;
+                }
             }
-            setVariableValue(getServicePlanVariableName(), servicePlan);
-        } catch (Exception ex) {
-            logexception("InvokeHeterogeneousProcessActivity: cannot get variable instance", ex);
-            throw new ActivityException(-1, ex.getMessage(), ex);
+            setVariableValue(getServiceSummaryVariableName(), summary);
         }
-        if (done && status.equals(WorkStatus.STATUS_HOLD)) done = false;
-        if (done) super.deregisterEvents();
+        catch (Exception ex) {
+            logexception("InvokeHeterogeneousProcessActivity: cannot get variable instance", ex);
+            if (ex instanceof ActivityException)
+                throw (ActivityException)ex;
+            else
+                throw new ActivityException(-1, ex.getMessage(), ex);
+        }
+        if (done && status.equals(WorkStatus.STATUS_HOLD))
+            done = false;
+        if (done)
+            deregisterEvents();
         return done;
     }
 
     protected boolean allSubProcessCompleted() throws ActivityException, XmlException {
         ServicePlan plan = getServicePlan();
+        ServiceSummary summary = getServiceSummary(false);
         for (Microservice service : plan.getServices()) {
-            if (service.getStatusCode() != WorkStatus.STATUS_COMPLETED.intValue()
-                    && service.getStatusCode() != WorkStatus.STATUS_CANCELLED.intValue())
+            MicroserviceHistory history = summary.getMicroservice(service.getName());
+            if (history.getStatusCode() != WorkStatus.STATUS_COMPLETED.intValue()
+                    && history.getStatusCode() != WorkStatus.STATUS_CANCELLED.intValue()) {
                 return false;
+            }
         }
         return true;
+    }
+
+    private void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
+        List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
+        ServiceSummary summary = getServiceSummary(true);
+        try {
+            for (Microservice service : servicePlan.getServices()) {
+                if (summary.getMicroservice(service.getName()).getStatusCode() == WorkStatus.STATUS_PENDING_PROCESS) {
+                    MicroserviceHistory history = summary.getMicroservice(service.getName());
+                    try {
+                        ProcessInstance processInstance = createProcessInstance(service);
+                        procInstList.add(processInstance);
+                        history.setInstanceId(processInstance.getId());
+                        history.setStatusCode(WorkStatus.STATUS_IN_PROGRESS);
+                    }
+                    catch (Exception ex) {
+                        history.setStatusCode(WorkStatus.STATUS_FAILED);
+                        throw ex;
+                    }
+                }
+            }
+        }
+        catch (ProcessException | DataAccessException ex) {
+            throw new ActivityException(ex.getMessage(), ex);
+        }
+        finally {
+            setVariableValue(getServiceSummaryVariableName(), summary);
+        }
+
+        if (!getEngine().isInService()) {
+            EventWaitInstance received = registerWaitEvents(false, true);
+            if (received != null) {
+                resumeOnOtherEvent(
+                    getExternalEventInstanceDetails(received.getMessageDocumentId()),
+                    received.getCompletionCode());
+            }
+        }
+        // send JMS message at the end to ensure database changes are committed
+        try {
+            int delay = getDelay();
+            for (int k = 0; k < procInstList.size(); k++) {
+                getEngine().startProcessInstance(procInstList.get(k), delay * k + delay);
+            }
+        }
+        catch (ProcessException | DataAccessException ex) {
+            throw new ActivityException(ex.getMessage(), ex);
+        }
     }
 
     private void executeServiceSubflowsInParallel(ServicePlan servicePlan) throws ActivityException {
@@ -298,19 +332,21 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             }
         }
 
+        ServiceSummary summary = getServiceSummary(true);
         boolean hasFailedSubprocess = false;
         for (int i = 0; i < allRunners.length; i++) {
             Microservice service = serviceList.get(i);
             Long subprocInstId = allRunners[i].procInstId;
-            Map<String, String> outParameters = allRunners[i].outParameters;
+            Map<String,String> outParameters = allRunners[i].outParameters;
+            MicroserviceHistory history = summary.getMicroservice(service.getName());
             if (subprocInstId != null)
-                service.setInstanceId(subprocInstId);
+                history.setInstanceId(subprocInstId);
             if (outParameters == null) {
                 hasFailedSubprocess = true;
-                service.setStatusCode(WorkStatus.STATUS_FAILED);
+                history.setStatusCode(WorkStatus.STATUS_FAILED);
             }
             else {
-                service.setStatusCode(WorkStatus.STATUS_COMPLETED);
+                history.setStatusCode(WorkStatus.STATUS_COMPLETED);
                 for (String paramName : outParameters.keySet()) {
                     String bindingExpression = getBindingExpression(service, paramName);
                     if (bindingExpression != null) {
@@ -320,7 +356,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 }
             }
         }
-        setVariableValue(getServicePlanVariableName(), servicePlan);
+        setVariableValue(getServiceSummaryVariableName(), summary);
         if (hasFailedSubprocess)
             throw new ActivityException("At least one subflow is not completed");
         onFinish();

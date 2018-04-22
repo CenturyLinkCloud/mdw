@@ -1,0 +1,60 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=58,y=128,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=195,ly=104,type=Elbow,xs=122&224,ys=148&148"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=478,y=128,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"servicePlan\"]",
+        "Rule": "import com.centurylink.mdw.tests.microservice.ServicePlanTest\r\n\r\nval servicePlanTest = ServicePlanTest()\r\n\r\nwhen (variables[\"testCase\"]) {\r\n  \"defaultBindings\" -> {\r\n    variables[\"servicePlan\"] = servicePlanTest.defaultBindings()\r\n  }\r\n  \"customBindings\" -> {\r\n    variables[\"servicePlan\"] = servicePlanTest.customBindings()\r\n  }\r\n}",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=228,y=122,w=105,h=71"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Create\r\nServicePlan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=406,ly=148,type=Elbow,xs=337&474,ys=148&148"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=40,y=39,w=147,h=27"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=232,y=45,w=149,h=22"},
+    "content": "Just tests the DSL",
+    "id": "N3"
+  }],
+  "variables": {
+    "servicePlan": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

@@ -1,5 +1,4 @@
 // build service-plan.jar (as needed -- delivered as asset)
-
 apply plugin: 'kotlin'
 
 buildscript {

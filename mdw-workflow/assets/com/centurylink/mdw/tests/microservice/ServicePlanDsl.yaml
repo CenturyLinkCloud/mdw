@@ -1,0 +1,103 @@
+process: # 10142
+  name: ServicePlanTest
+  instance: 1
+  activity: # 1 "2018-04-21 19:57:58"
+    name: Start
+    status: Completed
+  activity: # 4 "2018-04-21 19:57:58"
+    name: |
+      Create
+      ServicePlan
+    status: Completed
+  activity: # 2 "2018-04-21 19:57:58"
+    name: Stop
+    status: Completed
+  variable: # 10387
+    name: servicePlan
+    value: |
+      !!com.centurylink.mdw.microservice.ServicePlan {
+        services: [
+          {
+            bindings: {
+              admin/createUser: '\${DefaultInvoke}',
+              'http://localhost:8080/mdw/services/Users': serviceUrl,
+              POST: serviceMethod,
+              '\${request}': request,
+              '\${requestHeaders}': requestHeaders,
+              '\${servicePlan}': servicePlan,
+              com.centurylink.mdw.microservice/IdentityRequestMapper.groovy: requestMapper,
+              com.centurylink.mdw.microservice/IdentityResponseMapper.groovy: responseMapper,
+              greeting: hello
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createUser,
+            template: 'com.centurylink.mdw.microservice/\${DefaultInvoke}.proc',
+            url: 'http://localhost:8080/mdw/services/Users'
+          }]
+        
+      }
+  variable: # 10386
+    name: testCase
+    value: customBindings
+process: # 10141
+  name: ServicePlanTest
+  instance: 2
+  activity: # 1 "2018-04-21 19:57:50"
+    name: Start
+    status: Completed
+  activity: # 4 "2018-04-21 19:57:50"
+    name: |
+      Create
+      ServicePlan
+    status: Completed
+  activity: # 2 "2018-04-21 19:57:53"
+    name: Stop
+    status: Completed
+  variable: # 10385
+    name: servicePlan
+    value: |
+      !!com.centurylink.mdw.microservice.ServicePlan {
+        services: [
+          {
+            bindings: {
+              admin/createUser: '\${DefaultInvoke}',
+              'http://localhost:8080/mdw/services/Users': serviceUrl,
+              POST: serviceMethod,
+              '\${request}': request,
+              '\${requestHeaders}': requestHeaders,
+              '\${servicePlan}': servicePlan,
+              com.centurylink.mdw.microservice/IdentityRequestMapper.groovy: requestMapper,
+              com.centurylink.mdw.microservice/IdentityResponseMapper.groovy: responseMapper
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createUser,
+            template: 'com.centurylink.mdw.microservice/\${DefaultInvoke}.proc',
+            url: 'http://localhost:8080/mdw/services/Users'
+          },
+          {
+            bindings: {
+              admin/createGroup: '\${DefaultInvoke}',
+              'http://localhost:8080/mdw/services/Workgroups': serviceUrl,
+              POST: serviceMethod,
+              '\${request}': request,
+              '\${requestHeaders}': requestHeaders,
+              '\${servicePlan}': servicePlan,
+              com.centurylink.mdw.microservice/IdentityRequestMapper.groovy: requestMapper,
+              com.centurylink.mdw.microservice/IdentityResponseMapper.groovy: responseMapper
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createGroup,
+            template: 'com.centurylink.mdw.microservice/\${DefaultInvoke}.proc',
+            url: 'http://localhost:8080/mdw/services/Workgroups'
+          }]
+        
+      }
+  variable: # 10384
+    name: testCase
+    value: defaultBindings

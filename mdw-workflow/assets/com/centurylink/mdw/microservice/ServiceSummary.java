@@ -19,10 +19,6 @@ public class ServiceSummary implements Jsonable {
     public static final String MICROSERVICE = "Microservice";
     public static final String SERVICE_SUMMARY_NOTIFICATION = "servicesummary-update-";
 
-    private String publicUserId;
-    public String getPublicUserId() { return publicUserId; }
-    public void setPublicUserId(String publicUserId) { this.publicUserId = publicUserId; }
-
     private String requestId;
     public String getRequestId() { return requestId; }
     public void setRequestId(String id) { this.requestId = id; }

@@ -143,6 +143,9 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
         }
         return properties;
     }
+    public Map<String,String> getProps() {
+        return getProperties();
+    }
 
     public MockRuntimeContext(String activityName) {
         this(activityName, null);
