@@ -32,6 +32,9 @@
           </a>            
           <a href="" class="btn btn-default" ng-if="authUser.hasRole('Site Admin')" ng-click="deleteAsset()">
             <span class="glyphicon glyphicon-remove"></span> Delete
+          </a>  
+          <a ng-if="task" href="" class="btn btn-default" ng-click="viewInstances()">
+            <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span> Instances
           </a>            
         </div>
       </div>

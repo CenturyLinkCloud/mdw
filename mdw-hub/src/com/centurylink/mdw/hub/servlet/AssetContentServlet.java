@@ -263,7 +263,7 @@ public class AssetContentServlet extends HttpServlet {
                         asset = persisterVcs.getProcessBase(pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
                     }
                     else if (assetName.endsWith(".task")) {
-                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(assetRoot + "/" + pkgName + "/" + assetName)));
+                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
                     }
                     else {
                         asset = persisterVcs.getAsset(pkg.getId(), assetName);
@@ -303,12 +303,14 @@ public class AssetContentServlet extends HttpServlet {
                     // update ASSET_REF with current info before saving
                     verChange = newVer != ver;
                     if (verChange) {
-                        String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
                         VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
-                        AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
-                        try (DbAccess dbAccess = new DbAccess()) {
-                            Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), dbAccess.getConnection());
-                            cp.updateRef(curRef);
+                        if (vc != null && vc.getCommit() != null) {
+                            String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
+                            AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
+                            try (DbAccess dbAccess = new DbAccess()) {
+                                Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), dbAccess.getConnection());
+                                cp.updateRef(curRef);
+                            }
                         }
                     }
 
