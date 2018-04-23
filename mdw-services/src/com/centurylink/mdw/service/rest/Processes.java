@@ -134,9 +134,19 @@ public class Processes extends JsonRestService implements JsonExportable {
                         summary.put("version", process.getProcessVersion());
                         summary.put("masterRequestId", process.getMasterRequestId());
                         summary.put("definitionId", process.getProcessId());
-                        Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
-                        if (latest != null && !latest.getId().equals(process.getProcessId()))
-                            summary.put("archived", true);
+                        summary.put("template", process.getTemplate());
+                        if (process.getTemplate() != null) {
+                            summary.put("templatePackage", process.getTemplatePackage());
+                            summary.put("templateVersion", process.getTemplateVersion());
+                            Process latestTemplate = ProcessCache.getProcess(process.getTemplatePackage() + "/" + process.getTemplate());
+                            if (latestTemplate != null && !latestTemplate.getId().equals(process.getProcessId()))
+                                summary.put("archived", true);
+                        }
+                        else {
+                            Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
+                            if (latest != null && !latest.getId().equals(process.getProcessId()))
+                                summary.put("archived", true);
+                        }
 
                         return summary;
                     }

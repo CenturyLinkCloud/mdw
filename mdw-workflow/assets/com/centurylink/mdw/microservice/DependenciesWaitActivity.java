@@ -9,6 +9,7 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -92,13 +93,13 @@ public class DependenciesWaitActivity extends EventWaitActivity {
     }
 
     public boolean dependenciesMet() throws ActivityException {
-        ServiceSummary serviceSummary = getServiceSummary();
+        ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary == null) {
             // No service Summary, so throw exception since we shouldn't proceed
             // if we can't determine if dependencies are met
-            logger.severe(ServiceSummary.SERVICE_SUMMARY + " not found");
+            logger.severe("Service summary not found");
             throw new ActivityException("Unable to determine if dependencies are met, "
-                    + ServiceSummary.SERVICE_SUMMARY + " variable not found");
+                    + "service summary variable not found");
         }
         // if microservice is checked and not successful invocation, then
         // dependenciesMet=false and bunk out
@@ -207,17 +208,18 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                                 .findFirst().orElse(null);
     }
 
-    protected ServiceSummary getServiceSummary() throws ActivityException {
-        String[] outDocs = new String[1];
-        outDocs[0] = ServiceSummary.SERVICE_SUMMARY;
-        setOutputDocuments(outDocs);
-        ServiceSummary serviceSummary = (ServiceSummary) getVariableValue(ServiceSummary.SERVICE_SUMMARY);
-        if (serviceSummary == null) {
-            logger.severe(ServiceSummary.SERVICE_SUMMARY + " not found");
-            return null;
-        }
-        else {
-            return serviceSummary;
-        }
+    protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
+        DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        if (forUpdate)
+            return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
+        else
+            return (ServiceSummary) getDocument(docRef, Jsonable.class.getName());
+    }
+
+    /**
+     * You'd need a custom .impl asset to set this through designer
+     */
+    protected String getServiceSummaryVariableName() {
+        return getAttribute("serviceSummaryVariable", "serviceSummary");
     }
 }

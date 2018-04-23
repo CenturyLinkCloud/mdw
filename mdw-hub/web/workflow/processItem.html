@@ -4,8 +4,8 @@
       <div>
         <div ng-if="!process"> <!-- only for list item -->
           {{item.packageName}}/
-          <a class="mdw-item-link mdw-item-nowrap" href="#/workflow/processes/{{item.id}}">
-            {{item.processName}} v{{item.processVersion}} &nbsp;{{item.id}}</a>
+          <a ng-class="['mdw-item-link', 'mdw-item-nowrap', {'mdw-template': item.template}]" href="#/workflow/processes/{{item.id}}">
+            {{item.processName}} {{item.processVersion == '0' ? '' : 'v' + item.processVersion}} &nbsp;{{item.id}}</a>
         </div>
         <div class="mdw-item-sub">
           <span>Master request: 

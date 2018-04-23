@@ -90,6 +90,12 @@ public class ProcessInstance implements Serializable, Jsonable {
             secondaryOwner = jsonObj.getString("secondaryOwner");
         if (jsonObj.has("secondaryOwnerId"))
             secondaryOwnerId = jsonObj.getLong("secondaryOwnerId");
+        if (jsonObj.has("template"))
+            template = jsonObj.getString("template");
+        if (jsonObj.has("templatePackage"))
+            templatePackage = jsonObj.getString("templatePackage");
+        if (jsonObj.has("templateVersion"))
+            templateVersion = jsonObj.getString("templateVersion");
         // detail info
         if (jsonObj.has("activities")) {
             JSONArray activitiesJson = jsonObj.getJSONArray("activities");
@@ -160,6 +166,18 @@ public class ProcessInstance implements Serializable, Jsonable {
     public void setSolutionId(String solutionId) {
         this.solutionId = solutionId;
     }
+
+    private String template;
+    public String getTemplate() { return template; }
+    public void setTemplate(String template) { this.template = template; }
+
+    private String templatePackage;
+    public String getTemplatePackage() { return templatePackage; }
+    public void setTemplatePackage(String templatePackage) { this.templatePackage = templatePackage; }
+
+    private String templateVersion;
+    public String getTemplateVersion() { return templateVersion; }
+    public void setTemplateVersion(String version) { this.templateVersion = version; }
 
     private String owner;
     public String getOwner() { return owner; }
@@ -353,6 +371,12 @@ public class ProcessInstance implements Serializable, Jsonable {
             json.put("secondaryOwner", secondaryOwner);
             json.put("secondaryOwnerId", secondaryOwnerId);
         }
+        if (template != null)
+            json.put("template", template);
+        if (templatePackage != null)
+            json.put("templatePackage", templatePackage);
+        if (templateVersion != null)
+            json.put("templateVersion", templateVersion);
         // detail info (for ProcessInstanceVO retrieval)
         if (activities != null) {
             JSONArray activitiesJson = new JSONArray();

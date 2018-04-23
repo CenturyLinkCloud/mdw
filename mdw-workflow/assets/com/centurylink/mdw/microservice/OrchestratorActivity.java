@@ -221,7 +221,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     private void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
         List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
-        ServiceSummary summary = new ServiceSummary();
+        ServiceSummary summary = new ServiceSummary(getMasterRequestId());
         try {
             for (Microservice service : servicePlan.getServices()) {
                 MicroserviceHistory history = summary.addMicroservice(service.getName());
@@ -269,7 +269,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         List<Microservice> serviceList = servicePlan.getServices();
         SubprocessRunner[] allRunners = new SubprocessRunner[(serviceList.size())];
         List<SubprocessRunner> activeRunners = new ArrayList<SubprocessRunner>(serviceList.size());
-        ServiceSummary summary = new ServiceSummary();
+        ServiceSummary summary = new ServiceSummary(getMasterRequestId());
         for (int i = 0; i < serviceList.size(); i++) {
             Microservice service = serviceList.get(i);
             SubprocessRunner runner = new SubprocessRunner(service, i, activeRunners);

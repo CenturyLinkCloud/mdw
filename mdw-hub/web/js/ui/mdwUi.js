@@ -56,6 +56,10 @@ var $mdwUi = {
        FONT: 'bold 18px sans-serif',
        SIZE: 18
      },
+     TEMPLATE_FONT: {
+       FONT: 'bold italic 18px sans-serif',
+       SIZE: 18
+     },
      DEFAULT_LINE_WIDTH: 1,
      DEFAULT_COLOR: 'black',
      HYPERLINK_COLOR: '#1565c0',

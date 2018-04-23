@@ -371,6 +371,9 @@
   font-size: 14px;
   font-weight: bold;
 }
+.mdw-template {
+  font-style: italic;
+}
 .mdw-item-link {
   margin-bottom: 2px;
   font-size: 15px;

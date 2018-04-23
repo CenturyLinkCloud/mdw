@@ -17,6 +17,7 @@ import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -108,10 +109,6 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         Long responseId = super.logResponse(response);
         int code = response.getStatusCode() == null ? 0 : response.getStatusCode();
         Status status = new Status(code, response.getStatusMessage());
-        // Ensure that we get the most up-to-date serviceSummary
-        String[] outDocs = new String[1];
-        outDocs[0] = ServiceSummary.SERVICE_SUMMARY;
-        setOutputDocuments(outDocs);
         //
         try {
             populateResponseVariable(new StatusResponse(status));
@@ -145,7 +142,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     public void updateServiceSummary(Status status, Long responseId)
             throws ActivityException, ServiceException, DataAccessException {
 
-        ServiceSummary serviceSummary = getServiceSummary();
+        ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary != null) {
             String microservice = getMicroservice();
             List<Invocation> invocations = serviceSummary.getInvocations(microservice);
@@ -162,7 +159,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 serviceSummary.addInvocation(microservice, invocation);
             }
 
-            setVariableValue(ServiceSummary.SERVICE_SUMMARY, serviceSummary);
+            setVariableValue(getServiceSummaryVariableName(), serviceSummary);
             // Do any notifications
             notifyServiceSummaryUpdate(serviceSummary);
         }
@@ -181,33 +178,32 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     }
 
     /**
-     * This returns the microservice that is to be updated in the serviceSummary
-     * It defaults to the value of "packageName/processName".
-     * In the case where this won't work (i.e we are in a deep subprocess)
-     * it can be overridden by defining the value in the activity for "Microservice name"
-     * @return the microservice to be updated in the serviceSummary
+     * Logical microservice name that is to be updated in the serviceSummary.
+     * Defaults to "packageName/processName" (or instance name for process templates).
+     * In the case where this won't work (i.e we are in a deep subprocess).
+     * Can be overridden through design via the "microservice" attribute
      */
-    public String getMicroservice() {
-        String microservice = getAttributeValue(ServiceSummary.MICROSERVICE);
+    protected String getMicroservice() {
+        String microservice = getAttributeValue("microservice");
+        // TODO templates
         if (microservice == null)
             microservice = getPackage().getName() + "/" + getProcessDefinition().getName();
         return microservice;
     }
 
+    protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
+        DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        if (forUpdate)
+            return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
+        else
+            return (ServiceSummary) getDocument(docRef, Jsonable.class.getName());
+    }
+
     /**
-     * Looks up and returns the ServiceSummary variable value
-     * @return ServiceSummary object
-     * @throws ActivityException
+     * You'd need a custom .impl asset to set this through designer
      */
-    public ServiceSummary getServiceSummary() throws ActivityException {
-        ServiceSummary serviceSummary = (ServiceSummary) getVariableValue(
-                ServiceSummary.SERVICE_SUMMARY);
-        if (serviceSummary == null) {
-            return null;
-        }
-        else {
-            return serviceSummary;
-        }
+    protected String getServiceSummaryVariableName() {
+        return getAttribute("serviceSummaryVariable", "serviceSummary");
     }
 
     /**
@@ -217,9 +213,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      */
     public Long getRequestId() throws ActivityException {
 
-        String requestIdVarName = getAttributeValue(ServiceSummary.REQUEST_ID_VAR);
-        if (requestIdVarName == null)
-            requestIdVarName = ServiceSummary.DEFAULT_REQUEST_ID_VAR;
+        String requestIdVarName = getRequestIdVariableName();
 
         Variable requestIdVar = getProcessDefinition().getVariable(requestIdVarName);
         if (requestIdVar == null && !"GET".equals(getHttpMethod()))
@@ -242,5 +236,13 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             }
         }
     }
+
+    /**
+     * You'd need a custom .impl asset to set this through designer
+     */
+    protected String getRequestIdVariableName() {
+        return getAttribute("requestIdVariable", "requestId");
+    }
+
 
 }

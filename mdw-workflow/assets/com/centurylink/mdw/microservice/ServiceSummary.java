@@ -13,15 +13,8 @@ import com.centurylink.mdw.model.Jsonable;
  */
 public class ServiceSummary implements Jsonable {
 
-    public static final String SERVICE_SUMMARY = "serviceSummary";
-    public static final String REQUEST_ID_VAR = "Request ID";
-    public static final String DEFAULT_REQUEST_ID_VAR = "requestId";
-    public static final String MICROSERVICE = "Microservice";
-    public static final String SERVICE_SUMMARY_NOTIFICATION = "servicesummary-update-";
-
-    private String requestId;
-    public String getRequestId() { return requestId; }
-    public void setRequestId(String id) { this.requestId = id; }
+    private String masterRequestId;
+    public String getMasterRequestId() { return masterRequestId; }
 
     private List<MicroserviceHistory> microservices = new ArrayList<>();
     public List<MicroserviceHistory> getMicroservices() { return microservices; }
@@ -83,12 +76,12 @@ public class ServiceSummary implements Jsonable {
         updates.add(update);
     }
 
-    public ServiceSummary() {
+    public ServiceSummary(String masterRequestId) {
+        this.masterRequestId = masterRequestId;
     }
 
     public ServiceSummary(JSONObject json) {
-        if (json.has("requestId"))
-            this.requestId = json.getString("requestId");
+        this.masterRequestId = json.getString("masterRequestId");
         if (json.has("microservices")) {
             JSONObject summaryJson = json.getJSONObject("microservices");
             for (String microservice : JSONObject.getNames(summaryJson)) {
@@ -100,8 +93,7 @@ public class ServiceSummary implements Jsonable {
 
     public JSONObject getJson() {
         JSONObject json = create();
-        if (requestId != null)
-            json.put("requestId", requestId);
+        json.put("masterRequestId", masterRequestId);
         JSONObject historiesJson = create();
         for (MicroserviceHistory history : microservices) {
             JSONObject historyJson = history.getJson();
