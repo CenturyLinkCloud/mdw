@@ -48,6 +48,22 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     public void execute() throws ActivityException {
         servicePlan = getServicePlan();
+        ServiceSummary serviceSummary = new ServiceSummary(getMasterRequestId());
+        String serviceSummaryVar = getServiceSummaryVariableName();
+        setVariableValue(serviceSummaryVar, serviceSummary);
+        // update bindings with serviceSummary value
+        boolean planNeedsUpdate = false;
+        for (Microservice plannedService : servicePlan.getServices()) {
+            Map<String,Object> bindings = plannedService.getBindings();
+            if (bindings.containsKey(serviceSummaryVar) && bindings.get(serviceSummaryVar) == null) {
+                bindings.put(serviceSummaryVar, getParameterStringValue(serviceSummaryVar));
+                planNeedsUpdate = true;
+            }
+        }
+        if (planNeedsUpdate) {
+            setVariableValue(getServicePlanVariableName(), servicePlan);
+        }
+
         if (getEngine().isInService() && isParallel() && isSynchronous()) {
             executeServiceSubflowsInParallel(servicePlan);
         }
@@ -140,18 +156,12 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
      */
     protected Map<String,String> createBindings(List<Variable> childVars, Microservice service,
             boolean passDocumentContent) throws ActivityException {
-        String serviceSummaryVar = getServiceSummaryVariableName();
         Map<String,String> parameters = new HashMap<>();
         for (int i = 0; i < childVars.size(); i++) {
             Variable childVar = childVars.get(i);
             if (childVar.isInput()) {
                 String subflowVarName = childVar.getName();
                 Object value = service.getBindings().get(subflowVarName);
-                if (value == null) {
-                    // service summary
-                    if (subflowVarName.equals(serviceSummaryVar))
-                        value = getParameterStringValue(serviceSummaryVar);
-                }
                 if (value != null) {
                     String stringValue = String.valueOf(value);
                     if (passDocumentContent) {
@@ -221,7 +231,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     private void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
         List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
-        ServiceSummary summary = new ServiceSummary(getMasterRequestId());
+        ServiceSummary summary = getServiceSummary(true);
         try {
             for (Microservice service : servicePlan.getServices()) {
                 MicroserviceHistory history = summary.addMicroservice(service.getName());
@@ -269,7 +279,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         List<Microservice> serviceList = servicePlan.getServices();
         SubprocessRunner[] allRunners = new SubprocessRunner[(serviceList.size())];
         List<SubprocessRunner> activeRunners = new ArrayList<SubprocessRunner>(serviceList.size());
-        ServiceSummary summary = new ServiceSummary(getMasterRequestId());
+        ServiceSummary summary = getServiceSummary(true);
         for (int i = 0; i < serviceList.size(); i++) {
             Microservice service = serviceList.get(i);
             SubprocessRunner runner = new SubprocessRunner(service, i, activeRunners);

@@ -84,9 +84,12 @@ public class ServiceSummary implements Jsonable {
         this.masterRequestId = json.getString("masterRequestId");
         if (json.has("microservices")) {
             JSONObject summaryJson = json.getJSONObject("microservices");
-            for (String microservice : JSONObject.getNames(summaryJson)) {
-                MicroserviceHistory history = new MicroserviceHistory(microservice, summaryJson.getJSONObject(microservice));
-                microservices.add(history);
+            String[] microserviceNames = JSONObject.getNames(summaryJson);
+            if (microserviceNames != null) {
+                for (String microservice : microserviceNames) {
+                    MicroserviceHistory history = new MicroserviceHistory(microservice, summaryJson.getJSONObject(microservice));
+                    microservices.add(history);
+                }
             }
         }
     }
