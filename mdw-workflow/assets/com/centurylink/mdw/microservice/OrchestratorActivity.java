@@ -106,7 +106,8 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     /**
-     * You'd need a custom .impl asset to set this through designer
+     * You'd need a custom .impl asset to set this through designer.
+     * To view instances in MDWHub you'd also need to customize inspector-tabs.js.
      */
     protected String getServicePlanVariableName() {
         return getAttribute("servicePlanVariable", "servicePlan");

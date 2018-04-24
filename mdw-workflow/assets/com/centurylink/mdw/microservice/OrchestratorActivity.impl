@@ -1,5 +1,5 @@
 {
-  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "category": "com.centurylink.mdw.activity.types.InvokeProcessActivity",
   "icon": "orchestrator.png",
   "implementorClass": "com.centurylink.mdw.microservice.OrchestratorActivity",
   "label": "Microservice Orchestrator",

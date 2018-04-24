@@ -1,4 +1,4 @@
-${StandardInvoke}.proc=1 Renamed from c:mdwworkspacesmdw6mdw-workflowassetscomcenturylinkmdwmicroservice${DefaultInvoke}.proc
+${StandardInvoke}.proc=1
 CombiningConsolidator.java=1
 Consolidator.java=1
 DependenciesWaitActivity.java=7
@@ -15,9 +15,11 @@ ServicePlan.kt=1
 ServicePlanDsl.kt=1
 ServicePlanModel.kt=1
 ServiceSummary.java=2
+ServiceSummaryApi.java=1
 Update.java=2
 WorstCaseConsolidator.java=1
 build.gradle=1
 buildKt.gradle=1
 collector.png=1
 orchestrator.png=1
+service-plan.jar=1
