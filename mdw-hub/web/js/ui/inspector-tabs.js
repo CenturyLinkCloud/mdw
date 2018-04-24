@@ -199,7 +199,10 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                     var subprocTbl = Compatibility.getTable(attr);
                     for (let i = 0; i < subprocTbl.length; i++) {
                       var subprocRow = subprocTbl[i];
-                      subprocs.push(subprocRow[1] + ' v' + subprocRow[2]);
+                      var subprocSpec = subprocRow[1] + ' v' + subprocRow[2];
+                      if (!subprocs.includes(subprocSpec)) {
+                        subprocs.push(subprocSpec);
+                      }
                     }
                   }
                 }
