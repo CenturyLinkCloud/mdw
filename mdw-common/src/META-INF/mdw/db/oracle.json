@@ -1,0 +1,9 @@
+{
+  "schemaUpgradeQueries": [
+    {
+      "name": "process instance template",
+      "check": "select column_name from user_tab_cols where table_name = 'PROCESS_INSTANCE' and column_name = 'TEMPLATE'",
+      "upgrade": "alter table PROCESS_INSTANCE add TEMPLATE VARCHAR2(256 BYTE)"
+    }
+  ]
+}
