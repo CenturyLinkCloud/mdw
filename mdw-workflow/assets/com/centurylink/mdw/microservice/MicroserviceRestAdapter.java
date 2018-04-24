@@ -160,34 +160,32 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             }
 
             setVariableValue(getServiceSummaryVariableName(), serviceSummary);
-            // Do any notifications
             notifyServiceSummaryUpdate(serviceSummary);
         }
     }
 
     /**
-     * <p>
-     * This is left to the implementor if any kind of notification
-     * needs to be sent out whenever the service summary is updated
-     * </p>
-     * @param serviceSummary
-     * @throws ServiceException
-     * @throws DataAccessException
+     * TODO: default behavior
      */
     public void notifyServiceSummaryUpdate(ServiceSummary serviceSummary) {
     }
 
     /**
-     * Logical microservice name that is to be updated in the serviceSummary.
-     * Defaults to "packageName/processName" (or instance name for process templates).
-     * In the case where this won't work (i.e we are in a deep subprocess).
-     * Can be overridden through design via the "microservice" attribute
+     * Standard behavior is to read from a String variable (defaultName='microservice').
+     * If no variable is defined, fallback is the 'microservice' design attribute.
      */
-    protected String getMicroservice() {
-        String microservice = getAttributeValue("microservice");
-        // TODO templates
+    protected String getMicroservice() throws ActivityException {
+        String microservice = null;
+        String microserviceVarName = getAttribute("microserviceVariable", "microservice");
+        if (getMainProcessDefinition().getVariable(microserviceVarName) == null) {
+            // configured through attribute
+            microservice = getAttributeValueSmart("microservice");
+        }
+        else {
+            microservice = getParameterStringValue(microserviceVarName);
+        }
         if (microservice == null)
-            microservice = getPackage().getName() + "/" + getProcessDefinition().getName();
+            throw new ActivityException("Cannot discern microservice");
         return microservice;
     }
 

@@ -16,6 +16,7 @@ ServicePlanDsl.kt=1
 ServicePlanModel.kt=1
 ServiceSummary.java=2
 ServiceSummaryApi.java=1
+StatusResponseMapper.groovy=1
 Update.java=2
 WorstCaseConsolidator.java=1
 build.gradle=1

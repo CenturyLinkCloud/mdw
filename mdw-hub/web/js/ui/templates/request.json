@@ -1,0 +1,66 @@
+{
+  "category": "object",
+  "pagelet": {"widgets": [
+    {
+      "type": "dropdown",
+      "name": "method",
+      "label": "Method",
+      "options": [
+        "GET", "POST", "PUT", "DELETE", "PATCH"
+      ],
+      "default": "POST"
+    },
+    {
+      "type": "text",
+      "name": "path",
+      "label": "Path"
+    },
+    {
+      "type": "table",
+      "name": "parameters",
+      "converter": "ObjectTableConverter",
+      "widgets": [
+        {
+          "label": "Parameter Name",
+          "name": "_key",
+          "type": "text"
+        },
+        {
+          "label": "Type",
+          "name": "type",
+          "type": "dropdown",
+          "options": [
+            "Path",
+            "Body",
+            "Query",
+            "Header",
+            "Form"
+          ],
+          "default": "Body"
+        },
+        {
+          "type": "checkbox",
+          "name": "required",
+          "label": "Required"
+        },
+        {
+          "name": "description",
+          "label": "Description",
+          "type": "text"
+        },
+	    {
+	      "type": "asset",
+	      "name": "dataType",
+	      "label": "Data Type",
+	      "source": "java"
+	    }
+      ]
+    },
+    {
+      "name": "Process Request Help",
+      "section": "Request",
+      "type": "link",
+      "url": "/MDWWeb/doc/processRequest.html"
+    }    
+  ]}
+}

@@ -38,7 +38,7 @@
     {
       "attributes": {
         "Output Documents": "[\"servicePlan\"]",
-        "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n        }\r\n    }\r\n}",
+        "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n        }\r\n    }\r\n}",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=181,y=144,w=108,h=74"
       },

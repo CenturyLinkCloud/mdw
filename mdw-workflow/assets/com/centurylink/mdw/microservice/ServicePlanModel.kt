@@ -21,6 +21,7 @@ data class Microservice(
         var enabled: Boolean? = true,
         var count: Int = 1,
         var bindings: MutableMap<String,Any?> = mutableMapOf(
+          "microservice" to name,
           "serviceUrl" to url,
           "serviceMethod" to method,
           "request" to runtimeContext.docRefs["request"],

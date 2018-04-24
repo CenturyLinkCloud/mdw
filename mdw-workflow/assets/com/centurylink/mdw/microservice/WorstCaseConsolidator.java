@@ -6,6 +6,10 @@ import com.centurylink.mdw.model.Status;
 
 import kotlin.Pair;
 
+/**
+ * Finds and returns the response with the worst (highest)
+ * HTTP status code.
+ */
 public class WorstCaseConsolidator implements Consolidator {
 
     @Override

@@ -88,7 +88,7 @@
     "id": "N3"
   }],
   "variables": {
-    "DefaultServiceTemplate": {
+    "microservice": {
       "category": "INPUT",
       "type": "java.lang.String"
     },
@@ -99,6 +99,10 @@
     "requestHeaders": {
       "category": "INPUT",
       "type": "java.util.Map<String,String>"
+    },
+    "requestId": {
+      "category": "LOCAL",
+      "type": "java.lang.Long"
     },
     "requestMapper": {
       "category": "INPUT",

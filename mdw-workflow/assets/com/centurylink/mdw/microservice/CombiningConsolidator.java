@@ -6,6 +6,11 @@ import com.centurylink.mdw.model.Status;
 
 import kotlin.Pair;
 
+/**
+ * Create a payload with an array of StatusResponse Jsonable.
+ * Overall status code/message are taken from the worst (highest)
+ * HTTP status code among individual responses.
+ */
 public class CombiningConsolidator implements Consolidator {
 
     @Override
