@@ -73,6 +73,8 @@ public class MdwMain {
             // initialize db access and set database time
             try {
                 DatabaseAccess db = new DatabaseAccess(null);
+                db.checkAndUpgradeSchema();
+
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
