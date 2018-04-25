@@ -143,6 +143,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/system/Server.class"
         include "com/centurylink/mdw/model/system/ServerList.class"
         include "com/centurylink/mdw/util/file/MdwIgnore.class"
+        include "com/centurylink/mdw/util/file/VersionProperties.class"
     }
     
     from configurations.cli.asFileTree.files.collect {

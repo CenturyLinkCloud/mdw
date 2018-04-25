@@ -30,6 +30,7 @@ import java.util.Properties;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.util.file.VersionProperties;
 
 @Parameters(commandNames = "assets", commandDescription = "Compare asset versions to avoid errors during import", separators="=")
 public class Vercheck extends Setup {
@@ -44,6 +45,11 @@ public class Vercheck extends Setup {
     private boolean warn;
     public boolean isWarn() { return warn; }
     public void setWarn(boolean warn) { this.warn = warn; }
+
+    @Parameter(names="--fix", description="Automatically increment versions")
+    private boolean fix;
+    public boolean isFix() { return warn; }
+    public void setFix(boolean fix) { this.fix = fix; }
 
     private static final String ERR_UNVERSIONED = "Unversioned asset";
     private static final String ERR_BAD_VERSION_LINE = "Bad version line";
@@ -79,12 +85,23 @@ public class Vercheck extends Setup {
         for (String path : assetFiles.keySet()) {
             AssetFile assetFile = assetFiles.get(path);
             if (assetFile.error != null) {
-                System.err.println("ERROR: " + path + " --> " + assetFile.error);
-                errorCount++;
+                if (assetFile.fixed) {
+                    System.out.println("FIXED: " + path + " --> " + assetFile.error);
+                }
+                else {
+                    System.err.println("ERROR: " + path + " --> " + assetFile.error);
+                    errorCount++;
+                }
             }
             else {
-                if (assetFile.file == null && warn)
-                    System.err.println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
+                if (assetFile.file == null && warn) {
+                    if (fix && removeVersion(assetFile)) {
+                        System.err.println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
+                    }
+                    else {
+                        System.err.println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
+                    }
+                }
             }
         }
 
@@ -126,6 +143,8 @@ public class Vercheck extends Setup {
                         int tagVer = Integer.parseInt(tagVerProp.split(" ")[0]);
                         if (tagVer > assetFile.version) {
                             assetFile.error = ERR_TAG_VER_GT + " (" + formatVersion(tagVer) + " > " + formatVersion(assetFile.version) + ")";
+                            if (fix)
+                                assetFile.fixed = updateVersion(assetFile, ++tagVer);
                         }
                         else if (tagVer == assetFile.version) {
                             // compare file contents
@@ -134,6 +153,8 @@ public class Vercheck extends Setup {
                             byte[] fileContents = Files.readAllBytes(Paths.get(assetFile.file.getPath()));
                             if (!Arrays.equals(tagContents, fileContents)) {
                                 assetFile.error = ERR_SAME_VER_DIFF_CONTENT + " (v " + formatVersion(assetFile.version) + ")";
+                                if (fix)
+                                    assetFile.fixed = updateVersion(assetFile, ++assetFile.version);
                             }
                         }
                     }
@@ -166,8 +187,11 @@ public class Vercheck extends Setup {
                 String verProp = pkgProps.getProperty(asset);
                 try {
                     assetFile.version = verProp == null ? 0 : Integer.parseInt(verProp.split(" ")[0]);
-                    if (assetFile.version == 0)
+                    if (assetFile.version == 0) {
                         assetFile.error = ERR_UNVERSIONED;
+                        if (fix)
+                            assetFile.fixed = updateVersion(assetFile, 1);
+                    }
                 }
                 catch (NumberFormatException ex) {
                     assetFile.error = ERR_BAD_VERSION_LINE + ": " + asset + "=" + verProp;
@@ -183,6 +207,8 @@ public class Vercheck extends Setup {
                     if (assetFile == null) {
                         assetFile = new AssetFile(path);
                         assetFile.error = ERR_UNVERSIONED;
+                        if (fix)
+                            assetFile.fixed = updateVersion(assetFile, 1);
                         assetFiles.put(path, assetFile);
                     }
                     assetFile.file = file;
@@ -212,13 +238,39 @@ public class Vercheck extends Setup {
         return versionProps;
     }
 
+    private boolean updateVersion(AssetFile assetFile, int newVer) throws IOException {
+        File versionsFile = new File(getAssetRoot() + "/" + assetFile.getPackagePath() + "/" + META_DIR + "/versions");
+        VersionProperties versionProperties = new VersionProperties(versionsFile);
+        versionProperties.setProperty(assetFile.getAssetName(), String.valueOf(newVer));
+        versionProperties.save();
+        return true;
+    }
+
+    private boolean removeVersion(AssetFile assetFile) throws IOException {
+        File versionsFile = new File(getAssetRoot() + "/" + assetFile.getPackagePath() + "/" + META_DIR + "/versions");
+        VersionProperties versionProperties = new VersionProperties(versionsFile);
+        versionProperties.remove(assetFile.getAssetName());
+        versionProperties.save();
+        return true;
+    }
+
     class AssetFile {
         String path;
         File file;
         Integer version;
         String error;
+        boolean fixed;
+
         AssetFile(String path) {
             this.path = path;
+        }
+
+        String getPackagePath() {
+            return path.substring(0, path.lastIndexOf('/')).replace('.', '/');
+        }
+
+        String getAssetName() {
+            return path.substring(path.lastIndexOf('/') + 1);
         }
     }
 }
