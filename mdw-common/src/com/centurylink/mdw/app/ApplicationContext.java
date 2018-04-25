@@ -414,7 +414,7 @@ public class ApplicationContext {
             servicesUrl = getMdwHubUrl();
         }
         if (servicesUrl.endsWith("/"))
-            servicesUrl = servicesUrl.substring(1);
+            servicesUrl = servicesUrl.substring(0, servicesUrl.length()-1);
         return servicesUrl;
     }
 
@@ -428,7 +428,7 @@ public class ApplicationContext {
             url = "http://" + getServer() + "/mdw";
         }
         if (url.endsWith("/"))
-            url = url.substring(1);
+            url = url.substring(0, url.length()-1);
         return url;
     }
 
@@ -439,7 +439,7 @@ public class ApplicationContext {
             if (docsUrl == null)
                 docsUrl = "https://centurylinkcloud.github.io/mdw/docs";
             if (docsUrl.endsWith("/"))
-                docsUrl = docsUrl.substring(1);
+                docsUrl = docsUrl.substring(0, docsUrl.length()-1);
         }
         return docsUrl;
     }
