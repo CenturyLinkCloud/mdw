@@ -539,7 +539,7 @@ public abstract class Setup implements Operation {
 
     private void findAssetPackageDirs(File from, List<File> into) throws IOException {
         for (File file : from.listFiles()) {
-            if (file.isDirectory() && !file.getName().equals(META_DIR)) {
+            if (file.isDirectory() && !file.getName().equals(META_DIR) && !file.getName().equals("Archive")) {
                 if (new File(file + "/" + META_DIR).isDirectory()) {
                     MdwIgnore mdwIgnore = new MdwIgnore(from);
                     if (!mdwIgnore.isIgnore(file))

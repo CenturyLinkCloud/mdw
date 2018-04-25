@@ -133,10 +133,15 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
      */
     protected Process getSubflow(Microservice service) throws ActivityException {
         AssetVersionSpec spec = new AssetVersionSpec(service.getSubflow());
-        Process process = ProcessCache.getProcessSmart(spec);
-        if (process == null)
-            throw new ActivityException("Subflow not found: " + service.getSubflow());
-        return process;
+        try {
+            Process process = ProcessCache.getProcessSmart(spec);
+            if (process == null)
+                throw new ActivityException("Subflow not found: " + service.getSubflow());
+            return process;
+        }
+        catch (DataAccessException ex) {
+            throw new ActivityException(ex.getMessage(), ex);
+        }
     }
 
     private ProcessInstance createProcessInstance(Microservice service)

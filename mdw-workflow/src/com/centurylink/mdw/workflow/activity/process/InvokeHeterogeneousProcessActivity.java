@@ -135,7 +135,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             if (procmap.get(i)[0].equals(logicalProcName)) {
                 String subproc_name = procmap.get(i)[1];
                 String v = procmap.get(i)[2];
-                return super.getSubProcessVO(subproc_name, v);
+                return super.getSubprocess(subproc_name, v);
             }
         }
         return null;

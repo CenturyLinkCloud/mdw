@@ -197,7 +197,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait
     /**
      * TODO: Allow expressions that resolve to a version/spec.
      */
-    protected Process getSubProcessVO(String name, String verSpec) throws DataAccessException {
+    protected Process getSubprocess(String name, String verSpec) throws DataAccessException {
         Process match = ProcessCache.getProcessSmart(new AssetVersionSpec(name, verSpec));
         if (match == null)
             throw new DataAccessException("Unable to find process definition for " + name + " v" + verSpec);
