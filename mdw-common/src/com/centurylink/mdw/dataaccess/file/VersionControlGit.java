@@ -15,28 +15,21 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeSet;
 
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -54,10 +47,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.dircache.DirCacheIterator;
-import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
@@ -66,20 +57,15 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.TextProgressMonitor;
-import org.eclipse.jgit.notes.Note;
-import org.eclipse.jgit.notes.NoteMap;
 import org.eclipse.jgit.pgm.Main;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
-import org.eclipse.jgit.treewalk.FileTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.WorkingTreeIterator;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 
@@ -88,6 +74,7 @@ import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.model.asset.CommitInfo;
+import com.centurylink.mdw.util.file.VersionProperties;
 
 public class VersionControlGit implements VersionControl {
 
@@ -112,10 +99,7 @@ public class VersionControlGit implements VersionControl {
     private Map<File,Long> file2id;
     private Map<Long,File> id2file;
 
-    boolean gitNotesVersioning = false;
-    // only one of the following is used
-    private Map<File,AssetRevision> file2rev;
-    private Map<File,Properties> pkg2versions;
+    private Map<File,VersionProperties> pkg2versions;
 
     private CredentialsProvider credentialsProvider;
     public CredentialsProvider getCredentialsProvider() { return this.credentialsProvider; };
@@ -146,10 +130,7 @@ public class VersionControlGit implements VersionControl {
 
         file2id = new HashMap<File,Long>();
         id2file = new HashMap<Long,File>();
-        if (gitNotesVersioning)
-            file2rev = new HashMap<File,AssetRevision>();
-        else
-            pkg2versions = new HashMap<File,Properties>();
+        pkg2versions = new HashMap<>();
 
         String idLengthProp = System.getProperty("com.centurylink.mdw.abbreviated.id.length");
         if (idLengthProp != null)
@@ -221,23 +202,15 @@ public class VersionControlGit implements VersionControl {
     public void clear() {
         file2id.clear();
         id2file.clear();
-        if (gitNotesVersioning)
-            file2rev.clear();
-        else
-            pkg2versions.clear();
+        pkg2versions.clear();
     }
 
     public void deleteRev(File file) throws IOException {
-        if (gitNotesVersioning) {
-            file2rev.remove(file); // TODO remove git note
-        }
-        else {
-            Properties verProps = getVersionProps(file.getParentFile());
-            String val = verProps.getProperty(file.getName());
-            if (val != null) {
-                verProps.remove(file.getName());
-                saveVersionProps(file.getParentFile());
-            }
+        VersionProperties verProps = getVersionProps(file.getParentFile());
+        String val = verProps.getProperty(file.getName());
+        if (val != null) {
+            verProps.remove(file.getName());
+            verProps.save();
         }
     }
 
@@ -261,9 +234,9 @@ public class VersionControlGit implements VersionControl {
     }
 
     public void setRevisionInVersionsFile(File file, AssetRevision rev) throws IOException {
-        Properties verProps = getVersionProps(file.getParentFile());
-        verProps.setProperty(file.getName(), formatVersionProp(rev));
-        saveVersionProps(file.getParentFile());
+        VersionProperties verProps = getVersionProps(file.getParentFile());
+        verProps.setProperty(file.getName(), String.valueOf(rev.getVersion()));
+        verProps.save();
     }
 
     public static AssetRevision parseAssetRevision(String propertyValue) {
@@ -280,136 +253,13 @@ public class VersionControlGit implements VersionControl {
         return assetRevision;
     }
 
-    private String formatVersionProp(AssetRevision assetRevision) {
-        String propVal = String.valueOf(assetRevision.getVersion());
-        if (assetRevision.getComment() != null)
-            propVal += " " + assetRevision.getComment().replaceAll("\\r", "").replace('\n', NEWLINE_CHAR);
-        return propVal;
-    }
-
-    private Properties getVersionProps(File pkgDir) throws IOException {
-        Properties props = pkg2versions.get(pkgDir);
+    private VersionProperties getVersionProps(File pkgDir) throws IOException {
+        VersionProperties props = pkg2versions.get(pkgDir);
         if (props == null) {
-            // make sure the keys are sorted in a predictable order
-            // also avoid setting date comment which causes Git conflicts
-            props = new Properties() {
-                @Override
-                public synchronized Enumeration<Object> keys() {
-                    return Collections.enumeration(new TreeSet<Object>(super.keySet()));
-                }
-                @Override
-                public void store(OutputStream out, String comments) throws IOException {
-                    if (comments != null) {
-                        super.store(out, comments);
-                    }
-                    else {
-                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
-                        synchronized (this) {
-                            for (Enumeration<?> e = keys(); e.hasMoreElements();) {
-                                String key = (String)e.nextElement();
-                                String val = (String)get(key);
-                                bw.write(key.replaceAll(" ", "\\\\ ").replaceAll("!", "\\\\!") + "=" + val);
-                                bw.newLine();
-                            }
-                        }
-                        bw.flush();
-                    }
-                }
-            };
-            File propFile = new File(pkgDir + "/" + VERSIONS_FILE);
-            if (propFile.exists()) {
-                InputStream in = null;
-                try {
-                    in = new FileInputStream(propFile);
-                    props.load(in);
-                }
-                finally {
-                    if (in != null)
-                        in.close();
-                }
-            }
+            props = new VersionProperties(new File(pkgDir + "/" + VERSIONS_FILE));
             pkg2versions.put(pkgDir, props);
         }
         return props;
-    }
-
-    private void saveVersionProps(File pkgDir) throws IOException {
-        Properties props = getVersionProps(pkgDir);
-        File propFile = new File(pkgDir + "/" + VERSIONS_FILE);
-        if (props.isEmpty()) {
-            if (propFile.exists() && !propFile.delete())
-                throw new IOException("Unable to delete file: " + propFile);
-        }
-        else {
-            OutputStream out = null;
-            try {
-                out = new FileOutputStream(propFile);
-                props.store(out, null);
-            }
-            catch (FileNotFoundException ex) {
-                // dimensions annoyingly makes files read-only
-                propFile.setWritable(true);
-                out = new FileOutputStream(propFile);
-                props.store(out, null);
-            }
-            finally {
-                if (out != null)
-                    out.close();
-            }
-        }
-    }
-
-    /**
-     * Storing revisions in Git Notes causes object hash computation, which is expensive.
-     */
-    public AssetRevision getRevisionGitNotes(File file) throws IOException {
-        AssetRevision rev = file2rev.get(file);
-        if (rev == null) {
-            ObjectId workingId = getObjectId(file);
-
-            try (RevWalk walk = new RevWalk(localRepo)) {
-                Ref ref = localRepo.findRef(NOTES_REF);
-                if (ref != null) {
-                    RevCommit notesCommit = walk.parseCommit(ref.getObjectId());
-                    NoteMap notes = NoteMap.read(walk.getObjectReader(), notesCommit);
-                    Note note = notes.getNote(workingId);
-                    if (note != null) {
-                        ObjectLoader loader = localRepo.open(note.getData());
-                        String noteStr = new String(loader.getBytes()).trim();
-                        rev = parseAssetRevision(noteStr);
-                        file2rev.put(file, rev);
-                        return rev;
-                    }
-                }
-            }
-        }
-
-        return rev;
-    }
-
-    /**
-     * Storing revisions in Git Notes causes object hash computation, which is expensive.
-     */
-    public void setRevisionGitNotes(File file, AssetRevision rev) throws IOException {
-        ObjectId workingId = getObjectId(file);
-
-        try (RevWalk walk = new RevWalk(localRepo)) {
-            RevObject notesObj;
-            try {
-                notesObj = walk.parseAny(workingId);
-            }
-            catch (MissingObjectException ex) {
-                // new files need "git add" before attaching notes
-                git.add().addFilepattern(getRepoPath(file)).call();
-                notesObj = walk.parseAny(workingId);
-            }
-
-            String note = formatVersionProp(rev);
-            git.notesAdd().setNotesRef(NOTES_REF).setMessage(note).setObjectId(notesObj).call();
-        }
-        catch (Exception ex) {
-            throw new IOException(ex.getMessage(), ex);
-        }
     }
 
     /**
@@ -446,32 +296,6 @@ public class VersionControlGit implements VersionControl {
         catch (NoSuchAlgorithmException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
-    }
-
-    /**
-     * TODO: see if performance can be improved
-     */
-    private ObjectId getObjectId(File file) throws IOException {
-        try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
-            treeWalk.addTree(new FileTreeIterator(localRepo));
-
-            String path = getRepoPath(file);
-            treeWalk.setFilter(PathFilter.create(path));
-
-            while (treeWalk.next()) {
-                WorkingTreeIterator workingTreeIterator = treeWalk.getTree(0, WorkingTreeIterator.class);
-                if (treeWalk.getPathString().equals(path))
-                    return workingTreeIterator.getEntryObjectId();
-                if (workingTreeIterator.getEntryFileMode().equals(FileMode.TREE))
-                    treeWalk.enterSubtree();
-            }
-
-            return ObjectId.zeroId(); // not found
-        }
-    }
-
-    private String getRepoPath(File file) {
-        return file.getPath().substring(localRepo.getDirectory().getPath().length() - 4).replace('\\', '/');
     }
 
     private String getLogicalPath(File file) {

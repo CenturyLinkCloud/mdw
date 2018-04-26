@@ -356,6 +356,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             contentTypes.put(XML, "text/xml");
             contentTypes.put(XSD, "text/xml");
             contentTypes.put(XSL, "text/xml");
+            contentTypes.put(YAML, "text/yaml");
         }
 
         String type = contentTypes.get(language);

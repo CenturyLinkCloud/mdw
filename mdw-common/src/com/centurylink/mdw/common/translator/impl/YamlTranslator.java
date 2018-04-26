@@ -29,9 +29,8 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.representer.Representer;
 
 import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.ExecutionPlan;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
@@ -55,7 +54,7 @@ public class YamlTranslator extends DocumentReferenceTranslator implements XmlDo
                 Yaml yaml = new Yaml(new Constructor() {
                     protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                         try {
-                            return CompiledJavaCache.getResourceClass(name, getClass().getClassLoader(), getPackage());
+                            return getPackage().getCloudClassLoader().loadClass(name);
                         }
                         catch (Exception ex) {
                             throw new ClassNotFoundException(name, ex);

@@ -32,6 +32,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
          * with prop names being labels and prop values evaluated.
          * Note: '=' refers to the identity (name) of each obj in collection
          */
+        Request: {
+          '_template': mdw.roots.services + '/js/ui/templates/request.json'
+        },
         Variables: {
           '_template': mdw.roots.services + '/js/ui/templates/variables.json'
         },
@@ -183,27 +186,47 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var subprocs = [];
-              if (workflowObject.attributes.processname) {
-                subprocs.push(workflowObject.attributes.processname + ' v' + workflowObject.attributes.processversion);
-              }
-              else if (workflowObject.attributes.processmap) {
-                var attr = workflowObject.attributes.processmap;
-                if (attr) {
-                  var subprocTbl = Compatibility.getTable(attr);
-                  for (let i = 0; i < subprocTbl.length; i++) {
-                    var subprocRow = subprocTbl[i];
-                    subprocs.push(subprocRow[1] + ' v' + subprocRow[2]);
+              var gets = [];
+              if (workflowObject.attributes.processname || workflowObject.attributes.processmap) {
+                // traditional subproc activity
+                var subprocs = [];
+                if (workflowObject.attributes.processname) {
+                  subprocs.push(workflowObject.attributes.processname + ' v' + workflowObject.attributes.processversion);
+                }
+                else if (workflowObject.attributes.processmap) {
+                  var attr = workflowObject.attributes.processmap;
+                  if (attr) {
+                    var subprocTbl = Compatibility.getTable(attr);
+                    for (let i = 0; i < subprocTbl.length; i++) {
+                      var subprocRow = subprocTbl[i];
+                      var subprocSpec = subprocRow[1] + ' v' + subprocRow[2];
+                      if (!subprocs.includes(subprocSpec)) {
+                        subprocs.push(subprocSpec);
+                      }
+                    }
                   }
                 }
-              }
-              var gets = [];
-              subprocs.forEach(function(subproc) {
-                var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&owner=PROCESS_INSTANCE&ownerId=';
-                runtimeInfo.forEach(function(instance) {
-                  gets.push($http.get(url + instance.processInstanceId));
+                subprocs.forEach(function(subproc) {
+                  var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&owner=PROCESS_INSTANCE&ownerId=';
+                  runtimeInfo.forEach(function(instance) {
+                    gets.push($http.get(url + instance.processInstanceId));
+                  });
                 });
-              });
+              }
+              else if ((diagramObject.diagram.process.variables && diagramObject.diagram.process.variables.serviceSummary) || workflowObject.attributes.serviceSummaryVariable) {
+                // orchestrator with serviceSummary
+                var serviceSummaryVarName = 'serviceSummary';
+                if (workflowObject.attributes.serviceSummaryVarName) {
+                  serviceSummaryVarName = workflowObject.attributes.serviceSummaryVarName;
+                }
+                var serviceSummary = diagramObject.diagram.instance.variables.find(function(variable) {
+                  return variable.name === serviceSummaryVarName;
+                });
+                if (serviceSummary) {
+                  gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '/subflows'));
+                }
+              }
+              
               return $q.all(gets);
             }
           }

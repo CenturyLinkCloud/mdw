@@ -206,7 +206,7 @@ public class Archive extends Setup {
                                     ? Integer.parseInt(propVal.substring(0, firstSpace))
                                     : Integer.parseInt(propVal);
                             if (oldVer > newVer)
-                                flaggedAsset = newPkg.dir + "/" + key;
+                                flaggedAsset = newPkg.dir + "/" + key + " (" + oldVer + " > " + newVer + ")";
                         }
                         if (flaggedAsset != null)
                             break;

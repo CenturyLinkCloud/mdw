@@ -106,7 +106,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     public void execute() throws ActivityException{
         try{
-            Process subprocdef = getSubProcessVO();
+            Process subprocdef = getSubprocess();
             if (isLogDebugEnabled())
               logdebug("Invoking subprocess: " + subprocdef.getLabel());
             subprocIsService = subprocdef.getProcessType().equals(ProcessVisibilityConstant.SERVICE);
@@ -200,7 +200,12 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     }
 
-    boolean resume_on_process_finish(InternalEvent msg, Integer status)
+    @Deprecated
+    boolean resume_on_process_finish(InternalEvent msg, Integer status) throws ActivityException {
+        return resumeOnProcessFinish(msg, status);
+    }
+
+    protected boolean resumeOnProcessFinish(InternalEvent msg, Integer status)
         throws ActivityException {
         try{
             Long subprocInstId = msg.getWorkInstanceId();
@@ -216,7 +221,6 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
-
     }
 
     private void bindVariables(Map<String,String> params, boolean passDocContent) throws ActivityException {
@@ -325,11 +329,10 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         }
     }
 
-    protected Process getSubProcessVO() throws DataAccessException {
-
+    protected Process getSubprocess() throws DataAccessException {
         String name = getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
         String verSpec = getAttributeValue(WorkAttributeConstant.PROCESS_VERSION);
-        return getSubProcessVO(name, verSpec);
+        return getSubprocess(name, verSpec);
     }
 
     private boolean containsDocReference(Map<String, String> params) {

@@ -1,0 +1,9 @@
+{
+  "schemaUpgradeQueries": [
+    {
+      "name": "process instance template",
+      "check": "select * from information_schema.columns where table_schema = 'mdw' and table_name='PROCESS_INSTANCE' and column_name='TEMPLATE'",
+      "upgrade": "ALTER TABLE PROCESS_INSTANCE ADD TEMPLATE VARCHAR(256)"
+    }
+  ]
+}

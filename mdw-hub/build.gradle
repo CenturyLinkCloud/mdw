@@ -53,7 +53,8 @@ dependencies {
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/mysql", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
     providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/kotlin", includes: ["*.jar"])
- 
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/microservice", includes: ["*.jar"])
+    
     compile group: "commons-beanutils", name: "commons-beanutils", version: "1.8.3"
     compile group: "commons-cli", name: "commons-cli", version: "1.4"
     compile group: "commons-codec", name: "commons-codec", version: "1.3"

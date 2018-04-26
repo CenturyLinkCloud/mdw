@@ -101,7 +101,7 @@ selectionMod.factory('Selection', ['mdw', function(mdw) {
     if (this.getSelectObj() && !this.isMulti()) {
       var selObj = this.getSelectObj();
       var id = selObj.workflowItem ? selObj.workflowItem.id : null;
-      if (id) {
+      if (id && typeof id === 'string') {
         this.setSelectObj(this.diagram.get(id));
         if (!this.getSelectObj()) {
           for (var i = 0; i < this.diagram.subflows.length; i++) {

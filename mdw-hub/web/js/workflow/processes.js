@@ -170,6 +170,7 @@ processMod.controller('ProcessController',
     }
   };
   
+  
   $scope.workflowStatuses = WORKFLOW_STATUSES;
   
   $scope.valuesEdit = false;
@@ -357,15 +358,17 @@ processMod.controller('ProcessDefController',
     $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
     $scope.process.definitionId = summary.definitionId;
+    $scope.process.template = summary.template;
     $scope.process.archived = summary.archived;
     if ($scope.process.archived)
-      $scope.process.version = summary.version;
+      $scope.process.version = summary.template ? summary.templateVersion : summary.version;
     $scope.definitionId = $scope.process.definitionId;
   }
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
         $scope.process.definitionId = defSum.id;
         $scope.definitionId = $scope.process.definitionId;
+        $scope.template = $scope.process.template;
     });
   }
 }]);

@@ -58,7 +58,7 @@ public class CommonDataAccess {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     protected static final String PROC_INST_COLS = "pi.master_request_id, pi.process_instance_id, pi.process_id, pi.owner, pi.owner_id, " +
-            "pi.status_cd, pi.start_dt, pi.end_dt, pi.compcode, pi.comments";
+            "pi.status_cd, pi.start_dt, pi.end_dt, pi.compcode, pi.comments, pi.template";
 
     protected DatabaseAccess db;
     private int databaseVersion;
@@ -907,12 +907,19 @@ public class CommonDataAccess {
         pi.setEndDate(rs.getTimestamp("end_dt"));
         pi.setCompletionCode(rs.getString("compcode"));
         pi.setComment(rs.getString("comments"));
+        pi.setTemplate(rs.getString("template"));
         // avoid loading into ProcessCache
         if (pi.getComment() != null) {
             AssetHeader assetHeader = new AssetHeader(pi.getComment());
             pi.setProcessName(assetHeader.getName());
             pi.setProcessVersion(assetHeader.getVersion());
             pi.setPackageName(assetHeader.getPackageName());
+        }
+        if (pi.getTemplate() != null) {
+            AssetHeader templateHeader = new AssetHeader(pi.getTemplate());
+            pi.setTemplate(templateHeader.getName());
+            pi.setTemplatePackage(templateHeader.getPackageName());
+            pi.setTemplateVersion(templateHeader.getVersion());
         }
         return pi;
     }

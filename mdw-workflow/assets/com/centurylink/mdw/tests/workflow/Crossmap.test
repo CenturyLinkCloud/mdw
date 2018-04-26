@@ -22,5 +22,5 @@ start process("CrossmapTest") {
   }
 }"""]
 }
-//wait process
-//verify process
+wait process
+verify process

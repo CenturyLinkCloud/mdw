@@ -1,7 +1,7 @@
 {
   "category": "com.centurylink.mdw.activity.types.GeneralActivity",
   "icon": "send.gif",
-  "implementorClass": "com.centurylink.mdw.microservice.ServiceSummaryEventPublish",
+  "implementorClass": "com.centurylink.mdw.microservice.ServiceEventPublish",
   "label": "Service Summary Event Publish",
   "pagelet": "<PAGELET>\n  <TEXT NAME='Event Name' LABEL='Event'/>\n<\/PAGELET>"
 }

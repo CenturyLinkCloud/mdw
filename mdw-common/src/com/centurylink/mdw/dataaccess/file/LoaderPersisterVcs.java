@@ -21,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,6 +64,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
 
 // TODO clear VersionControl & PackageDir/AssetFile caches on Cache Refresh.
@@ -210,31 +209,21 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     protected List<File> getPkgDirFiles(File parentDir, boolean includeArchive, List<File> excludes)
             throws DataAccessException {
         List<File> pkgDirFiles = new ArrayList<>();
-        File mdwIgnore = new File(parentDir + "/.mdwignore");
-        if (mdwIgnore.exists()) {
-            try {
-                // currently only supports a straight directory list (no wildcards)
-                String list = new String(Files.readAllBytes(Paths.get(mdwIgnore.getPath()))).trim();
-                for (String line : list.split("\n")) {
-                    line = line.trim();
-                    if (!line.startsWith("#"))
-                        excludes.add(new File(parentDir + "/" + line));
-                }
+        try {
+            MdwIgnore mdwIgnore = new MdwIgnore(parentDir);
+            for (File pkgDirFile : parentDir.listFiles(pkgDirFilter)) {
+                if (!excludes.contains(pkgDirFile) && !mdwIgnore.isIgnore(pkgDirFile))
+                    pkgDirFiles.add(pkgDirFile);
             }
-            catch (IOException ex) {
-                throw new DataAccessException(ex.getMessage(), ex);
+            for (File subDir : parentDir.listFiles(subDirFilter)) {
+                if (!excludes.contains(subDir) && !mdwIgnore.isIgnore(subDir) && (includeArchive || !subDir.equals(archiveDir)))
+                    pkgDirFiles.addAll(getPkgDirFiles(subDir, excludes));
             }
+            return pkgDirFiles;
         }
-
-        for (File pkgDirFile : parentDir.listFiles(pkgDirFilter)) {
-            if (!excludes.contains(pkgDirFile))
-                pkgDirFiles.add(pkgDirFile);
+        catch (IOException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
         }
-        for (File subDir : parentDir.listFiles(subDirFilter)) {
-            if (!excludes.contains(subDir) && (includeArchive || !subDir.equals(archiveDir)))
-                pkgDirFiles.addAll(getPkgDirFiles(subDir, excludes));
-        }
-        return pkgDirFiles;
     }
 
     protected PackageDir getPackageDir(long packageId) throws DataAccessException {

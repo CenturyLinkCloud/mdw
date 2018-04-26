@@ -1,0 +1,56 @@
+process: # 10107
+  name: CrossmapTest
+  instance: 1
+  activity: # 1 "2018-04-19 09:05:55"
+    name: Start
+    status: Completed
+  activity: # 4 "2018-04-19 09:05:55"
+    name: jsonToJson
+    status: Completed
+  activity: # 5 "2018-04-19 09:05:55"
+    name: jsonToXml
+    status: Completed
+  activity: # 2 "2018-04-19 09:05:56"
+    name: Stop
+    status: Completed
+  variable: # 10321
+    name: jsonInput
+    value: |
+      {"chess": {
+        "pieces": [
+          {
+            "name": "bishop",
+            "movement": "diagonal"
+          },
+          {
+            "name": "knight",
+            "movement": "two across, one over"
+          }
+        ],
+        "board": {
+          "shape": "rect",
+          "columns": 8,
+          "rows": 8
+        },
+        "champion": "Deep Blue"
+      }}
+  variable: # 10322
+    name: jsonToJsonOutput
+    value: |
+      {"game": {
+        "gameboard": {
+          "shape": "rect",
+          "columns": 8,
+          "rows": 8
+        },
+        "name": "chess",
+        "currentChamp": "Deep Blue"
+      }}
+  variable: # 10323
+    name: jsonToXmlOutput
+    value: |
+      <ns:game xmlns:ns="http://www.centurylink.com/mdw">
+          <ns:name>chess</ns:name>
+          <ns:currentChamp>Deep Blue</ns:currentChamp>
+          <ns:gameboard columns="8" rows="8" shape="rect"/>
+      </ns:game>

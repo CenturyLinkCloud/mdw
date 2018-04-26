@@ -1,0 +1,122 @@
+process: # 10082
+  name: ServicePlanTest
+  instance: 1
+  activity: # 1 "2018-04-25 08:20:30"
+    name: Start
+    status: Completed
+  activity: # 4 "2018-04-25 08:20:30"
+    name: |
+      Create
+      ServicePlan
+    status: Completed
+  activity: # 2 "2018-04-25 08:20:30"
+    name: Stop
+    status: Completed
+  variable: # 10290
+    name: request
+    value: |
+      {
+        "emailAddress": "torvalds@transmeta.com",
+        "firstName": "Linus",
+        "id": "torvalds",
+        "lastName": "Torvalds"
+      }
+  variable: # 10301
+    name: servicePlan
+    value: |
+      !!com.centurylink.mdw.microservice.ServicePlan {
+        services: [
+          {
+            bindings: {
+              microservice: admin/createUser,
+              serviceUrl: 'http://localhost:8080/mdw/services/Users',
+              serviceMethod: POST,
+              request: 'DOCUMENT:12345',
+              requestHeaders: null,
+              serviceSummary: null,
+              requestMapper: com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy,
+              responseMapper: com.centurylink.mdw.microservice/IdentityResponseMapper.groovy,
+              hello: greeting,
+              intVar: 123
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createUser,
+            subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            url: 'http://localhost:8080/mdw/services/Users'
+          }]
+        
+      }
+  variable: # 10291
+    name: testCase
+    value: customBindings
+process: # 10077
+  name: ServicePlanTest
+  instance: 2
+  activity: # 1 "2018-04-25 08:20:21"
+    name: Start
+    status: Completed
+  activity: # 4 "2018-04-25 08:20:22"
+    name: |
+      Create
+      ServicePlan
+    status: Completed
+  activity: # 2 "2018-04-25 08:20:25"
+    name: Stop
+    status: Completed
+  variable: # 10263
+    name: request
+    value: |
+      {
+        "emailAddress": "torvalds@transmeta.com",
+        "firstName": "Linus",
+        "id": "torvalds",
+        "lastName": "Torvalds"
+      }
+  variable: # 10269
+    name: servicePlan
+    value: |
+      !!com.centurylink.mdw.microservice.ServicePlan {
+        services: [
+          {
+            bindings: {
+              microservice: admin/createUser,
+              serviceUrl: 'http://localhost:8080/mdw/services/Users',
+              serviceMethod: POST,
+              request: 'DOCUMENT:12345',
+              requestHeaders: null,
+              serviceSummary: null,
+              requestMapper: com.centurylink.mdw.microservice/IdentityRequestMapper.groovy,
+              responseMapper: com.centurylink.mdw.microservice/IdentityResponseMapper.groovy
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createUser,
+            subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            url: 'http://localhost:8080/mdw/services/Users'
+          },
+          {
+            bindings: {
+              microservice: admin/createGroup,
+              serviceUrl: 'http://localhost:8080/mdw/services/Workgroups',
+              serviceMethod: POST,
+              request: 'DOCUMENT:12345',
+              requestHeaders: null,
+              serviceSummary: null,
+              requestMapper: com.centurylink.mdw.microservice/IdentityRequestMapper.groovy,
+              responseMapper: com.centurylink.mdw.microservice/IdentityResponseMapper.groovy
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createGroup,
+            subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            url: 'http://localhost:8080/mdw/services/Workgroups'
+          }]
+        
+      }
+  variable: # 10264
+    name: testCase
+    value: defaultBindings

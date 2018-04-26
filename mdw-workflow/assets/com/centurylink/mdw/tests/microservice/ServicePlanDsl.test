@@ -1,0 +1,19 @@
+package com.centurylink.mdw.tests.microservice
+
+// creates two instances
+start process("ServicePlanTest") {
+    variables = [ testCase: "defaultBindings",
+        request: asset("mainRequest.json").text
+    ]
+}
+
+wait process // ensure consistent ordering in yaml
+
+start process("ServicePlanTest") {
+    variables = [ testCase: "customBindings",
+        request: asset("mainRequest.json").text
+    ]
+}
+
+wait process
+verify process

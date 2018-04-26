@@ -135,7 +135,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             if (procmap.get(i)[0].equals(logicalProcName)) {
                 String subproc_name = procmap.get(i)[1];
                 String v = procmap.get(i)[2];
-                return super.getSubProcessVO(subproc_name, v);
+                return super.getSubprocess(subproc_name, v);
             }
         }
         return null;
@@ -154,7 +154,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             inService = engine.isInService();
             if (inService && forceParallel && synchronous) {
                 emptyPlan = process_plan.getProcessExecutionPlan().getSubprocessInstanceList().size()==0;
-                if (!emptyPlan) execute_service_subprocess_in_parallel(process_plan);
+                if (!emptyPlan) executeServiceSubprocessesInParallel(process_plan);
             } else {
                 int i = 0;
                 List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
@@ -168,7 +168,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 if (!engine.isInService()) {
                     EventWaitInstance received = registerWaitEvents(false, true);
                     if (received!=null)
-                        resume_on_other_event(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
+                        resumeOnOtherEvent(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
                 }
                 // send JMS message at the end to ensure database changes are committed
                 if (!emptyPlan) {
@@ -195,7 +195,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             if (process == null)
                 throw new Exception("Cannot find process with logical name " + piplan.getLogicalProcessName());
             List<Variable> childVars = process.getVariables();
-            Map<String,String> parameters = createVariableBinding(childVars, piplan, false);
+            Map<String,String> parameters = createVariableBindings(childVars, piplan, false);
             // create ProcessInstance and its variable instances
             ProcessInstance pi = getEngine().createProcessInstance(
                     process.getId(), OwnerType.PROCESS_INSTANCE,
@@ -232,7 +232,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
      * @return a map (name-value pairs) of variable bindings
      * @throws Exception various types of exceptions
      */
-    private Map<String,String> createVariableBinding(List<Variable> childVars, SubprocessInstance piplan,
+    private Map<String,String> createVariableBindings(List<Variable> childVars, SubprocessInstance piplan,
             boolean passDocumentContent)
             throws Exception {
         Map<String,String> parameters = new HashMap<String,String>();
@@ -265,7 +265,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         return parameters;
     }
 
-    boolean resume_on_process_finish(InternalEvent msg, Integer status)
+    protected boolean resumeOnProcessFinish(InternalEvent msg, Integer status)
             throws ActivityException {
         boolean done;
         try {
@@ -307,7 +307,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         return true;
     }
 
-    private void execute_service_subprocess_in_parallel(ProcessExecutionPlanDocument execplan) throws ActivityException {
+    private void executeServiceSubprocessesInParallel(ProcessExecutionPlanDocument execplan) throws ActivityException {
         List<SubprocessInstance> piplanList = execplan.getProcessExecutionPlan().getSubprocessInstanceList();
         SubprocessRunner[] allRunners = new SubprocessRunner[(piplanList.size())];
         List<SubprocessRunner> activeRunners = new ArrayList<SubprocessRunner>(piplanList.size());
@@ -382,7 +382,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 engineDriver = new ProcessEngineDriver();
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
-                Map<String,String> parameters = createVariableBinding(childVars, piplan, perfLevel >= 5); // DHO
+                Map<String,String> parameters = createVariableBindings(childVars, piplan, perfLevel >= 5); // DHO
                 outParameters = engineDriver.invokeServiceAsSubprocess(process.getId(),
                         getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel);
 

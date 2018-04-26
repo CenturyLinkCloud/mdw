@@ -262,7 +262,7 @@ class ProcessExecutorImpl {
         }
         for (String varName : eventParams.keySet()) {
             Variable variable = process.getVariable(varName);
-            if (variable==null) {
+            if (variable == null) {
                 String msg = "there is no variable named " + varName
                     + " in process with ID " + process.getId()
                     + " for parameter binding";
@@ -300,7 +300,7 @@ class ProcessExecutorImpl {
      */
     ProcessInstance createProcessInstance(Long processId, String ownerType,
             Long ownerId, String secondaryOwnerType, Long secondaryOwnerId,
-            String masterRequestId, Map<String,String> parameters, String label)
+            String masterRequestId, Map<String,String> parameters, String label, String template)
     throws ProcessException, DataAccessException
     {
         ProcessInstance pi;
@@ -324,8 +324,9 @@ class ProcessExecutorImpl {
             pi.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS);
             if (label != null)
                 pi.setComment(label);
+            if (template != null)
+                pi.setTemplate(template);
             edao.createProcessInstance(pi);
-            // if (parameters!=null)    // do not check this, as below will initialize variables array
             createVariableInstancesFromEventMessage(pi, parameters);
         } catch (SQLException e) {
             throw new DataAccessException(-1, e.getMessage(), e);
@@ -539,7 +540,7 @@ class ProcessExecutorImpl {
         String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
         ProcessInstance procInst = createProcessInstance(embeddedProcdef.getId(),
                 ownerType, processInstVO.getId(), secondaryOwnerType, secondaryOwnerId,
-                processInstVO.getMasterRequestId(), null, null);
+                processInstVO.getMasterRequestId(), null, null, null);
         startProcessInstance(procInst, 0);
     }
 

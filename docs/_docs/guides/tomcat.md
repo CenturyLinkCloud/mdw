@@ -20,8 +20,11 @@ Run MDW on Apache Tomcat.
   That's it.  The war is located under project_dir/deploy/webapps/.
   If you want to install the MDW war to a different location, use the `--webapps-dir` CLI option.
   The best way to debug your project's Java assets is through Eclipse.  Read on to the next section to set that up.
-  Otherwise, if you're installing on a server or just want to run Tomcat from the command line, make sure and specify these
-  system properties in cataline.properties:
+  Otherwise, if you're **installing on a server** or just want to run Tomcat from the command line:
+  ```
+    mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.1.05
+  ```
+  Then make sure and specify these system properties in catalina.properties:
   ```
   mdw.runtime.env=<dev/test/prod/etc>
   mdw.config.location=<path_to_config_dir>

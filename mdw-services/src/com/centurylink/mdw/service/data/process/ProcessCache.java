@@ -105,9 +105,6 @@ public class ProcessCache implements CacheService {
         vl.add(process);
         if (versionZero)
             procNameLatest.put(process.getQualifiedName(), process);
-
-        if (process.getPackageName() == null)
-            logger.warn("Non-Package Qualified Process Names are DEPRECATED in MDW");
     }
 
     private Process getProcess0(Long processId) {
@@ -141,68 +138,49 @@ public class ProcessCache implements CacheService {
 
     /**
      * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
-     * @see AssetVO.meetsVersionSpec().
-     * TODO: spec.packageName is ignored
+     * @see Asset.meetsVersionSpec().
      */
-    public static Process getProcessSmart(AssetVersionSpec spec) {
-        try {
-            Process match = null;
-            for (Process process : getAllProcesses()) {
-                if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getName())) {
-                        if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
-                            match = process;
-                    }
-                }
-                else
-                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
-                        if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
-                            match = process;
-                    }
-            }
-            if (match == null) {
-                return null;
-            }
-            else {
-                return getProcess(match.getId());
+    public static Process getProcessSmart(AssetVersionSpec spec) throws DataAccessException {
+        if (spec.getPackageName() == null)
+            throw new DataAccessException("Spec must be package-qualified: " + spec);
+        Process match = null;
+        String specQualifiedName = spec.getQualifiedName();
+        if (specQualifiedName.endsWith(".proc"))
+            specQualifiedName = specQualifiedName.substring(0, specQualifiedName.length() - 5);
+        for (Process process : getAllProcesses()) {
+            if (specQualifiedName.equals(process.getQualifiedName())) {
+                if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
+                    match = process;
             }
         }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+        if (match == null) {
             return null;
+        }
+        else {
+            return getProcess(match.getId());
         }
     }
 
     /**
      * Find all definitions matching the specified version spec.  Returns shallow processes.
      */
-    public static List<Process> getProcessesSmart(AssetVersionSpec spec) {
-        try {
-            List<Process> matches = new ArrayList<>();
-            for (Process process : getAllProcesses()) {
-                if (spec.getQualifiedName().equals(spec.getName())) {   // Missing package name - Match using only process name
-                    if (spec.getName().equals(process.getName())) {
-                        if (process.meetsVersionSpec(spec.getVersion()))
-                            matches.add(process);
-                    }
-                }
-                else
-                    if (spec.getQualifiedName().equals(process.getQualifiedName())) {   // Match using fully qualified process name
-                        if (process.meetsVersionSpec(spec.getVersion()))
-                            matches.add(process);
-                    }
+    public static List<Process> getProcessesSmart(AssetVersionSpec spec) throws DataAccessException {
+        if (spec.getPackageName() == null)
+            throw new DataAccessException("Spec must be package-qualified: " + spec);
+        List<Process> matches = new ArrayList<>();
+        for (Process process : getAllProcesses()) {
+            if (spec.getQualifiedName().equals(process.getQualifiedName())) {
+                if (process.meetsVersionSpec(spec.getVersion()))
+                    matches.add(process);
             }
-            return matches;
         }
-        catch (DataAccessException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            return null;
-        }
+        return matches;
     }
 
     private Process getProcess0(String procname, int version, boolean exceptionWhenNotFound) {
         if (procname.indexOf("/") < 0) {
-            logger.severe("Cannot retrieve process " + procname + ". Non-Package Qualified Process Names are NOT ALLOWED in MDW");
+            String msg = procname + " not retrieved. Process names must be package-qualified.";
+            logger.severeException(msg, new DataAccessException(msg));
             return null;
         }
 
@@ -228,7 +206,6 @@ public class ProcessCache implements CacheService {
 
     private Process getProcess0(String procname, int version) {
         Process procdef = null;
-
 
         if (version == 0) {
             Map<String,Process> procNameLatestTemp = procNameLatest;

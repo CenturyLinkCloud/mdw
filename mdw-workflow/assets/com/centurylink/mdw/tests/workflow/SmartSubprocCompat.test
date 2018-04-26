@@ -1,7 +1,0 @@
-package com.centurylink.mdw.tests.workflow
-
-start process("SmartProcessParent") {
-    variables = [ testCase: "oldStyle" ]
-}
-wait process
-verify processes("SmartProcessParent", "SmartProcessChildCompat")

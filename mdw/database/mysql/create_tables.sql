@@ -152,22 +152,23 @@ CREATE TABLE ACTIVITY_INSTANCE
 
 CREATE TABLE PROCESS_INSTANCE
 (
-  PROCESS_INSTANCE_ID  BIGINT         PRIMARY KEY auto_increment,
-  PROCESS_ID           BIGINT         NOT NULL,
-  OWNER                VARCHAR(30)    NOT NULL,
-  OWNER_ID             BIGINT         NOT NULL,
-  SECONDARY_OWNER      VARCHAR(30),
-  SECONDARY_OWNER_ID   BIGINT,
-  STATUS_CD            TINYINT        NOT NULL,
-  START_DT             DATETIME(6),
-  END_DT               DATETIME(6),
-  CREATE_DT            DATETIME(6)    NOT NULL,
-  CREATE_USR           VARCHAR(30)    NOT NULL,
-  MOD_DT               TIMESTAMP(6),
-  MOD_USR              VARCHAR(30),
-  COMMENTS             VARCHAR(1000),
-  MASTER_REQUEST_ID    VARCHAR(80),
-  COMPCODE             VARCHAR(80)
+  PROCESS_INSTANCE_ID   BIGINT         PRIMARY KEY auto_increment,
+  PROCESS_ID            BIGINT         NOT NULL,
+  OWNER                 VARCHAR(30)    NOT NULL,
+  OWNER_ID              BIGINT         NOT NULL,
+  SECONDARY_OWNER       VARCHAR(30),
+  SECONDARY_OWNER_ID    BIGINT,
+  STATUS_CD             TINYINT        NOT NULL,
+  START_DT              DATETIME(6),
+  END_DT                DATETIME(6),
+  CREATE_DT             DATETIME(6)    NOT NULL,
+  CREATE_USR            VARCHAR(30)    NOT NULL,
+  MOD_DT                TIMESTAMP(6),
+  MOD_USR               VARCHAR(30),
+  COMMENTS              VARCHAR(1000),
+  MASTER_REQUEST_ID     VARCHAR(80),
+  COMPCODE              VARCHAR(80),
+  TEMPLATE              VARCHAR(256)
 ) auto_increment=10000;
 
 CREATE TABLE ATTRIBUTE
@@ -275,8 +276,8 @@ CREATE TABLE TASK_INST_GRP_MAPP (
 );
 
 CREATE TABLE INSTANCE_INDEX (
-  INSTANCE_ID    	  BIGINT                   	NOT NULL,
-  OWNER_TYPE		  VARCHAR(30)     			NOT NULL,
+  INSTANCE_ID         BIGINT                    NOT NULL,
+  OWNER_TYPE          VARCHAR(30)               NOT NULL,
   INDEX_KEY           VARCHAR(64)               NOT NULL,
   INDEX_VALUE         VARCHAR(256)              NOT NULL,
   CREATE_DT           DATETIME                  NOT NULL,
@@ -284,10 +285,10 @@ CREATE TABLE INSTANCE_INDEX (
 );
 
 CREATE TABLE ASSET_REF (
-  DEFINITION_ID    	  BIGINT                    NOT NULL,
-  NAME	 		          VARCHAR(512)              NOT NULL,
-  REF           	    VARCHAR(64)               NOT NULL,
-  ARCHIVE_DT          TIMESTAMP					        NOT NULL,
+  DEFINITION_ID       BIGINT                    NOT NULL,
+  NAME                VARCHAR(512)              NOT NULL,
+  REF                 VARCHAR(64)               NOT NULL,
+  ARCHIVE_DT          TIMESTAMP                 NOT NULL,
   PRIMARY KEY (DEFINITION_ID)
 );
 

@@ -128,7 +128,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
     }
 
     /**
-     * Returns the builder object for creating new output variable value.
+     * Invokes the builder object for creating new output variable value.
      */
     protected void runScript(String mapperScript, Slurper slurper, Builder builder)
             throws ActivityException, TransformerException {
@@ -142,7 +142,6 @@ public class CrossmapActivity extends DefaultActivityImpl {
         binding.setVariable(builder.getName(), builder);
         GroovyShell shell = new GroovyShell(getPackage().getCloudClassLoader(), binding, compilerConfig);
         Script gScript = shell.parse(mapperScript);
-        // gScript.setProperty("out", getRuntimeContext().get);
         gScript.run();
     }
 

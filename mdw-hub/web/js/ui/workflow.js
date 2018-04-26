@@ -60,9 +60,10 @@ workflowMod.controller('MdwWorkflowController',
   };
   
   $scope.renderProcess = function() {
-    var packageName = $scope.process.packageName;
-    var processName = $scope.process.name;
-    var processVersion = $scope.process.archived ? $scope.process.version : null;
+    var template = $scope.process.template;
+    var packageName = template && $scope.process.templatePackage ? $scope.process.templatePackage : $scope.process.packageName;
+    var processName = template ? template : $scope.process.name;
+    var processVersion = $scope.process.archived ? (template ? $scope.process.template.version : $scope.process.version) : null;
     var instanceId = $scope.process.id;
     var masterRequestId = $scope.process.masterRequestId;
     var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;
@@ -76,7 +77,8 @@ workflowMod.controller('MdwWorkflowController',
         $scope.process.packageName = packageName; // not returned in JSON
         // restore summary instance data
         $scope.process.id = instanceId;
-        $scope.process.masterRequestId = masterRequestId; 
+        $scope.process.masterRequestId = masterRequestId;
+        $scope.process.template = template;
         $scope.implementors = mdwImplementors.get();
         if ($scope.implementors) {
           $scope.doRender();
@@ -104,8 +106,8 @@ workflowMod.controller('MdwWorkflowController',
       $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
         .then(function success(response) {
           $scope.instance = response.data;
-            $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity);
-            $scope.diagram.draw($scope.animate);
+          $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity);
+          $scope.diagram.draw($scope.animate);
         }, function error(response) {
           mdw.messages = response.statusText;
       });
