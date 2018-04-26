@@ -152,8 +152,8 @@ processMod.controller('ProcessesController',
 }]);
 
 processMod.controller('ProcessController', 
-    ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
-     function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
+    ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES', 'ProcessHierarchy',
+     function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES, ProcessHierarchy) {
   
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
   
@@ -169,9 +169,14 @@ processMod.controller('ProcessController',
       });    
     }
   };
-  
-  $scope.workflowStatuses = WORKFLOW_STATUSES;
-  
+    $scope.workflowStatuses = WORKFLOW_STATUSES;
+    
+    console.log('$routeParams.triggerId='+$routeParams.triggerId+ '$routeParams.instanceId='+$routeParams.instanceId);
+    var instancesList = ProcessHierarchy.retrieve({}, function(response) {
+    var hierarchies= instancesList.rawResponse; 
+    instancesList= util.jsonToArray(hierarchies);
+    $scope.instances =JSON.parse(instancesList);
+  }); 
   $scope.valuesEdit = false;
   $scope.editValues = function(edit) {
     $scope.valuesEdit = edit;
@@ -387,3 +392,52 @@ processMod.factory('ProcessDef', ['$resource', 'mdw', function($resource, mdw) {
     retrieve: { method: 'GET', isArray: false }
   });
 }]);
+
+processMod.factory('ProcessHierarchy', ['$resource', 'mdw', '$routeParams',  function($resource, mdw, $routeParams) {
+  return $resource(mdw.roots.services + '/Services/Processes/?mdw-app=designer&app=mdw-admin&callHierarchyFor='+$routeParams.instanceId, mdw.serviceParams(), {
+    retrieve: { method: 'GET', transformResponse: function(data, headers) {
+      var instanceData = {
+          rawResponse: data
+      };
+      return instanceData; 
+      }
+    }
+  });
+}]);
+
+
+processMod.directive('mdwInstanceTree', function() {
+  return {
+    restrict: 'E', 
+    replace: true, //replace <mdwInstanceTree> by the whole template
+    scope: {
+      data: '=src' 
+    },    
+    template: '<ul><mdw-tree-branch ng-repeat="c in data.children" src="c"></mdw-tree-branch></ul>',
+   };
+});
+
+processMod.directive('mdwTreeBranch', function($compile) {
+  return {
+    restrict: 'E', 
+    replace: true, // replace <mdwTreeBranch> by the whole template
+    scope: {
+      node: '=src'  
+    },    
+    template: '<li><a href="#/workflow/processes/{{node.processInstance.id}}">{{ node.processInstance.processName }} {{node.processInstance.processVersion }} ({{node.processInstance.id}})</a></li>',
+    link: function(scope, element, attrs) {
+    var hasChildren = angular.isArray(scope.node.children);   
+     if (hasChildren) {        
+       element.append('<mdw-instance-tree src="node"></mdw-instance-tree>');    
+        // recompile Angular due to manual appending
+        $compile(element.contents())(scope); 
+      }     
+      element.on('click', function(event) {
+        event.stopPropagation();          
+          if (hasChildren) {
+            element.toggleClass('collapsed');
+          }
+      });      
+    }
+  };
+});

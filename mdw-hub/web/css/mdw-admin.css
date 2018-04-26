@@ -1376,6 +1376,34 @@
 .mdw-emoji .emoji-mart-emoji span:hover {
   cursor: default !important;
 }
+
+.tree-view ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+.tree-view ul li:before {
+  content: "-";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  color: #424246;
+}
+
+.tree-view .collapsed ul {
+  display: none;
+}
+
+.tree-view li.collapsed:before {
+  content: '+';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  color: #424246;
+}
+
+.tree-view li a:hover {
+  cursor: pointer;
+}
 /*
 .line-legend li {
   display: flex;

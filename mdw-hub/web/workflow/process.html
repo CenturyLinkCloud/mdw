@@ -1,28 +1,36 @@
-<div class="row" style="display:flex;">
-  <div class="mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/process-nav.html'"></div>
-  <div class="mdw-panel-full-width">
-    <div class="panel panel-default mdw-panel">
-      <div class="panel-heading mdw-heading">
-        <div class="mdw-heading-label">
-          <a ng-href="#/packages/{{process.packageName}}">
-            {{process.packageName}}</a>
-            /
-          <a ng-href="#/workflow/definitions/{{process.packageName}}/{{process.name}}">{{process.name}}</a>
-          <a class="mdw-id" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
-        </div>
-        <div class="mdw-heading-actions">
-          <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'workflow/legend.html'" 
-              popover-placement="left-top" pop-click title="Info">
-            <span class="glyphicon glyphicon-info-sign mdw-icon-btn"></span>
-          </button>        
-        </div>
-      </div>
-      <div class="mdw-section">
-        <mdw-workflow process="process" render-state="true" animate="false" activity="{{activity}}"
-          service-base="{{mdw.roots.services}}/services"
-          hub-base="{{mdw.roots.hub}}">
-        </mdw-workflow>
-      </div>
-    </div>
-  </div>
+<div class="row" style="display: flex;">
+	<div class="mdw-sidebar" ng-if="!isFullView()"
+		ng-include="'layout/process-nav.html'"></div>
+	<div class="mdw-panel-full-width">
+		<div class="panel panel-default mdw-panel">
+			<div class="panel-heading mdw-heading">
+				<div class="mdw-heading-label">
+					<a ng-href="#/packages/{{process.packageName}}">
+						{{process.packageName}}</a> / <a
+						ng-href="#/workflow/definitions/{{process.packageName}}/{{process.name}}">{{process.name}}</a>
+					<a class="mdw-id" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
+				</div>
+				<div class="mdw-heading-actions">
+					<button type="button" class="btn btn-primary mdw-btn"
+						uib-popover-template="'workflow/legend.html'"
+						popover-placement="left-top" pop-click title="Info">
+						<span class="glyphicon glyphicon-info-sign mdw-icon-btn"></span>
+						Info
+					</button>
+					<button type="button" class="btn btn-primary mdw-btn"
+						uib-popover-template="'workflow/hierarchy.html'"
+						popover-placement="left-top" pop-click title="View Hierarchy">
+						<span class="glyphicon glyphicon-tree-conifer mdw-tree-btn"></span>
+						Instances Tree
+					</button>
+				</div>
+			</div>
+			<div class="mdw-section">
+				<mdw-workflow process="process" render-state="true" animate="false"
+					activity="{{activity}}"
+					service-base="{{mdw.roots.services}}/services"
+					hub-base="{{mdw.roots.hub}}"> </mdw-workflow>
+			</div>
+		</div>
+	</div>
 </div>
