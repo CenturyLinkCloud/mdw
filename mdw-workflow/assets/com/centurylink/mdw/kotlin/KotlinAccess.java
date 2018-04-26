@@ -38,16 +38,15 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.java.CompilationException;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-/**
- * TODO: Incremental compilation of kotlin assets.
- */
 @RegisteredService(CacheService.class)
 public class KotlinAccess implements CacheService {
 
@@ -108,8 +107,11 @@ public class KotlinAccess implements CacheService {
         try {
             // compile .kt assets (not scripts)
             List<File> sources = getSources();
-            if (!sources.isEmpty()) {
+            File classesDir = new File(ApplicationContext.getTempDirectory() + "/" + KotlinClasspathKt.CLASSES_PATH);
+            // conditional compilation only applies in dev mode
+            if (!sources.isEmpty() && (!ApplicationContext.isDevelopment() || needsCompile(sources, classesDir))) {
                 List<String> args = new ArrayList<>();
+                logger.info("Compiling Kotlin...");
                 if (logger.isDebugEnabled())
                     logger.debug("Kotlin asset sources:");
                 for (File source : sources) {
@@ -118,7 +120,7 @@ public class KotlinAccess implements CacheService {
                     args.add(source.toString());
                 }
                 args.add("-d");
-                args.add(ApplicationContext.getTempDirectory() + "/" + KotlinClasspathKt.CLASSES_PATH);
+                args.add(classesDir.getPath());
                 args.add("-no-stdlib");
                 String classpath = new KotlinClasspath().getAsString();
                 if (logger.isDebugEnabled()) {
@@ -135,6 +137,9 @@ public class KotlinAccess implements CacheService {
                 else if (logger.isDebugEnabled()) {
                     logger.debug("Kotlin compilation result: " + exitCode);
                 }
+            }
+            else {
+                logger.info("Skipping Kotlin compilation as " + classesDir.getPath() + " is up-to-date");
             }
 
             instance = this;
@@ -171,6 +176,54 @@ public class KotlinAccess implements CacheService {
             }
         );
         return files;
+    }
+
+
+    private File newestClassFile;
+
+    /**
+     * Currently does an unsophisticated brute check of last modified source and asset jars versus
+     * the last compiled class file.
+     * TODO: https://github.com/CenturyLinkCloud/mdw/issues/392
+     */
+    protected synchronized boolean needsCompile(List<File> sources, File outputDir) throws IOException {
+        if (!outputDir.isDirectory())
+            return true;
+
+        newestClassFile = null;
+        Files.walkFileTree(Paths.get(outputDir.getPath()),
+            EnumSet.noneOf(FileVisitOption.class), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                    if (path.toString().endsWith(".class")) {
+                        File classFile = path.toFile();
+                        if (newestClassFile == null || classFile.lastModified() > newestClassFile.lastModified())
+                            newestClassFile = classFile;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            }
+        );
+        if (newestClassFile == null)
+            return true;  // nothing compiled
+
+        File newestSourceFile = null;
+        for (File source : sources) {
+            if (newestSourceFile == null || source.lastModified() > newestSourceFile.lastModified())
+                newestSourceFile = source;
+        }
+        for (Asset jar : AssetCache.getJarAssets()) {
+            if (newestSourceFile == null || jar.file().lastModified() > newestSourceFile.lastModified())
+                newestSourceFile = jar.file();
+        }
+
+        boolean needsCompile = newestSourceFile.lastModified() >= newestClassFile.lastModified();
+        if (logger.isDebugEnabled()) {
+            if (needsCompile)
+                logger.debug("Kt needs compile due to " + newestSourceFile + " >= " + newestClassFile);
+            else
+                logger.debug("Kt no compile due to " + newestSourceFile + " < " + newestClassFile);
+        }
+        return needsCompile;
     }
 
 }
