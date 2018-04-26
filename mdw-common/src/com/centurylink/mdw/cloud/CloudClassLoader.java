@@ -155,8 +155,10 @@ public class CloudClassLoader extends ClassLoader {
 
         if (b == null) {
             String kotlinPkg = "com.centurylink.mdw.kotlin";
-            if (ApplicationContext.isDevelopment() && !name.equals(kotlinPkg + ".KotlinAccess")) {
-                // In dev, since kotlin assets are lazily compiled, trigger compilation if package is present.
+            // In dev, since kotlin assets are lazily compiled, trigger compilation if package is present.
+            // Also in dev exclude some unfound java junk loaded from other packages (looking at you, camel).
+            if (ApplicationContext.isDevelopment() && !name.equals(kotlinPkg + ".KotlinAccess")
+                    && !name.startsWith("org.osgi.") && !name.startsWith("org.apache.camel.")) {
                 Package kotlinPackage = PackageCache.getPackage(kotlinPkg);
                 if (kotlinPackage != null) {
                     try {
