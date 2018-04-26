@@ -29,7 +29,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 /**
- * Handle War download.
+ * Handle War download.  TODO: Allow specify war name
  */
 @Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
 public class Install extends Setup {
