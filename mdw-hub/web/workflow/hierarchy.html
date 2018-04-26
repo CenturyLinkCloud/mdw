@@ -1,0 +1,8 @@
+<div class="tree-view">
+   <a ng-if="instances.processInstance"
+		href="#/workflow/processes/{{instances.processInstance.id}}">{{
+		instances.processInstance.processName }} {{
+		instances.processInstance.processVersion }}
+		({{instances.processInstance.id}})</a>
+	<mdw-instance-tree src="instances"></mdw-instance-tree>
+</div>

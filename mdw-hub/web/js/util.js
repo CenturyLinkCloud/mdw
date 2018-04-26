@@ -224,6 +224,23 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
         }
       }
       return except;
+    },
+    jsonToArray:function(obj) {
+    if (typeof(obj) === 'object') {
+      var keys = Object.keys(obj);
+      var allObjects = keys.every(x => typeof(obj[x]) === 'object');
+      if (allObjects) {
+        return keys.map(x => this.jsonToArray(obj[x]));
+      } else {
+        var o = {};
+        keys.forEach(x => {
+          o[x] = this.jsonToArray(obj[x]);
+        });
+        return o;
+      }
+    } else {
+      return obj;
     }
+  }
   };
 }]);
