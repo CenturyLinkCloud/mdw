@@ -1,0 +1,6 @@
+package com.centurylink.mdw.tests.microservice
+
+// incoming request format same as seed_users.json
+start process("MicroserviceOrchestration") {
+    variables = [ request: asset("mainRequest.json").text ]
+}

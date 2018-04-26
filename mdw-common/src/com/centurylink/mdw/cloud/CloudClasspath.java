@@ -64,13 +64,13 @@ public class CloudClasspath {
             }
             List<Asset> jarAssets = cloudClassLoader.getJarAssets();
             if (jarAssets != null) {
-                jarAssetFiles.addAll(Arrays.asList(ClasspathUtil.listJarFiles(ApplicationContext.getAssetRoot(), true)));
+                jarAssetFiles.addAll(Arrays.asList(ClasspathUtil.listJarFiles(ApplicationContext.getAssetRoot(), true, true)));
             }
         }
 
         if (ApplicationContext.isSpringBoot()) {
             File bootInfLib = new File(ApplicationContext.getDeployPath() + "/BOOT-INF/lib");
-            webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(bootInfLib, true)));
+            webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(bootInfLib, true, false)));
             webInfClasses = new File(ApplicationContext.getDeployPath() + "/BOOT-INF/classes");
         }
         else {
@@ -88,19 +88,19 @@ public class CloudClasspath {
                 if(StringHelper.isEmpty(mdwWarName))
                     mdwWarName = "mdw";
                 File mdwWebInfDir = new File(tomcatWebAppDir + FILE_SEP + mdwWarName + FILE_SEP + "WEB-INF");
-                webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true)));
+                webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true, false)));
                 webInfClasses = new File(mdwWebInfDir + FILE_SEP + "classes");
             }
 
             // tomcat base
             File tomcatBaseLib = new File(catalinaBase + FILE_SEP + "lib");
             if (tomcatBaseLib.isDirectory())
-                tomcatBaseLibJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatBaseLib, false)));
+                tomcatBaseLibJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatBaseLib, false, false)));
             // tomcat home
             String catalinaHome = System.getProperty("catalina.home");
             File tomcatHomeLib = new File(catalinaHome + FILE_SEP + "lib");
             if (tomcatHomeLib.isDirectory())
-                tomcatHomeLibJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatHomeLib, false)));
+                tomcatHomeLibJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatHomeLib, false, false)));
         }
     }
 

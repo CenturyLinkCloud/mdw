@@ -248,9 +248,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long procInstId = db.isMySQL()?null:this.getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into PROCESS_INSTANCE " +
             "(PROCESS_INSTANCE_ID, PROCESS_ID, OWNER, OWNER_ID, SECONDARY_OWNER, " +
-            "SECONDARY_OWNER_ID, STATUS_CD, MASTER_REQUEST_ID, START_DT, COMMENTS, CREATE_DT, CREATE_USR) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, " + nowPrecision() + ", 'MDWEngine')";
-        Object[] args = new Object[9];
+            "SECONDARY_OWNER_ID, STATUS_CD, MASTER_REQUEST_ID, START_DT, COMMENTS, TEMPLATE, CREATE_DT, CREATE_USR) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, ?," + nowPrecision() + ", 'MDWEngine')";
+        Object[] args = new Object[10];
         args[0] = procInstId;
         args[1] = pi.getProcessId();
         args[2] = pi.getOwner();
@@ -260,6 +260,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[6] = pi.getStatusCode();
         args[7] = pi.getMasterRequestId();
         args[8] = pi.getComment();
+        args[9] = pi.getTemplate();
         if (db.isMySQL()) procInstId = db.runInsertReturnId(query, args);
         else db.runUpdate(query, args);
         pi.setId(procInstId);

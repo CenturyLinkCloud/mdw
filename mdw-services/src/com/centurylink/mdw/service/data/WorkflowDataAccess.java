@@ -167,6 +167,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
         catch (ParseException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
+        // template
+        String template = query.getFilter("template");
+        if (template != null)
+            sb.append(" and template = '" + template + "'");
         return sb.toString();
     }
 
@@ -178,5 +182,4 @@ public class WorkflowDataAccess extends CommonDataAccess {
         sb.append("\n");
         return sb.toString();
     }
-
 }

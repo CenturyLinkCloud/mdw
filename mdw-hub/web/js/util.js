@@ -129,6 +129,8 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
           return 'groovy';
         else if (ext == 'spring' || ext == 'camel')
           return 'xml';
+        else if (ext == 'kt' || ext == 'kts')
+          return 'kotlin';
         else if (ext === 'proc' || ext === 'task' || ext === 'impl' || ext === 'evth' || ext == 'pagelet')
             return 'json';
         return ext;

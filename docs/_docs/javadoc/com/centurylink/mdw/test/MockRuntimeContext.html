@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -160,26 +160,30 @@ extends <a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeC
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#attributes">attributes</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#docRefs">docRefs</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#masterRequestId">masterRequestId</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#pkg">pkg</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#process">process</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#processInstance">processInstance</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#properties">properties</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#variables">variables</a></span></code>&nbsp;</td>
 </tr>
@@ -239,42 +243,52 @@ extends <a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeC
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getAttributes--">getAttributes</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getMasterRequestId--">getMasterRequestId</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getDocRefs--">getDocRefs</a></span>()</code>
+<div class="block">For read-only access.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getMdwVersion--">getMdwVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getMasterRequestId--">getMasterRequestId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getMdwVersion--">getMdwVersion</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getPackage--">getPackage</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getProcess--">getProcess</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getProcessId--">getProcessId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getProcessInstance--">getProcessInstance</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getProcessInstanceId--">getProcessInstanceId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getProperties--">getProperties</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getProps--">getProps</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#getVariables--">getVariables</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/test/MockRuntimeContext.html#setAdapterStubbedResponse-java.lang.String-">setAdapterStubbedResponse</a></span>(java.lang.String&nbsp;response)</code>&nbsp;</td>
 </tr>
@@ -396,6 +410,15 @@ extends <a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeC
 <li class="blockList">
 <h4>variables</h4>
 <pre>protected&nbsp;java.util.Map&lt;java.lang.String,java.lang.Object&gt; variables</pre>
+</li>
+</ul>
+<a name="docRefs">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>docRefs</h4>
+<pre>protected&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt; docRefs</pre>
 </li>
 </ul>
 <a name="attributes">
@@ -550,6 +573,21 @@ extends <a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeC
 </dl>
 </li>
 </ul>
+<a name="getDocRefs--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDocRefs</h4>
+<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getDocRefs()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getDocRefs--">ProcessRuntimeContext</a></code></span></div>
+<div class="block">For read-only access.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getDocRefs--">getDocRefs</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getAttributes--">
 <!--   -->
 </a>
@@ -572,6 +610,19 @@ extends <a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeC
 <li class="blockList">
 <h4>getProperties</h4>
 <pre>public&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getProperties()</pre>
+</li>
+</ul>
+<a name="getProps--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProps</h4>
+<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getProps()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProps--">getProps</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="setAdapterStubbedResponse-java.lang.String-">

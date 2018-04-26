@@ -312,11 +312,14 @@ implements <a href="../../../../../../com/centurylink/mdw/cache/CacheService.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>getProcessSmart</h4>
-<pre>public static&nbsp;<a href="../../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;getProcessSmart(<a href="../../../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;spec)</pre>
+<pre>public static&nbsp;<a href="../../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;getProcessSmart(<a href="../../../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;spec)
+                               throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.</div>
 <dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><code>TODO: spec.packageName is ignored</code></dd>
+<dd><code>Asset.meetsVersionSpec().</code></dd>
 </dl>
 </li>
 </ul>
@@ -326,8 +329,13 @@ implements <a href="../../../../../../com/centurylink/mdw/cache/CacheService.htm
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getProcessesSmart</h4>
-<pre>public static&nbsp;java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;getProcessesSmart(<a href="../../../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;spec)</pre>
+<pre>public static&nbsp;java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;getProcessesSmart(<a href="../../../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;spec)
+                                                 throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Find all definitions matching the specified version spec.  Returns shallow processes.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>

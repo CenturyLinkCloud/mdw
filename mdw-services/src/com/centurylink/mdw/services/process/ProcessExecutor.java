@@ -78,20 +78,32 @@ public class ProcessExecutor implements RetryableTransaction {
             Long ownerId, String secondaryOwnerType, Long secondaryOwnerId,
             String masterRequestId, Map<String,String> parameters)
     throws ProcessException, DataAccessException {
-        String label = null;
-        Process procVO = ProcessCache.getProcess(processId);
-        if (procVO != null) {
-            label = procVO.getLabel();
+
+        String label = null, template = null;
+        Process process = ProcessCache.getProcess(processId);
+        if (process != null) {
             Package pkg = PackageCache.getProcessPackage(processId);
-            if (pkg != null && !pkg.isDefaultPackage())
-                label = pkg.getName() + "/" + label;
+            if (process.getName().startsWith("$") && parameters.containsKey(process.getName())) {
+                // template process -- name is provided in params
+                label = parameters.get(process.getName());
+                parameters.remove(process.getName());
+                template = process.getLabel();
+                if (pkg != null && !pkg.isDefaultPackage())
+                    template = pkg.getName() + "/" + template;
+            }
+            else {
+                label = process.getLabel();
+                if (pkg != null && !pkg.isDefaultPackage())
+                    label = pkg.getName() + "/" + label;
+            }
         }
+
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
             return engineImpl.createProcessInstance(processId, ownerType,
                     ownerId, secondaryOwnerType, secondaryOwnerId,
-                    masterRequestId, parameters, label);
+                    masterRequestId, parameters, label, template);
         } catch (MdwException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
@@ -1222,4 +1234,5 @@ public class ProcessExecutor implements RetryableTransaction {
     public void setTransactionRetryCount(int count) {
         transactionRetryCount = count;
     }
+
 }

@@ -33,6 +33,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.variable.VariableInstance;
@@ -532,7 +533,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     protected ProcessInstance getProcessInstanceBase0(Long processInstanceId) throws SQLException, DataAccessException {
         String query = "select PROCESS_ID, OWNER, OWNER_ID, MASTER_REQUEST_ID, " +
-                "STATUS_CD, START_DT, END_DT, COMPCODE, COMMENTS, SECONDARY_OWNER, SECONDARY_OWNER_ID\n" +
+                "STATUS_CD, START_DT, END_DT, COMPCODE, COMMENTS, TEMPLATE, SECONDARY_OWNER, SECONDARY_OWNER_ID\n" +
                 "from PROCESS_INSTANCE where PROCESS_INSTANCE_ID = ?";
         ResultSet rs = db.runSelect(query, processInstanceId);
         if (!rs.next())
@@ -547,6 +548,13 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         pi.setEndDate(StringHelper.dateToString(rs.getTimestamp("END_DT")));
         pi.setCompletionCode(rs.getString("COMPCODE"));
         pi.setComment(rs.getString("COMMENTS"));
+        pi.setTemplate(rs.getString("TEMPLATE"));
+        if (pi.getTemplate() != null) {
+            AssetHeader templateHeader = new AssetHeader(pi.getTemplate());
+            pi.setTemplate(templateHeader.getName());
+            pi.setTemplatePackage(templateHeader.getPackageName());
+            pi.setTemplateVersion(templateHeader.getVersion());
+        }
         pi.setSecondaryOwner(rs.getString("SECONDARY_OWNER"));
         if (pi.getSecondaryOwner() != null)
             pi.setSecondaryOwnerId(rs.getLong("SECONDARY_OWNER_ID"));

@@ -45,6 +45,15 @@
 			</matcher>
 		</filter>
 		<filter>
+			<id>1524318919905</id>
+			<name>assets/com/centurylink/mdw/microservice</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-build</arguments>
+			</matcher>
+		</filter>
+		<filter>
 			<id>1500934043114</id>
 			<name>assets/com/centurylink/mdw/node</name>
 			<type>10</type>

@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2017 CenturyLink, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.centurylink.mdw.microservice;
 
 import java.util.List;
@@ -24,13 +9,14 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 
-public class MicroserviceDependenciesWait extends EventWaitActivity {
+public class DependenciesWaitActivity extends EventWaitActivity {
 
     private static String MICROSERVICE_NAMES = "MICROSERVICE_NAMES";
 
@@ -107,13 +93,13 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
     }
 
     public boolean dependenciesMet() throws ActivityException {
-        ServiceSummary serviceSummary = getServiceSummary();
+        ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary == null) {
             // No service Summary, so throw exception since we shouldn't proceed
             // if we can't determine if dependencies are met
-            logger.severe(ServiceSummary.SERVICE_SUMMARY + " not found");
+            logger.severe("Service summary not found");
             throw new ActivityException("Unable to determine if dependencies are met, "
-                    + ServiceSummary.SERVICE_SUMMARY + " variable not found");
+                    + "service summary variable not found");
         }
         // if microservice is checked and not successful invocation, then
         // dependenciesMet=false and bunk out
@@ -222,18 +208,18 @@ public class MicroserviceDependenciesWait extends EventWaitActivity {
                                 .findFirst().orElse(null);
     }
 
-    public ServiceSummary getServiceSummary() throws ActivityException {
-        String[] outDocs = new String[1];
-        outDocs[0] = ServiceSummary.SERVICE_SUMMARY;
-        setOutputDocuments(outDocs);
-        ServiceSummary serviceSummary = (ServiceSummary) getVariableValue(
-                ServiceSummary.SERVICE_SUMMARY);
-        if (serviceSummary == null) {
-            logger.severe(ServiceSummary.SERVICE_SUMMARY + " not found");
-            return null;
-        }
-        else {
-            return serviceSummary;
-        }
+    protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
+        DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        if (forUpdate)
+            return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
+        else
+            return (ServiceSummary) getDocument(docRef, Jsonable.class.getName());
+    }
+
+    /**
+     * You'd need a custom .impl asset to set this through designer
+     */
+    protected String getServiceSummaryVariableName() {
+        return getAttribute("serviceSummaryVariable", "serviceSummary");
     }
 }

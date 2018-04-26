@@ -1476,4 +1476,30 @@ public abstract class BaseActivity implements GeneralActivity {
             setVariableValue(spec, value);
         }
     }
+
+    public Object getRequiredVariableValue(String name) throws ActivityException {
+        if (getMainProcessDefinition().getVariable(name) == null)
+            throw new ActivityException("Missing process variable: " + name);
+        return getVariableValue(name);
+    }
+
+    protected String getAttribute(String name) {
+        String v = getAttributeValueSmart(name);
+        return v == null || v.isEmpty() ? null : v;
+    }
+
+    protected boolean getAttribute(String name, Boolean defaultValue) {
+        String v = getAttribute(name);
+        return v == null ? defaultValue : v.equalsIgnoreCase("true");
+    }
+
+    protected int getAttribute(String name, Integer defaultValue) {
+        String v = getAttribute(name);
+        return v == null ? defaultValue : Integer.parseInt(v);
+    }
+
+    protected String getAttribute(String name, String defaultValue) {
+        String v = getAttribute(name);
+        return v == null ? defaultValue : v;
+    }
 }

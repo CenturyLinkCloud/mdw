@@ -169,14 +169,12 @@ processMod.controller('ProcessController',
       });    
     }
   };
-    $scope.workflowStatuses = WORKFLOW_STATUSES;
-    
-    console.log('$routeParams.triggerId='+$routeParams.triggerId+ '$routeParams.instanceId='+$routeParams.instanceId);
-    var instancesList = ProcessHierarchy.retrieve({}, function(response) {
-    var hierarchies= instancesList.rawResponse; 
-    instancesList= util.jsonToArray(hierarchies);
-    $scope.instances =JSON.parse(instancesList);
-  }); 
+  $scope.workflowStatuses = WORKFLOW_STATUSES;
+  var instancesList = ProcessHierarchy.retrieve({}, function(response) {
+    var hierarchies = instancesList.rawResponse; 
+    instancesList = util.jsonToArray(hierarchies);
+    $scope.instances = JSON.parse(instancesList);
+  });
   $scope.valuesEdit = false;
   $scope.editValues = function(edit) {
     $scope.valuesEdit = edit;
@@ -362,15 +360,17 @@ processMod.controller('ProcessDefController',
     $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
     $scope.process.definitionId = summary.definitionId;
+    $scope.process.template = summary.template;
     $scope.process.archived = summary.archived;
     if ($scope.process.archived)
-      $scope.process.version = summary.version;
+      $scope.process.version = summary.template ? summary.templateVersion : summary.version;
     $scope.definitionId = $scope.process.definitionId;
   }
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
         $scope.process.definitionId = defSum.id;
         $scope.definitionId = $scope.process.definitionId;
+        $scope.template = $scope.process.template;
     });
   }
 }]);

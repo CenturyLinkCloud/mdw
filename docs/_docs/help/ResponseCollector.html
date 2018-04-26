@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Response Collector Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Response Collector Activity</h1>
+
+The Response Collector activity handles consolidation of multiple service invocations into a single Status Response.
+
+<h3>Consolidator Implementation</h3>
+Responses are combined through a 
+<a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/microservice/Consolidator.java">Consolidator</a>.
+The default (embedded in the activity implementor class) is to set the code to the maximum HTTP status code among the responses, and to populate the
+JSON payload with a map of accumulated <a href="../javadoc/com/centurylink/mdw/model/StatusResponse.html">StatusResponse</a>s.
+<br/><br/>
+This behavior can be overridden by entering your a value for the <code>Consolidator</code> attribute.
+This should be the fully-qualified class name of your custom Consolidator implementation (in Java or Kotlin).
+</body>
+</html>

@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.dataaccess;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -27,16 +30,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
@@ -56,11 +65,13 @@ public class DatabaseAccess {
     private static int retryMax = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_MAX, 3);
     private static int retryInterval = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_INTERVAL, 500);
 
-    private static Map<String, DataSource> loadedDataSources = new ConcurrentHashMap<String, DataSource>();
-    private static Map<String, Boolean> collectionDocIdIndexed = new ConcurrentHashMap<String, Boolean>();
+    private static Map<String,DataSource> loadedDataSources = new ConcurrentHashMap<>();
+    private static Map<String,Boolean> collectionDocIdIndexed = new ConcurrentHashMap<>();
 
     private static EmbeddedDataAccess embedded;
     public static EmbeddedDataAccess getEmbedded() { return embedded; }
+
+    private static boolean checkUpgradePerformed;
 
     protected Map<String,String> connectParams;
     protected Connection connection;
@@ -201,6 +212,46 @@ public class DatabaseAccess {
             }
             catch (DataAccessException ex) {
                 throw new SQLException(ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public void checkAndUpgradeSchema() {
+        synchronized(getClass()) {
+            if (checkUpgradePerformed)
+                return;
+            StandardLogger logger = LoggerUtil.getStandardLogger();
+            try {
+                String upgradeJsonPath = "db/" + (isOracle() ? "oracle.json" : "mysql.json");
+                InputStream is = FileHelper.readFile(upgradeJsonPath, DatabaseAccess.class.getClassLoader());
+                if (is != null) {
+                    logger.info("Check/apply db upgrades: " + upgradeJsonPath);
+                    try (BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
+                        JSONObject upgradeJson = new JSONObject(buffer.lines().collect(Collectors.joining("\n")));
+                        JSONArray queriesArr = upgradeJson.getJSONArray("schemaUpgradeQueries");
+                        if (queriesArr != null) {
+                            try (DbAccess dbAccess = new DbAccess()) {
+                                for (int i = 0; i < queriesArr.length(); i++) {
+                                    JSONObject queriesObj = queriesArr.getJSONObject(i);
+                                    String name = queriesObj.getString("name");
+                                    String checkSql = queriesObj.getString("check");
+                                    ResultSet rs = dbAccess.runSelect(checkSql);
+                                    if (!rs.next()) {
+                                        logger.info("  db upgrade: " + name);
+                                        String upgradeSql = queriesObj.getString("upgrade");
+                                        dbAccess.runUpdate(upgradeSql);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                logger.severeException("Failed to check/upgrade db: " + ex.getMessage(), ex);
+            }
+            finally {
+                checkUpgradePerformed = true;
             }
         }
     }
@@ -578,6 +629,7 @@ public class DatabaseAccess {
      * MongoDB doesn't allow keys to have dots (.) or to start with $.  This method encodes such keys if found
      * and returns a new BSON document
      */
+    @SuppressWarnings("unchecked")
     public static org.bson.Document encodeMongoDoc(org.bson.Document doc) {
         org.bson.Document newDoc = new org.bson.Document();
         for (String key : doc.keySet()) {
@@ -607,6 +659,7 @@ public class DatabaseAccess {
      * MongoDB doesn't allow keys to have dots (.) or to start with $.  This method decodes such keys back to dots and $ if found
      * and returns a new BSON document
      */
+    @SuppressWarnings("unchecked")
     public static org.bson.Document decodeMongoDoc(org.bson.Document doc) {
         org.bson.Document newDoc = new org.bson.Document();
         for (String key : doc.keySet()) {
