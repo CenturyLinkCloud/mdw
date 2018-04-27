@@ -408,34 +408,34 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         this.diagramObj.calc(widget.value);
       }
       else if (widget.parent && widget.parent.type === 'table') {
-        var tblWidget = widget.parent;
-        tblWidget.value = [];
-        for (let i = 0; i < tblWidget.widgetRows.length; i++) {
-          var widgetRow = tblWidget.widgetRows[i];
-          if (widgetRow[0].value) {
-            var valueRow = [];
-            for (let j = 0; j < widgetRow.length; j++) {
-              if (widgetRow[j].source === 'proc' || widgetRow[j].type === 'asset') {
-                var assetVersion = this.getAssetVersion(widgetRow[j].value, true);
-                if (assetVersion) {
-                  valueRow.push(assetVersion.asset);
-                  if (assetVersion.version)
-                    valueRow.push(assetVersion.version);
+        var tblWdg = widget.parent;
+        tblWdg.value = [];
+        for (let i = 0; i < tblWdg.widgetRows.length; i++) {
+          var wdgRow = tblWdg.widgetRows[i];
+          if (wdgRow[0].value) {
+            var valRow = [];
+            for (let j = 0; j < wdgRow.length; j++) {
+              if (wdgRow[j].source === 'proc' || wdgRow[j].type === 'asset') {
+                var assetVer = this.getAssetVersion(wdgRow[j].value, true);
+                if (assetVer) {
+                  valRow.push(assetVer.asset);
+                  if (assetVer.version)
+                    valRow.push(assetVer.version);
                 }
               }
               else {
-                valueRow.push(widgetRow[j].value ? widgetRow[j].value : '');  
+                valRow.push(wdgRow[j].value ? wdgRow[j].value : '');  
               }
             }
-            tblWidget.value.push(valueRow);
+            tblWdg.value.push(valRow);
           }
         }
-        if (tblWidget.converter && this.template.category === 'object') {
-          let converter = $injector.get(tblWidget.converter);
-          this.workflowObj[tblWidget.name] = converter.fromWidgetValue(tblWidget, this.removeEmptyRows(tblWidget.value));
+        if (tblWdg.converter && this.template.category === 'object') {
+          let converter = $injector.get(tblWdg.converter);
+          this.workflowObj[tblWdg.name] = converter.fromWidgetValue(tblWdg, this.removeEmptyRows(tblWdg.value));
         }
         else {
-          this.workflowObj.attributes[tblWidget.name] = JSON.stringify(this.removeEmptyRows(tblWidget.value));
+          this.workflowObj.attributes[tblWdg.name] = JSON.stringify(this.removeEmptyRows(tblWdg.value));
         }
       }
       else {
