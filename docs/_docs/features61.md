@@ -13,6 +13,7 @@ title: MDW 6.1 New Features
   7. SendGrid email notifications
   8. "Bootstrap" mode enables startup without local assets
   9. Refined Slack channel workflow collaboration
+  10. [Declarative REST API service paths]() for workflow processes.
   
 ## Compatibility Notes
   1. Asset package metafiles saved as package.yaml instead of package.json (json metafiles still supported).

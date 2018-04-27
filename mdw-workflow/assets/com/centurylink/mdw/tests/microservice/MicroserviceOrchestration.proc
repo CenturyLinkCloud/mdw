@@ -72,7 +72,10 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=196,y=48,w=236,h=27"
+    "WORK_DISPLAY_INFO": "x=196,y=48,w=236,h=27",
+    "requestMethod": "POST",
+    "requestParameters": "[[\"User\",\"Body\",\"true\",\"Create user with groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.1,1)\"]]",
+    "requestPath": "/user"
   },
   "variables": {
     "request": {

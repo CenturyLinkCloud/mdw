@@ -36,6 +36,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.services + '/js/ui/templates/variables.json'
         },
         Request: {
+          '_attribute': { name: 'Request' },
           '_template': mdw.roots.services + '/js/ui/templates/request.json'
         },
         Documentation: { 
