@@ -85,8 +85,8 @@ public class CloudClasspath {
             }
             if (tomcatWebAppDir.isDirectory()) {
                 String mdwWarName = PropertyManager.getProperty(PropertyNames.MDW_WAR_NAME);
-                if(StringHelper.isEmpty(mdwWarName))
-                    mdwWarName = "mdw";
+                if (StringHelper.isEmpty(mdwWarName))
+                    mdwWarName = ApplicationContext.getMdwHubContextRoot();
                 File mdwWebInfDir = new File(tomcatWebAppDir + FILE_SEP + mdwWarName + FILE_SEP + "WEB-INF");
                 webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true, false)));
                 webInfClasses = new File(mdwWebInfDir + FILE_SEP + "classes");

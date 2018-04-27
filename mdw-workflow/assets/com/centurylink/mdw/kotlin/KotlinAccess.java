@@ -78,14 +78,10 @@ public class KotlinAccess implements CacheService {
         getInstance().scripts.put(name, script);
     }
 
-    /**
-     * Loads lazily in development to speed startup time.
-     */
     @Override
     public void refreshCache() throws Exception {
         clearCache();
-        if (!ApplicationContext.isDevelopment())
-           getInstance();
+        getInstance();
     }
     @Override
     public void clearCache() {
