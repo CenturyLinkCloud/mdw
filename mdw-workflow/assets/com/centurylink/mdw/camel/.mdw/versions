@@ -19,7 +19,6 @@ NotifyHandler.java=1
 ProcessLaunchHandler.java=2
 RoutesDefinitionRuleSet.java=1
 TomcatCamelContext.java=1
-bus-all-2.1.2.1.jar=1
 camel-core-2.18.3.jar=1
 camel-cxf-2.18.3.jar=1
 camel-spring-2.18.3.jar=1

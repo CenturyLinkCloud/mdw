@@ -23,7 +23,5 @@ TestActivityStub\ Fallout.task=1
 TestActivityStub.proc=5
 TestActivityStubSubproc.proc=2
 TestAdapterStub.proc=6
-]AdapterStubEcho.test=1
-]AdapterStubEcho.yaml=1
 employeeRequest.json=1
 employeeResponse.json=1

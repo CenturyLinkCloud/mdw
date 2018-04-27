@@ -1,12 +1,10 @@
 Acknowledger.java=5
 ChildProcessDocUpdate.test=2
 ChildProcessDocUpdate.yaml=2
-Custom\ Category\ Task.task=1
 CustomBaseData.proc=5
 CustomBaseData.test=2
 CustomBaseData.yaml=1 Renamed from c:gitMDW2mdw-workflowassetscomcenturylinkmdw	estscloudcustom-base-data.yaml
 DynamicActivityImpl.proc=2
-DynamicActivityImpl.test=1 Renamed from c:gitMDW2mdw-workflowassetscomcenturylinkmdw	estsclouddynamic-activity-impl.test
 DynamicActivityImpl.yaml=1
 DynamicJavaGeneralActivity.java=2
 JaxbAsset.java=4

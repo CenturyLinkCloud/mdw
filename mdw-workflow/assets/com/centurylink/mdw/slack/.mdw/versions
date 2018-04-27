@@ -1,11 +1,8 @@
 ActionHandler.java=1
 EventHandler.java=1
-Handler.java=1
 MarkdownScrubber.java=3
 MessageMonitor.java=8
-Monitor.java=1
 SlackActivity.java=2
-SlackAdapter.java=1
 SlackEvent.java=1
 SlackRequest.java=3
 SlackService.java=3
