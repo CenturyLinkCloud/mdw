@@ -249,6 +249,19 @@ public class Checkpoint extends Setup {
         }
     }
 
+    public String getLatestRefCommit() throws SQLException, IOException {
+        String select = "select ref from asset_ref where archive_dt= (select max(archive_dt) from asset_ref)";
+        try (Connection conn = getDbConnection();
+                PreparedStatement stmt = conn.prepareStatement(select)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("ref");
+                }
+            }
+        }
+        return null;
+    }
+
     private void loadDbDriver() throws IOException {
         try {
             Class.forName(DbInfo.getDatabaseDriver(dbInfo.getUrl()));
