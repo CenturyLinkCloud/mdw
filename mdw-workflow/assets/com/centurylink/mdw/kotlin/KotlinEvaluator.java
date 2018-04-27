@@ -39,11 +39,15 @@ public class KotlinEvaluator implements ScriptEvaluator {
         try {
             KotlinCompiledScript compiled = KotlinAccess.getScript(name);
             if (compiled == null) {
-                KotlinScriptEngine scriptEngine = KotlinAccess.getInstance().getScriptEngine();
-                compiled = (KotlinCompiledScript) scriptEngine.compile(name, script);
-                KotlinAccess.putScript(name, compiled);
+                synchronized(KotlinAccess.getInstance().getScripts()) {
+                    compiled = KotlinAccess.getScript(name);
+                    if (compiled == null) {
+                        KotlinScriptEngine scriptEngine = KotlinAccess.getInstance().getScriptEngine();
+                        compiled = (KotlinCompiledScript) scriptEngine.compile(name, script);
+                        KotlinAccess.putScript(name, compiled);
+                    }
+                }
             }
-            // TODO handle bindings output
             return compiled.eval(new SimpleBindings(bindings));
         }
         catch (KotlinScriptException ex) {

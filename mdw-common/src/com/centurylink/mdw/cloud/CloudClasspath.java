@@ -35,8 +35,6 @@ public class CloudClasspath {
     private CloudClassLoader cloudClassLoader;
     private String systemClasspath;
     private String cloudClasspath;
-    private List<File> tomcatBaseLibJars = new ArrayList<File>();
-    private List<File> tomcatHomeLibJars = new ArrayList<File>();
     private List<File> webappJars = new ArrayList<File>();
     private List<File> jarAssetFiles = new ArrayList<File>();
     private File webInfClasses;
@@ -48,7 +46,6 @@ public class CloudClasspath {
         this.cloudClassLoader = cloudClassLoader;
     }
 
-    // cloud compiler class path
     public void read() throws IOException {
         systemClasspath = System.getProperty("java.class.path");
         if (systemClasspath == null)
@@ -91,22 +88,9 @@ public class CloudClasspath {
                 webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true, false)));
                 webInfClasses = new File(mdwWebInfDir + FILE_SEP + "classes");
             }
-
-            // tomcat base
-            File tomcatBaseLib = new File(catalinaBase + FILE_SEP + "lib");
-            if (tomcatBaseLib.isDirectory())
-                tomcatBaseLibJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatBaseLib, false, false)));
-            // tomcat home
-            String catalinaHome = System.getProperty("catalina.home");
-            File tomcatHomeLib = new File(catalinaHome + FILE_SEP + "lib");
-            if (tomcatHomeLib.isDirectory())
-                tomcatHomeLibJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(tomcatHomeLib, false, false)));
         }
     }
 
-    /**
-     * Includes the asset root (useful for Kotlin script compilation).
-     */
     public List<File> getFiles() {
         List<File> files = new ArrayList<>();
         String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_CLASSPATH);
@@ -115,13 +99,10 @@ public class CloudClasspath {
                 files.add(new File(file));
             }
         }
-        files.add(ApplicationContext.getAssetRoot());
-        files.addAll(tomcatBaseLibJars);
         files.addAll(webappJars);
         if (webInfClasses != null) {
             files.add(webInfClasses);
         }
-        files.addAll(tomcatHomeLibJars);
         if (cloudClasspath != null) {
             for (String file : cloudClasspath.split(PATH_SEP)) {
                 files.add(new File(file));
@@ -133,7 +114,6 @@ public class CloudClasspath {
                 files.add(new File(file));
             }
         }
-
         return files;
     }
 
@@ -144,17 +124,11 @@ public class CloudClasspath {
         String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_CLASSPATH);
         if (compilerClasspath != null)
             classpath.append(PATH_SEP).append(compilerClasspath);
-        for (File jarFile : tomcatBaseLibJars) {
-            classpath.append(PATH_SEP).append(jarFile.getAbsolutePath());
-        }
         for (File jarFile : webappJars) {
             classpath.append(PATH_SEP).append(jarFile.getAbsolutePath());
         }
         if (webInfClasses != null) {
             classpath.append(PATH_SEP).append(webInfClasses);
-        }
-        for (File jarFile : tomcatHomeLibJars) {
-            classpath.append(PATH_SEP).append(jarFile.getAbsolutePath());
         }
         if (cloudClasspath != null) {
             classpath.append(PATH_SEP).append(cloudClasspath);

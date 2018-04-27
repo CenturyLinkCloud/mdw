@@ -49,8 +49,8 @@ public class MdwJavaFileManager <M extends JavaFileManager> extends ForwardingJa
      */
     public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling)
     throws IOException {
-        if (logger.isDebugEnabled())
-            logger.debug("Loading Dynamic Java byte code from: " + (sibling == null ? null : sibling.toUri()));
+        if (logger.isMdwDebugEnabled())
+            logger.mdwDebug("Loading Dynamic Java byte code from: " + (sibling == null ? null : sibling.toUri()));
         try {
             JavaFileObject jfo = new ByteArrayJavaFileObject(className, kind);
             jfoCache.put(className, jfo);
