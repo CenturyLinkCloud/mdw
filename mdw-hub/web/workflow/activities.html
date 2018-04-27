@@ -1,16 +1,13 @@
-<!-- 
-FIXME: select, filter, sort, actions, search -- all need to be wired up to real data from Activities service
- -->
 <div class="row">
   <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
-	  <div class="col-md-10">
-	  <div class="panel panel-default mdw-panel">
-	    <div class="panel-heading mdw-heading">
-	      <div class="mdw-heading-checklist">
-	        <input type="checkbox" ng-model="model.activityList.selectedState.all" ng-change="model.activityList.toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
-	        Activities
-	        <span class="mdw-heading-sub">({{model.activityList.total}})</span>
-	      </div>
+    <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-checklist">
+          <input type="checkbox" ng-model="model.activityList.selectedState.all" ng-change="model.activityList.toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
+          Activities
+          <span class="mdw-heading-sub">({{model.activityList.total}})</span>
+        </div>
         
         <div class="mdw-heading-input">
           <div class="mdw-inner-addon mdw-right-addon">
@@ -43,10 +40,10 @@ FIXME: select, filter, sort, actions, search -- all need to be wired up to real 
             <span class="glyphicon glyphicon-stats"></span> Chart
           </button>        
         </mdw-actions>
-	   </div>
-	   <mdw-list class="mdw-checklist" mdw-list-service="/services/Activities" mdw-list-model="model.activityList" mdw-list-items="activityInstances"
+     </div>
+     <mdw-list class="mdw-checklist" mdw-list-service="/services/Activities" mdw-list-model="model.activityList" mdw-list-items="activityInstances"
         mdw-list-filter="model.activityFilter" mdw-list-item="workflow/activityItem.html">
      </mdw-list>
-	  </div>
     </div>
+  </div>
 </div>

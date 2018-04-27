@@ -32,13 +32,12 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
          * with prop names being labels and prop values evaluated.
          * Note: '=' refers to the identity (name) of each obj in collection
          */
-        Request: {
-          '_template': mdw.roots.services + '/js/ui/templates/request.json'
-        },
         Variables: {
           '_template': mdw.roots.services + '/js/ui/templates/variables.json'
         },
-        Versions: {},
+        Request: {
+          '_template': mdw.roots.services + '/js/ui/templates/request.json'
+        },
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
           '_template': mdw.roots.services + '/js/ui/templates/documentation.json'
@@ -144,7 +143,66 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           'Initiated By': 'owner',
           ID: 'ownerId',
           '_url': '${it.owner == "PROCESS_INSTANCE" ? "#/workflow/processes/" + it.ownerId : (it.owner == "ERROR" ? "#/workflow/triggers/" + it.ownerId : "#/workflow/requests/" + it.ownerId)}'
-        }
+        },
+        Hierarchy: {
+          'hierarchyInstances': [{
+            'Process': '${it.treeLabel}',
+            'ID': '${it.id}',
+            '_url': '${"#/workflow/processes/" + it.id}',
+            '': '${it.thisFlag}'
+          }],
+          'getHierarchyList': function(diagramObject, workflowObject, runtimeInfo) {
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return true;
+            }
+            else {
+              if (runtimeInfo === null || runtimeInfo.length === 0)
+                return null;
+              var url = mdw.roots.services + '/services/Processes?mdw-app=designer&callHierarchyFor=' + runtimeInfo.id;
+              return $http.get(url).then(function(response) {
+                if (response.status !== 200)
+                  return null;
+                var result = { 
+                    status: response.status,
+                    maxWidth: 150,
+                    data: {
+                      hierarchyInstances: []
+                    }
+                };
+                var top = true;
+                var pad = '';
+                var addChildren = function(caller) {
+                  if (caller.processInstance) {
+                    var treeLabel = pad;
+                    if (!top) {
+                      treeLabel += '- ';
+                    }
+                    treeLabel += caller.processInstance.packageName + "/" + caller.processInstance.processName + " v" + caller.processInstance.processVersion;
+                    caller.processInstance.treeLabel = treeLabel;
+                    caller.processInstance.thisFlag = caller.processInstance.id === runtimeInfo.id ? '*' : '';
+                    result.data.hierarchyInstances.push(caller.processInstance);
+                  }
+                  if (caller.children) {
+                    pad += '  ';
+                    if (top) {
+                      top = false;
+                    }
+                    else {
+                      pad += '  ';
+                    }
+                    caller.children.forEach(function(child) {
+                      addChildren(child);
+                    });
+                  }
+                };
+
+                addChildren(response.data);
+                return result;
+              });
+            }
+          }
+        },
       },
       activity: {
         /* unnamed one-item array of object:

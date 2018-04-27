@@ -122,10 +122,14 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             if (promise) {
               promise.then(function(res) {
                 var resArr;
-                if (res instanceof Array)
+                var maxWidth;
+                if (res instanceof Array) {
                   resArr = res;
-                else
+                }
+                else {
                   resArr = [res];
+                  maxWidth = res.maxWidth;
+                }
                 var tabInfo = [];
                 resArr.forEach(function(result) {
                   result.data[listName].forEach(function(it) {
@@ -146,7 +150,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
                     tabInfo.push(item);
                   });
                 });
-                $scope.applyTabArray(passedTabArr, tabInfo);
+                $scope.applyTabArray(passedTabArr, tabInfo, maxWidth);
               });
             }
             return;
@@ -317,9 +321,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     }
   };
   
-  $scope.applyTabArray = function(tabArr, tabInfo) {
+  $scope.applyTabArray = function(tabArr, tabInfo, maxWidth) {
     // indicates columnar display and tabInfo is array
-    var maxColWidth = 50;
+    var maxColWidth = maxWidth ? maxWidth : 50;
     var colSpacing = 3;
     var props = util.getProperties(tabArr[0]);
     

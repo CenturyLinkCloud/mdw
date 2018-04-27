@@ -237,7 +237,7 @@
   float: right;
 }
 .mdw-action-btn {
-	margin-left: 4px;
+  margin-left: 4px;
 }
 .mdw-heading-options {
   float: left;
@@ -266,27 +266,27 @@
   border-bottom: none;
 }
 .mdw-comment-panel {
-	border-color: #c0d3eb;
+  border-color: #c0d3eb;
 }
 .mdw-comment-panel .mdw-heading {
-	background-color: white !important;
-	padding-top: 8px;
-	padding-bottom: 7px;
+  background-color: white !important;
+  padding-top: 8px;
+  padding-bottom: 7px;
 }
 .mdw-comment-panel .mdw-btn {
   padding: 3px 6px;
-  font-size: 14px;	
+  font-size: 14px;  
 }
 .mdw-comment-panel .mdw-section {
-	min-height: 66px;
-	border-bottom-color: #c0d3eb;
-	line-height: 22px;
+  min-height: 66px;
+  border-bottom-color: #c0d3eb;
+  line-height: 22px;
 }
 .mdw-comment-panel textarea {
-	width: 100%;
-	line-height: 20px;
-	overflow-y: hidden;
-	margin: 0;
+  width: 100%;
+  line-height: 20px;
+  overflow-y: hidden;
+  margin: 0;
   padding: 10px;
   border-top: 0;
   border-left: 0;
@@ -294,9 +294,9 @@
   border-right: 0;  
 }
 .mdw-attach-zone {
-	font-size: 13px;
-	font-style: italic;
-	padding: 2px 10px 10px 10px;
+  font-size: 13px;
+  font-style: italic;
+  padding: 2px 10px 10px 10px;
 }
 .mdw-panel-full-width {
   width: 100%;
@@ -335,8 +335,8 @@
   top: 1px;
 }
 .mdw-request {
-	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-	font-size: 13px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 13px;
 }
 .mdw-resource-heading {
   border: 1px solid #ddd;
@@ -429,8 +429,8 @@
   font-weight: bold;
 }
 .mdw-date-btn {
-	border: 1px solid #2e6da4;
-	padding: 3px 6px;
+  border: 1px solid #2e6da4;
+  padding: 3px 6px;
 }
 .mdw-date-glyph {
   color: #337ab7;
@@ -861,7 +861,7 @@
   
 }
 .mdw-task-package {
-	font-weight: normal;
+  font-weight: normal;
 }
 .mdw-canvas {
   /* prevent highlighting on double-click */
@@ -1180,13 +1180,13 @@
   color: transparent;
 }
 .mdw-push {
-	font-size: 12px;
+  font-size: 12px;
 }
 .mdw-console {
-	color: #f1f1f1;
-	background-color: black;
-	width: 100%;
-	font-size: 15px;
+  color: #f1f1f1;
+  background-color: black;
+  width: 100%;
+  font-size: 15px;
   font-family: monospace;
 }
 .mdw-highlight {
@@ -1218,14 +1218,14 @@
   color: #f44336;
 }
 .mdw-markdown-segment {
-	display: inline;
-  white-space: pre-line;	
+  display: inline;
+  white-space: pre-line;  
 }
 .mdw-markdown-segment > p:first-child {
-	display: inline;
+  display: inline;
 }
 .mdw-emoji {
-	position: relative;
+  position: relative;
   top: 5px;
 }
 .panel-heading a {
@@ -1363,56 +1363,19 @@
   overflow-y: auto;
 }
 .emoji-mart-preview {
-	display: none;
+  display: none;
 }
 .emoji-mart-emoji span:hover {
-	cursor: pointer !important;
+  cursor: pointer !important;
 }
 .mdw-emoji .emoji-mart-emoji {
-	width: 25px;
-	top: -22px;
-	cursor: default;
+  width: 25px;
+  top: -22px;
+  cursor: default;
 }
 .mdw-emoji .emoji-mart-emoji span {
-	position: absolute;
+  position: absolute;
 }
 .mdw-emoji .emoji-mart-emoji span:hover {
   cursor: default !important;
 }
-
-.tree-view ul {
-  list-style-type: none;
-  padding-left: 20px;
-}
-.tree-view ul li:before {
-  content: "-";
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  color: #424246;
-}
-
-.tree-view .collapsed ul {
-  display: none;
-}
-
-.tree-view li.collapsed:before {
-  content: '+';
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  color: #424246;
-}
-
-.tree-view li a:hover {
-  cursor: pointer;
-}
-/*
-.line-legend li {
-  display: flex;
-  margin-left: 80px;
-}
-.line-legend-text {
-  font-weight: bold;
-}
-*/

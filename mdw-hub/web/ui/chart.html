@@ -1,81 +1,81 @@
 <div class="panel-heading mdw-heading">
-	<div class="mdw-heading-label">{{label}} for the:</div>
-	<div class="mdw-heading-input">
-		<div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
-			<i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
-				class="form-control mdw-inline mdw-dropfilter mdw-med-width"
-				value="{{span}}" uib-dropdown-toggle readonly>
-			<ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
-				aria-labelledby="simple-dropdown">
-				<li ng-repeat="sp in spans"><a href="" ng-click="setSpan(sp)">{{sp}}</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<span class="mdw-heading-label mdw-med-indent">by:</span>
-	<div class="mdw-heading-input">
-		<div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
-			<i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
-				class="form-control mdw-inline mdw-dropfilter mdw-med-width"
-				value="{{breakdown}}" uib-dropdown-toggle readonly>
-			<ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
-				aria-labelledby="simple-dropdown">
-				<li ng-repeat="bd in breakdowns"><a href=""
-					ng-click="setBreakdown(bd)">{{bd}}</a></li>
-			</ul>
-		</div>
-	</div>
-	
-	<div class="mdw-heading-input"  ng-if="breakdown == 'Completion Time'">
-	    <span class="mdw-heading-label mdw-med-indent">Show In:&nbsp; </span>
-		<div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
-			<i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
-				class="form-control mdw-inline mdw-dropfilter mdw-med-width"
-				value="{{timefilter}}" uib-dropdown-toggle readonly>
-			<ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
-				aria-labelledby="simple-dropdown">
-				<li ng-repeat="tf in timefilters"><a href="" ng-click="setTimefilter(tf)">{{tf}}</a>
-				</li>
-			</ul>
-		</div>
-	</div>
+  <div class="mdw-heading-label">{{label}} for the:</div>
+  <div class="mdw-heading-input">
+    <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+      <i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
+        class="form-control mdw-inline mdw-dropfilter mdw-med-width"
+        value="{{span}}" uib-dropdown-toggle readonly>
+      <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
+        aria-labelledby="simple-dropdown">
+        <li ng-repeat="sp in spans"><a href="" ng-click="setSpan(sp)">{{sp}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <span class="mdw-heading-label mdw-med-indent">by:</span>
+  <div class="mdw-heading-input">
+    <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+      <i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
+        class="form-control mdw-inline mdw-dropfilter mdw-med-width"
+        value="{{breakdown}}" uib-dropdown-toggle readonly>
+      <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
+        aria-labelledby="simple-dropdown">
+        <li ng-repeat="bd in breakdowns"><a href=""
+          ng-click="setBreakdown(bd)">{{bd}}</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="mdw-heading-input"  ng-if="breakdown == 'Completion Time'">
+      <span class="mdw-heading-label mdw-med-indent">Show In:&nbsp; </span>
+    <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+      <i class="glyphicon glyphicon-chevron-down"></i> <input type="text"
+        class="form-control mdw-inline mdw-dropfilter mdw-med-width"
+        value="{{timefilter}}" uib-dropdown-toggle readonly>
+      <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu
+        aria-labelledby="simple-dropdown">
+        <li ng-repeat="tf in timefilters"><a href="" ng-click="setTimefilter(tf)">{{tf}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-	<!-- TODO: wrap attribute varies according to buttons included -->
-	<mdw-actions wrap="1100"> <!-- TODO: Actions is only when something selected (also, gravity not used) -->
-	<button type="button" class="btn btn-primary mdw-btn"
-		mdw-action-pop-button ng-if="getBreakdown()"
-		uib-popover-template="'ui/chartSelect.html'" select-pop>
-		<span class="glyphicon glyphicon-ok"></span> Select
-	</button>
-	<button type="button" class="btn btn-primary mdw-btn"
-		mdw-action-pop-button uib-popover-template="'ui/chartFilters.html'">
-		<span class="glyphicon glyphicon-filter"></span> Filter
-	</button>
-	<button type="button" class="btn btn-primary mdw-btn"
-		ng-click="downloadExcel()">
-		<span class="glyphicon glyphicon-download-alt"></span> Export
-	</button>
-	<button type="button" class="btn btn-primary mdw-btn"
-		ng-click="goList()">
-		<span class="glyphicon glyphicon-menu-hamburger"></span> List
-	</button>
-	</mdw-actions>
+  <!-- TODO: wrap attribute varies according to buttons included -->
+  <mdw-actions wrap="1100"> <!-- TODO: Actions is only when something selected (also, gravity not used) -->
+  <button type="button" class="btn btn-primary mdw-btn"
+    mdw-action-pop-button ng-if="getBreakdown()"
+    uib-popover-template="'ui/chartSelect.html'" select-pop>
+    <span class="glyphicon glyphicon-ok"></span> Select
+  </button>
+  <button type="button" class="btn btn-primary mdw-btn"
+    mdw-action-pop-button uib-popover-template="'ui/chartFilters.html'">
+    <span class="glyphicon glyphicon-filter"></span> Filter
+  </button>
+  <button type="button" class="btn btn-primary mdw-btn"
+    ng-click="downloadExcel()">
+    <span class="glyphicon glyphicon-download-alt"></span> Export
+  </button>
+  <button type="button" class="btn btn-primary mdw-btn"
+    ng-click="goList()">
+    <span class="glyphicon glyphicon-menu-hamburger"></span> List
+  </button>
+  </mdw-actions>
 
 </div>
 <div class="mdw-section">
-	<div class="mdw-section" ng-if="chartType != 'chart chart-pie'">
-		<canvas id="line" class="chart chart-line"
-			chart-options="chartOptions" chart-data="data" chart-labels="labels"
-			chart-legend="true" chart-series="series" chart-click="onClick"
-			chart-hover="onHover">
+  <div class="mdw-section" ng-if="chartType != 'chart chart-pie'">
+    <canvas id="line" class="chart chart-line"
+      chart-options="chartOptions" chart-data="data" chart-labels="labels"
+      chart-legend="true" chart-series="series" chart-click="onClick"
+      chart-hover="onHover">
     </canvas>
-		<div ng-bind-html="chartLegend | markdown | unsafe"></div>
-	</div>
-	<div class="mdw-section" ng-if="chartType == 'chart chart-pie'">
-		<canvas id="line" class="chart chart-pie" chart-options="chartOptions"
-			chart-data="data" chart-labels="labels" chart-legend="true"
-			chart-series="series" chart-click="onClick" chart-hover="onHover">
+    <div ng-bind-html="chartLegend | markdown | unsafe"></div>
+  </div>
+  <div class="mdw-section" ng-if="chartType == 'chart chart-pie'">
+    <canvas id="line" class="chart chart-pie" chart-options="chartOptions"
+      chart-data="data" chart-labels="labels" chart-legend="true"
+      chart-series="series" chart-click="onClick" chart-hover="onHover">
   </canvas>
-		<div ng-bind-html="chartLegend | markdown | unsafe"></div>
-	</div>
+    <div ng-bind-html="chartLegend | markdown | unsafe"></div>
+  </div>
 </div>

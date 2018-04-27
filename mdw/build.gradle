@@ -266,8 +266,22 @@ task jsxNoTabs(type: JavaExec) {
     workingDir = '..'
 }
 
+task htmlNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-hub/web/**/*.html']
+    workingDir = '..'
+}
+
+task cssNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-hub/web/css/**/*.css']
+    workingDir = '..'
+}
+
 task codeFormat {
-    dependsOn(javaNoTabs, jsNoTabs, jsxNoTabs)
+    dependsOn(javaNoTabs, jsNoTabs, jsxNoTabs, htmlNoTabs, cssNoTabs)
 }
 
 task checkAssetVersions(type: Exec) {
