@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.java.CompilationException;
@@ -48,7 +50,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 @RegisteredService(CacheService.class)
-public class KotlinAccess implements CacheService {
+public class KotlinAccess implements CacheService, PreloadableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -68,6 +70,8 @@ public class KotlinAccess implements CacheService {
     }
 
     private Map<String,KotlinCompiledScript> scripts;
+    public Map<String,KotlinCompiledScript> getScripts() { return scripts; }
+
     public static KotlinCompiledScript getScript(String name) {
         return getInstance().scripts.get(name);
     }
@@ -79,10 +83,21 @@ public class KotlinAccess implements CacheService {
     }
 
     @Override
-    public void refreshCache() throws Exception {
+    public void initialize(Map<String,String> params) throws CachingException {
+        // TODO: params indicate scripts to precompile
+    }
+
+    @Override
+    public void loadCache() {
+        refreshCache();
+    }
+
+    @Override
+    public void refreshCache() {
         clearCache();
         getInstance();
     }
+
     @Override
     public void clearCache() {
         instance = null;
@@ -105,7 +120,7 @@ public class KotlinAccess implements CacheService {
             List<File> sources = getSources();
             File classesDir = new File(ApplicationContext.getTempDirectory() + "/" + KotlinClasspathKt.CLASSES_PATH);
             // conditional compilation only applies in dev mode
-            if (!sources.isEmpty() && (!ApplicationContext.isDevelopment() || needsCompile(sources, classesDir))) {
+            if (!sources.isEmpty() && needsCompile(sources, classesDir)) {
                 List<String> args = new ArrayList<>();
                 logger.info("Compiling Kotlin...");
                 if (logger.isDebugEnabled())
@@ -221,5 +236,4 @@ public class KotlinAccess implements CacheService {
         }
         return needsCompile;
     }
-
 }

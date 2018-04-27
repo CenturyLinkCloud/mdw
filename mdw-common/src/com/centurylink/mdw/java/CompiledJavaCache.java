@@ -328,15 +328,15 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
         classpath += pathSep + getTempDir();  // include java source artifacts
 
-        String info = "Compiling Dynamic Java class: " + className;
-        if (logger.isDebugEnabled()) {
+        String debug = "Compiling Dynamic Java class: " + className;
+        if (logger.isMdwDebugEnabled()) {
             String extra = "parent ClassLoader=" + parentLoader;
             if (currentPackage != null)
                 extra += ", workflow package: " + currentPackage.getLabel();
-            logger.debug(info + " (" + extra + ")");
+            logger.debug(debug + " (" + extra + ")");
         }
-        else {
-            logger.info(info);
+        else if (logger.isDebugEnabled()) {
+            logger.debug(debug);
         }
 
         if (logger.isMdwDebugEnabled()) {
@@ -400,15 +400,15 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
         classpath += pathSep + getTempDir();  // include java source artifacts
 
-        String info = "Compiling Dynamic Java classes: " + classNames;
-        if (logger.isDebugEnabled()) {
+        String debug = "Compiling Dynamic Java classes: " + classNames;
+        if (logger.isMdwDebugEnabled()) {
             String extra = "parent ClassLoader=" + parentLoader;
             if (currentPackage != null)
                 extra += ", workflow package: " + currentPackage.getLabel();
-            logger.debug(info + " (" + extra + ")");
+            logger.debug(debug + " (" + extra + ")");
         }
-        else {
-            logger.info(info);
+        else if (logger.isDebugEnabled()) {
+            logger.info(debug);
         }
 
         if (logger.isMdwDebugEnabled()) {

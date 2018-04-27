@@ -18,9 +18,7 @@ package com.centurylink.mdw.cache;
 import java.util.Map;
 
 /**
- * This interface defines a cache that can be preloaded
- * optionally
- *
+ * Defines a cache that can be preloaded.
  */
 public interface PreloadableCache extends CacheService {
 
