@@ -250,7 +250,21 @@ public class AssetServicesImpl implements AssetServices {
                 // currently "extension" is the only supported filter
                 String ext = query.getFilter("extension");
                 if (ext != null) {
-                    stream = stream.filter(f -> f.isFile() && f.getName().endsWith("." + ext));
+                    if (ext.startsWith("[")) {
+                        String[] exts = query.getArrayFilter("extension");
+                        stream = stream.filter(f -> {
+                            if (f.isFile()) {
+                                for (String anExt : exts) {
+                                    if (f.getName().endsWith("." + anExt))
+                                        return true;
+                                }
+                            }
+                            return false;
+                        });
+                    }
+                    else {
+                        stream = stream.filter(f -> f.isFile() && f.getName().endsWith("." + ext));
+                    }
                 }
 
                 List<AssetInfo> assets = new ArrayList<AssetInfo>();

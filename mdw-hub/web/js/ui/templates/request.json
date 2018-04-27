@@ -1,9 +1,9 @@
 {
-  "category": "object",
+  "category": "attributes",
   "pagelet": {"widgets": [
     {
       "type": "dropdown",
-      "name": "method",
+      "name": "requestMethod",
       "label": "Method",
       "options": [
         "GET", "POST", "PUT", "DELETE", "PATCH"
@@ -12,12 +12,12 @@
     },
     {
       "type": "text",
-      "name": "path",
+      "name": "requestPath",
       "label": "Path"
     },
     {
       "type": "table",
-      "name": "parameters",
+      "name": "requestParameters",
       "converter": "ObjectTableConverter",
       "widgets": [
         {
@@ -52,7 +52,7 @@
 	      "type": "asset",
 	      "name": "dataType",
 	      "label": "Data Type",
-	      "source": "java"
+	      "source": "[java,kt]"
 	    }
       ]
     },

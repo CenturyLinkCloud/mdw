@@ -407,6 +407,37 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       else if (widget.name === '_controlPoints') {
         this.diagramObj.calc(widget.value);
       }
+      else if (widget.parent && widget.parent.type === 'table') {
+        var tblWdg = widget.parent;
+        tblWdg.value = [];
+        for (let i = 0; i < tblWdg.widgetRows.length; i++) {
+          var wdgRow = tblWdg.widgetRows[i];
+          if (wdgRow[0].value) {
+            var valRow = [];
+            for (let j = 0; j < wdgRow.length; j++) {
+              if (wdgRow[j].source === 'proc' || wdgRow[j].type === 'asset') {
+                var assetVer = this.getAssetVersion(wdgRow[j].value, true);
+                if (assetVer) {
+                  valRow.push(assetVer.asset);
+                  if (assetVer.version)
+                    valRow.push(assetVer.version);
+                }
+              }
+              else {
+                valRow.push(wdgRow[j].value ? wdgRow[j].value : '');  
+              }
+            }
+            tblWdg.value.push(valRow);
+          }
+        }
+        if (tblWdg.converter && this.template.category === 'object') {
+          let converter = $injector.get(tblWdg.converter);
+          this.workflowObj[tblWdg.name] = converter.fromWidgetValue(tblWdg, this.removeEmptyRows(tblWdg.value));
+        }
+        else {
+          this.workflowObj.attributes[tblWdg.name] = JSON.stringify(this.removeEmptyRows(tblWdg.value));
+        }
+      }
       else {
         this.workflowObj.attributes[widget.name] = widget.value;
       }
