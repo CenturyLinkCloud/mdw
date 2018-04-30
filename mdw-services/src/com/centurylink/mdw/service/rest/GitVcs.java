@@ -143,7 +143,9 @@ public class GitVcs extends JsonRestService {
 
                     if (VcsArchiver.setInProgress()) {
                         logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
-                        boolean hard = query.getBooleanFilter("gitHard");
+                        boolean hard = false;
+                        if (content.has("gitHard"))
+                            hard = content.getBoolean("gitHard");
                         archiver.backup();
                         vcGit.hardCheckout(branch, hard);
                         archiver.archive(deleteTempBackups);

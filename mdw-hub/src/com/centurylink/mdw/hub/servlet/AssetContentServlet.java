@@ -338,9 +338,6 @@ public class AssetContentServlet extends HttpServlet {
                     if (ApplicationContext.isDevelopment())  // Only Dev mode allows for saving without also committing and pushing to Git
                         CacheRegistration.getInstance().refreshCaches(null);
 
-                    boolean distributed = "true".equalsIgnoreCase(request.getParameter("distributedSave"));
-                    if (distributed)
-                        propagate(request, content);
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));
                 }
             }

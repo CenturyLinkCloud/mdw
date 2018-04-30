@@ -40,7 +40,6 @@ public class AssetImportMonitor implements StartupService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private Long interval;
     private static boolean _terminating;
     private static AssetImportMonitor monitor;
     private static Thread thread;
@@ -49,7 +48,6 @@ public class AssetImportMonitor implements StartupService {
      * Invoked when the server starts up.
      */
     public void onStartup() throws StartupException {
-        interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
         monitor = this;
         thread = new Thread() {
             @Override
@@ -61,8 +59,6 @@ public class AssetImportMonitor implements StartupService {
         thread.start();
     }
 
-
-
     public void onShutdown() {
         _terminating = true;
         thread.interrupt();
@@ -70,6 +66,8 @@ public class AssetImportMonitor implements StartupService {
 
     public void start() {
         try {
+            Long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
+            boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
             VcsArchiver archiver = null;
             File assetDir = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) == null ? null : new File(PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
             File tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR) == null ? null: new File(PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR));
@@ -100,7 +98,7 @@ public class AssetImportMonitor implements StartupService {
                             if (VcsArchiver.setInProgress()) {
                             logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                             archiver.backup();
-                    //        vcs.hardCheckout(branch);
+                            vcs.hardCheckout(branch, gitHardReset);
                             archiver.archive(true);
                             CacheRegistration.getInstance().refreshCaches(null);
                             }
