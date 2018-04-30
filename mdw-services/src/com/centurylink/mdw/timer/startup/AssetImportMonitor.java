@@ -96,11 +96,12 @@ public class AssetImportMonitor implements StartupService {
                                 dbAccess.getConnection());
                         if (!vcs.getCommit().equals(cp.getLatestRefCommit())) {
                             if (VcsArchiver.setInProgress()) {
-                            logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
-                            archiver.backup();
-                            vcs.hardCheckout(branch, gitHardReset);
-                            archiver.archive(true);
-                            CacheRegistration.getInstance().refreshCaches(null);
+                                logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
+                                logger.info("Performing Git checkout: " + vcs + " (branch: " + branch + ")(Hard Reset: " + (gitHardReset ? "YES)" : "NO)"));
+                                archiver.backup();
+                                vcs.hardCheckout(branch, gitHardReset);
+                                archiver.archive(true);
+                                CacheRegistration.getInstance().refreshCaches(null);
                             }
                         }
                     }
