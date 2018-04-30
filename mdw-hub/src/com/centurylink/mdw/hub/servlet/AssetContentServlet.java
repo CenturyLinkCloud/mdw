@@ -387,8 +387,4 @@ public class AssetContentServlet extends HttpServlet {
         userAction.setSource(getClass().getSimpleName());
         ServiceLocator.getUserServices().auditLog(userAction);
     }
-
-    protected void propagate(HttpServletRequest request, byte[] requestContent) throws IOException {
-    	// MDW no longer propagates since there is no way to know instance names/ports when in a cloud deployment
-    }
 }
