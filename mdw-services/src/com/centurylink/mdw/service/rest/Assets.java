@@ -201,6 +201,7 @@ public class Assets extends JsonRestService {
                 importer.setAssetLoc(assetRoot.getPath());
                 importer.setForce(true);
                 importer.run();
+                CacheRegistration.getInstance().refreshCaches(null);
             }
             else {
                 // download from discovery server
@@ -218,11 +219,17 @@ public class Assets extends JsonRestService {
                 AssetServices assetServices = ServiceLocator.getAssetServices();
                 VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                 progressMonitor.start("Archive existing assets");
-                VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
-                archiver.backup();
-                logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-                ZipHelper.unzip(tempFile, assetRoot, null, null, true);
-                archiver.archive(true);
+                if (VcsArchiver.setInProgress()) {
+                    VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
+                    archiver.backup();
+                    logger.info("Unzipping " + tempFile + " into: " + assetRoot);
+                    ZipHelper.unzip(tempFile, assetRoot, null, null, true);
+                    archiver.archive(true);
+                    CacheRegistration.getInstance().refreshCaches(null);
+                }
+                else {
+                    throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
+                }
                 progressMonitor.done();
                 tempFile.delete();
             }

@@ -41,6 +41,7 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -140,10 +141,16 @@ public class GitVcs extends JsonRestService {
                     if (content.has("deleteTempBackups"))
                         deleteTempBackups = content.getBoolean("deleteTempBackups");
 
-                    logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
-                    archiver.backup();
-                    vcGit.hardCheckout(branch);
-                    archiver.archive(deleteTempBackups);
+                    if (VcsArchiver.setInProgress()) {
+                        logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")");
+                        archiver.backup();
+                        vcGit.hardCheckout(branch);
+                        archiver.archive(deleteTempBackups);
+                        CacheRegistration.getInstance().refreshCaches(null);
+                    }
+                    else {
+                        throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
+                    }
                 }
                 else {
                     if (pkgName != null) {

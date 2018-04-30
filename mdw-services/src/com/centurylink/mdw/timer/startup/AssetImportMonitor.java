@@ -97,11 +97,13 @@ public class AssetImportMonitor implements StartupService {
                         Checkpoint cp = new Checkpoint(assetDir, vcs, vcs.getCommit(),
                                 dbAccess.getConnection());
                         if (!vcs.getCommit().equals(cp.getLatestRefCommit())) {
+                            if (VcsArchiver.setInProgress()) {
                             logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                             archiver.backup();
                     //        vcs.hardCheckout(branch);
                             archiver.archive(true);
                             CacheRegistration.getInstance().refreshCaches(null);
+                            }
                         }
                     }
                     Thread.sleep(interval);

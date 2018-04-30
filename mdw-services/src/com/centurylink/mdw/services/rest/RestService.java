@@ -127,20 +127,7 @@ public abstract class RestService {
 
     protected void propagate(String method, String request, Map<String,String> headers)
     throws ServiceException, IOException {
-        String requestUrl = headers.get(Listener.METAINFO_REQUEST_URL);
-        String queryStr = "";
-        if (!StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
-            queryStr = "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
-        if (requestUrl == null)
-            throw new ServiceException("Missing header: " + Listener.METAINFO_REQUEST_URL);
-        for (URL serviceUrl : getOtherServerUrls(requestUrl)) {
-            HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl + queryStr));
-            httpHelper.setHeaders(headers);
-            if (method.equals("post"))
-                validateResponse(httpHelper.post(request));
-            else if (method.equals("put"))
-                validateResponse(httpHelper.put(request));
-        }
+        // MDW no longer propagates since there is no way to know instance names/ports when in a cloud deployment
     }
 
     protected List<URL> getOtherServerUrls(String requestUrl) throws IOException {

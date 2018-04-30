@@ -74,8 +74,8 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   
   $scope.initOptions = function() {
     $scope.options = {
-      distributedSave: true,
-      cacheRefresh: true,
+      distributedSave: false,
+      cacheRefresh: false,
       commitAndPush: true
     };    
   };

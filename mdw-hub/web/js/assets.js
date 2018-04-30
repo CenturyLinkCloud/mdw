@@ -42,8 +42,8 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   $scope.fileImportMessage = 'Select a JSON or ZIP file to import.';
   $scope.fileImportUploading = false;
   $scope.packageImportFile = null;
-  $scope.distributedImport = true;
-  $scope.cacheRefresh = true;
+  $scope.distributedImport = false;
+  $scope.cacheRefresh = false;
   $scope.deleteTempBackups = true;
   
   $scope.cancel = function() {
