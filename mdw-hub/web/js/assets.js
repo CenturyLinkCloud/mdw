@@ -45,13 +45,14 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   $scope.distributedImport = false;
   $scope.cacheRefresh = false;
   $scope.deleteTempBackups = true;
+  $scope.gitHardReset = false;
   
   $scope.cancel = function() {
     $location.path('/packages');
   };
   
   $scope.gitImport = function() {
-    GitVcs.import({pkgPath: '*', gitAction: 'pull'}, { distributed: $scope.distributedImport, deleteTempBackups: $scope.deleteTempBackups }, function(data) {
+    GitVcs.import({pkgPath: '*', gitAction: 'pull'}, { distributed: $scope.distributedImport, deleteTempBackups: $scope.deleteTempBackups, gitHard: $scope.gitHardReset }, function(data) {
       if (data.status && data.status.code !== 0) {
         $scope.gitImportMessage = data.status.message;
       }

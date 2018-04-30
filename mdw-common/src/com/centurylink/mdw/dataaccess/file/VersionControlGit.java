@@ -368,14 +368,19 @@ public class VersionControlGit implements VersionControl {
         new Delete(localDir, true).run();
     }
 
+    public void hardCheckout(String branch) throws Exception {
+        hardCheckout(branch, false);
+    }
+
     /**
      * Performs a HARD reset and FORCED checkout.
      * Only to be used on server (not Designer).
      * FIXME: path is ignored
      */
-    public void hardCheckout(String branch) throws Exception {
+    public void hardCheckout(String branch, Boolean hard) throws Exception {
         fetch(); // in case the branch is not known locally
-        hardReset();
+        if (hard)
+            hardReset();
         checkout(branch);
         pull(branch);  // pull before delete or next pull may add non-path items back
     }
