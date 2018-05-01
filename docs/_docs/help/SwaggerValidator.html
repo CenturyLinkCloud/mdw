@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>Swagger Validator</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Swagger Validator</h1>
+<p>
+  The Swagger Validator activity checks a process's request for conformance with the requirements specified
+  in its Swagger schema.  The results are accumulated in a 
+  Limberest <a href="https://limberest.io/limberest/javadoc/io/limberest/validate/Result.html">Result</a> object.
+  Default handling of the result is as follows (override <code>handleResponse()</code> to customize):
+  <ul>
+    <li><strong>Success</strong>: returns an activity result of <code>true</code></li>
+    <li><string>Failure</string>: sets the response payload and HTTP status code according to the result,
+      and returns an activity result of <code>false</code></li>
+</p>
+
+<h3><a id="configuring">Configuring</a></h3>
+<p>
+  Validation is applied to the selected request items.
+</p>
+<p>
+  Strict means unexpected elements cause validation failure (vs ignored).
+</p>
+</body>
+</html>

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.cache.CachingException;
@@ -30,7 +29,6 @@ import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetRequest;
-import com.centurylink.mdw.model.asset.AssetRequest.HttpMethod;
 import com.centurylink.mdw.model.asset.RequestKey;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -73,19 +71,14 @@ public class ProcessPaths implements PreloadableCache {
                     try {
                         String contents = new String(Files.readAllBytes(Paths.get(process.file().getPath())));
                         if (contents.indexOf("\"requestPath\"") > 0) {
-                            process = new Process(new JSONObject(contents));
-                            String path = process.getAttribute("requestPath");
-                            String method = process.getAttribute("requestMethod");
-                            if (path != null && method != null) {
+                            process = new Process(packageName, processName, new JSONObject(contents));
+                            AssetRequest assetRequest = process.getRequest();
+                            if (assetRequest != null) {
+                                String path = assetRequest.getPath();
                                 if (!path.startsWith("/"))
                                     path = "/" + path;
-                                HttpMethod httpMethod = HttpMethod.valueOf(method);
-                                String assetPath = packageName + "/" + processName;
-                                String parameters = process.getAttribute("requestParameters");
-                                JSONArray params = parameters == null ? null : new JSONArray(parameters);
-                                AssetRequest assetRequest = new AssetRequest(assetPath, httpMethod, path, params);
                                 String servicePath = packageName.replace('.', '/') + path;
-                                RequestKey requestKey = new RequestKey(httpMethod, servicePath);
+                                RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
                                 AssetRequest existing = requestPaths.get(requestKey);
                                 if (existing == null) {
                                     requestPaths.put(requestKey, assetRequest);

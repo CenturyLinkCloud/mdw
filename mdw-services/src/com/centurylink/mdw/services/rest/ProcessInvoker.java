@@ -74,9 +74,9 @@ public class ProcessInvoker extends JsonRestService {
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + assetRequest.getAsset());
 
         Variable requestVar = process.getVariable("request");
-        String requestType = requestVar == null ? null : requestVar.getType();
         Object requestObj = null;
         if (content != null) {
+            String requestType = requestVar == null ? null : requestVar.getType();
             if (JSONObject.class.getName().equals(requestType)) {
                 requestObj = content;
             }

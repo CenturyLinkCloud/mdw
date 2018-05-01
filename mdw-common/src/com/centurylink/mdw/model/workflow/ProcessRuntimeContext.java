@@ -37,6 +37,7 @@ import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.ServiceValuesAccess;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.XPathELResolver;
@@ -98,6 +99,21 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
 
     public String getAttribute(String name) {
         return getAttributes().get(name);
+    }
+
+    public boolean getAttribute(String name, Boolean defaultValue) {
+        String v = getAttribute(name);
+        return v == null ? defaultValue : v.equalsIgnoreCase("true");
+    }
+
+    public int getAttribute(String name, Integer defaultValue) {
+        String v = getAttribute(name);
+        return v == null ? defaultValue : Integer.parseInt(v);
+    }
+
+    public String getAttribute(String name, String defaultValue) {
+        String v = getAttribute(name);
+        return v == null ? defaultValue : v;
     }
 
     public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance) {
@@ -352,5 +368,12 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             return ((DocumentReferenceTranslator)translator).realToObject(strVal);
         else
             return translator.toObject(strVal);
+    }
+
+    private ServiceValuesAccess serviceValues;
+    public ServiceValuesAccess getServiceValues() {
+        if (serviceValues == null)
+            serviceValues = new ServiceValuesAccess(this);
+        return serviceValues;
     }
 }

@@ -32,6 +32,8 @@ import com.centurylink.mdw.model.Changes;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetRequest;
+import com.centurylink.mdw.model.asset.AssetRequest.HttpMethod;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.ExternalEvent;
@@ -797,9 +799,12 @@ public class Process extends Asset implements Jsonable {
         return inputVars;
     }
 
-    /**
-     * Only for VCS Assets.
-     */
+    public Process(String packageName, String processName, JSONObject json) {
+        this(json);
+        setPackageName(packageName);
+        setName(processName);
+    }
+
     public Process(JSONObject json) throws JSONException {
         if (json.has("name"))
             setName(json.getString("name"));
@@ -919,5 +924,22 @@ public class Process extends Asset implements Jsonable {
 
     public String getJsonName() {
         return getName();
+    }
+
+    public AssetRequest getRequest() {
+        String path = getAttribute("requestPath");
+        String method = getAttribute("requestMethod");
+        if (path != null && method != null) {
+            if (!path.startsWith("/"))
+                path = "/" + path;
+            HttpMethod httpMethod = HttpMethod.valueOf(method);
+            String assetPath = getPackageName() + "/" + getName();
+            String parameters = getAttribute("requestParameters");
+            JSONArray params = parameters == null ? null : new JSONArray(parameters);
+            return new AssetRequest(assetPath, httpMethod, path, params);
+        }
+        else {
+            return null;
+        }
     }
 }

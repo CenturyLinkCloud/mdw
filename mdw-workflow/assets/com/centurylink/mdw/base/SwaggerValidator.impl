@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "swagger.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.validate.SwaggerValidatorActivity",
+  "label": "Swagger Validator",
+  "pagelet": "<PAGELET>\n  <LIST NAME='Validate'>\n    <OPTION>Path</OPTION>\n    <OPTION>Query</OPTION>\n    <OPTION>Body</OPTION>\n    <OPTION>Headers</OPTION>\n  </LIST>\n  <BOOLEAN NAME='Strict' />\n  <HYPERLINK URL='/MDWWeb/doc/SwaggerValidator.html'>Swagger Validator Help</HYPERLINK>\n</PAGELET>"
+}
