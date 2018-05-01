@@ -21,11 +21,13 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.ServiceValuesAccess;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.service.api.MdwSwaggerCache;
 import com.centurylink.mdw.service.api.SwaggerModelValidator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -34,6 +36,7 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import io.limberest.service.http.Status;
 import io.limberest.validate.Result;
 import io.limberest.validate.ValidationException;
+import io.swagger.models.Swagger;
 
 @Tracked(LogLevel.TRACE)
 public class SwaggerValidatorActivity extends DefaultActivityImpl {
@@ -57,10 +60,13 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         }
 
         try {
+            Swagger swagger = MdwSwaggerCache.getSwagger(requestPath);
+            if (swagger == null)
+                throw new ValidationException(Status.NOT_FOUND.getCode(), "No swagger found: " + requestPath);
+            SwaggerModelValidator validator = new SwaggerModelValidator(httpMethod, requestPath, swagger);
             Result result = new Result();
-            SwaggerModelValidator validator = new SwaggerModelValidator(httpMethod, requestPath);
             if (isValidatePath())
-                result.also(validator.validatePath(serviceValues.getRequestPath(), isStrict()));
+                result.also(validator.validatePath(requestPath, isStrict()));
             if (isValidateQuery())
                 result.also(validator.validateQuery(serviceValues.getQuery(), isStrict()));
             if (isValidateHeaders())
@@ -100,7 +106,11 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
             Variable responseVariable = getMainProcessDefinition().getVariable(responseVariableName);
             if (responseVariable == null)
                 throw new ActivityException("Missing response variable: " + responseVariableName);
-            Object responseObject = serviceValues.fromJson(responseVariableName, statusResponse.getJson());
+            Object responseObject;
+            if (responseVariable.getType().equals(Jsonable.class.getName()))
+                responseObject = statusResponse; // _type has not been set, so serialization would fail
+            else
+                responseObject = serviceValues.fromJson(responseVariableName, statusResponse.getJson());
             setVariableValue(responseVariableName, responseObject);
             return false;
         }

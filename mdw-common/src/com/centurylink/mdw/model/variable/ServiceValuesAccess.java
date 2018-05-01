@@ -106,11 +106,15 @@ public class ServiceValuesAccess {
         return requestHeaders.get(Listener.METAINFO_HTTP_METHOD);
     }
 
+    /**
+     * Always begins with "/".
+     */
     public String getRequestPath() {
         Map<String,String> requestHeaders = getRequestHeaders();
         if (requestHeaders == null)
             return null;
-        return requestHeaders.get(Listener.METAINFO_REQUEST_PATH);
+        String path = requestHeaders.get(Listener.METAINFO_REQUEST_PATH);
+        return path.startsWith("/") ? path : "/" + path;
     }
 
     public Query getQuery() {
@@ -151,6 +155,9 @@ public class ServiceValuesAccess {
         }
     }
 
+    /**
+     * For Jsonable, _type property is required.
+     */
     public Object fromJson(String variableName, JSONObject json) throws TranslationException {
         if (json == null)
             return null;

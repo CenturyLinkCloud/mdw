@@ -111,14 +111,15 @@ public class ProcessInvoker extends JsonRestService {
 
         String masterRequestId = getMasterRequestId(headers);
 
-        Map<String,Object> inputVariables = new HashMap<>();
-        if (requestVar != null && requestObj != null)
-            inputVariables.put(requestVar.getName(), requestObj);
-
         if (process.isService()) {
-            return invokeServiceProcess(assetRequest.getAsset(), requestObj, masterRequestId, inputVariables, headers);
+            return invokeServiceProcess(assetRequest.getAsset(), requestObj, masterRequestId, null, headers);
         }
         else {
+            // request and requestHeaders need explicit binding for non-service procs
+            Map<String,Object> inputVariables = new HashMap<>();
+            if (requestVar != null && requestObj != null)
+                inputVariables.put(requestVar.getName(), requestObj);
+            inputVariables.put("requestHeaders", headers);
             launchProcess(assetRequest.getAsset(), masterRequestId, inputVariables, headers);
             return new StatusResponse(Status.ACCEPTED).getJson();
         }

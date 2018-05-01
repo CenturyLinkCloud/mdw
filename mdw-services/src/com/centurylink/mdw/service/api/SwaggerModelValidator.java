@@ -27,16 +27,15 @@ import io.limberest.service.ResourcePath;
 import io.limberest.service.http.Request.HttpMethod;
 import io.limberest.validate.Result;
 import io.limberest.validate.ValidationException;
+import io.swagger.models.Swagger;
 
 /**
  * Validate JSON service requests against swagger annotations.
  */
 public class SwaggerModelValidator extends SwaggerValidator {
 
-    public SwaggerModelValidator(String method, String path) throws ValidationException {
-        super(new SwaggerRequest(HttpMethod.valueOf(method.toUpperCase()),
-                new ResourcePath(path.startsWith("/") ? path : '/' + path),
-                MdwSwaggerCache.getSwagger(path.startsWith("/") ? path : '/' + path)));
+    public SwaggerModelValidator(String method, String path, Swagger swagger) throws ValidationException {
+        super(new SwaggerRequest(HttpMethod.valueOf(method.toUpperCase()), new ResourcePath(path), swagger));
     }
 
     public Result validate(String path, Query query, JSONObject body, Map<String,String> headers)

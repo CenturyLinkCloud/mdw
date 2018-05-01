@@ -31,7 +31,7 @@ public class MdwSwaggerCache implements CacheService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<String,Swagger> swaggerSvcs = new HashMap<String,Swagger>();
+    private static Map<String,Swagger> swaggerSvcs = new HashMap<>();
 
     public static Swagger getSwagger() {
         return getSwagger("/");
@@ -63,8 +63,10 @@ public class MdwSwaggerCache implements CacheService {
                 else if (hubUrl.startsWith("http://"))
                     swagger.getSchemes().add(Scheme.HTTP);
             }
+            // TODO find (non-conflicting) process paths
+            if (swagger.getPaths() == null)
+                swagger = null;
             swaggerSvcs.put(svcPath, swagger);
-            // TODO put (non-conflicting) process paths
         }
         return swagger;
     }
