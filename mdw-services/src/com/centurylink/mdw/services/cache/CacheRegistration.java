@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.xmlbeans.XmlException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.annotations.Parameter;
@@ -80,9 +82,9 @@ public class CacheRegistration implements StartupService {
      */
     public void onStartup() {
         try {
-            preloadCache();
+            preloadCaches();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
-            preloadDynamicCache();
+            preloadDynamicCaches();
             performInitialRequest();
         }
         catch (Exception ex){
@@ -98,14 +100,13 @@ public class CacheRegistration implements StartupService {
      * @throws Exception
      * @throws StartupException
      */
-    private void preloadCache() throws Exception {
+    private void preloadCaches() throws IOException, XmlException {
         Map<String,Properties> caches = getPreloadCacheSpecs();
         for (String cacheName : caches.keySet()) {
             Properties cacheProps = (Properties)caches.get(cacheName);
             String cacheClassName = cacheProps.getProperty("ClassName");
             logger.info(" - loading cache " + cacheName);
             CacheService cachingObj = getCacheInstance(cacheClassName, cacheProps);
-
             if (cachingObj != null) {
                 if (cachingObj instanceof PreloadableCache) {
                     ((PreloadableCache)cachingObj).loadCache();
@@ -123,22 +124,27 @@ public class CacheRegistration implements StartupService {
     /**
      * Load caches registered as dynamic java services.
      */
-    private void preloadDynamicCache() throws Exception {
+    private void preloadDynamicCaches() {
         List<CacheService> dynamicCacheServices = CacheRegistry.getInstance().getDynamicCacheServices();
         for (CacheService dynamicCacheService : dynamicCacheServices) {
             if (dynamicCacheService instanceof PreloadableCache) {
-                PreloadableCache preloadableCache = (PreloadableCache)dynamicCacheService;
-                RegisteredService regServ = preloadableCache.getClass().getAnnotation(RegisteredService.class);
-                Map<String,String> params = new HashMap<>();
-                Parameter[] parameters = regServ.parameters();
-                if (parameters != null) {
-                    for (Parameter parameter : parameters) {
-                        if (parameter.name().length() > 0)
-                            params.put(parameter.name(), parameter.value());
+                try {
+                    PreloadableCache preloadableCache = (PreloadableCache)dynamicCacheService;
+                    RegisteredService regServ = preloadableCache.getClass().getAnnotation(RegisteredService.class);
+                    Map<String,String> params = new HashMap<>();
+                    Parameter[] parameters = regServ.parameters();
+                    if (parameters != null) {
+                        for (Parameter parameter : parameters) {
+                            if (parameter.name().length() > 0)
+                                params.put(parameter.name(), parameter.value());
+                        }
                     }
+                    preloadableCache.initialize(params);
+                    preloadableCache.loadCache();
                 }
-                preloadableCache.initialize(params);
-                preloadableCache.loadCache();
+                catch (Exception ex) {
+                    logger.severeException("Failed to preload " + dynamicCacheService.getClass(), ex);
+                }
             }
             synchronized(allCaches) {
                 allCaches.put(dynamicCacheService.getClass().getName(), dynamicCacheService);
@@ -244,22 +250,13 @@ public class CacheRegistration implements StartupService {
         }
     }
 
-    /**
-     * Returns the list of all the start up classes that has been
-     * defined in the application properties file
-     * @throws Exception
-     * @return Collection of StartUPClasses
-     */
-    private Map<String,Properties> getPreloadCacheSpecs() throws Exception {
-
+    private Map<String,Properties> getPreloadCacheSpecs() throws IOException, XmlException {
         Map<String,String> depedencyCacheMap = new HashMap<String, String>();
         ApplicationCacheDocument appCacheDoc = null;
-        InputStream stream = null;
         Map<String,Properties> retPropsTemp = new HashMap<String,Properties>();
         Map<String,Properties> retProps = new LinkedHashMap<String,Properties>();
         List<String> tempList;
-        try {
-            stream = FileHelper.openConfigurationFile(APPLICATION_CACHE_FILE_NAME);
+        try (InputStream stream = FileHelper.openConfigurationFile(APPLICATION_CACHE_FILE_NAME)) {
             appCacheDoc = ApplicationCacheDocument.Factory.parse(stream, Compatibility.namespaceOptions());
             ApplicationCache appCache = appCacheDoc.getApplicationCache();
             for (Cache cache : appCache.getCacheList()) {
@@ -284,15 +281,8 @@ public class CacheRegistration implements StartupService {
                         retProps.put(name, retPropsTemp.get(name));
                 }
             }
+            return retProps;
         }
-        catch (Throwable e) {
-            logger.severeException("Failed to load cache configuration", e);
-        }
-        finally {
-            if (stream!=null) stream.close();
-        }
-        return retProps;
-
     }
 
     public void registerCache(String name, CacheService cache) {

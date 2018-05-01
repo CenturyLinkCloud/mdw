@@ -57,10 +57,10 @@
       ]
     },
     {
-      "name": "Process Request Help",
+      "name": "Workflow Request Help",
       "section": "Request",
       "type": "link",
-      "url": "/MDWWeb/doc/processRequest.html"
+      "url": "/MDWWeb/doc/workflowRequest.html"
     }    
   ]}
 }

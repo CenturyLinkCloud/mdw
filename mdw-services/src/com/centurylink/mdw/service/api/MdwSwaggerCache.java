@@ -64,6 +64,7 @@ public class MdwSwaggerCache implements CacheService {
                     swagger.getSchemes().add(Scheme.HTTP);
             }
             swaggerSvcs.put(svcPath, swagger);
+            // TODO put (non-conflicting) process paths
         }
         return swagger;
     }

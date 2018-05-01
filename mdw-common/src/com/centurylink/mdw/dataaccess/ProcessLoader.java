@@ -44,7 +44,7 @@ public interface ProcessLoader {
     List<Package> getPackageList(boolean deep, ProgressMonitor progressMonitor)
     throws DataAccessException;
 
-    List<Process> getProcessList()
+    List<Process> getProcessList(boolean withArchived)
     throws DataAccessException;
 
     Process loadProcess(Long processID, boolean withSubProcesses)
