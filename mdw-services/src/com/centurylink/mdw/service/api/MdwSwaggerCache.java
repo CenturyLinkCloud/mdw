@@ -87,9 +87,6 @@ public class MdwSwaggerCache implements CacheService {
                 swagger.getSchemes().add(Scheme.HTTPS);
             else if (hubUrl.startsWith("http://"))
                 swagger.getSchemes().add(Scheme.HTTP);
-
-            if (swagger.getPath(servicePath) == null)
-                return null;  // to indicate nothing for this path
         }
         return swagger;
     }

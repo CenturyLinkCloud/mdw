@@ -16,6 +16,11 @@
       "label": "Path"
     },
     {
+      "type": "text",
+      "name": "requestSummary",
+      "label": "Swagger Summary"
+    },    
+    {
       "type": "table",
       "name": "requestParameters",
       "converter": "ObjectTableConverter",

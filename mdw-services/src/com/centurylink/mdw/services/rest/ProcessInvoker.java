@@ -84,11 +84,10 @@ public class ProcessInvoker extends JsonRestService {
                 // try to instantiate specify bodyParam type if configured
                 Parameter bodyParam = assetRequest.getBodyParameter();
                 if (bodyParam.getDataType() != null) {
+                    // TODO primitive types
                     Package processPackage = PackageCache.getProcessPackage(process.getId());
                     try {
-                        String qname = bodyParam.getDataType().replace('/', '.');
-                        qname = qname.substring(0, qname.lastIndexOf('.'));
-                        Class<?> bodyClass = processPackage.getCloudClassLoader().loadClass(qname);
+                        Class<?> bodyClass = processPackage.getCloudClassLoader().loadClass(bodyParam.getDataType());
                         if (Jsonable.class.isAssignableFrom(bodyClass)) {
                             Constructor<? extends Jsonable> constructor = bodyClass.asSubclass(Jsonable.class).getConstructor(JSONObject.class);
                             requestObj = constructor.newInstance(content);

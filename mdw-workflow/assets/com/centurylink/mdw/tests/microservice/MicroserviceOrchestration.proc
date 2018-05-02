@@ -105,8 +105,9 @@
     "PROCESS_VISIBILITY": "SERVICE",
     "WORK_DISPLAY_INFO": "x=379,y=59,w=236,h=27",
     "requestMethod": "POST",
-    "requestParameters": "[[\"User\",\"Body\",\"true\",\"Create user with groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.1,1)\"]]",
-    "requestPath": "/user"
+    "requestParameters": "[[\"User\",\"Body\",\"true\",\"User with optional groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.2,1)\"]]",
+    "requestPath": "/user",
+    "requestSummary": "Create a user and add to workgroups"
   },
   "variables": {
     "request": {

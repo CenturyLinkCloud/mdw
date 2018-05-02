@@ -108,12 +108,14 @@ public class CacheRegistration implements StartupService {
             logger.info(" - loading cache " + cacheName);
             CacheService cachingObj = getCacheInstance(cacheClassName, cacheProps);
             if (cachingObj != null) {
+                long before = System.currentTimeMillis();
                 if (cachingObj instanceof PreloadableCache) {
                     ((PreloadableCache)cachingObj).loadCache();
                 }
                 synchronized(allCaches) {
                     allCaches.put(cacheName, cachingObj);
                 }
+                logger.debug("    - " + cacheName + " loaded in " + (System.currentTimeMillis() - before) + " ms");
             }
             else {
                 logger.warn("Caching Class is  invalid. Name-->"+cacheClassName);

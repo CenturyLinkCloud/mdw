@@ -23,7 +23,7 @@ import com.centurylink.mdw.model.asset.AssetRequest.HttpMethod;
 public class RequestKey implements Comparable<RequestKey> {
 
     /**
-     * This is the full service path.
+     * This is the full service path (whereas AssetRequest.path is to asset package).
      */
     private String path;
     public String getPath() { return path; }

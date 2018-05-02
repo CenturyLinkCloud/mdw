@@ -36,6 +36,9 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import io.limberest.service.http.Status;
 import io.limberest.validate.Result;
 import io.limberest.validate.ValidationException;
+import io.swagger.models.HttpMethod;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 
 @Tracked(LogLevel.TRACE)
@@ -61,8 +64,12 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
 
         try {
             Swagger swagger = MdwSwaggerCache.getSwagger(requestPath);
-            if (swagger == null)
+            Path swaggerPath = swagger.getPath(requestPath);
+            if (swaggerPath == null)
                 throw new ValidationException(Status.NOT_FOUND.getCode(), "No swagger found: " + requestPath);
+            Operation swaggerOp = swaggerPath.getOperationMap().get(HttpMethod.valueOf(httpMethod));
+            if (swaggerOp == null)
+                throw new ValidationException(Status.NOT_FOUND.getCode(), "No swagger found: " + httpMethod + " " + requestPath);
             SwaggerModelValidator validator = new SwaggerModelValidator(httpMethod, requestPath, swagger);
             Result result = new Result();
             if (isValidatePath())

@@ -45,11 +45,14 @@ public class ProcessRequests implements PreloadableCache {
     }
 
     public static AssetRequest getRequest(String method, String path) {
-        RequestKey key = new RequestKey(method, path);
-        AssetRequest assetRequest = requests.get(key);
+        return getRequest(new RequestKey(method, path));
+    }
+
+    public static AssetRequest getRequest(RequestKey requestKey) {
+        AssetRequest assetRequest = requests.get(requestKey);
         if (assetRequest == null) {
             synchronized(requests) {
-                assetRequest = requests.get(key);
+                assetRequest = requests.get(requestKey);
             }
         }
         return assetRequest;

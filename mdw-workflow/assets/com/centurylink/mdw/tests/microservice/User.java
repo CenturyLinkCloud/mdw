@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value="User", description="User with optional groups")
+@ApiModel(value="User/Groups", description="User with optional groups")
 public class User implements Jsonable {
 
     public User(JSONObject json) {

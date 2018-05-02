@@ -936,7 +936,9 @@ public class Process extends Asset implements Jsonable {
             String assetPath = getPackageName() + "/" + getName();
             String parameters = getAttribute("requestParameters");
             JSONArray params = parameters == null ? null : new JSONArray(parameters);
-            return new AssetRequest(assetPath, httpMethod, path, params);
+            AssetRequest request = new AssetRequest(assetPath, httpMethod, path, params);
+            request.setSummary(getAttribute("requestSummary"));
+            return request;
         }
         else {
             return null;

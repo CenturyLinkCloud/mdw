@@ -52,8 +52,15 @@ public class AssetRequest {
     private HttpMethod method;
     public HttpMethod getMethod() { return method; }
 
+    /**
+     * Service path (relative to asset package).
+     */
     private String path;
     public String getPath() { return path; }
+
+    private String summary;
+    public String getSummary() { return summary; }
+    public void setSummary(String summary) { this.summary = summary; }
 
     private List<Parameter> parameters;
     public List<Parameter> getParameters() { return parameters; }
@@ -99,14 +106,9 @@ public class AssetRequest {
     }
 
     public AssetRequest(String asset, HttpMethod method, String path) {
-        this(asset, method, path, (List<Parameter>)null);
-    }
-
-    public AssetRequest(String asset, HttpMethod method, String path, List<Parameter> parameters) {
         this.asset = asset;
         this.method = method;
         this.path = path;
-        this.parameters = parameters;
     }
 
     public AssetRequest(String asset, HttpMethod method, String path, JSONArray parameters) {
@@ -148,7 +150,10 @@ public class AssetRequest {
                           break;
                   case 3: this.description = jsonArray.getString(i);
                           break;
-                  case 4: this.dataType = jsonArray.getString(i);
+                  case 4: this.dataType = jsonArray.getString(i).replace('/', '.');
+                          if (this.dataType.endsWith(".java") || this.dataType.endsWith(".kt"))
+                              this.dataType = this.dataType.substring(0, this.dataType.lastIndexOf("."));
+                          break;
                 }
             }
         }
