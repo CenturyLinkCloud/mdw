@@ -18,6 +18,7 @@ package com.centurylink.mdw.timer.startup;
 import java.io.File;
 
 import com.centurylink.mdw.cli.Checkpoint;
+import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DbAccess;
@@ -41,22 +42,24 @@ public class AssetImportMonitor implements StartupService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static boolean _terminating;
-    private static AssetImportMonitor monitor;
-    private static Thread thread;
+    private static AssetImportMonitor monitor = null;
+    private static Thread thread = null;
 
     /**
      * Invoked when the server starts up.
      */
     public void onStartup() throws StartupException {
-        monitor = this;
-        thread = new Thread() {
-            @Override
-            public void run() {
-                this.setName("AssetImportMonitor-thread");
-                monitor.start();
-            }
-        };
-        thread.start();
+        if (monitor == null) {
+            monitor = this;
+            thread = new Thread() {
+                @Override
+                public void run() {
+                    this.setName("AssetImportMonitor-thread");
+                    monitor.start();
+                }
+            };
+            thread.start();
+        }
     }
 
     public void onShutdown() {
@@ -65,6 +68,8 @@ public class AssetImportMonitor implements StartupService {
     }
 
     public void start() {
+        WebSocketMessenger websocket = null;
+        boolean subscribers = false;
         try {
             Long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
             boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
@@ -96,12 +101,38 @@ public class AssetImportMonitor implements StartupService {
                                 dbAccess.getConnection());
                         if (!vcs.getCommit().equals(cp.getLatestRefCommit())) {
                             if (VcsArchiver.setInProgress()) {
+                                websocket = WebSocketMessenger.getInstance();
+                                subscribers = false;
                                 logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                 logger.info("Performing Git checkout: " + vcs + " (branch: " + branch + ")(Hard Reset: " + (gitHardReset ? "YES)" : "NO)"));
+                                if (websocket != null) {
+                                    try {
+                                        subscribers = websocket.send("SystemMessage", "Asset import in progress...");
+                                    }
+                                    catch (Exception ex) {
+                                        logger.warnException("Exception trying to send message over websocket", ex);
+                                    }
+                                }
                                 archiver.backup();
                                 vcs.hardCheckout(branch, gitHardReset);
                                 archiver.archive(true);
+                                if (subscribers) {
+                                    try {
+                                        subscribers = websocket.send("SystemMessage", "Asset import complete.  Refreshing caches...");
+                                    }
+                                    catch (Exception ex) {
+                                        logger.warnException("Exception trying to send message over websocket", ex);
+                                    }
+                                }
                                 CacheRegistration.getInstance().refreshCaches(null);
+                                if (subscribers) {
+                                    try {
+                                        subscribers = websocket.send("SystemMessage", "Cache refresh completed");
+                                    }
+                                    catch (Exception ex) {
+                                        logger.warnException("Exception trying to send message over websocket", ex);
+                                    }
+                                }
                             }
                         }
                     }
@@ -115,6 +146,14 @@ public class AssetImportMonitor implements StartupService {
         }
         catch (Exception e) {
             logger.severeException(e.getMessage(), e);
+            if (websocket != null && subscribers) {
+                try {
+                    subscribers = websocket.send("SystemMessage", "Import error: " + e.getMessage());
+                }
+                catch (Exception ex) {
+                    logger.warnException("Exception trying to send message over websocket", ex);
+                }
+            }
         }
         finally {
             if (!_terminating) this.start();  // Restart if a failure occurred, besides instance is shutting down

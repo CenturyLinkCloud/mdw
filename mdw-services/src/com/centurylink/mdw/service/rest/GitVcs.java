@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
@@ -58,6 +59,13 @@ import io.swagger.annotations.ApiOperation;
 public class GitVcs extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private Thread thread;
+    private VcsArchiver archiver;
+    private VersionControlGit vcGit;
+    private String branch;
+    private boolean hard = false;
+    private boolean deleteTempBackups = false;
 
     @Override
     public List<String> getRoles(String path) {
@@ -119,13 +127,13 @@ public class GitVcs extends JsonRestService {
         if (action == null)
             throw new ServiceException(HTTP_400_BAD_REQUEST, "Missing parameter: gitAction");
         try {
-            VersionControlGit vcGit = getVersionControl();
+            vcGit = getVersionControl();
             String requestPath = URLDecoder.decode(subpath, "UTF-8");
             String assetPath = vcGit.getRelativePath(new File(getRequiredProperty(PropertyNames.MDW_ASSET_LOCATION)));
-            String branch = getRequiredProperty(PropertyNames.MDW_GIT_BRANCH);
+            branch = getRequiredProperty(PropertyNames.MDW_GIT_BRANCH);
             logger.info("Git VCS branch: " + branch);
 
-            VcsArchiver archiver = getVcsArchiver(vcGit);
+            archiver = getVcsArchiver(vcGit);
             int lastSlash = requestPath.lastIndexOf('/');
             String pkgName = null;
             String assetName = null;
@@ -137,19 +145,20 @@ public class GitVcs extends JsonRestService {
             if ("pull".equals(action)) {
                 if (requestPath.equals("*")) {
                     // importing all assets
-                    boolean deleteTempBackups = false;
                     if (content.has("deleteTempBackups"))
                         deleteTempBackups = content.getBoolean("deleteTempBackups");
-
+                    if (content.has("gitHard"))
+                        hard = content.getBoolean("gitHard");
                     if (VcsArchiver.setInProgress()) {
-                        boolean hard = false;
-                        if (content.has("gitHard"))
-                            hard = content.getBoolean("gitHard");
-                        logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")(Hard Reset: " + (hard ? "YES)" : "NO)"));
-                        archiver.backup();
-                        vcGit.hardCheckout(branch, hard);
-                        archiver.archive(deleteTempBackups);
-                        CacheRegistration.getInstance().refreshCaches(null);
+                        GitVcs importer = this;
+                        thread = new Thread() {
+                            @Override
+                            public void run() {
+                                this.setName("GitVcsAssetImporter-thread");
+                                importer.importAssets();
+                            }
+                        };
+                        thread.start();
                     }
                     else {
                         throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
@@ -233,5 +242,53 @@ public class GitVcs extends JsonRestService {
         ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
         progressMonitor.start("Archive existing assets");
         return new VcsArchiver(assetDir, tempDir, vc, progressMonitor);
+    }
+
+    private void importAssets() {
+        WebSocketMessenger websocket = WebSocketMessenger.getInstance();
+        boolean subscribers = false;
+        try {
+            logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")(Hard Reset: " + (hard ? "YES)" : "NO)"));
+            if (websocket != null) {
+                try {
+                    subscribers = websocket.send("SystemMessage", "Asset import in progress...");
+                }
+                catch (Exception ex) {
+                    logger.warnException("Exception trying to send message over websocket", ex);
+                }
+            }
+            archiver.backup();
+            vcGit.hardCheckout(branch, hard);
+            archiver.archive(deleteTempBackups);
+            if (subscribers) {
+                try {
+                    subscribers = websocket.send("SystemMessage", "Asset import complete.  Refreshing caches...");
+                }
+                catch (Exception ex) {
+                    logger.warnException("Exception trying to send message over websocket", ex);
+                }
+            }
+            CacheRegistration.getInstance().refreshCaches(null);
+            if (subscribers) {
+                try {
+                    subscribers = websocket.send("SystemMessage", "Cache refresh completed");
+                }
+                catch (Exception ex) {
+                    logger.warnException("Exception trying to send message over websocket", ex);
+                }
+            }
+        }
+        catch (Throwable e) {
+            logger.severeException("Exception during asset import", e);
+            if (websocket != null && subscribers) {
+                try {
+                    subscribers = websocket.send("SystemMessage", "Import error: " + e.getMessage());
+                }
+                catch (Exception ex) {
+                    logger.warnException("Exception trying to send message over websocket", ex);
+                }
+            }
+
+        }
     }
 }

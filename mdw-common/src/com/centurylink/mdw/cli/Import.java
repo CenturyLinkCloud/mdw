@@ -33,10 +33,10 @@ import com.beust.jcommander.Parameters;
  * otherwise, if --packageName is specified imports from an mdw instance;
  * otherwise, imports from associated Git repository.
  * Note: this performs a Git
- * <a href="https://git-scm.com/docs/git-reset#git-reset---hard">HARD REST</a>,
+ * <a href="https://git-scm.com/docs/git-reset#git-reset---hard">HARD RESET only if --hard-reset is specified</a>,
  * overwriting all local changes.
  */
-@Parameters(commandNames="import", commandDescription="Import assets from Git (HARD RESET!), or Maven", separators="=")
+@Parameters(commandNames="import", commandDescription="Import assets from Git, or Maven", separators="=")
 public class Import extends Setup {
 
     @Parameter(names="--group-id", description="Maven group id.  If this option is specified, imports from Discovery.")
@@ -65,6 +65,11 @@ public class Import extends Setup {
     private boolean force = false;
     public boolean isForce() { return force; }
     public void setForce(boolean force) { this.force = force; }
+
+    @Parameter(names="--hard-reset", description="Git hard reset overwrites any and all changes in local repo")
+    private boolean hardReset = false;
+    public boolean isHardReset() { return hardReset; }
+    public void setHardReset(boolean hardReset) { this.hardReset = hardReset; }
 
     // for maven
     private List<String> artifacts = new ArrayList<>();
@@ -149,6 +154,7 @@ public class Import extends Setup {
 
         System.out.println("Importing from Git into: " + getProjectDir() + "...");
 
+        // Capture current Refs in ASSET_REF before import
         DbInfo dbInfo = new DbInfo(props);
         Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
         try {
@@ -158,8 +164,16 @@ public class Import extends Setup {
             throw new IOException(ex.getMessage(), ex);
         }
 
-        Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch());
+        Git git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
         git.run(monitors);
+
+        // Capture new Refs in ASSET_REF after import (Git pull)
+        try {
+            checkpoint.run(monitors).updateRefs();
+        }
+        catch (SQLException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
     }
 
     protected void importPackageFromMaven(String groupId, String artifactId, String version,
