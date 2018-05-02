@@ -36,7 +36,7 @@ import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.service.data.process.ProcessPaths;
+import com.centurylink.mdw.service.data.process.ProcessRequests;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.rest.ProcessInvoker;
 import com.centurylink.mdw.services.rest.RestService;
@@ -233,7 +233,7 @@ public class ServiceRequestHandler implements EventHandler {
                 }
 
                 // lastly, try process invoker mapping
-                AssetRequest processRequest = ProcessPaths.getRequest(headers.get(Listener.METAINFO_HTTP_METHOD), requestPath);
+                AssetRequest processRequest = ProcessRequests.getRequest(headers.get(Listener.METAINFO_HTTP_METHOD), requestPath);
                 if (processRequest != null) {
                     return new ProcessInvoker(processRequest);
                 }

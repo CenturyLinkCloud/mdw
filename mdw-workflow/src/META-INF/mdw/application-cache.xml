@@ -38,7 +38,7 @@
   <Cache Name="AllowableTaskActions" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.task.AllowableTaskActions</Property>
   </Cache>    
-  <Cache Name="ProcessPaths" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.service.data.process.ProcessPaths</Property>
+  <Cache Name="ProcessRequests" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.process.ProcessRequests</Property>
   </Cache>
 </ApplicationCache>

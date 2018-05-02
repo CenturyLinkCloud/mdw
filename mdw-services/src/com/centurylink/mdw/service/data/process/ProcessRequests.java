@@ -34,22 +34,22 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class ProcessPaths implements PreloadableCache {
+public class ProcessRequests implements PreloadableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<RequestKey,AssetRequest> requestPaths = new TreeMap<>();
+    private static Map<RequestKey,AssetRequest> requests = new TreeMap<>();
 
-    public static Map<RequestKey,AssetRequest> getRequestPaths() {
-        return requestPaths;
+    public static Map<RequestKey,AssetRequest> getRequests() {
+        return requests;
     }
 
     public static AssetRequest getRequest(String method, String path) {
         RequestKey key = new RequestKey(method, path);
-        AssetRequest assetRequest = requestPaths.get(key);
+        AssetRequest assetRequest = requests.get(key);
         if (assetRequest == null) {
-            synchronized(requestPaths) {
-                assetRequest = requestPaths.get(key);
+            synchronized(requests) {
+                assetRequest = requests.get(key);
             }
         }
         return assetRequest;
@@ -61,8 +61,8 @@ public class ProcessPaths implements PreloadableCache {
 
     @Override
     public void loadCache() {
-        synchronized(requestPaths) {
-            requestPaths.clear();
+        synchronized(requests) {
+            requests.clear();
             try {
                 Map<RequestKey,List<AssetRequest>> conflicting = new TreeMap<>();
                 for (Process process : DataAccess.getProcessLoader().getProcessList(false)) {
@@ -79,9 +79,9 @@ public class ProcessPaths implements PreloadableCache {
                                     path = "/" + path;
                                 String servicePath = packageName.replace('.', '/') + path;
                                 RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
-                                AssetRequest existing = requestPaths.get(requestKey);
+                                AssetRequest existing = requests.get(requestKey);
                                 if (existing == null) {
-                                    requestPaths.put(requestKey, assetRequest);
+                                    requests.put(requestKey, assetRequest);
                                 }
                                 else {
                                     List<AssetRequest> conflicts = conflicting.get(requestKey);
@@ -128,8 +128,8 @@ public class ProcessPaths implements PreloadableCache {
 
     @Override
     public void clearCache() {
-        synchronized(requestPaths) {
-            requestPaths.clear();
+        synchronized(requests) {
+            requests.clear();
         }
     }
 }
