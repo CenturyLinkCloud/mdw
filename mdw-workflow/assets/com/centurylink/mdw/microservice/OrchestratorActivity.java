@@ -285,7 +285,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         List<Microservice> serviceList = servicePlan.getServices();
         SubprocessRunner[] allRunners = new SubprocessRunner[(serviceList.size())];
         List<SubprocessRunner> activeRunners = new ArrayList<SubprocessRunner>(serviceList.size());
-        ServiceSummary summary = getServiceSummary(true);
+        ServiceSummary summary = getServiceSummary(false);
         for (int i = 0; i < serviceList.size(); i++) {
             Microservice service = serviceList.get(i);
             SubprocessRunner runner = new SubprocessRunner(service, i, activeRunners);
@@ -323,6 +323,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             }
         }
 
+        summary = getServiceSummary(true); // lock serviceSummary again
         boolean hasFailedSubprocess = false;
         for (int i = 0; i < allRunners.length; i++) {
             Microservice service = serviceList.get(i);

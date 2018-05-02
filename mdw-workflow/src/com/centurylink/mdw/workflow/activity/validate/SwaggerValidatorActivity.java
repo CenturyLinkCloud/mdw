@@ -15,14 +15,18 @@
  */
 package com.centurylink.mdw.workflow.activity.validate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
+import com.centurylink.mdw.model.asset.AssetRequest.ParameterType;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.ServiceValuesAccess;
 import com.centurylink.mdw.model.variable.Variable;
@@ -72,13 +76,13 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
                 throw new ValidationException(Status.NOT_FOUND.getCode(), "No swagger found: " + httpMethod + " " + requestPath);
             SwaggerModelValidator validator = new SwaggerModelValidator(httpMethod, requestPath, swagger);
             Result result = new Result();
-            if (isValidatePath())
+            if (isValidate(ParameterType.Path))
                 result.also(validator.validatePath(requestPath, isStrict()));
-            if (isValidateQuery())
+            if (isValidate(ParameterType.Query))
                 result.also(validator.validateQuery(serviceValues.getQuery(), isStrict()));
-            if (isValidateHeaders())
+            if (isValidate(ParameterType.Header))
                 result.also(validator.validateHeaders(requestHeaders, isStrict()));
-            if (isValidateBody()) {
+            if (isValidate(ParameterType.Body)) {
                 if (request == null) {
                     result.also(Status.BAD_REQUEST, "Missing request: " + serviceValues.getRequestVariableName());
                 }
@@ -133,20 +137,18 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         return getAttribute(STRICT, false);
     }
 
-    protected boolean isValidatePath() {
-        System.out.println("VALIDATE: " + getAttribute(VALIDATE, ""));
-        return false;
-    }
-
-    protected boolean isValidateQuery() {
-        return true;
-    }
-
-    protected boolean isValidateHeaders() {
-        return false;
-    }
-
-    protected boolean isValidateBody() {
-        return true;
+    private List<String> validateParams;
+    protected boolean isValidate(ParameterType paramType) {
+        if (validateParams == null) {
+            validateParams = new ArrayList<String>();
+            String attr = getAttribute(VALIDATE, "");
+            if (!attr.isEmpty()) {
+                JSONArray arr = new JSONArray(attr);
+                for (int i = 0; i < arr.length(); i++) {
+                    validateParams.add(arr.getString(i));
+                }
+            }
+        }
+        return validateParams.contains(paramType.toString());
     }
 }
