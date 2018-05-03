@@ -43,8 +43,11 @@ import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.system.Bulletin;
+import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
@@ -63,7 +66,7 @@ public class CacheRegistration implements StartupService {
     private static final String APPLICATION_CACHE_FILE_NAME = "application-cache.xml";
     // following 2 lines cannot be initialized in onStartup() - too late
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static Map<String,CacheService> allCaches = new LinkedHashMap<String,CacheService>();
+    private static Map<String,CacheService> allCaches = new LinkedHashMap<>();
 
     private static CacheRegistration instance;
     public static synchronized CacheRegistration getInstance() {
@@ -199,7 +202,9 @@ public class CacheRegistration implements StartupService {
     }
 
     public synchronized void refreshCaches(List<String> excludedFormats) throws StartupException {
+        Bulletin bulletin = null;
         try {
+            bulletin = SystemMessages.bulletinOn("Cache refresh in progress...");
             String propmgr = PropertyManager.class.getName();
             if (excludedFormats == null || !excludedFormats.contains("PROPERTIES"))
                 refreshCache(propmgr);
@@ -212,13 +217,16 @@ public class CacheRegistration implements StartupService {
                 }
             }
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
-
             performInitialRequest();
+            SystemMessages.bulletinOff(bulletin, "Cache refresh completed");
 
         } catch (Exception ex) {
-             String message = "Failed to load caches";
-             logger.severeException(message, ex);
-             throw new StartupException(message, ex);
+            String message = "Failed to load caches";
+            logger.severeException(message, ex);
+            if (bulletin != null) {
+                SystemMessages.bulletinOff(bulletin, Level.Error, "Cache refresh failed");
+            }
+            throw new StartupException(message, ex);
         }
     }
 

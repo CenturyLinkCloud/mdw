@@ -30,13 +30,14 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.system.Bulletin;
+import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -44,6 +45,7 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
@@ -66,8 +68,6 @@ public class GitVcs extends JsonRestService {
     private String branch;
     private boolean hard = false;
     private boolean deleteTempBackups = false;
-    private WebSocketMessenger websocket = null;
-    private Boolean subscribers = null;
 
     @Override
     public List<String> getRoles(String path) {
@@ -247,31 +247,20 @@ public class GitVcs extends JsonRestService {
     }
 
     private void importAssets() {
-        websocket = WebSocketMessenger.getInstance();
+        Bulletin bulletin = null;
         try {
             logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")(Hard Reset: " + (hard ? "YES)" : "NO)"));
-            sendWebSocketMessage("Asset import (Git) in progress...");
+            bulletin = SystemMessages.bulletinOn("Asset import in progress...");
             archiver.backup();
             vcGit.hardCheckout(branch, hard);
             archiver.archive(deleteTempBackups);
-            sendWebSocketMessage("Asset import (Git) complete.  Refreshing caches...");
+            SystemMessages.bulletinOff(bulletin, "Asset import completed");
+            bulletin = new Bulletin("Cache refresh in progress...");
             CacheRegistration.getInstance().refreshCaches(null);
-            sendWebSocketMessage("Cache refresh completed");
         }
         catch (Throwable e) {
             logger.severeException("Exception during asset import", e);
-            sendWebSocketMessage("Import (Git) error: " + e.getMessage());
-        }
-    }
-
-    private void sendWebSocketMessage(String message) {
-        if (websocket != null && (subscribers == null || subscribers)) {
-            try {
-                subscribers = websocket.send("SystemMessage", message);
-            }
-            catch (Exception ex) {
-                logger.warnException("Exception trying to send message over websocket", ex);
-            }
+            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + e.getMessage());
         }
     }
 }

@@ -23,6 +23,7 @@
     "$mdwWebSocketUrl": false,
     "$mdwDiscoveryUrl": false,
     "$mdwCustomRoutes": false,
+    "$mdwMessages": true,
     "$mdwUi": true,
     "hljs": false,
     "JsDiff": false,

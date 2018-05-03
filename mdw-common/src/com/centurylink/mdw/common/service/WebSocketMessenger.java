@@ -38,7 +38,7 @@ public class WebSocketMessenger {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private Map<String,List<Session>> topicSubscribers = new HashMap<>();
+    private static Map<String,List<Session>> topicSubscribers = new HashMap<>();
 
     private static WebSocketMessenger instance;
     /**

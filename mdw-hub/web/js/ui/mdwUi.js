@@ -20,6 +20,7 @@ var $mdwUi = {
      $mdwUi.Configurator = ngInjector.get('Configurator');
      $mdwUi.DOCUMENT_TYPES = ngInjector.get('DOCUMENT_TYPES');
      $mdwUi.authUser = authUser;
+     $mdwMessages.init();
    },
    pseudoImplementors: [
      {
