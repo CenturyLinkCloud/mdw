@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":9,"i64":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10,"i64":9,"i65":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -187,9 +187,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#Process--">Process</a></span>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#Process-org.json.JSONObject-">Process</a></span>(org.json.JSONObject&nbsp;json)</code>
-<div class="block">Only for VCS Assets.</div>
-</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#Process-org.json.JSONObject-">Process</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#Process-java.lang.Long-">Process</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
@@ -202,6 +200,11 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#Process-com.centurylink.mdw.model.workflow.Process-">Process</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;cloneFrom)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#Process-java.lang.String-java.lang.String-org.json.JSONObject-">Process</a></span>(java.lang.String&nbsp;packageName,
+       java.lang.String&nbsp;processName,
+       org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -335,35 +338,39 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getProcessType--">getProcessType</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i26" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/AssetRequest.html" title="class in com.centurylink.mdw.model.asset">AssetRequest</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getRequest--">getRequest</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getSequenceId--">getSequenceId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getStartActivity--">getStartActivity</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getSubprocesses--">getSubprocesses</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getSubProcessVO-java.lang.Long-">getSubProcessVO</a></span>(java.lang.Long&nbsp;id)</code>
 <div class="block">returns the process VO identified by the passed in work id
  It is also possible the sub process is referencing self.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html" title="class in com.centurylink.mdw.model.workflow">TextNote</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getTextNotes--">getTextNotes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getTransition-java.lang.Long-">getTransition</a></span>(java.lang.Long&nbsp;id)</code>
 <div class="block">Find a work transition based on its id value</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getTransition-java.lang.Long-java.lang.Integer-java.lang.String-">getTransition</a></span>(java.lang.Long&nbsp;fromId,
              java.lang.Integer&nbsp;eventType,
@@ -371,11 +378,11 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <div class="block">Finds one work transition for this process matching the specified parameters</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getTransitions--">getTransitions</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getTransitions-java.lang.Long-java.lang.Integer-java.lang.String-">getTransitions</a></span>(java.lang.Long&nbsp;fromWorkId,
               java.lang.Integer&nbsp;eventType,
@@ -384,76 +391,76 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
  that match the event type and completion code.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getTransitionWithNoLabel--">getTransitionWithNoLabel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getUpstreamActivities-java.lang.Long-">getUpstreamActivities</a></span>(java.lang.Long&nbsp;activityId)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getVariable-java.lang.Long-">getVariable</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getVariable-java.lang.String-">getVariable</a></span>(java.lang.String&nbsp;varName)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getVariables--">getVariables</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#getWorkTransitionVO-java.lang.Long-">getWorkTransitionVO</a></span>(java.lang.Long&nbsp;pWorkTransId)</code>
 <div class="block">Returns the WorkTransitionVO</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#hasDynamicJavaActivity--">hasDynamicJavaActivity</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#isEmbeddedExceptionHandler--">isEmbeddedExceptionHandler</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#isEmbeddedProcess--">isEmbeddedProcess</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#isLoaded--">isLoaded</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#isService--">isService</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#isWorkActivity-java.lang.Long-">isWorkActivity</a></span>(java.lang.Long&nbsp;pWorkId)</code>
 <div class="block">checks if the passed in workId is
  Activity</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#overrideAttributesApplied--">overrideAttributesApplied</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#removeDeletedTransitions--">removeDeletedTransitions</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#removeEmptyAndOverrideAttributes--">removeEmptyAndOverrideAttributes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#removeEmptyAttributes--">removeEmptyAttributes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#set-java.util.List-java.util.List-java.util.List-java.util.List-java.util.List-">set</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes,
    java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a>&gt;&nbsp;variables,
@@ -461,58 +468,58 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
    java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;subprocesses,
    java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&gt;&nbsp;activities)</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setActivities-java.util.List-">setActivities</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&gt;&nbsp;activities)</code>&nbsp;</td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setAttribute-java.lang.String-java.lang.String-">setAttribute</a></span>(java.lang.String&nbsp;attrname,
             java.lang.String&nbsp;value)</code>
 <div class="block">Set the value of a process attribute.</div>
 </td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setAttributes-java.util.List-">setAttributes</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</code>&nbsp;</td>
 </tr>
-<tr id="i55" class="rowColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setDescription-java.lang.String-">setDescription</a></span>(java.lang.String&nbsp;description)</code>&nbsp;</td>
 </tr>
-<tr id="i56" class="altColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setExternalEvents-java.util.List-">setExternalEvents</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/event/ExternalEvent.html" title="class in com.centurylink.mdw.model.event">ExternalEvent</a>&gt;&nbsp;externalEvents)</code>&nbsp;</td>
 </tr>
-<tr id="i57" class="rowColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setImplementors-java.util.List-">setImplementors</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;&nbsp;imps)</code>&nbsp;</td>
 </tr>
-<tr id="i58" class="altColor">
+<tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setSequenceId-int-">setSequenceId</a></span>(int&nbsp;sequenceId)</code>&nbsp;</td>
 </tr>
-<tr id="i59" class="rowColor">
+<tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setSubprocesses-java.util.List-">setSubprocesses</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;subprocesses)</code>&nbsp;</td>
 </tr>
-<tr id="i60" class="altColor">
+<tr id="i61" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setTextNotes-java.util.List-">setTextNotes</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html" title="class in com.centurylink.mdw.model.workflow">TextNote</a>&gt;&nbsp;v)</code>&nbsp;</td>
 </tr>
-<tr id="i61" class="rowColor">
+<tr id="i62" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setTransitions-java.util.List-">setTransitions</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;&nbsp;transitions)</code>&nbsp;</td>
 </tr>
-<tr id="i62" class="altColor">
+<tr id="i63" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#setVariables-java.util.List-">setVariables</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a>&gt;&nbsp;variables)</code>&nbsp;</td>
 </tr>
-<tr id="i63" class="rowColor">
+<tr id="i64" class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#versionFromString-java.lang.String-">versionFromString</a></span>(java.lang.String&nbsp;v)</code>&nbsp;</td>
 </tr>
-<tr id="i64" class="altColor">
+<tr id="i65" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html#versionToString-int-">versionToString</a></span>(int&nbsp;version)</code>&nbsp;</td>
 </tr>
@@ -663,6 +670,17 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;Process(<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;cloneFrom)</pre>
 </li>
 </ul>
+<a name="Process-java.lang.String-java.lang.String-org.json.JSONObject-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Process</h4>
+<pre>public&nbsp;Process(java.lang.String&nbsp;packageName,
+               java.lang.String&nbsp;processName,
+               org.json.JSONObject&nbsp;json)</pre>
+</li>
+</ul>
 <a name="Process-org.json.JSONObject-">
 <!--   -->
 </a>
@@ -671,7 +689,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <h4>Process</h4>
 <pre>public&nbsp;Process(org.json.JSONObject&nbsp;json)
         throws org.json.JSONException</pre>
-<div class="block">Only for VCS Assets.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>
@@ -1390,7 +1407,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <a name="getJsonName--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getJsonName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getJsonName()</pre>
@@ -1400,6 +1417,15 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/model/asset/Asset.html#getJsonName--">getJsonName</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="getRequest--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getRequest</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/asset/AssetRequest.html" title="class in com.centurylink.mdw.model.asset">AssetRequest</a>&nbsp;getRequest()</pre>
 </li>
 </ul>
 </li>

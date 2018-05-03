@@ -126,7 +126,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/common/service/AuthorizationException.html" title="class in com.centurylink.mdw.common.service">AuthorizationException</a>, <a href="../../../../../com/centurylink/mdw/services/EventException.html" title="class in com.centurylink.mdw.services">EventException</a>, <a href="../../../../../com/centurylink/mdw/services/task/TaskValidationException.html" title="class in com.centurylink.mdw.services.task">TaskValidationException</a>, <a href="../../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a>, <a href="../../../../../com/centurylink/mdw/service/api/validator/ValidationException.html" title="class in com.centurylink.mdw.service.api.validator">ValidationException</a></dd>
+<dd><a href="../../../../../com/centurylink/mdw/common/service/AuthorizationException.html" title="class in com.centurylink.mdw.common.service">AuthorizationException</a>, <a href="../../../../../com/centurylink/mdw/services/EventException.html" title="class in com.centurylink.mdw.services">EventException</a>, <a href="../../../../../com/centurylink/mdw/services/task/TaskValidationException.html" title="class in com.centurylink.mdw.services.task">TaskValidationException</a>, <a href="../../../../../com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a></dd>
 </dl>
 <hr>
 <br>
@@ -208,6 +208,13 @@ extends <a href="../../../../../com/centurylink/mdw/common/MdwException.html" ti
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html#ServiceException-int-java.lang.String-java.lang.Throwable-">ServiceException</a></span>(int&nbsp;code,
                 java.lang.String&nbsp;message,
                 java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html#ServiceException-io.limberest.validate.Result-">ServiceException</a></span>(io.limberest.validate.Result&nbsp;validationResult)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html#ServiceException-io.limberest.validate.Result-io.limberest.validate.Result.Consolidator-">ServiceException</a></span>(io.limberest.validate.Result&nbsp;validationResult,
+                io.limberest.validate.Result.Consolidator&nbsp;consolidator)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html#ServiceException-com.centurylink.mdw.model.Status-">ServiceException</a></span>(<a href="../../../../../com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a>&nbsp;status)</code>&nbsp;</td>
@@ -443,10 +450,29 @@ extends <a href="../../../../../com/centurylink/mdw/common/MdwException.html" ti
 <a name="ServiceException-com.centurylink.mdw.model.Status-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>ServiceException</h4>
 <pre>public&nbsp;ServiceException(<a href="../../../../../com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a>&nbsp;status)</pre>
+</li>
+</ul>
+<a name="ServiceException-io.limberest.validate.Result-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ServiceException</h4>
+<pre>public&nbsp;ServiceException(io.limberest.validate.Result&nbsp;validationResult)</pre>
+</li>
+</ul>
+<a name="ServiceException-io.limberest.validate.Result-io.limberest.validate.Result.Consolidator-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ServiceException</h4>
+<pre>public&nbsp;ServiceException(io.limberest.validate.Result&nbsp;validationResult,
+                        io.limberest.validate.Result.Consolidator&nbsp;consolidator)</pre>
 </li>
 </ul>
 </li>

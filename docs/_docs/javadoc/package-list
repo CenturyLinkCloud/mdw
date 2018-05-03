@@ -55,7 +55,6 @@ com.centurylink.mdw.provider
 com.centurylink.mdw.rules
 com.centurylink.mdw.script
 com.centurylink.mdw.service.api
-com.centurylink.mdw.service.api.validator
 com.centurylink.mdw.service.data
 com.centurylink.mdw.service.data.event
 com.centurylink.mdw.service.data.process
@@ -109,6 +108,7 @@ com.centurylink.mdw.workflow.activity.task
 com.centurylink.mdw.workflow.activity.template
 com.centurylink.mdw.workflow.activity.timer
 com.centurylink.mdw.workflow.activity.transform
+com.centurylink.mdw.workflow.activity.validate
 com.centurylink.mdw.workflow.adapter
 com.centurylink.mdw.workflow.adapter.db
 com.centurylink.mdw.workflow.adapter.file

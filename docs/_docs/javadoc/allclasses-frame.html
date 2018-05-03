@@ -52,7 +52,6 @@
 <li><a href="com/centurylink/mdw/service/rest/AppSummary.html" title="class in com.centurylink.mdw.service.rest" target="classFrame">AppSummary</a></li>
 <li><a href="com/centurylink/mdw/cli/Archive.html" title="class in com.centurylink.mdw.cli" target="classFrame">Archive</a></li>
 <li><a href="com/centurylink/mdw/model/asset/ArchiveDir.html" title="class in com.centurylink.mdw.model.asset" target="classFrame">ArchiveDir</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/ArrayValidator.html" title="class in com.centurylink.mdw.service.api.validator" target="classFrame">ArrayValidator</a></li>
 <li><a href="com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset" target="classFrame">Asset</a></li>
 <li><a href="com/centurylink/mdw/cache/impl/AssetCache.html" title="class in com.centurylink.mdw.cache.impl" target="classFrame">AssetCache</a></li>
 <li><a href="com/centurylink/mdw/hub/servlet/AssetContentServlet.html" title="class in com.centurylink.mdw.hub.servlet" target="classFrame">AssetContentServlet</a></li>
@@ -64,6 +63,9 @@
 <li><a href="com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess" target="classFrame">AssetRef</a></li>
 <li><a href="com/centurylink/mdw/cache/impl/AssetRefCache.html" title="class in com.centurylink.mdw.cache.impl" target="classFrame">AssetRefCache</a></li>
 <li><a href="com/centurylink/mdw/util/AssetRefConverter.html" title="class in com.centurylink.mdw.util" target="classFrame">AssetRefConverter</a></li>
+<li><a href="com/centurylink/mdw/model/asset/AssetRequest.html" title="class in com.centurylink.mdw.model.asset" target="classFrame">AssetRequest</a></li>
+<li><a href="com/centurylink/mdw/model/asset/AssetRequest.HttpMethod.html" title="enum in com.centurylink.mdw.model.asset" target="classFrame">AssetRequest.HttpMethod</a></li>
+<li><a href="com/centurylink/mdw/model/asset/AssetRequest.ParameterType.html" title="enum in com.centurylink.mdw.model.asset" target="classFrame">AssetRequest.ParameterType</a></li>
 <li><a href="com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess" target="classFrame">AssetRevision</a></li>
 <li><a href="com/centurylink/mdw/service/rest/Assets.html" title="class in com.centurylink.mdw.service.rest" target="classFrame">Assets</a></li>
 <li><a href="com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services" target="classFrame"><span class="interfaceName">AssetServices</span></a></li>
@@ -391,12 +393,14 @@
 <li><a href="com/centurylink/mdw/services/process/ProcessExecutor.html" title="class in com.centurylink.mdw.services.process" target="classFrame">ProcessExecutor</a></li>
 <li><a href="com/centurylink/mdw/workflow/activity/process/ProcessFinishActivity.html" title="class in com.centurylink.mdw.workflow.activity.process" target="classFrame">ProcessFinishActivity</a></li>
 <li><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow" target="classFrame">ProcessInstance</a></li>
+<li><a href="com/centurylink/mdw/services/rest/ProcessInvoker.html" title="class in com.centurylink.mdw.services.rest" target="classFrame">ProcessInvoker</a></li>
 <li><a href="com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow" target="classFrame">ProcessList</a></li>
 <li><a href="com/centurylink/mdw/dataaccess/ProcessLoader.html" title="interface in com.centurylink.mdw.dataaccess" target="classFrame"><span class="interfaceName">ProcessLoader</span></a></li>
 <li><a href="com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor" target="classFrame"><span class="interfaceName">ProcessMonitor</span></a></li>
 <li><a href="com/centurylink/mdw/cli/ProcessNamer.html" title="class in com.centurylink.mdw.cli" target="classFrame">ProcessNamer</a></li>
 <li><a href="com/centurylink/mdw/dataaccess/ProcessPersister.html" title="interface in com.centurylink.mdw.dataaccess" target="classFrame"><span class="interfaceName">ProcessPersister</span></a></li>
 <li><a href="com/centurylink/mdw/dataaccess/ProcessPersister.PersistType.html" title="enum in com.centurylink.mdw.dataaccess" target="classFrame">ProcessPersister.PersistType</a></li>
+<li><a href="com/centurylink/mdw/service/data/process/ProcessRequests.html" title="class in com.centurylink.mdw.service.data.process" target="classFrame">ProcessRequests</a></li>
 <li><a href="com/centurylink/mdw/model/workflow/ProcessRun.html" title="class in com.centurylink.mdw.model.workflow" target="classFrame">ProcessRun</a></li>
 <li><a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow" target="classFrame">ProcessRuntimeContext</a></li>
 <li><a href="com/centurylink/mdw/services/ProcessServices.html" title="interface in com.centurylink.mdw.services" target="classFrame"><span class="interfaceName">ProcessServices</span></a></li>
@@ -435,6 +439,7 @@
 <li><a href="com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request" target="classFrame">Request</a></li>
 <li><a href="com/centurylink/mdw/model/request/RequestCount.html" title="class in com.centurylink.mdw.model.request" target="classFrame">RequestCount</a></li>
 <li><a href="com/centurylink/mdw/service/data/RequestDataAccess.html" title="class in com.centurylink.mdw.service.data" target="classFrame">RequestDataAccess</a></li>
+<li><a href="com/centurylink/mdw/model/asset/RequestKey.html" title="class in com.centurylink.mdw.model.asset" target="classFrame">RequestKey</a></li>
 <li><a href="com/centurylink/mdw/model/request/RequestList.html" title="class in com.centurylink.mdw.model.request" target="classFrame">RequestList</a></li>
 <li><a href="com/centurylink/mdw/common/service/RequestRoutingStrategy.html" title="interface in com.centurylink.mdw.common.service" target="classFrame"><span class="interfaceName">RequestRoutingStrategy</span></a></li>
 <li><a href="com/centurylink/mdw/service/rest/Requests.html" title="class in com.centurylink.mdw.service.rest" target="classFrame">Requests</a></li>
@@ -495,6 +500,7 @@
 <li><a href="com/centurylink/mdw/service/handler/ServiceRequestHandler.Format.html" title="enum in com.centurylink.mdw.service.handler" target="classFrame">ServiceRequestHandler.Format</a></li>
 <li><a href="com/centurylink/mdw/hub/servlet/ServiceServlet.html" title="class in com.centurylink.mdw.hub.servlet" target="classFrame">ServiceServlet</a></li>
 <li><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl" target="classFrame">ServiceTraceMonitor</a></li>
+<li><a href="com/centurylink/mdw/model/variable/ServiceValuesAccess.html" title="class in com.centurylink.mdw.model.variable" target="classFrame">ServiceValuesAccess</a></li>
 <li><a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli" target="classFrame">Setup</a></li>
 <li><a href="com/centurylink/mdw/workflow/task/strategy/ShortestQueueAutoAssignStrategy.html" title="class in com.centurylink.mdw.workflow.task.strategy" target="classFrame">ShortestQueueAutoAssignStrategy</a></li>
 <li><a href="com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log" target="classFrame">SimpleLogger</a></li>
@@ -540,7 +546,6 @@
 <li><a href="com/centurylink/mdw/common/translator/impl/StringListTranslator.html" title="class in com.centurylink.mdw.common.translator.impl" target="classFrame">StringListTranslator</a></li>
 <li><a href="com/centurylink/mdw/common/translator/impl/StringStringMapTranslator.html" title="class in com.centurylink.mdw.common.translator.impl" target="classFrame">StringStringMapTranslator</a></li>
 <li><a href="com/centurylink/mdw/common/translator/impl/StringTranslator.html" title="class in com.centurylink.mdw.common.translator.impl" target="classFrame">StringTranslator</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/StringValidator.html" title="class in com.centurylink.mdw.service.api.validator" target="classFrame">StringValidator</a></li>
 <li><a href="com/centurylink/mdw/services/event/StubHelper.html" title="class in com.centurylink.mdw.services.event" target="classFrame">StubHelper</a></li>
 <li><a href="com/centurylink/mdw/services/test/StubServer.html" title="class in com.centurylink.mdw.services.test" target="classFrame">StubServer</a></li>
 <li><a href="com/centurylink/mdw/services/test/StubServer.Stubber.html" title="interface in com.centurylink.mdw.services.test" target="classFrame"><span class="interfaceName">StubServer.Stubber</span></a></li>
@@ -551,10 +556,12 @@
 <li><a href="com/centurylink/mdw/task/types/SubTaskPlan.html" title="class in com.centurylink.mdw.task.types" target="classFrame">SubTaskPlan</a></li>
 <li><a href="com/centurylink/mdw/observer/task/SubTaskStrategy.html" title="interface in com.centurylink.mdw.observer.task" target="classFrame"><span class="interfaceName">SubTaskStrategy</span></a></li>
 <li><a href="com/centurylink/mdw/activity/types/SuspendibleActivity.html" title="interface in com.centurylink.mdw.activity.types" target="classFrame"><span class="interfaceName">SuspendibleActivity</span></a></li>
+<li><a href="com/centurylink/mdw/service/api/SwaggerAnnotationsReader.html" title="class in com.centurylink.mdw.service.api" target="classFrame">SwaggerAnnotationsReader</a></li>
 <li><a href="com/centurylink/mdw/cli/SwaggerCodegen.html" title="class in com.centurylink.mdw.cli" target="classFrame">SwaggerCodegen</a></li>
 <li><a href="com/centurylink/mdw/cli/SwaggerGenerate.html" title="class in com.centurylink.mdw.cli" target="classFrame">SwaggerGenerate</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/SwaggerModelValidator.html" title="class in com.centurylink.mdw.service.api.validator" target="classFrame">SwaggerModelValidator</a></li>
-<li><a href="com/centurylink/mdw/service/api/SwaggerReader.html" title="class in com.centurylink.mdw.service.api" target="classFrame">SwaggerReader</a></li>
+<li><a href="com/centurylink/mdw/service/api/SwaggerModelValidator.html" title="class in com.centurylink.mdw.service.api" target="classFrame">SwaggerModelValidator</a></li>
+<li><a href="com/centurylink/mdw/workflow/activity/validate/SwaggerValidatorActivity.html" title="class in com.centurylink.mdw.workflow.activity.validate" target="classFrame">SwaggerValidatorActivity</a></li>
+<li><a href="com/centurylink/mdw/service/api/SwaggerWorkflowReader.html" title="class in com.centurylink.mdw.service.api" target="classFrame">SwaggerWorkflowReader</a></li>
 <li><a href="com/centurylink/mdw/sync/SyncExpressionEvaluator.html" title="class in com.centurylink.mdw.sync" target="classFrame">SyncExpressionEvaluator</a></li>
 <li><a href="com/centurylink/mdw/activity/types/SynchronizationActivity.html" title="interface in com.centurylink.mdw.activity.types" target="classFrame"><span class="interfaceName">SynchronizationActivity</span></a></li>
 <li><a href="com/centurylink/mdw/workflow/activity/sync/SynchronizationActivity.html" title="class in com.centurylink.mdw.workflow.activity.sync" target="classFrame">SynchronizationActivity</a></li>
@@ -669,10 +676,6 @@
 <li><a href="com/centurylink/mdw/services/UserServices.html" title="interface in com.centurylink.mdw.services" target="classFrame"><span class="interfaceName">UserServices</span></a></li>
 <li><a href="com/centurylink/mdw/services/user/UserServicesImpl.html" title="class in com.centurylink.mdw.services.user" target="classFrame">UserServicesImpl</a></li>
 <li><a href="com/centurylink/mdw/model/task/UserTaskAction.html" title="class in com.centurylink.mdw.model.task" target="classFrame">UserTaskAction</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/ValidationException.html" title="class in com.centurylink.mdw.service.api.validator" target="classFrame">ValidationException</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/ValidationMessage.html" title="class in com.centurylink.mdw.service.api.validator" target="classFrame">ValidationMessage</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/ValidationResult.html" title="class in com.centurylink.mdw.service.api.validator" target="classFrame">ValidationResult</a></li>
-<li><a href="com/centurylink/mdw/service/api/validator/Validator.html" title="interface in com.centurylink.mdw.service.api.validator" target="classFrame"><span class="interfaceName">Validator</span></a></li>
 <li><a href="com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model" target="classFrame">Value</a></li>
 <li><a href="com/centurylink/mdw/model/Value.Display.html" title="enum in com.centurylink.mdw.model" target="classFrame">Value.Display</a></li>
 <li><a href="com/centurylink/mdw/service/rest/ValueHolders.html" title="class in com.centurylink.mdw.service.rest" target="classFrame">ValueHolders</a></li>
