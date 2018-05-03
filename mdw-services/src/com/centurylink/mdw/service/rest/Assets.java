@@ -32,6 +32,7 @@ import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
@@ -64,6 +65,9 @@ import io.swagger.annotations.ApiOperation;
 public class Assets extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private WebSocketMessenger websocket = null;
+    private Boolean subscribers = null;
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
@@ -192,16 +196,28 @@ public class Assets extends JsonRestService {
         discQuery.setArrayFilter("packages", pkgs.toArray(new String[0]));
         File assetRoot = ApplicationContext.getAssetRoot();
         try {
+            websocket = WebSocketMessenger.getInstance();
             // central discovery
             if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
                 String groupId = query.getFilter("groupId");
                 if (groupId == null)
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
+                sendWebSocketMessage("Asset import (Central Discovery) in progress...");
                 Import importer = new Import(groupId, pkgs);
                 importer.setAssetLoc(assetRoot.getPath());
                 importer.setForce(true);
                 importer.run();
-                CacheRegistration.getInstance().refreshCaches(null);
+                Assets temp = this;
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        this.setName("AssetsCacheRefresh-thread");
+                        temp.sendWebSocketMessage("Asset import (Packages) complete.  Refreshing caches...");
+                        CacheRegistration.getInstance().refreshCaches(null);
+                        temp.sendWebSocketMessage("Cache refresh completed");
+                    }
+                };
+                thread.start();
             }
             else {
                 // download from discovery server
@@ -220,12 +236,23 @@ public class Assets extends JsonRestService {
                 VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                 progressMonitor.start("Archive existing assets");
                 if (VcsArchiver.setInProgress()) {
+                    sendWebSocketMessage("Asset import (Distributed Discovery) in progress...");
                     VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
                     archiver.backup();
                     logger.info("Unzipping " + tempFile + " into: " + assetRoot);
                     ZipHelper.unzip(tempFile, assetRoot, null, null, true);
                     archiver.archive(true);
-                    CacheRegistration.getInstance().refreshCaches(null);
+                    Assets temp = this;
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            this.setName("AssetsCacheRefresh-thread");
+                            temp.sendWebSocketMessage("Asset import (Packages) complete.  Refreshing caches...");
+                            CacheRegistration.getInstance().refreshCaches(null);
+                            temp.sendWebSocketMessage("Cache refresh completed");
+                        }
+                    };
+                    thread.start();
                 }
                 else {
                     throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
@@ -237,6 +264,7 @@ public class Assets extends JsonRestService {
             this.propagatePut(content, headers);
         }
         catch (Exception ex) {
+            sendWebSocketMessage("Import error: " + ex.getMessage());
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
 
@@ -297,5 +325,14 @@ public class Assets extends JsonRestService {
         return null;
     }
 
-
+    private void sendWebSocketMessage(String message) {
+        if (websocket != null && (subscribers == null || subscribers)) {
+            try {
+                subscribers = websocket.send("SystemMessage", message);
+            }
+            catch (Exception ex) {
+                logger.warnException("Exception trying to send message over websocket", ex);
+            }
+        }
+    }
 }

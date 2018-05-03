@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,13 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -85,9 +83,11 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
 @WebServlet(urlPatterns={"/asset/*"}, loadOnStartup=1)
 public class AssetContentServlet extends HttpServlet {
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static final StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private File assetRoot;
+    private WebSocketMessenger websocket = null;
+    private Boolean subscribers = null;
 
     public void init() throws ServletException {
         assetRoot = ApplicationContext.getAssetRoot();
@@ -202,6 +202,8 @@ public class AssetContentServlet extends HttpServlet {
             LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) DataAccess.getProcessPersister();
             AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
+                websocket = WebSocketMessenger.getInstance();
+                subscribers = null;
                 if ("packages".equals(path)) {
                     authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip");
                     String contentType = request.getContentType();
@@ -217,6 +219,7 @@ public class AssetContentServlet extends HttpServlet {
                     VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                     progressMonitor.start("Archive existing assets");
                     if (VcsArchiver.setInProgress()) {
+                        sendWebSocketMessage("Asset import (Packages) in progress...");
                         VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
                         archiver.backup();
                         if (isZip) {
@@ -240,7 +243,17 @@ public class AssetContentServlet extends HttpServlet {
                             }
                         }
                         archiver.archive();
-                        CacheRegistration.getInstance().refreshCaches(null);
+                        AssetContentServlet temp = this;
+                        Thread thread = new Thread() {
+                            @Override
+                            public void run() {
+                                this.setName("AssetPackagesCacheRefresh-thread");
+                                temp.sendWebSocketMessage("Asset import (Packages) complete.  Refreshing caches...");
+                                CacheRegistration.getInstance().refreshCaches(null);
+                                temp.sendWebSocketMessage("Cache refresh completed");
+                            }
+                        };
+                        thread.start();
                     }
                     else {
                         throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
@@ -335,8 +348,21 @@ public class AssetContentServlet extends HttpServlet {
                     }
                     logger.info("Asset saved: " + path + " v" + version);
 
-                    if (ApplicationContext.isDevelopment())  // Only Dev mode allows for saving without also committing and pushing to Git
-                        CacheRegistration.getInstance().refreshCaches(null);
+                    if (ApplicationContext.isDevelopment()) {  // Only Dev mode allows for saving without also committing and pushing to Git
+                        AssetContentServlet temp = this;
+                        Thread thread = new Thread() {
+                            @Override
+                            public void run() {
+                                this.setName("AssetSaveCacheRefresh-thread");
+                                synchronized(logger) {
+                                    temp.sendWebSocketMessage("Asset save complete.  Refreshing caches...");
+                                    CacheRegistration.getInstance().refreshCaches(null);
+                                    temp.sendWebSocketMessage("Cache refresh completed");
+                                }
+                            }
+                        };
+                        thread.start();
+                    }
 
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));
                 }
@@ -383,5 +409,16 @@ public class AssetContentServlet extends HttpServlet {
         UserAction userAction = new UserAction(user.getCuid(), action, entity, 0L, includes);
         userAction.setSource(getClass().getSimpleName());
         ServiceLocator.getUserServices().auditLog(userAction);
+    }
+
+    private void sendWebSocketMessage(String message) {
+        if (websocket != null && (subscribers == null || subscribers)) {
+            try {
+                subscribers = websocket.send("SystemMessage", message);
+            }
+            catch (Exception ex) {
+                logger.warnException("Exception trying to send message over websocket", ex);
+            }
+        }
     }
 }

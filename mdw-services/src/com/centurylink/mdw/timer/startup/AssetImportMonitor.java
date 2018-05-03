@@ -45,6 +45,9 @@ public class AssetImportMonitor implements StartupService {
     private static AssetImportMonitor monitor = null;
     private static Thread thread = null;
 
+    private WebSocketMessenger websocket = null;
+    private Boolean subscribers = null;
+
     /**
      * Invoked when the server starts up.
      */
@@ -68,8 +71,6 @@ public class AssetImportMonitor implements StartupService {
     }
 
     public void start() {
-        WebSocketMessenger websocket = null;
-        boolean subscribers = false;
         try {
             Long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
             boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
@@ -102,37 +103,16 @@ public class AssetImportMonitor implements StartupService {
                         if (!vcs.getCommit().equals(cp.getLatestRefCommit())) {
                             if (VcsArchiver.setInProgress()) {
                                 websocket = WebSocketMessenger.getInstance();
-                                subscribers = false;
+                                subscribers = null;
                                 logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                 logger.info("Performing Git checkout: " + vcs + " (branch: " + branch + ")(Hard Reset: " + (gitHardReset ? "YES)" : "NO)"));
-                                if (websocket != null) {
-                                    try {
-                                        subscribers = websocket.send("SystemMessage", "Asset import in progress...");
-                                    }
-                                    catch (Exception ex) {
-                                        logger.warnException("Exception trying to send message over websocket", ex);
-                                    }
-                                }
+                                sendWebSocketMessage("Asset import (Git) in progress...");
                                 archiver.backup();
                                 vcs.hardCheckout(branch, gitHardReset);
                                 archiver.archive(true);
-                                if (subscribers) {
-                                    try {
-                                        subscribers = websocket.send("SystemMessage", "Asset import complete.  Refreshing caches...");
-                                    }
-                                    catch (Exception ex) {
-                                        logger.warnException("Exception trying to send message over websocket", ex);
-                                    }
-                                }
+                                sendWebSocketMessage("Asset import (Git) complete.  Refreshing caches...");
                                 CacheRegistration.getInstance().refreshCaches(null);
-                                if (subscribers) {
-                                    try {
-                                        subscribers = websocket.send("SystemMessage", "Cache refresh completed");
-                                    }
-                                    catch (Exception ex) {
-                                        logger.warnException("Exception trying to send message over websocket", ex);
-                                    }
-                                }
+                                sendWebSocketMessage("Cache refresh completed");
                             }
                         }
                     }
@@ -146,17 +126,21 @@ public class AssetImportMonitor implements StartupService {
         }
         catch (Exception e) {
             logger.severeException(e.getMessage(), e);
-            if (websocket != null && subscribers) {
-                try {
-                    subscribers = websocket.send("SystemMessage", "Import error: " + e.getMessage());
-                }
-                catch (Exception ex) {
-                    logger.warnException("Exception trying to send message over websocket", ex);
-                }
-            }
+            sendWebSocketMessage("Import error: " + e.getMessage());
         }
         finally {
             if (!_terminating) this.start();  // Restart if a failure occurred, besides instance is shutting down
+        }
+    }
+
+    private void sendWebSocketMessage(String message) {
+        if (websocket != null && (subscribers == null || subscribers)) {
+            try {
+                subscribers = websocket.send("SystemMessage", message);
+            }
+            catch (Exception ex) {
+                logger.warnException("Exception trying to send message over websocket", ex);
+            }
         }
     }
 }

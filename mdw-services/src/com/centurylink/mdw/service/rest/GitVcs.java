@@ -66,6 +66,8 @@ public class GitVcs extends JsonRestService {
     private String branch;
     private boolean hard = false;
     private boolean deleteTempBackups = false;
+    private WebSocketMessenger websocket = null;
+    private Boolean subscribers = null;
 
     @Override
     public List<String> getRoles(String path) {
@@ -245,50 +247,31 @@ public class GitVcs extends JsonRestService {
     }
 
     private void importAssets() {
-        WebSocketMessenger websocket = WebSocketMessenger.getInstance();
-        boolean subscribers = false;
+        websocket = WebSocketMessenger.getInstance();
         try {
             logger.info("Performing Git checkout: " + vcGit + " (branch: " + branch + ")(Hard Reset: " + (hard ? "YES)" : "NO)"));
-            if (websocket != null) {
-                try {
-                    subscribers = websocket.send("SystemMessage", "Asset import in progress...");
-                }
-                catch (Exception ex) {
-                    logger.warnException("Exception trying to send message over websocket", ex);
-                }
-            }
+            sendWebSocketMessage("Asset import (Git) in progress...");
             archiver.backup();
             vcGit.hardCheckout(branch, hard);
             archiver.archive(deleteTempBackups);
-            if (subscribers) {
-                try {
-                    subscribers = websocket.send("SystemMessage", "Asset import complete.  Refreshing caches...");
-                }
-                catch (Exception ex) {
-                    logger.warnException("Exception trying to send message over websocket", ex);
-                }
-            }
+            sendWebSocketMessage("Asset import (Git) complete.  Refreshing caches...");
             CacheRegistration.getInstance().refreshCaches(null);
-            if (subscribers) {
-                try {
-                    subscribers = websocket.send("SystemMessage", "Cache refresh completed");
-                }
-                catch (Exception ex) {
-                    logger.warnException("Exception trying to send message over websocket", ex);
-                }
-            }
+            sendWebSocketMessage("Cache refresh completed");
         }
         catch (Throwable e) {
             logger.severeException("Exception during asset import", e);
-            if (websocket != null && subscribers) {
-                try {
-                    subscribers = websocket.send("SystemMessage", "Import error: " + e.getMessage());
-                }
-                catch (Exception ex) {
-                    logger.warnException("Exception trying to send message over websocket", ex);
-                }
-            }
+            sendWebSocketMessage("Import (Git) error: " + e.getMessage());
+        }
+    }
 
+    private void sendWebSocketMessage(String message) {
+        if (websocket != null && (subscribers == null || subscribers)) {
+            try {
+                subscribers = websocket.send("SystemMessage", message);
+            }
+            catch (Exception ex) {
+                logger.warnException("Exception trying to send message over websocket", ex);
+            }
         }
     }
 }

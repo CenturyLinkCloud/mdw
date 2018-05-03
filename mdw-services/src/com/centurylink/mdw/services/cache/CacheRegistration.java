@@ -63,8 +63,7 @@ public class CacheRegistration implements StartupService {
     private static final String APPLICATION_CACHE_FILE_NAME = "application-cache.xml";
     // following 2 lines cannot be initialized in onStartup() - too late
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static Map<String,CacheService> allCaches
-        = new LinkedHashMap<String,CacheService>();
+    private static Map<String,CacheService> allCaches = new LinkedHashMap<String,CacheService>();
 
     private static CacheRegistration instance;
     public static synchronized CacheRegistration getInstance() {
@@ -199,7 +198,7 @@ public class CacheRegistration implements StartupService {
         refreshCaches(null);
     }
 
-    public void refreshCaches(List<String> excludedFormats) throws StartupException {
+    public synchronized void refreshCaches(List<String> excludedFormats) throws StartupException {
         try {
             String propmgr = PropertyManager.class.getName();
             if (excludedFormats == null || !excludedFormats.contains("PROPERTIES"))
