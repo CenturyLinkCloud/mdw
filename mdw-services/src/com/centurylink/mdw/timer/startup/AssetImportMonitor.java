@@ -18,15 +18,17 @@ package com.centurylink.mdw.timer.startup;
 import java.io.File;
 
 import com.centurylink.mdw.cli.Checkpoint;
-import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.system.Bulletin;
+import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -44,9 +46,6 @@ public class AssetImportMonitor implements StartupService {
     private static boolean _terminating;
     private static AssetImportMonitor monitor = null;
     private static Thread thread = null;
-
-    private WebSocketMessenger websocket = null;
-    private Boolean subscribers = null;
 
     /**
      * Invoked when the server starts up.
@@ -71,6 +70,7 @@ public class AssetImportMonitor implements StartupService {
     }
 
     public void start() {
+        Bulletin bulletin = null;
         try {
             Long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
             boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
@@ -102,17 +102,15 @@ public class AssetImportMonitor implements StartupService {
                                 dbAccess.getConnection());
                         if (!vcs.getCommit().equals(cp.getLatestRefCommit())) {
                             if (VcsArchiver.setInProgress()) {
-                                websocket = WebSocketMessenger.getInstance();
-                                subscribers = null;
                                 logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                 logger.info("Performing Git checkout: " + vcs + " (branch: " + branch + ")(Hard Reset: " + (gitHardReset ? "YES)" : "NO)"));
-                                sendWebSocketMessage("Asset import (Git) in progress...");
+                                bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                                 archiver.backup();
                                 vcs.hardCheckout(branch, gitHardReset);
                                 archiver.archive(true);
-                                sendWebSocketMessage("Asset import (Git) complete.  Refreshing caches...");
+                                SystemMessages.bulletinOff(bulletin, "Asset import completed");
+                                bulletin = null;
                                 CacheRegistration.getInstance().refreshCaches(null);
-                                sendWebSocketMessage("Cache refresh completed");
                             }
                         }
                     }
@@ -126,21 +124,10 @@ public class AssetImportMonitor implements StartupService {
         }
         catch (Exception e) {
             logger.severeException(e.getMessage(), e);
-            sendWebSocketMessage("Import error: " + e.getMessage());
+            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + e.getMessage());
         }
         finally {
             if (!_terminating) this.start();  // Restart if a failure occurred, besides instance is shutting down
-        }
-    }
-
-    private void sendWebSocketMessage(String message) {
-        if (websocket != null && (subscribers == null || subscribers)) {
-            try {
-                subscribers = websocket.send("SystemMessage", message);
-            }
-            catch (Exception ex) {
-                logger.warnException("Exception trying to send message over websocket", ex);
-            }
         }
     }
 }

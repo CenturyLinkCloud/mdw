@@ -40,17 +40,17 @@ public class WebSocketMessenger {
 
     private static Map<String,List<Session>> topicSubscribers = new HashMap<>();
 
-    private static WebSocketMessenger instance;
+    private static WebSocketMessenger instance = null;;
     /**
      * @return null until first subscriber
      */
-    public static WebSocketMessenger getInstance() {
+    public synchronized static WebSocketMessenger getInstance() {
+        if (instance == null)
+            instance = new WebSocketMessenger();
         return instance;
     }
 
-    public WebSocketMessenger() {
-        instance = this;
-    }
+    public WebSocketMessenger() {}
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {

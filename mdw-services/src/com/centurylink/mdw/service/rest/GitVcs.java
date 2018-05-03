@@ -255,7 +255,6 @@ public class GitVcs extends JsonRestService {
             vcGit.hardCheckout(branch, hard);
             archiver.archive(deleteTempBackups);
             SystemMessages.bulletinOff(bulletin, "Asset import completed");
-            bulletin = new Bulletin("Cache refresh in progress...");
             CacheRegistration.getInstance().refreshCaches(null);
         }
         catch (Throwable e) {

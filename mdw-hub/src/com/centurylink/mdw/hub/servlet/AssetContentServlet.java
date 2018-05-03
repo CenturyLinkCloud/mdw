@@ -39,7 +39,6 @@ import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -58,6 +57,8 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.system.Bulletin;
+import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
@@ -69,6 +70,7 @@ import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
@@ -86,8 +88,6 @@ public class AssetContentServlet extends HttpServlet {
     private static final StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private File assetRoot;
-    private WebSocketMessenger websocket = null;
-    private Boolean subscribers = null;
 
     public void init() throws ServletException {
         assetRoot = ApplicationContext.getAssetRoot();
@@ -198,12 +198,11 @@ public class AssetContentServlet extends HttpServlet {
             throw new ServletException(assetRoot + " is not a directory");
 
         String path = request.getPathInfo().substring(1);
+        Bulletin bulletin = null;
         try {
             LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) DataAccess.getProcessPersister();
             AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
-                websocket = WebSocketMessenger.getInstance();
-                subscribers = null;
                 if ("packages".equals(path)) {
                     authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip");
                     String contentType = request.getContentType();
@@ -219,7 +218,7 @@ public class AssetContentServlet extends HttpServlet {
                     VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                     progressMonitor.start("Archive existing assets");
                     if (VcsArchiver.setInProgress()) {
-                        sendWebSocketMessage("Asset import (Packages) in progress...");
+                        bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                         VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
                         archiver.backup();
                         if (isZip) {
@@ -243,14 +242,13 @@ public class AssetContentServlet extends HttpServlet {
                             }
                         }
                         archiver.archive();
-                        AssetContentServlet temp = this;
+                        SystemMessages.bulletinOff(bulletin, "Asset import completed");
+                        bulletin = null;
                         Thread thread = new Thread() {
                             @Override
                             public void run() {
                                 this.setName("AssetPackagesCacheRefresh-thread");
-                                temp.sendWebSocketMessage("Asset import (Packages) complete.  Refreshing caches...");
                                 CacheRegistration.getInstance().refreshCaches(null);
-                                temp.sendWebSocketMessage("Cache refresh completed");
                             }
                         };
                         thread.start();
@@ -349,16 +347,11 @@ public class AssetContentServlet extends HttpServlet {
                     logger.info("Asset saved: " + path + " v" + version);
 
                     if (ApplicationContext.isDevelopment()) {  // Only Dev mode allows for saving without also committing and pushing to Git
-                        AssetContentServlet temp = this;
                         Thread thread = new Thread() {
                             @Override
                             public void run() {
                                 this.setName("AssetSaveCacheRefresh-thread");
-                                synchronized(logger) {
-                                    temp.sendWebSocketMessage("Asset save complete.  Refreshing caches...");
-                                    CacheRegistration.getInstance().refreshCaches(null);
-                                    temp.sendWebSocketMessage("Cache refresh completed");
-                                }
+                                CacheRegistration.getInstance().refreshCaches(null);
                             }
                         };
                         thread.start();
@@ -369,6 +362,7 @@ public class AssetContentServlet extends HttpServlet {
             }
             catch (ServiceException ex) {
                 logger.severeException(ex.getMessage(), ex);
+                SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
                 response.getWriter().write(ex.getStatusResponse().getJson().toString(2));
                 StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
                 response.setStatus(sr.getStatus().getCode());
@@ -377,6 +371,7 @@ public class AssetContentServlet extends HttpServlet {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
+            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
             StatusResponse sr = new StatusResponse(Status.INTERNAL_SERVER_ERROR, ex.getMessage());
             response.setStatus(sr.getStatus().getCode());
             response.getWriter().println(sr.getJson().toString(2));
@@ -409,16 +404,5 @@ public class AssetContentServlet extends HttpServlet {
         UserAction userAction = new UserAction(user.getCuid(), action, entity, 0L, includes);
         userAction.setSource(getClass().getSimpleName());
         ServiceLocator.getUserServices().auditLog(userAction);
-    }
-
-    private void sendWebSocketMessage(String message) {
-        if (websocket != null && (subscribers == null || subscribers)) {
-            try {
-                subscribers = websocket.send("SystemMessage", message);
-            }
-            catch (Exception ex) {
-                logger.warnException("Exception trying to send message over websocket", ex);
-            }
-        }
     }
 }

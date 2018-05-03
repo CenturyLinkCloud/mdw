@@ -32,7 +32,6 @@ import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
@@ -42,11 +41,14 @@ import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.model.system.Bulletin;
+import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
@@ -65,9 +67,6 @@ import io.swagger.annotations.ApiOperation;
 public class Assets extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
-    private WebSocketMessenger websocket = null;
-    private Boolean subscribers = null;
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
@@ -195,26 +194,25 @@ public class Assets extends JsonRestService {
         Query discQuery = new Query(path);
         discQuery.setArrayFilter("packages", pkgs.toArray(new String[0]));
         File assetRoot = ApplicationContext.getAssetRoot();
+        Bulletin bulletin = null;
         try {
-            websocket = WebSocketMessenger.getInstance();
             // central discovery
             if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
                 String groupId = query.getFilter("groupId");
                 if (groupId == null)
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
-                sendWebSocketMessage("Asset import (Central Discovery) in progress...");
+                bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                 Import importer = new Import(groupId, pkgs);
                 importer.setAssetLoc(assetRoot.getPath());
                 importer.setForce(true);
                 importer.run();
-                Assets temp = this;
+                SystemMessages.bulletinOff(bulletin, "Asset import completed");
+                bulletin = null;
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
                         this.setName("AssetsCacheRefresh-thread");
-                        temp.sendWebSocketMessage("Asset import (Packages) complete.  Refreshing caches...");
                         CacheRegistration.getInstance().refreshCaches(null);
-                        temp.sendWebSocketMessage("Cache refresh completed");
                     }
                 };
                 thread.start();
@@ -236,20 +234,19 @@ public class Assets extends JsonRestService {
                 VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                 progressMonitor.start("Archive existing assets");
                 if (VcsArchiver.setInProgress()) {
-                    sendWebSocketMessage("Asset import (Distributed Discovery) in progress...");
+                    bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                     VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
                     archiver.backup();
                     logger.info("Unzipping " + tempFile + " into: " + assetRoot);
                     ZipHelper.unzip(tempFile, assetRoot, null, null, true);
                     archiver.archive(true);
-                    Assets temp = this;
+                    SystemMessages.bulletinOff(bulletin, "Asset import completed");
+                    bulletin = null;
                     Thread thread = new Thread() {
                         @Override
                         public void run() {
                             this.setName("AssetsCacheRefresh-thread");
-                            temp.sendWebSocketMessage("Asset import (Packages) complete.  Refreshing caches...");
                             CacheRegistration.getInstance().refreshCaches(null);
-                            temp.sendWebSocketMessage("Cache refresh completed");
                         }
                     };
                     thread.start();
@@ -264,7 +261,7 @@ public class Assets extends JsonRestService {
             this.propagatePut(content, headers);
         }
         catch (Exception ex) {
-            sendWebSocketMessage("Import error: " + ex.getMessage());
+            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
 
@@ -323,16 +320,5 @@ public class Assets extends JsonRestService {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         }
         return null;
-    }
-
-    private void sendWebSocketMessage(String message) {
-        if (websocket != null && (subscribers == null || subscribers)) {
-            try {
-                subscribers = websocket.send("SystemMessage", message);
-            }
-            catch (Exception ex) {
-                logger.warnException("Exception trying to send message over websocket", ex);
-            }
-        }
     }
 }

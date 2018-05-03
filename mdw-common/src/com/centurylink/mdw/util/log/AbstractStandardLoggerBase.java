@@ -178,8 +178,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     protected void sendToWebWatcher(String topic, JSONObject message) throws JSONException, IOException {
-        if (WebSocketMessenger.getInstance() != null)
-            WebSocketMessenger.getInstance().send(topic, message.toString());
+        WebSocketMessenger.getInstance().send(topic, message.toString());
     }
 
 }

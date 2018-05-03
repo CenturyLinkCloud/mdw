@@ -87,12 +87,8 @@ public class TailWatcher {
         lastModified = f.lastModified();
         FileInfo fileInfo = new FileInfo(f);
         FileView fileView = new FileView(fileInfo, lastLine);
-        WebSocketMessenger websocket = WebSocketMessenger.getInstance();
         boolean subscribers = false;
-        if (websocket != null) {
-            subscribers = websocket.send(file.toAbsolutePath().toString().replace('\\', '/'),
-                    fileView.getJson().toString());
-        }
+        subscribers = WebSocketMessenger.getInstance().send(file.toAbsolutePath().toString().replace('\\', '/'), fileView.getJson().toString());
         lastLine = fileInfo.getLineCount() - 1;
         return subscribers;
     }
