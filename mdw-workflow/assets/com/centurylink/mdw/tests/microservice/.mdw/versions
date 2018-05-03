@@ -1,5 +1,5 @@
 MicroserviceOrchestration.proc=2
-MicroserviceOrchestrator.test=1
+MicroserviceOrchestrator.test=2
 MicroserviceOrchestrator.yaml=1
 ServicePlanDsl.test=1
 ServicePlanDsl.yaml=1

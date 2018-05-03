@@ -896,7 +896,7 @@ public abstract class BaseActivity implements GeneralActivity {
         Document docvo;
         try {
             docvo = engine.getDocument(docref, false);
-            // force deserialization if needed
+            // deserialize if needed
             docvo.getObject(type, getPackage());
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

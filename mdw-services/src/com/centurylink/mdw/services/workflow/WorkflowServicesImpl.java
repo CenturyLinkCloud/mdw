@@ -40,6 +40,7 @@ import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
+import com.centurylink.mdw.common.translator.impl.StringDocumentTranslator;
 import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
@@ -1315,6 +1316,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
             if (trans instanceof JavaObjectTranslator) {
                 Object obj = doc.getObject(Object.class.getName(), pkg);
                 return obj.toString();
+            }
+            else if (trans instanceof StringDocumentTranslator) {
+                return doc.getContent();
             }
             else if (trans instanceof XmlDocumentTranslator && !(trans instanceof YamlTranslator)) {
                 org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)trans).toDomDocument(doc.getObject(doc.getDocumentType(), pkg));
