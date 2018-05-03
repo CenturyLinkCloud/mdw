@@ -821,15 +821,17 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packages;
     }
 
-    public List<Process> getProcessList() throws DataAccessException {
+    public List<Process> getProcessList(boolean withArchived) throws DataAccessException {
         List<Process> processes = new ArrayList<Process>();
         try {
             for (PackageDir pkgDir : getPackageDirs())
                 processes.addAll(loadProcesses(pkgDir, false));
-            for (AssetRef ref : AssetRefCache.getAllProcessRefs()) {
-                Process proc = AssetRefConverter.getProcess(ref);
-                if (proc != null && !processes.contains(proc))
-                    processes.add(proc);
+            if (withArchived) {
+                for (AssetRef ref : AssetRefCache.getAllProcessRefs()) {
+                    Process proc = AssetRefConverter.getProcess(ref);
+                    if (proc != null && !processes.contains(proc))
+                        processes.add(proc);
+                }
             }
             Collections.sort(processes);
             return processes;
@@ -1120,7 +1122,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public List<Process> findCalledProcesses(Process mainproc) throws DataAccessException {
         // make sure process is loaded
         mainproc = loadProcess(mainproc.getId(), false);
-        return findInvoked(mainproc, getProcessList());
+        return findInvoked(mainproc, getProcessList(true));
     }
 
     public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass) throws DataAccessException {

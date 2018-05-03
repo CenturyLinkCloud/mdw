@@ -1,10 +1,10 @@
-MicroserviceOrchestration.proc=1
-MicroserviceOrchestrator.test=1
+MicroserviceOrchestration.proc=2
+MicroserviceOrchestrator.test=2
 MicroserviceOrchestrator.yaml=1
 ServicePlanDsl.test=1
 ServicePlanDsl.yaml=1
 ServicePlanTest.kt=1
 ServicePlanTest.proc=1
-User.java=1
+User.java=2
 UserRequestMapper.groovy=1
 mainRequest.json=1

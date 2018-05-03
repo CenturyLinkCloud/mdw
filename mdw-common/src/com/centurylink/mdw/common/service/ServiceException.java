@@ -19,6 +19,9 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 
+import io.limberest.validate.Result;
+import io.limberest.validate.Result.Consolidator;
+
 public class ServiceException extends MdwException {
 
     // taken from HTTP response codes
@@ -53,5 +56,14 @@ public class ServiceException extends MdwException {
 
     public ServiceException(Status status) {
         super(status.getCode(), status.getMessage());
+    }
+
+    public ServiceException(Result validationResult) {
+        super(validationResult.getWorstCode(), validationResult.getStatus().getMessage());
+    }
+
+    public ServiceException(Result validationResult, Consolidator consolidator) {
+        super(validationResult.getWorstCode(),
+                validationResult.getStatus(consolidator).getMessage());
     }
 }

@@ -32,10 +32,13 @@ import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.service.data.process.ProcessRequests;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.services.rest.ProcessInvoker;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -187,9 +190,10 @@ public class ServiceRequestHandler implements EventHandler {
      */
     protected TextService getServiceInstance(Map<String,String> headers) throws ServiceException {
         try {
-            String[] pathSegments = headers.get(Listener.METAINFO_REQUEST_PATH) != null ? headers.get(Listener.METAINFO_REQUEST_PATH).split("/") : null;
+            String requestPath = headers.get(Listener.METAINFO_REQUEST_PATH);
+            String[] pathSegments = requestPath != null ? requestPath.split("/") : null;
             if (pathSegments == null)
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to find a service or handler for given request");
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to find a service or handler for request path: " + requestPath);
             String contentType = headers.get(Listener.METAINFO_CONTENT_TYPE);
             String serviceClassName = MDW_REST_SERVICE_PROVIDER_PACKAGE + "." + pathSegments[0];
             try {
@@ -227,6 +231,13 @@ public class ServiceRequestHandler implements EventHandler {
                     if (service != null)
                         return service;
                 }
+
+                // lastly, try process invoker mapping
+                AssetRequest processRequest = ProcessRequests.getRequest(headers.get(Listener.METAINFO_HTTP_METHOD), requestPath);
+                if (processRequest != null) {
+                    return new ProcessInvoker(processRequest);
+                }
+
                 return null;
             }
         }

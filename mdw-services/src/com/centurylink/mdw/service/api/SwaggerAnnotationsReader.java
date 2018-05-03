@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,11 +56,11 @@ import io.swagger.util.ReflectionUtils;
  * Duplicated from io.swagger.servlet.Reader except where noted below to avoid auto-inclusion of
  * of Swagger's ServletResourceReaderExtension.
  */
-public class SwaggerReader {
+public class SwaggerAnnotationsReader {
 
     private final Swagger swagger;
 
-    private SwaggerReader(Swagger swagger) {
+    private SwaggerAnnotationsReader(Swagger swagger) {
         this.swagger = swagger;
         ModelConverters.getInstance().addConverter(new ModelResolver(Json.mapper()) {
             protected boolean shouldIgnoreClass(Type type) {
@@ -79,7 +79,7 @@ public class SwaggerReader {
      * @param classes are a set of classes to scan
      */
     public static void read(Swagger swagger, Set<Class<?>> classes) {
-        final SwaggerReader reader = new SwaggerReader(swagger);
+        final SwaggerAnnotationsReader reader = new SwaggerAnnotationsReader(swagger);
         for (Class<?> cls : classes) {
             final ReaderContext context = new ReaderContext(swagger, cls, "", null, false, new ArrayList<String>(),
                     new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Parameter>());

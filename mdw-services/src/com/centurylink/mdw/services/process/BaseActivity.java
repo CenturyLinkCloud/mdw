@@ -891,16 +891,13 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Given a document reference object (typically bound to a
      * document variable), returns the actual document object.
-     * @param docref
-     * @return
-     * @throws ActivityException
      */
     protected Object getDocument(DocumentReference docref, String type) throws ActivityException {
         Document docvo;
         try {
             docvo = engine.getDocument(docref, false);
-            // deserialize here to support package aware translator providers
-            docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
+            // deserialize if needed
+            docvo.getObject(type, getPackage());
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException("Failed to get document", ex);

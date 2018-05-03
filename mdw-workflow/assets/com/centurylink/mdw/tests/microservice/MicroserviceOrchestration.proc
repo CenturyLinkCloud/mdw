@@ -1,27 +1,27 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=37,y=70,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=45,y=52,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
+      "name": "Receive",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=102,ly=127,type=Elbow,xs=101&177,ys=90&181"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=100,ly=68,type=Elbow,xs=105&294&294,ys=72&72&138"},
         "event": "FINISH",
         "id": "T1",
-        "to": "A4"
+        "to": "A6"
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=558,y=307,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=645,y=449,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
+      "name": "Respond"
     },
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Hold",
-        "WORK_DISPLAY_INFO": "x=342,y=144,w=103,h=75",
+        "WORK_DISPLAY_INFO": "x=428,y=284,w=121,h=77",
         "parallel": "true",
         "synchronous": "true"
       },
@@ -29,7 +29,7 @@
       "implementor": "com.centurylink.mdw.microservice.OrchestratorActivity",
       "name": "Invoke\r\nServices",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=435,ly=201,type=Elbow,xs=393&393,ys=223&288"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=531,ly=343,type=Elbow,xs=489&489,ys=365&430"},
         "event": "FINISH",
         "id": "T2",
         "to": "A5"
@@ -40,13 +40,13 @@
         "Output Documents": "[\"servicePlan\"]",
         "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n        }\r\n    }\r\n}",
         "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=181,y=144,w=108,h=74"
+        "WORK_DISPLAY_INFO": "x=238,y=282,w=118,h=75"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Create\r\nPlan",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=315,ly=181,type=Elbow,xs=293&338,ys=181&181"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=399,ly=320,type=Elbow,xs=360&424,ys=320&320"},
         "event": "FINISH",
         "id": "T3",
         "to": "A3"
@@ -54,28 +54,60 @@
     },
     {
       "attributes": {
-        "WORK_DISPLAY_INFO": "x=342,y=292,w=104,h=70",
+        "WORK_DISPLAY_INFO": "x=429,y=434,w=120,h=73",
         "consolidator": "com.centurylink.mdw.microservice.CombiningConsolidator"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.microservice.ResponseCollector",
       "name": "Consolidate\r\nResponses",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=502,ly=327,type=Elbow,xs=450&554,ys=327&327"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=597,ly=469,type=Elbow,xs=553&641,ys=469&469"},
         "event": "FINISH",
         "id": "T4",
         "to": "A2"
       }]
+    },
+    {
+      "attributes": {
+        "Validate": "[\"Query\",\"Body\"]",
+        "WORK_DISPLAY_INFO": "x=238,y=142,w=118,h=75"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.validate.SwaggerValidatorActivity",
+      "name": "Validate\r\nRequest",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=140,ly=178,type=Elbow,xs=234&109,ys=177&177"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A7"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=305,ly=238,type=Elbow,xs=297&297,ys=221&278"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "true",
+          "to": "A4"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=45,y=157,w=60,h=40"},
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Reject"
     }
   ],
   "attributes": {
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=196,y=48,w=236,h=27",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "WORK_DISPLAY_INFO": "x=379,y=59,w=236,h=27",
     "requestMethod": "POST",
-    "requestParameters": "[[\"User\",\"Body\",\"true\",\"Create user with groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.1,1)\"]]",
-    "requestPath": "/user"
+    "requestParameters": "[[\"User\",\"Body\",\"true\",\"User with optional groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.2,1)\"]]",
+    "requestPath": "/user",
+    "requestSummary": "Create a user and add to workgroups"
   },
   "variables": {
     "request": {

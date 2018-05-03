@@ -132,7 +132,7 @@ public class ProcessCache implements CacheService {
     private static List<Process> processList;
     public static synchronized List<Process> getAllProcesses() throws DataAccessException {
         if (processList == null)
-            processList = DataAccess.getProcessLoader().getProcessList();
+            processList = DataAccess.getProcessLoader().getProcessList(true);
         return processList;
     }
 
