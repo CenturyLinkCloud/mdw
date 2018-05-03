@@ -23,14 +23,14 @@
   </div>
   <label class="mdw-label">Options:</label>
   <div style="margin-left:7px;position:relative;top:-5px;">
-    <div class="checkbox mdw-checkbox">
+<!--      <div class="checkbox mdw-checkbox">
       <label><input type="checkbox" ng-model="options.distributedSave">Distributed save (all server instances)</label>
     </div>
     <div class="checkbox mdw-checkbox">
       <label><input type="checkbox" ng-model="options.cacheRefresh">Refresh server caches after save</label>
-    </div>
+    </div>   -->
     <div class="checkbox mdw-checkbox" style="margin-bottom:5px;">
-      <label><input type="checkbox" ng-model="options.commitAndPush">Commit and push to VCS remote</label>
+      <label><input type="checkbox" ng-model="options.commitAndPush" ng-disabled="{{mdw.hubUser.length}} == 0">Commit and push to VCS remote</label>
     </div>
     <div>
       <label class="mdw-label">Commit Message:</label>

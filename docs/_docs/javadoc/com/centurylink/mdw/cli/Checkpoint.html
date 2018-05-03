@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -191,32 +191,36 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#getCurrentRefs-java.io.File-">getCurrentRefs</a></span>(java.io.File&nbsp;dir)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#getLatestRefCommit--">getLatestRefCommit</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#retrieveAllRefs-java.util.Date-">retrieveAllRefs</a></span>(java.util.Date&nbsp;cutoffDate)</code>
 <div class="block">Finds all asset refs from the database since cutoffDate, or all if cutoffDate is null.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#retrieveRef-java.lang.Long-">retrieveRef</a></span>(java.lang.Long&nbsp;id)</code>
 <div class="block">Finds an asset ref from the database by definitionID.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#retrieveRef-java.lang.String-">retrieveRef</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Finds an asset ref from the database by asset name.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html" title="class in com.centurylink.mdw.cli">Checkpoint</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#run-com.centurylink.mdw.cli.ProgressMonitor...-">run</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;progressMonitors)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#updateRef-com.centurylink.mdw.dataaccess.AssetRef-">updateRef</a></span>(<a href="../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a>&nbsp;ref)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#updateRefs--">updateRefs</a></span>()</code>
 <div class="block">Update refs in db.</div>
@@ -413,12 +417,28 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <a name="updateRef-com.centurylink.mdw.dataaccess.AssetRef-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>updateRef</h4>
 <pre>public&nbsp;void&nbsp;updateRef(<a href="../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a>&nbsp;ref)
                throws java.sql.SQLException,
                       java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getLatestRefCommit--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getLatestRefCommit</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getLatestRefCommit()
+                                    throws java.sql.SQLException,
+                                           java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>

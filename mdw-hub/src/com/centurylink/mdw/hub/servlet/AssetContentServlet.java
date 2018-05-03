@@ -70,7 +70,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
@@ -216,29 +216,35 @@ public class AssetContentServlet extends HttpServlet {
                     ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
                     VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
                     progressMonitor.start("Archive existing assets");
-                    VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
-                    archiver.backup();
-                    if (isZip) {
-                        logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-                        ZipHelper.unzip(tempFile, assetRoot, null, null, true);
+                    if (VcsArchiver.setInProgress()) {
+                        VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
+                        archiver.backup();
+                        if (isZip) {
+                            logger.info("Unzipping " + tempFile + " into: " + assetRoot);
+                            ZipHelper.unzip(tempFile, assetRoot, null, null, true);
+                        }
+                        else {
+                            logger.info("Importing " + tempFile + " into: " + assetRoot);
+                            ImporterExporterJson importer = new ImporterExporterJson();
+                            String packageJson = new String(FileHelper.read(tempFile));
+                            List<Package> packages = importer.importPackages(packageJson);
+                            for (Package pkg : packages) {
+                                PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkg.getName());
+                                if (pkgDir == null) {
+                                    // new pkg
+                                    pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg, persisterVcs.getVersionControl());
+                                    pkgDir.setYaml(true);
+                                }
+                                persisterVcs.save(pkg, pkgDir, true);
+                                pkgDir.parse(); // sync
+                            }
+                        }
+                        archiver.archive();
+                        CacheRegistration.getInstance().refreshCaches(null);
                     }
                     else {
-                        logger.info("Importing " + tempFile + " into: " + assetRoot);
-                        ImporterExporterJson importer = new ImporterExporterJson();
-                        String packageJson = new String(FileHelper.read(tempFile));
-                        List<Package> packages = importer.importPackages(packageJson);
-                        for (Package pkg : packages) {
-                            PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkg.getName());
-                            if (pkgDir == null) {
-                                // new pkg
-                                pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg, persisterVcs.getVersionControl());
-                                pkgDir.setYaml(true);
-                            }
-                            persisterVcs.save(pkg, pkgDir, true);
-                            pkgDir.parse(); // sync
-                        }
+                        throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
                     }
-                    archiver.archive();
                     progressMonitor.done();
                 }
                 else {
@@ -329,9 +335,9 @@ public class AssetContentServlet extends HttpServlet {
                     }
                     logger.info("Asset saved: " + path + " v" + version);
 
-                    boolean distributed = "true".equalsIgnoreCase(request.getParameter("distributedSave"));
-                    if (distributed)
-                        propagate(request, content);
+                    if (ApplicationContext.isDevelopment())  // Only Dev mode allows for saving without also committing and pushing to Git
+                        CacheRegistration.getInstance().refreshCaches(null);
+
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));
                 }
             }
@@ -377,33 +383,5 @@ public class AssetContentServlet extends HttpServlet {
         UserAction userAction = new UserAction(user.getCuid(), action, entity, 0L, includes);
         userAction.setSource(getClass().getSimpleName());
         ServiceLocator.getUserServices().auditLog(userAction);
-    }
-
-    protected void propagate(HttpServletRequest request, byte[] requestContent) throws IOException {
-        String method = request.getMethod();
-        URL requestUrl = new URL(request.getRequestURL().toString());
-        for (URL serviceUrl : ApplicationContext.getOtherServerUrls(requestUrl)) {
-            HttpHelper httpHelper = new HttpHelper(serviceUrl);
-            try {
-                byte[] response;
-                if ("post".equalsIgnoreCase(method))
-                    response = httpHelper.postBytes(requestContent);
-                else if (method.equalsIgnoreCase("put"))
-                    response = httpHelper.putBytes(requestContent);
-                else if (method.equalsIgnoreCase("delete"))
-                    response = httpHelper.deleteBytes(requestContent);
-                else
-                    throw new UnsupportedOperationException(method);
-                JSONObject jsonObject = new JsonObject(new String(response));
-                JSONObject status = jsonObject.getJSONObject("status");
-                int code = status.getInt("code");
-                String message = status.getString("message");
-                if (code >= 400)
-                    throw new ServiceException(code, "Propagation error: " + message);
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
-        }
     }
 }

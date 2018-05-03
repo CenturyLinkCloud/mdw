@@ -39,6 +39,7 @@ import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
+import com.centurylink.mdw.timer.startup.AssetImportMonitor;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -139,6 +140,10 @@ public class MdwMain {
                     startupService.onStartup();
                 }
             }
+
+            logger.info("Initialize " + AssetImportMonitor.class.getName());
+            (new AssetImportMonitor()).onStartup();
+
             logger.info("MDW initialization completed after " + (System.currentTimeMillis() - before) + " ms");
         }
         catch (Exception e) {
@@ -169,6 +174,7 @@ public class MdwMain {
         }
 
         try {
+            (new AssetImportMonitor()).onShutdown();
             (new TimerTaskRegistration()).onShutdown();
 
             logger.info("Shutdown common thread pool");

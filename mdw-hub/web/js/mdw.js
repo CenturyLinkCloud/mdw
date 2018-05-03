@@ -11,6 +11,7 @@ mdwMod.factory('mdw', function() {
     discoveryUrl: $mdwDiscoveryUrl,
     authMethod: $mdwAuthMethod,
     appId: $mdwAppId,
+    hubUser: $mdwHubUser,   // Used to determine if isDevelopment() - value is only set when in Dev mode
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot,

@@ -185,10 +185,12 @@ public class DataAccess {
                                     File tempDir = new File(PropertyNames.MDW_TEMP_DIR);
                                     ProgressMonitor progressMonitor = new SystemOutProgressMonitor();
                                     VcsArchiver archiver = new VcsArchiver(rootDir, tempDir, vcGit, progressMonitor);
-                                    logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
-                                    archiver.backup();
-                                    vcGit.hardCheckout(branch);
-                                    archiver.archive();
+                                    if (VcsArchiver.setInProgress()) {
+                                        logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
+                                        archiver.backup();
+                                        vcGit.hardCheckout(branch);
+                                        archiver.archive();
+                                    }
                                 }
                             }
                         }
@@ -216,7 +218,7 @@ public class DataAccess {
 
     public static void updateAssetRefs() throws DataAccessException {
         StandardLogger logger = LoggerUtil.getStandardLogger();
-        if (assetVersionControl != null && ((!ApplicationContext.isDevelopment() && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) || PropertyManager.getBooleanProperty("mdw.assetref.force", false))) {
+        if (assetVersionControl != null && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) {
             // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
@@ -240,7 +242,6 @@ public class DataAccess {
         else {
             String message = "";
             if (assetVersionControl == null) message = " AssetVersionControl is null";
-            if (ApplicationContext.isDevelopment()) message = message.length() == 0 ? " mdw.runtime.env=dev" : ", mdw.runtime.env=dev";
             if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " mdw.git.auto.pull=true" : ", mdw.git.auto.pull=true";
             logger.info("ASSET_REF table not auto-populated during startup due to: " + message);
         }
