@@ -21,7 +21,6 @@ var MdwMessages = function() {
 };
 
 MdwMessages.prototype.bulletin = function(bulletin) {
-  this.clear();
   if (this.timeout) {
     clearTimeout(this.timeout);
     this.timeout = null;
@@ -32,14 +31,18 @@ MdwMessages.prototype.bulletin = function(bulletin) {
       if (text && text !== this.currentBulletin.message.message) {
         let msgs = this.message(bulletin.message);
         if (msgs) {
+          this.currentBulletin = null;
+          msgs.classList.remove('mdw-bulletin');
           msgs.classList.add('mdw-fade-out');
           var mdwMessages = this;
           this.timeout = setTimeout(function() { 
-            mdwMessages.clear(); 
-          }, 3000);
+            mdwMessages.clear(true); 
+          }, 4000);
         }
       }
-      this.currentBulletin = null;
+      else {
+          this.clear(true);
+      }
     }
     else if (bulletin.message.level === 'Error' || this.currentBulletin.message.level === 'Info') {
       // display new one only if higher or same severity
@@ -65,10 +68,16 @@ MdwMessages.prototype.message = function(message) {
   return this.show(message.message, message.level);
 };
 
+// Right now returns the current bulletin text, if any.
+MdwMessages.prototype.getMessageText = function() {
+  if (this.currentBulletin)
+    return this.currentBulletin.text;
+};
+
 MdwMessages.prototype.show = function(text, level) {
   var msgs = document.getElementById('mdwMainMessages');
   if (msgs) {
-    this.clear(msgs);
+    this.clear();
     if (level === 'Info') {
       msgs.classList.add('mdw-info');
     }
@@ -89,16 +98,23 @@ MdwMessages.prototype.show = function(text, level) {
   return msgs;
 };
 
-MdwMessages.prototype.clear = function(msgs) {
-  document.body.style.overflowX = 'visible';
-  if (!msgs) {
-    msgs = document.getElementById('mdwMainMessages');
+// if bulletin is true, also clears current bulletin
+MdwMessages.prototype.clear = function(bulletin) {
+  if (bulletin) {
+      this.currentBulletin = null;
+      document.body.style.overflowX = 'visible';
   }
+  var msgs = document.getElementById('mdwMainMessages');
   if (msgs) {
-    msgs.innerHTML = '';
-    msgs.classList.remove('mdw-error');
-    msgs.classList.remove('mdw-info');
-    msgs.classList.remove('mdw-bulletin');
+    if (bulletin) {
+      msgs.innerHTML = '';
+      msgs.classList.remove('mdw-bulletin');
+      msgs.classList.remove('mdw-error');
+      msgs.classList.remove('mdw-info');
+    }
+    else {
+      msgs.innerHtml = this.currentBulletin ? this.currentBulletin.message.message : '';
+    }
     msgs.classList.remove('mdw-fade-out');
   }
   else {

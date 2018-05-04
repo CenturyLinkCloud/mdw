@@ -43,6 +43,9 @@ mdwMod.factory('mdw', function() {
             logo.src = logo.src.substring(0, logo.src.lastIndexOf('/')) + '/hub_logo.png';
         }
       }, 0);
+    },
+    getBullitin: function() {
+      return $mdwMessages.currentBulletin;
     }
   };
 });

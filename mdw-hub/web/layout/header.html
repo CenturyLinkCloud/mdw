@@ -6,7 +6,7 @@
    <img id="hub_loading" src="images/hub_loading.gif" alt="Hub Loading" style="display:none;margin-left:1px;" />
   </div>
   <div style="float:left;">
-   <div id="mdwMainMessages" class="mdw-messages">{{mdw.messages}}</div>
+   <div id="mdwMainMessages" class="mdw-messages">{{mdw.messages ? mdw.messages : mdw.getMessage()}}</div>
   </div> 
   <div class="mdw_bannerRight">
    <img src="images/ctl.gif" alt="CenturyLink(R)" />

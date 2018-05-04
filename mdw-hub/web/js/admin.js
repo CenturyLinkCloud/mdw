@@ -248,14 +248,16 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
       var url = attrs.tabLink;
       
       elem.bind('click', function() {
-        $mdwUi.clearMessage();
+        $mdwMessages.clear();
         var main = document.getElementById('mdw-main');
         if (main) {
           // navigating from full-screen (eg: filepanel)
           main.style.padding = '20px';
           main.style.height = '';
           main.style.minHeight = '600px';
-          document.body.style.overflowX = 'visible';
+          if (!$mdwMessages.currentBulletin) {
+              document.body.style.overflowX = 'visible';
+          }
           document.body.style.overflowY = 'visible';
         }
         
