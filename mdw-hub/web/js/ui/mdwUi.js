@@ -2,6 +2,7 @@
 
 // Global access to ui objects (for react components).
 // Drawing objects are pre-injected in admin.js.
+var $mdwMessages;
 var $mdwUi = {
     
    init: function(ngInjector, authUser) {
@@ -20,7 +21,7 @@ var $mdwUi = {
      $mdwUi.Configurator = ngInjector.get('Configurator');
      $mdwUi.DOCUMENT_TYPES = ngInjector.get('DOCUMENT_TYPES');
      $mdwUi.authUser = authUser;
-     $mdwMessages.init();
+     $mdwMessages = new MdwMessages();
    },
    pseudoImplementors: [
      {

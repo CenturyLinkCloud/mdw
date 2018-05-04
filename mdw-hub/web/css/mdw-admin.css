@@ -691,8 +691,34 @@
   position: absolute;
   color: #a94442;
   padding-top: 30px;
-  padding-left: 20px;
-  font-weight: bold;  
+  font-weight: bold;
+  width: calc(100% - 480px);
+}
+.mdw-info {
+  color: #2196f3;
+}
+.mdw-error {
+  color: #a94442;
+}
+@keyframes crawl {
+  from {transform: translateX(100%);}
+  to {transform: translateX(-230px);}
+}
+.mdw-bulletin {
+  animation-name: crawl;
+  animation-duration: 8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  z-index: -100;
+}
+@keyframes fade {
+   0% {opacity: 1;}
+   100% {opacity: 0;} 
+} 
+.mdw-fade-out {
+  animation-name: fade;
+  animation-duration: 4s;
+  animation-timing-function: linear;
 }
 .mdw-test-message {
   color: #a94442;

@@ -13,10 +13,14 @@
 }
 .mdw_bannerRight {
   float: right;
+  background-color: white;
+  width: 230px;
 }
 .mdw_bannerLeft {
   float: left;
   margin-top: 5px;
+  background-color: white;
+  width: 230px;
 }
 .mdw_user {
   margin-top: -5px;
