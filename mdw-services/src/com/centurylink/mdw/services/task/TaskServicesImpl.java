@@ -482,16 +482,12 @@ public class TaskServicesImpl implements TaskServices {
         List<TaskTemplate> taskVOs = getTaskTemplates(query);
         Map<String, List<TaskTemplate>> templates = new HashMap<>();
         for (TaskTemplate taskVO : taskVOs) {
-            if (templates.get(taskVO.getPackageName()) == null) {
-                List<TaskTemplate> templateList = new ArrayList<>();
-                templateList.add(taskVO);
+            List<TaskTemplate> templateList = templates.get(taskVO.getPackageName());
+            if (templateList == null) {
+                templateList = new ArrayList<>();
                 templates.put(taskVO.getPackageName(), templateList);
             }
-            else {
-                List<TaskTemplate> templateList = templates.get(taskVO.getPackageName());
-                templateList.add(taskVO);
-                templates.put(taskVO.getPackageName(), templateList);
-            }
+            templateList.add(taskVO);
         }
         return templates;
     }
