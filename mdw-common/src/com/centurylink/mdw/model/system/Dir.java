@@ -118,7 +118,7 @@ public class Dir implements Jsonable {
                         dirs.add(new Dir(f, excludeMatchers, details));
                     }
                 }
-                else {
+                else if (f.canRead()) {
                     files.add(new FileInfo(f, details));
                 }
             }
