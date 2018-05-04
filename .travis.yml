@@ -1,4 +1,6 @@
 language: java
+git:
+  depth: 250
 branches:
   only:
   - master
