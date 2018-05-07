@@ -1,21 +1,17 @@
-
 [![Build Status](https://travis-ci.org/CenturyLinkCloud/mdw.svg?branch=master)](https://travis-ci.org/CenturyLinkCloud/mdw)
 [![Dependency Status](https://gemnasium.com/badges/github.com/CenturyLinkCloud/mdw.svg)](https://gemnasium.com/github.com/CenturyLinkCloud/mdw)
 [![Issue Count](https://codeclimate.com/github/CenturyLinkCloud/mdw/badges/issue_count.svg)](https://codeclimate.com/github/CenturyLinkCloud/mdw)
 
 ### Core Developer Setup 
 1. Prerequisites
- - Eclipse Oxygen for JavaEE Developers:                              
-   [http://www.eclipse.org/downloads/eclipse-packages/]([http://www.eclipse.org/downloads/eclipse-packages/)
-   
- - For installing eclipse plug-ins, please follow [this link](http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/) and return to continue with the setup. 
-       
-   - Tomcat 8:                                  
-     - [https://tomcat.apache.org](https://tomcat.apache.org)
-       
-   - Chrome and Postman for testing RESTFul Web service:                                            
-     - [https://www.google.com/chrome](https://www.google.com/chrome)
-     - [https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop)
+   - Eclipse Oxygen for JavaEE Developers:                              
+     http://www.eclipse.org/downloads/eclipse-packages/
+   - MDW Designer Plugin:
+     https://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/ 
+   - Tomcat 8/8.5:                                  
+     http://tomcat.apache.org/download-80.cgi
+   - Postman:                                            
+     https://www.getpostman.com/apps
      
 2. Get the Source Code
    - Command-line Git:  
@@ -26,38 +22,37 @@
    
 3. Set up npm (One-time step)
    - Install NodeJS:                                                                     
-     [https://docs.npmjs.com/getting-started/installing-node](https://docs.npmjs.com/getting-started/installing-node)
+     https://docs.npmjs.com/getting-started/installing-node
    - Open a command prompt in the mdw-hub project directory
-    ```
-    npm install
-   ```
+     ```
+     npm install
+     ```
 4. Build the Projects (Initial, non-incremental build)
    - Window > Show View > Other > Gradle  > Gradle Tasks.
-   - Expand the mdw project, click View Menu > Show All Tasks, then expand `other` and double-click the `buildDev` task.
+   - Expand the mdw project, click View Menu > Show All Tasks, then expand `other` and double-click the `buildDev` task (on Mac it may be necessary to run Gradle from the command line).
    - Refresh all projects in Eclipse and (ctrl-b) to build (or let autobuild do it).  Incremental builds can be performed this way and do not require a Gradle build.
 
 5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
 
 6. Edit configuration files to suit local environment:
-   - mdw/config/mdw.properties (locally, use absolute paths for mdw.asset.location and mdw.git.local.path)
+   - mdw/config/mdw.yaml (locally, use absolute paths for mdw.asset.location and mdw.git.local.path)
    - mdw/config/access.yaml (set devUser to yourself)
    - mdw/config/seed_users.json
    - (On Linux or Mac): Copy mdw-common/src/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
    
 7. Deploy on Tomcat in Eclipse
    - In Eclipse Servers view, right-click and select New > Server  
-     **Important**: Select the Apache > Tomcat 8.0 (MDW) runtime
-     and make sure you have a jdk 1.8 installed and added it to your class path.
+     **Important**: Select the Apache > Tomcat 8/8.5 (MDW) runtime
+     and make sure you have a jdk 1.8 (vs jre) selected for the runtime.
    - Select the mdw-hub module in the Add/Remove wizard page
    - Double-click on the server and set the startup timeout to something large (like 3600s)
    - Under MDW Server Options set the following Java Options (appropriate for your workspace):
- 
-    ```    
-    -Dmdw.runtime.env=dev  
-    -Dmdw.config.location=c:/workspaces/mdw/mdw/config
-    -Xms512m -Xmx1024m
-    ```
-
+     ```    
+     -Dmdw.runtime.env=dev  
+     -Dmdw.config.location=c:/workspaces/mdw/mdw/config
+     -Xms512m -Xmx1024m
+     ```
+     
 8. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
    - (On Linux and Mac): Right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.  If initially mdw-hub publishing is incomplete (missing index.html, etc):
@@ -73,10 +68,10 @@
    - Select all test cases, and execute
    
 ### Code Format
-   - See [docs/code/format.md](docs/_docs/code/format.md)
+   - https://centurylinkcloud.github.io/mdw/docs/code/format/
 
-### Designer
-   - See https://github.com/CenturyLinkCloud/mdw-designer/blob/master/README.md
+### Designer Development
+   - https://github.com/CenturyLinkCloud/mdw-designer/blob/master/README.md
 
 ### Documentation
 1. Source
