@@ -5,8 +5,8 @@
 
 ### Core Developer Setup 
 1. Prerequisites
- - Eclipse Neon for JavaEE Developers:                              
-   [http://www.eclipse.org/downloads]([http://www.eclipse.org/downloads)
+ - Eclipse Oxygen for JavaEE Developers:                              
+   [http://www.eclipse.org/downloads/eclipse-packages/]([http://www.eclipse.org/downloads/eclipse-packages/)
    
  - For installing eclipse plug-ins, please follow [this link](http://centurylinkcloud.github.io/mdw/docs/guides/InstallEclipsePluginsGuide/) and return to continue with the setup. 
        
