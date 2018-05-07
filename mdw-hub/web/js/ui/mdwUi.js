@@ -78,6 +78,20 @@ var $mdwUi = {
      HIGHLIGHT_MARGIN: 10,
      HIGHLIGHT_COLOR: '#03a9f4'
    },
+   showMessage: function(msg) {
+     // TODO: https://github.com/CenturyLinkCloud/mdw/issues/409
+     var msgs = document.getElementById('mdwMainMessages');
+     if (msgs)
+       msgs.innerHTML = msg;
+     else
+       console.log('ERROR: ' + msg); // TODO mobile toast
+   },
+   clearMessage: function() {
+     // TODO: https://github.com/CenturyLinkCloud/mdw/issues/409
+     var msgs = document.getElementById('mdwMainMessages');
+     if (msgs)
+       msgs.innerHTML = '';
+   },
    hubLoading: function(loading) {
      setTimeout(function() {
        var logo;
