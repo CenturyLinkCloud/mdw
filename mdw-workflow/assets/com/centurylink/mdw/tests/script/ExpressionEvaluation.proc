@@ -29,10 +29,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=50,y=50,w=195,h=27",
-    "requestParameters": "[[\"rrrr\",\"Body\",\"true\",\"rrr\",\"com.centurylink.mdw.camel/CamelHandler.java\",\"[0.2,1)\"]]",
-    "requestPath": "/test",
-    "requestSummary": "swageer"
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=195,h=27"
   },
   "variables": {
     "firstName": {
