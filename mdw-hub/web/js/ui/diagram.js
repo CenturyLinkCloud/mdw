@@ -249,8 +249,23 @@ diagramMod.factory('Diagram',
         canvasDisplay.h = toolbox.getHeight();
     }
     
-    this.canvas.width = canvasDisplay.w;
-    this.canvas.height = canvasDisplay.h;
+    var dpRatio = 1;
+    if (window.devicePixelRatio) {
+      dpRatio = window.devicePixelRatio;
+    }
+    if (dpRatio == 1) {
+      this.canvas.width = canvasDisplay.w;
+      this.canvas.height = canvasDisplay.h;
+    }
+    else {
+      // fix blurriness on retina displays
+      this.canvas.width = canvasDisplay.w * dpRatio;
+      this.canvas.height = canvasDisplay.h * dpRatio;
+      this.canvas.style.width = canvasDisplay.w + 'px';
+      this.canvas.style.height = canvasDisplay.h + 'px';
+      var ctx = this.canvas.getContext('2d');
+      ctx.scale(dpRatio, dpRatio);
+    }
   };
 
   // post-animation callback is the only way to prevent notes from screwing up context font (why?)
