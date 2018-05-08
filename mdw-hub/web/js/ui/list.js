@@ -101,9 +101,11 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
     for (var key in $scope.listFilter) {
       if ($scope.listFilter.hasOwnProperty(key)) {
         var val = $scope.listFilter[key];
-        if (val !== null && typeof(val) != "undefined") {
+        if (val !== null && typeof(val) != 'undefined') {
           if (val instanceof Date) 
             val = util.serviceDate(val);
+          else if (typeof(val) === 'string')
+            val = val.replace(/\[/g, "%5B").replace(/]/g, "%5D");
           query += '&' + key + '=' + val;
         }
       }

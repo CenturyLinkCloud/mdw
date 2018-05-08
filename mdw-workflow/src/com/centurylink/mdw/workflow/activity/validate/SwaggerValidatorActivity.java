@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
+import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.AssetRequest.ParameterType;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.ServiceValuesAccess;
@@ -50,6 +51,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
 
     public static final String VALIDATE = "Validate";
     public static final String STRICT = "Strict";
+    public static final String PATH = "Path";
 
     @Override
     public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
@@ -59,7 +61,21 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
             throw new ActivityException("Missing request headers: " + serviceValues.getRequestHeadersVariableName());
 
         String httpMethod = serviceValues.getHttpMethod();
-        String requestPath = serviceValues.getRequestPath();
+        String requestPath = getAttribute(PATH);
+        if (requestPath == null) {
+            // try process-defined request path
+            AssetRequest processRequest = getProcessDefinition().getRequest();
+            if (processRequest != null) {
+                String processPath = processRequest.getPath();
+                if (!processPath.startsWith("/"))
+                    processPath = "/" + processPath;
+                requestPath = "/" + getPackage().getName().replace('.', '/') + processPath;
+            }
+        }
+        if (requestPath == null) {
+            // fallback is actual request path
+            requestPath = serviceValues.getRequestPath();
+        }
 
         Object request = null;
         if (!"GET".equalsIgnoreCase(httpMethod)) {

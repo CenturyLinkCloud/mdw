@@ -46,16 +46,31 @@ public class RequestKey implements Comparable<RequestKey> {
     }
 
     public boolean equals(Object other) {
-        return other instanceof RequestKey && other.toString().equals(toString());
-    }
-
-    public int hashCode() {
-        return toString().hashCode();
+        return other instanceof RequestKey && compareTo((RequestKey)other) == 0;
     }
 
     @Override
     public int compareTo(RequestKey other) {
-        int res = path.compareTo(other.path);
+        // handle dynamic path elements
+        String[] segs1 = path.split("/");
+        String[] segs2 = other.path.split("/");
+        for (int i = 0; i < segs1.length; i++) {
+            String seg = segs1[i];
+            if (seg.startsWith("{") && seg.endsWith("}")) {
+                segs1[i] = "{}";
+                if (segs2.length > i)
+                    segs2[i] = "{}";
+            }
+        }
+        for (int i = 0; i < segs2.length; i++) {
+            String seg = segs2[i];
+            if (seg.startsWith("{") && seg.endsWith("}") && !seg.equals("{}")) {
+                segs2[i] = "{}";
+                if (segs1.length > i)
+                    segs1[i] = "{}";
+            }
+        }
+        int res = String.join("/", segs1).compareTo(String.join("/", segs2));
         if (res == 0)
             res = method.compareTo(other.method);
         return res;

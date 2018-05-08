@@ -323,7 +323,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
     }
     else {
-      $http.get(mdw.roots.services + '/services/Assets?extension=' + widgets[0].source + "&app=mdw-admin").then(function(res) {
+      $http.get(mdw.roots.services + '/services/Assets?extension=' + widgets[0].source.replace(/\[/g, "%5B").replace(/]/g, "%5D") + "&app=mdw-admin").then(function(res) {
         if (res.data.packages) {
           res.data.packages.forEach(function(pkg) {
             pkg.assets.forEach(function(asset) {
