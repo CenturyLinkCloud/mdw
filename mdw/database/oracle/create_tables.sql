@@ -327,4 +327,10 @@ CREATE TABLE VALUE
   COMMENTS        VARCHAR(1024)
 );
 
+CREATE TABLE INSTANCE_TIMING (
+  INSTANCE_ID        NUMBER(16)                NOT NULL,
+  OWNER_TYPE         VARCHAR(30)               NOT NULL,
+  ELAPSED_MS         NUMBER(24)                NOT NULL
+);
+
 spool off;

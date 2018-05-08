@@ -223,6 +223,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
         return procinst.getId();
     }
 
+
     public synchronized Long createVariableInstance(VariableInstance var, Long processInstId)
             throws SQLException {
         if (cache_variable==CACHE_OFF) {
@@ -341,7 +342,18 @@ public class EngineDataAccessCache implements EngineDataAccess {
             if (pi!=null) pi.setStatusCode(status);
         }
     }
-
+    public synchronized void setProcessElapsedTime(ProcessInstance pi) throws SQLException {
+        if(cache_process==CACHE_OFF) {
+            edadb.setProcessElapsedTime(pi);
+        }else if(cache_process==CACHE_ONLY){
+            ProcessInstance cachepi = procInstCache.get(pi.getId());
+            cachepi.setCompletionTime(pi.getCompletionTime());
+        }else{
+            edadb.setProcessElapsedTime(pi);
+            ProcessInstance cachepi = procInstCache.get(pi.getId());
+            if(cachepi!=null)cachepi.setCompletionTime(pi.getCompletionTime());
+        }
+    }
     public synchronized void cancelTransitionInstances(Long procInstId, String comment,
             Long transId) throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {

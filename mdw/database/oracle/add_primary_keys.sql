@@ -116,5 +116,11 @@ ALTER TABLE value ADD
 (   
    PRIMARY KEY (Name,Owner_type,owner_id)
 );
+
+ALTER TABLE INSTANCE_TIMING ADD  
+(  
+  CONSTRAINT timing_primary_key
+  PRIMARY KEY(INSTANCE_ID,OWNER_TYPE)
+);
   
 spool off;

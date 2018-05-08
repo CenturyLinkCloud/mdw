@@ -208,6 +208,28 @@ public class CommonDataAccess {
         return value;
     }
 
+    protected Long getElapsedTime(Long instanceId)throws SQLException{
+        Long elapsedTime=null;
+        try{
+            String query=null;
+            db.openConnection();
+            if(db.isMySQL() || db.isMariaDB()){
+                query ="SELECT TIMEDIFF(End_dt,Start_dt)* 600 "+
+                       "FROM process_instance WHERE process_instance_id= "+instanceId;
+            }else if(db.isOracle()){
+                query="SELECT (CAST(end_dt AS DATE) - CAST(start_dt AS DATE)) * 86400*1000 AS ELAPSED_MS "+
+                       "FROM process_instance WHERE process_instance_id="+instanceId;
+            }
+            ResultSet rs = db.runSelect(query);
+            if(rs.next()){
+                elapsedTime=rs.getLong(1);
+            }
+        }finally {
+            db.closeConnection();
+        }
+        return elapsedTime;
+    }
+
     public Map<String,String> getAttributes(String ownerType, Long ownerId)
     throws SQLException {
         try {
