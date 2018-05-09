@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
@@ -38,7 +39,7 @@ public class WebSocketMessenger {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<String,List<Session>> topicSubscribers = new HashMap<>();
+    private static Map<String,List<Session>> topicSubscribers = new ConcurrentHashMap<>();
 
     private static WebSocketMessenger instance = null;;
     /**
@@ -78,7 +79,7 @@ public class WebSocketMessenger {
                 "An established connection was aborted")) {
             // avoid nuisance logging when browser closes connection
             if (logger.isMdwDebugEnabled())
-                logger.severeException(t.getMessage(), t);
+                logger.warn(t.getMessage());
         }
         else {
             logger.severeException(t.getMessage(), t);
