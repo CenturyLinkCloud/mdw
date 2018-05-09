@@ -96,7 +96,7 @@ class BlindTrustManager implements X509TrustManager {
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             X500Principal subject = chain[0].getSubjectX500Principal();
             X500Principal issuer = chain[0].getIssuerX500Principal();
-            if (!trustedHost.equals(getCn(subject.getName())) || !trustedHost.equals(getCn(issuer.getName())))
+            if (!trustedHost.equals(getCn(subject.getName())) && !trustedHost.equals(getCn(issuer.getName())))
                 defaultTrustManager.checkServerTrusted(chain, authType);
     }
 

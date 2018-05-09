@@ -42,15 +42,12 @@ public class RequestKey implements Comparable<RequestKey> {
     }
 
     public String toString() {
-        return method + " " + path;
+        return path + " " + method;
     }
 
-    public boolean equals(Object other) {
-        return other instanceof RequestKey && compareTo((RequestKey)other) == 0;
-    }
-
-    @Override
-    public int compareTo(RequestKey other) {
+    public boolean match(RequestKey other) {
+        if (!method.equals(other.method))
+            return false;
         // handle dynamic path elements
         String[] segs1 = path.split("/");
         String[] segs2 = other.path.split("/");
@@ -70,9 +67,14 @@ public class RequestKey implements Comparable<RequestKey> {
                     segs1[i] = "{}";
             }
         }
-        int res = String.join("/", segs1).compareTo(String.join("/", segs2));
-        if (res == 0)
-            res = method.compareTo(other.method);
-        return res;
+        return String.join("/", segs1).equals(String.join("/", segs2));
+    }
+
+    /**
+     * Not to be used for equality tests (see match).
+     */
+    @Override
+    public int compareTo(RequestKey other) {
+        return toString().compareTo(other.toString());
     }
 }

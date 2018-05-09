@@ -49,13 +49,12 @@ public class ProcessRequests implements PreloadableCache {
     }
 
     public static AssetRequest getRequest(RequestKey requestKey) {
-        AssetRequest assetRequest = requests.get(requestKey);
-        if (assetRequest == null) {
-            synchronized(requests) {
-                assetRequest = requests.get(requestKey);
-            }
+        // default compareTo() breaks down for dynamic path elements
+        for (RequestKey key : requests.keySet()) {
+            if (key.match(requestKey))
+                return requests.get(key);
         }
-        return assetRequest;
+        return null;
     }
 
     @Override

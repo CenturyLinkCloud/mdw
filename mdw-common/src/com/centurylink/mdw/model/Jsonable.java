@@ -27,7 +27,14 @@ import io.swagger.annotations.ApiModelProperty;
 public interface Jsonable extends io.limberest.json.Jsonable {
 
     default JSONObject getJson() throws JSONException {
-        return new Jsonator(this).getJson(create());
+        return new Jsonator(this) {
+            @Override
+            protected Object getJsonObject(Object o) {
+                if (o != null && o.getClass().getName().equals("groovy.lang.MetaClassImpl"))
+                    return null;
+                return super.getJsonObject(o);
+            }
+        }.getJson(create());
     };
 
     /**

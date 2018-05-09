@@ -9,3 +9,4 @@ local.gradle
 temp/
 mdw.log
 /deps.txt
+/buildSrc/

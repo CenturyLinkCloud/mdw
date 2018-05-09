@@ -899,8 +899,8 @@ public abstract class BaseActivity implements GeneralActivity {
             // deserialize if needed
             docvo.getObject(type, getPackage());
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ActivityException("Failed to get document", ex);
+            logexception("Error retrieving " + docref, ex);
+            throw new ActivityException("Error retrieving " + docref, ex);
         }
         return docvo == null ? null : docvo.getObject(type, getPackage());
     }
@@ -910,8 +910,8 @@ public abstract class BaseActivity implements GeneralActivity {
          try {
              docvo = engine.getDocument(docref, false);
          } catch (Exception ex) {
-             logger.severeException(ex.getMessage(), ex);
-             throw new ActivityException("Failed to get document", ex);
+             logexception("Error retrieving " + docref, ex);
+             throw new ActivityException("Error retrieving " + docref, ex);
          }
          return docvo==null?null:docvo.getContent(getPackage());
     }
@@ -932,8 +932,8 @@ public abstract class BaseActivity implements GeneralActivity {
             // deserialize here (why?)
             docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ActivityException("Failed to lock document for update", ex);
+            logexception("Error retrieving " + docref, ex);
+            throw new ActivityException("Error retrieving " + docref, ex);
         }
         return docvo == null ? null : docvo.getObject(type, getPackage());
     }

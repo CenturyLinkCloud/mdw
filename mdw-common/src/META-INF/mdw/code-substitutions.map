@@ -1,2 +1,0 @@
-# more specific substitutions first
-com.centurylink.mdw.model.value.activity.ActivityRuntimeContext=com.centurylink.mdw.model.workflow.ActivityRuntimeContext
