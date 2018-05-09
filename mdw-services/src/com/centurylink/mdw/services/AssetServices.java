@@ -29,6 +29,7 @@ import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.services.asset.Renderer;
 
 /**
  * Services for interacting with design-time workflow assets.
@@ -97,4 +98,6 @@ public interface AssetServices {
     public List<ArchiveDir> getArchiveDirs() throws ServiceException;
 
     public List<String> getExtraPackageNames() throws ServiceException;
+
+    public Renderer getRenderer(String assetPath, String renderTo) throws ServiceException;
 }

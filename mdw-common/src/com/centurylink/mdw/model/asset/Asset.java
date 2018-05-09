@@ -332,6 +332,17 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
     }
 
     public String getContentType() {
+        String type = getContentType(language);
+        if (type == null) {
+            if (isBinary())
+                return "application/octet-stream";
+            else
+                return "text/plain";
+        }
+        return type;
+    }
+
+    public static String getContentType(String language) {
         if (contentTypes == null) {
             contentTypes = new HashMap<String,String>();
             contentTypes.put(SPRING, "text/xml");
@@ -358,16 +369,7 @@ public class Asset implements Serializable, Comparable<Asset>, Jsonable {
             contentTypes.put(XSL, "text/xml");
             contentTypes.put(YAML, "text/yaml");
         }
-
-        String type = contentTypes.get(language);
-        if (type == null) {
-            if (isBinary())
-                return "application/octet-stream";
-            else
-                return "text/plain";
-        }
-
-        return type;
+        return contentTypes.get(language);
     }
 
     public boolean isBinary() {
