@@ -1,3 +1,4 @@
+import org.apache.tools.ant.DirectoryScanner
 // publishes build output to a maven repository
 // eg: mdw repo or maven central
 plugins {
@@ -52,6 +53,12 @@ task zipAssetPackages {
         println "    " + pkgCat + ": " + pkgName
               
         task "zipAsset$pkgCat"(type: Zip) {
+            doFirst {
+                DirectoryScanner.defaultExcludes.each { DirectoryScanner.removeDefaultExclude it }
+            }              
+            doLast {
+                DirectoryScanner.resetDefaultExcludes()
+            }         
             destinationDir = file("../${mdwAssetOutputDir}")
             archiveName = "${pkgCat}-${mdwVersion}.zip"
             from "../${mdwAssetRoot}"
