@@ -22,9 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.services.system.SystemMessages;
 
 public class Bulletins extends JsonRestService {
 
