@@ -1,4 +1,3 @@
-import org.apache.tools.ant.DirectoryScanner
 // publishes build output to a maven repository
 // eg: mdw repo or maven central
 plugins {
