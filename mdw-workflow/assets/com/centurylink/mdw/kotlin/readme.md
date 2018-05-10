@@ -12,7 +12,7 @@ used as variables in workflow processes.  Both of these concepts are illustrated
 located in the script tests package:
 https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script
 
-## Script Activity and Evaluator
+## Script Activity
 The Kotlin Script activity is included in this package for full-blown kts support.  Since Kotlin is a strongly and statically typed
 language, access to variables is not implicit like in Groovy scripts; instead, use the *variables* map:
 ```kotlin
@@ -21,6 +21,7 @@ var person: Person = variables["jsonablePerson"] as Person
 Working examples are available in the 
 [script tests package](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script).
 
+## Script Evaluator
 For use in an evaluator activity, select Kotlin in the Language dropdown.
 Examples are in KotlinEvaluator.test in the 
 [script tests package](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script).
