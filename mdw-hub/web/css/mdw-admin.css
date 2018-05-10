@@ -701,12 +701,16 @@
   color: #a94442;
 }
 @keyframes crawl {
-  from {transform: translateX(100%);}
-  to {transform: translateX(-230px);}
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-230px);
+  }
 }
 .mdw-bulletin {
   animation-name: crawl;
-  animation-duration: 8s;
+  animation-duration: 12s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
   z-index: -100;
