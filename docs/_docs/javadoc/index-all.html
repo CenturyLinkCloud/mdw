@@ -5272,6 +5272,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Asset.html#getContentType--">getContentType()</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Asset.html#getContentType-java.lang.String-">getContentType(String)</a></span> - Static method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/AssetInfo.html#getContentType--">getContentType()</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a></dt>
 <dd>
 <div class="block">If not mapped, content-type is application/octet-stream for binary and test/plain otherwise.</div>
@@ -8474,6 +8476,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#getRemoteServer--">getRemoteServer()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/AssetServicesImpl.html#getRenderer-java.lang.String-java.lang.String-">getRenderer(String, String)</a></span> - Method in class com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/AssetServicesImpl.html" title="class in com.centurylink.mdw.services.asset">AssetServicesImpl</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/AssetServices.html#getRenderer-java.lang.String-java.lang.String-">getRenderer(String, String)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services">AssetServices</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/AppSummary.html#getRepository--">getRepository()</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/AppSummary.html" title="class in com.centurylink.mdw.model">AppSummary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRepositoryUrl--">getRepositoryUrl()</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html" title="class in com.centurylink.mdw.dataaccess.file">VersionControlGit</a></dt>
@@ -10868,6 +10874,12 @@
 <dt><a href="com/centurylink/mdw/common/translator/impl/HtmlDocumentTranslator.html" title="class in com.centurylink.mdw.common.translator.impl"><span class="typeNameLink">HtmlDocumentTranslator</span></a> - Class in <a href="com/centurylink/mdw/common/translator/impl/package-summary.html">com.centurylink.mdw.common.translator.impl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/translator/impl/HtmlDocumentTranslator.html#HtmlDocumentTranslator--">HtmlDocumentTranslator()</a></span> - Constructor for class com.centurylink.mdw.common.translator.impl.<a href="com/centurylink/mdw/common/translator/impl/HtmlDocumentTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">HtmlDocumentTranslator</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/services/asset/HtmlRenderer.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">HtmlRenderer</span></a> - Class in <a href="com/centurylink/mdw/services/asset/package-summary.html">com.centurylink.mdw.services.asset</a></dt>
+<dd>
+<div class="block">TODO: cached output based on file timestamp</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/HtmlRenderer.html#HtmlRenderer-com.centurylink.mdw.model.asset.AssetInfo-">HtmlRenderer(AssetInfo)</a></span> - Constructor for class com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/HtmlRenderer.html" title="class in com.centurylink.mdw.services.asset">HtmlRenderer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/test/TestCaseScript.html#http-java.lang.String-">http(String)</a></span> - Method in class com.centurylink.mdw.services.test.<a href="com/centurylink/mdw/services/test/TestCaseScript.html" title="class in com.centurylink.mdw.services.test">TestCaseScript</a></dt>
 <dd>&nbsp;</dd>
@@ -15441,7 +15453,19 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/ProcessPersister.html#renameProcess-java.lang.Long-java.lang.String-int-">renameProcess(Long, String, int)</a></span> - Method in interface com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/ProcessPersister.html" title="interface in com.centurylink.mdw.dataaccess">ProcessPersister</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/HtmlRenderer.html#render--">render()</a></span> - Method in class com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/HtmlRenderer.html" title="class in com.centurylink.mdw.services.asset">HtmlRenderer</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/Renderer.html#render--">render()</a></span> - Method in interface com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/Renderer.html" title="interface in com.centurylink.mdw.services.asset">Renderer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/services/asset/Renderer.html" title="interface in com.centurylink.mdw.services.asset"><span class="typeNameLink">Renderer</span></a> - Interface in <a href="com/centurylink/mdw/services/asset/package-summary.html">com.centurylink.mdw.services.asset</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/TaskAttributeConstant.html#RENDERING_ENGINE">RENDERING_ENGINE</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/TaskAttributeConstant.html" title="class in com.centurylink.mdw.constant">TaskAttributeConstant</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/services/asset/RenderingException.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">RenderingException</span></a> - Exception in <a href="com/centurylink/mdw/services/asset/package-summary.html">com.centurylink.mdw.services.asset</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/RenderingException.html#RenderingException-int-java.lang.String-">RenderingException(int, String)</a></span> - Constructor for exception com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/RenderingException.html" title="class in com.centurylink.mdw.services.asset">RenderingException</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/RenderingException.html#RenderingException-int-java.lang.String-java.lang.Throwable-">RenderingException(int, String, Throwable)</a></span> - Constructor for exception com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/RenderingException.html" title="class in com.centurylink.mdw.services.asset">RenderingException</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/StringHelper.html#Replace-java.lang.String-java.lang.String-java.lang.String-">Replace(String, String, String)</a></span> - Static method in class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/StringHelper.html" title="class in com.centurylink.mdw.util">StringHelper</a></dt>
 <dd>
