@@ -46,6 +46,7 @@ public class RootServlet extends HttpServlet {
 
         String path = request.getServletPath();
         if (path.equals("/") || path.equals("/index.html")) {
+            response.setCharacterEncoding("UTF-8"); // why oh why does servlet spec default to ISO-8859-1?
             if (new File(WebAppContext.getMdw().getOverrideRoot() + "/index.html").isFile()) {
                 request.getRequestDispatcher("/customContent/index.html").forward(request, response);
             }

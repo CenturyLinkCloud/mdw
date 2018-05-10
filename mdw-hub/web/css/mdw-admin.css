@@ -1200,6 +1200,15 @@
 .mdw-task-editor {
   padding: 10px;
 }
+.mdw-markdown-editor {
+  padding: 5px;
+}
+.mdw-markdown {
+  margin-left: 15px;
+  margin-right: 15px;
+  width: calc(100% - 30px);
+  height: 100%;
+}
 .mdw-dirty {
   font-weight: bold;
   font-size: 22px;

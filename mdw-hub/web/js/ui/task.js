@@ -22,7 +22,7 @@ taskMod.controller('MdwTaskTemplateController',
         $scope.buildConfigurators();
       }, function error(response) {
         mdw.messages = response.statusText;
-      });      
+      });
     }
   };
   

@@ -30,6 +30,7 @@
     "hljs": false,
     "JsDiff": false,
     "marked": false,
+    "SimpleMDE": false,
     "describe": false,
     "it": false,
     "before": false,
