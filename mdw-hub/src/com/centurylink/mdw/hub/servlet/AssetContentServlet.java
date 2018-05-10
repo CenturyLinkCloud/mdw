@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +164,13 @@ public class AssetContentServlet extends HttpServlet {
                             String contentType = Asset.getContentType(render.toUpperCase());
                             if (contentType != null)
                                 response.setContentType(contentType);
-                            response.getOutputStream().write(renderer.render());
+                            Map<String,String> options = new HashMap<>();
+                            Enumeration<String> paramNames = request.getParameterNames();
+                            while (paramNames.hasMoreElements()) {
+                                String paramName = paramNames.nextElement();
+                                options.put(paramName, request.getParameter(paramName));
+                            }
+                            response.getOutputStream().write(renderer.render(options));
                         }
                         catch (ServiceException ex) {
                             logger.severeException(ex.getMessage(), ex);
