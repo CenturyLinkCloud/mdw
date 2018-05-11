@@ -131,6 +131,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           End: 'endDate',
           Label: 'comments'
         },
+        Source: {
+          'Initiated By': 'owner',
+          ID: 'ownerId',
+          '_url': '${it.owner == "PROCESS_INSTANCE" ? "#/workflow/processes/" + it.ownerId : (it.owner == "ERROR" ? "#/workflow/triggers/" + it.ownerId : "#/workflow/requests/" + it.ownerId)}'
+        },
         /* named one-item array of object:
          * Name evaluates to an array which is displayed as a table with
          * each item's name/value designated by the array's single object.
@@ -140,10 +145,90 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           Value: 'value',
           Type: 'type'
         }]},
-        Source: {
-          'Initiated By': 'owner',
-          ID: 'ownerId',
-          '_url': '${it.owner == "PROCESS_INSTANCE" ? "#/workflow/processes/" + it.ownerId : (it.owner == "ERROR" ? "#/workflow/triggers/" + it.ownerId : "#/workflow/requests/" + it.ownerId)}'
+        /*
+         * see Subprocesses below
+         */
+        'Service Summary': {
+          'serviceList': [{
+            'Service': '${it.name}',
+            'ID': '${it.id}',
+            '_url': '${it.url}',
+            'When': '${it.started}',
+            'Status': '${it.status}',
+            '': '${it.thisFlag}'
+          }],
+          'getServiceList': function(diagramObject, workflowObject, runtimeInfo) {
+            // TODO: non-standard service summary variable name
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return workflowObject.variables && workflowObject.variables.serviceSummary;
+            }
+            else {
+              if (runtimeInfo === null || !runtimeInfo.variables)
+                return null;
+              var serviceSummary = runtimeInfo.variables.find(function(variable) {
+                return variable.name === 'serviceSummary'; 
+              });
+              if (!serviceSummary)
+                return null;
+              var url = mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9);
+              return $http.get(url).then(function(response) {
+                if (response.status !== 200)
+                  return null;
+                var result = { 
+                    status: response.status,
+                    maxWidth: 150,
+                    data: {
+                      serviceList: []
+                    }
+                };
+                // populate the serviceList pseudo array
+                var serviceSummary = response.data;
+                var microservices = serviceSummary.microservices;
+                var services = [];
+                Object.keys(microservices).forEach(function(name) {
+                  let service = microservices[name];
+                  service.name = name;
+                  services.push(service);
+                });
+                // sort by id
+                services.sort(function(s1, s2) {
+                  return s1.instanceId - s2.instanceId;
+                });
+                services.forEach(function(microservice) {
+                  result.data.serviceList.push({
+                    name: microservice.name,
+                    id: microservice.instanceId,
+                    url: '#/workflow/processes/' + microservice.instanceId,
+                    started: microservice.instanceTriggered ? new Date(microservice.instanceTriggered).toLocaleString() : null,
+                    status: microservice.instanceStatus,
+                    thisFlag: microservice.instanceId === runtimeInfo.id ? '*' : '' 
+                  });
+                  microservice.invocations.forEach(function(invocation) {
+                    result.data.serviceList.push({
+                      name: '  invocation',
+                      id: invocation.requestId,
+                      url: '#/workflow/requests/' + invocation.requestId,
+                      started: invocation.sent ? new Date(invocation.sent).toLocaleString() : null,
+                      status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
+                    });
+                  });
+                  if (microservice.updates) {
+                    microservice.updates.forEach(function(update) {
+                      result.data.serviceList.push({
+                        name: '  update',
+                        id: update.requestId,
+                        url: '#/workflow/requests/' + update.requestId,
+                        started: update.received ? new Date(update.received).toLocaleString() : null,
+                        status: update.status ? (update.status.code + ": " + update.status.message) : null
+                      });
+                    });
+                  }
+                });
+                return result;
+              });
+            }
+          }
         },
         Hierarchy: {
           'hierarchyInstances': [{
@@ -220,7 +305,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         }],
         /* named one-item array, followed by function:
          * Function returns an array of promises from which are extracted
-         * the JSON array with the corresponding (eg: 'processInstances').
+         * the JSON array with the corresponding name (eg: 'processInstances').
          * From these arrays each item is evaluated using the standard
          * rules of prop name = label and prop value = eval.
          * 
@@ -285,7 +370,6 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '/subflows'));
                 }
               }
-              
               return $q.all(gets);
             }
           }

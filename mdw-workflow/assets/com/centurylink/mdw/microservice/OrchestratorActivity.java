@@ -1,5 +1,6 @@
 package com.centurylink.mdw.microservice;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -242,6 +243,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             for (Microservice service : servicePlan.getServices()) {
                 MicroserviceHistory history = summary.addMicroservice(service.getName());
                 try {
+                    history.setInstanceTriggered(Instant.now());
                     ProcessInstance processInstance = createProcessInstance(service);
                     procInstList.add(processInstance);
                     history.setInstanceId(processInstance.getId());
@@ -327,11 +329,9 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         boolean hasFailedSubprocess = false;
         for (int i = 0; i < allRunners.length; i++) {
             Microservice service = serviceList.get(i);
-            Long subprocInstId = allRunners[i].procInstId;
             MicroserviceHistory history = summary.getMicroservice(service.getName());
-            if (subprocInstId != null) {
-                history.setInstanceId(subprocInstId);
-            }
+            history.setInstanceId(allRunners[i].procInstId);
+            history.setInstanceTriggered(allRunners[i].procInstTriggered);
             if (allRunners[i].success) {
                 history.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
             }
@@ -350,6 +350,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         private Microservice service;
         private List<SubprocessRunner> runners;
         private Long procInstId = null;
+        private Instant procInstTriggered = null;
         private boolean success;
 
         private SubprocessRunner(Microservice service, int index, List<SubprocessRunner> runners) {
@@ -367,6 +368,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
                 Map<String,String> parameters = createBindings(childVars, service, perfLevel >= 5);
+                procInstTriggered = Instant.now();
                 success = engineDriver.invokeServiceAsSubprocess(process.getId(),
                         getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel) != null;
                 procInstId = engineDriver.getMainProcessInstanceId();

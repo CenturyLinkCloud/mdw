@@ -1,5 +1,6 @@
 package com.centurylink.mdw.microservice;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,13 @@ public class MicroserviceHistory implements Jsonable {
     private Long instanceId;
     public Long getInstanceId() { return instanceId; }
     public void setInstanceId(Long instanceId) { this.instanceId = instanceId; }
+
+    /**
+     * Process instance triggered.
+     */
+    private Instant instanceTriggered;
+    public Instant getInstanceTriggered() { return instanceTriggered; }
+    public void setInstanceTriggered(Instant triggered) { this.instanceTriggered = triggered; }
 
     /**
      * Process instance status.
