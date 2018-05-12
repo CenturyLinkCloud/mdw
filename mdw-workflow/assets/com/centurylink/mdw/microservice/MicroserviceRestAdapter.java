@@ -83,7 +83,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary != null) {
             String microservice = getMicroservice();
-            List<Invocation> invocations = serviceSummary.getInvocations(microservice);
+            List<Invocation> invocations = serviceSummary.getInvocations(microservice, getProcessInstanceId());
             if (invocations == null)
                 throw new ActivityException("No invocations for: " + microservice);
 
@@ -94,7 +94,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             }
             else {
                 Invocation invocation = new Invocation(getRequestId(), status, Instant.now(), responseId);
-                serviceSummary.addInvocation(microservice, invocation);
+                serviceSummary.addInvocation(microservice, getProcessInstanceId(), invocation);
             }
 
             setVariableValue(getServiceSummaryVariableName(), serviceSummary);

@@ -80,11 +80,11 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=43,y=40,w=165,h=27"
+    "WORK_DISPLAY_INFO": "x=43,y=40,w=175,h=26"
   },
   "textNotes": [{
-    "attributes": {"WORK_DISPLAY_INFO": "x=386,y=33,w=341,h=74"},
-    "content": "TODO:\r\n - Initial dependency check\r\n - Post-invoke serviceSummary update\r\n - Post-invoke serviceSummary notification",
+    "attributes": {"WORK_DISPLAY_INFO": "x=386,y=33,w=281,h=50"},
+    "content": "TODO:\r\n - Initial dependency check\r\n - Post-invoke serviceSummary notification",
     "id": "N3"
   }],
   "variables": {

@@ -395,13 +395,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Tasks?processInstanceId=' + runtimeInfo[0].processInstanceId + '&activityInstanceIds=[';
+              var url = mdw.roots.services + '/services/Tasks?processInstanceId=' + runtimeInfo[0].processInstanceId + '&activityInstanceIds=%5B';
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
               }
-              url += ']&sort=startDate&descending=true';
+              url += '%5D&sort=startDate&descending=true';
               return $http.get(url);
             }
           }
@@ -422,13 +422,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=[';              
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=%5B';              
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
               }
-              url += ']&descending=true';
+              url += '%5D&descending=true';
               return $http.get(url);
             }
           }
@@ -449,13 +449,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=[';              
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=%5B';              
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
               }
-              url += ']&descending=true';
+              url += '%5D&descending=true';
               return $http.get(url);
             }
           }

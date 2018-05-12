@@ -176,36 +176,25 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * @throws JSONException
      */
     public Jsonable microServiceSuccess(String microservice, ServiceSummary serviceSummary) {
-        // Grab the invocations for this service
-        List<Invocation> invocations = serviceSummary.getInvocations(microservice);
-        logger.info(getActivityName() + "  ***Invocations " + invocations);
-        logger.info(getActivityName() + "  ***Invocations checking for  " + microservice);
-
-        try {
-            logger.info(getActivityName() + "  ***service summary:"
-                    + serviceSummary.getJson().toString());
+        for (MicroserviceHistory history : serviceSummary.getMicroservices(microservice)) {
+            List<Invocation> invocations = history.getInvocations();
+            if (invocations != null) {
+                for (Invocation invocation : invocations) {
+                    if (invocation.getStatus().getCode() == Status.OK.getCode()) {
+                        return invocation;
+                    }
+                }
+            }
+            List<Update> updates = history.getUpdates();
+            if (updates != null) {
+                for (Update update : updates) {
+                    if (update.getStatus().getCode() == Status.OK.getCode()) {
+                        return update;
+                    }
+                }
+            }
         }
-        catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (invocations == null)
-            return null;
-        // Get first successful 200 invocation
-        Invocation successfulInvocation = invocations.stream()
-                .filter((invocation) -> Status.OK.getCode() == invocation.getStatus().getCode()
-                        || Status.ACCEPTED.getCode() == invocation.getStatus().getCode())
-                .findFirst().orElse(null);
-        logger.info("Invocations checking for  " + microservice + " invocation="
-                + successfulInvocation);
-        List<Update> updates = serviceSummary.getUpdates(microservice);
-        // If none found, check updates
-        return successfulInvocation != null ? successfulInvocation
-                : updates == null ? null
-                        : updates.stream().filter((update) -> Status.OK.getCode() == update
-                                .getStatus().getCode()
-                                || Status.ACCEPTED.getCode() == update.getStatus().getCode())
-                                .findFirst().orElse(null);
+        return null;
     }
 
     protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {

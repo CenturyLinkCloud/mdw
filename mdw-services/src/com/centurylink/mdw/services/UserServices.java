@@ -17,13 +17,14 @@ package com.centurylink.mdw.services;
 
 import java.util.List;
 
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.user.RoleList;
-import com.centurylink.mdw.model.user.UserAction;
-import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.model.user.UserList;
 import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.RoleList;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.UserList;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.WorkgroupList;
 
 public interface UserServices {
@@ -50,7 +51,7 @@ public interface UserServices {
 
     public User getUser(String cuid) throws DataAccessException;
 
-    public void createUser(User user) throws DataAccessException;
+    public void createUser(User user) throws DataAccessException, ServiceException;
     public void updateUser(User user) throws DataAccessException;
     public void deleteUser(String cuid) throws DataAccessException;
     public void addUserToWorkgroup(String cuid, String group) throws DataAccessException;

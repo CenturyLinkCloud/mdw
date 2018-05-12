@@ -177,7 +177,10 @@ public class UserServicesImpl implements UserServices {
         UserGroupCache.remove(group);
     }
 
-    public void createUser(User user) throws DataAccessException {
+    public void createUser(User user) throws DataAccessException, ServiceException {
+        User existing = getUsers().get(user.getCuid());
+        if (existing != null)
+            throw new ServiceException(ServiceException.CONFLICT, "User ID already exists: " + user.getCuid());
         user.setId(getUserDAO().saveUser(user));
         getUserDAO().updateUserAttributes(user.getId(), user.getAttributes());
         UserGroupCache.set(user);

@@ -38,7 +38,7 @@
     {
       "attributes": {
         "Output Documents": "[\"servicePlan\"]",
-        "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n        }\r\n    }\r\n}",
+        "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\nimport com.centurylink.mdw.model.Jsonable\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n            enabled = (variables[\"request\"] as Jsonable).getJson().has(\"group\")\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/GroupRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n    }\r\n}",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=238,y=282,w=118,h=75"
       },
@@ -103,7 +103,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "SERVICE",
-    "WORK_DISPLAY_INFO": "x=379,y=59,w=236,h=27",
+    "WORK_DISPLAY_INFO": "x=379,y=59,w=250,h=26",
     "requestMethod": "POST",
     "requestParameters": "[[\"User\",\"Body\",\"true\",\"User with optional groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.2,1)\"]]",
     "requestPath": "/user",

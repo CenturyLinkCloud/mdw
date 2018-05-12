@@ -87,9 +87,11 @@ public class ServiceSummaryApi extends JsonRestService {
                         PackageCache.getPackage(this.getClass().getPackage().getName()));
                 if (segments.length == 7 && segments[6].equals("subflows")) {
                     ProcessList processList = new ProcessList("processInstances", new ArrayList<>());
-                    for (MicroserviceHistory history : serviceSummary.getMicroservices()) {
-                        Long instanceId = history.getInstanceId();
-                        processList.addProcess(workflowServices.getProcess(instanceId));
+                    for (String microserviceName : serviceSummary.getMicroservices().keySet()) {
+                        for (MicroserviceHistory history : serviceSummary.getMicroservices(microserviceName)) {
+                            Long instanceId = history.getInstanceId();
+                            processList.addProcess(workflowServices.getProcess(instanceId));
+                        }
                     }
                     return processList.getJson();
                 }
