@@ -123,7 +123,9 @@ public class ServiceSummary implements Jsonable {
             JSONArray microservicesArr = new JSONArray();
             summaryJson.put(microserviceName, microservicesArr);
             for (MicroserviceHistory history : histories) {
-                microservicesArr.put(history.getJson());
+                JSONObject microserviceJson = history.getJson();
+                microserviceJson.remove("microservice");
+                microservicesArr.put(microserviceJson);
             }
         }
         return json;

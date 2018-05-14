@@ -89,7 +89,7 @@ process: # 12075
     value: |
       {
         "masterRequestId": "sdwf35b84c94f241c3",
-        "microservices": {"portster/PortIn": {
+        "microservices": {"portster/PortIn": [{
           "invocations": [{
             "requestId": 601957,
             "responseId": 601959,
@@ -107,7 +107,7 @@ process: # 12075
               "message": "focaccept"
             }
           }]
-        }}
+        }]}
       }
   variable: # 15246
     name: subCount
