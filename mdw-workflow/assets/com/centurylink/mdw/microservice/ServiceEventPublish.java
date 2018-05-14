@@ -19,7 +19,7 @@ public class ServiceEventPublish extends PublishEventMessage {
     }
 
     protected void publish(String eventName, String eventMessage, int delay) throws Exception {
-        DocumentReference docref = this.createDocument(String.class.getName(),
+        DocumentReference docref = createDocument(String.class.getName(),
                 eventMessage, OwnerType.INTERNAL_EVENT, this.getActivityInstanceId());
         loginfo("Publish message, event=" + eventName +
                 ", id=" + docref.getDocumentId() + ", message=" + eventMessage);

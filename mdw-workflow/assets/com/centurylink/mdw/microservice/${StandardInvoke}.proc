@@ -1,19 +1,19 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=77,y=178,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=69,y=98,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=217,ly=81,type=Elbow,xs=141&201,ys=198&198"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=21,ly=-232,type=Elbow,xs=133&246,ys=118&118"},
         "event": "FINISH",
         "id": "T1",
-        "to": "A4"
+        "to": "A7"
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=728,y=179,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=641,y=418,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -24,15 +24,15 @@
         "Mapper": "${requestMapper}",
         "Mapper_assetVersion": "0",
         "Output": "serviceRequest",
-        "WORK_DISPLAY_INFO": "x=205,y=163,w=106,h=75"
+        "WORK_DISPLAY_INFO": "x=491,y=81,w=119,h=79"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
       "name": "Map\r\nRequest",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=344,ly=200,type=Elbow,xs=315&371,ys=200&200"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=437,ly=188,type=ElbowV,xs=550&349,ys=164&235"},
         "event": "FINISH",
-        "id": "T2",
+        "id": "T7",
         "to": "A5"
       }]
     },
@@ -45,13 +45,13 @@
         "REQUEST_VARIABLE": "serviceRequest",
         "RESPONSE_VARIABLE": "serviceResponse",
         "RetryHttpCodes": "500",
-        "WORK_DISPLAY_INFO": "x=375,y=163,w=101,h=75"
+        "WORK_DISPLAY_INFO": "x=270,y=239,w=159,h=81"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
       "name": "REST\r\nInvoke",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=505,ly=199,type=Elbow,xs=480&529,ys=199&199"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=248,ly=370,type=ElbowV,xs=349&170,ys=324&396"},
         "event": "FINISH",
         "id": "T3",
         "to": "A6"
@@ -63,13 +63,43 @@
         "Mapper": "${responseMapper}",
         "Mapper_assetVersion": "0",
         "Output": "response",
-        "WORK_DISPLAY_INFO": "x=533,y=160,w=104,h=75"
+        "WORK_DISPLAY_INFO": "x=110,y=400,w=120,h=80"
       },
       "id": "A6",
       "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
       "name": "Map\r\nResponse",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=676,ly=199,type=Elbow,xs=641&724,ys=199&199"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=321,ly=439,type=Elbow,xs=234&396,ys=439&439"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=250,y=80,w=119,h=81"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.microservice.DependenciesWaitActivity",
+      "name": "Await\nDependencies",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=466,ly=120,type=Elbow,xs=373&487,ys=120&120"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "Event Name": "service-summary-update-${masterRequestId}",
+        "WORK_DISPLAY_INFO": "x=400,y=399,w=119,h=80"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.microservice.ServiceEventPublish",
+      "name": "Notify Summary\nUpdate",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=586,ly=273,type=Elbow,xs=523&637,ys=438&438"},
         "event": "FINISH",
         "id": "T4",
         "to": "A2"
@@ -80,13 +110,8 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=43,y=40,w=175,h=26"
+    "WORK_DISPLAY_INFO": "x=30,y=25,w=175,h=26"
   },
-  "textNotes": [{
-    "attributes": {"WORK_DISPLAY_INFO": "x=386,y=33,w=281,h=50"},
-    "content": "TODO:\r\n - Initial dependency check\r\n - Post-invoke serviceSummary notification",
-    "id": "N3"
-  }],
   "variables": {
     "microservice": {
       "category": "INPUT",

@@ -1,4 +1,4 @@
-${StandardInvoke}.proc=2
+${StandardInvoke}.proc=4
 CombiningConsolidator.java=1
 Consolidator.java=1
 DependenciesWaitActivity.java=7
@@ -10,7 +10,7 @@ MicroserviceHistory.java=2
 MicroserviceRestAdapter.java=5
 OrchestratorActivity.java=4
 ResponseCollector.java=1
-ServiceEventPublish.java=2
+ServiceEventPublish.java=3
 ServicePlanModel.kt=1
 ServiceSummary.java=4
 ServiceSummaryApi.java=2

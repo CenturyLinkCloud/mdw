@@ -54,8 +54,9 @@ public class MicroserviceHistory implements Jsonable {
     public List<Update> getUpdates() { return updates; }
     public void setUpdates(List<Update> updates) { this.updates = updates; }
 
-    public MicroserviceHistory(String microservice) {
+    public MicroserviceHistory(String microservice, Long instanceId) {
         this.microservice = microservice;
+        this.instanceId = instanceId;
         this.invocations = new ArrayList<Invocation>();
     }
 

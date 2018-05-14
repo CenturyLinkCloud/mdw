@@ -57,8 +57,8 @@ public class ServiceSummary implements Jsonable {
     /**
      * Adds and returns a microservice.
      */
-    public MicroserviceHistory addMicroservice(String name) {
-        MicroserviceHistory microservice = new MicroserviceHistory(name);
+    public MicroserviceHistory addMicroservice(String name, Long instanceId) {
+        MicroserviceHistory microservice = new MicroserviceHistory(name, instanceId);
         List<MicroserviceHistory> histories = microservices.get(name);
         if (histories == null) {
             histories = new ArrayList<>();
@@ -76,8 +76,7 @@ public class ServiceSummary implements Jsonable {
         }
         MicroserviceHistory history = getMicroservice(microserviceName, instanceId);
         if (history == null) {
-            history = addMicroservice(microserviceName);
-            history.setInstanceId(instanceId);
+            history = addMicroservice(microserviceName, instanceId);
         }
         List<Invocation> invocations = getInvocations(microserviceName, instanceId);
         if (invocations == null) {
