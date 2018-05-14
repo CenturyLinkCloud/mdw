@@ -4,6 +4,16 @@
       "name": "process instance template",
       "check": "select column_name from user_tab_cols where table_name = 'PROCESS_INSTANCE' and column_name = 'TEMPLATE'",
       "upgrade": "alter table PROCESS_INSTANCE add TEMPLATE VARCHAR2(256 BYTE)"
+    },
+    {
+      "name": "instance timing",
+      "check": "SELECT * FROM user_tables WHERE table_name ='INSTANCE_TIMING'",
+      "upgrade":"CREATE TABLE INSTANCE_TIMING (INSTANCE_ID  NUMBER(16)   NOT NULL,  OWNER_TYPE  VARCHAR(30)  NOT NULL, ELAPSED_MS   NUMBER(24)   NOT NULL)"                              
+    },
+    {
+      "name": "instance timing primary key",
+      "check": "SELECT * FROM user_constraints where table_name='INSTANCE_TIMING' and constraint_name='TIMING_PRIMARY_KEY'",
+      "upgrade": "ALTER TABLE INSTANCE_TIMING ADD(CONSTRAINT timing_primary_key PRIMARY KEY(INSTANCE_ID,OWNER_TYPE))"
     }
-  ]
+  ]  
 }
