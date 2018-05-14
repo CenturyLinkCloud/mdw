@@ -22,7 +22,7 @@
       "attributes": {
         "STATUS_AFTER_EVENT": "Hold",
         "WORK_DISPLAY_INFO": "x=428,y=284,w=121,h=77",
-        "parallel": "true",
+        "parallel": "false",
         "synchronous": "true"
       },
       "id": "A3",
@@ -120,7 +120,7 @@
     },
     "response": {
       "category": "OUTPUT",
-      "type": "com.centurylink.mdw.model.Jsonable"
+      "type": "org.json.JSONObject"
     },
     "responseHeaders": {
       "category": "OUTPUT",

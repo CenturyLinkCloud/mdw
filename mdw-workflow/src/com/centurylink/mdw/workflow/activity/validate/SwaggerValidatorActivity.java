@@ -103,7 +103,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
                     result.also(Status.BAD_REQUEST, "Missing request: " + serviceValues.getRequestVariableName());
                 }
                 else {
-                    JSONObject requestJson = serviceValues.toJson(serviceValues.getResponseVariableName(), request);
+                    JSONObject requestJson = serviceValues.toJson(serviceValues.getRequestVariableName(), request);
                     result.also(validator.validateBody(requestJson, isStrict()));
                 }
             }

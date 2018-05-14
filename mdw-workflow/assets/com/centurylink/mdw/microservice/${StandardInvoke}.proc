@@ -113,6 +113,10 @@
     "WORK_DISPLAY_INFO": "x=30,y=25,w=175,h=26"
   },
   "variables": {
+    "i": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
     "microservice": {
       "category": "INPUT",
       "type": "java.lang.String"

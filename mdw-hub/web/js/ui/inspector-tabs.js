@@ -185,22 +185,21 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                 // populate the serviceList pseudo array
                 var serviceSummary = response.data;
                 var microservices = serviceSummary.microservices;
-                var services = [];
-                Object.keys(microservices).forEach(function(name) {
-                  let service = microservices[name];
-                  service.name = name;
-                  services.push(service);
-                });
-                // sort by id
-                services.sort(function(s1, s2) {
-                  return s1.instanceId - s2.instanceId;
-                });
-                services.forEach(function(microservice) {
+                var formatDate = function(date) {
+                  let now = new Date();
+                  let str = (date.getMonth() + 1) + '/' + date.getDate();
+                  if (date.getFullYear() != now.getFullYear()) {
+                    str += '/' + date.getFullYear();
+                  }
+                  str += ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds(); 
+                  return str;
+                };
+                microservices.forEach(function(microservice) {
                   result.data.serviceList.push({
-                    name: microservice.name,
+                    name: microservice.microservice,
                     id: microservice.instanceId,
                     url: '#/workflow/processes/' + microservice.instanceId,
-                    started: microservice.instanceTriggered ? new Date(microservice.instanceTriggered).toLocaleString() : null,
+                    started: microservice.instanceTriggered ? formatDate(new Date(microservice.instanceTriggered)) : null,
                     status: microservice.instanceStatus,
                     thisFlag: microservice.instanceId === runtimeInfo.id ? '*' : '' 
                   });
@@ -209,7 +208,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                       name: '  invocation',
                       id: invocation.requestId,
                       url: '#/workflow/requests/' + invocation.requestId,
-                      started: invocation.sent ? new Date(invocation.sent).toLocaleString() : null,
+                      started: invocation.sent ? formatDate(new Date(invocation.sent)) : null,
                       status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
                     });
                   });
@@ -219,7 +218,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                         name: '  update',
                         id: update.requestId,
                         url: '#/workflow/requests/' + update.requestId,
-                        started: update.received ? new Date(update.received).toLocaleString() : null,
+                        started: update.received ? formatDate(new Date(update.received)) : null,
                         status: update.status ? (update.status.code + ": " + update.status.message) : null
                       });
                     });

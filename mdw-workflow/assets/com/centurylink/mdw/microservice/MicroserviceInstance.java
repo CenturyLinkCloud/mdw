@@ -10,10 +10,10 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 
 /**
- * Represents a microservice's invocations and updates for one master request.
+ * Represents a microservice's invocations and updates for one instanceId.
  * Invocations will always be non-null (empty if none), whereas updates can be null.
  */
-public class MicroserviceHistory implements Jsonable {
+public class MicroserviceInstance implements Jsonable {
 
     private String microservice;
     public String getMicroservice() { return microservice; }
@@ -54,14 +54,13 @@ public class MicroserviceHistory implements Jsonable {
     public List<Update> getUpdates() { return updates; }
     public void setUpdates(List<Update> updates) { this.updates = updates; }
 
-    public MicroserviceHistory(String microservice, Long instanceId) {
+    public MicroserviceInstance(String microservice, Long instanceId) {
         this.microservice = microservice;
         this.instanceId = instanceId;
         this.invocations = new ArrayList<Invocation>();
     }
 
-    public MicroserviceHistory(String microservice, JSONObject json) {
-        this.microservice = microservice;
+    public MicroserviceInstance(JSONObject json) {
         bind(json);
     }
 
