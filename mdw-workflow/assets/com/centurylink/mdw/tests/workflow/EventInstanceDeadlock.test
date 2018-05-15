@@ -7,8 +7,8 @@ start process("com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Main") {
         serviceSummary: '''{
   "_type": "com.centurylink.mdw.microservice.ServiceSummary",
   "serviceSummary": {
-      "microservices": {
-        "portster/PortIn": [{
+      "microservices": [
+        {
           "updates": [
             {
               "requestId": 0,
@@ -28,9 +28,10 @@ start process("com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Main") {
               "message": "Accepted"
             },
             "responseId": 601959
-          }]
-        }]
-      },
+          }],
+          "microservice": "portster/PortIn"
+        }
+      ],
       "masterRequestId": "sdwf35b84c94f241c3"
     }
 }'''
