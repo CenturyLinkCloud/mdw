@@ -99,7 +99,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     protected boolean isParallel() {
-        return getAttribute(PARALLEL, true);
+        return getAttribute(PARALLEL, false);
     }
 
     protected ServicePlan getServicePlan() throws ActivityException {
