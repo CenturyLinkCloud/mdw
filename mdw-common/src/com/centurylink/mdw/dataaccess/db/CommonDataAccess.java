@@ -218,7 +218,7 @@ public class CommonDataAccess {
                        " FROM process_instance WHERE process_instance_id=? "+
                        " AND OWNER = ?";
             }else if(db.isOracle()){
-                query="SELECT (CAST(end_dt AS DATE) - CAST(start_dt AS DATE)) * 86400*1000 AS ELAPSED_MS "+
+                query="SELECT (CAST("+nowPrecision()+" AS DATE) - CAST(start_dt AS DATE)) * 86400*1000 AS ELAPSED_MS "+
                        " FROM process_instance WHERE process_instance_id=?"+
                        " AND OWNER = ?";
             }
