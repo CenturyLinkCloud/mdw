@@ -19,23 +19,19 @@ public class ServiceSummary implements Jsonable {
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
 
-    private Map<String,List<MicroserviceInstance>> microservices = new LinkedHashMap<>();
-    public Map<String,List<MicroserviceInstance>> getMicroservices() { return microservices; }
-    public void setMicroservices(Map<String,List<MicroserviceInstance>> microservices) {
+    private Map<String,MicroserviceList> microservices = new LinkedHashMap<>();
+    public Map<String,MicroserviceList> getMicroservices() { return microservices; }
+    public void setMicroservices(Map<String,MicroserviceList> microservices) {
         this.microservices = microservices;
     }
 
-    public List<MicroserviceInstance> getMicroservices(String name) {
-        List<MicroserviceInstance> instances = microservices.get(name);
-        return instances == null ? new ArrayList<>() : instances;
+    public MicroserviceList getMicroservices(String name) {
+        return microservices.get(name);
     }
 
     public MicroserviceInstance getMicroservice(String name, Long instanceId) {
-        for (MicroserviceInstance instance : getMicroservices(name)) {
-            if (instanceId.equals(instance.getInstanceId()))
-                return instance;
-        }
-        return null;
+        MicroserviceList instances = getMicroservices(name);
+        return instances == null ? null : instances.getInstance(instanceId);
     }
 
     public List<Invocation> getInvocations(String microserviceName, Long instanceId) {
@@ -53,9 +49,9 @@ public class ServiceSummary implements Jsonable {
      */
     public MicroserviceInstance addMicroservice(String name, Long instanceId) {
         MicroserviceInstance microservice = new MicroserviceInstance(name, instanceId);
-        List<MicroserviceInstance> instances = microservices.get(name);
+        MicroserviceList instances = getMicroservices(name);
         if (instances == null) {
-            instances = new ArrayList<>();
+            instances = new MicroserviceList(name);
             microservices.put(name, instances);
         }
         instances.add(microservice);
@@ -63,12 +59,12 @@ public class ServiceSummary implements Jsonable {
     }
 
     public void addInvocation(String microserviceName, Long instanceId, Invocation invocation) {
-        List<MicroserviceInstance> instances = microservices.get(microserviceName);
+        MicroserviceList instances = microservices.get(microserviceName);
         if (instances == null) {
-            instances = new ArrayList<>();
+            instances = new MicroserviceList(microserviceName);
             microservices.put(microserviceName, instances);
         }
-        MicroserviceInstance instance = getMicroservice(microserviceName, instanceId);
+        MicroserviceInstance instance = instances.getInstance(instanceId);
         if (instance == null) {
             instance = addMicroservice(microserviceName, instanceId);
         }
@@ -80,8 +76,22 @@ public class ServiceSummary implements Jsonable {
         invocations.add(invocation);
     }
 
-    public void addUpdate(String microservice, Update update) {
-        throw new RuntimeException("Not implemented");
+    public void addUpdate(String microserviceName, Long instanceId, Update update) {
+        MicroserviceList instances = microservices.get(microserviceName);
+        if (instances == null) {
+            instances = new MicroserviceList(microserviceName);
+            microservices.put(microserviceName, instances);
+        }
+        MicroserviceInstance instance = instances.getInstance(instanceId);
+        if (instance == null) {
+            instance = addMicroservice(microserviceName, instanceId);
+        }
+        List<Update> updates = getUpdates(microserviceName, instanceId);
+        if (updates == null) {
+            updates = new ArrayList<>();
+            instance.setUpdates(updates);
+        }
+        updates.add(update);
     }
 
     public ServiceSummary(String masterRequestId) {
@@ -91,15 +101,20 @@ public class ServiceSummary implements Jsonable {
     public ServiceSummary(JSONObject json) {
         this.masterRequestId = json.getString("masterRequestId");
         if (json.has("microservices")) {
-            JSONArray instancesArr = json.getJSONArray("microservices");
-            for (int i = 0; i < instancesArr.length(); i++) {
-                MicroserviceInstance instance = new MicroserviceInstance(instancesArr.getJSONObject(i));
-                List<MicroserviceInstance> instances = microservices.get(instance.getMicroservice());
-                if (instances == null) {
-                    instances = new ArrayList<>();
-                    microservices.put(instance.getMicroservice(), instances);
+            JSONArray microservicesArr = json.getJSONArray("microservices");
+            for (int i = 0; i < microservicesArr.length(); i++) {
+                JSONObject listObj = microservicesArr.getJSONObject(i);
+                String name = listObj.getString("name");
+                if (listObj.has("instances")) {
+                    MicroserviceList instances = new MicroserviceList(name);
+                    microservices.put(name, instances);
+                    JSONArray instancesArr = listObj.getJSONArray("instances");
+                    for (int j = 0; j < instancesArr.length(); j++) {
+                        MicroserviceInstance instance = new MicroserviceInstance(instancesArr.getJSONObject(j));
+                        instance.setMicroservice(name);
+                        instances.add(instance);
+                    }
                 }
-                instances.add(instance);
             }
         }
     }
@@ -107,11 +122,21 @@ public class ServiceSummary implements Jsonable {
     public JSONObject getJson() {
         JSONObject json = create();
         json.put("masterRequestId", masterRequestId);
-        JSONArray instancesArr = new JSONArray();
-        json.put("microservices", instancesArr);
+        JSONArray microservicesArr = new JSONArray();
+        json.put("microservices", microservicesArr);
         for (String microserviceName : microservices.keySet()) {
-            for (MicroserviceInstance instance : microservices.get(microserviceName)) {
-                instancesArr.put(instance.getJson());
+            JSONObject listObj = new JSONObject();
+            listObj.put("name", microserviceName);
+            microservicesArr.put(listObj);
+            MicroserviceList instances = getMicroservices(microserviceName);
+            if (instances != null) {
+                JSONArray instancesArr = new JSONArray();
+                listObj.put("instances", instancesArr);
+                for (MicroserviceInstance instance : instances.getInstances()) {
+                    JSONObject instanceObj = instance.getJson();
+                    instanceObj.remove("microservice");
+                    instancesArr.put(instanceObj);
+                }
             }
         }
         return json;

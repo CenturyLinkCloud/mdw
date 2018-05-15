@@ -200,12 +200,12 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             done = true;
             ServiceSummary summary = getServiceSummary(true);
             for (Microservice service : servicePlan.getServices()) {
-                for (MicroserviceInstance instance : summary.getMicroservices(service.getName())) {
-                    if (instance.getInstanceId().equals(procInstId)) {
-                        instance.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
+                for (MicroserviceInstance instance : summary.getMicroservices(service.getName()).getInstances()) {
+                    if (instance.getId().equals(procInstId)) {
+                        instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
                     }
-                    if (!instance.getInstanceStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
-                            && !instance.getInstanceStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
+                    if (!instance.getStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
+                            && !instance.getStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
                         done = false;
                     }
                 }
@@ -230,9 +230,9 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         ServicePlan plan = getServicePlan();
         ServiceSummary summary = getServiceSummary(false);
         for (Microservice service : plan.getServices()) {
-            for (MicroserviceInstance instance : summary.getMicroservices(service.getName())) {
-                if (!instance.getInstanceStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
-                        && !instance.getInstanceStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
+            for (MicroserviceInstance instance : summary.getMicroservices(service.getName()).getInstances()) {
+                if (!instance.getStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
+                        && !instance.getStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
                     return false;
                 }
             }
@@ -251,14 +251,14 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                         try {
                             ProcessInstance processInstance = createProcessInstance(i, service);
                             instance = summary.addMicroservice(service.getName(), processInstance.getId());
-                            instance.setInstanceTriggered(Instant.now());
+                            instance.setTriggered(Instant.now());
                             procInstList.add(processInstance);
-                            instance.setInstanceId(processInstance.getId());
-                            instance.setInstanceStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
+                            instance.setId(processInstance.getId());
+                            instance.setStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
                         }
                         catch (Exception ex) {
                             if (instance != null)
-                                instance.setInstanceStatus(WorkStatus.STATUSNAME_FAILED);
+                                instance.setStatus(WorkStatus.STATUSNAME_FAILED);
                             throw ex;
                         }
                     }
@@ -340,14 +340,14 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             MicroserviceInstance instance = summary.getMicroservice(service.getName(), runner.procInstId);
             if (instance == null) {
                 instance = summary.addMicroservice(service.getName(), runner.procInstId);
-                instance.setInstanceTriggered(runner.procInstTriggered);
+                instance.setTriggered(runner.procInstTriggered);
             }
             if (runner.success) {
-                instance.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
+                instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
             }
             else {
                 hasFailedSubprocess = true;
-                instance.setInstanceStatus(WorkStatus.STATUSNAME_FAILED);
+                instance.setStatus(WorkStatus.STATUSNAME_FAILED);
             }
         }
         setVariableValue(getServiceSummaryVariableName(), summary);

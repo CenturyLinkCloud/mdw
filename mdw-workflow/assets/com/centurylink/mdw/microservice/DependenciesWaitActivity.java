@@ -176,7 +176,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * @throws JSONException
      */
     public Jsonable microServiceSuccess(String microservice, ServiceSummary serviceSummary) {
-        for (MicroserviceInstance instance : serviceSummary.getMicroservices(microservice)) {
+        for (MicroserviceInstance instance : serviceSummary.getMicroservices(microservice).getInstances()) {
             List<Invocation> invocations = instance.getInvocations();
             if (invocations != null) {
                 for (Invocation invocation : invocations) {

@@ -84,30 +84,32 @@ process: # 12075
   variable: # 15248
     name: publishFirst
     value: false
-  variable: # 10864
+  variable: # 1569
     name: serviceSummary
     value: |
       {
         "masterRequestId": "sdwf35b84c94f241c3",
         "microservices": [{
-          "invocations": [{
-            "requestId": 601957,
-            "responseId": 601959,
-            "sent": "2018-04-25T14:20:29.280Z",
-            "status": {
-              "code": 202,
-              "message": "Accepted"
-            }
+          "instances": [{
+            "invocations": [{
+              "requestId": 601957,
+              "responseId": 601959,
+              "sent": "2018-04-25T14:20:29.280Z",
+              "status": {
+                "code": 202,
+                "message": "Accepted"
+              }
+            }],
+            "updates": [{
+              "received": "2018-04-25T14:20:29.280Z",
+              "requestId": 0,
+              "status": {
+                "code": 202,
+                "message": "focaccept"
+              }
+            }]
           }],
-          "microservice": "portster/PortIn",
-          "updates": [{
-            "received": "2018-04-25T14:20:29.280Z",
-            "requestId": 0,
-            "status": {
-              "code": 202,
-              "message": "focaccept"
-            }
-          }]
+          "name": "portster/PortIn"
         }]
       }
   variable: # 15246

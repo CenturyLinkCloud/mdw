@@ -7,6 +7,7 @@ IdentityResponseMapper.groovy=1
 Invocation.java=2
 MicroserviceDsl.kt=1
 MicroserviceInstance.java=1
+MicroserviceList.java=1
 MicroserviceRestAdapter.java=5
 OrchestratorActivity.java=5
 ResponseCollector.java=1

@@ -195,32 +195,36 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   return str;
                 };
                 microservices.forEach(function(microservice) {
-                  result.data.serviceList.push({
-                    name: microservice.microservice,
-                    id: microservice.instanceId,
-                    url: '#/workflow/processes/' + microservice.instanceId,
-                    started: microservice.instanceTriggered ? formatDate(new Date(microservice.instanceTriggered)) : null,
-                    status: microservice.instanceStatus,
-                    thisFlag: microservice.instanceId === runtimeInfo.id ? '*' : '' 
-                  });
-                  microservice.invocations.forEach(function(invocation) {
-                    result.data.serviceList.push({
-                      name: '  invocation',
-                      id: invocation.requestId,
-                      url: '#/workflow/requests/' + invocation.requestId,
-                      started: invocation.sent ? formatDate(new Date(invocation.sent)) : null,
-                      status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
-                    });
-                  });
-                  if (microservice.updates) {
-                    microservice.updates.forEach(function(update) {
+                  if (microservice.instances) {
+                    microservice.instances.forEach(function(instance) {
                       result.data.serviceList.push({
-                        name: '  update',
-                        id: update.requestId,
-                        url: '#/workflow/requests/' + update.requestId,
-                        started: update.received ? formatDate(new Date(update.received)) : null,
-                        status: update.status ? (update.status.code + ": " + update.status.message) : null
+                        name: microservice.name,
+                        id: instance.id,
+                        url: '#/workflow/processes/' + instance.id,
+                        started: instance.triggered ? formatDate(new Date(instance.triggered)) : null,
+                        status: instance.status,
+                        thisFlag: instance.id === runtimeInfo.id ? '*' : '' 
                       });
+                      instance.invocations.forEach(function(invocation) {
+                        result.data.serviceList.push({
+                          name: '  invocation',
+                          id: invocation.requestId,
+                          url: '#/workflow/requests/' + invocation.requestId,
+                          started: invocation.sent ? formatDate(new Date(invocation.sent)) : null,
+                          status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
+                        });
+                      });
+                      if (instance.updates) {
+                        instance.updates.forEach(function(update) {
+                          result.data.serviceList.push({
+                            name: '  update',
+                            id: update.requestId,
+                            url: '#/workflow/requests/' + update.requestId,
+                            started: update.received ? formatDate(new Date(update.received)) : null,
+                            status: update.status ? (update.status.code + ": " + update.status.message) : null
+                          });
+                        });
+                      }
                     });
                   }
                 });

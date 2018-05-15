@@ -16,7 +16,7 @@ public class WorstCaseConsolidator implements Consolidator {
     public Pair<Integer,JSONObject> getResponse(ServiceSummary serviceSummary) {
         Status worstStatus = Status.OK;
         for (String microserviceName : serviceSummary.getMicroservices().keySet()) {
-            for (MicroserviceInstance microservice : serviceSummary.getMicroservices(microserviceName)) {
+            for (MicroserviceInstance microservice : serviceSummary.getMicroservices(microserviceName).getInstances()) {
                 Status status = microservice.latestStatus();
                 if (status.getCode() > worstStatus.getCode())
                     worstStatus = status;

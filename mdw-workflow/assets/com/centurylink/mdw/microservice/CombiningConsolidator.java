@@ -18,7 +18,7 @@ public class CombiningConsolidator implements Consolidator {
         JSONObject responses = new JSONObject();
         Status worstStatus = Status.OK;
         for (String microserviceName : serviceSummary.getMicroservices().keySet()) {
-            for (MicroserviceInstance microservice : serviceSummary.getMicroservices(microserviceName)) {
+            for (MicroserviceInstance microservice : serviceSummary.getMicroservices(microserviceName).getInstances()) {
                 Status status = microservice.latestStatus();
                 responses.put(microservice.getJsonName(), status.getJson());
                 if (status.getCode() > worstStatus.getCode())

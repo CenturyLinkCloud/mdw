@@ -10,7 +10,7 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 
 /**
- * Represents a microservice's invocations and updates for one instanceId.
+ * Represents a microservice's invocations and updates for one process instance.
  * Invocations will always be non-null (empty if none), whereas updates can be null.
  */
 public class MicroserviceInstance implements Jsonable {
@@ -22,23 +22,23 @@ public class MicroserviceInstance implements Jsonable {
     /**
      * Process instance ID.
      */
-    private Long instanceId;
-    public Long getInstanceId() { return instanceId; }
-    public void setInstanceId(Long instanceId) { this.instanceId = instanceId; }
+    private Long id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     /**
      * Process instance triggered.
      */
-    private Instant instanceTriggered;
-    public Instant getInstanceTriggered() { return instanceTriggered; }
-    public void setInstanceTriggered(Instant triggered) { this.instanceTriggered = triggered; }
+    private Instant triggered;
+    public Instant getTriggered() { return triggered; }
+    public void setTriggered(Instant triggered) { this.triggered = triggered; }
 
     /**
      * Process instance status.
      */
-    private String instanceStatus;
-    public String getInstanceStatus() { return instanceStatus; }
-    public void setInstanceStatus(String status) { this.instanceStatus = status; }
+    private String status;
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     /**
      * Calls to the microservice.
@@ -56,7 +56,7 @@ public class MicroserviceInstance implements Jsonable {
 
     public MicroserviceInstance(String microservice, Long instanceId) {
         this.microservice = microservice;
-        this.instanceId = instanceId;
+        this.id = instanceId;
         this.invocations = new ArrayList<Invocation>();
     }
 
