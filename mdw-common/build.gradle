@@ -25,7 +25,7 @@ configurations {
 dependencies {
 
     cli group: "com.beust", name: "jcommander", version: "1.72"
-    cli group: "org.json", name: "json", version: "20160810"
+    cli group: "org.json", name: "json", version: "20180130"
     cli group: "org.yaml", name: "snakeyaml", version: "1.18"
     cli group: "com.samskivert", name: "jmustache", version: "1.12"
 

@@ -34,6 +34,10 @@ import io.swagger.models.Swagger;
  */
 public class SwaggerModelValidator extends SwaggerValidator {
 
+    public SwaggerModelValidator(String method, String path) throws ValidationException {
+        this(method, path, MdwSwaggerCache.getSwagger(path.startsWith("/") ? path : '/' + path));
+    }
+
     public SwaggerModelValidator(String method, String path, Swagger swagger) throws ValidationException {
         super(new SwaggerRequest(HttpMethod.valueOf(method.toUpperCase()), new ResourcePath(path), swagger));
     }
