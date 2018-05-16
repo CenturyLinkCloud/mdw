@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.adapter;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Map;
 
 import com.centurylink.mdw.auth.AuthTokenProvider;
 import com.centurylink.mdw.auth.MdwAuthenticator;
@@ -30,7 +31,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 public class MdwAuthProvider implements AuthTokenProvider {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private String appId = null;
+    private Map<String,String> options = null;
 
     @Override
     public byte[] getToken(URL endpoint, String user, String password) throws MdwSecurityException {
@@ -71,11 +72,16 @@ public class MdwAuthProvider implements AuthTokenProvider {
     }
 
     protected String invokeAuth(String user, String password) throws MdwSecurityException {
-        String token = new MdwAuthenticator(appId).doAuthentication(user, password);
+        if (options == null || options.get("appId") == null) {
+            logger.severe("Missing AppId value for MdwAuthenticator");
+            return null;
+        }
+        String token = new MdwAuthenticator(options.get("appId")).doAuthentication(user, password);
         return token == null ? null : token;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    @Override
+    public void setOptions(Map<String, String> options) {
+        this.options = options;
     }
 }

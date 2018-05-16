@@ -39,7 +39,6 @@ import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.adapter.MdwAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.BasicAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 
@@ -305,9 +304,11 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 URL endpoint = new URL(getEndpointUri());
                 String user = getAttribute(AUTH_USER);
                 String password = getAttribute(AUTH_PASSWORD);
-                if (authProvider instanceof MdwAuthProvider) {
-                    String appId = getAttribute(AUTH_APP_ID);
-                    ((MdwAuthProvider)authProvider).setAppId(appId);
+                String appId = getAttribute(AUTH_APP_ID);
+                if (appId == null || appId.length() == 0) {
+                    Map<String,String> options = new HashMap<>();
+                    options.put("appId", appId);
+                    ((AuthTokenProvider) authProvider).setOptions(options);
                 }
                 String token = new String(((AuthTokenProvider)authProvider).getToken(endpoint, user, password));
                 headers.put("Authorization", "Bearer " + token);

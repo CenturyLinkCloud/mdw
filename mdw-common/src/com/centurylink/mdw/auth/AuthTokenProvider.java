@@ -16,9 +16,11 @@
 package com.centurylink.mdw.auth;
 
 import java.net.URL;
+import java.util.Map;
 
 public interface AuthTokenProvider {
 
     public byte[] getToken(URL endpoint, String user, String password) throws MdwSecurityException;
+    public void setOptions(Map<String,String> options);
 
 }
