@@ -51,15 +51,20 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         apiPackage = "com.centurylink.api.service";
         modelPackage = "com.centurylink.api.model";
 
-        cliOptions.add(CliOption.newString(TRIM_API_PATHS, "Trim API paths and adjust package names accordingly").defaultValue(Boolean.TRUE.toString()));
+        cliOptions.add(CliOption
+                .newString(TRIM_API_PATHS, "Trim API paths and adjust package names accordingly")
+                .defaultValue(Boolean.TRUE.toString()));
         additionalProperties.put(TRIM_API_PATHS, true);
 
-        cliOptions.add(CliOption.newString(GENERATED_FLOW_BASE_PACKAGE, "Base package for generated microservice orchestration workflow processes"));
+        cliOptions.add(CliOption.newString(GENERATED_FLOW_BASE_PACKAGE,
+                "Base package for generated microservice orchestration workflow processes"));
 
-        // relevant once we submit a PR to swagger-code to become an official java library
+        // relevant once we submit a PR to swagger-code to become an official
+        // java library
         supportedLibraries.put(NAME, getHelp());
         setLibrary(NAME);
-        CliOption library = new CliOption(CodegenConstants.LIBRARY, "library template (sub-template) to use");
+        CliOption library = new CliOption(CodegenConstants.LIBRARY,
+                "library template (sub-template) to use");
         library.setDefault(NAME);
         library.setEnum(supportedLibraries);
         library.setDefault(NAME);
@@ -82,15 +87,19 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
             apiPackage = "";
         }
         if (additionalProperties.containsKey(GENERATED_FLOW_BASE_PACKAGE)) {
-            this.setGeneratedFlowBasePackage(additionalProperties.get(GENERATED_FLOW_BASE_PACKAGE).toString());
+            this.setGeneratedFlowBasePackage(
+                    additionalProperties.get(GENERATED_FLOW_BASE_PACKAGE).toString());
         }
 
         importMapping.put("Jsonable", "com.centurylink.mdw.model.Jsonable");
         importMapping.put("JsonRestService", "com.centurylink.mdw.services.rest.JsonRestService");
-        importMapping.put("ServiceException", "com.centurylink.mdw.common.service.ServiceException");
+        importMapping.put("ServiceException",
+                "com.centurylink.mdw.common.service.ServiceException");
         importMapping.put("Map", "java.util.Map");
-        importMapping.put("SwaggerValidator", "com.centurylink.mdw.service.api.validator.SwaggerModelValidator");
-        importMapping.put("ValidationException", "com.centurylink.mdw.service.api.validator.ValidationException");
+        importMapping.put("SwaggerValidator",
+                "com.centurylink.mdw.service.api.validator.SwaggerModelValidator");
+        importMapping.put("ValidationException",
+                "com.centurylink.mdw.service.api.validator.ValidationException");
         importMapping.put("JsonList", "com.centurylink.mdw.model.JsonList");
     }
 
@@ -118,7 +127,7 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     private List<String> modelNames = new ArrayList<>();
 
     @Override
-    public CodegenModel fromModel(String name, Model model, Map<String,Model> allDefinitions) {
+    public CodegenModel fromModel(String name, Model model, Map<String, Model> allDefinitions) {
         CodegenModel codegenModel = super.fromModel(name, model, allDefinitions);
         if (!modelNames.contains(name))
             modelNames.add(name);
@@ -131,13 +140,13 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     public String toApiFilename(String name) {
         String filename;
         String pkgName;
-        if (trimApiPaths && apiPackage().isEmpty()) {
-            filename = trimmedPaths.get(name) + "/" + toApiName(name);
-            pkgName = apiPackage() + trimmedPaths.get(name).replace('/', '.').substring(1);
-        }
-        else if (!apiPackage().isEmpty()) {
+        if (!apiPackage().isEmpty()) {
             filename = toApiName(name);
             pkgName = apiPackage();
+        }
+        else if (trimApiPaths) {
+            filename = trimmedPaths.get(name) + "/" + toApiName(name);
+            pkgName = apiPackage() + trimmedPaths.get(name).replace('/', '.').substring(1);
         }
         else {
             filename = super.toApiFilename(name);
@@ -163,19 +172,19 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
      */
     @Override
     public String toApiImport(String name) {
-        if (trimApiPaths && apiPackage().isEmpty()) {
-            return trimmedPaths.get(name).substring(1).replace('/', '.');
-        }
         if (!apiPackage().isEmpty())
             return apiPackage();
-        else {
+        else if (trimApiPaths)
+            return trimmedPaths.get(name).substring(1).replace('/', '.');
+        else
             return super.toApiImport(name);
-        }
     }
 
     @Override
-    public CodegenOperation fromOperation(String path, String httpMethod, Operation operation, Map<String,Model> definitions, Swagger swagger) {
-        CodegenOperation op = super.fromOperation(path, httpMethod, operation, definitions, swagger);
+    public CodegenOperation fromOperation(String path, String httpMethod, Operation operation,
+            Map<String, Model> definitions, Swagger swagger) {
+        CodegenOperation op = super.fromOperation(path, httpMethod, operation, definitions,
+                swagger);
         op.imports.add("Map");
         op.imports.remove("Request");
         op.imports.remove("Response");
@@ -185,26 +194,27 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
 
         if (generatedFlowBasePackage != null) {
             ProcessNamer processNamer = new ProcessNamer(generatedFlowBasePackage, path);
-            String processName = processNamer.getPackage() + "/" + processNamer.getName(op.httpMethod);
+            String processName = processNamer.getPackage() + "/"
+                    + processNamer.getName(op.httpMethod);
             op.vendorExtensions.put("generatedFlow", processName);
         }
 
         return op;
     }
 
-    Map<String,String> trimmedPaths;
-    Map<String,String> trimmedNames;
+    Map<String, String> trimmedPaths;
+    Map<String, String> trimmedNames;
 
     @Override
-    public void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co,
-            Map<String,List<CodegenOperation>> operations) {
+    public void addOperationToGroup(String tag, String resourcePath, Operation operation,
+            CodegenOperation co, Map<String, List<CodegenOperation>> operations) {
         super.addOperationToGroup(tag, resourcePath, operation, co, operations);
         if (trimApiPaths) {
             if (trimmedPaths == null)
                 trimmedPaths = new LinkedHashMap<>();
             if (trimmedNames == null)
                 trimmedNames = new LinkedHashMap<>();
-            Map<String,List<CodegenOperation>> ops = new LinkedHashMap<>();
+            Map<String, List<CodegenOperation>> ops = new LinkedHashMap<>();
             for (String path : operations.keySet()) {
                 String pkgPath = path;
                 String baseName = path;
@@ -212,7 +222,8 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
                 int slashCurly = pkgPath.lastIndexOf("/{");
                 if (slashCurly > 0) {
                     pkgPath = pkgPath.substring(0, slashCurly);
-                    className = path.substring(0, slashCurly) + camelize(path.substring(slashCurly + 2, path.lastIndexOf("}")));
+                    className = path.substring(0, slashCurly)
+                            + camelize(path.substring(slashCurly + 2, path.lastIndexOf("}")));
                 }
                 int pkgSlash = pkgPath.lastIndexOf("/");
                 if (pkgSlash > 0) {
@@ -232,24 +243,32 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
             for (CodegenOperation op : ops) {
                 // set restfulness according to our rules
                 op.isRestfulCreate = op.httpMethod.equalsIgnoreCase("POST");
-                op.isRestfulUpdate = op.httpMethod.equalsIgnoreCase("PUT") || op.httpMethod.equalsIgnoreCase("PATCH");
+                op.isRestfulUpdate = op.httpMethod.equalsIgnoreCase("PUT")
+                        || op.httpMethod.equalsIgnoreCase("PATCH");
                 op.isRestfulShow = op.httpMethod.equalsIgnoreCase("GET");
                 op.isRestfulDestroy = op.httpMethod.equalsIgnoreCase("DELETE");
 
-                // we use nickname for content param -- ugh (unable to override isRestfulUpdate behavior)
+                // we use nickname for content param -- ugh (unable to override
+                // isRestfulUpdate behavior)
                 op.nickname = op.isRestfulCreate || op.isRestfulUpdate ? "hasBody" : null;
             }
         }
     }
 
     protected boolean trimApiPaths = true;
-    public void setTrimApiPaths(boolean trimApiPaths) { this.trimApiPaths = trimApiPaths; }
+
+    public void setTrimApiPaths(boolean trimApiPaths) {
+        this.trimApiPaths = trimApiPaths;
+    }
 
     protected String generatedFlowBasePackage;
-    public void setGeneratedFlowBasePackage(String basePackage) { this.generatedFlowBasePackage = basePackage; }
+
+    public void setGeneratedFlowBasePackage(String basePackage) {
+        this.generatedFlowBasePackage = basePackage;
+    }
 
     /**
-     * Creates a package if it doesn't exist.  Only works from 6.1.
+     * Creates a package if it doesn't exist. Only works from 6.1.
      */
     public void mkPackage(String pkgName, File dir) {
         try {
