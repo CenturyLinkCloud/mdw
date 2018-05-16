@@ -305,7 +305,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 String user = getAttribute(AUTH_USER);
                 String password = getAttribute(AUTH_PASSWORD);
                 String appId = getAttribute(AUTH_APP_ID);
-                if (appId == null || appId.length() == 0) {
+                if (appId != null && appId.length() > 0) {
                     Map<String,String> options = new HashMap<>();
                     options.put("appId", appId);
                     ((AuthTokenProvider) authProvider).setOptions(options);

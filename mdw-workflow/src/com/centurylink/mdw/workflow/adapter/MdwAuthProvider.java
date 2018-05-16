@@ -41,6 +41,8 @@ public class MdwAuthProvider implements AuthTokenProvider {
             if (token == null) {
                 // not found in cache -- invoke auth call
                 token = invokeAuth(user, password);
+                if (token == null)
+                    return null;
                 putToken(endpoint, user, token);
             }
             return token.getBytes();
