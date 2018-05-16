@@ -39,6 +39,7 @@ import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.workflow.adapter.MdwAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.BasicAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 
@@ -274,6 +275,11 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
      * Override to specify HTTP request headers.
      */
     public Map<String,String> getRequestHeaders() {
+
+        // If we already set the headers when logging request metadata, use them
+        if (super.getRequestHeaders() != null)
+            return super.getRequestHeaders();
+
         try {
             Map<String,String> headers = null;
             String headersVar = getAttributeValueSmart(HEADERS_VARIABLE);
@@ -299,9 +305,15 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 URL endpoint = new URL(getEndpointUri());
                 String user = getAttribute(AUTH_USER);
                 String password = getAttribute(AUTH_PASSWORD);
+                if (authProvider instanceof MdwAuthProvider) {
+                    String appId = getAttribute(AUTH_APP_ID);
+                    ((MdwAuthProvider)authProvider).setAppId(appId);
+                }
                 String token = new String(((AuthTokenProvider)authProvider).getToken(endpoint, user, password));
                 headers.put("Authorization", "Bearer " + token);
             }
+            // Set the headers so that we don't try and set them next time this method gets called
+            super.setRequestHeaders(headers);
             return headers;
         }
         catch (Exception ex) {
