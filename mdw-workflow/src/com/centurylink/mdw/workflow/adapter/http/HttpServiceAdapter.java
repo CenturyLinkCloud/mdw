@@ -55,7 +55,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
      * @return an HttpHelper instance
      * @throws PropertyException
      */
-    public HttpHelper getHttpHelper(Object connection) throws PropertyException {
+    public HttpHelper getHttpHelper(Object connection) throws ActivityException {
         String user = getAttributeValueSmart(PROP_USER);
         String pass = getAttributeValueSmart(PROP_PASS);
         HttpHelper helper = new HttpHelper((HttpConnection)connection);

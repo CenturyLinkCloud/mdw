@@ -20,10 +20,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
+import com.centurylink.mdw.auth.AuthTokenProvider;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -37,6 +39,7 @@ import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.workflow.adapter.http.BasicAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 
 @Tracked(LogLevel.TRACE)
@@ -45,7 +48,10 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public static final String HTTP_METHOD = "HttpMethod";
     public static final String ENDPOINT_URI = "EndpointUri";  // includes the resource path
     public static final String HEADERS_VARIABLE = "HeadersVariable";
-
+    public static final String AUTH_PROVIDER = "AuthProvider";
+    public static final String AUTH_APP_ID = "AuthAppId";
+    public static final String AUTH_USER = "AuthUser";
+    public static final String AUTH_PASSWORD = "AuthPassword";
 
     @Override
     public Object openConnection() throws ConnectionException {
@@ -95,6 +101,43 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         catch (Exception ex) {
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, ex.getMessage(), ex);
         }
+    }
+
+    public HttpHelper getHttpHelper(Object connection) throws ActivityException {
+        Object authProvider = getAuthProvider();
+        if (authProvider instanceof BasicAuthProvider)
+            return ((BasicAuthProvider)authProvider).getHttpHelper((HttpConnection)connection);
+        else
+            return new HttpHelper((HttpConnection)connection);
+    }
+
+    private Object authProvider;
+    public Object getAuthProvider() throws ActivityException {
+        if (authProvider == null) {
+            String providerClass = getAttributeValueSmart(AUTH_PROVIDER);
+            if (providerClass != null) {
+                String user = getAttribute(AUTH_USER);
+                String password = getAttribute(AUTH_PASSWORD);
+                if (providerClass.equals(BasicAuthProvider.class.getName())) {
+                    authProvider = new BasicAuthProvider(user, password);
+                }
+                else {
+                    try {
+                        Class<?> clazz = getPackage().getCloudClassLoader().loadClass(providerClass);
+                        if (AuthTokenProvider.class.isAssignableFrom(clazz)) {
+                            return clazz.newInstance();
+                        }
+                        else {
+                            throw new ActivityException("Provider must implement AuthTokenProvider: " + clazz);
+                        }
+                    }
+                    catch (ReflectiveOperationException ex) {
+                        throw new ActivityException(ex.getMessage(), ex);
+                    }
+                }
+            }
+        }
+        return authProvider;
     }
 
     /**
@@ -231,10 +274,6 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
      * Override to specify HTTP request headers.
      */
     public Map<String,String> getRequestHeaders() {
-
-        if (super.getRequestHeaders() != null)
-            return super.getRequestHeaders();
-
         try {
             Map<String,String> headers = null;
             String headersVar = getAttributeValueSmart(HEADERS_VARIABLE);
@@ -247,13 +286,22 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     throw new ActivityException("Headers variable '" + headersVar + "' must be of type java.util.Map");
                 Object headersObj = getVariableValue(headersVar);
                 if (headersObj != null) {
-                    headers = new HashMap<String,String>();
+                    headers = new HashMap<>();
                     for (Object key : ((Map<?,?>)headersObj).keySet()) {
                         headers.put(key.toString(), ((Map<?,?>)headersObj).get(key).toString());
                     }
                 }
             }
-            super.setRequestHeaders(headers);
+            Object authProvider = getAuthProvider();
+            if (authProvider instanceof AuthTokenProvider) {
+                if (headers == null)
+                    headers = new HashMap<>();
+                URL endpoint = new URL(getEndpointUri());
+                String user = getAttribute(AUTH_USER);
+                String password = getAttribute(AUTH_PASSWORD);
+                String token = new String(((AuthTokenProvider)authProvider).getToken(endpoint, user, password));
+                headers.put("Authorization", "Bearer " + token);
+            }
             return headers;
         }
         catch (Exception ex) {
