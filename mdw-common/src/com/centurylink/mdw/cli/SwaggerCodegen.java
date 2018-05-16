@@ -40,6 +40,7 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     public static final String NAME = "mdw";
     public static final String TRIM_API_PATHS = "trimApiPaths";
     public static final String GENERATED_FLOW_BASE_PACKAGE = "generatedFlowBasePackage";
+    public static final String INPUT_API_PACKAGE = "inputApiPackage";
 
     public SwaggerCodegen() {
         super();
@@ -77,7 +78,7 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
         if (additionalProperties.containsKey(TRIM_API_PATHS)) {
             this.setTrimApiPaths(convertPropertyToBoolean(TRIM_API_PATHS));
         }
-        if (trimApiPaths) {
+        if (trimApiPaths && !additionalProperties.containsKey(INPUT_API_PACKAGE)) {
             apiPackage = "";
         }
         if (additionalProperties.containsKey(GENERATED_FLOW_BASE_PACKAGE)) {
@@ -130,15 +131,20 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     public String toApiFilename(String name) {
         String filename;
         String pkgName;
-        if (trimApiPaths) {
+        if (trimApiPaths && apiPackage().isEmpty()) {
             filename = trimmedPaths.get(name) + "/" + toApiName(name);
             pkgName = apiPackage() + trimmedPaths.get(name).replace('/', '.').substring(1);
+        }
+        else if (!apiPackage().isEmpty()) {
+            filename = toApiName(name);
+            pkgName = apiPackage();
         }
         else {
             filename = super.toApiFilename(name);
             pkgName = apiPackage();
         }
-        File file = new File(getOutputDir() + "/" + apiPackage().replace('.', '/') + "/" + filename);
+        File file = new File(
+                getOutputDir() + "/" + apiPackage().replace('.', '/') + "/" + filename);
         mkPackage(pkgName, file.getParentFile());
         return filename;
     }
@@ -146,7 +152,8 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
     @Override
     public String toModelFilename(String name) {
         String filename = super.toModelFilename(name);
-        File file = new File(getOutputDir() + "/" + modelPackage().replace('.', '/') + "/" + filename);
+        File file = new File(
+                getOutputDir() + "/" + modelPackage().replace('.', '/') + "/" + filename);
         mkPackage(modelPackage, file.getParentFile());
         return filename;
     }
@@ -156,9 +163,11 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
      */
     @Override
     public String toApiImport(String name) {
-        if (trimApiPaths) {
+        if (trimApiPaths && apiPackage().isEmpty()) {
             return trimmedPaths.get(name).substring(1).replace('/', '.');
         }
+        if (!apiPackage().isEmpty())
+            return apiPackage();
         else {
             return super.toApiImport(name);
         }

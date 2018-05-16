@@ -51,20 +51,26 @@ public class Codegen extends Setup {
         return codeType;
     }
 
+    public void setCodeType(String codeType) {
+        this.codeType = codeType;
+    }
+
     @Parameter(names="--input-spec", description="Input swagger specification")
     private String inputSpec;
     public String getInputSpec() {
         return inputSpec;
     }
 
+    public void setInputSpec(String spec) {
+        this.inputSpec = spec;
+    }
+
+
     @Parameter(names="--config", description="Config file")
     private String config;
     public String getConfig() {
         return config;
     }
-
-    @Parameter(names="--template-dir", description="Template Directory")
-    private String templateDir;
 
     @Parameter(names="--generate-orchestration-flows", description="create a process for each endpoint")
     private boolean generateOrchestrationFlows;
@@ -83,15 +89,45 @@ public class Codegen extends Setup {
 
     private String basePackage;
 
+    /**
+     * @return the basePackage
+     */
+    public String getBasePackage() {
+        return basePackage;
+    }
+
+    /**
+     * @param basePackage the basePackage to set
+     */
+    public void setBasePackage(String basePackage) {
+        this.basePackage = basePackage;
+    }
+
+    private String apiPackage;
+
+    /**
+     * @return the apiPackage
+     */
+    public String getApiPackage() {
+        return apiPackage;
+    }
+
+    /**
+     * @param apiPackage the apiPackage to set
+     */
+    public void setApiPackage(String apiPackage) {
+        this.apiPackage = apiPackage;
+    }
+
     @Override
     public Codegen run(ProgressMonitor... monitors) throws IOException {
 
-        if (templateDir == null)
-            downloadTemplates();
-
-        basePackage = new Props(this).get(Props.Gradle.SOURCE_GROUP, false);
-        if (basePackage == null)
-            basePackage = new File(System.getProperty("user.dir")).getName();
+        downloadTemplates();
+        if (basePackage == null) {
+            basePackage = new Props(this).get(Props.Gradle.SOURCE_GROUP, false);
+            if (basePackage == null)
+                basePackage = new File(System.getProperty("user.dir")).getName();
+        }
         basePackage = basePackage.replace('-', '_');
 
         if (codeType.equals("swagger")) {
@@ -146,7 +182,7 @@ public class Codegen extends Setup {
         String codegenTemplateDir = new File(getTemplateDir() + "/codegen").getAbsolutePath();
 
         args.add("--template-dir");
-        args.add(templateDir == null ? codegenTemplateDir : templateDir);
+        args.add(codegenTemplateDir);
 
         args.add("-i");
         args.add(inputSpec);
@@ -159,8 +195,15 @@ public class Codegen extends Setup {
 
         args.add("--model-package");
         args.add(basePackage + ".model");
+
         args.add("--api-package");
-        args.add(trimApiPaths ? "" : basePath.substring(1).replace('/', '.'));
+        if (apiPackage != null) {
+            args.add(apiPackage);
+            args.add("--input-api-package");
+            args.add("true");
+        }
+        else
+            args.add(trimApiPaths ? "" : basePath.substring(1).replace('/', '.'));
 
         if (generateOrchestrationFlows) {
             args.add("--generated-flow-base-package");

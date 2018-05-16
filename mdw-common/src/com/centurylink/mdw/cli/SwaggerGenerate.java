@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.cli;
 
+import static io.swagger.codegen.config.CodegenConfiguratorUtils.applySystemPropertiesKvpList;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +35,9 @@ import io.swagger.codegen.config.CodegenConfigurator;
 public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
 
     public static final String GENERATED_FLOW_BASE_PACKAGE = "generatedFlowBasePackage";
+
+    public static final String INPUT_API_PACKAGE = "inputApiPackage";
+
 
     @Option(name = {"-v", "--verbose"}, description = "verbose mode")
     private Boolean verbose;
@@ -186,6 +191,10 @@ public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
             description = GENERATED_FLOW_BASE_PACKAGE)
     private String generatedFlowBasePackage;
 
+    @Option(name = {"--input-api-package"}, title = "consider user entered api package",
+            description = INPUT_API_PACKAGE)
+    private String inputApiPackage;
+
     @Override
     public void run() {
 
@@ -292,6 +301,14 @@ public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
             addlProps.put(GENERATED_FLOW_BASE_PACKAGE, generatedFlowBasePackage);
             configurator.setAdditionalProperties(addlProps);
         }
+
+        if (inputApiPackage != null) {
+            Map<String,Object> addlProps = new LinkedHashMap<>();
+            addlProps.put(INPUT_API_PACKAGE, inputApiPackage);
+            configurator.setAdditionalProperties(addlProps);
+        }
+
+        applySystemPropertiesKvpList(systemProperties, configurator);
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();
         DefaultGenerator generator = new DefaultGenerator();
