@@ -266,7 +266,19 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         pi.setId(procInstId);
         return procInstId;
     }
-
+    public void setProcessElapsedTime(ProcessInstance pi) throws SQLException {
+        Long elapsedTime=getElapsedTime(pi.getId(),OwnerType.PROCESS_INSTANCE);
+        String query = "insert into INSTANCE_TIMING " +
+                      "(INSTANCE_ID, OWNER_TYPE, ELAPSED_MS) "+
+                       "values (?, ?, ?)";
+        Object[] args = new Object[3];
+        args[0] = pi.getId();
+        args[1] = pi.getOwner();
+        args[2] = elapsedTime;
+        db.openConnection();
+        db.runUpdate(query, args);
+        pi.setCompletionTime(elapsedTime);
+    }
     public void setProcessInstanceStatus(Long procInstId, Integer status)
         throws SQLException {
         String query;

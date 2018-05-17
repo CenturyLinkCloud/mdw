@@ -39,6 +39,9 @@ public interface EngineDataAccess {
     Long createProcessInstance(ProcessInstance procinst)
     throws DataAccessException,SQLException;
 
+    void setProcessElapsedTime(ProcessInstance pi)
+    throws SQLException;
+
     ProcessInstance getProcessInstance(Long procInstId)
     throws DataAccessException,SQLException;
 

@@ -1202,6 +1202,7 @@ class ProcessExecutorImpl {
 
     private void completeProcessInstance(ProcessInstance procInst) throws Exception {
         edao.setProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_COMPLETED);
+        edao.setProcessElapsedTime(procInst);
         if (!inService) {
             edao.removeEventWaitForProcessInstance(procInst.getId());
             this.cancelTasksOfProcessInstance(procInst);
@@ -1257,6 +1258,7 @@ class ProcessExecutorImpl {
                     (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getQualifiedName()
                     + (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
         }
+
         notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_COMPLETE);
     }
 
