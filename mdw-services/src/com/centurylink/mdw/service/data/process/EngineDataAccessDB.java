@@ -273,7 +273,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                        "values (?, ?, ?)";
         Object[] args = new Object[3];
         args[0] = pi.getId();
-        args[1] = pi.getOwner();
+        args[1] = OwnerType.PROCESS_INSTANCE;
         args[2] = elapsedTime;
         db.openConnection();
         db.runUpdate(query, args);

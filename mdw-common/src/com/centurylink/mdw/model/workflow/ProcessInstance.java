@@ -148,6 +148,10 @@ public class ProcessInstance implements Serializable, Jsonable {
     public String getPackageName() { return packageName; }
     public void setPackageName(String pkg) { this.packageName = pkg; }
 
+    private Long completionTime;
+    public Long getCompletionTime(){return completionTime; }
+    public void setCompletionTime(Long completionTime){ this.completionTime=completionTime;}
+
     /**
      * Formatted.
      */
