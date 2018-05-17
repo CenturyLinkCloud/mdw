@@ -445,12 +445,14 @@ public class ApplicationContext {
     }
 
     private static String getContextRoot(String url) {
-        int k1 = url.indexOf("://");
-        if (k1<0) return "Unknown";
-        int k2 = url.indexOf("/", k1+3);
-        if (k2<0) return "Unknown";
-        int k3 = url.indexOf("/", k2+1);
-        return (k3>0)?url.substring(k2+1,k3):url.substring(k2+1);
+        int i1 = url.indexOf("://");
+        if (i1 < 0)
+            return "Unknown";
+        int i2 = url.indexOf("/", i1+3);
+        if (i2 < 0)
+            return "";  // root path
+        int i3 = url.indexOf("/", i2 + 1);
+        return (i3 > 0) ? url.substring(i2 + 1, i3) : url.substring(i2 + 1);
     }
 
     public static String getMdwHubContextRoot() {
