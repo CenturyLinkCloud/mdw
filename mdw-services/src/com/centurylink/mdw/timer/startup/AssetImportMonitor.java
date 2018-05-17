@@ -18,6 +18,7 @@ package com.centurylink.mdw.timer.startup;
 import java.io.File;
 
 import com.centurylink.mdw.cli.Checkpoint;
+import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DbAccess;
@@ -28,7 +29,6 @@ import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;

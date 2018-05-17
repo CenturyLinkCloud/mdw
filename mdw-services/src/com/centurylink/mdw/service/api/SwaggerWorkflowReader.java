@@ -77,8 +77,8 @@ public class SwaggerWorkflowReader {
                 if (type != null) {
                     final Property property = ModelConverters.getInstance().readAsProperty(type);
                     if (property != null) {
-                        final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
-                        for (Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
+                        final Map<PropertyBuilder.PropertyId,Object> args = new EnumMap<>(PropertyBuilder.PropertyId.class);
+                        for (Map.Entry<String,Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
                             swagger.addDefinition(entry.getKey(), entry.getValue());
                         }
                         if (swaggerParam instanceof BodyParameter) {

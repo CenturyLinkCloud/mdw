@@ -16,6 +16,7 @@
 package com.centurylink.mdw.workflow.adapter;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
@@ -68,6 +70,8 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 public abstract class TextAdapterActivity extends DefaultActivityImpl
 implements AdapterActivity, AdapterInvocationError, TextAdapter {
     static final String PROP_RETRY_EXCEPTIONS = "RETRY_EXCEPTIONS";
+    static final String RESPONSE_TYPE = "ResponseType";
+
     private static Random random = null;
     private boolean isStubbing;
 
@@ -199,10 +203,29 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         if (varname == null)
             return;
         String vartype = getParameterType(varname);
-        if (VariableTranslator.isDocumentReferenceVariable(getPackage(), vartype))
-            setParameterValueAsDocument(varname, vartype, response);
-        else
+        com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vartype);
+        if (translator instanceof DocumentReferenceTranslator) {
+            Object responseObj = response;
+            String coerceToType = getAttribute(RESPONSE_TYPE);
+            if (coerceToType != null) {
+                String className = coerceToType.substring(0, coerceToType.lastIndexOf(".")).replace('/', '.');
+                try {
+                    Class<?> responseClass = getPackage().getCloudClassLoader().loadClass(className);
+                    // TODO: handle other types (eg yaml)
+                    if (Jsonable.class.isAssignableFrom(responseClass)) {
+                        Constructor<?> ctor = responseClass.getConstructor(JSONObject.class);
+                        responseObj = ctor.newInstance(new JSONObject(response));
+                    }
+                }
+                catch (ReflectiveOperationException ex) {
+                    throw new ActivityException(ex.getMessage(), ex);
+                }
+            }
+            setParameterValueAsDocument(varname, vartype, responseObj);
+        }
+        else {
             setParameterValue(varname, response);
+        }
     }
 
     /**
@@ -530,7 +553,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
             return docref.getDocumentId();
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logexception(ex.getMessage(), ex);
             return null;
         }
     }

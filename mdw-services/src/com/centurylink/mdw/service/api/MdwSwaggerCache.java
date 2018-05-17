@@ -65,15 +65,20 @@ public class MdwSwaggerCache implements CacheService {
             final SwaggerWorkflowReader workflowReader = new SwaggerWorkflowReader(swagger);
             Map<RequestKey,AssetRequest> processRequests = ProcessRequests.getRequests();
             for (RequestKey requestKey : processRequests.keySet()) {
-                Operation alreadyOp = null;
-                Path alreadyPath = swagger.getPath(servicePath);
-                if (alreadyPath != null) {
-                    alreadyOp = alreadyPath.getOperationMap().get(HttpMethod.valueOf(requestKey.getMethod().toString()));
-                }
-                if (alreadyOp == null) {
-                    // workflow paths have lowest priority
-                    AssetRequest processRequest = processRequests.get(requestKey);
-                    workflowReader.read(requestKey, processRequest);
+                String requestPath = requestKey.getPath();
+                if (!requestPath.startsWith("/"))
+                    requestPath = "/" + requestPath;
+                if (requestPath.startsWith(servicePath)) {
+                    Operation alreadyOp = null;
+                    Path alreadyPath = swagger.getPath(servicePath);
+                    if (alreadyPath != null) {
+                        alreadyOp = alreadyPath.getOperationMap().get(HttpMethod.valueOf(requestKey.getMethod().toString()));
+                    }
+                    if (alreadyOp == null) {
+                        // workflow paths have lowest priority
+                        AssetRequest processRequest = processRequests.get(requestKey);
+                        workflowReader.read(requestKey, processRequest);
+                    }
                 }
             }
 

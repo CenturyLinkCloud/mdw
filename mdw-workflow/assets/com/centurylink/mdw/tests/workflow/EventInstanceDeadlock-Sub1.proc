@@ -26,7 +26,7 @@
         "WORK_DISPLAY_INFO": "x=230,y=114,w=150,h=78"
       },
       "id": "A3",
-      "implementor": "com.centurylink.mdw.microservice.MicroserviceDependenciesWait",
+      "implementor": "com.centurylink.mdw.microservice.DependenciesWaitActivity",
       "name": "Microservice\r\nDependencies Wait",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=439,ly=153,type=Elbow,xs=384&492,ys=153&153"},
@@ -40,7 +40,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "SERVICE",
-    "WORK_DISPLAY_INFO": "x=40,y=42,w=260,h=27"
+    "WORK_DISPLAY_INFO": "x=40,y=42,w=278,h=26"
   },
   "variables": {"serviceSummary": {
     "category": "INPUT",

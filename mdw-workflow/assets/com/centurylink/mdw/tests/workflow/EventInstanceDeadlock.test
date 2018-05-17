@@ -7,30 +7,33 @@ start process("com.centurylink.mdw.tests.workflow/EventInstanceDeadlock-Main") {
         serviceSummary: '''{
   "_type": "com.centurylink.mdw.microservice.ServiceSummary",
   "serviceSummary": {
-      "microservices": {
-        "portster/PortIn": {
-          "updates": [
-            {
-              "requestId": 0,
-              "received": "2018-04-25T14:20:29.280Z",
-              "status": {
-                "code": 202,
-                "message": "focaccept"
+      "microservices": [
+        {
+          "instances": [{
+            "updates": [
+              {
+                "requestId": 0,
+                "received": "2018-04-25T14:20:29.280Z",
+                "status": {
+                  "code": 202,
+                  "message": "focaccept"
+                }
               }
-            }
-          ],
-          "invocations": [{
-            "requestId": 601957,
-            "sent": "2018-04-25T14:20:29.280Z",
-            "content": "",
-            "status": {
+            ],
+            "invocations": [{
+              "requestId": 601957,
+              "sent": "2018-04-25T14:20:29.280Z",
+              "content": "",
+              "status": {
               "code": 202,
-              "message": "Accepted"
-            },
-            "responseId": 601959
-          }]
+                "message": "Accepted"
+              },
+              "responseId": 601959
+            }]
+          }],
+         "name": "portster/PortIn"
         }
-      },
+      ],
       "masterRequestId": "sdwf35b84c94f241c3"
     }
 }'''

@@ -17,11 +17,13 @@ public class CombiningConsolidator implements Consolidator {
     public Pair<Integer,JSONObject> getResponse(ServiceSummary serviceSummary) {
         JSONObject responses = new JSONObject();
         Status worstStatus = Status.OK;
-        for (MicroserviceHistory microservice : serviceSummary.getMicroservices()) {
-            Status status = microservice.latestStatus();
-            responses.put(microservice.getJsonName(), status.getJson());
-            if (status.getCode() > worstStatus.getCode())
-                worstStatus = status;
+        for (String microserviceName : serviceSummary.getMicroservices().keySet()) {
+            for (MicroserviceInstance microservice : serviceSummary.getMicroservices(microserviceName).getInstances()) {
+                Status status = microservice.latestStatus();
+                responses.put(microservice.getJsonName(), status.getJson());
+                if (status.getCode() > worstStatus.getCode())
+                    worstStatus = status;
+            }
         }
         JSONObject json = new JSONObject();
         json.put("status", worstStatus.getJson());

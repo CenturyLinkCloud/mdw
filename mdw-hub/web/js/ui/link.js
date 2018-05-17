@@ -12,6 +12,10 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     this.to = to;
     this.workflowType = 'transition';
     this.isLink = true;
+    this.dpRatio = 1;
+    if (window.devicePixelRatio) {
+      this.dpRatio = window.devicePixelRatio;
+    }
   };
   
   Link.INITIATED = 'blue';
@@ -227,7 +231,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
           horizontal = !horizontal;
         }
         if (hitX)
-          hit = context.isPointInStroke && context.isPointInStroke(hitX, hitY);
+          hit = context.isPointInStroke && (this.dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*this.dpRatio, hitY*this.dpRatio));
         else
           context.stroke();
       }
@@ -257,7 +261,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
             context.beginPath();
             context.moveTo(seg.from.x, seg.from.y);
             context.lineTo(seg.to.x, seg.to.y);
-            if (context.isPointInStroke && context.isPointInStroke(hitX, hitY)) {
+            if (context.isPointInStroke && (this.dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*this.dpRatio, hitY*this.dpRatio))) {
               hit = true;
             }
           });
@@ -419,7 +423,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     }
     
     if (hitX) {
-      if (context.isPointInStroke && context.isPointInStroke(hitX, hitY))
+      if (context.isPointInStroke && (this.dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*this.dpRatio, hitY*this.dpRatio)))
         return true;
     }
     else {
@@ -484,20 +488,20 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     context.lineTo(Math.round(Math.cos(dl)*p + x), Math.round(Math.sin(dl)*p + y));
     context.lineTo(Math.round(Math.cos(dr)*p + x), Math.round(Math.sin(dr)*p + y));
     if (hitX) {
-      return context.isPointInStroke && context.isPointInStroke(hitX, hitY);
+      return (context.isPointInStroke && (this.dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*this.dpRatio, hitY*this.dpRatio)));
     }
     else {
       context.fill();
       context.stroke();
     }
   };
-  
+
   Link.prototype.getAutoElbowLinkType = function() {
     var type = this.display.type;
     var xs = this.display.xs;
     var ys = this.display.ys;
-    
-    if (type == Link.ELBOWH) {
+
+    if (type == Link.LINK_TYPES.ELBOWH) {
       if (xs[0] == xs[1]) {
         return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V; 
       } 
@@ -511,7 +515,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
         return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_HV;
       }
     } 
-    else if (type === Link.ELBOWV) {
+    else if (type === Link.LINK_TYPES.ELBOWV) {
       if (xs[0] == xs[1]) {
         return Link.AUTO_ELBOW_LINK_TYPES.AUTOLINK_V; 
       }

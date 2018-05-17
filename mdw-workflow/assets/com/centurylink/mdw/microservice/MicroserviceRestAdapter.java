@@ -5,22 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.translator.JsonTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
 /**
@@ -28,8 +19,6 @@ import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
  * populate headers, response and serviceSummary (if it exists)
  */
 public class MicroserviceRestAdapter extends RestServiceAdapter {
-
-    public static final String JSON_RESPONSE_VARIABLE = "JSON Response Variable";
 
     /**
      * Overridden to append JSON headers.
@@ -53,72 +42,21 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         return requestHeaders;
     }
 
-    protected void populateResponseVariable(StatusResponse response)
-            throws ActivityException, JSONException {
-        Variable responseVariable = null;
-        String responseVarName = getAttributeValue(JSON_RESPONSE_VARIABLE);
-        if (responseVarName != null) {
-            responseVariable = getProcessDefinition().getVariable(responseVarName);
-            if (responseVariable == null)
-                throw new ActivityException("No variable defined: " + responseVarName);
-        }
-        else {
-            // default response variable name
-            responseVariable = getProcessDefinition().getVariable("response");
-        }
-
-        if (responseVariable != null && VariableTranslator.getTranslator(getPackage(),
-                responseVariable.getType()) instanceof JsonTranslator) {
-            if (Jsonable.class.getName().equals(responseVariable.getType()))
-                setVariableValue(responseVariable.getName(), response);
-            else if (JSONObject.class.getName().equals(responseVariable.getType()))
-                setVariableValue(responseVariable.getName(), response.getJson());
-            else
-                throw new JSONException(
-                        "Unrecognized JSON variable type: " + responseVariable.getType());
-        }
-    }
-
     /**
-     * Add request-id header
-     *
-     * @throws ActivityException
-     */
-    protected void populateResponseHeaders() throws AdapterException, ActivityException {
-        Variable responseHeadersVar = getProcessDefinition().getVariable("responseHeaders");
-        if (responseHeadersVar != null) {
-            try {
-                Map<String, String> responseHeaders = super.getResponseHeaders();
-                if (responseHeaders == null)
-                    responseHeaders = new HashMap<String, String>();
-                responseHeaders.put(Request.REQUEST_ID, getMasterRequestId());
-                setVariableValue("responseHeaders", responseHeaders);
-            }
-            catch (ActivityException ex) {
-                throw new AdapterException(ex.getMessage(), ex);
-            }
-        }
-    }
-
-    /**
-     * Populate response variable and serviceSummary
-     * @return response Id
+     * Populates serviceSummary
+     * @return responseId
      */
     @Override
     protected Long logResponse(Response response) {
         Long responseId = super.logResponse(response);
         int code = response.getStatusCode() == null ? 0 : response.getStatusCode();
         Status status = new Status(code, response.getStatusMessage());
-        //
         try {
-            populateResponseVariable(new StatusResponse(status));
-            populateResponseHeaders();
             updateServiceSummary(status, responseId);
         }
-        catch (Exception ex) {
+        catch (ActivityException ex) {
             logexception(ex.getMessage(), ex);
         }
-
         return responseId;
     }
 
@@ -140,12 +78,12 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     }
 
     public void updateServiceSummary(Status status, Long responseId)
-            throws ActivityException, ServiceException, DataAccessException {
+            throws ActivityException {
 
         ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary != null) {
             String microservice = getMicroservice();
-            List<Invocation> invocations = serviceSummary.getInvocations(microservice);
+            List<Invocation> invocations = serviceSummary.getInvocations(microservice, getProcessInstanceId());
             if (invocations == null)
                 throw new ActivityException("No invocations for: " + microservice);
 
@@ -156,7 +94,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             }
             else {
                 Invocation invocation = new Invocation(getRequestId(), status, Instant.now(), responseId);
-                serviceSummary.addInvocation(microservice, invocation);
+                serviceSummary.addInvocation(microservice, getProcessInstanceId(), invocation);
             }
 
             setVariableValue(getServiceSummaryVariableName(), serviceSummary);
@@ -191,6 +129,8 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
         DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        if (docRef == null)
+            return null;
         if (forUpdate)
             return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
         else
@@ -207,11 +147,10 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     /**
      * Returns the requestId that we will use to populate the serviceSummary
      * @return requestId used to populate the serviceSummary
-     * @throws ActivityException
      */
     public Long getRequestId() throws ActivityException {
 
-        String requestIdVarName = getRequestIdVariableName();
+        String requestIdVarName = getAttribute("requestIdVariable", "requestId");
 
         Variable requestIdVar = getProcessDefinition().getVariable(requestIdVarName);
         if (requestIdVar == null && !"GET".equals(getHttpMethod()))
@@ -234,13 +173,5 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             }
         }
     }
-
-    /**
-     * You'd need a custom .impl asset to set this through designer
-     */
-    protected String getRequestIdVariableName() {
-        return getAttribute("requestIdVariable", "requestId");
-    }
-
 
 }

@@ -17,9 +17,9 @@ package com.centurylink.mdw.common.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
@@ -30,6 +30,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -38,7 +39,7 @@ public class WebSocketMessenger {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<String,List<Session>> topicSubscribers = new HashMap<>();
+    private static Map<String,List<Session>> topicSubscribers = new ConcurrentHashMap<>();
 
     private static WebSocketMessenger instance = null;;
     /**
@@ -78,7 +79,7 @@ public class WebSocketMessenger {
                 "An established connection was aborted")) {
             // avoid nuisance logging when browser closes connection
             if (logger.isMdwDebugEnabled())
-                logger.severeException(t.getMessage(), t);
+                logger.warn(t.getMessage());
         }
         else {
             logger.severeException(t.getMessage(), t);
@@ -96,6 +97,16 @@ public class WebSocketMessenger {
            }
            if (!sessions.contains(session))
                sessions.add(session);
+       }
+       // catch me up on any active bulletins
+       Map<String,Bulletin> bulletins = SystemMessages.getBulletins();
+       for (Bulletin bulletin : bulletins.values()) {
+           try {
+               session.getBasicRemote().sendText(bulletin.getJson().toString());
+           }
+           catch (IOException ex) {
+               logger.severeException(ex.getMessage(), ex);
+           }
        }
     }
 

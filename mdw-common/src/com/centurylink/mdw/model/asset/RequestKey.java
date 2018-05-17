@@ -42,22 +42,39 @@ public class RequestKey implements Comparable<RequestKey> {
     }
 
     public String toString() {
-        return method + " " + path;
+        return path + " " + method;
     }
 
-    public boolean equals(Object other) {
-        return other instanceof RequestKey && other.toString().equals(toString());
+    public boolean match(RequestKey other) {
+        if (!method.equals(other.method))
+            return false;
+        // handle dynamic path elements
+        String[] segs1 = path.split("/");
+        String[] segs2 = other.path.split("/");
+        for (int i = 0; i < segs1.length; i++) {
+            String seg = segs1[i];
+            if (seg.startsWith("{") && seg.endsWith("}")) {
+                segs1[i] = "{}";
+                if (segs2.length > i)
+                    segs2[i] = "{}";
+            }
+        }
+        for (int i = 0; i < segs2.length; i++) {
+            String seg = segs2[i];
+            if (seg.startsWith("{") && seg.endsWith("}") && !seg.equals("{}")) {
+                segs2[i] = "{}";
+                if (segs1.length > i)
+                    segs1[i] = "{}";
+            }
+        }
+        return String.join("/", segs1).equals(String.join("/", segs2));
     }
 
-    public int hashCode() {
-        return toString().hashCode();
-    }
-
+    /**
+     * Not to be used for equality tests (see match).
+     */
     @Override
     public int compareTo(RequestKey other) {
-        int res = path.compareTo(other.path);
-        if (res == 0)
-            res = method.compareTo(other.method);
-        return res;
+        return toString().compareTo(other.toString());
     }
 }

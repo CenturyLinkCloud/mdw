@@ -75,7 +75,6 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   $scope.initOptions = function() {
     $scope.options = {
       distributedSave: false,
-      cacheRefresh: false,
       commitAndPush: true
     };    
   };
@@ -131,7 +130,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     return $scope.options.commitAndPush && !$scope.gitCredentials;    
   };
   
-  $scope.save = function() {
+  $scope.save = function(andClose) {
     console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
     if ($scope.options.commitAndPush && $scope.git.user && $scope.git.password) {
       $cookieStore.put('gitUser', $scope.git.user);
@@ -170,8 +169,9 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
         },
         function success(response) {
           $scope.setPopElem(null);  // in anticipation of having been closed by POST
-          if ($scope.options.cacheRefresh)
-            $scope.refreshCaches(); // best effort
+          if (andClose) {
+            window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;            
+          }
         },
         function error(response) {
           if (response.data.status)
@@ -184,8 +184,9 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       }
       else {
         $scope.closePopover();
-        if ($scope.options.cacheRefresh)
-          $scope.refreshCaches(); // best effort
+        if (andClose) {
+          window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;
+        }
       }
     }, 
     function error(response) {

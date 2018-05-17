@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
@@ -45,7 +46,6 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;

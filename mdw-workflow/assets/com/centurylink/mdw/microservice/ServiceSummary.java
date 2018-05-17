@@ -1,8 +1,11 @@
 package com.centurylink.mdw.microservice;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
@@ -16,62 +19,77 @@ public class ServiceSummary implements Jsonable {
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
 
-    private List<MicroserviceHistory> microservices = new ArrayList<>();
-    public List<MicroserviceHistory> getMicroservices() { return microservices; }
-    public void setMicroservices(List<MicroserviceHistory> microservices) {
+    private Map<String,MicroserviceList> microservices = new LinkedHashMap<>();
+    public Map<String,MicroserviceList> getMicroservices() { return microservices; }
+    public void setMicroservices(Map<String,MicroserviceList> microservices) {
         this.microservices = microservices;
     }
 
-    public MicroserviceHistory getMicroservice(String name) {
-        for (MicroserviceHistory microservice : microservices) {
-            if (microservice.getMicroservice().equals(name))
-                return microservice;
-        }
-        return null;
+    public MicroserviceList getMicroservices(String name) {
+        return microservices.get(name);
     }
 
-    public List<Invocation> getInvocations(String microservice) {
-        MicroserviceHistory history = getMicroservice(microservice);
-        if (history == null)
-            return null;
-        else
-            return history.getInvocations();
+    public MicroserviceInstance getMicroservice(String name, Long instanceId) {
+        MicroserviceList instances = getMicroservices(name);
+        return instances == null ? null : instances.getInstance(instanceId);
     }
 
-    public List<Update> getUpdates(String microservice) {
-        MicroserviceHistory history = getMicroservice(microservice);
-        if (history == null)
-            return null;
-        else
-            return history.getUpdates();
+    public List<Invocation> getInvocations(String microserviceName, Long instanceId) {
+        MicroserviceInstance instance = getMicroservice(microserviceName, instanceId);
+        return instance == null ? null : instance.getInvocations();
+    }
+
+    public List<Update> getUpdates(String microserviceName, Long instanceId) {
+        MicroserviceInstance instance = getMicroservice(microserviceName, instanceId);
+        return instance == null ? null : instance.getUpdates();
     }
 
     /**
      * Adds and returns a microservice.
      */
-    public MicroserviceHistory addMicroservice(String name) {
-        MicroserviceHistory microservice = new MicroserviceHistory(name);
-        microservices.add(microservice);
+    public MicroserviceInstance addMicroservice(String name, Long instanceId) {
+        MicroserviceInstance microservice = new MicroserviceInstance(name, instanceId);
+        MicroserviceList instances = getMicroservices(name);
+        if (instances == null) {
+            instances = new MicroserviceList(name);
+            microservices.put(name, instances);
+        }
+        instances.add(microservice);
         return microservice;
     }
 
-    public void addInvocation(String microservice, Invocation invocation) {
-        MicroserviceHistory history = getMicroservice(microservice);
-        if (history == null) {
-            history = addMicroservice(microservice);
+    public void addInvocation(String microserviceName, Long instanceId, Invocation invocation) {
+        MicroserviceList instances = microservices.get(microserviceName);
+        if (instances == null) {
+            instances = new MicroserviceList(microserviceName);
+            microservices.put(microserviceName, instances);
         }
-        getInvocations(microservice).add(invocation);
+        MicroserviceInstance instance = instances.getInstance(instanceId);
+        if (instance == null) {
+            instance = addMicroservice(microserviceName, instanceId);
+        }
+        List<Invocation> invocations = getInvocations(microserviceName, instanceId);
+        if (invocations == null) {
+            invocations = new ArrayList<>();
+            instance.setInvocations(invocations);
+        }
+        invocations.add(invocation);
     }
 
-    public void addUpdate(String microservice, Update update) {
-        MicroserviceHistory history = getMicroservice(microservice);
-        if (history == null) {
-            history = addMicroservice(microservice);
+    public void addUpdate(String microserviceName, Long instanceId, Update update) {
+        MicroserviceList instances = microservices.get(microserviceName);
+        if (instances == null) {
+            instances = new MicroserviceList(microserviceName);
+            microservices.put(microserviceName, instances);
         }
-        List<Update> updates = getUpdates(microservice);
+        MicroserviceInstance instance = instances.getInstance(instanceId);
+        if (instance == null) {
+            instance = addMicroservice(microserviceName, instanceId);
+        }
+        List<Update> updates = getUpdates(microserviceName, instanceId);
         if (updates == null) {
-            updates = new ArrayList<Update>();
-            history.setUpdates(updates);
+            updates = new ArrayList<>();
+            instance.setUpdates(updates);
         }
         updates.add(update);
     }
@@ -83,12 +101,19 @@ public class ServiceSummary implements Jsonable {
     public ServiceSummary(JSONObject json) {
         this.masterRequestId = json.getString("masterRequestId");
         if (json.has("microservices")) {
-            JSONObject summaryJson = json.getJSONObject("microservices");
-            String[] microserviceNames = JSONObject.getNames(summaryJson);
-            if (microserviceNames != null) {
-                for (String microservice : microserviceNames) {
-                    MicroserviceHistory history = new MicroserviceHistory(microservice, summaryJson.getJSONObject(microservice));
-                    microservices.add(history);
+            JSONArray microservicesArr = json.getJSONArray("microservices");
+            for (int i = 0; i < microservicesArr.length(); i++) {
+                JSONObject listObj = microservicesArr.getJSONObject(i);
+                String name = listObj.getString("name");
+                if (listObj.has("instances")) {
+                    MicroserviceList instances = new MicroserviceList(name);
+                    microservices.put(name, instances);
+                    JSONArray instancesArr = listObj.getJSONArray("instances");
+                    for (int j = 0; j < instancesArr.length(); j++) {
+                        MicroserviceInstance instance = new MicroserviceInstance(instancesArr.getJSONObject(j));
+                        instance.setMicroservice(name);
+                        instances.add(instance);
+                    }
                 }
             }
         }
@@ -97,13 +122,23 @@ public class ServiceSummary implements Jsonable {
     public JSONObject getJson() {
         JSONObject json = create();
         json.put("masterRequestId", masterRequestId);
-        JSONObject historiesJson = create();
-        for (MicroserviceHistory history : microservices) {
-            JSONObject historyJson = history.getJson();
-            String microservice = (String)historyJson.remove("microservice");
-            historiesJson.put(microservice, historyJson);
+        JSONArray microservicesArr = new JSONArray();
+        json.put("microservices", microservicesArr);
+        for (String microserviceName : microservices.keySet()) {
+            JSONObject listObj = new JSONObject();
+            listObj.put("name", microserviceName);
+            microservicesArr.put(listObj);
+            MicroserviceList instances = getMicroservices(microserviceName);
+            if (instances != null) {
+                JSONArray instancesArr = new JSONArray();
+                listObj.put("instances", instancesArr);
+                for (MicroserviceInstance instance : instances.getInstances()) {
+                    JSONObject instanceObj = instance.getJson();
+                    instanceObj.remove("microservice");
+                    instancesArr.put(instanceObj);
+                }
+            }
         }
-        json.put("microservices", historiesJson);
         return json;
     }
 }

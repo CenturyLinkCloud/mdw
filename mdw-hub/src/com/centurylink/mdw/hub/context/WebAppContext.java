@@ -42,7 +42,9 @@ public class WebAppContext {
     public static Mdw getMdw() throws IOException {
         if (mdw == null) {
 
-            String hubRoot = "/mdw";  // TODO overridable
+            String hubRoot = ApplicationContext.getMdwHubContextRoot();
+            if (hubRoot.length() > 0 && !hubRoot.startsWith("/"))
+                hubRoot = "/" + hubRoot;
             String servicesRoot = PropertyManager.getProperty("mdw.hub.services.url");
             if (servicesRoot == null)
                 servicesRoot = hubRoot;

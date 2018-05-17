@@ -269,7 +269,7 @@ public abstract class JsonRestService extends RestService implements JsonService
             responseJson = ((Jsonable) responseObject).getJson();
         else
             throw new ServiceException(HTTP_500_INTERNAL_ERROR,
-                    "Unsupported response type: " + responseObject.getClass());
+                    "Unsupported response type: " + (responseObject == null ? null : responseObject.getClass()));
         for (String key : responseHeaders.keySet())
             headers.put(key, responseHeaders.get(key));
         return responseJson;

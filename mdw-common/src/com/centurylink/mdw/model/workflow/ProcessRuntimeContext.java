@@ -282,6 +282,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
             valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstance, Object.class));
             valueExpressionMap.put("variables", new ValueExpressionLiteral(this.getVariables() , Object.class));
             valueExpressionMap.put("props", new ValueExpressionLiteral(this.getPropertyAccessorMap(), Map.class));
+            valueExpressionMap.put("env", new ValueExpressionLiteral(this.getEnvironmentAccessorMap(), Map.class));
 
             Map<String,Object> variables = getVariables();
             if (variables != null) {
@@ -302,8 +303,21 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         };
     }
 
+    private Map<String,String> getEnvironmentAccessorMap() {
+        return new HashMap<String,String>() {
+            @Override
+            public String get(Object key) {
+                return System.getenv(key.toString());
+            }
+        };
+    }
+
     public Map<String,String> getProps() {
         return getPropertyAccessorMap();
+    }
+
+    public Map<String,String> getEnv() {
+        return getEnvironmentAccessorMap();
     }
 
     public String getMdwHubUrl() {

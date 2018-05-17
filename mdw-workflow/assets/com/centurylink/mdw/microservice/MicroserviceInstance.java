@@ -1,5 +1,6 @@
 package com.centurylink.mdw.microservice;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +10,10 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 
 /**
- * Represents a microservice's invocations and updates for one master request.
+ * Represents a microservice's invocations and updates for one process instance.
  * Invocations will always be non-null (empty if none), whereas updates can be null.
  */
-public class MicroserviceHistory implements Jsonable {
+public class MicroserviceInstance implements Jsonable {
 
     private String microservice;
     public String getMicroservice() { return microservice; }
@@ -21,16 +22,23 @@ public class MicroserviceHistory implements Jsonable {
     /**
      * Process instance ID.
      */
-    private Long instanceId;
-    public Long getInstanceId() { return instanceId; }
-    public void setInstanceId(Long instanceId) { this.instanceId = instanceId; }
+    private Long id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    /**
+     * Process instance triggered.
+     */
+    private Instant triggered;
+    public Instant getTriggered() { return triggered; }
+    public void setTriggered(Instant triggered) { this.triggered = triggered; }
 
     /**
      * Process instance status.
      */
-    private String instanceStatus;
-    public String getInstanceStatus() { return instanceStatus; }
-    public void setInstanceStatus(String status) { this.instanceStatus = status; }
+    private String status;
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     /**
      * Calls to the microservice.
@@ -46,13 +54,13 @@ public class MicroserviceHistory implements Jsonable {
     public List<Update> getUpdates() { return updates; }
     public void setUpdates(List<Update> updates) { this.updates = updates; }
 
-    public MicroserviceHistory(String microservice) {
+    public MicroserviceInstance(String microservice, Long instanceId) {
         this.microservice = microservice;
+        this.id = instanceId;
         this.invocations = new ArrayList<Invocation>();
     }
 
-    public MicroserviceHistory(String microservice, JSONObject json) {
-        this.microservice = microservice;
+    public MicroserviceInstance(JSONObject json) {
         bind(json);
     }
 

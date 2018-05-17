@@ -222,7 +222,7 @@ public class DatabaseAccess {
                 return;
             StandardLogger logger = LoggerUtil.getStandardLogger();
             try {
-                String upgradeJsonPath = "db/" + (isOracle() ? "oracle.json" : "mysql.json");
+                String upgradeJsonPath = "db/" + (isOracle() ? "oracle" : "mysql") + "/upgrade.json";
                 InputStream is = FileHelper.readFile(upgradeJsonPath, DatabaseAccess.class.getClassLoader());
                 if (is != null) {
                     logger.info("Check/apply db upgrades: " + upgradeJsonPath);

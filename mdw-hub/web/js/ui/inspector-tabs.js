@@ -67,6 +67,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
           '_categories': ['com.centurylink.mdw.activity.types.NotificationActivity']
         },
+        Authentication: {
+          '_attributes': 'auth', // TODO not fully baked 
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
+        },
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
           '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'
@@ -131,6 +136,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           End: 'endDate',
           Label: 'comments'
         },
+        Source: {
+          'Initiated By': 'owner',
+          ID: 'ownerId',
+          '_url': '${it.owner == "PROCESS_INSTANCE" ? "#/workflow/processes/" + it.ownerId : (it.owner == "ERROR" ? "#/workflow/triggers/" + it.ownerId : "#/workflow/requests/" + it.ownerId)}'
+        },
         /* named one-item array of object:
          * Name evaluates to an array which is displayed as a table with
          * each item's name/value designated by the array's single object.
@@ -140,10 +150,93 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           Value: 'value',
           Type: 'type'
         }]},
-        Source: {
-          'Initiated By': 'owner',
-          ID: 'ownerId',
-          '_url': '${it.owner == "PROCESS_INSTANCE" ? "#/workflow/processes/" + it.ownerId : (it.owner == "ERROR" ? "#/workflow/triggers/" + it.ownerId : "#/workflow/requests/" + it.ownerId)}'
+        /*
+         * see Subprocesses below
+         */
+        'Service Summary': {
+          'serviceList': [{
+            'Service': '${it.name}',
+            'ID': '${it.id}',
+            '_url': '${it.url}',
+            'When': '${it.started}',
+            'Status': '${it.status}',
+            '': '${it.thisFlag}'
+          }],
+          'getServiceList': function(diagramObject, workflowObject, runtimeInfo) {
+            // TODO: non-standard service summary variable name
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return workflowObject.variables && workflowObject.variables.serviceSummary;
+            }
+            else {
+              if (runtimeInfo === null || !runtimeInfo.variables)
+                return null;
+              var serviceSummary = runtimeInfo.variables.find(function(variable) {
+                return variable.name === 'serviceSummary'; 
+              });
+              if (!serviceSummary)
+                return null;
+              var url = mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9);
+              return $http.get(url).then(function(response) {
+                if (response.status !== 200)
+                  return null;
+                var result = { 
+                    status: response.status,
+                    maxWidth: 150,
+                    data: {
+                      serviceList: []
+                    }
+                };
+                // populate the serviceList pseudo array
+                var serviceSummary = response.data;
+                var microservices = serviceSummary.microservices;
+                var formatDate = function(date) {
+                  let now = new Date();
+                  let str = (date.getMonth() + 1) + '/' + date.getDate();
+                  if (date.getFullYear() != now.getFullYear()) {
+                    str += '/' + date.getFullYear();
+                  }
+                  str += ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds(); 
+                  return str;
+                };
+                microservices.forEach(function(microservice) {
+                  if (microservice.instances) {
+                    microservice.instances.forEach(function(instance) {
+                      result.data.serviceList.push({
+                        name: microservice.name,
+                        id: instance.id,
+                        url: '#/workflow/processes/' + instance.id,
+                        started: instance.triggered ? formatDate(new Date(instance.triggered)) : null,
+                        status: instance.status,
+                        thisFlag: instance.id === runtimeInfo.id ? '*' : '' 
+                      });
+                      instance.invocations.forEach(function(invocation) {
+                        result.data.serviceList.push({
+                          name: '  invocation',
+                          id: invocation.requestId,
+                          url: '#/workflow/requests/' + invocation.requestId,
+                          started: invocation.sent ? formatDate(new Date(invocation.sent)) : null,
+                          status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
+                        });
+                      });
+                      if (instance.updates) {
+                        instance.updates.forEach(function(update) {
+                          result.data.serviceList.push({
+                            name: '  update',
+                            id: update.requestId,
+                            url: '#/workflow/requests/' + update.requestId,
+                            started: update.received ? formatDate(new Date(update.received)) : null,
+                            status: update.status ? (update.status.code + ": " + update.status.message) : null
+                          });
+                        });
+                      }
+                    });
+                  }
+                });
+                return result;
+              });
+            }
+          }
         },
         Hierarchy: {
           'hierarchyInstances': [{
@@ -220,7 +313,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         }],
         /* named one-item array, followed by function:
          * Function returns an array of promises from which are extracted
-         * the JSON array with the corresponding (eg: 'processInstances').
+         * the JSON array with the corresponding name (eg: 'processInstances').
          * From these arrays each item is evaluated using the standard
          * rules of prop name = label and prop value = eval.
          * 
@@ -285,7 +378,6 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '/subflows'));
                 }
               }
-              
               return $q.all(gets);
             }
           }
@@ -311,13 +403,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Tasks?processInstanceId=' + runtimeInfo[0].processInstanceId + '&activityInstanceIds=[';
+              var url = mdw.roots.services + '/services/Tasks?processInstanceId=' + runtimeInfo[0].processInstanceId + '&activityInstanceIds=%5B';
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
               }
-              url += ']&sort=startDate&descending=true';
+              url += '%5D&sort=startDate&descending=true';
               return $http.get(url);
             }
           }
@@ -338,13 +430,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=[';              
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=%5B';              
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
               }
-              url += ']&descending=true';
+              url += '%5D&descending=true';
               return $http.get(url);
             }
           }
@@ -365,13 +457,13 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=[';              
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=%5B';              
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
                   url += ",";
               }
-              url += ']&descending=true';
+              url += '%5D&descending=true';
               return $http.get(url);
             }
           }

@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.model;
 
+import java.util.Comparator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,5 +38,15 @@ public class JsonObject extends JSONObject {
 
     public Set<String> keySet() {
         return new TreeSet<String>(super.keySet());
+    }
+
+    protected Set<Entry<String,Object>> entrySet() {
+        Set<Entry<String,Object>> entries = new TreeSet<Entry<String,Object>>(new Comparator<Entry<String,Object>>() {
+            public int compare(Entry<String,Object> e1, Entry<String,Object> e2) {
+                return e1.getKey().compareTo(e2.getKey());
+            }
+        });
+        entries.addAll(super.entrySet());
+        return entries;
     }
 }

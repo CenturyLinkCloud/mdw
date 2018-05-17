@@ -47,6 +47,7 @@ import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.ArchiveDir;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -713,6 +714,15 @@ public class AssetServicesImpl implements AssetServices {
         public boolean exists() {
             return false;
         }
+    }
+
+    @Override
+    public Renderer getRenderer(String assetPath, String renderTo) throws ServiceException {
+        AssetInfo asset = getAsset(assetPath);
+        if (renderTo.equals(Asset.HTML)) {
+            return new HtmlRenderer(asset);
+        }
+        return null;
     }
 
 }

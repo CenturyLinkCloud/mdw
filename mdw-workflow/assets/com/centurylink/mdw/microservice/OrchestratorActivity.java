@@ -1,5 +1,6 @@
 package com.centurylink.mdw.microservice;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +99,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     protected boolean isParallel() {
-        return getAttribute(PARALLEL, true);
+        return getAttribute(PARALLEL, false);
     }
 
     protected ServicePlan getServicePlan() throws ActivityException {
@@ -144,12 +145,12 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         }
     }
 
-    private ProcessInstance createProcessInstance(Microservice service)
+    private ProcessInstance createProcessInstance(int index, Microservice service)
             throws ActivityException, DataAccessException, ProcessException {
         Process process = getSubflow(service);
         // create bindings
         List<Variable> childVars = process.getVariables();
-        Map<String,String> parameters = createBindings(childVars, service, false);
+        Map<String,String> parameters = createBindings(childVars, index, service, false);
         // create process instance
         return getEngine().createProcessInstance(
                 process.getId(), OwnerType.PROCESS_INSTANCE,
@@ -160,7 +161,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     /**
      * Returns variable bindings to be passed into subprocess.
      */
-    protected Map<String,String> createBindings(List<Variable> childVars, Microservice service,
+    protected Map<String,String> createBindings(List<Variable> childVars, int index, Microservice service,
             boolean passDocumentContent) throws ActivityException {
         Map<String,String> parameters = new HashMap<>();
         for (int i = 0; i < childVars.size(); i++) {
@@ -185,6 +186,8 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             // template variable will populate process name
             parameters.put(processName, service.getName());
         }
+        if (parameters.get("i") == null)
+            parameters.put("i", String.valueOf(index));
         return parameters;
     }
 
@@ -197,19 +200,20 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             done = true;
             ServiceSummary summary = getServiceSummary(true);
             for (Microservice service : servicePlan.getServices()) {
-                MicroserviceHistory history = summary.getMicroservice(service.getName());
-                if (history.getInstanceId().equals(procInstId)) {
-                    history.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
-                }
-                if (!history.getInstanceStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
-                        && !history.getInstanceStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
-                    done = false;
+                for (MicroserviceInstance instance : summary.getMicroservices(service.getName()).getInstances()) {
+                    if (instance.getId().equals(procInstId)) {
+                        instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
+                    }
+                    if (!instance.getStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
+                            && !instance.getStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
+                        done = false;
+                    }
                 }
             }
             setVariableValue(getServiceSummaryVariableName(), summary);
         }
         catch (Exception ex) {
-            logexception("InvokeHeterogeneousProcessActivity: cannot get variable instance", ex);
+            logexception(ex.getMessage(), ex);
             if (ex instanceof ActivityException)
                 throw (ActivityException)ex;
             else
@@ -226,10 +230,11 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         ServicePlan plan = getServicePlan();
         ServiceSummary summary = getServiceSummary(false);
         for (Microservice service : plan.getServices()) {
-            MicroserviceHistory history = summary.getMicroservice(service.getName());
-            if (!history.getInstanceStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
-                    && !history.getInstanceStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
-                return false;
+            for (MicroserviceInstance instance : summary.getMicroservices(service.getName()).getInstances()) {
+                if (!instance.getStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
+                        && !instance.getStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -240,16 +245,23 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         ServiceSummary summary = getServiceSummary(true);
         try {
             for (Microservice service : servicePlan.getServices()) {
-                MicroserviceHistory history = summary.addMicroservice(service.getName());
-                try {
-                    ProcessInstance processInstance = createProcessInstance(service);
-                    procInstList.add(processInstance);
-                    history.setInstanceId(processInstance.getId());
-                    history.setInstanceStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
-                }
-                catch (Exception ex) {
-                    history.setInstanceStatus(WorkStatus.STATUSNAME_FAILED);
-                    throw ex;
+                if (service.getEnabled()) {
+                    MicroserviceInstance instance = null;
+                    for (int i = 0 ; i < service.getCount(); i++) {
+                        try {
+                            ProcessInstance processInstance = createProcessInstance(i, service);
+                            instance = summary.addMicroservice(service.getName(), processInstance.getId());
+                            instance.setTriggered(Instant.now());
+                            procInstList.add(processInstance);
+                            instance.setId(processInstance.getId());
+                            instance.setStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
+                        }
+                        catch (Exception ex) {
+                            if (instance != null)
+                                instance.setStatus(WorkStatus.STATUSNAME_FAILED);
+                            throw ex;
+                        }
+                    }
                 }
             }
         }
@@ -282,27 +294,25 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     private void executeServiceSubflowsInParallel(ServicePlan servicePlan) throws ActivityException {
         // create runners and service summary
-        List<Microservice> serviceList = servicePlan.getServices();
-        SubprocessRunner[] allRunners = new SubprocessRunner[(serviceList.size())];
-        List<SubprocessRunner> activeRunners = new ArrayList<SubprocessRunner>(serviceList.size());
-        ServiceSummary summary = getServiceSummary(false);
-        for (int i = 0; i < serviceList.size(); i++) {
-            Microservice service = serviceList.get(i);
-            SubprocessRunner runner = new SubprocessRunner(service, i, activeRunners);
-            allRunners[i] = runner;
-            activeRunners.add(runner);
-            summary.addMicroservice(service.getName());
+        List<SubprocessRunner> allRunners = new ArrayList<>();
+        List<SubprocessRunner> activeRunners = new ArrayList<>();
+        for (Microservice service : servicePlan.getServices()) {
+            if (service.getEnabled()) {
+                for (int i = 0; i < service.getCount(); i++) {
+                    SubprocessRunner runner = new SubprocessRunner(i, service, activeRunners);
+                    allRunners.add(runner);
+                    activeRunners.add(runner);
+                }
+            }
         }
-        setVariableValue(getServiceSummaryVariableName(), summary);
 
         // spawn runner threads
         ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
         int pollInterval = PropertyManager.getIntegerProperty(
                 PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL,
                 PropertyNames.MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT);
-        for (int i = 0; i < allRunners.length; i++) {
-            while (!threadPool.execute(ThreadPoolProvider.WORKER_ENGINE, "ServiceSubProcess",
-                    allRunners[i])) {
+        for (SubprocessRunner runner : allRunners) {
+            while (!threadPool.execute(ThreadPoolProvider.WORKER_ENGINE, "ServiceSubProcess", runner)) {
                 try {
                     String msg = ThreadPoolProvider.WORKER_ENGINE  + " has no thread available to launch subflow";
                     logexception(msg, new Exception(msg));
@@ -323,21 +333,21 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             }
         }
 
-        summary = getServiceSummary(true); // lock serviceSummary again
+        ServiceSummary summary = getServiceSummary(true);
         boolean hasFailedSubprocess = false;
-        for (int i = 0; i < allRunners.length; i++) {
-            Microservice service = serviceList.get(i);
-            Long subprocInstId = allRunners[i].procInstId;
-            MicroserviceHistory history = summary.getMicroservice(service.getName());
-            if (subprocInstId != null) {
-                history.setInstanceId(subprocInstId);
+        for (SubprocessRunner runner : allRunners) {
+            Microservice service = runner.service;
+            MicroserviceInstance instance = summary.getMicroservice(service.getName(), runner.procInstId);
+            if (instance == null) {
+                instance = summary.addMicroservice(service.getName(), runner.procInstId);
+                instance.setTriggered(runner.procInstTriggered);
             }
-            if (allRunners[i].success) {
-                history.setInstanceStatus(WorkStatus.STATUSNAME_COMPLETED);
+            if (runner.success) {
+                instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
             }
             else {
                 hasFailedSubprocess = true;
-                history.setInstanceStatus(WorkStatus.STATUSNAME_FAILED);
+                instance.setStatus(WorkStatus.STATUSNAME_FAILED);
             }
         }
         setVariableValue(getServiceSummaryVariableName(), summary);
@@ -350,9 +360,12 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         private Microservice service;
         private List<SubprocessRunner> runners;
         private Long procInstId = null;
+        private Instant procInstTriggered = null;
         private boolean success;
+        private int index;
 
-        private SubprocessRunner(Microservice service, int index, List<SubprocessRunner> runners) {
+        private SubprocessRunner(int index, Microservice service, List<SubprocessRunner> runners) {
+            this.index = index;
             this.runners = runners;
             this.service = service;
         }
@@ -366,7 +379,8 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 engineDriver = new ProcessEngineDriver();
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
-                Map<String,String> parameters = createBindings(childVars, service, perfLevel >= 5);
+                Map<String,String> parameters = createBindings(childVars, index, service, perfLevel >= 5);
+                procInstTriggered = Instant.now();
                 success = engineDriver.invokeServiceAsSubprocess(process.getId(),
                         getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel) != null;
                 procInstId = engineDriver.getMainProcessInstanceId();

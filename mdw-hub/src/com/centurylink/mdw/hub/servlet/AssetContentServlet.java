@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -69,8 +71,9 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.asset.Renderer;
+import com.centurylink.mdw.services.asset.RenderingException;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.services.system.SystemMessages;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
@@ -82,7 +85,7 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
 /**
  * Provides read/update access for raw asset content.
  */
-@WebServlet(urlPatterns={"/asset/*"}, loadOnStartup=1)
+@WebServlet(urlPatterns = { "/asset/*" }, loadOnStartup = 1)
 public class AssetContentServlet extends HttpServlet {
 
     private static final StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -94,7 +97,7 @@ public class AssetContentServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         if (!assetRoot.isDirectory())
             throw new ServletException(assetRoot + " is not a directory");
 
@@ -108,14 +111,16 @@ public class AssetContentServlet extends HttpServlet {
             }
             else {
                 String recursive = request.getParameter("recursive");
-                boolean includeSubPkgs = recursive == null ? false : recursive.equalsIgnoreCase("true") ? true : false;
+                boolean includeSubPkgs = recursive == null ? false
+                        : recursive.equalsIgnoreCase("true") ? true : false;
                 response.setHeader("Content-Disposition", "attachment;filename=\"packages.zip\"");
                 response.setContentType("application/octet-stream");
                 try {
                     List<File> includes = new ArrayList<File>();
                     for (String pkgName : getPackageNames(packages))
                         includes.add(new File(assetRoot + "/" + pkgName.replace('.', '/')));
-                    ZipHelper.writeZipWith(assetRoot, response.getOutputStream(), includes, includeSubPkgs);
+                    ZipHelper.writeZipWith(assetRoot, response.getOutputStream(), includes,
+                            includeSubPkgs);
                 }
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
@@ -132,6 +137,7 @@ public class AssetContentServlet extends HttpServlet {
             }
 
             boolean gitRemote = false;
+            String render = request.getParameter("render");
             File assetFile;
             if (path.startsWith("Archive")) {
                 assetFile = new File(assetRoot + "/" + path);
@@ -142,11 +148,38 @@ public class AssetContentServlet extends HttpServlet {
 
                 assetFile = asset.getFile();
                 if ("true".equalsIgnoreCase(request.getParameter("download"))) {
-                    response.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
+                    response.setHeader("Content-Disposition",
+                            "attachment;filename=\"" + asset.getFile().getName() + "\"");
                     response.setContentType("application/octet-stream");
                 }
                 else {
-                    response.setContentType(asset.getContentType());
+                    if (render == null) {
+                        response.setContentType(asset.getContentType());
+                    }
+                    else {
+                        try {
+                            Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render.toUpperCase());
+                            if (renderer == null)
+                                throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
+                            String contentType = Asset.getContentType(render.toUpperCase());
+                            if (contentType != null)
+                                response.setContentType(contentType);
+                            Map<String,String> options = new HashMap<>();
+                            Enumeration<String> paramNames = request.getParameterNames();
+                            while (paramNames.hasMoreElements()) {
+                                String paramName = paramNames.nextElement();
+                                options.put(paramName, request.getParameter(paramName));
+                            }
+                            response.getOutputStream().write(renderer.render(options));
+                        }
+                        catch (ServiceException ex) {
+                            logger.severeException(ex.getMessage(), ex);
+                            StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
+                            response.setStatus(sr.getStatus().getCode());
+                            response.getWriter().println(sr.getJson().toString(2));
+                        }
+                        return;
+                    }
                 }
             }
 
@@ -158,7 +191,7 @@ public class AssetContentServlet extends HttpServlet {
                     if (branch == null)
                         throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
                     AssetServices assetServices = ServiceLocator.getAssetServices();
-                    VersionControlGit vcGit = (VersionControlGit)assetServices.getVersionControl();
+                    VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
                     String gitPath = vcGit.getRelativePath(assetFile);
                     in = vcGit.getRemoteContentStream(branch, gitPath);
                     if (in == null)
@@ -193,7 +226,8 @@ public class AssetContentServlet extends HttpServlet {
      * Distributed operations support does not include package import.
      * authorization for distributed requests handled by issue #222.
      */
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         if (!assetRoot.isDirectory())
             throw new ServletException(assetRoot + " is not a directory");
 
@@ -204,22 +238,26 @@ public class AssetContentServlet extends HttpServlet {
             AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
                 if ("packages".equals(path)) {
-                    authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip");
+                    authorizeForUpdate(request.getSession(), Action.Import, Entity.Package,
+                            "Package zip");
                     String contentType = request.getContentType();
                     boolean isZip = "application/zip".equals(contentType);
                     if (!isZip && !"application/json".equals(contentType))
-                        throw new ServiceException(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Unsupported content: " + contentType);
+                        throw new ServiceException(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+                                "Unsupported content: " + contentType);
                     File tempDir = new File(ApplicationContext.getTempDirectory());
                     String fileExt = isZip ? ".zip" : ".json";
-                    File tempFile = new File(tempDir + "/packageImport_" + StringHelper.filenameDateToString(new Date()) + fileExt);
+                    File tempFile = new File(tempDir + "/packageImport_"
+                            + StringHelper.filenameDateToString(new Date()) + fileExt);
                     logger.info("Saving package import temporary file: " + tempFile);
                     FileHelper.writeToFile(request.getInputStream(), tempFile);
                     ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                    VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
+                    VersionControlGit vcs = (VersionControlGit) assetServices.getVersionControl();
                     progressMonitor.start("Archive existing assets");
                     if (VcsArchiver.setInProgress()) {
                         bulletin = SystemMessages.bulletinOn("Asset import in progress...");
-                        VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
+                        VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs,
+                                progressMonitor);
                         archiver.backup();
                         if (isZip) {
                             logger.info("Unzipping " + tempFile + " into: " + assetRoot);
@@ -231,10 +269,12 @@ public class AssetContentServlet extends HttpServlet {
                             String packageJson = new String(FileHelper.read(tempFile));
                             List<Package> packages = importer.importPackages(packageJson);
                             for (Package pkg : packages) {
-                                PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkg.getName());
+                                PackageDir pkgDir = persisterVcs
+                                        .getTopLevelPackageDir(pkg.getName());
                                 if (pkgDir == null) {
                                     // new pkg
-                                    pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg, persisterVcs.getVersionControl());
+                                    pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg,
+                                            persisterVcs.getVersionControl());
                                     pkgDir.setYaml(true);
                                 }
                                 persisterVcs.save(pkg, pkgDir, true);
@@ -254,7 +294,8 @@ public class AssetContentServlet extends HttpServlet {
                         thread.start();
                     }
                     else {
-                        throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
+                        throw new ServiceException(ServiceException.CONFLICT,
+                                "Asset import was NOT performed since an import was already in progress...");
                     }
                     progressMonitor.done();
                 }
@@ -263,11 +304,13 @@ public class AssetContentServlet extends HttpServlet {
 
                     int lastSlash = path.lastIndexOf('/');
                     if (lastSlash == -1 || lastSlash > path.length() - 2)
-                        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+                        throw new ServiceException(ServiceException.BAD_REQUEST,
+                                "Bad path: " + path);
                     String pkgName = path.substring(0, lastSlash);
                     Package pkg = persisterVcs.getPackage(pkgName);
                     if (pkg == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND, "Package not found: " + pkgName);
+                        throw new ServiceException(ServiceException.NOT_FOUND,
+                                "Package not found: " + pkgName);
 
                     String assetName = path.substring(lastSlash + 1);
                     String version = request.getParameter("version");
@@ -277,17 +320,20 @@ public class AssetContentServlet extends HttpServlet {
 
                     // TODO event handler and implementors
                     if (assetName.endsWith(".proc")) {
-                        asset = persisterVcs.getProcessBase(pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
+                        asset = persisterVcs.getProcessBase(
+                                pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
                     }
                     else if (assetName.endsWith(".task")) {
-                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
+                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(
+                                assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
                     }
                     else {
                         asset = persisterVcs.getAsset(pkg.getId(), assetName);
                     }
 
                     if (asset == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + pkgName + "/" + assetName);
+                        throw new ServiceException(ServiceException.NOT_FOUND,
+                                "Asset not found: " + pkgName + "/" + assetName);
 
                     if (version == null)
                         version = asset.getVersionString();
@@ -298,7 +344,7 @@ public class AssetContentServlet extends HttpServlet {
                     InputStream is = request.getInputStream();
                     int read = 0;
                     byte[] bytes = new byte[1024];
-                    while((read = is.read(bytes)) != -1)
+                    while ((read = is.read(bytes)) != -1)
                         baos.write(bytes, 0, read);
                     byte[] content = baos.toByteArray();
 
@@ -315,17 +361,22 @@ public class AssetContentServlet extends HttpServlet {
 
                     int newVer = Asset.parseVersion(version);
                     if (newVer < ver)
-                        throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid asset version: v" + version);
+                        throw new ServiceException(ServiceException.BAD_REQUEST,
+                                "Invalid asset version: v" + version);
 
                     // update ASSET_REF with current info before saving
                     verChange = newVer != ver;
                     if (verChange) {
-                        VersionControlGit vc = (VersionControlGit)assetServices.getVersionControl();
+                        VersionControlGit vc = (VersionControlGit) assetServices
+                                .getVersionControl();
                         if (vc != null && vc.getCommit() != null) {
-                            String curPath = pkgName + "/" + assetName + " v" + Asset.formatVersion(ver);
-                            AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)), vc.getCommit());
+                            String curPath = pkgName + "/" + assetName + " v"
+                                    + Asset.formatVersion(ver);
+                            AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)),
+                                    vc.getCommit());
                             try (DbAccess dbAccess = new DbAccess()) {
-                                Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc, curRef.getRef(), dbAccess.getConnection());
+                                Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc,
+                                        curRef.getRef(), dbAccess.getConnection());
                                 cp.updateRef(curRef);
                             }
                         }
@@ -333,8 +384,8 @@ public class AssetContentServlet extends HttpServlet {
 
                     asset.setVersion(newVer);
                     if (asset instanceof Process) {
-                        persisterVcs.save((Process)asset, pkgDir);
-                        persisterVcs.updateProcess((Process)asset);
+                        persisterVcs.save((Process) asset, pkgDir);
+                        persisterVcs.updateProcess((Process) asset);
                     }
                     else {
                         persisterVcs.save(asset, pkgDir);
@@ -346,7 +397,12 @@ public class AssetContentServlet extends HttpServlet {
                     }
                     logger.info("Asset saved: " + path + " v" + version);
 
-                    if (ApplicationContext.isDevelopment()) {  // Only Dev mode allows for saving without also committing and pushing to Git
+                    if (ApplicationContext.isDevelopment()) { // Only Dev mode
+                                                              // allows for
+                                                              // saving without
+                                                              // also committing
+                                                              // and pushing to
+                                                              // Git
                         Thread thread = new Thread() {
                             @Override
                             public void run() {
@@ -362,7 +418,8 @@ public class AssetContentServlet extends HttpServlet {
             }
             catch (ServiceException ex) {
                 logger.severeException(ex.getMessage(), ex);
-                SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
+                SystemMessages.bulletinOff(bulletin, Level.Error,
+                        "Asset import failed: " + ex.getMessage());
                 response.getWriter().write(ex.getStatusResponse().getJson().toString(2));
                 StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
                 response.setStatus(sr.getStatus().getCode());
@@ -371,7 +428,8 @@ public class AssetContentServlet extends HttpServlet {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
+            SystemMessages.bulletinOff(bulletin, Level.Error,
+                    "Asset import failed: " + ex.getMessage());
             StatusResponse sr = new StatusResponse(Status.INTERNAL_SERVER_ERROR, ex.getMessage());
             response.setStatus(sr.getStatus().getCode());
             response.getWriter().println(sr.getJson().toString(2));
@@ -379,7 +437,7 @@ public class AssetContentServlet extends HttpServlet {
     }
 
     private String[] getPackageNames(String packagesParam) {
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String, String> params = new HashMap<String, String>();
         params.put("packages", packagesParam);
         Query query = new Query("", params);
         return query.getArrayFilter("packages");
@@ -388,19 +446,23 @@ public class AssetContentServlet extends HttpServlet {
     /**
      * Also audit logs (if not distributed propagation).
      */
-    private void authorizeForUpdate(HttpSession session, Action action, Entity entity, String includes) throws AuthorizationException, DataAccessException {
-        AuthenticatedUser user  = (AuthenticatedUser)session.getAttribute("authenticatedUser");
+    private void authorizeForUpdate(HttpSession session, Action action, Entity entity,
+            String includes) throws AuthorizationException, DataAccessException {
+        AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
         if (user == null && ApplicationContext.getServiceUser() != null) {
             String cuid = ApplicationContext.getServiceUser();
             user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
         }
 
         if (user == null)
-            throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
+            throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED,
+                    "Authentication failure");
         if (!user.hasRole(Role.PROCESS_DESIGN))
-            throw new AuthorizationException(AuthorizationException.FORBIDDEN, "User " + user.getCuid() + " not authorized for this action");
+            throw new AuthorizationException(AuthorizationException.FORBIDDEN,
+                    "User " + user.getCuid() + " not authorized for this action");
 
-        logger.info("Asset mod request received from user: " + user.getCuid() + " for: " + includes);
+        logger.info(
+                "Asset mod request received from user: " + user.getCuid() + " for: " + includes);
         UserAction userAction = new UserAction(user.getCuid(), action, entity, 0L, includes);
         userAction.setSource(getClass().getSimpleName());
         ServiceLocator.getUserServices().auditLog(userAction);

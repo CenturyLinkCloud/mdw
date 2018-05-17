@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.services.system;
+package com.centurylink.mdw.common.service;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.util.log.LoggerUtil;

@@ -8,3 +8,4 @@ packages/
 *.launch
 bin/
 out/
+activemq-data/

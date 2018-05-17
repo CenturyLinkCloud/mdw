@@ -42,7 +42,7 @@ dependencies {
     
     providedCompile group: "javax.el", name: "el-api", version: "1.0"
     providedCompile group: "javax.servlet", name: "javax.servlet-api", version: "3.1.0"
-    providedCompile group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    providedCompile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     providedCompile group: "javax.servlet.jsp.jstl", name: "jstl-api", version: "1.2"
     providedCompile group: "junit", name: "junit", version: "4.8.1"
     providedCompile group: "aopalliance", name: "aopalliance", version: "1.0"
@@ -78,11 +78,11 @@ dependencies {
     springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.15"
     springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.15"
     providedCompile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.15"
-    springBoot group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    springBoot group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     springBoot group: "javax.el", name: "el-api", version: "1.0"  // why?
     springBootLoader group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion
     
-    runtimeExtra group: "javax.validation", name: "validation-api", version: "1.1.0.Final"
+    runtimeExtra group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     runtimeExtra group: "org.springframework", name: "spring-beans", version: springVersion
     runtimeExtra group: "org.springframework", name: "spring-context", version: springVersion
     runtimeExtra group: "org.springframework", name: "spring-core", version: springVersion

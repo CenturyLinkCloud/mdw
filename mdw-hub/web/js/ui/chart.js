@@ -273,7 +273,7 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       $scope.dataUrl += '?';
     $scope.dataUrl += 'app=mdw-admin&startDate=' + $scope.start;
     if (breakdown && breakdown.instancesParam) 
-        $scope.dataUrl += '&' + breakdown.instancesParam + '=[' + $scope.selected + ']';
+        $scope.dataUrl += '&' + breakdown.instancesParam + '=%5B' + $scope.selected + '%5D';
     $http.get($scope.dataUrl).error(function(data, status) {
       console.log('HTTP ' + status + ': ' + $scope.dataUrl);
     }).success(function(data, status, headers, config) {

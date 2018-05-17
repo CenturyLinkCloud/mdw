@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -253,6 +253,11 @@ implements <a href="../../../../../com/centurylink/mdw/services/AssetServices.ht
 </td>
 </tr>
 <tr id="i20" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/services/asset/Renderer.html" title="interface in com.centurylink.mdw.services.asset">Renderer</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getRenderer-java.lang.String-java.lang.String-">getRenderer</a></span>(java.lang.String&nbsp;assetPath,
+           java.lang.String&nbsp;renderTo)</code>&nbsp;</td>
+</tr>
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl.html" title="interface in com.centurylink.mdw.dataaccess">VersionControl</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getVersionControl--">getVersionControl</a></span>()</code>&nbsp;</td>
 </tr>
@@ -641,7 +646,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/AssetServices.ht
 <a name="getExtraPackageNames--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getExtraPackageNames</h4>
 <pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getExtraPackageNames()
@@ -649,6 +654,23 @@ implements <a href="../../../../../com/centurylink/mdw/services/AssetServices.ht
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/AssetServices.html#getExtraPackageNames--">getExtraPackageNames</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services">AssetServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRenderer-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getRenderer</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/services/asset/Renderer.html" title="interface in com.centurylink.mdw.services.asset">Renderer</a>&nbsp;getRenderer(java.lang.String&nbsp;assetPath,
+                            java.lang.String&nbsp;renderTo)
+                     throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/AssetServices.html#getRenderer-java.lang.String-java.lang.String-">getRenderer</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services">AssetServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>

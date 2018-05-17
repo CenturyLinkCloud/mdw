@@ -56,6 +56,11 @@ task zipAssetPackages {
             archiveName = "${pkgCat}-${mdwVersion}.zip"
             from "../${mdwAssetRoot}"
             include "${pkgName}/**"
+            doLast {
+                ant.zip(destfile: "../${mdwAssetOutputDir}/${pkgCat}-${mdwVersion}.zip") {
+                    fileset(dir: "../${mdwAssetRoot}", includes: "${pkgName}/**", defaultexcludes: "no", excludes: "com/centurylink/mdw/node/node_modules/")
+                }
+            }
         }
     }
 }
