@@ -34,9 +34,9 @@ adminApp.config(function($httpProvider) {
       'responseError': function(rejection) {
         mdw.hubLoading(false);
         if (rejection.status === 401 || (rejection.status === -1 && rejection.config.url.endsWith(".html")))
-        	window.location.href = $mdwHubRoot + "/login";
+          window.location.href = $mdwHubRoot + "/login";
         else
-        	return $q.reject(rejection);
+          return $q.reject(rejection);
       }
     };
   });

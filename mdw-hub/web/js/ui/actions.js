@@ -5,11 +5,11 @@ var actionsMod = angular.module('mdwActions', ['mdw']);
 actionsMod.controller('MdwActionsController', ['$scope', '$window',
                                               function($scope, $window) {
   $scope.popPlace = 'left';
-  
+
   this.getScope = function() {
     return $scope;
   };
-  
+
   this.setPlace = function() {
     var minWidth = $scope.wrapWidth;
     if (minWidth && !$window.matchMedia('(min-width: ' + minWidth + ')').matches)
@@ -26,7 +26,7 @@ actionsMod.directive('mdwActions', [function() {
     transclude: true,
     templateUrl: 'ui/mdw-actions.html',
     controller: 'MdwActionsController',
-    controllerAs: 'mdwActions', 
+    controllerAs: 'mdwActions',
     link: {
       pre: function(scope, elem, attrs) {
         var wrap = parseInt(attrs.wrap);
@@ -58,7 +58,7 @@ actionsMod.directive('mdwActionPopButton', ['$window', '$compile', function($win
           var parentScope = scope.$parent;
           while (!parentScope.setPopElem && parentScope.$parent)
             parentScope = parentScope.$parent;
-  
+
           if (parentScope.setPopElem) {
             elem.bind('click', function() {
               if (parentScope.popElem === elem) {
@@ -72,7 +72,7 @@ actionsMod.directive('mdwActionPopButton', ['$window', '$compile', function($win
             });
           }
         }
-  
+
         var resizeHandler = function() {
           ctrl.setPlace();
           attrs.$set("popoverPlacement", scope.popPlace);
@@ -86,4 +86,3 @@ actionsMod.directive('mdwActionPopButton', ['$window', '$compile', function($win
     }
   };
 }]);
-

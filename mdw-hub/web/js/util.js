@@ -177,8 +177,8 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
       return output;
     },
     buildException: function(exceptHolder) {
-    	// Uses the callback mechanism to update the except variable (gets around jshint error)
-    	return function(el) {
+      // Uses the callback mechanism to update the except variable (gets around jshint error)
+      return function(el) {
             exceptHolder.exceptionMessage += '\tat ' + el.class;
             if (el.method) {
               if (el.method.startsWith('<'))
@@ -193,7 +193,7 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
               exceptHolder.exceptionMessage += ')\n';
             }
 
-    	};
+      };
     },
     asException: function(value) {
       var except = '';

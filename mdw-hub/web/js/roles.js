@@ -43,7 +43,7 @@ roleMod.controller('RolesController', ['$scope', '$location', 'Workroles',
 }]);
 
 roleMod.controller('RoleController', ['$scope', '$routeParams', '$location', '$http', 'mdw', 'Workroles', 
-									  function($scope, $routeParams, $location, $http, mdw, Workroles) {
+                    function($scope, $routeParams, $location, $http, mdw, Workroles) {
   $scope.getRoleList = function() {
     return Workroles.roleList;
   };
@@ -75,7 +75,7 @@ roleMod.controller('RoleController', ['$scope', '$routeParams', '$location', '$h
   $scope.save = function() {
     console.log('saving role: ' + $scope.role.name);
 
-	Workroles.update({name: $scope.uneditedRole.name}, Workroles.shallowCopy({}, $scope.role),
+  Workroles.update({name: $scope.uneditedRole.name}, Workroles.shallowCopy({}, $scope.role),
       function(data) {
         if (data.status.code !== 0) {
           $scope.role.message = data.status.message;

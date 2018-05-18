@@ -43,7 +43,7 @@ import com.centurylink.mdw.model.Jsonable;
 public class Grep {
 
     private Path root;
-    private PathMatcher matcher;
+    private List<PathMatcher> matchers = new ArrayList<>();
     private int count;
 
     /**
@@ -59,12 +59,16 @@ public class Grep {
 
     /**
      * @param search expression
-     * @param glob files pattern
+     * @param glob files pattern(s)
      */
-    public Grep(Path root, String glob) {
+    public Grep(Path root, String... globs) {
         this.root = root;
-        this.matcher = FileSystems.getDefault().getPathMatcher(
-                "glob:" + root.toString().replace('\\', '/') + "/" + glob.replace('\\', '/'));
+        if (globs != null) {
+            for (String glob : globs) {
+                this.matchers.add(FileSystems.getDefault().getPathMatcher(
+                        "glob:" + root.toString().replace('\\', '/') + "/" + glob.replace('\\', '/')));
+            }
+        }
     }
 
     /**
@@ -77,10 +81,13 @@ public class Grep {
         Files.walkFileTree(root,
             EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                    if (matcher.matches(path)) {
-                        List<LineMatches> lineMatches = search(path, pattern);
-                        if (lineMatches != null)
-                            fileMatches.put(root.relativize(path), lineMatches);
+                    for (PathMatcher matcher : matchers) {
+                        if (matcher.matches(path)) {
+                            System.out.println("PATH: " + path);
+                            List<LineMatches> lineMatches = search(path, pattern);
+                            if (lineMatches != null)
+                                fileMatches.put(root.relativize(path), lineMatches);
+                        }
                     }
                     return count == 0 || count < limit ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
                 }
@@ -174,7 +181,7 @@ public class Grep {
             System.err.println("Syntax: grep <pattern> <glob>");
             System.exit(-1);
         }
-        Grep grep = new Grep(Paths.get("."), args[1]);
+        Grep grep = new Grep(Paths.get("."), args[1].split("\\s+"));
         Map<Path,List<LineMatches>> pathMatches = grep.find(args[0]);
 
         for (Path path : pathMatches.keySet()) {

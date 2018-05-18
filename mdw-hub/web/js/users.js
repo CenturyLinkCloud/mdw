@@ -6,7 +6,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
                                        function($scope, $http, $location, mdw, Users) {
   $scope.users = [];
   $scope.user = null;
-  
+
   $scope.busy = false;
   $scope.total = 0;
   $scope.selected = null;
@@ -43,7 +43,6 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
     $scope.users = [$scope.selected];
   };
   
-  
   $scope.change = function() {
     if ($scope.selected === null) {
       // repopulate list
@@ -59,31 +58,31 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   };
   
   $scope.findCentralUser = function(typed) {
-	  return $http.get(mdw.roots.central + '/services/' + 'com/centurylink/mdw/central/' + 'users?app=mdw-admin&appId=' + mdw.appId + '&find=' + typed).then(function(response) {
-		  return response.data.users;
-	  });
+    return $http.get(mdw.roots.central + '/services/api/users?find=' + typed + '&appId=' + mdw.appId).then(function(response) {
+      return response.data.users;
+    });
   };  
 
   // adding central user
   $scope.selectedUser = null; // not used but required by typeahead
   $scope.addSelectedUser = function(selUser) {
-	  console.log('creating user: ' + selUser.username);
-	  $scope.selectedUser = selUser;
-	  Users.create({cuid: selUser.username}, selUser,
-			  function(data) {
-		  if (data.status.code !== 0) {
-			  $scope.user.message = data.status.message;
-		  }
-		  else {
-			  $scope.setCreate(false);
-			  $scope.users = [];
-			  $scope.total = 0;          
-			  $scope.user.message = "User ID added: [" + $scope.selectedUser.username + "]";
-		  }
-	  }, 
-	  function(error) {
-		  $scope.user.message = error.data.status.message;
-	  });
+    console.log('creating user: ' + selUser.username);
+    $scope.selectedUser = selUser;
+    Users.create({cuid: selUser.username}, selUser,
+        function(data) {
+      if (data.status.code !== 0) {
+        $scope.user.message = data.status.message;
+      }
+      else {
+        $scope.setCreate(false);
+        $scope.users = [];
+        $scope.total = 0;          
+        $scope.user.message = "User ID added: [" + $scope.selectedUser.username + "]";
+      }
+    }, 
+    function(error) {
+      $scope.user.message = error.data.status.message;
+    });
   };
   
   $scope.create = false;
@@ -147,7 +146,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
   };
   
   $scope.setAdvance = function(advance) {
-	    $scope.advance = advance;
+      $scope.advance = advance;
   };
   $scope.confirm = false;
   $scope.setConfirm = function(confirm) {
@@ -310,21 +309,21 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
       value: ''
   };
   $scope.addAttribute = function () {
-	  $scope.user.attributes[$scope.attribute.name] = $scope.attribute.value;
-	  
-	  $scope.attribute = {
-	      name: '', 
-	      value: ''
-	  };
+    $scope.user.attributes[$scope.attribute.name] = $scope.attribute.value;
+    
+    $scope.attribute = {
+        name: '', 
+        value: ''
+    };
   };
   $scope.del = function(attrName){
-		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
-		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
-			if (res) {
-				delete  $scope.user.attributes[attrName];
-			   console.log('deleted attribute ' + attrName);
-			}
-		});
+    var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+    uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+      if (res) {
+        delete  $scope.user.attributes[attrName];
+         console.log('deleted attribute ' + attrName);
+      }
+    });
   };
 }]);
 

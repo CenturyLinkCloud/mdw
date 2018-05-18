@@ -6,7 +6,7 @@ servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis',
                                              function($scope, mdw, ServiceApis) {
 
 
-	var swaggerDef = ServiceApis.get({}, function success() {
+  var swaggerDef = ServiceApis.get({}, function success() {
     $scope.serviceApis = {}; // path-to-api object
 
     var paths = swaggerDef.paths;

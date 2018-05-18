@@ -13,8 +13,8 @@ groupMod.controller('GroupsController', ['$scope', '$location', 'Workgroups',
   $scope.setCreate = function(create) {
     $scope.create = create;
     $scope.workgroup = { 
-    		name: '', // blank name helps w/applying error styles
-    		attributes: {'Slack Channel': ''}
+        name: '', // blank name helps w/applying error styles
+        attributes: {'Slack Channel': ''}
     };
   };
   
@@ -61,9 +61,9 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
   };
 
   $scope.setAdvance = function(advance) {
-	    $scope.advance = advance;
+      $scope.advance = advance;
   };
-	  
+    
   $scope.confirm = false;
   $scope.setConfirm = function(confirm) {
     $scope.confirm = confirm;
@@ -172,29 +172,29 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
   
   $scope.workgroup = Workgroups.get({name: $routeParams.groupName});
   $scope.attribute = {
-	      name: '', 
-	      value: ''
-	  };
+        name: '', 
+        value: ''
+    };
   $scope.addAttribute = function () {
-	    if ($scope.workgroup.attributes === undefined) {
-	    	$scope.workgroup.attributes = {};
-	    }
+      if ($scope.workgroup.attributes === undefined) {
+        $scope.workgroup.attributes = {};
+      }
 
-	  $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value;
-	  
-	  $scope.attribute = {
-	      name: '', 
-	      value: ''
-	  };
+    $scope.workgroup.attributes[$scope.attribute.name] = $scope.attribute.value;
+    
+    $scope.attribute = {
+        name: '', 
+        value: ''
+    };
   };
   $scope.del = function(attrName){
-		var msg = 'Proceed with deleting ' + attrName + ' attribute!';
-		uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
-			if (res) {
-				delete  $scope.workgroup.attributes[attrName];
-			   console.log('deleted attribute ' + attrName);
-			}
-		});
+    var msg = 'Proceed with deleting ' + attrName + ' attribute!';
+    uiUtil.confirm('Confirm Attribute Delete', msg, function(res) {
+      if (res) {
+        delete  $scope.workgroup.attributes[attrName];
+         console.log('deleted attribute ' + attrName);
+      }
+    });
   };
 }]);
 
@@ -211,7 +211,7 @@ groupMod.factory('Workgroups', ['$resource', 'mdw', function($resource, mdw) {
       destWorkgroup.attributes = {};
       for (var attr in srcWorkgroup.attributes) {
         if (srcWorkgroup.attributes.hasOwnProperty(attr))
-        	destWorkgroup.attributes[attr] = srcWorkgroup.attributes[attr];
+          destWorkgroup.attributes[attr] = srcWorkgroup.attributes[attr];
       }
       return destWorkgroup;
     }

@@ -255,7 +255,7 @@ task javaNoTabs(type: JavaExec) {
 task jsNoTabs(type: JavaExec) {
     classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
     main = 'com.centurylink.mdw.util.file.Grep'
-    args = ['\t', 'mdw-hub/web/js/**/*.js']
+    args = ['\t', 'mdw-hub/web/js/**/*.js mdw-hub/web/js/*.js']
     workingDir = '..'
 }
 
