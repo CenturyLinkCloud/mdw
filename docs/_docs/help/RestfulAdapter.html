@@ -14,18 +14,18 @@ The basic design parameters for configuring a RESTful Adapter Activity are illus
 <br/><br/>
 The first attribute to specify is the HTTP method of your service request.
 According to <a href="http://en.wikipedia.org/wiki/REST">RESTful design principles</a>, GET requests should be used for non-impactful resource retrieval, while POST request can be used for operations that create or update data.
-Typically the request and response variables are Document-type variables which hold XML content according to a previously agreed XSD.
+Typically the request and response variables are Document-type variables which hold JSON or XML content according to a previously agreed XSD.
 For GET requests, the Request Variable attribute is not required and will be ignored if specified.
 <br/><br/>
 The Timeout settings are optional, as is the Headers Variable.
-If you specify a variable for the HTTP Headers, this variable must be of type java.util.Map and should contain String key/value pairs with the desired headers.
+If you specify a variable for the HTTP Headers, this variable must be of type java.util.Map<String,String> and should contain String key/value pairs with the desired headers.
 The XSD URL attributes are for information only and are not used at runtime.
 <br/><br/>
 The Restful Adapter supports "Http Basic Authentication" for any targeted web services that require a user/password. The user can enter a user/password combination which will be encoded as per the Basic Authentication guidelines, and sent with each request.
 <br/><br/>
-Please note that to enable this Http Basic Authentication functionality, you have to set the property below in your mdw.yaml file.
-<br/><br/>
-<code>mdw.http.listeners.auth.mode=Basic</code>
+The Restful Adapter also supports Token (JWT) authentication for invoking services that use MDW Auth as the authentication provider.  
+This means that an MDW application can invoke a service hosted by another MDW application that uses MDW Auth. You must select the MdwAuthProvider class as well as specify the remote App Id, user, and password in the Authentication tab.  
+MDW will behind the scenes, authenticate the specified user using MDW Central, and then use the issued JWT to invoke the service.
 <br/><br/>
 <img src="images/restfulAdapter.jpg" />
 <br/><br/>

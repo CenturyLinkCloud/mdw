@@ -514,7 +514,4 @@ For specific details on how to configure the above adapters for Basic Authentica
 The MDW servlets below support HTTP Basic Authentication for hosted web services.
 - SoapServlet
 
-To enable these servlets to use Basic authentication, you should set the following property in your mdw.properties configuration file. 
-   `mdw.http.listeners.auth.mode=Basic`
-
 - After authentication is successful, the authenticated username will be available in the metaInfo property "AuthenticatedUser" or Listener.AUTHENTICATED_USER_HEADER
