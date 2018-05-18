@@ -113,7 +113,8 @@ public class PackageCache implements PreloadableCache {
 
         List<Package> filteredPackages = packages.stream()
                 .filter(e -> !mdwVersion.equals(e.getVersionString())
-                        && e.getPackageName().startsWith("com.centurylink.mdw"))
+                        && e.getPackageName().startsWith("com.centurylink.mdw")
+                        && !e.getPackageName().startsWith("com.centurylink.mdw.central"))
                 .collect(Collectors.toList());
         List<Package> obsoletePackages = filteredPackages.stream()
                 .filter(p2 -> !(p2.getPackageName().matches(exceptions)))
@@ -122,8 +123,7 @@ public class PackageCache implements PreloadableCache {
         if (!obsoletePackages.isEmpty()){
             StringBuilder message=new StringBuilder();
             message.append( "\n****************************************\n"
-                    + "** WARNING: Following MDW Framework asset packages do not match current build Version "
-                    + mdwVersion + "\n" + "** Please import correct version packages. \n");
+                    + "** WARNING: These asset packages do not match current build version " + mdwVersion + "\n");
             for (Package p1 : obsoletePackages) {
                 message.append("**   "+p1.getLabel()+"\n");
             }

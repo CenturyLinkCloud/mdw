@@ -113,17 +113,29 @@ clean {
 }
 
 task jsHint(type: Exec) {
-    if (System.properties["os.name"].startsWith("Windows"))
+    if (System.properties["os.name"].startsWith("Windows")) {
         commandLine 'cmd', '/c', 'npm', 'run', '--no-color', 'jshint'
-    else
+    }
+    else if (System.properties["os.name"].startsWith("Mac OS X")) {
+        environment PATH: "${System.env.PATH}:/usr/local/bin"
+        commandLine '/usr/local/bin/npm', 'run', '--no-color', 'jshint'
+    }
+    else {
         commandLine 'npm', 'run', '--no-color', 'jshint'
+    }
 }
 
 task esLint(type: Exec) {
-    if (System.properties["os.name"].startsWith("Windows"))
+    if (System.properties["os.name"].startsWith("Windows")) {
         commandLine 'cmd', '/c', 'npm', 'run', '--no-color', 'eslint'
-    else
+    }
+    else if (System.properties["os.name"].startsWith("Mac OS X")) {
+        environment PATH: "${System.env.PATH}:/usr/local/bin"
+        commandLine '/usr/local/bin/npm', 'run', '--no-color', 'eslint'
+    }
+    else {
         commandLine 'npm', 'run', '--no-color', 'eslint'
+    }
 }
 
 task lint {

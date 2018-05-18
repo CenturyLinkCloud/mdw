@@ -123,6 +123,8 @@ public class PropertyNames {
     public static final String MDW_HUB_URL = "mdw.hub.url";
     public static final String MDW_TASK_ACTION_DEF = "mdw.hub.action.definition";
     public static final String MDW_HUB_OVERRIDE_PACKAGE = "mdw.hub.override.package";
+    // root package maps to / context path for JSX assets
+    public static final String MDW_HUB_ROOT_PACKAGE = "mdw.hub.root.package";
 
     // XmlOptions properties
     public static final String MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS = "mdw.translator.xmlbeans.load.options";

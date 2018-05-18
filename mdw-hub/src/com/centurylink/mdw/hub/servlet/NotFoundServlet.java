@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.hub.context.Mdw;
 import com.centurylink.mdw.hub.context.Page;
 import com.centurylink.mdw.hub.context.WebAppContext;
@@ -65,39 +67,13 @@ public class NotFoundServlet extends HttpServlet {
             }
 
             Mdw mdw = WebAppContext.getMdw();
-            Page page = new Page(mdw, path);
-
+            Page page = findPage(mdw, path);
             if (!page.exists()) {
-                if (page.getExt() == null) {
-                    // try appending supported page extensions
-                    page = new Page(mdw, path + ".html");
-                    if (!page.exists()) {
-                        page = new Page(mdw, path + ".md");
-                    }
-                    if (!page.exists()) {
-                        String assetPath = path;
-                        if (assetPath.endsWith("/"))
-                            assetPath = assetPath.substring(0, assetPath.length() - 1);
-                        int lastSlash = assetPath.lastIndexOf('/');
-                        String pkgPath = assetPath.substring(0, lastSlash);
-                        String name = assetPath.substring(lastSlash + 1);
-                        page = new Page(mdw, pkgPath + "/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".jsx");
-                        if (!page.exists()) {
-                            Page ancestor = new Page(mdw, path).findAncestor("Index.jsx");
-                            if (ancestor != null)
-                                page = ancestor;
-                        }
-                        if (page.exists()) {
-                            // standalone jsx path (without extension): set template html
-                            page.setTemplate("com/centurylink/mdw/react/index.html");
-                        }
-                    }
-                }
-                if (!page.exists()) {
-                    // allow 404 override
-                    page = new Page(mdw, "/error/404.html");
-                }
+                String rootPkg = PropertyManager.getProperty(PropertyNames.MDW_HUB_ROOT_PACKAGE);
+                if (rootPkg != null)
+                    page = findPage(mdw, "/" + rootPkg + path);
             }
+
             if (page.exists()) {
                 response.setContentType("text/html");
 
@@ -140,4 +116,39 @@ public class NotFoundServlet extends HttpServlet {
         request.getRequestDispatcher("/error/404.html").forward(request, response);
     }
 
+    private Page findPage(Mdw mdw, String path) {
+        Page page = new Page(mdw, path);
+        if (!page.exists()) {
+            if (page.getExt() == null) {
+                // try appending supported page extensions
+                page = new Page(mdw, path + ".html");
+                if (!page.exists()) {
+                    page = new Page(mdw, path + ".md");
+                }
+                if (!page.exists()) {
+                    String assetPath = path;
+                    if (assetPath.endsWith("/"))
+                        assetPath = assetPath.substring(0, assetPath.length() - 1);
+                    int lastSlash = assetPath.lastIndexOf('/');
+                    String pkgPath = assetPath.substring(0, lastSlash);
+                    String name = assetPath.substring(lastSlash + 1);
+                    page = new Page(mdw, pkgPath + "/" + name.substring(0, 1).toUpperCase() + name.substring(1) + ".jsx");
+                    if (!page.exists()) {
+                        Page ancestor = new Page(mdw, path).findAncestor("Index.jsx");
+                        if (ancestor != null)
+                            page = ancestor;
+                    }
+                    if (page.exists()) {
+                        // standalone jsx path (without extension): set template html
+                        page.setTemplate("com/centurylink/mdw/react/index.html");
+                    }
+                }
+            }
+            if (!page.exists()) {
+                // allow 404 override
+                page = new Page(mdw, "/error/404.html");
+            }
+        }
+        return page;
+    }
 }
