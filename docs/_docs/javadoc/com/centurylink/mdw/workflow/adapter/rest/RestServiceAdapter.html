@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -317,7 +317,7 @@ implements <a href="../../../../../../com/centurylink/mdw/adapter/HeaderAwareAda
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-">invoke</a></span>(java.lang.Object&nbsp;conn,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-">invoke</a></span>(java.lang.Object&nbsp;inConn,
       java.lang.String&nbsp;request,
       int&nbsp;timeout,
       java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
@@ -340,6 +340,11 @@ implements <a href="../../../../../../com/centurylink/mdw/adapter/HeaderAwareAda
 </td>
 </tr>
 <tr id="i17" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.html#performHttpAction-com.centurylink.mdw.util.HttpHelper-java.lang.String-">performHttpAction</a></span>(<a href="../../../../../../com/centurylink/mdw/util/HttpHelper.html" title="class in com.centurylink.mdw.util">HttpHelper</a>&nbsp;httpHelper,
+                 java.lang.String&nbsp;request)</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.html#setResponseHeaders-java.util.Map-">setResponseHeaders</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
@@ -635,7 +640,7 @@ implements <a href="../../../../../../com/centurylink/mdw/adapter/HeaderAwareAda
 <ul class="blockList">
 <li class="blockList">
 <h4>invoke</h4>
-<pre>public&nbsp;java.lang.String&nbsp;invoke(java.lang.Object&nbsp;conn,
+<pre>public&nbsp;java.lang.String&nbsp;invoke(java.lang.Object&nbsp;inConn,
                                java.lang.String&nbsp;request,
                                int&nbsp;timeout,
                                java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
@@ -658,6 +663,25 @@ implements <a href="../../../../../../com/centurylink/mdw/adapter/HeaderAwareAda
 <dd><code><a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></code> - non-retriable exception</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../../com/centurylink/mdw/adapter/TextAdapter.html#invoke-java.lang.Object-java.lang.String-int-java.util.Map-"><code>TextAdapter.invoke(java.lang.Object, java.lang.String, int, java.util.Map)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="performHttpAction-com.centurylink.mdw.util.HttpHelper-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>performHttpAction</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;performHttpAction(<a href="../../../../../../com/centurylink/mdw/util/HttpHelper.html" title="class in com.centurylink.mdw.util">HttpHelper</a>&nbsp;httpHelper,
+                                             java.lang.String&nbsp;request)
+                                      throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
+                                             java.io.IOException,
+                                             <a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></code></dd>
 </dl>
 </li>
 </ul>
