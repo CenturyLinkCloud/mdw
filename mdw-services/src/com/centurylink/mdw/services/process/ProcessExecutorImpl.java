@@ -1201,8 +1201,8 @@ class ProcessExecutorImpl {
     }
 
     private void completeProcessInstance(ProcessInstance procInst) throws Exception {
-        edao.setProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_COMPLETED);
         edao.setProcessElapsedTime(procInst);
+        edao.setProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_COMPLETED);
         if (!inService) {
             edao.removeEventWaitForProcessInstance(procInst.getId());
             this.cancelTasksOfProcessInstance(procInst);
