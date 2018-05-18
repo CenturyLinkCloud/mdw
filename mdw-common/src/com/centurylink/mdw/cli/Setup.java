@@ -212,6 +212,16 @@ public abstract class Setup implements Operation {
         Props.Gradle.SOURCE_GROUP.specified = true;
     }
 
+    @Parameter(names="--template-dir", description="Template Directory")
+    protected String templateDir;
+
+    /**
+     * @param templateDir the templateDir to set
+     */
+    public void setTemplateDir(String templateDir) {
+        this.templateDir = templateDir;
+    }
+
     /**
      * Checks for any existing packages.  If none present, adds the defaults.
      */
@@ -501,8 +511,12 @@ public abstract class Setup implements Operation {
     }
 
     protected File getTemplateDir() throws IOException {
-        String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
-        return new File(getMdwHome() + "/lib/" + mdwVer);
+        if (templateDir != null)
+            return new File(templateDir);
+        else {
+            String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
+            return new File(getMdwHome() + "/lib/" + mdwVer);
+        }
     }
 
     /**
