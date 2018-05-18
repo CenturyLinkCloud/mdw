@@ -170,6 +170,7 @@ public class HttpConnection {
 
     HttpResponse response;
     public HttpResponse getResponse() { return response; }
+    public void setResponse(HttpResponse resp) { response = resp; }
 
     /**
      * Populates the response member.  Closes the connection.

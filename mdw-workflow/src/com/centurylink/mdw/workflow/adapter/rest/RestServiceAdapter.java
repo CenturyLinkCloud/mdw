@@ -30,6 +30,7 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.Variable;
@@ -116,16 +117,16 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         if (authProvider == null) {
             String providerClass = getAttributeValueSmart(AUTH_PROVIDER);
             if (providerClass != null) {
-                String user = getAttribute(AUTH_USER);
-                String password = getAttribute(AUTH_PASSWORD);
                 if (providerClass.equals(BasicAuthProvider.class.getName())) {
+                    String user = getAttribute(AUTH_USER);
+                    String password = getAttribute(AUTH_PASSWORD);
                     authProvider = new BasicAuthProvider(user, password);
                 }
                 else {
                     try {
                         Class<?> clazz = getPackage().getCloudClassLoader().loadClass(providerClass);
                         if (AuthTokenProvider.class.isAssignableFrom(clazz)) {
-                            return clazz.newInstance();
+                            authProvider = clazz.newInstance();
                         }
                         else {
                             throw new ActivityException("Provider must implement AuthTokenProvider: " + clazz);
@@ -164,37 +165,32 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
      * endpoint URI.  Override getRequestData() to provide the requestData value (usually a String).
      */
     @Override
-    public String invoke(Object conn, String request, int timeout, Map<String, String> headers)
+    public String invoke(Object inConn, String request, int timeout, Map<String, String> headers)
     throws ConnectionException, AdapterException {
         HttpHelper httpHelper = null;
+        Object conn = inConn;
         try {
             httpHelper = getHttpHelper(conn);
-
-            int connectTimeout = getConnectTimeout();
-            if (connectTimeout > 0)
-                httpHelper.setConnectTimeout(connectTimeout);
-
-            int readTimeout = getReadTimeout();
-            if (readTimeout > 0)
-                httpHelper.setReadTimeout(readTimeout);
 
             if (headers != null)
                 httpHelper.setHeaders(headers);
 
-            String httpMethod = getHttpMethod();
-            String response = null;
-            if (httpMethod.equals("GET"))
-                response = httpHelper.get();
-            else if (httpMethod.equals("POST"))
-                response = httpHelper.post(request);
-            else if (httpMethod.equals("PUT"))
-                response = httpHelper.put(request);
-            else if (httpMethod.equals("DELETE"))
-                response = httpHelper.delete();
-            else if (httpMethod.equals("PATCH"))
-                response = httpHelper.patch(request);
-            else
-                throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
+            String response = performHttpAction(httpHelper, request);
+
+            // Check if received a 401 if using an AuthTokenProvider, refresh token in case it expired and try again
+            if (response != null && getAuthProvider() instanceof AuthTokenProvider && super.getResponse(conn, response).getStatusCode() == Status.UNAUTHORIZED.getCode()) {
+                String user = getAttribute(AUTH_USER);
+                String password = getAttribute(AUTH_PASSWORD);
+                URL endpoint = new URL(getEndpointUri());
+                AuthTokenProvider authProvider = (AuthTokenProvider)getAuthProvider();
+                authProvider.invalidateToken(endpoint, user);
+                String token = new String(authProvider.getToken(endpoint, user, password));
+                headers.put("Authorization", "Bearer " + token);
+                conn = openConnection();
+                httpHelper = getHttpHelper(conn);
+                httpHelper.setHeaders(headers);
+                response = performHttpAction(httpHelper, request);
+            }
 
             if (response != null) {
                 int codeThreshold = DEFAULT_HTTP_CODE;
@@ -228,9 +224,40 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             throw new AdapterException(responseCode, ex.getMessage() , ex);
         }
         finally {
-            if (httpHelper != null)
+            if (httpHelper != null) {
                 setResponseHeaders(httpHelper.getHeaders());
+                // We have to override the response from original connection if token was expired
+                if (!httpHelper.getConnection().equals(inConn))
+                    ((HttpConnection)inConn).setResponse(httpHelper.getConnection().getResponse());
+            }
         }
+    }
+
+    protected String performHttpAction(HttpHelper httpHelper, String request) throws ActivityException, IOException, AdapterException {
+        int connectTimeout = getConnectTimeout();
+        if (connectTimeout > 0)
+            httpHelper.setConnectTimeout(connectTimeout);
+
+        int readTimeout = getReadTimeout();
+        if (readTimeout > 0)
+            httpHelper.setReadTimeout(readTimeout);
+
+        String httpMethod = getHttpMethod();
+        String response = null;
+        if (httpMethod.equals("GET"))
+            response = httpHelper.get();
+        else if (httpMethod.equals("POST"))
+            response = httpHelper.post(request);
+        else if (httpMethod.equals("PUT"))
+            response = httpHelper.put(request);
+        else if (httpMethod.equals("DELETE"))
+            response = httpHelper.delete();
+        else if (httpMethod.equals("PATCH"))
+            response = httpHelper.patch(request);
+        else
+            throw new AdapterException("Unsupported HTTP Method: " + httpMethod);
+
+        return response;
     }
 
     /**

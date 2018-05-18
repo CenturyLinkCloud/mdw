@@ -15,62 +15,42 @@
  */
 package com.centurylink.mdw.workflow.adapter;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.centurylink.mdw.auth.AuthTokenProvider;
 import com.centurylink.mdw.auth.MdwAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
-import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.services.util.AuthUtils;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 public class MdwAuthProvider implements AuthTokenProvider {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static Map<String,String> tokenMap = new ConcurrentHashMap<>();
+
     private Map<String,String> options = null;
 
     @Override
     public byte[] getToken(URL endpoint, String user, String password) throws MdwSecurityException {
-
-        try {
-            String token = getToken(endpoint, user);
-            if (token == null) {
-                // not found in cache -- invoke auth call
-                token = invokeAuth(user, password);
-                if (token == null)
-                    return null;
-                putToken(endpoint, user, token);
-            }
-            return token.getBytes();
+        String token = getToken(endpoint, user);
+        if (token == null) {
+            // not found in cache -- invoke auth call
+            token = invokeAuth(user, password);
+            if (token == null)
+                return null;
+            putToken(endpoint, user, token);
         }
-        catch (ReflectiveOperationException ex) {
-            throw new MdwSecurityException(ex.getMessage(), ex);
-        }
+        return token.getBytes();
     }
 
-    protected String getToken(URL endpoint, String user) throws ReflectiveOperationException {
-        CacheService jwtTokenCacheInstance = CacheRegistration.getInstance().getCache(AuthUtils.JWTTOKENCACHE);
-        if (jwtTokenCacheInstance == null)  {
-            logger.warn("Missing package com.centurylink.mdw.authCTL");
-            return null;
-        }
-        Method tokenGetter = jwtTokenCacheInstance.getClass().getMethod("getToken", URL.class, String.class);
-        String token = (String)tokenGetter.invoke(jwtTokenCacheInstance, endpoint, user);
-        return token == null ? null : token;
+    protected String getToken(URL endpoint, String user) {
+        return tokenMap.get(getEndpointKey(endpoint, user));
     }
 
-    protected void putToken(URL endpoint, String user, String token) throws ReflectiveOperationException {
-        CacheService jwtTokenCacheInstance = CacheRegistration.getInstance().getCache(AuthUtils.JWTTOKENCACHE);
-        if (jwtTokenCacheInstance == null)  {
-            logger.warn("Missing package com.centurylink.mdw.authCTL");
-            return;
-        }
-        Method tokenPutter = jwtTokenCacheInstance.getClass().getMethod("putToken", URL.class, String.class, String.class);
-        tokenPutter.invoke(jwtTokenCacheInstance, endpoint, user, token);
+    protected void putToken(URL endpoint, String user, String token) {
+        tokenMap.put(getEndpointKey(endpoint, user), token);
     }
 
     protected String invokeAuth(String user, String password) throws MdwSecurityException {
@@ -85,5 +65,14 @@ public class MdwAuthProvider implements AuthTokenProvider {
     @Override
     public void setOptions(Map<String, String> options) {
         this.options = options;
+    }
+
+    @Override
+    public void invalidateToken(URL endpoint, String user) {
+        tokenMap.remove(getEndpointKey(endpoint, user));
+    }
+
+    private static String getEndpointKey(URL endpoint, String user) {
+        return endpoint.getProtocol() + "://" + user + "@" + endpoint.getHost() + ":" + endpoint.getPort() + "/" + endpoint.getPath();
     }
 }
