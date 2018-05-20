@@ -27,13 +27,9 @@ authExclusions:
   - '/noIe.html'
   - '/images/*'
   - '/css/*'
-  - '/doc/*'
-  - '/javadoc/*'
-  - '/api/*'
+  - '/docs/*'
+  - '/api-docs/*'
   - '/services/AppSummary'
-  - '/services/System/sysInfo'
-  - '/services/com/centurylink/mdw/slack'
-  - '/services/com/centurylink/mdw/slack/event'
   
 # Headers appended to all HTTP servlet responses.
 responseHeaders:

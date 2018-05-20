@@ -39,7 +39,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
                                               function($scope, $routeParams, $sce, $window, mdw, ServiceApis, Assets, Asset) {
 
   // api path is actual service path
-  $scope.apiUrl = 'api/' + $routeParams.servicePath + '.json';
+  $scope.apiUrl = 'api-docs/' + $routeParams.servicePath + '.json';
   $scope.serviceApi = ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.json'}, function success(serviceDef) {
     $scope.serviceApi.servicePath = $routeParams.servicePath; // service path is logical path (with dots separating subpaths)
     $scope.serviceApi.apiPath = $routeParams.servicePath.replace(/\./g, '/'); // api path is actual service path
@@ -112,7 +112,7 @@ servicesMod.controller('CombinedServiceController', ['$scope', '$routeParams', '
 }]);
 
 servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.hub + '/api/:servicePath:ext', {}, {
+  return $resource(mdw.roots.hub + '/api-docs/:servicePath:ext', {}, {
     get: {
       method: 'GET',
       transformResponse: function(data, headers) {
@@ -125,7 +125,7 @@ servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw)
         else if (contentType && contentType.startsWith("text/yaml")) {
           serviceDef.format = 'yaml';
         }
-        serviceDef.apiBase = mdw.roots.hub + '/api';
+        serviceDef.apiBase = mdw.roots.hub + '/api-docs';
         serviceDef.raw = data;
         return serviceDef;
       }

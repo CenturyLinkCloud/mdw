@@ -10,7 +10,7 @@
   
   <div class="form-group" ng-if="selectedUser.username != undefined">
     <label class="control-label col-xs-2" for="userCuid">ID: </label>
-    <label class="control-label"  for="userCuid">{{selectedUser.username}}</label>
+    <label class="control-label" for="userCuid">{{selectedUser.username}}</label>
   </div>
   <div class="form-group" ng-if="selectedUser.name != undefined">
     <label class="control-label col-xs-2" ng-if="selectedUser.name != undefined" for="userName">Name: </label>
@@ -21,7 +21,7 @@
     <div class="col-xs-2"></div>
     <div class="mdw-message">{{user.message}}</div>
     <div class="mdw-buttons">
-      <button class="btn mdw-btn mdw-cancel-btn" type="reset" ng-click="cancel()">Cancel</button>
+      <button class="btn mdw-btn mdw-cancel-btn" ng-click="cancel()">Cancel</button>
     </div>
   </div>
 </form>

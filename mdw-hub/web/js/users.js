@@ -58,7 +58,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   };
   
   $scope.findCentralUser = function(typed) {
-    return $http.get(mdw.roots.central + '/services/api/users?find=' + typed + '&appId=' + mdw.appId).then(function(response) {
+    return $http.get(mdw.roots.central + '/api/users?find=' + typed + '&appId=' + mdw.appId).then(function(response) {
       return response.data.users;
     });
   };  

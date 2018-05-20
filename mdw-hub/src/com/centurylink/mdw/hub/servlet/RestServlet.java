@@ -43,7 +43,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
-@WebServlet(urlPatterns={"/services/*", "/Services/*", "/REST/*"}, loadOnStartup=1)
+@WebServlet(urlPatterns={"/api/*", "/services/*", "/Services/*", "/REST/*"}, loadOnStartup=1)
 public class RestServlet extends ServiceServlet {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

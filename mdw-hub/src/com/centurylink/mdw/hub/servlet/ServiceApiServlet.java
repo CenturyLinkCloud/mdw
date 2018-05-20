@@ -41,7 +41,7 @@ import io.swagger.util.Yaml;
 /**
  * Scans a service path for Swagger annotations and generates the service spec in JSON or YAML.
  */
-@WebServlet(urlPatterns={"/api/*"}, loadOnStartup=1)
+@WebServlet(urlPatterns={"/api-docs/*"}, loadOnStartup=1)
 public class ServiceApiServlet extends HttpServlet {
 
     private static final String YAML_EXT = ".yaml";

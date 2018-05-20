@@ -202,11 +202,11 @@ public class ServiceRequestHandler implements EventHandler {
                 return serviceClass.newInstance();
             }
             catch (ClassNotFoundException ex) {
-                // try dynamic based on annotations eg: MyServices/Employees/dxoakes
+                // try dynamic based on annotations eg: api/Users/dxoakes
                 Class<? extends RegisteredService> serviceType = Listener.CONTENT_TYPE_JSON.equals(contentType) ? JsonService.class : XmlService.class;
                 MdwServiceRegistry registry = MdwServiceRegistry.getInstance();
                 String pkgName = null;
-                for (int i = 0; i < pathSegments.length - 1; i++) {
+                for (int i = 0; i < pathSegments.length; i++) {
                     String pathSegment = pathSegments[i];
                     if (i == 0)
                         pkgName = pathSegment;
@@ -214,22 +214,14 @@ public class ServiceRequestHandler implements EventHandler {
                         pkgName += "." + pathSegment;
                     Package pkg = PackageCache.getPackage(pkgName);
                     if (pkg != null) {
-                        // give it a shot
-                        TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/" + pathSegments[i + 1]);
+                        // try without any subpath first (@Path="/")
+                        TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/");
+                        if (service == null && i < pathSegments.length - 1) {
+                            service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/" + pathSegments[i + 1]);
+                        }
                         if (service != null)
                             return service;
                     }
-                }
-                // try dynamic based on parent path (HTTP methods only handle resource ID segments)
-                Package pkg = PackageCache.getPackage(pkgName);
-                if (pkg == null) {
-                    // try package name based on all segments: @Path("/")
-                    pkg = PackageCache.getPackage(pkgName + "." + pathSegments[pathSegments.length - 1]);
-                }
-                if (pkg != null) {
-                    TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/");
-                    if (service != null)
-                        return service;
                 }
 
                 // lastly, try process invoker mapping

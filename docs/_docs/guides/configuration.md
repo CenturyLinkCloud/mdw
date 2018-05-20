@@ -215,39 +215,36 @@ title: MDW Configuration
       - 0:0:0:0:0:0:0:1
       
     # Auth methods supported include ct (ClearTrust Web Agent) 
-    # or oauth (OAuth2).  Default is oauth.
-    authMethod: ct
+    # or mdw (or other JWT provider).  Default is mdw.
+    # If using other JWT provider, must configure via properties (mdw.yml)
+    authMethod: mdw
     
     # This is the header we trust to specify the authenticated user id.
     # NOTE: This is only secure when upstreamHosts is enforced.
-    authUserHeader: ct-remote-user
+    #authUserHeader: remote-user
     
     # Allows access to all UI functions and Service APIs permitted for this
     # user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
     devUser: mdwapp
     
-    # Allows access to all Service APIs permitted for this user without
-    # authenticating.  Useful when UI access is through login, but service access
-    # should be wide open.  Requires "-Dmdw.service.api.open=true" system property.
-    # serviceUser: mdwapp
-    
     # Auth exclusions are patterns that can be accessed directly
-    # without authentication even when running in non-dev mode. 
-    # (upstreamHosts is still enforced if specified). 
+    # without authentication even when running with protection 
+    # (upstreamHosts != null & not in dev mode). 
+    # In the cases where the pattern accesses a service, it falls to
+    # the specific service to handle access (i.e. based on HTTP method and/or path)
     authExclusions:
       - '/login'
       - '/error'
-      - '/offline'
-      - '/sysInfo'
+      - '/js/nav.json'  
       - '/images/*'
       - '/css/*'
       - '/doc/*'
       - '/javadoc/*'
-      - '/filepanel/*'
-      - '/services/*'
-      - '/Services/*'
-      - '/api/*'
-      - '/asset/*'
+      - '/api-docs/*'
+      - '/services/AppSummary'
+      - '/services/System/sysInfo'
+      - '/services/com/centurylink/mdw/slack'
+      - '/services/com/centurylink/mdw/slack/event'
       
     # Headers appended to all HTTP servlet responses.
     responseHeaders:
@@ -263,7 +260,7 @@ title: MDW Configuration
     loggingOptions:
       logResponseTimes: false
       logHeaders: false
-      logParameters: false    
+      logParameters: false
     ```
 
 ## seed_users.json
