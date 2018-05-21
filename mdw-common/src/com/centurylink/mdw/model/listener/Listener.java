@@ -70,6 +70,8 @@ public interface Listener {
     // Will be populated when authentication fails
     public static final String AUTHENTICATION_FAILED = "AuthenticationFailed";
 
+    public static final String AUTHENTICATED_JWT = "AuthenticatedJWT";
+
     public static final String METAINFO_DOWNLOAD_FORMAT = "DownloadFormat";
     public static final String METAINFO_MASTER_OP = "mdw-master-op";
     public static final String DOWNLOAD_FORMAT_EXCEL = "xlsx";

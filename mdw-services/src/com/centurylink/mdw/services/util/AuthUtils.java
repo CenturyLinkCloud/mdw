@@ -236,6 +236,8 @@ public class AuthUtils {
         if (logger.isDebugEnabled()) {
             logger.debug("authentication successful for user '"+headers.get(Listener.AUTHENTICATED_USER_HEADER)+"'");
         }
+        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_JWT_PRESERVE, false))
+            headers.put(Listener.AUTHENTICATED_JWT, authHeader);
         return true;
     }
 

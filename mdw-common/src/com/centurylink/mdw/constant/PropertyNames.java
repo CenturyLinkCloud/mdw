@@ -167,6 +167,7 @@ public class PropertyNames {
     public static final String MDW_JWT_CUSTOM_SUBJECT = "mdw.jwt.custom.subject";  // Optional JWT field to verify
     public static final String MDW_JWT_CUSTOM_ALGORITHM = "mdw.jwt.custom.algorithm"; // Optional for additional safety check
 
+    public static final String MDW_JWT_PRESERVE = "mdw.jwt.preserve";  // Set to true for setting header with Authenticated/verified JWT, for use by services
 
     // Request Routing
     public static final String MDW_ROUTING_REQUESTS_ENABLED = "mdw.requestrouting.enabled";
