@@ -563,7 +563,8 @@ extends java.lang.Object</pre>
 <h4>getRoles</h4>
 <pre>protected&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getRoles(java.lang.String&nbsp;path,
                                                     java.lang.String&nbsp;method)</pre>
-<div class="block">Default impl pays no attention to method (for compatibility).</div>
+<div class="block">Default impl pays no attention to method (for compatibility).
+ GET access if restricted if the "Runtime View" role exists.</div>
 </li>
 </ul>
 <a name="getRoles-java.lang.String-">

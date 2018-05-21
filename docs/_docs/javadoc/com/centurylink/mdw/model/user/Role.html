@@ -138,11 +138,11 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#ALL">ALL</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#ASSET_DESIGN">ASSET_DESIGN</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#ASSET_DESIGN">ASSET_DESIGN</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#ASSET_VIEW">ASSET_VIEW</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
@@ -154,19 +154,23 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#SUPERVISOR">SUPERVISOR</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#RUNTIME_VIEW">RUNTIME_VIEW</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#TASK_EXECUTION">TASK_EXECUTION</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#TASK_ADMIN">TASK_ADMIN</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#USER_ADMIN">USER_ADMIN</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#TASK_EXECUTION">TASK_EXECUTION</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#VIEW_ONLY">VIEW_ONLY</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#USER_ADMIN">USER_ADMIN</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/user/Role.html#USER_VIEW">USER_VIEW</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -336,32 +340,6 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 </dl>
 </li>
 </ul>
-<a name="USER_ADMIN">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>USER_ADMIN</h4>
-<pre>public static final&nbsp;java.lang.String USER_ADMIN</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.USER_ADMIN">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="SUPERVISOR">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SUPERVISOR</h4>
-<pre>public static final&nbsp;java.lang.String SUPERVISOR</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.SUPERVISOR">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
 <a name="TASK_EXECUTION">
 <!--   -->
 </a>
@@ -375,29 +353,68 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 </dl>
 </li>
 </ul>
-<a name="VIEW_ONLY">
+<a name="USER_ADMIN">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>VIEW_ONLY</h4>
-<pre>public static final&nbsp;java.lang.String VIEW_ONLY</pre>
+<h4>USER_ADMIN</h4>
+<pre>public static final&nbsp;java.lang.String USER_ADMIN</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.VIEW_ONLY">Constant Field Values</a></dd>
+<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.USER_ADMIN">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
-<a name="ALL">
+<a name="TASK_ADMIN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TASK_ADMIN</h4>
+<pre>public static final&nbsp;java.lang.String TASK_ADMIN</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.TASK_ADMIN">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="ASSET_VIEW">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ASSET_VIEW</h4>
+<pre>public static final&nbsp;java.lang.String ASSET_VIEW</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.ASSET_VIEW">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="RUNTIME_VIEW">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>RUNTIME_VIEW</h4>
+<pre>public static final&nbsp;java.lang.String RUNTIME_VIEW</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.RUNTIME_VIEW">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="USER_VIEW">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>ALL</h4>
-<pre>public static final&nbsp;java.lang.String ALL</pre>
+<h4>USER_VIEW</h4>
+<pre>public static final&nbsp;java.lang.String USER_VIEW</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.ALL">Constant Field Values</a></dd>
+<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.user.Role.USER_VIEW">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
