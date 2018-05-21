@@ -229,6 +229,13 @@ class ProcessExecutorImpl {
         }
     }
 
+    void setReqCompletionTime(String ownerType, Long ownerId)throws DataAccessException{
+        try{
+            edao.setReqCompletionTime(ownerType, ownerId);
+        }catch (Exception e) {
+            throw new DataAccessException(0, e.getMessage(), e);
+        }
+     }
     /**
      * Does not work for remote documents
      */
@@ -1201,7 +1208,7 @@ class ProcessExecutorImpl {
     }
 
     private void completeProcessInstance(ProcessInstance procInst) throws Exception {
-        edao.setProcessElapsedTime(procInst);
+        edao.setProcessCompletionTime(procInst);
         edao.setProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_COMPLETED);
         if (!inService) {
             edao.removeEventWaitForProcessInstance(procInst.getId());
