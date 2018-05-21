@@ -3,9 +3,10 @@
  */
 package com.centurylink.mdw.service.rest;
 
-
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -32,6 +33,16 @@ import io.swagger.annotations.ApiOperation;
 public class AppSummary extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    @Override
+    protected List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            return new ArrayList<>(); // wide open
+        }
+        else {
+            return super.getRoles(path, method);
+        }
+    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {

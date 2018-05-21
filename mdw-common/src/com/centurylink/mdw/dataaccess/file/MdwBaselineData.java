@@ -89,7 +89,6 @@ public class MdwBaselineData implements BaselineData {
             userRoles.add(Role.PROCESS_DESIGN);
             userRoles.add(Role.PROCESS_EXECUTION);
             userRoles.add(Role.USER_ADMIN);
-            userRoles.add(Role.SUPERVISOR);
             userRoles.add(Role.TASK_EXECUTION);
         }
         return userRoles;

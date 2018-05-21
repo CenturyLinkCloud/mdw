@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,10 +48,21 @@ import io.swagger.annotations.ApiOperation;
 public class Workgroups extends JsonRestService {
 
     @Override
-    public List<String> getRoles(String path) {
-        List<String> roles = super.getRoles(path);
-        roles.add(Role.USER_ADMIN);
-        return roles;
+    public List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+                roles.add(Role.USER_VIEW);
+                roles.add(Role.USER_ADMIN);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
+        else {
+            List<String> roles = super.getRoles(path);
+            roles.add(Role.USER_ADMIN);
+            return roles;
+        }
     }
 
     @Override

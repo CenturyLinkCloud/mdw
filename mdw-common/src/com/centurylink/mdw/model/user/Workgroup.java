@@ -34,7 +34,6 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Workgroup", description="MDW user workgroup")
 public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable {
 
-    public static final boolean DEFAULT_ALL_ROLES = false;
     public static final String SLACK_CHANNELS = "Slack Channel(s)";
 
     /**
@@ -147,11 +146,11 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
      * Check whether the group has the specified role.
      */
     public boolean hasRole(String roleName){
-        if (roles == null)
-            return DEFAULT_ALL_ROLES;
-            // no specified roles means all roles when DEFAULT_ALL_ROLES is true
-        for (String r : roles) {
-            if (r.equals(roleName)) return true;
+        if (roles != null) {
+            for (String r : roles) {
+                if (r.equals(roleName))
+                    return true;
+            }
         }
         return false;
     }
@@ -168,24 +167,6 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
              }
          }
          return buffer.toString();
-    }
-
-    @ApiModelProperty(hidden=true)
-    public String getRolesAsString() {
-            StringBuffer buffer = new StringBuffer();
-        if (roles != null && roles.size() > 0) {
-            for (int i = 0; i < roles.size(); i++) {
-                if (i > 0)
-                    buffer.append('/');
-                buffer.append(roles.get(i));
-            }
-            return buffer.toString();
-        } else {
-            if (DEFAULT_ALL_ROLES)
-                return Role.ALL;
-            else
-                return Role.VIEW_ONLY;
-        }
     }
 
     private Map<String,String> attributes;

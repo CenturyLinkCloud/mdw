@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Path;
@@ -26,6 +28,9 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -38,6 +43,22 @@ import io.swagger.annotations.ApiOperation;
 public class Pagelets extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    @Override
+    protected List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+                roles.add(Role.ASSET_VIEW);
+                roles.add(Role.ASSET_DESIGN);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
+        else {
+            return super.getRoles(path, method);
+        }
+    }
 
     @Override
     @Path("/{assetPath}")

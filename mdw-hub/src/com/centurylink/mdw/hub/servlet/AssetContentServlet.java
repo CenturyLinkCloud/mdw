@@ -66,6 +66,7 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
@@ -102,6 +103,17 @@ public class AssetContentServlet extends HttpServlet {
             throw new ServletException(assetRoot + " is not a directory");
 
         String path = request.getPathInfo().substring(1);
+        try {
+            authorizeForView(request.getSession(), path);
+        }
+        catch (AuthorizationException ex) {
+            logger.severeException(ex.getMessage(), ex);
+            StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
+            response.setStatus(sr.getStatus().getCode());
+            response.getWriter().println(sr.getJson().toString(2));
+            return;
+        }
+
         if ("packages".equals(path)) {
             String packages = request.getParameter("packages");
             if (packages == null) {
@@ -238,8 +250,7 @@ public class AssetContentServlet extends HttpServlet {
             AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
                 if ("packages".equals(path)) {
-                    authorizeForUpdate(request.getSession(), Action.Import, Entity.Package,
-                            "Package zip");
+                    authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip");
                     String contentType = request.getContentType();
                     boolean isZip = "application/zip".equals(contentType);
                     if (!isZip && !"application/json".equals(contentType))
@@ -455,16 +466,37 @@ public class AssetContentServlet extends HttpServlet {
         }
 
         if (user == null)
-            throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED,
-                    "Authentication failure");
-        if (!user.hasRole(Role.PROCESS_DESIGN))
+            throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
+        if (!user.hasRole(Role.ASSET_DESIGN) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP)) {
             throw new AuthorizationException(AuthorizationException.FORBIDDEN,
                     "User " + user.getCuid() + " not authorized for this action");
+        }
 
-        logger.info(
-                "Asset mod request received from user: " + user.getCuid() + " for: " + includes);
+        logger.info("Asset mod request received from user: " + user.getCuid() + " for: " + includes);
         UserAction userAction = new UserAction(user.getCuid(), action, entity, 0L, includes);
         userAction.setSource(getClass().getSimpleName());
         ServiceLocator.getUserServices().auditLog(userAction);
+    }
+
+    /**
+     * Only if "Asset View" role exists.  Web resource assets are excluded.
+     */
+    private void authorizeForView(HttpSession session, String path) throws AuthorizationException {
+        if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+            if (!path.endsWith(".css") && !path.endsWith(".js") && !path.endsWith(".jpg") && !path.endsWith(".png")
+                    && !path.endsWith(".gif") && !path.endsWith("woff") && !path.endsWith("woff2") && !path.endsWith("ttf")) {
+                AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
+                if (user == null && ApplicationContext.getServiceUser() != null) {
+                    String cuid = ApplicationContext.getServiceUser();
+                    user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
+                }
+                if (user == null)
+                    throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
+                if (!user.hasRole(Role.ASSET_VIEW) && !user.hasRole(Role.ASSET_DESIGN) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP)) {
+                    throw new AuthorizationException(AuthorizationException.FORBIDDEN,
+                            "User " + user.getCuid() + " not authorized for " + path);
+                }
+            }
+        }
     }
 }

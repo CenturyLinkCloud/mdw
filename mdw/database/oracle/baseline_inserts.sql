@@ -12,6 +12,8 @@ INSERT INTO USER_ROLE (USER_ROLE_ID,USER_ROLE_NAME,CREATE_USR,COMMENTS)
     values (9,'User Admin', 'BASELINE5.5', 'manage users, groups and roles');
 INSERT INTO USER_ROLE (USER_ROLE_ID,USER_ROLE_NAME,CREATE_USR,COMMENTS) 
     values (10,'Task Execution', 'BASELINE5.5','perform manual tasks');
+INSERT INTO USER_ROLE (USER_ROLE_ID,USER_ROLE_NAME,CREATE_USR,COMMENTS) 
+    values (11, 'Task Admin', 'BASELINE5.5', 'create and assign tasks');
        
 insert into USER_GROUP (USER_GROUP_ID,GROUP_NAME,CREATE_USR,COMMENTS)
   values (1,'MDW Support','BASELINE5.5','MDW Support Group');

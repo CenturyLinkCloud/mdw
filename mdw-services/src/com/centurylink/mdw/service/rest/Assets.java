@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.rest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,10 @@ import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
@@ -67,6 +71,23 @@ import io.swagger.annotations.ApiOperation;
 public class Assets extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    protected List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+                roles.add(Role.ASSET_VIEW);
+                roles.add(Role.ASSET_DESIGN);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
+        else {
+            List<String> roles = super.getRoles(path, method);
+            roles.add(Role.ASSET_DESIGN);
+            return roles;
+        }
+    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {

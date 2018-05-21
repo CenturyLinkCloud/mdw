@@ -32,16 +32,18 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Role", description="MDW user role")
 public class Role implements Serializable, Comparable<Role>, Jsonable  {
 
-    // new, per-group roles
     public static final String PROCESS_DESIGN = "Process Design";
     public static final String ASSET_DESIGN = PROCESS_DESIGN;  // synonym for process design role
     public static final String PROCESS_EXECUTION = "Process Execution";
-    public static final String USER_ADMIN = "User Admin";
-    public static final String SUPERVISOR = "Supervisor";
     public static final String TASK_EXECUTION = "Task Execution";
-    public static final String VIEW_ONLY = "View Only";     // only needed when user does not have any other role
+    public static final String USER_ADMIN = "User Admin";
+    public static final String TASK_ADMIN = "Task Admin";
 
-    public static final String ALL = "All";        // has all roles applicable to the group
+    // if these roles exist, then read access is restricted
+    public static final String ASSET_VIEW = "Asset View";
+    public static final String RUNTIME_VIEW = "Runtime View";
+    public static final String USER_VIEW = "User View";
+    // (task view access is restricted by way of workgroups)
 
     public Role() {
     }

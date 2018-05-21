@@ -10,7 +10,7 @@ INSERT INTO USER_ROLE (USER_ROLE_NAME,CREATE_USR,COMMENTS,CREATE_DT)
 INSERT INTO USER_ROLE (USER_ROLE_NAME,CREATE_USR,COMMENTS,CREATE_DT) 
     values ('Task Execution', 'BASELINE5.5', 'perform manual tasks', now());
 INSERT INTO USER_ROLE (USER_ROLE_NAME,CREATE_USR,COMMENTS,CREATE_DT) 
-    values ('Supervisor', 'BASELINE5.5', 'reassign tasks, acting as a group member', now());
+    values ('Task Admin', 'BASELINE5.5', 'create and assign tasks', now());
     
 insert into USER_GROUP (GROUP_NAME,CREATE_USR,COMMENTS,CREATE_DT)
     values ('MDW Support','BASELINE5.5','MDW Support Group', now());

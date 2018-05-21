@@ -93,63 +93,48 @@ public class UserServicesImpl implements UserServices {
      * Does not include non-public attributes.
      * Includes empty values for all public attributes.
      */
-    public User getUser(String cuid) throws DataAccessException {
-        try {
-            User user = UserGroupCache.getUser(cuid);
-            if (user == null)
-                return null;
+    public User getUser(String cuid) {
+        User user = UserGroupCache.getUser(cuid);
+        if (user == null)
+            return null;
+        // add empty attributes
+        if (user.getAttributes() == null)
+            user.setAttributes(new HashMap<String,String>());
+        for (String name : UserGroupCache.getUserAttributeNames()) {
+            if (!user.getAttributes().containsKey(name))
+                user.setAttribute(name, null);
+            // substitute friendly attribute names
+            if (user.getAttributes().containsKey(User.OLD_EMAIL)) {
+                String oldEmail = user.getAttributes().remove(User.OLD_EMAIL);
+                if (user.getAttribute(User.EMAIL) == null)
+                    user.setAttribute(User.EMAIL, oldEmail);
+            }
+            if (user.getAttributes().containsKey(User.OLD_PHONE)) {
+                String oldPhone = user.getAttributes().remove(User.OLD_PHONE);
+                if (user.getAttribute(User.PHONE) == null)
+                    user.setAttribute(User.PHONE, oldPhone);
+            }
+        }
+        return user;
+    }
+
+    public Workgroup getWorkgroup(String groupName) {
+        Workgroup workgroup = UserGroupCache.getWorkgroup(groupName);
+        if (workgroup != null) {
             // add empty attributes
-            if (user.getAttributes() == null)
-                user.setAttributes(new HashMap<String,String>());
-            for (String name : UserGroupCache.getUserAttributeNames()) {
-                if (!user.getAttributes().containsKey(name))
-                    user.setAttribute(name, null);
-                // substitute friendly attribute names
-                if (user.getAttributes().containsKey(User.OLD_EMAIL)) {
-                    String oldEmail = user.getAttributes().remove(User.OLD_EMAIL);
-                    if (user.getAttribute(User.EMAIL) == null)
-                        user.setAttribute(User.EMAIL, oldEmail);
-                }
-                if (user.getAttributes().containsKey(User.OLD_PHONE)) {
-                    String oldPhone = user.getAttributes().remove(User.OLD_PHONE);
-                    if (user.getAttribute(User.PHONE) == null)
-                        user.setAttribute(User.PHONE, oldPhone);
-                }
+            if (workgroup.getAttributes() == null)
+                workgroup.setAttributes(new HashMap<String,String>());
+            for (String name : UserGroupCache.getWorkgroupAttributeNames()) {
+                if (!workgroup.getAttributes().containsKey(name))
+                    workgroup.setAttribute(name, null);
             }
-            return user;
         }
-        catch (CachingException ex) {
-            throw new DataAccessException(ServiceException.NOT_FOUND, "Cannot find user: " + cuid, ex);
-        }
+
+        return workgroup;
     }
 
-    public Workgroup getWorkgroup(String groupName) throws DataAccessException {
-        try {
-            Workgroup workgroup = UserGroupCache.getWorkgroup(groupName);
-            if (workgroup != null) {
-                // add empty attributes
-                if (workgroup.getAttributes() == null)
-                    workgroup.setAttributes(new HashMap<String,String>());
-                for (String name : UserGroupCache.getWorkgroupAttributeNames()) {
-                    if (!workgroup.getAttributes().containsKey(name))
-                        workgroup.setAttribute(name, null);
-                }
-            }
-
-            return workgroup;
-        }
-        catch (CachingException ex) {
-            throw new DataAccessException("Cannot find workgroup: " + groupName, ex);
-        }
-    }
-
-    public Role getRole(String roleName) throws DataAccessException {
-        try {
-            return UserGroupCache.getRole(roleName);
-        }
-        catch (CachingException ex) {
-            throw new DataAccessException("Cannot find role: " + roleName, ex);
-        }
+    public Role getRole(String roleName) {
+        return UserGroupCache.getRole(roleName);
     }
 
     public void auditLog(UserAction userAction) throws DataAccessException {

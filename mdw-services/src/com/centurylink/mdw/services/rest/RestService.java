@@ -34,6 +34,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -98,10 +99,19 @@ public abstract class RestService {
 
     /**
      * Default impl pays no attention to method (for compatibility).
+     * GET access if restricted if the "Runtime View" role exists.
      */
     protected List<String> getRoles(String path, String method) {
-        if (method.equals("GET"))
-            return new ArrayList<>();
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            // restrict if view access role exists
+            if (UserGroupCache.getRole(Role.RUNTIME_VIEW) != null) {
+                roles.add(Role.RUNTIME_VIEW);
+                roles.add(Role.PROCESS_EXECUTION);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
         return getRoles(path);
     }
 

@@ -436,8 +436,9 @@ public class TaskWorkflowHelper {
             }
             assign(assigneeId);
             try {
-                assigneeCuid = UserGroupCache.getUser(assigneeId).getCuid();
-
+                User user = UserGroupCache.getUser(assigneeId);
+                if (user != null)
+                    assigneeCuid = user.getCuid();
             }
             catch (CachingException ex) {
                 logger.severeException(ex.getMessage(), ex);
@@ -576,8 +577,7 @@ public class TaskWorkflowHelper {
                                 + taskResumeEndpoint + ": " + statusMessage.getMessage());
         }
         catch (Exception ex) {
-            throw new ServiceException("Failed to resume task instance: " + taskInstance.getId(),
-                    ex);
+            throw new ServiceException("Failed to resume task instance: " + taskInstance.getId(), ex);
         }
     }
 
@@ -967,7 +967,8 @@ public class TaskWorkflowHelper {
                 String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
                 if (!StringHelper.isEmpty(assigneeVarSpec)) {
                     try {
-                        String cuid = UserGroupCache.getUser(userId).getCuid();
+                        User user = UserGroupCache.getUser(userId);
+                        String cuid = user == null ? null : user.getCuid();
                         if (cuid == null)
                             throw new DataAccessException("User not found for id: " + userId);
                         TaskRuntimeContext runtimeContext = getContext();

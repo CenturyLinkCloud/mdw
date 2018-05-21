@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -45,17 +47,27 @@ import io.swagger.annotations.ApiOperation;
 public class Roles extends JsonRestService {
 
     @Override
-    public List<String> getRoles(String path) {
-        List<String> roles = super.getRoles(path);
-        roles.add(Role.USER_ADMIN);
-        return roles;
+    public List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+                roles.add(Role.USER_VIEW);
+                roles.add(Role.USER_ADMIN);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
+        else {
+            List<String> roles = super.getRoles(path);
+            roles.add(Role.USER_ADMIN);
+            return roles;
+        }
     }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
         return Entity.Role;
     }
-
 
     /**
      * Retrieve a user role or the list of all roles.
@@ -73,13 +85,16 @@ public class Roles extends JsonRestService {
             if (roleName == null) // use request path
                 roleName = getSegment(path, 1);
             if (roleName != null) {
-                return userServices.getRole(roleName).getJson();
+                Role role = userServices.getRole(roleName);
+                if (role == null)
+                    throw new ServiceException(HTTP_404_NOT_FOUND, "Role not found: " + roleName);
+                return role.getJson();
             }
             else {
                 return userServices.getRoles().getJson();
             }
         }
-        catch (Exception ex) {
+        catch (DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }

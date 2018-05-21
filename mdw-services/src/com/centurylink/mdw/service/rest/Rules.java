@@ -49,7 +49,7 @@ import io.swagger.annotations.ApiOperation;
 public class Rules extends JsonRestService {
 
     @Override
-    public List<String> getRoles(String path) {
+    public List<String> getRoles(String path, String method) {
         List<String> roles = super.getRoles(path);
         roles.add(Role.PROCESS_EXECUTION);
         return roles;
@@ -64,7 +64,7 @@ public class Rules extends JsonRestService {
      * Apply rules designated in asset path against incoming request parameters.
      */
     @Override
-    public JSONObject get(String path, Map<String, String> headers)
+    public JSONObject get(String path, Map<String,String> headers)
             throws ServiceException, JSONException {
         Asset rules = getRulesAsset(path);
 

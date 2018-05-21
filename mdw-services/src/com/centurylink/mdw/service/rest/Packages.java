@@ -41,8 +41,11 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Mdw;
 import com.centurylink.mdw.model.RawJson;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -59,6 +62,22 @@ import io.swagger.annotations.ApiOperation;
 public class Packages extends JsonRestService implements JsonExportable {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    @Override
+    protected List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+                roles.add(Role.ASSET_VIEW);
+                roles.add(Role.ASSET_DESIGN);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
+        else {
+            return super.getRoles(path, method);
+        }
+    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {

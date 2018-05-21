@@ -161,7 +161,7 @@ public class UserGroupCache implements PreloadableCache {
             Workgroup workgroup = getWorkgroup(groupName);
             for (User user : workgroup.getUsers()) {
                 user = getUser(user.getId()); // load full user
-                if (isMatch(user, prefix) && !matches.contains(user)) {
+                if (user != null && isMatch(user, prefix) && !matches.contains(user)) {
                     matches.add(user);
                     if (++count > limit)
                         return matches;
@@ -242,9 +242,7 @@ public class UserGroupCache implements PreloadableCache {
                 user = usersByCuid.get(cuid);
                 if (user == null) {
                     user = loadUser(cuid);
-                    if (user == null)
-                        return null;
-                    else {
+                    if (user != null) {
                         usersByCuid.put(cuid, user);
                         usersById.put(user.getId(), user);
                     }
@@ -261,9 +259,7 @@ public class UserGroupCache implements PreloadableCache {
                 user = usersById.get(id);
                 if (user == null) {
                     user = loadUser(id);
-                    if (user == null)
-                        throw new CachingException("Cannot find user id: " + id);
-                    else {
+                    if (user != null) {
                         usersById.put(id, user);
                         usersByCuid.put(user.getCuid(), user);
                     }
@@ -280,9 +276,7 @@ public class UserGroupCache implements PreloadableCache {
                 role = rolesByName.get(name);
                 if (role == null) {
                     role = loadRole(name);
-                    if (role == null)
-                        throw new CachingException("Cannot find role: " + name);
-                    else
+                    if (role != null)
                         rolesByName.put(name, role);
                 }
             }

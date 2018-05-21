@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,11 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -39,6 +43,22 @@ import io.swagger.annotations.ApiOperation;
 @Path("/Implementors")
 @Api("Activity implementor definitions")
 public class Implementors extends JsonRestService {
+
+    @Override
+    protected List<String> getRoles(String path, String method) {
+        if (method.equals("GET")) {
+            List<String> roles = new ArrayList<>();
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
+                roles.add(Role.ASSET_VIEW);
+                roles.add(Role.ASSET_DESIGN);
+                roles.add(Workgroup.SITE_ADMIN_GROUP);
+            }
+            return roles;
+        }
+        else {
+            return super.getRoles(path, method);
+        }
+    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
@@ -84,5 +104,4 @@ public class Implementors extends JsonRestService {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
-
 }
