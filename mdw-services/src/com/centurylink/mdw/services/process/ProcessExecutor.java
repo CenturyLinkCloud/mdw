@@ -770,6 +770,24 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
+    public void setReqCompletionTime(String ownerType, Long ownerId)
+            throws DataAccessException {
+                TransactionWrapper transaction=null;
+                try {
+                    transaction = startTransaction();
+                    engineImpl.setReqCompletionTime(ownerType,ownerId);
+                } catch (DataAccessException e) {
+                    if (canRetryTransaction(e)) {
+                        transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                        setReqCompletionTime(ownerType,ownerId);
+                    }
+                    else
+                        throw e;
+                } finally {
+                    stopTransaction(transaction);
+                }
+            }
+
     public void updateDocumentContent(DocumentReference docref, Object doc, String type, Package pkg)
      throws DataAccessException {
         TransactionWrapper transaction=null;

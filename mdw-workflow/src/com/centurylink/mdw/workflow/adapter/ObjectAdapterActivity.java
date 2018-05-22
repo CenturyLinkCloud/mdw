@@ -322,6 +322,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            getEngine().setReqCompletionTime(OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -333,6 +334,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         try {
             DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
+            getEngine().setReqCompletionTime(OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

@@ -39,7 +39,7 @@ public interface EngineDataAccess {
     Long createProcessInstance(ProcessInstance procinst)
     throws DataAccessException,SQLException;
 
-    void setProcessElapsedTime(ProcessInstance pi)
+    void setProcessCompletionTime(ProcessInstance pi)
     throws SQLException;
 
     ProcessInstance getProcessInstance(Long procInstId)
@@ -139,6 +139,9 @@ public interface EngineDataAccess {
     throws DataAccessException,SQLException;
 
     void updateDocumentInfo(Document docvo)
+    throws SQLException;
+
+    void setReqCompletionTime(String ownerType, Long ownerId)
     throws SQLException;
 
     /////// events

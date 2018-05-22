@@ -283,6 +283,12 @@ public class EngineDataAccessCache implements EngineDataAccess {
         documentCache.put(docvo.getDocumentId(), docvo);
     }
 
+    public synchronized void setReqCompletionTime(String ownerType, Long ownerId)throws SQLException{
+        // no cache for req completion time
+           if (cache_document!=CACHE_OFF) {
+               edadb.setReqCompletionTime(ownerType, ownerId);
+           }
+    }
     public synchronized Long createTransitionInstance(TransitionInstance vo) throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
             vo.setTransitionInstanceID(getNextInternalId());
@@ -342,14 +348,14 @@ public class EngineDataAccessCache implements EngineDataAccess {
             if (pi!=null) pi.setStatusCode(status);
         }
     }
-    public synchronized void setProcessElapsedTime(ProcessInstance pi) throws SQLException {
+    public synchronized void setProcessCompletionTime(ProcessInstance pi) throws SQLException {
         if(cache_process==CACHE_OFF) {
-            edadb.setProcessElapsedTime(pi);
+            edadb.setProcessCompletionTime(pi);
         }else if(cache_process==CACHE_ONLY){
             ProcessInstance cachepi = procInstCache.get(pi.getId());
             cachepi.setCompletionTime(pi.getCompletionTime());
         }else{
-            edadb.setProcessElapsedTime(pi);
+            edadb.setProcessCompletionTime(pi);
             ProcessInstance cachepi = procInstCache.get(pi.getId());
             if(cachepi!=null)cachepi.setCompletionTime(pi.getCompletionTime());
         }

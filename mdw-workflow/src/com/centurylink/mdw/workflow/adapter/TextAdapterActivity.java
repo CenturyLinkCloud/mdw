@@ -550,7 +550,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 if (meta != null && meta.length() > 0)
                     createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_RESPONSE_META, docref.getDocumentId());
             }
-
+            getEngine().setReqCompletionTime(OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
             return docref.getDocumentId();
         } catch (Exception ex) {
             logexception(ex.getMessage(), ex);
