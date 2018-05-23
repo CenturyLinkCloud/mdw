@@ -1,1 +1,1 @@
-java -jar ${MDW_HOME}/mdw-cli.jar $@
+java -jar ${MDW_HOME}/mdw-cli.jar "$@"

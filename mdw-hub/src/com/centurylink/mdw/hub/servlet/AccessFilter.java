@@ -247,6 +247,11 @@ public class AccessFilter implements Filter {
 
             // check authentication
             AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
+            if (user != null && path.equals("/services/com/centurylink/mdw/central/auth")) {
+                // clear user from session (may be logging in as different user)
+                user = null;
+                session.invalidate();
+            }
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
                 user = null;
                 String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);

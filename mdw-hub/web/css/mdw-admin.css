@@ -690,6 +690,7 @@
   float: left;
   position: absolute;
   color: #a94442;
+  margin-left: 15px;
   padding-top: 30px;
   font-weight: bold;
   width: calc(100% - 480px);
