@@ -81,8 +81,10 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         if (widget.type === 'asset')
           this.initAssetOptions([widget]);
       }
-      if (!widget.value && widget.default)
+      if (!widget.value && widget.default) {
         widget.value = widget.default;
+        this.valueChanged(widget);
+      }
 
       // value handling for some widget types
       if (widget.type === 'checkbox' && widget.value) {
