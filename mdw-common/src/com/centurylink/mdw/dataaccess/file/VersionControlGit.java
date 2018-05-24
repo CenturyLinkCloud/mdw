@@ -224,6 +224,8 @@ public class VersionControlGit implements VersionControl {
 
     public AssetRevision getRevisionInVersionsFile(File file) throws IOException {
         Properties verProps = getVersionProps(file.getParentFile());
+        if(verProps==null)
+            return null;
         String propVal = verProps.getProperty(file.getName());
         if (propVal == null) {
             return null;
@@ -256,8 +258,11 @@ public class VersionControlGit implements VersionControl {
     private VersionProperties getVersionProps(File pkgDir) throws IOException {
         VersionProperties props = pkg2versions.get(pkgDir);
         if (props == null) {
-            props = new VersionProperties(new File(pkgDir + "/" + VERSIONS_FILE));
-            pkg2versions.put(pkgDir, props);
+            File file=new File(pkgDir + "/" + VERSIONS_FILE);
+            if(file.exists()){
+                props = new VersionProperties(file);
+                pkg2versions.put(pkgDir, props);
+            }
         }
         return props;
     }
