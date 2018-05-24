@@ -23,7 +23,7 @@ Install the MDW Designer Eclipse Plugin
   ...
   ```
   - Eclipse Oxygen for JavaEE Developers:<br>
-    <https://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/oxygen2>  
+    <https://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/oxygen3a>  
   
 ### Install Designer from Eclipse Marketplace
   - Launch Eclipse and from the menu select Help > Eclipse Marketplace...
