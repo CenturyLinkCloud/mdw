@@ -17,7 +17,7 @@
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.1",
     "react-bootstrap-date-picker": "^5.1.0",
-    "react-bootstrap-typeahead": "^2.0.0-alpha.3",
+    "react-bootstrap-typeahead": "^2.6.0",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^15.6.1",
     "react-dropzone": "^4.2.3",
