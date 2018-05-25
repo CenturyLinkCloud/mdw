@@ -15,7 +15,13 @@
  */
 package com.centurylink.mdw.common.service;
 
+import com.centurylink.mdw.model.Status;
+
 public class AuthorizationException extends ServiceException {
+
+    public AuthorizationException() {
+        super(Status.FORBIDDEN.getCode(), Status.FORBIDDEN.getMessage());
+    }
 
     public AuthorizationException(String message) {
         super(message);

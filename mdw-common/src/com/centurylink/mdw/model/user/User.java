@@ -141,10 +141,6 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         this.workgroups = groups.toArray(new Workgroup[groups.size()]);
     }
 
-    /**
-     * Only used by Designer.
-     * TODO: remove when possible
-     */
     @ApiModelProperty(hidden=true)
     public List<String> getRoles(String group) {
         if (workgroups==null) return null;

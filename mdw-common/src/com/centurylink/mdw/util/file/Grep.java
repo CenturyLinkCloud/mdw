@@ -83,7 +83,6 @@ public class Grep {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     for (PathMatcher matcher : matchers) {
                         if (matcher.matches(path)) {
-                            System.out.println("PATH: " + path);
                             List<LineMatches> lineMatches = search(path, pattern);
                             if (lineMatches != null)
                                 fileMatches.put(root.relativize(path), lineMatches);
