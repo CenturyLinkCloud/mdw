@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.MiniCrypter;
 
@@ -39,7 +40,10 @@ public class JavaPropertyManager extends PropertyManager {
     public JavaPropertyManager() throws StartupException {
         mainPropertyFileName = getMainPropertyFileName();
         if (mainPropertyFileName == null) {
-            throw new StartupException("Cannot find mdw.yaml or mdw.properties");
+            if ("standalone".equals(ApplicationContext.getRuntimeEnvironment()))
+                return;
+            else
+                throw new StartupException("Cannot find mdw.yaml or mdw.properties");
         }
 
         loadPropertiesFromFile(null, mainPropertyFileName, true, true);
