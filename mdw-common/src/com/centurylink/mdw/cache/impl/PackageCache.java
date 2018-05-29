@@ -107,7 +107,7 @@ public class PackageCache implements PreloadableCache {
      * Otherwise logs a warning message.
      */
     private static void validatePackageVersion(List<Package> packages) {
-        final String exceptions = ".*\\b(oracle|tibco|demo)\\b.*";
+        final String exceptions = ".*\\b(oracle|tibco|demo|hub)\\b.*";
         String version = ApplicationContext.getMdwVersion();
         String mdwVersion = version.split("\\-")[0];
 
