@@ -57,8 +57,8 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
     });
   };
   
-  $scope.findCentralUser = function(typed) {
-    return $http.get(mdw.roots.central + '/api/users?find=' + typed + '&appId=' + mdw.appId).then(function(response) {
+  $scope.findCentral = function(typed) {
+    return $http.get(mdw.roots.services + '/services/Users?mdw-central=true&find=' + typed).then(function(response) {
       return response.data.users;
     });
   };  
@@ -67,22 +67,21 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
   $scope.selectedUser = null; // not used but required by typeahead
   $scope.addSelectedUser = function(selUser) {
     console.log('creating user: ' + selUser.username);
-    $scope.selectedUser = selUser;
-    Users.create({cuid: selUser.username}, selUser,
-        function(data) {
-      if (data.status.code !== 0) {
-        $scope.user.message = data.status.message;
-      }
-      else {
-        $scope.setCreate(false);
-        $scope.users = [];
-        $scope.total = 0;          
-        $scope.user.message = "User ID added: [" + $scope.selectedUser.username + "]";
-      }
-    }, 
-    function(error) {
-      $scope.user.message = error.data.status.message;
-    });
+    Users.create({cuid: selUser.username}, { name: selUser.name, cuid: selUser.username },
+      function(data) {
+        if (data.status.code !== 0) {
+          $scope.user.message = data.status.message;
+        }
+        else {
+          $scope.setCreate(false);
+          $scope.users = [];
+          $scope.total = 0;          
+          $scope.user.message = "User added: " + selUser.username;
+        }
+      }, 
+      function(error) {
+        $scope.user.message = error.data.status.message;
+      });
   };
   
   $scope.create = false;

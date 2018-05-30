@@ -15,7 +15,10 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +34,13 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.HttpHelper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -70,6 +74,8 @@ public class Users extends JsonRestService {
         return Entity.User;
     }
 
+    private HttpHelper centralHelper;
+
     /**
      * Retrieve a specific user or a page of users.
      */
@@ -100,10 +106,28 @@ public class Users extends JsonRestService {
             }
             else {
                 Query query = getQuery(path, headers);
-                if (query.getFind() != null)
-                    return userServices.findUsers(query.getFind()).getJson();
-                else
+                if (query.getFind() != null) {
+                    if (query.getBooleanFilter("mdw-central")) {
+                        // get users from central
+                        if (centralHelper == null) {
+                            centralHelper = new HttpHelper(new URL(ApplicationContext.getMdwCentralUrl()
+                                    + "/api/users?find=" + query.getFind() + "&appId=" + ApplicationContext.getAppId()));
+                            Map<String,String> hdrs = new HashMap<String,String>();
+                            centralHelper.setHeaders(hdrs);
+                            String appToken = java.lang.System.getenv("MDW_APP_TOKEN");
+                            if (appToken == null)
+                                throw new IOException("Missing environment variable: MDW_APP_TOKEN");
+                            hdrs.put("mdw-app-token", appToken);
+                        }
+                        return new JSONObject(centralHelper.get());
+                    }
+                    else {
+                        return userServices.findUsers(query.getFind()).getJson();
+                    }
+                }
+                else {
                     return userServices.getUsers(query.getStart(), query.getMax()).getJson();
+                }
             }
         }
         catch (DataAccessException ex) {
@@ -111,6 +135,9 @@ public class Users extends JsonRestService {
                 throw new ServiceException(ex.getCode(), ex.getMessage(), ex);
             else
                 throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+        catch (IOException ex) {
+            throw new ServiceException(HTTP_500_INTERNAL_ERROR, ex.getMessage(), ex);
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);

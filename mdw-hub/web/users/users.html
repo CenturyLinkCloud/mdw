@@ -26,7 +26,7 @@
           <div class="mdw-item-sub">{{user.cuid}}</div>
         </li>
       </ul>
-      <div ng-if="create && mdw.authMethod != 'mdw'" ng-include="'users/userForm.html'">
+      <div ng-if="create && (mdw.hubUser || mdwmdw.authMethod !== 'mdw')" ng-include="'users/userForm.html'">
       </div>
       <div ng-if="create && mdw.authMethod === 'mdw'" ng-include="'users/centralUserForm.html'">
       </div>
