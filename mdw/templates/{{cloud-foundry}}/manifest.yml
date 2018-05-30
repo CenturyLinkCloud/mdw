@@ -78,7 +78,7 @@ env:
     "mdw.hub.url": "https://{{project}}.useast.appfog.ctl.io/mdw",
     "mdw.services.url": "http://{{project}}.useast.appfog.ctl.io:80/mdw",
     "mdw.discovery.url": "{{discovery-url}}",
-    "mdw.central.url": "https://mdw.useast.appfog.ctl.io/mdw",
+    "mdw.central.url": "https://mdw-central.com",
       
     "mdw.application.name": "{{project}}",
     

@@ -80,7 +80,7 @@ title: Command Line Interface
         Default: false
       --discovery-url
         Asset Discovery URL
-        Default: https://mdw.useast.appfog.ctl.io/mdw
+        Default: https://mdw-central.com
       --force
         Force overwrite, even on localhost or when branch disagrees
         Default: false

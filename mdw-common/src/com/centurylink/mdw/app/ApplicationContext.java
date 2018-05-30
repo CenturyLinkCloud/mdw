@@ -719,7 +719,7 @@ public class ApplicationContext {
     public static String getMdwCentralUrl() {
         String mdwCentralUrl = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_URL);
         if (mdwCentralUrl == null)
-            mdwCentralUrl = "https://mdw.useast.appfog.ctl.io/mdw";
+            mdwCentralUrl = "https://mdw-central.com";
         return mdwCentralUrl;
     }
 
