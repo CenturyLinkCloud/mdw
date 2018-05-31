@@ -72,7 +72,9 @@ public class YamlPropertyManager extends PropertyManager {
 
         // application yamls
         YamlLoader loader = mdwYamlProps.getLoader();
-        Map<?,?> application = loader.getMap("application", mdwYamlProps.getRoot());
+        Map<?,?> application = loader.getMap("app", mdwYamlProps.getRoot());
+        if (application == null)
+            loader.getMap("application", mdwYamlProps.getRoot()); // compatibility
         if (application != null) {
             @SuppressWarnings("unchecked")
             List<String> appConfigs = loader.getList("configs", application);

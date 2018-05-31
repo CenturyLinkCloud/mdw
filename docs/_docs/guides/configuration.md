@@ -9,8 +9,10 @@ title: MDW Configuration
     (**Please** do not use this as a starting point as it contains inappropriate/non-default values for illustration.  
       Instead run the `mdw init` CLI command to generate from the latest template).
     ```yaml
-    application:
-      name: my-project  # required
+    app:
+      id: my-project  # required
+      configs:
+      - myconfig.yaml
       
     # clustered server instances (required -- at least one)
     servers:

@@ -54,6 +54,14 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
     public static final String PATH = "Path";
 
     @Override
+    public boolean isDisabled() throws ActivityException {
+        boolean disabled = super.isDisabled();
+        if (disabled)
+            setReturnCode("true");
+        return disabled;
+    }
+
+    @Override
     public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
         ServiceValuesAccess serviceValues = runtimeContext.getServiceValues();
         Map<String,String> requestHeaders = serviceValues.getRequestHeaders();
