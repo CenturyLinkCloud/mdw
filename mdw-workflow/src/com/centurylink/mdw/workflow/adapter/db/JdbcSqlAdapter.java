@@ -177,7 +177,7 @@ public class JdbcSqlAdapter extends ObjectAdapterActivity {
     @Override
     protected Object getRequestData() throws ActivityException {
         try {
-            return getSqlQuery();
+            return executePreScript(getSqlQuery());
         }
         catch (Exception ex) {
             throw new ActivityException(ex.getMessage(), ex);
