@@ -180,7 +180,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<PackageDir> getPackageDirs() throws DataAccessException {
-        return getPackageDirs(true);
+        return getPackageDirs(false);
     }
 
     public synchronized List<PackageDir> getPackageDirs(boolean includeArchive) throws DataAccessException {
