@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.data.process;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,10 +26,12 @@ import java.util.TreeMap;
 
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.RequestKey;
 import com.centurylink.mdw.model.workflow.Process;
@@ -72,7 +75,7 @@ public class ProcessRequests implements PreloadableCache {
                     String packageName = process.getPackageName();
                     String processName = process.getName();
                     try {
-                        Path assetPath=Paths.get(process.file().getPath());
+                        Path assetPath = Paths.get(process.file().getPath());
                         String contents = new String(Files.readAllBytes(assetPath));
                         if (contents.indexOf("\"requestPath\"") > 0) {
                             process = new Process(packageName, processName, new JSONObject(contents));
@@ -85,8 +88,10 @@ public class ProcessRequests implements PreloadableCache {
                                 RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
                                 AssetRequest existing = requests.get(requestKey);
                                 //filter out  archived ones.
-                                if(!assetPath.toString().contains("Archive")){
-                                    if(existing == null) {
+                                if (!assetPath.startsWith(
+                                        Paths.get(new File(ApplicationContext.getAssetRoot() + "/"
+                                                + PackageDir.ARCHIVE_SUBDIR).getPath()))) {
+                                    if (existing == null) {
                                         requests.put(requestKey, assetRequest);
                                     }
                                     else {
