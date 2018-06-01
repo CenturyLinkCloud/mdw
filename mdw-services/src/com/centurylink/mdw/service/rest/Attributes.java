@@ -152,6 +152,6 @@ public class Attributes extends JsonRestService {
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         JSONObject empty = new JsonObject();
-        return put(path, empty, headers);
+        return post(path, empty, headers);
     }
 }
