@@ -16,6 +16,7 @@
 package com.centurylink.mdw.service.data.process;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,8 @@ public class ProcessRequests implements PreloadableCache {
                     String packageName = process.getPackageName();
                     String processName = process.getName();
                     try {
-                        String contents = new String(Files.readAllBytes(Paths.get(process.file().getPath())));
+                        Path assetPath=Paths.get(process.file().getPath());
+                        String contents = new String(Files.readAllBytes(assetPath));
                         if (contents.indexOf("\"requestPath\"") > 0) {
                             process = new Process(packageName, processName, new JSONObject(contents));
                             AssetRequest assetRequest = process.getRequest();
@@ -82,18 +84,22 @@ public class ProcessRequests implements PreloadableCache {
                                 String servicePath = packageName.replace('.', '/') + path;
                                 RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
                                 AssetRequest existing = requests.get(requestKey);
-                                if (existing == null) {
-                                    requests.put(requestKey, assetRequest);
-                                }
-                                else {
-                                    List<AssetRequest> conflicts = conflicting.get(requestKey);
-                                    if (conflicts == null) {
-                                        conflicts = new ArrayList<>();
-                                        conflicts.add(existing);
-                                        conflicting.put(requestKey, conflicts);
+                                //filter out  archived ones.
+                                if(!assetPath.toString().contains("Archive")){
+                                    if(existing == null) {
+                                        requests.put(requestKey, assetRequest);
                                     }
-                                    conflicts.add(assetRequest);
+                                    else {
+                                        List<AssetRequest> conflicts = conflicting.get(requestKey);
+                                        if (conflicts == null) {
+                                            conflicts = new ArrayList<>();
+                                            conflicts.add(existing);
+                                            conflicting.put(requestKey, conflicts);
+                                        }
+                                        conflicts.add(assetRequest);
+                                    }
                                 }
+
                             }
                         }
                     }
