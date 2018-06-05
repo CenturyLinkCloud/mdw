@@ -83,7 +83,9 @@ public class LoginServlet extends HttpServlet {
             }
         }
         else if ("mdw".equals(authMethod)) {  // MDW Auth - Redirect to mdw-central to log in
-            response.sendRedirect(ApplicationContext.getMdwCentralUrl() + "/signin?returnURL=" + ApplicationContext.getMdwHubUrl() + "/&appID=" + ApplicationContext.getAppId());
+            // TODO: what is appID used for?
+            String returnUrl = ApplicationContext.getMdwHubUrl() + "/index.html&appID=" + ApplicationContext.getAppId();
+            response.sendRedirect(ApplicationContext.getMdwCentralUrl() + "/signin?returnURL=" + returnUrl);
         }
         else {
             StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,

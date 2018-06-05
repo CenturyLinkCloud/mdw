@@ -472,8 +472,8 @@ public class ApplicationContext {
     }
 
     public static boolean isMasterServer() {
-        // getServerHost(), getServerPort() do not work in PaaS
-        return isPaaS() || getMasterServer().equals(getServer());
+        // getServerHost(), getServerPort() do not work in PaaS or AWS
+        return isPaaS() || "mdw-central.com".equals(getMasterServer().getHost()) || getMasterServer().equals(getServer());
     }
 
     public static String getTempDirectory() {

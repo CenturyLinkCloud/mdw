@@ -118,6 +118,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
             return handleResult(result);
         }
         catch (ValidationException ex) {
+            logger.debugException(ex.getMessage(), ex);
             return handleResult(ex.getResult());
         }
     }
