@@ -255,8 +255,6 @@ public class AccessFilter implements Filter {
             if (user == null || user.getCuid() == null || (authUser != null && !user.getCuid().equals(authUser))) {
                 user = null;
                 String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
-                if (authHdr == null && ApplicationContext.isMdwAuth() && "GET".equals(request.getMethod())) //JWT coming in on URL query string
-                    authHdr = request.getParameter(Listener.AUTHORIZATION_HEADER_NAME);
                 if (authHdr != null) {
                     Map<String,String> headers = new HashMap<String,String>();
                     headers.put(Listener.AUTHORIZATION_HEADER_NAME, authHdr);
@@ -326,12 +324,6 @@ public class AccessFilter implements Filter {
                             logger.warn("Cannot identify a valid service user for internal MDW request.  Please create mdwapp user or specify another user.");
                     }
                 }
-            }
-
-            // This is to remove the JWT from QueryString
-            if ((user != null || authUser != null)  && "GET".equals(request.getMethod()) && request.getParameter(Listener.AUTHORIZATION_HEADER_NAME) != null) {
-                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
-                return;
             }
 
             if (responseHeaders != null || logHeaders) {

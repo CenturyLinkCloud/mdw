@@ -83,9 +83,8 @@ public class LoginServlet extends HttpServlet {
             }
         }
         else if ("mdw".equals(authMethod)) {  // MDW Auth - Redirect to mdw-central to log in
-            // TODO: what is appID used for?
-            String returnUrl = ApplicationContext.getMdwHubUrl() + "/&appID=" + ApplicationContext.getAppId();
-            response.sendRedirect(ApplicationContext.getMdwCentralUrl() + "/signin?returnURL=" + returnUrl);
+            response.sendRedirect(ApplicationContext.getMdwCentralUrl() + "/signin?appID=" + ApplicationContext.getAppId()
+                    + "&returnURL=" + ApplicationContext.getMdwHubUrl());
         }
         else {
             StatusResponse sr = new StatusResponse(Status.METHOD_NOT_ALLOWED,
