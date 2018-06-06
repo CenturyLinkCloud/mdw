@@ -255,6 +255,10 @@ public class ApplicationContext {
                             }
                         }
                     }
+                    if (serverHost == null) {
+                        // fall back to the hostname as known locally
+                        serverHost = InetAddress.getLocalHost().getHostName();
+                    }
                 }
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
@@ -468,12 +472,13 @@ public class ApplicationContext {
     }
 
     public static Server getMasterServer() {
+        if (getServerList().size() == 1)
+            return getServer(); // in case no host match in server list
         return getServerList().get(0);
     }
 
     public static boolean isMasterServer() {
-        // getServerHost(), getServerPort() do not work in PaaS or AWS
-        return isPaaS() || "mdw-central.com".equals(getMasterServer().getHost()) || getMasterServer().equals(getServer());
+        return getServerList().size() <= 1 || getMasterServer().equals(getServer());
     }
 
     public static String getTempDirectory() {

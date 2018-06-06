@@ -68,6 +68,10 @@ public class ServerList implements Iterable<Server>, YamlPropertyTranslator {
         return servers.get(index);
     }
 
+    public int size() {
+        return servers.size();
+    }
+
     @Override
     public Iterator<Server> iterator() {
         return servers.iterator();
