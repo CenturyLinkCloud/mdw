@@ -26,7 +26,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.hub.context.WebAppContext;
 
 /**
@@ -44,10 +46,21 @@ public class CustomContentFilter implements Filter {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             String path = httpRequest.getServletPath();
             // forward to override servlet
-            if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile())
-                request.getRequestDispatcher("/customContent" + path).forward(request, response);
-            else
+            if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
+                // if authUser is null, redirect to avoid bypassing AccessFilter
+                if (httpRequest.getSession().getAttribute("authenticatedUser") == null) {
+                    String redirect = "/" + ApplicationContext.getMdwHubContextRoot() + "/customContent" + path;
+                    if (httpRequest.getQueryString() != null)
+                        redirect += "?" + httpRequest.getQueryString();
+                    ((HttpServletResponse)response).sendRedirect(redirect);
+                }
+                else {
+                    request.getRequestDispatcher("/customContent" + path).forward(request, response);
+                }
+            }
+            else {
                 chain.doFilter(request, response);
+            }
         }
         else {
             chain.doFilter(request, response);

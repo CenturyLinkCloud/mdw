@@ -25,6 +25,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.centurylink.mdw.app.ApplicationContext;
 
 /**
  * Takes the place of welcome-files in web.xml
@@ -40,7 +43,16 @@ public class RootFilter implements Filter {
     throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)req;
         if (request.getServletPath().equals("/") && request.getPathInfo() == null) {
-            request.getRequestDispatcher("/index.html").forward(req, resp);
+            // if authUser is null, redirect to avoid bypassing AccessFilter
+            if (request.getSession().getAttribute("authenticatedUser") == null) {
+                String redirect = "/" + ApplicationContext.getMdwHubContextRoot() + "/index.html";
+                if (request.getQueryString() != null)
+                    redirect += "?" + request.getQueryString();
+                ((HttpServletResponse)resp).sendRedirect(redirect);
+            }
+            else {
+                request.getRequestDispatcher("/index.html").forward(req, resp);
+            }
         }
         else {
             chain.doFilter(req, resp);
