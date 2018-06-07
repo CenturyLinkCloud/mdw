@@ -722,6 +722,9 @@ public class AssetServicesImpl implements AssetServices {
         if (renderTo.equals(Asset.HTML)) {
             return new HtmlRenderer(asset);
         }
+        else if (renderTo.equals(Asset.TEXT)) {
+            return new TextRenderer(asset);
+        }
         return null;
     }
 
