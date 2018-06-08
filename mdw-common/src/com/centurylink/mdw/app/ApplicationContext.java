@@ -472,13 +472,13 @@ public class ApplicationContext {
     }
 
     public static Server getMasterServer() {
-        if (getServerList().size() == 1)
+        if (!isPaaS() && getServerList().size() == 1)
             return getServer(); // in case no host match in server list
         return getServerList().get(0);
     }
 
     public static boolean isMasterServer() {
-        return getServerList().size() <= 1 || getMasterServer().equals(getServer());
+        return isPaaS() || getServerList().size() <= 1 || getMasterServer().equals(getServer());
     }
 
     public static String getTempDirectory() {
