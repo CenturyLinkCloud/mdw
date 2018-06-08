@@ -170,7 +170,7 @@ testingMod.controller('TestsController',
     TestConfig.put({}, $scope.config, function success() {
       mdw.messages = null;
       TestsExec.run({}, {packages: execTestPkgs}, function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code !== 200) {
           mdw.messages = data.status.message;
         }
         else {
@@ -194,7 +194,7 @@ testingMod.controller('TestsController',
   
   $scope.cancelTests = function() {
     TestsCancel.run({}, {}, function(data) {
-      if (data.status.code !== 0) {
+      if (data.status.code !== 200) {
         $scope.testExecMessage = data.status.message;
       }
       else {
@@ -360,7 +360,7 @@ testingMod.controller('TestController', ['$scope', '$routeParams', '$q', '$locat
   
   $scope.runTest = function(testPkg, testName, item) {
     TestExec.run({packageName: testPkg, testCaseName: testName, itemName: item}, {}, function(data) {
-      if (data.status.code !== 0) {
+      if (data.status.code !== 200) {
         $scope.testExecMessage = data.status.message;
       }
       else {

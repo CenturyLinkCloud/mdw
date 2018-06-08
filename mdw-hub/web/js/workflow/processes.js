@@ -196,7 +196,7 @@ processMod.controller('ProcessController',
     });
     Process.update({instanceId: $scope.process.id, extra: 'values'}, newValues,
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code !== 200) {
           mdw.messages = data.status.message;
         }
         else {

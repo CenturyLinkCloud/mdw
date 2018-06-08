@@ -77,7 +77,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
         });
       };
       var successHandler = function(data, status, headers, config) {
-        if (data.status.code !== 0) {
+        if (data.status.code !== 200) {
           $scope.$parent.model.activityList.reload(function(activityList) {
             $scope.updateOnActionError(data.status.message, instanceIds, activityList);
           });
@@ -241,7 +241,7 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Proc
          console.log('http: ' + status);
        };
        var successHandler = function(data, status, headers, config) {
-         if (data.status.code !== 0) {
+         if (data.status.code !== 200) {
          }
          else {
            $scope.$close();

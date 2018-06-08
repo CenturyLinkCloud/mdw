@@ -83,7 +83,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       };
       
       TaskAction.action({action: action}, taskAction, function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code !== 200) {
           $scope.model.taskList.reload(function(taskList) {
             $scope.updateOnActionError(data.status.message, instanceIds, taskList);
           });
@@ -232,7 +232,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     };
     TaskAction.create({action: 'create'}, createAction,
       function(data) {
-        if (data.status && data.status.code !== 0) {
+        if (data.status && data.status.code !== 200) {
           $scope.task.message = data.status.message;
         }
         else {
