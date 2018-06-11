@@ -62,7 +62,10 @@ public abstract class JsonRestService extends RestService implements JsonService
             if (user != null)
                 auditLog(getUserAction(user, path, json, headers));
             if (response == null) {
-                return getDefaultResponse();
+                if (headers.containsKey(Listener.METAINFO_HTTP_STATUS_CODE))
+                    return getDefaultResponse(Integer.parseInt(headers.get(Listener.METAINFO_HTTP_STATUS_CODE)));
+                else
+                    return getDefaultResponse(Status.OK.getCode());
             }
             else if (response.has(JsonArray.GENERIC_ARRAY)) {
                 return response.getJSONArray(JsonArray.GENERIC_ARRAY).toString(2);
@@ -294,7 +297,9 @@ public abstract class JsonRestService extends RestService implements JsonService
         return workflowServices.notify(PackageCache.getPackage(packageName), eventId, eventMessage);
     }
 
-    protected String getDefaultResponse() {
-        return new StatusResponse(Status.OK).getJson().toString(2);
+    protected String getDefaultResponse(int httpStatusCode) {
+        Status status = Status.forCode(httpStatusCode);
+        StatusResponse statusResponse = new StatusResponse(status == null ? Status.OK : status);
+        return statusResponse.getJson().toString(2);
     }
 }

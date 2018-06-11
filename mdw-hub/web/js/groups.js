@@ -31,7 +31,7 @@ groupMod.controller('GroupsController', ['$scope', '$location', 'Workgroups',
     
     Workgroups.create({name: $scope.workgroup.name}, $scope.workgroup,
       function(data) {
-        if (data.status.code !== 200) {
+        if (data.status.code !== 201) {
           $scope.workgroup.message = data.status.message;
         }
         else {

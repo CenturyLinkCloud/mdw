@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,4 +102,47 @@ public class Status implements Jsonable {
     public static final Status GATEWAY_TIMEOUT = new Status(504, "Gateway Timeout");
     public static final Status HTTP_VERSION_NOT_SUPPORTED = new Status(505, "HTTP Version Not Supported");
 
+    private static Map<Integer,Status> statuses = new HashMap<>();
+    static {
+        statuses.put(200, OK);
+        statuses.put(201, CREATED);
+        statuses.put(202, ACCEPTED);
+        statuses.put(204, NO_CONTENT);
+        statuses.put(205, RESET_CONTENT);
+        statuses.put(206, PARTIAL_CONTENT);
+        statuses.put(301, MOVED_PERMANENTLY);
+        statuses.put(302, FOUND);
+        statuses.put(303, SEE_OTHER);
+        statuses.put(304, NOT_MODIFIED);
+        statuses.put(305, USE_PROXY);
+        statuses.put(307, TEMPORARY_REDIRECT);
+        statuses.put(400, BAD_REQUEST);
+        statuses.put(401, UNAUTHORIZED);
+        statuses.put(402, PAYMENT_REQUIRED);
+        statuses.put(403, FORBIDDEN);
+        statuses.put(404, NOT_FOUND);
+        statuses.put(405, METHOD_NOT_ALLOWED);
+        statuses.put(406, NOT_ACCEPTABLE);
+        statuses.put(407, PROXY_AUTHENTICATION_REQUIRED);
+        statuses.put(408, REQUEST_TIMEOUT);
+        statuses.put(409, CONFLICT);
+        statuses.put(410, GONE);
+        statuses.put(411, LENGTH_REQUIRED);
+        statuses.put(412, PRECONDITION_FAILED);
+        statuses.put(413, REQUEST_ENTITY_TOO_LARGE);
+        statuses.put(414, REQUEST_URI_TOO_LONG);
+        statuses.put(415, UNSUPPORTED_MEDIA_TYPE);
+        statuses.put(416, REQUESTED_RANGE_NOT_SATISFIABLE);
+        statuses.put(417, EXPECTATION_FAILED);
+        statuses.put(500, INTERNAL_SERVER_ERROR);
+        statuses.put(501, NOT_IMPLEMENTED);
+        statuses.put(502, BAD_GATEWAY);
+        statuses.put(503, SERVICE_UNAVAILABLE);
+        statuses.put(504, GATEWAY_TIMEOUT);
+        statuses.put(505, HTTP_VERSION_NOT_SUPPORTED);
+    }
+
+    public static Status forCode(int code) {
+        return statuses.get(code);
+    }
 }
