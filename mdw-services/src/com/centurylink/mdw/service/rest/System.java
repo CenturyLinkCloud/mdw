@@ -26,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
@@ -38,13 +37,7 @@ import com.centurylink.mdw.services.SystemServices.SysInfoType;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/System")
-@Api("System Information & Configuration")
 public class System extends JsonRestService {
 
     /**
@@ -58,10 +51,6 @@ public class System extends JsonRestService {
 
     @Override
     @Path("/{sysInfoType}/{category}")
-    @ApiOperation(value="Retrieve system information",
-        notes="The sysInfoType path segment is mandatory.  If {category} is not present, "
-                + "returns a shallow list of available sysInfoCategories.",
-        response=SysInfoCategory.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         SystemServices systemServices = ServiceLocator.getSystemServices();
         String[] segments = getSegments(path);
@@ -85,9 +74,6 @@ public class System extends JsonRestService {
 
     @Override
     @Path("/config")
-    @ApiOperation(value="Update configuration", response=StatusMessage.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="ConfigValues", paramType="body", required=true, dataType="java.lang.Object")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         String[] segments = getSegments(path);

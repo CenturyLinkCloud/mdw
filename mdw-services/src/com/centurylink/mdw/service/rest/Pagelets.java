@@ -79,4 +79,5 @@ public class Pagelets extends JsonRestService {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
+
 }

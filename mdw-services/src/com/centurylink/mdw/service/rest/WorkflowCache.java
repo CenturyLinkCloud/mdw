@@ -27,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -36,11 +35,7 @@ import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.startup.StartupException;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/WorkflowCache")
-@Api("Workflow cache refresh")
 public class WorkflowCache extends JsonRestService {
 
     @Override
@@ -65,8 +60,6 @@ public class WorkflowCache extends JsonRestService {
 
     @Override
     @Path("/{cacheName}")
-    @ApiOperation(value="Refresh the entire MDW workflow cache, or an individual cache",
-        notes="If {cacheName} is present a single cache is refresh, otherwise all caches are refreshed", response=StatusMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
 

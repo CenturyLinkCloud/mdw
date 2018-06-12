@@ -31,7 +31,6 @@ import org.json.JSONObject;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.SystemMessages;
-import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.VcsArchiver;
@@ -51,13 +50,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/GitVcs")
-@Api("Git service for VCS Assets")
 public class GitVcs extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -113,11 +106,6 @@ public class GitVcs extends JsonRestService {
      */
     @Override
     @Path("/{gitPath}")
-    @ApiOperation(value="Interact with Git for VCS Assets",
-        notes="Performs the requested {Action} on {gitPath}", response=StatusMessage.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="Action", paramType="query", dataType="string"),
-        @ApiImplicitParam(name="includeMeta", paramType="query", dataType="boolean")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
 

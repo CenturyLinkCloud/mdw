@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.JsonExport;
 import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -48,11 +49,12 @@ import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;
 
-@Api(hidden=true)
 public abstract class JsonRestService extends RestService implements JsonService {
 
     public String getJson(JSONObject json, Map<String,String> headers) throws ServiceException {
         String path = headers.get(Listener.METAINFO_REQUEST_PATH);
+        if (path.startsWith("/api/") && !isApi())
+            throw new ServiceException(Status.NOT_FOUND);
         try {
             JSONObject response;
             User user = authorize(path, json, headers);
@@ -290,6 +292,14 @@ public abstract class JsonRestService extends RestService implements JsonService
     protected int notifyProcess(String packageName, String eventId, String eventMessage) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         return workflowServices.notify(PackageCache.getPackage(packageName), eventId, eventMessage);
+    }
+
+    /**
+     * True if should expose via the /api/* path.  This path indicates public consumption,
+     * versus /services/*, which is not included in swaggers and meant for internal use.
+     */
+    public boolean isApi() {
+        return this.getClass().getAnnotation(Api.class) != null;
     }
 
 }

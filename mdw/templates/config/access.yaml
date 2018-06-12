@@ -24,6 +24,7 @@ requireHttps:
 authExclusions:
   - '/login'
   - '/error'
+  - '/js/nav.json'
   - '/noIe.html'
   - '/images/*'
   - '/css/*'

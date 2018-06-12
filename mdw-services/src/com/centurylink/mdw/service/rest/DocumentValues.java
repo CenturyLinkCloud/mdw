@@ -29,11 +29,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/DocumentValues")
-@Api("Document String Values")
 public class DocumentValues extends JsonRestService {
 
     @Override
@@ -48,8 +44,6 @@ public class DocumentValues extends JsonRestService {
      */
     @Override
     @Path("/{documentId}")
-    @ApiOperation(value="Retrieve a String value of a Document",
-        response=String.class)
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
@@ -66,5 +60,4 @@ public class DocumentValues extends JsonRestService {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path, e);
         }
     }
-
 }

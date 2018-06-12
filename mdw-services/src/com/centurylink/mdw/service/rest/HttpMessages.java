@@ -36,11 +36,7 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/HttpMessages")
-@Api("Http Helper to send Message")
 public class HttpMessages extends JsonRestService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -57,8 +53,6 @@ public class HttpMessages extends JsonRestService {
     }
 
     @Override
-    @ApiOperation(value="http post call",
-    notes="Request must contain a valid URL, payload and user.", response=HttpMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
@@ -101,9 +95,6 @@ public class HttpMessages extends JsonRestService {
     }
 
     @Override
-    @ApiOperation(value="http Get call",
-    notes="Request must contain a valid URL and user",
-    response=HttpMessage.class)
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
         String response = null;
@@ -147,8 +138,6 @@ public class HttpMessages extends JsonRestService {
     }
 
     @Override
-    @ApiOperation(value="http put call",
-    notes="Request must contain a valid URL, payload and user.", response=HttpMessage.class)
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
@@ -192,8 +181,6 @@ public class HttpMessages extends JsonRestService {
     }
 
     @Override
-    @ApiOperation(value="http delete call",
-    notes="Request must contain a valid URL and user.", response=HttpMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
@@ -242,8 +229,6 @@ public class HttpMessages extends JsonRestService {
     }
 
     @Override
-    @ApiOperation(value="http patch call",
-    notes="Request must contain a valid URL, payload and user.", response=HttpMessage.class)
     public JSONObject patch(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
@@ -285,5 +270,4 @@ public class HttpMessages extends JsonRestService {
         }
         return requestMessage.getJson();
     }
-
 }

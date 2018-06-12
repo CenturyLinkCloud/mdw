@@ -31,15 +31,11 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * Important: This service does not actually authenticate the user.  The authentication is assumed to have already taken
  * place in the Security Servlet Filter or in AuthUtils, depending on the auth type.
  */
 @Path("/AuthenticatedUser")
-@Api("MDWHub authenticated user")
 public class AuthenticatedUser extends JsonRestService {
 
     @Override
@@ -51,7 +47,6 @@ public class AuthenticatedUser extends JsonRestService {
      * Retrieve the current authenticated user.
      */
     @Override
-    @ApiOperation(value="Retrieves the user as authenticated by MDW", response=User.class)
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         // we trust this header value because only MDW can set it
         String authUser = (String)headers.get(Listener.AUTHENTICATED_USER_HEADER);

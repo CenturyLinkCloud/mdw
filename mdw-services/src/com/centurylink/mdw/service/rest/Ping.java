@@ -29,11 +29,7 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/Ping")
-@Api("Ping service echos back the request content")
 public class Ping extends JsonRestService {
 
     @Override
@@ -53,8 +49,6 @@ public class Ping extends JsonRestService {
 
     @Override
     @Path("/{notused}")
-    @ApiOperation(value="Ping request",
-        notes="Echos the request contents in the response")
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
     throws ServiceException, JSONException {
         if (content.has("ping")) {

@@ -29,10 +29,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import io.swagger.annotations.Api;
-
 @Path("/AuditLog")
-@Api("Log Event")
 public class AuditLog extends JsonRestService {
 
     @Override

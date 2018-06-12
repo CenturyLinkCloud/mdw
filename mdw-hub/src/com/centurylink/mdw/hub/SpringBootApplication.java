@@ -116,7 +116,7 @@ public class SpringBootApplication {
                 FilterMap filterMap = new FilterMap();
                 filterMap.setFilterName(corsFilter.getFilterName());
                 filterMap.addURLPattern("/api/*");
-                filterMap.addURLPattern("/services/*");
+                filterMap.addURLPattern("/services/AppSummary");
                 context.addFilterMap(filterMap);
             }
         };

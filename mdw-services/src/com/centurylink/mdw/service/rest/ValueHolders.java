@@ -29,13 +29,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/ValueHolders")
-@Api("Runtime value holders")
 public class ValueHolders extends JsonRestService {
 
     @Override
@@ -48,10 +42,6 @@ public class ValueHolders extends JsonRestService {
      */
     @Override
     @Path("/{valueName}/{value}")
-    @ApiOperation(value = "Retrieve holder IDs for specific names and value patterns (supports *).",
-            response=String.class, responseContainer="Array")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="holderType", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String, String> headers)
             throws ServiceException, JSONException {
         Map<String, String> parameters = getParameters(headers);
@@ -69,5 +59,4 @@ public class ValueHolders extends JsonRestService {
             throw new ServiceException("Error loading value holders for " + valueName, ex);
         }
     }
-
 }

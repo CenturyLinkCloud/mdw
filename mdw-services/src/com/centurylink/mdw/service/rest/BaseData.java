@@ -32,17 +32,13 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.user.Role;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/BaseData")
-@Api("Custom baseline data")
 public class BaseData extends JsonRestService {
 
     @Override
@@ -71,9 +67,6 @@ public class BaseData extends JsonRestService {
      */
     @Override
     @Path("/{dataType}")
-    @ApiOperation(value="Retrieve app-specific baseline data",
-        notes="Supported dataTypes include VariableTypes and TaskCategories",
-        responseContainer="Array")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         String dataType = getSegment(path, 1);
         if (dataType == null)
@@ -103,7 +96,6 @@ public class BaseData extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-
     }
 }
 

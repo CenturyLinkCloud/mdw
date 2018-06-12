@@ -33,11 +33,7 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @Path("/JmsMessages")
-@Api("Jms Helper to send Message")
 public class JmsMessages extends JsonRestService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -54,8 +50,6 @@ public class JmsMessages extends JsonRestService {
     }
 
     @Override
-    @ApiOperation(value="jms call",
-    notes="Request must contain a valid endpoint, queue name, payload and authenticated user.", response=JmsMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         long before = java.lang.System.currentTimeMillis();
