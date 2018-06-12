@@ -105,20 +105,18 @@ public class SpringBootApplication {
                         return "/error";
                     }
                 });
+                // CORS access is wide open
                 FilterDef corsFilter = new FilterDef();
                 corsFilter.setFilterName("CorsFilter");
                 corsFilter.setFilterClass("org.apache.catalina.filters.CorsFilter");
-         //       corsFilter.addInitParameter("cors.allowed.methods", "GET,POST,OPTIONS");
+                corsFilter.addInitParameter("cors.allowed.methods", "GET,POST,PUT,DELETE,HEAD,OPTIONS");
                 corsFilter.addInitParameter("cors.allowed.headers", "Authorization,Content-Type,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Accept-Encoding,Accept-Language,Cache-Control,Connection,Host,Pragma,Referer,User-Agent");
-         //       corsFilter.addInitParameter("cors.exposed.headers", "Authorization");
-         //       corsFilter.addInitParameter("cors.allowed.origins", "*");
+                corsFilter.addInitParameter("cors.allowed.origins", "*");
                 context.addFilterDef(corsFilter);
                 FilterMap filterMap = new FilterMap();
                 filterMap.setFilterName(corsFilter.getFilterName());
-        //        filterMap.addURLPattern("*");
-                filterMap.addURLPattern("/services/AppSummary");
-                filterMap.addURLPattern("/services/com/centurylink/mdw/central/users");
-                filterMap.addURLPattern("/services/com/centurylink/mdw/central/auth");
+                filterMap.addURLPattern("/api/*");
+                filterMap.addURLPattern("/services/*");
                 context.addFilterMap(filterMap);
             }
         };
