@@ -2,24 +2,27 @@
 [![Dependency Status](https://gemnasium.com/badges/github.com/CenturyLinkCloud/mdw.svg)](https://gemnasium.com/github.com/CenturyLinkCloud/mdw)
 [![Issue Count](https://codeclimate.com/github/CenturyLinkCloud/mdw/badges/issue_count.svg)](https://codeclimate.com/github/CenturyLinkCloud/mdw)
 
-### Core Developer Setup 
+### MDW Documentation
+  - https://centurylinkcloud.github.io/mdw/
+
+### Core Developer Setup
 1. Prerequisites
    - Eclipse Oxygen for JavaEE Developers:                              
      http://www.eclipse.org/downloads/eclipse-packages/
    - MDW Designer Plugin:
-     https://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/ 
+     https://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/
    - Tomcat 8/8.5:                                  
      http://tomcat.apache.org/download-80.cgi
    - Postman:                                            
      https://www.getpostman.com/apps
-     
+
 2. Get the Source Code
    - Command-line Git:  
      `git clone https://github.com/CenturyLinkCloud/mdw.git mdw6`
    - Then in Eclipse:  
      Import the projects into your Eclipse workspace:  
      File > Import > General > Existing Projects into Workspace
-   
+
 3. Set up npm (One-time step)
    - Install NodeJS:                                                                     
      https://docs.npmjs.com/getting-started/installing-node
@@ -39,7 +42,7 @@
    - mdw/config/access.yaml (set devUser to yourself)
    - mdw/config/seed_users.json
    - (On Linux or Mac): Copy mdw-common/src/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
-   
+
 7. Deploy on Tomcat in Eclipse
    - In Eclipse Servers view, right-click and select New > Server  
      **Important**: Select the Apache > Tomcat 8/8.5 (MDW) runtime
@@ -52,7 +55,7 @@
      -Dmdw.config.location=c:/workspaces/mdw/mdw/config
      -Xms512m -Xmx1024m
      ```
-     
+
 8. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
    - (On Linux and Mac): Right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.  If initially mdw-hub publishing is incomplete (missing index.html, etc):
@@ -60,13 +63,13 @@
 	 - In Eclipse Servers view, right-click on your server and select Clean from the menu.
    - Check MDWHub access:                                                
      http://localhost:8080/mdw
-     
+
 9. Run the Tests
    - Access the autotest page in MDWHub:
      http://localhost:8080/mdw/#/tests
    - Use the Settings button to enable Stubbing and increase Threads to 10
    - Select all test cases, and execute
-   
+
 ### Code Format
    - https://centurylinkcloud.github.io/mdw/docs/code/format/
 
@@ -97,4 +100,3 @@
      ```
    - Access locally in your browser:
      http://127.0.0.1:4000/
-      

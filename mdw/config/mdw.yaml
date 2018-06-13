@@ -1,9 +1,6 @@
-container:
-  messenger: jms
-  jms.provider: ActiveMQ
-  datasource.provider: Tomcat
-  threadpool.provider: MDW
-
+app:
+  id: mdw6
+  
 database:
   driver: org.mariadb.jdbc.Driver
   url: jdbc:mariadb://localhost:3308/mdw
@@ -13,12 +10,6 @@ database:
   poolMaxIdle: 3
   validationQuery: select 1 from dual
 
-# optional mongodb
-# mongodb:
-#   host: localhost
-#   port: 27017
-
-# asset location info (use absolute paths when running thru eclipse wtp) 
 asset:
   location: ../mdw-workflow/assets
 
@@ -28,55 +19,15 @@ git:
   branch: master
   user: anonymous
 
-temp.dir: .temp
-
-# clustered server instances
-servers:
-  localhost:
-    ports:
-      - 8080
+temp.dir: ./temp
 
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
 discovery.url: http://repo.maven.apache.org/maven2
-central.url: https://mdw-central.com
 
-app:
-  id: mdw6
-
-# for SimpleLogger
 logging:
   level: DEBUG
-
-# email notifications
-mail:
-  smtp.host: mymailhost
-  smtp.port: 25
-  smtp.timeout: 10000
-  connection.timeout: 10000
-  
-# ldap
-ldap:
-  host: ldap.myorg.com
-  port: 1636
-  base.dn: dc=ad,dc=intra,dc=com
 
 filepanel:
   root.dirs:
     - ./logs
-    
-# Custom JWT Provider    
-#  jwt.custom:
-#    issuer: cxg7i.test.intranet
-#    userClaim: userid
-#    key:
-       
-#timer.task:
-#  ProcessCleanup: # run daily at 2:30 am
-#    TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
-#    Schedule: 30 2 * * ? *
-#     RuntimeCleanupScript: Cleanup-Runtime.sql
-#     ProcessExpirationAgeInDays: 180
-#     ExternalEventExpirationAgeInDays: 180
-#     MaximumProcessExpiration: 10000
-#     CommitInterval: 10000

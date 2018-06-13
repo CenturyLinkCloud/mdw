@@ -62,7 +62,7 @@ public class TomcatNaming implements NamingProvider {
     }
 
     public int getServerPort() throws Exception {
-        // paas and spring boot configs checked first
+        // cloud foundry and spring boot configs checked first
         String portStr = System.getenv("CF_INSTANCE_PORT");
         if (portStr == null)
             portStr = System.getProperty("mdw.server.port");

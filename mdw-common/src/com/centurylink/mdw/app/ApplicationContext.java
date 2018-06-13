@@ -17,16 +17,13 @@ package com.centurylink.mdw.app;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.jar.Attributes;
@@ -49,6 +46,7 @@ import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.container.plugin.MdwDataSource;
+import com.centurylink.mdw.container.plugin.tomcat.TomcatDataSource;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.model.system.ServerList;
@@ -126,7 +124,7 @@ public class ApplicationContext {
             logger = LoggerUtil.getStandardLogger();
             containerName = container;
 
-            // use reflection (or better yet (TODO) injection) to avoid build-time dependencies
+            // use reflection to avoid build-time dependencies
             String pluginPackage = MdwDataSource.class.getPackage().getName() + "." + containerName.toLowerCase();
             String namingProviderClass = pluginPackage + "." + containerName + "Naming";
             namingProvider = Class.forName(namingProviderClass).asSubclass(NamingProvider.class).newInstance();
@@ -135,11 +133,10 @@ public class ApplicationContext {
             String ds = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_DATASOURCE_PROVIDER);
             if (ds == null)
                 ds = PropertyManager.getProperty("mdw.container.datasource_provider"); // compatibility
-            if (StringHelper.isEmpty(ds) || ds.equals(DataSourceProvider.MDW)) {
+            if (StringHelper.isEmpty(ds) || ds.equals(DataSourceProvider.TOMCAT)) {
+                dataSourceProvider = new TomcatDataSource();
+            } else if (DataSourceProvider.MDW.equals(ds)){
                 dataSourceProvider = new MdwDataSource();
-            } else if (DataSourceProvider.TOMCAT.equals(ds)){
-                    String dsProviderClass = pluginPackage + "." + ds + "DataSource";
-                    dataSourceProvider = Class.forName(dsProviderClass).asSubclass(DataSourceProvider.class).newInstance();
             } else {
                 String dsProviderClass = pluginPackage + "." + ds + "DataSource";
                 dataSourceProvider = Class.forName(dsProviderClass).asSubclass(DataSourceProvider.class).newInstance();
@@ -151,7 +148,8 @@ public class ApplicationContext {
                 jms = PropertyManager.getProperty("mdw.container.jms_provider"); // compatibility
             if (StringHelper.isEmpty(jms))
                 jms = JmsProvider.ACTIVEMQ;
-            else if (JmsProvider.ACTIVEMQ.equals(jms)) {
+
+            if (JmsProvider.ACTIVEMQ.equals(jms)) {
                 if (jmsProvider == null) {
                     // use below to avoid build time dependency
                     jmsProvider = Class.forName("com.centurylink.mdw.container.plugin.activemq.ActiveMqJms").asSubclass(JmsProvider.class).newInstance();
@@ -222,47 +220,33 @@ public class ApplicationContext {
         return appId;
     }
 
-    /**
-     * Returns the server host name
-     * TODO: infer default port based on https/http in mdw.services.url.
-     */
-    public static String getServerHost(){
+    public static String getServerHost() {
         if (serverHost == null) {
-            if (isPaaS()) {
-                serverHost = getMasterServer().getHost();
-            }
-            else {
-                try {
-                    // unravel cloud deployment host name
-                    String localIp = new String(InetAddress.getLocalHost().getHostAddress());
-                    for (Server server : getCompleteServerList().getServers()) {
-                        String host = server.getHost();
-                        if (host.equals("localhost")) {
+            try {
+                // unravel cloud deployment host name
+                String localIp = new String(InetAddress.getLocalHost().getHostAddress());
+                for (Server server : getServerList().getServers()) {
+                    String host = server.getHost();
+                    if (host.equals("localhost")) {
+                        serverHost = host;
+                    }
+                    else if (host.indexOf('.') < 0) {
+                        // encourage fully-qualified domain names
+                        logger.severe("*** WARNING *** Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
+                    }
+                    for (InetAddress address : InetAddress.getAllByName(host)) {
+                        if (address.getHostAddress().equals(localIp)) {
                             serverHost = host;
                         }
-                        else if (host.indexOf('.') < 0) {
-                            // encourage fully-qualified domain names
-                            Exception ex = new UnknownHostException("Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
-                            logger.severeException(ex.getMessage(), ex);
-                        }
-                        if (server.getPort() <= 0) {
-                            // We need the port specified, even if it's just port 80
-                            logger.severe("Specify the port for each instance (use 80 if default port) in " + PropertyNames.MDW_SERVER_LIST);
-                        }
-                        for (InetAddress address : InetAddress.getAllByName(host)) {
-                            if (address.getHostAddress().equals(localIp)) {
-                                serverHost = host;
-                            }
-                        }
-                    }
-                    if (serverHost == null) {
-                        // fall back to the hostname as known locally
-                        serverHost = InetAddress.getLocalHost().getHostName();
                     }
                 }
-                catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                if (serverHost == null) {
+                    // fall back to the hostname as known locally
+                    serverHost = InetAddress.getLocalHost().getHostName();
                 }
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
             }
         }
 
@@ -272,16 +256,11 @@ public class ApplicationContext {
     private static int serverPort = -1;
     public static int getServerPort() {
         if (serverPort == -1) {
-            if (isPaaS()) {
-                serverPort = getMasterServer().getPort();
+            try {
+                serverPort = getNamingProvider().getServerPort();
             }
-            else {
-                try {
-                    serverPort = getNamingProvider().getServerPort();
-                }
-                catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
-                }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
             }
         }
         return serverPort;
@@ -422,8 +401,15 @@ public class ApplicationContext {
         return servicesUrl;
     }
 
-    public static String getLocalServiceUrl() {
-        return "http://" + getServer() + "/" + getServicesContextRoot();
+    private static String localServiceAccessUrl;
+    public static String getLocalServiceAccessUrl() {
+        if (localServiceAccessUrl == null) {
+            localServiceAccessUrl = "http://localhost";
+            if (getServerPort() > 0)
+                localServiceAccessUrl += ":" + getServerPort();
+            localServiceAccessUrl += "/" + ApplicationContext.getServicesContextRoot();
+        }
+        return localServiceAccessUrl;
     }
 
     public static String getMdwHubUrl() {
@@ -471,16 +457,6 @@ public class ApplicationContext {
         return new Server(getServerHost(), getServerPort());
     }
 
-    public static Server getMasterServer() {
-        if (!isPaaS() && getServerList().size() == 1)
-            return getServer(); // in case no host match in server list
-        return getServerList().get(0);
-    }
-
-    public static boolean isMasterServer() {
-        return isPaaS() || getServerList().size() <= 1 || getMasterServer().equals(getServer());
-    }
-
     public static String getTempDirectory() {
         String tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
         if (tempDir == null)
@@ -509,10 +485,6 @@ public class ApplicationContext {
 
     public static boolean isDevelopment() {
         return "dev".equalsIgnoreCase(getRuntimeEnvironment());
-    }
-
-    public static boolean isLocalhost() {
-        return "localhost".equals(getServerHost());
     }
 
     private static String devUser;
@@ -549,7 +521,7 @@ public class ApplicationContext {
             return serviceUser;
     }
 
-    public static boolean isPaaS() {
+    public static boolean isCloudFoundry() {
          return System.getenv("VCAP_APPLICATION") != null;
     }
 
@@ -605,17 +577,6 @@ public class ApplicationContext {
                 routingServerList = new ServerList();
         }
         return routingServerList;
-    }
-
-    private static ServerList completeServerList;
-    /**
-     * @return hosta:8080,hosta:8181,hostb:8080
-     */
-    public static ServerList getCompleteServerList() {
-        if (completeServerList == null) {
-            completeServerList = new ServerList(getServerList(), getRoutingServerList());
-        }
-        return completeServerList;
     }
 
     private static ClassLoader defaultClassLoader = ApplicationContext.class.getClassLoader();
@@ -685,23 +646,6 @@ public class ApplicationContext {
                 hubOverrideRoot = new File(assetRoot + "/" + getHubOverridePackage().replace('.', '/'));
         }
         return hubOverrideRoot;
-    }
-
-    public static List<URL> getOtherServerUrls(URL thisUrl) throws IOException {
-        List<URL> serverUrls = new ArrayList<URL>();
-        // Due to different domains for same servers in some environments
-        // (host1.ne1.savvis.net and host1.dev.intranet), compare host names sans domain
-        String thisHost = getServerHost().indexOf(".") > 0 ? getServerHost().substring(0, getServerHost().indexOf(".")) : getServerHost();
-        int thisPort = getServerPort() == 80 || getServerPort() == 443 ? -1 : getServerPort();
-        for (Server server : getCompleteServerList().getServers()) {
-            String serviceUrl = "http://" + server.toString() + thisUrl.getPath();
-            URL otherUrl = new URL(serviceUrl);
-            String otherHost = otherUrl.getHost().indexOf(".") > 0 ? otherUrl.getHost().substring(0, otherUrl.getHost().indexOf(".")) : otherUrl.getHost();
-            int otherPort = otherUrl.getPort() == 80 || otherUrl.getPort() == 443 ? -1 : otherUrl.getPort();
-            if (!(thisHost.equalsIgnoreCase(otherHost)) || thisPort != otherPort)
-                serverUrls.add(otherUrl);
-        }
-        return serverUrls;
     }
 
     public static String getWebSocketUrl() {

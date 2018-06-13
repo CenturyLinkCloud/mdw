@@ -320,7 +320,6 @@ public class SystemServicesImpl implements SystemServices {
         }
         systemInfos.add(new SysInfo("Server port", String.valueOf(ApplicationContext.getServerPort())));
         systemInfos.add(new SysInfo("Server name", ApplicationContext.getServer().toString()));
-        systemInfos.add(new SysInfo("Master server", ApplicationContext.getMasterServer().toString()));
         systemInfos.add(new SysInfo("Runtime env", ApplicationContext.getRuntimeEnvironment()));
         systemInfos.add(new SysInfo("Startup dir", System.getProperty("user.dir")));
         systemInfos.add(new SysInfo("App user", System.getProperty("user.name")));
@@ -499,7 +498,7 @@ public class SystemServicesImpl implements SystemServices {
         if (mdwCmd.get(0).equals("mdw"))
             mdwCmd.remove(0);
         if (!mdwCmd.isEmpty()) {
-            if (ApplicationContext.isPaaS() && System.getProperty("mdw.config.location") == null) {
+            if (ApplicationContext.isCloudFoundry() && System.getProperty("mdw.config.location") == null) {
                 String configLoc = ApplicationContext.getTempDirectory() + File.separator + "config";
                 System.setProperty("mdw.config.location", configLoc);
                 Files.createDirectories(Paths.get(configLoc));

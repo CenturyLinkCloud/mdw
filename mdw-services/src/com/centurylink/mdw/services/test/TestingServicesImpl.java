@@ -18,6 +18,7 @@ package com.centurylink.mdw.services.test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -395,7 +396,39 @@ public class TestingServicesImpl implements TestingServices {
         logger.info("Test execution canceled by: " + user);
     }
 
-    private static TestExecConfig testExecConfig = new TestExecConfig(); // default options
-    public TestExecConfig getTestExecConfig() { return testExecConfig; }
-    public void setTestExecConfig(TestExecConfig config) { testExecConfig = config; }
+    private static TestExecConfig testExecConfig;
+    public TestExecConfig getTestExecConfig() throws ServiceException {
+        if (testExecConfig == null) {
+            try {
+                File configFile = getTestConfigFile();
+                if (configFile != null && configFile.isFile())
+                    testExecConfig = new TestExecConfig(new JSONObject(new String(Files.readAllBytes(Paths.get(configFile.getPath())))));
+                else
+                    testExecConfig = new TestExecConfig();
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            }
+        }
+        return testExecConfig;
+    }
+    public void setTestExecConfig(TestExecConfig config) throws ServiceException {
+        testExecConfig = config;
+        try {
+            File configFile = getTestConfigFile();
+            if (configFile != null) {
+                Files.write(Paths.get(configFile.getPath()), config.getJson().toString(2).getBytes());
+            }
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+        }
+    }
+
+    private File getTestConfigFile() throws IOException {
+        File resultsDir = getTestResultsDir();
+        if (resultsDir == null)
+            return null;
+        return new File(resultsDir + "/mdw-test-config.json");
+    }
 }

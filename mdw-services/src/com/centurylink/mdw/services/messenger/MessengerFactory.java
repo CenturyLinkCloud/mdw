@@ -41,7 +41,7 @@ public class MessengerFactory {
         else if (RMI.equalsIgnoreCase(v)) internalMessenger = RMI;
         else if (HTTP.equalsIgnoreCase(v)) internalMessenger = HTTP;
         else if (SAME_SERVER.equalsIgnoreCase(v)) internalMessenger = SAME_SERVER;
-        else internalMessenger  = (ApplicationContext.getJmsProvider()==null)?HTTP:JMS;
+        else internalMessenger = (ApplicationContext.getJmsProvider()==null) ? HTTP : JMS;
         logger.info("Internal Messenger: " + internalMessenger);
     }
 

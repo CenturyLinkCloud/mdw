@@ -160,28 +160,12 @@ public class RoutingServiceMonitor implements ServiceMonitor {
 
                 if (!newHost.equalsIgnoreCase(origHost) || !(newPort == origPort) || !newQuery.equalsIgnoreCase(origQuery) || !origRequestUrl.getPath().equals(destination.getPath()))
                     return destination;
-
-        /*        if (origRequestUrl.lastIndexOf(":") < 8 && destination.toString().lastIndexOf(":") > 7) {
-                    origRequestUrl = origRequestUrl.substring(0, origRequestUrl.indexOf("/", 9)) + ":" + origRequestUrl.substring(origRequestUrl.indexOf("/", 9));
-                }
-                if (queryIdx > 0 && !StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING))) {
-                    origRequestUrl = origRequestUrl + "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
-                    if (!destination.toString().equals(origRequestUrl))
-                        return destination;
-                }
-                else if (!destination.toString().equals(origRequestUrl))
-                    return destination;
-                    */
             }
         }
         return null;
     }
 
     protected boolean isRoutingEnabled() {
-        return PropertyManager.getBooleanProperty(PropertyNames.MDW_ROUTING_REQUESTS_ENABLED, false) &&
-               !ApplicationContext.getRoutingServerList().isEmpty() &&
-               (ApplicationContext.getRoutingServerList().contains(ApplicationContext.getServer()) ||
-                 (ApplicationContext.isPaaS() && ApplicationContext.getRoutingServerList().contains(ApplicationContext.getMasterServer()))) &&
-               !ApplicationContext.getServerList().isEmpty();
+        return PropertyManager.getBooleanProperty(PropertyNames.MDW_ROUTING_REQUESTS_ENABLED, false);
     }
 }

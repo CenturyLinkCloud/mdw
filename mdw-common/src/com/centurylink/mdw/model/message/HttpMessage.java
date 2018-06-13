@@ -40,8 +40,7 @@ public class HttpMessage implements Serializable, Jsonable {
     {
         if (url == null)
         {
-            url = "http://" + ApplicationContext.getServerHost() + ":" + ApplicationContext.getServerPort()
-            + "/" + ApplicationContext.getServicesContextRoot() + "/services";
+            url = ApplicationContext.getServicesUrl() + "/services";
         }
         return url;
     }

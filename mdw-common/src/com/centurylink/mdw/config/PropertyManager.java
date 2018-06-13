@@ -157,7 +157,7 @@ public abstract class PropertyManager {
             System.out.println("Using Property Manager: " + pm);
             try {
                 Class<?> cls = PropertyManager.class.getClassLoader().loadClass(pm);
-                if (ApplicationContext.isPaaS() && cls.getName().equals(YamlPropertyManager.class.getName())) {
+                if (ApplicationContext.isCloudFoundry() && cls.getName().equals(YamlPropertyManager.class.getName())) {
                     String yamlSettings = System.getenv("mdw_settings");
                     instance = new YamlPropertyManager(yamlSettings);
                 }

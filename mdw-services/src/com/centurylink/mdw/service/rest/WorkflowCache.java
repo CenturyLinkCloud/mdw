@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,14 +79,8 @@ public class WorkflowCache extends JsonRestService {
             else {
                 new CacheRegistration().refreshCache(singleCacheName);
             }
-
-            if (content.has("distributed") && content.getBoolean("distributed"))
-                propagatePost(content, headers);
         }
         catch (StartupException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
-        }
-        catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
         }
 

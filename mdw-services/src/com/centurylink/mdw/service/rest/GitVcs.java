@@ -173,9 +173,6 @@ public class GitVcs extends JsonRestService {
                 }
 
                 archiver.getProgressMonitor().done();
-
-                if (content.has("distributed") && content.getBoolean("distributed"))
-                    propagatePost(content, headers);
             }
             else if ("push".equals(action)) {
                 if (pkgName != null) {

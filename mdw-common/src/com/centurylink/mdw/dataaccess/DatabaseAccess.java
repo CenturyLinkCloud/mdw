@@ -187,8 +187,7 @@ public class DatabaseAccess {
      * Whether this VM instance should start up an embedded database.
      */
     private static boolean isEmbeddedDb(String jdbcUrl) {
-        String dbprop = PropertyManager.getProperty(PropertyNames.MDW_DB_EMBEDDED_HOST_PORT);
-        return (jdbcUrl.contains("localhost") || (dbprop != null && jdbcUrl.contains(ApplicationContext.getServerHost()) && ApplicationContext.getServer().toString().equalsIgnoreCase(dbprop)));
+        return (jdbcUrl.startsWith("jdbc:mariadb://localhost:") || jdbcUrl.startsWith("jdbc:mysql://localhost:"));
     }
 
     private static synchronized void checkAndStartEmbeddedDb() throws SQLException {

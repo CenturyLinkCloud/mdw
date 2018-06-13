@@ -62,7 +62,7 @@ public class TimerTaskRegistration implements StartupService {
     private void configureTimers() throws StartupException {
         try {
             String v = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_MESSENGER);
-            int period_default = ("jms".equalsIgnoreCase(v))?60:5;
+            int period_default = (v == null || "jms".equalsIgnoreCase(v)) ? 60 : 5;
             int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_INITIAL_DELAY, 120);
             int unschedDelay = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_DELAY, 90);
             int unschedPeriod = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_INTERVAL, 300);

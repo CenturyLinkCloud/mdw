@@ -278,8 +278,6 @@ public class Assets extends JsonRestService {
                 progressMonitor.done();
                 tempFile.delete();
             }
-
-            this.propagatePut(content, headers);
         }
         catch (Exception ex) {
             SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
