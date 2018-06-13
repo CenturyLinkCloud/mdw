@@ -193,7 +193,7 @@ public class Run implements Operation {
 
     protected String getBootJar() throws IOException {
         String mdwVersion = new Version().getMdwVersion(getProjectDir());
-        return "bin" + File.separator + "mdw-boot-" + mdwVersion + ".jar";
+        return "mdw-boot-" + mdwVersion + ".jar";
     }
 
     protected File getLogDir() {

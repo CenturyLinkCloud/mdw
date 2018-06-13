@@ -92,23 +92,16 @@ public class Install extends Setup {
         }
         else {
             // download spring boot from binaries-url
-            File binDir = new File(getProjectDir() + "/bin");
-            File jarFile = new File(binDir + "/mdw-boot-" + mdwVer + ".jar");
-            if (binDir.isDirectory()) {
-                if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
-                    System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
-                    return this;
-                }
-
-                for (File file : binDir.listFiles()) {
-                    if (file.isFile() && file.getName().startsWith("mdw-") && file.getName().endsWith(".jar")) {
-                        // remove any mdw jars
-                        Files.delete(Paths.get(file.getPath()));
-                    }
-                }
+            File jarFile = new File(getProjectDir().getPath() + "/mdw-boot-" + mdwVer + ".jar");
+            if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
+                System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
+                return this;
             }
-            else {
-                Files.createDirectories(Paths.get(binDir.getPath()));
+            for (File file : getProjectDir().listFiles()) {
+                if (file.isFile() && file.getName().startsWith("mdw-") && file.getName().endsWith(".jar")) {
+                    // remove any mdw jars
+                    Files.delete(Paths.get(file.getPath()));
+                }
             }
 
             if (binariesUrl.startsWith("https://github.com/")) {
