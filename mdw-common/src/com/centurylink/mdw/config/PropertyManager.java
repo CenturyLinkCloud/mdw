@@ -31,7 +31,7 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.file.FileHelper;
 
-public abstract class PropertyManager implements CacheService {
+public abstract class PropertyManager {
 
     public static final String MDW_PROPERTIES_FILE_NAME = "mdw.properties";
     public static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";

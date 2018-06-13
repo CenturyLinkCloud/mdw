@@ -52,11 +52,9 @@ public class PaaSPropertyManager extends PropertyManager {
         }
     }
 
-    @Override
     public void refreshCache() throws Exception {
     }
 
-    @Override
     public void clearCache() {
     }
 

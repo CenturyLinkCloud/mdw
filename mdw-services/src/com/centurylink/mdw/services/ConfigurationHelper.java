@@ -61,7 +61,7 @@ public class ConfigurationHelper implements Serializable{
         CacheRegistration.getInstance().refreshCaches();
      }
      else {
-       PropertyManager.getInstance().refreshCache();
+//       PropertyManager.getInstance().refreshCache();
        LoggerUtil.getStandardLogger().refreshCache();  // in case log props have changed
      }
 

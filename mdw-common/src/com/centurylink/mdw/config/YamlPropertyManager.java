@@ -108,7 +108,6 @@ public class YamlPropertyManager extends PropertyManager {
         }
     }
 
-    @Override
     public void refreshCache() throws Exception {
         // remember asset location (for PaaS)
         String assetLocation = getProperty("mdw.asset.location");
@@ -117,7 +116,6 @@ public class YamlPropertyManager extends PropertyManager {
             setStringProperty("mdw.asset.location", assetLocation);
     }
 
-    @Override
     public void clearCache() {
     }
 

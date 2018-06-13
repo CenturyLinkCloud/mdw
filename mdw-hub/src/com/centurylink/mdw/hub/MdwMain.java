@@ -97,7 +97,7 @@ public class MdwMain {
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
             CacheRegistration cacheMgr = new CacheRegistration();
-            cacheMgr.registerCache(PropertyManager.class.getName(), PropertyManager.getInstance());
+//            cacheMgr.registerCache(PropertyManager.class.getName(), PropertyManager.getInstance());
 
             logger.info("Starting Thread Pool");
             threadPool = ApplicationContext.getThreadPoolProvider();
@@ -217,7 +217,7 @@ public class MdwMain {
                 }
             }
 
-            PropertyManager.getInstance().clearCache();
+//            PropertyManager.getInstance().clearCache();
             logger.info("MDW shutdown complete");
         } catch (Throwable ex) {
             logger.severeException("StartupListener:onShutdown fails", ex);

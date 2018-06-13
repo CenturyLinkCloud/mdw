@@ -206,8 +206,8 @@ public class CacheRegistration implements StartupService {
         try {
             bulletin = SystemMessages.bulletinOn("Cache refresh in progress...");
             String propmgr = PropertyManager.class.getName();
-            if (excludedFormats == null || !excludedFormats.contains("PROPERTIES"))
-                refreshCache(propmgr);
+//            if (excludedFormats == null || !excludedFormats.contains("PROPERTIES"))
+//                refreshCache(propmgr);
             if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
                 CacheRegistry.getInstance().clearDynamicServices();
             synchronized (allCaches) {
