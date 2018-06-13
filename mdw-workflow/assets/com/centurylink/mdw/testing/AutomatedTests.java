@@ -29,7 +29,6 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
@@ -77,28 +76,23 @@ public class AutomatedTests extends JsonRestService {
     response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
             throws ServiceException, JSONException {
-        // results file resides on master instance (but avoid loop)
-        if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
-            String[] segments = getSegments(path);
-            if (segments.length == 6) {
-                if ("config".equals(segments[5]))
-                    return ServiceLocator.getTestingServices().getTestExecConfig().getJson();
-                else
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
-            }
-            TestCaseItem item = getTestCaseItem(segments);
-            if (item != null) {
-                return item.getJson();
-            }
-            TestCase singleCase = getTestCase(segments);
-            if (singleCase != null) {
-                return singleCase.getJson();
-            }
-            return ServiceLocator.getTestingServices().getTestCases().getJson();
+        // results file must be cross-mounted in multiserver envs
+        String[] segments = getSegments(path);
+        if (segments.length == 6) {
+            if ("config".equals(segments[5]))
+                return ServiceLocator.getTestingServices().getTestExecConfig().getJson();
+            else
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         }
-        else {
-            return masterServerGet(path);
+        TestCaseItem item = getTestCaseItem(segments);
+        if (item != null) {
+            return item.getJson();
         }
+        TestCase singleCase = getTestCase(segments);
+        if (singleCase != null) {
+            return singleCase.getJson();
+        }
+        return ServiceLocator.getTestingServices().getTestCases().getJson();
     }
 
     /**
@@ -111,8 +105,7 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestCaseList", paramType="body", dataType="com.centurylink.mdw.test.TestCaseList")})
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        // results file resides on master instance
-        if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
+        // results file must be cross-mounted in multiserver envs
             TestingServices testingServices = ServiceLocator.getTestingServices();
             TestExecConfig config = testingServices.getTestExecConfig();
             String user = getAuthUser(headers);
@@ -121,65 +114,61 @@ public class AutomatedTests extends JsonRestService {
                 testingServices.cancelTestExecution(user);
             }
             else if ("unit".equals(segments[5])) {
-                if (content == null)
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing body");
-                String testName = null;
-                try {
-                    testName = content.getString("name");
-                    String groovy = content.getString("groovy");
-                    Binding binding = new Binding();
-                    binding.setVariable("unitTest", this);
-                    binding.setVariable("onServer", true);
-                    GroovyShell shell = new GroovyShell(this.getClass().getClassLoader(), binding);
-                    Script gScript = shell.parse(groovy);
-                    gScript.run();
+            if (content == null)
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Missing body");
+            String testName = null;
+            try {
+                testName = content.getString("name");
+                String groovy = content.getString("groovy");
+                Binding binding = new Binding();
+                binding.setVariable("unitTest", this);
+                binding.setVariable("onServer", true);
+                GroovyShell shell = new GroovyShell(this.getClass().getClassLoader(), binding);
+                Script gScript = shell.parse(groovy);
+                gScript.run();
 
-                    return null;
+                return null;
+            }
+            catch (JSONException ex) {
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required fields name and/or groovy");
+            }
+            catch (Exception ex) {
+                try {
+                    return createAssertionErrorResponse(testName, ex);
+                }
+                catch (JSONException jex) {
+                    throw new ServiceException(jex.getMessage(), jex);
+                }
+            }
+            catch (AssertionError err) {
+                try {
+                    return createAssertionErrorResponse(testName, err);
                 }
                 catch (JSONException ex) {
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required fields name and/or groovy");
-                }
-                catch (Exception ex) {
-                    try {
-                        return createAssertionErrorResponse(testName, ex);
-                    }
-                    catch (JSONException jex) {
-                        throw new ServiceException(jex.getMessage(), jex);
-                    }
-                }
-                catch (AssertionError err) {
-                    try {
-                        return createAssertionErrorResponse(testName, err);
-                    }
-                    catch (JSONException ex) {
-                        throw new ServiceException(ex.getMessage(), ex);
-                    }
+                    throw new ServiceException(ex.getMessage(), ex);
                 }
             }
-            else {
-                try {
-                    if (segments.length > 6 && "allTests".equals(segments[6])) {
-                        config.setStubbing(true);
-                        testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
-                        return null;
-                    }
-                    else {
-                        TestCase singleCase = getTestCase(segments);
-                        if (singleCase != null)
-                            testingServices.executeCase(singleCase, user, config);
-                        else
-                            testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
-                    }
-                }
-                catch (IOException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
-                }
-            }
-            return null;
         }
         else {
-            return masterServerPost(path, content);
+            try {
+                if (segments.length > 6 && "allTests".equals(segments[6])) {
+                    config.setStubbing(true);
+                    testingServices.executeCases(ServiceLocator.getTestingServices().getTestCases(), user, config);
+                    return null;
+                }
+                else {
+                    TestCase singleCase = getTestCase(segments);
+                    if (singleCase != null)
+                        testingServices.executeCase(singleCase, user, config);
+                    else
+                        testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                }
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            }
         }
+        return null;
     }
 
     private TestCase getTestCase(String[] segments) throws ServiceException {
@@ -215,14 +204,9 @@ public class AutomatedTests extends JsonRestService {
         @ApiImplicitParam(name="TestExecConfig", paramType="body", dataType="com.centurylink.mdw.test.TestExecConfig")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        if (ApplicationContext.isMasterServer() || headers.get(Listener.METAINFO_MASTER_OP) != null) {
-            TestingServices testingServices = ServiceLocator.getTestingServices();
-            testingServices.setTestExecConfig(new TestExecConfig(content));
-            return null;
-        }
-        else {
-            return masterServerPut(path, content);
-        }
+        TestingServices testingServices = ServiceLocator.getTestingServices();
+        testingServices.setTestExecConfig(new TestExecConfig(content));
+        return null;
     }
 
     private JSONObject createAssertionErrorResponse(String testName, Throwable err) throws JSONException {

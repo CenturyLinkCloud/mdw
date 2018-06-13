@@ -342,7 +342,7 @@ public class CacheRegistration implements StartupService {
     public static void performInitialRequest() {
         try {
             logger.info("Submit initial request.");
-            HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getLocalServiceUrl() + "/services/AppSummary"));
+            HttpHelper helper = new HttpHelper(new URL(ApplicationContext.getLocalServiceAccessUrl() + "/services/AppSummary"));
             helper.setConnectTimeout(1000);
             helper.setReadTimeout(1000);
             helper.get();

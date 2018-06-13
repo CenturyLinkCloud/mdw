@@ -23,10 +23,10 @@ public class PropertyNames {
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher"; // used internally, set by regression tester "<host>:<port>:<timeout>";
     public static final String MDW_LOGGING_WEB_WATCHER = "mdw.logging.web.watcher"; // used for watching using WebSocketServer
     // container service providers
-    public static final String MDW_CONTAINER_DATASOURCE_PROVIDER= "mdw.container.datasource.provider";
-    public static final String MDW_CONTAINER_JMS_PROVIDER= "mdw.container.jms.provider";
-    public static final String MDW_CONTAINER_MESSENGER= "mdw.container.messenger";  // jms or rmi
-    public static final String MDW_CONTAINER_THREADPOOL_PROVIDER= "mdw.container.threadpool.provider";
+    public static final String MDW_CONTAINER_DATASOURCE_PROVIDER = "mdw.container.datasource.provider";
+    public static final String MDW_CONTAINER_JMS_PROVIDER = "mdw.container.jms.provider";
+    public static final String MDW_CONTAINER_MESSENGER = "mdw.container.messenger";  // jms or http
+    public static final String MDW_CONTAINER_THREADPOOL_PROVIDER = "mdw.container.threadpool.provider";
     // database
     public static final String MDW_DB_URL = "mdw.database.url";
     public static final String MDW_DB_USERNAME = "mdw.database.username";
@@ -40,7 +40,6 @@ public class PropertyNames {
     // for embedded db
     public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
     public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
-    public static final String MDW_DB_EMBEDDED_HOST_PORT = "mdw.db.embedded.server";
     // for MongoDB
     public static final String MDW_MONGODB_HOST = "mdw.mongodb.host";
     public static final String MDW_MONGODB_PORT = "mdw.mongodb.port";

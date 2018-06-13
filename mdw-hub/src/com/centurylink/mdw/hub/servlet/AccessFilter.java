@@ -82,7 +82,7 @@ public class AccessFilter implements Filter {
 
         try {
             String accessYaml;
-            if (ApplicationContext.isPaaS())
+            if (ApplicationContext.isCloudFoundry())
                 accessYaml = System.getenv("mdw_access");
             else
                 accessYaml = new String(FileHelper.readConfig(ACCESS_CONFIG_FILE).getBytes());

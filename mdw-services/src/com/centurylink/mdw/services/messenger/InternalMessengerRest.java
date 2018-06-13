@@ -40,7 +40,7 @@ public class InternalMessengerRest extends InternalMessenger {
     }
 
     private void sendMessageSub(InternalEvent msg, String msgid) throws IOException {
-        HttpHelper httpHelper = new HttpHelper(new URL(ApplicationContext.getLocalServiceUrl()));
+        HttpHelper httpHelper = new HttpHelper(new URL(ApplicationContext.getLocalServiceAccessUrl()));
         HashMap<String,String> headers = new HashMap<String,String>();
         headers.put("MDWInternalMessageId", msgid);
         httpHelper.setHeaders(headers);

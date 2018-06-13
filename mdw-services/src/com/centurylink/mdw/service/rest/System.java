@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.system.SysInfoCategory;
@@ -35,7 +33,6 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.log.LoggerUtil;
 
 @Path("/System")
 public class System extends JsonRestService {
@@ -70,34 +67,5 @@ public class System extends JsonRestService {
         else {
             return new JsonObject(); // TODO
         }
-    }
-
-    @Override
-    @Path("/config")
-    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
-        String[] segments = getSegments(path);
-        if (segments.length != 2 || !"config".equals(segments[1]))
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid request path: " + path);
-
-        PropertyManager propMgr = PropertyManager.getInstance();
-        for (String name : JSONObject.getNames(content)) {
-            Object v = content.get(name);
-            String value = v == null ? null : v.toString();
-            propMgr.setStringProperty(name, value == null || value.isEmpty() ? null : value);
-        }
-        LoggerUtil.getStandardLogger().refreshCache();
-
-        if (content.has("distributed") && content.getBoolean("distributed")) {
-            try {
-
-                propagatePut(content, headers);
-            }
-            catch (IOException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-            }
-        }
-
-        return null;
     }
 }

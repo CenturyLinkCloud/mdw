@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.services.rest;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +26,6 @@ import javax.ws.rs.PUT;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -44,7 +40,6 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.JsonUtil;
 
 import io.swagger.annotations.Api;
@@ -150,54 +145,6 @@ public abstract class JsonRestService extends RestService implements JsonService
 
     public String getText(Object requestObj, Map<String,String> metaInfo) throws ServiceException {
         throw new ServiceException(ServiceException.BAD_REQUEST, metaInfo.get(Listener.METAINFO_REQUEST_PATH) + " requires JSON content type");
-    }
-
-    protected void propagatePost(JSONObject content, Map<String,String> headers)
-    throws ServiceException, IOException, JSONException {
-        if (content.has("distributed"))
-            content.remove("distributed");
-        super.propagate("post", content.toString(2), headers);
-    }
-
-    protected void propagatePut(JSONObject content, Map<String,String> headers)
-    throws ServiceException, IOException, JSONException {
-        if (content.has("distributed"))
-            content.remove("distributed");
-        super.propagate("put", content.toString(2), headers);
-    }
-
-    protected JSONObject masterServerGet(String path) throws ServiceException, JSONException {
-        try {
-            return new JsonObject(masterOpHelper(path).get());
-        }
-        catch (IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-    }
-
-    protected JSONObject masterServerPost(String path, JSONObject json) throws ServiceException, JSONException {
-        try {
-            return new JsonObject(masterOpHelper(path).post(json.toString(2)));
-        }
-        catch (IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-    }
-
-    protected HttpHelper masterOpHelper(String path) throws MalformedURLException {
-        String url = "http://" + ApplicationContext.getMasterServer() + "/" + ApplicationContext.getServicesContextRoot() + "/services/" + path;
-        HttpHelper httpHelper = new HttpHelper(new URL(url));
-        httpHelper.getConnection().setHeader(Listener.METAINFO_MASTER_OP, "true");
-        return httpHelper;
-    }
-
-    protected JSONObject masterServerPut(String path, JSONObject json) throws ServiceException, JSONException {
-        try {
-            return new JsonObject(masterOpHelper(path).put(json.toString(2)));
-        }
-        catch (IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
     }
 
     @Override

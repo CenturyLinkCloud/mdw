@@ -56,7 +56,7 @@ public class JsonUtil {
      * Does not support multi-line comments.
      */
     public static final String read(String name, ClassLoader classLoader) throws IOException {
-        if (ApplicationContext.isPaaS()) {
+        if (ApplicationContext.isCloudFoundry()) {
             return System.getenv("mdw_" + name.substring(0, name.lastIndexOf('.')));
         }
         else {

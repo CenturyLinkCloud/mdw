@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.services.rest;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -132,15 +130,6 @@ public abstract class RestService {
         if (value == null)
             throw new ServiceException(HTTP_404_NOT_FOUND, "Missing property: " + propName);
         return value;
-    }
-
-    protected void propagate(String method, String request, Map<String,String> headers)
-    throws ServiceException, IOException {
-        // MDW no longer propagates since there is no way to know instance names/ports when in a cloud deployment
-    }
-
-    protected List<URL> getOtherServerUrls(String requestUrl) throws IOException {
-        return ApplicationContext.getOtherServerUrls(new URL(requestUrl));
     }
 
     /**
