@@ -17,7 +17,6 @@ task env {
 
 task install(type: Copy) {
     from "deploy/app/mdw-boot-${mdwVersion}.jar"
-    into 'bin'
 }
 
 task start(type: Exec) {
