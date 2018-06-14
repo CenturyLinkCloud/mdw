@@ -48,6 +48,8 @@ public class RootFilter implements Filter {
                 String redirect = "/" + ApplicationContext.getMdwHubContextRoot() + "/index.html";
                 if (request.getQueryString() != null)
                     redirect += "?" + request.getQueryString();
+                else if (request.getHeader("Authorization") != null && request.getHeader("Authorization").startsWith("Bearer ")) // ios
+                    redirect += "?Authorization=" + request.getHeader("Authorization");
                 ((HttpServletResponse)resp).sendRedirect(redirect);
             }
             else {

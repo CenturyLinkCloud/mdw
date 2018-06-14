@@ -49,7 +49,10 @@ public class CustomContentFilter implements Filter {
             if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
                 // if authUser is null, redirect to avoid bypassing AccessFilter
                 if (httpRequest.getSession().getAttribute("authenticatedUser") == null) {
-                    String redirect = "/" + ApplicationContext.getMdwHubContextRoot() + "/customContent" + path;
+                    String hubRoot = ApplicationContext.getMdwHubContextRoot();
+                    if (!hubRoot.isEmpty())
+                        hubRoot = "/" + hubRoot;
+                    String redirect = hubRoot + "/customContent" + path;
                     if (httpRequest.getQueryString() != null)
                         redirect += "?" + httpRequest.getQueryString();
                     ((HttpServletResponse)response).sendRedirect(redirect);

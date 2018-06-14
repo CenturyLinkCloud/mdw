@@ -407,7 +407,8 @@ public class ApplicationContext {
             localServiceAccessUrl = "http://localhost";
             if (getServerPort() > 0)
                 localServiceAccessUrl += ":" + getServerPort();
-            localServiceAccessUrl += "/" + ApplicationContext.getServicesContextRoot();
+            if (!getServicesContextRoot().isEmpty())
+                localServiceAccessUrl += "/" + getServicesContextRoot();
         }
         return localServiceAccessUrl;
     }
