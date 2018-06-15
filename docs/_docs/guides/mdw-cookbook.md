@@ -397,7 +397,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
 #### Incorporate auto-validation
   - To validate the incoming request of Bugs workflow for conformance with Swagger schema, MDW Swagger Validator activity is very useful. It replaces programmatic Swagger validation. 
 Open the Create Bug process. Add the Swagger Validator activity to the workflow as shown below.  
-In the Path text box provided, specify the service which needs to be validated.
+- In the Path text box provided, specify the service which needs to be validated.
    Say  '/mdw/api/bugs'
 
 From drop down, You can choose any or a combination of Query, Headers, Body, Path for
