@@ -395,26 +395,11 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Refresh the server cache and revisit the Swagger docs on MDWHub's Services tab to confirm that these changes are reflected in the docs.
   
 #### Incorporate auto-validation
-  - With these model annotations in place, we can now replace our crude hand-crafted validations in the Validate Request script activity with something
-    more comprehensive.  Open the Create Bug process and change the script to this:
-    ```groovy
-    import com.centurylink.mdw.model.StatusResponse
-    import static com.centurylink.mdw.model.Status.ACCEPTED
-    import static com.centurylink.mdw.model.Status.BAD_REQUEST
-    import com.centurylink.mdw.service.api.validator.*
-    
-    def validator = new SwaggerModelValidator('POST', '/demo/api/bugs')
-    
-    try {
-      validator.validateRequestBody(request.json, true)
-      response = new StatusResponse(ACCEPTED)
-      return 'accepted'
-    }
-    catch (ValidationException ex) {
-      response = new StatusResponse(BAD_REQUEST, ex.message)
-      return 'invalid'
-    }
-    ```
+  - To validate the incoming request of Bugs workflow for conformance with Swagger schema, MDW Swagger Validator activity is very useful. It replaces programmatic Swagger validation. 
+Open the Create Bug process. Add the Swagger Validator activity to the workflow as shown below.  
+In the Path text box provided, specify the path say '/mdw/api/bugs'
+(../images/swaggerValidator.png)<br>
+ 
   - Post a request with this body to test failed validation:
     ```json
     {
@@ -740,7 +725,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - Drill in to the just-created task in MDWHub and click on the Values nav link.  It's empty!  In fact MDW does not automatically populate
     any values for custom tasks (except for [Task Indexes](../../help/taskIndexes.html), which is a subject we'll return to in 
-    [subsection 3.3](#33-add-a-new-tab-to-mdwhub).  We wouldn't have switched to custom task if we wanted MDW to populate Values.
+    swaggerValidator.png.  We wouldn't have switched to custom task if we wanted MDW to populate Values.
     In a moment we'll build a complete replacement task view anyway. 
     
 #### Create a JSX page asset
