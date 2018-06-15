@@ -398,7 +398,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - To validate the incoming request of Bugs workflow for conformance with Swagger schema, MDW Swagger Validator activity is very useful. It replaces programmatic Swagger validation. 
 Open the Create Bug process. Add the Swagger Validator activity to the workflow as shown below.  
 In the Path text box provided, specify the path say '/mdw/api/bugs'
-(../images/swaggerValidator.png)<br>
+![Swagger Validation Activity](../images/swaggerValidator.png)<br>
  
   - Post a request with this body to test failed validation:
     ```json
