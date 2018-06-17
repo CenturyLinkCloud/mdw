@@ -108,6 +108,11 @@
     var $mdwDiscoveryUrl = '${mdw.discoveryUrl}';
     var $mdwCustomRoutes = '${mdw.customRoutes}';
   </script>
+  <style type="text/css" ng-if="isMobile()">
+    .col-md-10 {
+      width: 100%;
+    }
+  </style>
   <div id="mdw-header" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/header.html'"></div>
   <div id="mdw-tabs" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/tabs.html'"></div>
   <div id="mdw-main" ng-class="{content: true, container: true, 'mdw-content': !isFullView(), 'mdw-mobile-content': isFullView(), 'mdw-full-width': isFullWidth()}" ng-view></div>
