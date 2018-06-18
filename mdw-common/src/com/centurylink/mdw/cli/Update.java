@@ -55,6 +55,7 @@ public class Update extends Setup {
         if (isSnapshots()) {
             Import mport = new Import();
             for (String pkg : getBaseAssetPackages()) {
+                mport.setAssetLoc(getProjectDir() + "/" + getAssetLoc());
                 mport.importSnapshotPackage(pkg, monitors);
             }
         }
