@@ -192,6 +192,16 @@ jar {
     // avoid confusingly including tomcat spring config(s)
     exclude "META-INF/mdw/spring/**"
     
+    // exclude cli classes and embedded deps
+    exclude "com/centurylink/mdw/cli/"
+    exclude "com/beust/"
+    exclude "org/json/"
+    exclude "META-INF/maven/org.json/"
+    exclude "org/yaml/"
+    exclude "META-INF/maven/org.yaml/"
+    exclude "com/samskivert/"
+    exclude "META-INF/maven/com.samskivert/"
+    
     // include needed schemas within mdw-common
     from configurations.schemas.asFileTree.files.collect {
         zipTree(it)
