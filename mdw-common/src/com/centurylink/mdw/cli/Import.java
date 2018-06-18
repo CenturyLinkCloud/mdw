@@ -222,4 +222,22 @@ public class Import extends Setup {
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
 
+    protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) throws IOException {
+        File assetDir = new File(getAssetLoc());
+        System.out.println("Importing from Maven into: " + assetDir + "...");
+        String url = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
+                + pkg.substring(pkg.lastIndexOf('.') + 1) + "&v=LATEST&p=zip";
+        List<String> pkgs = new ArrayList<>();
+        pkgs.add(pkg);
+        File tempZip = Files.createTempFile("sonatype-discovery", ".zip").toFile();
+        new Download(new URL(url), tempZip).run(monitors);
+
+        Archive archive = new Archive(assetDir, pkgs);
+        archive.backup();
+        System.out.println("Unzipping into: " + assetDir);
+        new Unzip(tempZip, assetDir, true).run();
+        archive.archive(true);
+        if (!tempZip.delete())
+            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
+    }
 }

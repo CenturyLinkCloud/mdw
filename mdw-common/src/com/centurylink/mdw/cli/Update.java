@@ -48,63 +48,75 @@ public class Update extends Setup {
     }
 
     public Update run(ProgressMonitor... monitors) throws IOException {
-        Props props = new Props(this);
-        String discoveryUrl;
-        if (Props.DISCOVERY_URL != null)
-            discoveryUrl = props.get(Props.DISCOVERY_URL);
-        else
-            discoveryUrl = getDiscoveryUrl();
-
         if (getBaseAssetPackages() == null) {
             initBaseAssetPackages();
         }
 
-        Map<String,String> discovered = new HashMap<>();
-        Discover discover = new Discover();
-        if (getMdwVersion() != null)
-            discover.setMdwVersion(getMdwVersion());
-        else
-            discover.setLatest(true);
-        boolean isMdw = discoveryUrl.endsWith("/services") || discoveryUrl.endsWith("/Services");
-        if (isMdw)
-            discover.discoverMdw(discoveryUrl, monitors);
-        else
-            discover.discoverMaven("com.centurylink.mdw.assets", monitors);
-        JSONObject json = discover.getPackages();
-        if (json.has("packages")) {
-            JSONArray pkgs = json.getJSONArray("packages");
-            for (int i = 0; i < pkgs.length(); i++) {
-                JSONObject pkgJson = pkgs.getJSONObject(i);
-                discovered.put(pkgJson.getString("name"), isMdw ? null : pkgJson.getString("version"));
+        if (isSnapshots()) {
+            Import mport = new Import();
+            for (String pkg : getBaseAssetPackages()) {
+                mport.importSnapshotPackage(pkg, monitors);
             }
-        }
-
-        List<String> toDownload = new ArrayList<>();
-        System.out.println("Import asset packages:");
-        for (String pkg : getBaseAssetPackages()) {
-            if (discovered.containsKey(pkg)) {
-                System.out.println("  - " + pkg);
-                toDownload.add(isMdw ? pkg : (pkg.substring(pkg.lastIndexOf('.') + 1) + "-" + discovered.get(pkg)));
-            }
-            else {
-                System.err.println("  - " + pkg + " not found for import");
-            }
-        }
-
-        if (toDownload.isEmpty()) {
-            System.out.println(" - no packages selected");
         }
         else {
-            Import mport = new Import();
-            mport.setAssetLoc(getProjectDir() + "/" + getAssetLoc());
-            if (isMdw) {
-                mport.importPackagesFromMdw(discoveryUrl, toDownload, monitors);
+            Props props = new Props(this);
+            String discoveryUrl;
+            if (Props.DISCOVERY_URL != null)
+                discoveryUrl = props.get(Props.DISCOVERY_URL);
+            else
+                discoveryUrl = getDiscoveryUrl();
+
+            Map<String, String> discovered = new HashMap<>();
+            Discover discover = new Discover();
+            if (getMdwVersion() != null)
+                discover.setMdwVersion(getMdwVersion());
+            else
+                discover.setLatest(true);
+            boolean isMdw = discoveryUrl.endsWith("/services")
+                    || discoveryUrl.endsWith("/Services");
+            if (isMdw)
+                discover.discoverMdw(discoveryUrl, monitors);
+            else
+                discover.discoverMaven("com.centurylink.mdw.assets", monitors);
+            JSONObject json = discover.getPackages();
+            if (json.has("packages")) {
+                JSONArray pkgs = json.getJSONArray("packages");
+                for (int i = 0; i < pkgs.length(); i++) {
+                    JSONObject pkgJson = pkgs.getJSONObject(i);
+                    discovered.put(pkgJson.getString("name"),
+                            isMdw ? null : pkgJson.getString("version"));
+                }
+            }
+
+            List<String> toDownload = new ArrayList<>();
+            System.out.println("Import asset packages:");
+            for (String pkg : getBaseAssetPackages()) {
+                if (discovered.containsKey(pkg)) {
+                    System.out.println("  - " + pkg);
+                    toDownload.add(isMdw ? pkg
+                            : (pkg.substring(pkg.lastIndexOf('.') + 1) + "-"
+                                    + discovered.get(pkg)));
+                }
+                else {
+                    System.err.println("  - " + pkg + " not found for import");
+                }
+            }
+
+            if (toDownload.isEmpty()) {
+                System.out.println(" - no packages selected");
             }
             else {
-                mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload, monitors);
+                Import mport = new Import();
+                mport.setAssetLoc(getProjectDir() + "/" + getAssetLoc());
+                if (isMdw) {
+                    mport.importPackagesFromMdw(discoveryUrl, toDownload, monitors);
+                }
+                else {
+                    mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload,
+                            monitors);
+                }
             }
         }
-
         return this;
     }
 }
