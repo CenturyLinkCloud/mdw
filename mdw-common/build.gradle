@@ -193,7 +193,6 @@ jar {
     exclude "META-INF/mdw/spring/**"
     
     // exclude cli classes and embedded deps
-    exclude "com/centurylink/mdw/cli/"
     exclude "com/beust/"
     exclude "org/json/"
     exclude "META-INF/maven/org.json/"
