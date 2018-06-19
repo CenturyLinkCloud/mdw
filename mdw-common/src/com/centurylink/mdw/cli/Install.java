@@ -61,6 +61,11 @@ public class Install extends Setup {
     public String getBinariesUrl() { return binariesUrl; }
     public void setBinariesUrl(String url) { this.binariesUrl = url; }
 
+    @Parameter(names="--boot-jar-loc", description="MDW Boot Jar Location")
+    private String bootJarLoc = ".";
+    public String getBootJarLoc() { return bootJarLoc; }
+    public void setBootJarLoc(String loc) { this.bootJarLoc = loc; }
+
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
         String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
         Download[] downloads = null;
@@ -92,8 +97,26 @@ public class Install extends Setup {
         }
         else {
             // download spring boot from binaries-url
-            File jarFile = new File(getProjectDir().getPath() + "/mdw-boot-" + mdwVer + ".jar");
-            if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
+            File bootJarDir = new File(getBootJarLoc());
+            File jarFile = new File(getBootJarLoc() + "/mdw-boot-" + mdwVer + ".jar");
+            if (bootJarDir.isDirectory()) {
+                if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
+                    System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
+                    return this;
+                }
+
+                for (File file : bootJarDir.listFiles()) {
+                    if (file.isFile() && file.getName().startsWith("mdw-") && file.getName().endsWith(".jar")) {
+                        // remove any mdw jars
+                        Files.delete(Paths.get(file.getPath()));
+                    }
+                }
+            }
+            else {
+                Files.createDirectories(Paths.get(bootJarDir.getPath()));
+            }
+
+           /* if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
                 System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
                 return this;
             }
@@ -102,7 +125,7 @@ public class Install extends Setup {
                     // remove any mdw jars
                     Files.delete(Paths.get(file.getPath()));
                 }
-            }
+            }*/
 
             if (binariesUrl.startsWith("https://github.com/")) {
                 // use the github api to find the boot jar size

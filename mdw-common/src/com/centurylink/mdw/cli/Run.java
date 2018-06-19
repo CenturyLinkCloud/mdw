@@ -81,6 +81,11 @@ public class Run implements Operation {
     public void setRetries(int retries) { this.retries = retries; }
     private int retried;
 
+    @Parameter(names="--boot-jar-loc", description="MDW Boot Jar Location")
+    private String bootJarLoc = ".";
+    public String getBootJarLoc() { return bootJarLoc; }
+    public void setBootJarLoc(String loc) { this.bootJarLoc = loc; }
+
     public Run run(ProgressMonitor... progressMonitors) throws IOException {
         List<String> cmdLine = new ArrayList<>();
         if (daemon) {
@@ -193,7 +198,7 @@ public class Run implements Operation {
 
     protected String getBootJar() throws IOException {
         String mdwVersion = new Version().getMdwVersion(getProjectDir());
-        return "mdw-boot-" + mdwVersion + ".jar";
+        return getBootJarLoc() + File.separator + "mdw-boot-" + mdwVersion + ".jar";
     }
 
     protected File getLogDir() {
