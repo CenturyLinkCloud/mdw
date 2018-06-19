@@ -3,5 +3,5 @@
   "icon": "shape:activity",
   "implementorClass": "com.centurylink.mdw.tests.cloud.DynamicJavaGeneralActivity",
   "label": "Dynamic Java General Activity",
-  "pagelet": "<PAGELET>\n  <HYPERLINK URL='/MDWWeb/doc/dynamicJava.html'>Dynamic Java Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <HYPERLINK URL='help/dynamicJava.html'>Dynamic Java Help<\/HYPERLINK>\n<\/PAGELET>"
 }
