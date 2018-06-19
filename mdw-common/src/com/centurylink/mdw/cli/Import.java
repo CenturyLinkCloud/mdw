@@ -225,7 +225,7 @@ public class Import extends Setup {
     protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) throws IOException {
         File assetDir = new File(getAssetLoc());
         System.out.println("Importing from Maven into: " + assetDir + "...");
-        String url = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
+        String url = getSnapshotsUrl() + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
                 + pkg.substring(pkg.lastIndexOf('.') + 1) + "&v=LATEST&p=zip";
         List<String> pkgs = new ArrayList<>();
         pkgs.add(pkg);

@@ -52,6 +52,7 @@ public class Props {
         public static Prop SPRING_VERSION;
         public static Prop MAVEN_REPO_URL;
         public static Prop SOURCE_GROUP;
+        public static Prop SONATYPE_REPO_URL;
     }
 
     public static List<Prop> ALL_PROPS = new ArrayList<>();
@@ -100,11 +101,14 @@ public class Props {
         Gradle.SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion", true);
         Gradle.MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl", true);
         Gradle.SOURCE_GROUP = new Prop("source-group", GRADLE, "sourceGroup", true);
+        Gradle.SONATYPE_REPO_URL = new Prop("snapshots-url", GRADLE, "snapshotsUrl", true);
+
 
         ALL_PROPS.add(Gradle.MDW_VERSION);
         ALL_PROPS.add(Gradle.SPRING_VERSION);
         ALL_PROPS.add(Gradle.MAVEN_REPO_URL);
         ALL_PROPS.add(Gradle.SOURCE_GROUP);
+        ALL_PROPS.add(Gradle.SONATYPE_REPO_URL);
     }
 
     private Map<File,Properties> propFiles = new HashMap<>();
