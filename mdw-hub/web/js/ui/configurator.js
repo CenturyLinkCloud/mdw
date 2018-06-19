@@ -366,7 +366,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     var helpWidgetIndex = -1;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
-      if (widget.type == 'link' && widget.url && widget.url.startsWith('/MDWWeb/doc') && 
+      if (widget.type == 'link' && widget.url && (widget.url.startsWith('/MDWWeb/doc') || widget.url.startsWith('help/')) && 
           ((!widget.section && (this.tab == 'Design' || this.tab == 'General')) || this.tab === widget.section)) {
         helpWidgetIndex = i;
         break;

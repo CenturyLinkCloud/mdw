@@ -3,5 +3,5 @@
   "icon": "kotlin.png",
   "implementorClass": "com.centurylink.mdw.kotlin.ScriptActivity",
   "label": "Kotlin Script",
-  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Kotlin Script'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='/MDWWeb/doc/scriptActivity.html'>Script Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Kotlin Script'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='help/scriptActivity.html'>Script Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }

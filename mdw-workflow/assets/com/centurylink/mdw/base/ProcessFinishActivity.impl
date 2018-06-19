@@ -3,5 +3,5 @@
   "icon": "shape:stop",
   "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
   "label": "Process Finish",
-  "pagelet": "<PAGELET>\n  <HYPERLINK URL='/MDWWeb/doc/ProcessFinishActivity.html'>Process Finish Activity Help<\/HYPERLINK>\n  <DROPDOWN NAME='TerminationAction' LABEL='Termination Action'>\n    <OPTION>Complete Process<\/OPTION>\n    <OPTION>Cancel Process<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='CompletionCode' LABEL='Completion Code'/>\n  <BOOLEAN NAME='DoNotNotifyCaller' LABEL='Suppress Caller Notify'/>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <HYPERLINK URL='help/ProcessFinishActivity.html'>Process Finish Activity Help<\/HYPERLINK>\n  <DROPDOWN NAME='TerminationAction' LABEL='Termination Action'>\n    <OPTION>Complete Process<\/OPTION>\n    <OPTION>Cancel Process<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='CompletionCode' LABEL='Completion Code'/>\n  <BOOLEAN NAME='DoNotNotifyCaller' LABEL='Suppress Caller Notify'/>\n<\/PAGELET>"
 }

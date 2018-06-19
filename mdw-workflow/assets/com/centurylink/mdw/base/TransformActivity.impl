@@ -3,5 +3,5 @@
   "icon": "xml.jpg",
   "implementorClass": "com.centurylink.mdw.workflow.activity.transform.TransformActivity",
   "label": "XML Transform",
-  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='TRANSFORM' LANGUAGES='GPath,XSLT'/>\n  <HYPERLINK URL='/MDWWeb/doc/documentTransform.html'>Transform Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='TRANSFORM' LANGUAGES='GPath,XSLT'/>\n  <HYPERLINK URL='help/documentTransform.html'>Transform Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }

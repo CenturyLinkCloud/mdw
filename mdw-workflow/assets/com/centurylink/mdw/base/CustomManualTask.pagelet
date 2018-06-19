@@ -3,16 +3,16 @@
   <TEXT NAME="logicalId" LABEL="Logical ID" VW="300"/>
   <DROPDOWN NAME="category" LABEL="Category" SOURCE="TaskCategory" VW="250"/>
   <TEXT NAME="description" LABEL="Description" MULTILINE="true"/>
-  <HYPERLINK URL="/MDWWeb/doc/taskTemplates.html">Task Template Help</HYPERLINK>
+  <HYPERLINK URL="help/taskTemplates.html">Task Template Help</HYPERLINK>
   <DROPDOWN NAME="CustomPage" LABEL="Custom Page" SOURCE="RuleSets" TYPE="JSX"/>
-  <HYPERLINK URL="/MDWWeb/doc/customPages.html">Custom Page Help</HYPERLINK>
+  <HYPERLINK URL="help/customPages.html">Custom Page Help</HYPERLINK>
   <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
   <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />
   <DROPDOWN NAME="PriorityStrategy" LABEL="Prioritization Strategy" VW="250">
     <OPTION PARAMETER="Priority">Specified</OPTION>
     <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
   </DROPDOWN>
-  <HYPERLINK URL="/MDWWeb/doc/taskSLA.html">Task SLA/Alert Help</HYPERLINK>
+  <HYPERLINK URL="help/taskSLA.html">Task SLA/Alert Help</HYPERLINK>
   <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
     <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
   </DROPDOWN>
@@ -33,7 +33,7 @@
     <DROPDOWN LABEL="Template Version" SOURCE="AssetVersion"/>
     <TEXT LABEL="Notifier Class(es)" VW="350"/>
   </TABLE>
-  <HYPERLINK URL="/MDWWeb/doc/taskNotices.html" SECTION="Notices">Task Notices Help</HYPERLINK>
+  <HYPERLINK URL="help/taskNotices.html" SECTION="Notices">Task Notices Help</HYPERLINK>
   <NOTE SECTION="Recipients" VH="65">Overrides task workgroups for notices.</NOTE>
   <LIST NAME="NoticeGroups" LABEL="Notice Groups" SOURCE="UserGroup" SECTION="Recipients" ADVANCED="true"/>
   <TEXT LABEL="Recipient(s) Expression" NAME="RecipientVar" VX="160" VW="410" SECTION="Recipients"/>
@@ -43,5 +43,5 @@
     <TEXT LABEL="Index Name" VW="200"/>
     <TEXT LABEL="Value Expression" VW="250"/>
   </TABLE>
-  <HYPERLINK URL="/MDWWeb/doc/taskIndexes.html" SECTION="Indexes">Task Indexes Help</HYPERLINK>  
+  <HYPERLINK URL="help/taskIndexes.html" SECTION="Indexes">Task Indexes Help</HYPERLINK>  
 </PAGELET>

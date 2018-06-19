@@ -65,7 +65,7 @@
       "name": "Workflow Request Help",
       "section": "Request",
       "type": "link",
-      "url": "/MDWWeb/doc/workflowRequest.html"
+      "url": "help/workflowRequest.html"
     }    
   ]}
 }

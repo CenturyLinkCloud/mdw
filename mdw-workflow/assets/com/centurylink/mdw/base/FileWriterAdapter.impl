@@ -3,5 +3,5 @@
   "icon": "writer.jpg",
   "implementorClass": "com.centurylink.mdw.workflow.adapter.file.FileWriterAdapter",
   "label": "File Writer",
-  "pagelet": "<PAGELET>\n  <TEXT NAME='OutputFilepath' LABEL='File Path'/>\n  <BOOLEAN NAME='AppendToFile' LABEL='Append' DEFAULT='true'/>\n  <TEXT NAME='WriteString' LABEL='Content String'/>\n  <HYPERLINK URL='/MDWWeb/doc/FileWriterActivity.html'>File Writer Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <TEXT NAME='OutputFilepath' LABEL='File Path'/>\n  <BOOLEAN NAME='AppendToFile' LABEL='Append' DEFAULT='true'/>\n  <TEXT NAME='WriteString' LABEL='Content String'/>\n  <HYPERLINK URL='help/FileWriterActivity.html'>File Writer Help<\/HYPERLINK>\n<\/PAGELET>"
 }

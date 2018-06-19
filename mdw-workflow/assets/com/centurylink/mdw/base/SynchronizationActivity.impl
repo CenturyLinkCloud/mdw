@@ -3,5 +3,5 @@
   "icon": "sync.png",
   "implementorClass": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
   "label": "Synchronization Activity",
-  "pagelet": "<PAGELET>\n  <TEXT NAME='Sync Expression' VW='390'/>\n  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events' SECTION='Events'>\n    <TEXT LABEL='Event Name'/>\n    <TEXT LABEL='Completion Code'/>\n    <\/TABLE>\n  <DROPDOWN NAME='STATUS_AFTER_EVENT' LABEL='Status after receiving event' DEFAULT='Cancelled' LW='175' VX='200' VW='120' SECTION='Events'>\n    <OPTION>Hold<\/OPTION>\n    <OPTION>Waiting<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL='/MDWWeb/doc/synchronization.html'>Synchronization Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <TEXT NAME='Sync Expression' VW='390'/>\n  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events' SECTION='Events'>\n    <TEXT LABEL='Event Name'/>\n    <TEXT LABEL='Completion Code'/>\n    <\/TABLE>\n  <DROPDOWN NAME='STATUS_AFTER_EVENT' LABEL='Status after receiving event' DEFAULT='Cancelled' LW='175' VX='200' VW='120' SECTION='Events'>\n    <OPTION>Hold<\/OPTION>\n    <OPTION>Waiting<\/OPTION>\n  <\/DROPDOWN>\n  <HYPERLINK URL='help/synchronization.html'>Synchronization Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }
