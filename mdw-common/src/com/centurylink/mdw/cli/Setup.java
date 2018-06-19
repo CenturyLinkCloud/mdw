@@ -69,9 +69,6 @@ public abstract class Setup implements Operation {
     public String findMdwVersion() throws IOException {
         if (getMdwVersion() == null) {
             URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/");
-            if (isSnapshots())
-                url = new URL(
-                        "https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/mdw-templates/");
             Crawl crawl = new Crawl(url, isSnapshots());
             crawl.run();
             if (crawl.getReleases().size() == 0)
