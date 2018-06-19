@@ -102,6 +102,7 @@ public class Init extends Setup {
         subst(getProjectDir());
         new File(getProjectDir() + "/src/main/java").mkdirs();
         Update update = new Update(getProjectDir());
+        update.setSnapshotsUrl(getSnapshotsUrl());
         update.setMdwVersion(getMdwVersion());
         update.run(progressMonitors);
         return this;

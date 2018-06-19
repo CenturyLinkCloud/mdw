@@ -222,6 +222,16 @@ public abstract class Setup implements Operation {
         this.templateDir = templateDir;
     }
 
+    @Parameter(names="--snapshots-url", description="MDW snapshot releases Sonatype repo URL")
+    private String snapshotsUrl = "https://oss.sonatype.org/service/local/artifact/maven";
+    public String getSnapshotsUrl() {
+        return snapshotsUrl.endsWith("/") ? snapshotsUrl.substring(0, snapshotsUrl.length() - 1) : snapshotsUrl;
+    }
+    public void setSnapshotsUrl(String url) {
+        this.snapshotsUrl = url;
+        Props.Gradle.MAVEN_REPO_URL.specified = true;
+    }
+
     /**
      * Checks for any existing packages.  If none present, adds the defaults.
      */
@@ -429,8 +439,8 @@ public abstract class Setup implements Operation {
         }
         else {
             if (isSnapshots()) {
-                templatesUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect"
-                        + "?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
+                templatesUrl = getSnapshotsUrl()
+                        + "/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
             }
             else {
                 templatesUrl = getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/"
