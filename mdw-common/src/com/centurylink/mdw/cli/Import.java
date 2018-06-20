@@ -16,6 +16,7 @@
 package com.centurylink.mdw.cli;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -124,7 +125,7 @@ public class Import extends Setup {
     }
     public void importPackagesFromMaven(String groupId, List<String> packages, ProgressMonitor... monitors) throws IOException {
         for (String pkg : packages) {
-            int index = pkg.indexOf('-');
+            int index = pkg.lastIndexOf('-');
             importPackageFromMaven(groupId, pkg.substring(0, index), pkg.substring(index + 1), monitors);
         }
     }
@@ -222,22 +223,30 @@ public class Import extends Setup {
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
 
-    protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) throws IOException {
+    protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) {
         File assetDir = new File(getAssetLoc());
         System.out.println("Importing from Maven into: " + assetDir + "...");
         String url = getSnapshotsUrl() + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
-                + pkg.substring(pkg.lastIndexOf('.') + 1) + "&v=LATEST&p=zip";
+                + pkg.replace("com.centurylink.mdw.", "").replace('.', '-') + "&v=LATEST&p=zip";
         List<String> pkgs = new ArrayList<>();
         pkgs.add(pkg);
-        File tempZip = Files.createTempFile("sonatype-discovery", ".zip").toFile();
-        new Download(new URL(url), tempZip).run(monitors);
+        try {
+            File tempZip = Files.createTempFile("sonatype-discovery", ".zip").toFile();
+            new Download(new URL(url), tempZip).run(monitors);
 
-        Archive archive = new Archive(assetDir, pkgs);
-        archive.backup();
-        System.out.println("Unzipping into: " + assetDir);
-        new Unzip(tempZip, assetDir, true).run();
-        archive.archive(true);
-        if (!tempZip.delete())
-            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
+            Archive archive = new Archive(assetDir, pkgs);
+            archive.backup();
+            System.out.println("Unzipping into: " + assetDir);
+            new Unzip(tempZip, assetDir, true).run();
+            archive.archive(true);
+            if (!tempZip.delete())
+                throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
+        }
+        catch (FileNotFoundException e) {
+            System.err.println("  - " + pkg + " not found for import");
+        }
+        catch (IOException e) {
+            System.err.println("Unable to import  - " + pkg );
+        }
     }
 }

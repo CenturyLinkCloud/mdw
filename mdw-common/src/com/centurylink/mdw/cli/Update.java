@@ -85,8 +85,8 @@ public class Update extends Setup {
                 JSONArray pkgs = json.getJSONArray("packages");
                 for (int i = 0; i < pkgs.length(); i++) {
                     JSONObject pkgJson = pkgs.getJSONObject(i);
-                    discovered.put(pkgJson.getString("name"),
-                            isMdw ? null : pkgJson.getString("version"));
+                    discovered.put(pkgJson.getString("name"), isMdw ? null
+                            : pkgJson.getString("artifact") + "-" + pkgJson.getString("version"));
                 }
             }
 
@@ -95,9 +95,7 @@ public class Update extends Setup {
             for (String pkg : getBaseAssetPackages()) {
                 if (discovered.containsKey(pkg)) {
                     System.out.println("  - " + pkg);
-                    toDownload.add(isMdw ? pkg
-                            : (pkg.substring(pkg.lastIndexOf('.') + 1) + "-"
-                                    + discovered.get(pkg)));
+                    toDownload.add(isMdw ? pkg : discovered.get(pkg));
                 }
                 else {
                     System.err.println("  - " + pkg + " not found for import");
