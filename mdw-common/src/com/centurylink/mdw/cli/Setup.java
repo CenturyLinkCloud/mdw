@@ -38,6 +38,8 @@ import com.centurylink.mdw.util.file.MdwIgnore;
 public abstract class Setup implements Operation {
 
     protected static final String META_DIR = ".mdw";
+    protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
+    protected static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
     protected static List<String> defaultBasePackages = new ArrayList<>();
     static {
@@ -68,7 +70,9 @@ public abstract class Setup implements Operation {
     }
     public String findMdwVersion() throws IOException {
         if (getMdwVersion() == null) {
-            URL url = new URL(getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/");
+            URL url = new URL(getReleasesUrl() + MDW_COMMON_PATH);
+            if (isSnapshots())
+                url = new URL(getSnapshotsUrl() + MDW_COMMON_PATH);
             Crawl crawl = new Crawl(url, isSnapshots());
             crawl.run();
             if (crawl.getReleases().size() == 0)
@@ -223,13 +227,13 @@ public abstract class Setup implements Operation {
     }
 
     @Parameter(names="--snapshots-url", description="MDW snapshot releases Sonatype repo URL")
-    private String snapshotsUrl = "https://oss.sonatype.org/service/local/artifact/maven";
+    private String snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots";
     public String getSnapshotsUrl() {
         return snapshotsUrl.endsWith("/") ? snapshotsUrl.substring(0, snapshotsUrl.length() - 1) : snapshotsUrl;
     }
     public void setSnapshotsUrl(String url) {
         this.snapshotsUrl = url;
-        Props.Gradle.MAVEN_REPO_URL.specified = true;
+        Props.Gradle.SONATYPE_REPO_URL.specified = true;
     }
 
     /**
@@ -439,11 +443,11 @@ public abstract class Setup implements Operation {
         }
         else {
             if (isSnapshots()) {
-                templatesUrl = getSnapshotsUrl()
+                templatesUrl = SONATYPE_URL
                         + "/redirect?r=snapshots&g=com.centurylink.mdw&a=mdw-templates&v=LATEST&p=zip";
             }
             else {
-                templatesUrl = getReleasesUrl() + "/com/centurylink/mdw/mdw-templates/"
+                templatesUrl = getReleasesUrl() + MDW_COMMON_PATH
                         + mdwVer + "/" + templates;
             }
         }
@@ -583,5 +587,20 @@ public abstract class Setup implements Operation {
                 assetFiles.add(file);
         }
         return assetFiles;
+    }
+
+    protected void updateBuildFile() throws IOException {
+        final Pattern repositoryPattern = Pattern.compile("maven\\s*\\{\\s*url\\s+\\w+\\s*}");
+        String contents = new String(
+                Files.readAllBytes(Paths.get(getProjectDir() + "/build.gradle")));
+        StringBuilder newContents = new StringBuilder(contents.length());
+        Matcher matcher = repositoryPattern.matcher(contents);
+        if (matcher.find()) {
+            newContents.append(contents.substring(0, matcher.end())).append("\n\t")
+                    .append("maven { url snapshotsUrl }");
+            newContents.append(contents.substring(matcher.end()));
+            Files.write(Paths.get(getProjectDir() + "/build.gradle"),
+                    newContents.toString().getBytes());
+        }
     }
 }

@@ -226,7 +226,7 @@ public class Import extends Setup {
     protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) {
         File assetDir = new File(getAssetLoc());
         System.out.println("Importing from Maven into: " + assetDir + "...");
-        String url = getSnapshotsUrl() + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
+        String url = SONATYPE_URL + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
                 + pkg.replace("com.centurylink.mdw.", "").replace('.', '-') + "&v=LATEST&p=zip";
         List<String> pkgs = new ArrayList<>();
         pkgs.add(pkg);

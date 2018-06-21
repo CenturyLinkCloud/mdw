@@ -56,11 +56,10 @@ public class Crawl implements Operation {
         releases = findReleases(page, "<tt>", release, "/</tt>");
         if (releases.isEmpty()) {
             // try maven-central list format
-            releases = findReleases(page, "<a href=\"", release, "/\"");
-        }
-        if (releases.isEmpty()) {
-            // try oss.sonatype.org format
-            releases = findReleases(page, "<a href=\"" + url, release, "/\"");
+            if (withSnapshots)
+                releases = findReleases(page, "<a href=\"" + url, release, "/\"");
+            else
+                releases = findReleases(page, "<a href=\"", release, "/\"");
         }
         return this;
     }
@@ -68,7 +67,7 @@ public class Crawl implements Operation {
     private List<String> findReleases(String page, String start, String release, String end) {
         Pattern pattern = Pattern.compile(start + release + end);
         Matcher matcher = pattern.matcher(page);
-        List<String> releases = new ArrayList<String>();
+        List<String> releases = new ArrayList<>();
         while (matcher.find()) {
             String match = matcher.group();
             String rel = match.substring(start.replaceAll("\\\\", "").length(),
