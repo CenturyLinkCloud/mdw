@@ -100,9 +100,11 @@ public class Init extends Setup {
         deleteAssetTemplates();
         System.out.println("Writing: ");
         subst(getProjectDir());
+        if(isSnapshots())
+            updateBuildFile();
         new File(getProjectDir() + "/src/main/java").mkdirs();
         Update update = new Update(getProjectDir());
-        update.setSnapshotsUrl(getSnapshotsUrl());
+        update.setSnapshots(isSnapshots());
         update.setMdwVersion(getMdwVersion());
         update.run(progressMonitors);
         return this;
