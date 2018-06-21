@@ -51,7 +51,7 @@ public abstract class Setup implements Operation {
     Setup() {
     }
 
-    Setup(File projectDir) {
+    protected Setup(File projectDir) {
         this.projectDir = projectDir;
     }
 

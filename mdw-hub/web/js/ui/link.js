@@ -487,12 +487,12 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     context.moveTo(x, y);
     context.lineTo(Math.round(Math.cos(dl)*p + x), Math.round(Math.sin(dl)*p + y));
     context.lineTo(Math.round(Math.cos(dr)*p + x), Math.round(Math.sin(dr)*p + y));
+    context.lineTo(x, y);
     if (hitX) {
       return (context.isPointInStroke && (this.dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*this.dpRatio, hitY*this.dpRatio)));
     }
     else {
       context.fill();
-      context.stroke();
     }
   };
 
