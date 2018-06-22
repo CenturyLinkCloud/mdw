@@ -188,11 +188,8 @@ public class Import extends Setup {
         new Download(new URL(url + groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + artifactId + "-" + version + ".zip"), tempZip).run(monitors);
 
-        Archive archive = new Archive(assetDir, pkgs);
-        archive.backup();
         System.out.println("Unzipping into: " + assetDir);
         new Unzip(tempZip, assetDir, true).run();
-        archive.archive(true);
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
@@ -214,11 +211,8 @@ public class Import extends Setup {
 
         // import packages
         File assetDir = getAssetRoot();
-        Archive archive = new Archive(assetDir, packages);
-        archive.backup();
         System.out.println("Unzipping into: " + assetDir);
         new Unzip(tempZip, assetDir, true).run();
-        archive.archive(true);
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
@@ -234,11 +228,8 @@ public class Import extends Setup {
             File tempZip = Files.createTempFile("sonatype-discovery", ".zip").toFile();
             new Download(new URL(url), tempZip).run(monitors);
 
-            Archive archive = new Archive(assetDir, pkgs);
-            archive.backup();
             System.out.println("Unzipping into: " + assetDir);
             new Unzip(tempZip, assetDir, true).run();
-            archive.archive(true);
             if (!tempZip.delete())
                 throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
         }
