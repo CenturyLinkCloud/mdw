@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ProcessList implements Jsonable, InstanceList<ProcessInstance> {
     public ProcessList(String name, JSONObject jsonObj) throws JSONException, ParseException {
         this.name = name;
         if (jsonObj.has("retrieveDate"))
-            retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
+            retrieveDate = (StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"))).toInstant();
         if (jsonObj.has("count"))
             count = jsonObj.getInt("count");
         if (jsonObj.has("total"))
@@ -69,7 +70,7 @@ public class ProcessList implements Jsonable, InstanceList<ProcessInstance> {
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         if (retrieveDate != null)
-            json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+            json.put("retrieveDate", (getRetrieveDate()));
         if (count != -1)
             json.put("count", count);
         if (total != -1) {
@@ -89,9 +90,9 @@ public class ProcessList implements Jsonable, InstanceList<ProcessInstance> {
     public String getName() { return name;}
     public void setName(String name) { this.name = name; }
 
-    private Date retrieveDate;
-    public Date getRetrieveDate() { return retrieveDate; }
-    public void setRetrieveDate(Date d) { this.retrieveDate = d; }
+    private Instant retrieveDate;
+    public Instant getRetrieveDate() { return retrieveDate; }
+    public void setRetrieveDate(Date d) { this.retrieveDate = d.toInstant(); }
 
     private int count = -1;
     public int getCount() { return count; }

@@ -50,12 +50,14 @@ public class StringHelper {
     private static SimpleDateFormat _df;
     private static SimpleDateFormat _serviceDateFormat;
     private static SimpleDateFormat _filenameDateFormat;
+    private static SimpleDateFormat _isoDateFormat;
 
     static {
         _f = NumberFormat.getInstance();
         _f.setMaximumFractionDigits(2);
         _f.setMinimumFractionDigits(2);
         _df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        _isoDateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         _serviceDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
         _filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
     }
@@ -1438,6 +1440,10 @@ public class StringHelper {
 
     public static String dateToString(Date d) {
         return d==null?null:_df.format(d);
+    }
+
+    public static String dateToISOString(Date d){
+        return d==null?null:_isoDateFormat.format(d);
     }
 
     public static Date stringToDate(String s) {

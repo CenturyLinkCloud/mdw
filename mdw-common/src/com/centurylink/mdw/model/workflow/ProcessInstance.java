@@ -215,7 +215,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     public void setStartDate(String d) { startDate = d; }
     @ApiModelProperty(hidden=true)
     public void setStartDate(Date d) {
-        startDate = StringHelper.dateToString(d);
+        startDate = StringHelper.dateToISOString(d);
     }
 
     private String completionCode;
