@@ -7,7 +7,8 @@ title: MDW Configuration
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
   - Here's an annotated example describing MDW's configuration options:   
     (**Please** do not use this as a starting point as it contains inappropriate/non-default values for illustration.  
-      Instead run the `mdw init` CLI command to generate from the latest template).
+      Instead run the `mdw init` CLI command to generate from the latest template).   
+    
     ```yaml
     app:
       id: my-project  # required
