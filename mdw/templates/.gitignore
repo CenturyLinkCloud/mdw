@@ -9,3 +9,4 @@ temp
 testResults
 {{asset-loc}}/Archive/
 RemoteSystemsTempFiles/
+.DS_Store

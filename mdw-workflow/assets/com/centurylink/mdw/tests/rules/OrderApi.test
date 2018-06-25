@@ -4,7 +4,12 @@ masterRequestId = Long.toHexString(java.time.Instant.now().toEpochMilli())
 println 'masterRequestId:: ' + masterRequestId
 
 def response = post http('api/com/centurylink/mdw/tests/rules/order') {
-    headers = [ 'Content-Type': 'application/json', 'mdw-request-id': masterRequestId, 'pragma': 'no-cache' ]
+    headers = [
+        'Content-Type': 'application/json',
+        'mdw-request-id': masterRequestId,
+        'pragma': 'no-cache',
+        'cache-control': 'no-cache'
+    ]
     payload = asset('OrderRequest.json').text
 }
 
