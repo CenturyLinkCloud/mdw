@@ -64,30 +64,32 @@ public class SwaggerWorkflowReader {
 
         Operation operation = new Operation();
         operation.setSummary(processRequest.getSummary());
-        for (Parameter parameter : processRequest.getParameters()) {
-            io.swagger.models.parameters.Parameter swaggerParam = createParam(parameter.getType());
-            swaggerParam.setName(parameter.getName());
-            swaggerParam.setRequired(parameter.isRequired());
-            swaggerParam.setDescription(parameter.getDescription());
-            if (parameter.getDataType() != null) {
-                if (swaggerParam instanceof SerializableParameter) {
-                    ((SerializableParameter)swaggerParam).setType(parameter.getDataType());
-                }
-                final Type type = typeFromString(parameter.getDataType());
-                if (type != null) {
-                    final Property property = ModelConverters.getInstance().readAsProperty(type);
-                    if (property != null) {
-                        final Map<PropertyBuilder.PropertyId,Object> args = new EnumMap<>(PropertyBuilder.PropertyId.class);
-                        for (Map.Entry<String,Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
-                            swagger.addDefinition(entry.getKey(), entry.getValue());
-                        }
-                        if (swaggerParam instanceof BodyParameter) {
-                            ((BodyParameter)swaggerParam).setSchema(PropertyBuilder.toModel(PropertyBuilder.merge(property, args)));
+        if (processRequest.getParameters() != null) {
+            for (Parameter parameter : processRequest.getParameters()) {
+                io.swagger.models.parameters.Parameter swaggerParam = createParam(parameter.getType());
+                swaggerParam.setName(parameter.getName());
+                swaggerParam.setRequired(parameter.isRequired());
+                swaggerParam.setDescription(parameter.getDescription());
+                if (parameter.getDataType() != null) {
+                    if (swaggerParam instanceof SerializableParameter) {
+                        ((SerializableParameter)swaggerParam).setType(parameter.getDataType());
+                    }
+                    final Type type = typeFromString(parameter.getDataType());
+                    if (type != null) {
+                        final Property property = ModelConverters.getInstance().readAsProperty(type);
+                        if (property != null) {
+                            final Map<PropertyBuilder.PropertyId,Object> args = new EnumMap<>(PropertyBuilder.PropertyId.class);
+                            for (Map.Entry<String,Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
+                                swagger.addDefinition(entry.getKey(), entry.getValue());
+                            }
+                            if (swaggerParam instanceof BodyParameter) {
+                                ((BodyParameter)swaggerParam).setSchema(PropertyBuilder.toModel(PropertyBuilder.merge(property, args)));
+                            }
                         }
                     }
                 }
+                operation.addParameter(swaggerParam);
             }
-            operation.addParameter(swaggerParam);
         }
 
         path.set(requestKey.getMethod().toString().toLowerCase(), operation);

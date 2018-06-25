@@ -1,0 +1,19 @@
+package com.centurylink.mdw.tests.rules
+
+masterRequestId = Long.toHexString(java.time.Instant.now().toEpochMilli())
+println 'masterRequestId:: ' + masterRequestId
+
+def response = post http("api/com/centurylink/mdw/tests/rules/order") {
+    headers = [ "Content-Type": "application/json", "mdw-request-id": masterRequestId ]
+    payload = asset('OrderRequest.json').text
+}
+
+assert response.code == 200
+// verify response {
+//   expected = asset("Cheapskates.json").text
+// }
+
+wait process('DroolsDecisionTable')
+verify process('DroolsDecisionTable')
+
+ 

@@ -1,43 +1,49 @@
-process: # 13605
+process: # 39
   name: DroolsDecisionTable
   instance: 1
-  activity: # 2 "2016-02-22 11:52:08"
+  activity: # 2 "2018-06-25 13:02:02"
     name: Start
     status: Completed
-  activity: # 3 "2016-02-22 11:52:08"
+  activity: # 3 "2018-06-25 13:02:02"
     name: Setup XMLBean
     status: Completed
-  activity: # 1 "2016-02-22 11:52:08"
+  activity: # 1 "2018-06-25 13:02:03"
     name: |
       Drools 
       Decision Table
     status: Completed
     result: WESTERN
-  activity: # 4 "2016-02-22 11:52:09"
+  activity: # 7 "2018-06-25 13:02:07"
+    name: Set Response
+    status: Completed
+  activity: # 5 "2018-06-25 13:02:08"
     name: Stop
     status: Completed
-  variable: # 20591
+  variable: # 282
     name: dueDate
-    value: ${~.* [0-3]\\d [0-2]\\d:[0-5]\\d:[0-5]\\d .* 201\\d}
-  variable: # 20590
+    value: ${~.*}
+  variable: # 281
     name: orderNumber
     value: 295417
-  variable: # 20589
+  variable: # 284
     name: quotedPrice
     value: 150
-  variable: # 20588
+  variable: # 283
     name: region
     value: Western
-  variable: # 20593
+  variable: # 301
+    name: response
+    value: {"workgroup": "Cheapskates"}
+  variable: # 296
     name: ruleVersion
     value: drools-orderRoutingDecisionTable.xlsx v${~\\d.\\d}
-  variable: # 20594
+  variable: # 299
     name: workgroup
     value: Cheapskates
-  variable: # 20592
+  variable: # 285
     name: xmlBeanVar
     value: |
       <ser:ApplicationSummary xmlns:ser="http://mdw.centurylink.com/services">
           <ApplicationName>Cheapskates</ApplicationName>
-          <MdwVersion>5.5</MdwVersion>
+          <MdwVersion>6.1</MdwVersion>
       </ser:ApplicationSummary>
