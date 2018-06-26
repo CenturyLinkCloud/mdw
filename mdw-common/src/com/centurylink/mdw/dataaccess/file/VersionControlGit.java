@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -461,6 +462,13 @@ public class VersionControlGit implements VersionControl {
 
     public void add(String filePattern) throws GitAPIException {
         git.add().addFilepattern(filePattern).call();
+    }
+
+    public void add(List<String> paths) throws Exception {
+        AddCommand add = git.add();
+        for (String path : paths)
+            add.addFilepattern(path);
+        add.call();
     }
 
     public void cloneNoCheckout() throws Exception {

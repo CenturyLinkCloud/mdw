@@ -186,7 +186,6 @@ public class GitVcs extends JsonRestService {
                                     content.getString("user"), content.getString("password")));
                         }
                         vcGit.pull(branch);
-                        // TODO stage if new or deleted
                         List<String> commitPaths = new ArrayList<>();
                         commitPaths.add(pkgPath + "/" + assetName);
                         if (query.getBooleanFilter("includeMeta")) {
@@ -194,6 +193,7 @@ public class GitVcs extends JsonRestService {
                             commitPaths.add(metaPath + "/versions");
                             commitPaths.add(metaPath + "/package.yaml");
                         }
+                        vcGit.add(commitPaths);
                         vcGit.commit(commitPaths, comment);
                         vcGit.push();
                     }
