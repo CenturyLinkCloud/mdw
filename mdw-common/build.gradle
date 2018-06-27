@@ -30,6 +30,7 @@ dependencies {
     cli group: "com.samskivert", name: "jmustache", version: "1.12"
 
     schemas fileTree(dir: "../mdw/libs", include: "mdw-schemas.jar")
+    schemas fileTree(dir: "../mdw/libs", include: "spring-xsds.jar")
     
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     compile group: "javax.jms", name: "javax.jms-api", version: "2.0.1"

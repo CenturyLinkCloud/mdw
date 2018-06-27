@@ -88,6 +88,7 @@ dependencies {
     runtimeExtra group: "org.springframework", name: "spring-core", version: springVersion
     runtimeExtra group: "org.springframework", name: "spring-expression", version: springVersion
     runtimeExtra group: "org.springframework", name: "spring-aop", version: springVersion
+    runtimeExtra fileTree(dir: "../mdw-common/mdw/libs", include: "spring-xsds.jar")
 }
 
 task mdwWarSourcesJar(type: Jar) {

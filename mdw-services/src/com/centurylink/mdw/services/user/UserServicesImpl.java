@@ -180,7 +180,7 @@ public class UserServicesImpl implements UserServices {
     public void deleteUser(String cuid) throws DataAccessException {
         UserDataAccess dao = getUserDAO();
         User user = dao.getUser(cuid);
-        if (cuid == null)
+        if (user == null)
             throw new DataAccessException("User: " + cuid + " does not exist");
         dao.deleteUser(user.getId());
         UserGroupCache.remove(user);
