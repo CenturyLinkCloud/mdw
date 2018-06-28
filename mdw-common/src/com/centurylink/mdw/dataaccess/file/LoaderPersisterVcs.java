@@ -40,8 +40,10 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.AssetRevision;
@@ -827,10 +829,12 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             for (PackageDir pkgDir : getPackageDirs())
                 processes.addAll(loadProcesses(pkgDir, false));
             if (withArchived) {
-                for (AssetRef ref : AssetRefCache.getAllProcessRefs()) {
-                    Process proc = AssetRefConverter.getProcess(ref);
-                    if (proc != null && !processes.contains(proc))
-                        processes.add(proc);
+                if (PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
+                    for (AssetRef ref : AssetRefCache.getAllProcessRefs()) {
+                        Process proc = AssetRefConverter.getProcess(ref);
+                        if (proc != null && !processes.contains(proc))
+                            processes.add(proc);
+                    }
                 }
             }
             Collections.sort(processes);

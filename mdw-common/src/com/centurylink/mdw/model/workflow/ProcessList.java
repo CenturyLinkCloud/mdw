@@ -28,7 +28,6 @@ import org.json.JSONObject;
 import com.centurylink.mdw.model.InstanceList;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
 
 /**
  * A collection of workflow process instances.
@@ -44,7 +43,7 @@ public class ProcessList implements Jsonable, InstanceList<ProcessInstance> {
     public ProcessList(String name, JSONObject jsonObj) throws JSONException, ParseException {
         this.name = name;
         if (jsonObj.has("retrieveDate"))
-            retrieveDate = (StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"))).toInstant();
+            retrieveDate = (java.time.Instant)jsonObj.get("retrieveDate");
         if (jsonObj.has("count"))
             count = jsonObj.getInt("count");
         if (jsonObj.has("total"))

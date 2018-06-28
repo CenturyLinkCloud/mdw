@@ -275,7 +275,7 @@ public abstract class RestService {
         String descrip = path;
         if (descrip.length() > 1000)
             descrip = descrip.substring(0, 999);
-        UserAction exportAction = new UserAction(user.getName(), action, entity, entityId, descrip);
+        UserAction exportAction = new UserAction(user == null ? "unknown" : user.getName(), action, entity, entityId, descrip);
         exportAction.setSource(getSource());
         auditLog(exportAction);
     }
