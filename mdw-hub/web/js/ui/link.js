@@ -257,11 +257,12 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
       }
       else {
         if (hitX) {
+          let dpRatio = this.dpRatio;
           segments.forEach(function(seg) {
             context.beginPath();
             context.moveTo(seg.from.x, seg.from.y);
             context.lineTo(seg.to.x, seg.to.y);
-            if (context.isPointInStroke && (this.dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*this.dpRatio, hitY*this.dpRatio))) {
+            if (context.isPointInStroke && (dpRatio == 1 ? context.isPointInStroke(hitX, hitY) : context.isPointInStroke(hitX*dpRatio, hitY*dpRatio))) {
               hit = true;
             }
           });
