@@ -180,15 +180,15 @@ public class Import extends Setup {
     protected void importPackageFromMaven(String groupId, String artifactId, String version,
             ProgressMonitor... monitors) throws IOException {
         File assetDir = new File(getAssetLoc());
-        System.out.println("Importing from Maven into: " + assetDir + "...");
         String url = "http://search.maven.org/remotecontent?filepath=";
         List<String> pkgs = new ArrayList<>();
         pkgs.add(groupId.replace("assets", "") + artifactId.replace('-', '.'));
         File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
+        System.out.println("Importing " + artifactId + "/" + version + " from Maven into: " + assetDir + "...");
         new Download(new URL(url + groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + artifactId + "-" + version + ".zip"), tempZip).run(monitors);
 
-        System.out.println("Unzipping into: " + assetDir);
+        System.out.println("Unzipping " + artifactId + "/" + version + " into: " + assetDir);
         new Unzip(tempZip, assetDir, true).run();
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
@@ -219,7 +219,7 @@ public class Import extends Setup {
 
     protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) {
         File assetDir = new File(getAssetLoc());
-        System.out.println("Importing from Maven into: " + assetDir + "...");
+        System.out.println("Importing " + pkg + " from Maven into: " + assetDir + "...");
         String url = SONATYPE_URL + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
                 + pkg.replace("com.centurylink.mdw.", "").replace('.', '-') + "&v=LATEST&p=zip";
         List<String> pkgs = new ArrayList<>();
