@@ -342,7 +342,7 @@ public class Pagelet implements Jsonable {
                         widgets.add(new Widget(arr.getJSONObject(i)));
                 }
                 else if (!key.equals("name") && !key.equals("type")) {
-                    setAttribute(key, json.getString(key));
+                    setAttribute(key, json.get(key).toString());
                 }
             }
         }

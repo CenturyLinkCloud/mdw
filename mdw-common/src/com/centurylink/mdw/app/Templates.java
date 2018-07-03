@@ -32,7 +32,8 @@ public class Templates {
     private Map<String,byte[]> templates = new LinkedHashMap<>();
 
     public static String get(String path) throws IOException {
-        return new String(getBytes(path));
+        byte[] bytes = getBytes(path);
+        return bytes == null ? null : new String(bytes);
     }
 
     public static byte[] getBytes(String path) throws IOException {
