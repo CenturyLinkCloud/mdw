@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
@@ -59,25 +60,28 @@ public class WorkflowCache extends JsonRestService {
 
     @Override
     @Path("/{cacheName}")
-    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
-    throws ServiceException, JSONException {
+    public JSONObject post(String path, JSONObject content, Map<String, String> headers)
+            throws ServiceException, JSONException {
 
         try {
-            String singleCacheName = getSegment(path, 1);
-
-            if (singleCacheName == null) {
-                List<String> excludeFormats = null;
-                if (content.has("excludeFormats")) {
-                    excludeFormats = new ArrayList<>();
-                    JSONArray jsonArr = content.getJSONArray("excludeFormats");
-                    for (int i = 0; i < jsonArr.length(); i++) {
-                        excludeFormats.add(jsonArr.getString(i));
+          //avoid cache refresh for localhost dev.
+            if (!(ApplicationContext.isDevelopment()
+                    && ApplicationContext.getMdwHubUrl().contains("localhost"))) {
+               String singleCacheName = getSegment(path, 1);
+               if (singleCacheName == null) {
+                    List<String> excludeFormats = null;
+                    if (content.has("excludeFormats")) {
+                        excludeFormats = new ArrayList<>();
+                        JSONArray jsonArr = content.getJSONArray("excludeFormats");
+                        for (int i = 0; i < jsonArr.length(); i++) {
+                            excludeFormats.add(jsonArr.getString(i));
+                        }
                     }
+                    CacheRegistration.getInstance().refreshCaches(excludeFormats);
                 }
-                CacheRegistration.getInstance().refreshCaches(excludeFormats);
-            }
-            else {
-                new CacheRegistration().refreshCache(singleCacheName);
+                else {
+                    new CacheRegistration().refreshCache(singleCacheName);
+                }
             }
         }
         catch (StartupException ex) {
