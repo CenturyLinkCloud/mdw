@@ -97,7 +97,7 @@ public class Init extends Setup {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
-        deleteAssetTemplates();
+        deleteDynamicTemplates();
         System.out.println("Writing: ");
         subst(getProjectDir());
         if(isSnapshots())
@@ -113,7 +113,7 @@ public class Init extends Setup {
     /**
      * These will be retrieved just-in-time based on current mdw version.
      */
-    private void deleteAssetTemplates() throws IOException {
+    private void deleteDynamicTemplates() throws IOException {
         File codegenDir = new File(getProjectDir() + "/codegen");
         if (codegenDir.exists()) {
             System.out.println("Deleting " + codegenDir);
@@ -123,6 +123,11 @@ public class Init extends Setup {
         if (assetsDir.exists()) {
             System.out.println("Deleting " + assetsDir);
             new Delete(assetsDir, true).run();
+        }
+        File configuratorDir = new File(getProjectDir() + "/configurator");
+        if (configuratorDir.exists()) {
+            System.out.println("Deleting " + configuratorDir);
+            new Delete(configuratorDir, true).run();
         }
     }
 

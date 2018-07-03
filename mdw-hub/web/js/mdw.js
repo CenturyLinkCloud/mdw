@@ -12,6 +12,7 @@ mdwMod.factory('mdw', function() {
     authMethod: $mdwAuthMethod,
     appId: $mdwAppId,
     hubUser: $mdwHubUser,   // Used to determine if isDevelopment() - value is only set when in Dev mode
+    sourceRepoUrl: 'https://github.com/CenturyLinkCloud/mdw',
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot,

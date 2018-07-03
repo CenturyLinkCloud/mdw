@@ -94,29 +94,19 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         if (widget.value)
           widget.label += '*';
       }
-      else if (widget.type === 'link') {
-        var basePkg = 'com.centurylink.mdw';
-        var implementorName = widget.value;
-        // mdw assets delivered in pkgs 
-        var assetPkgs = ["microservice","drools","demo","kafka","filepanel","slack","tibco","tests"];
-        var isAsset = false;
-        for (var ii = 0; ii < assetPkgs.length; ii++){
-          if (implementorName.startsWith(basePkg + '.' + assetPkgs[ii])) {
-            isAsset = true;
-            break;
-          }
-        }
-        if (implementorName.startsWith(basePkg + '.') && !isAsset) {
-          var filePath = widget.value.replace(/\./g,"/");
-          var baseURL = 'https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/src/';
-          widget.url = baseURL + filePath + ".java";     
+      else if (widget.type === 'link' && widget.name === 'implementor' && widget.value) {
+        var implName = widget.value;
+        if (implName.startsWith('com.centurylink.mdw.workflow.')) {
+          // mdw built-in (GitHub)
+          var filePath = implName.replace(/\./g,"/");
+          widget.url = mdw.sourceRepoUrl + '/blob/master/mdw-workflow/src/' + filePath + '.java';     
         }
         else {
-           var lastSlash = widget.value.lastIndexOf('.');
-           var pkgName = widget.value.substring(0, lastSlash);
-           var assetName = widget.value.substring(lastSlash + 1);
-           var assetURL = mdw.roots.hub + '/#/asset/' + pkgName + "/" + assetName + ".java";
-           widget.url = assetURL;      
+          // hopefully a java asset
+          var lastSlash = implName.lastIndexOf('.');
+          var pkgName = implName.substring(0, lastSlash);
+          var assetName = implName.substring(lastSlash + 1);
+          widget.url = mdw.roots.hub + '/#/asset/' + pkgName + "/" + assetName + '.java';
         }
       }
       else if (widget.type === 'picklist') {
@@ -378,7 +368,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       this.template.pagelet.widgets.splice(helpWidgetIndex, 1);
       return {
         name: widg.name,
-        url: mdw.roots.docs + '/help' + widg.url.substring(11)
+        url: mdw.roots.docs + '/help' + (widg.url.startsWith('/MDWWeb/doc') ? widg.url.substring(11) : widg.url.substring(4))
       };
     }
     else {

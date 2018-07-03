@@ -91,7 +91,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
         }
         else if ('decision' == shape) {
           this.diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
-          yAdjust = -8;
+          yAdjust = this.title.lines.length == 1 ? -2 : -8;
         }
         else if ('activity' == shape) {
           this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);

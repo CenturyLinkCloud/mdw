@@ -33,7 +33,7 @@
     <div class="panel panel-default mdw-inspector-panel">
       <div class="panel-heading mdw-heading">
         <div class="mdw-heading-label">
-          {{editable ? 'Configure' : 'Inspector'}}{{workflowObject.name || workflowType == 'transition' ? ': ' : ''}}
+          {{editable ? 'Configurator' : 'Inspector'}}{{workflowObject.name || workflowType == 'transition' ? ': ' : ''}}
           <span class="mdw-heading-sub">{{workflowType == 'transition' ? 'Transition' : workflowObject.name.removeCrs().replaceAll('\n', ' ')}}</span>
         </div>
         <div class="mdw-help-icon">

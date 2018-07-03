@@ -1,0 +1,100 @@
+{
+  "process": {
+    "Definition": {
+      "ID": "id",
+      "Name": "name",
+      "Description": "description",
+      "Created": "created",
+      "_template": "processDefinition.json"
+    },
+    "Design": {
+      "_template": "process.json"
+    },
+    "Variables": {
+      "_template": "variables.json"
+    },
+    "Request": {
+      "_attribute": { "name": "Request" },
+      "_template": "request.json"
+    },
+    "Documentation": {
+      "_attribute": { "name": "Documentation", "markdown": true },
+      "_template": "documentation.json"
+    },
+    "Monitoring": {
+      "_attributes": "monitoring",
+      "_template": "monitoring.json"
+    }
+  },
+  "activity": {
+    "Definition": {
+      "ID": "id",
+      "Name": "name",
+      "Implementor": "implementor",
+      "Description": "description",
+      "_template": "activityDefinition.json"
+    },
+    "Design": {
+      "_template": "Implementors/${it.implementor}"
+    },
+    "Events": {
+      "_template": "Implementors/${it.implementor}",
+      "_categories": ["com.centurylink.mdw.activity.types.TaskActivity", "com.centurylink.mdw.activity.types.InvokeProcessActivity", "com.centurylink.mdw.activity.types.SynchronizationActivity"]
+    },
+    "Recipients": {
+      "_template": "Implementors/${it.implementor}",
+      "_categories": ["com.centurylink.mdw.activity.types.NotificationActivity"]
+    },
+    "Authentication": {
+      "_attributes": "auth",
+      "_template": "Implementors/${it.implementor}",
+      "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
+    },
+    "Documentation": {
+      "_attribute": { "name": "Documentation", "markdown": true },
+      "_template": "documentation.json"
+    },
+    "Monitoring": {
+      "_attributes": "monitoring",
+      "_template": "monitoring.json"
+    },
+    "Stubbing": {
+      "_attributes": "stubbing",
+      "_template": "stubbing.json",
+      "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
+    },
+    "Attributes": "attributes"
+  },
+  "subprocess": {
+    "Definition": {
+      "ID": "id",
+      "Name": "name",
+      "Description": "description",
+      "_template": "processDefinition.json"
+    },
+    "Attributes": "attributes",
+    "Documentation": {
+      "_attribute": { "name": "Documentation", "markdown": true },
+      "_template": "documentation.json"
+    }
+  },
+  "transition": {
+    "Definition": {
+      "ID": "id",
+      "Result": "resultCode",
+      "Event": "event",
+      "_template": "transitionDefinition.json"
+    },
+    "Design": {
+      "_template": "transition.json"
+    },
+    "Attributes": "attributes"
+  },
+  "textNote": {
+    "Definition": {
+      "ID": "id",
+      "Text": "content",
+      "_template": "textNote.json"
+    }
+  }  
+}

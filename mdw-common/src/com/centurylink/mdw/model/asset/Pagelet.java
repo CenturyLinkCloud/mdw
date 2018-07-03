@@ -57,6 +57,8 @@ public class Pagelet implements Jsonable {
     }
 
     private List<Widget> widgets = new ArrayList<Widget>();
+    public List<Widget> getWidgets() { return widgets; }
+    public void setWidgets(List<Widget> widgets) { this.widgets = widgets; }
 
     /**
      * Note: changes widget type and attribute names into lower case.
@@ -67,7 +69,7 @@ public class Pagelet implements Jsonable {
 
         SAXParser parser = parserFactory.newSAXParser();
         parser.parse(src, new DefaultHandler() {
-            private Stack<Widget> widgs = new Stack<>();;
+            private Stack<Widget> widgs = new Stack<>();
             private Map<String,String> widgNameToElem = new HashMap<>();
             private boolean inOpt;
 
@@ -109,7 +111,7 @@ public class Pagelet implements Jsonable {
                 }
                 else {
                     if (!widgs.isEmpty()) {
-                        String elemName = widgNameToElem.get(widgs.peek());
+                        String elemName = widgNameToElem.get(widgs.peek().getName());
                         // assumes unnamed widgets can't have children
                         if (elemName == null || elemName.equals(name))
                             widgs.pop();
@@ -265,6 +267,18 @@ public class Pagelet implements Jsonable {
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
 
+        private String label;
+        public String getLabel() {
+            return label == null ? name : label;
+        }
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        private Object value;
+        public Object getValue() { return value; }
+        public void setValue(Object value) { this.value = value; }
+
         private Map<String,String> attributes;
         /**
          * everything but name, type and options
@@ -279,6 +293,10 @@ public class Pagelet implements Jsonable {
         private List<Widget> widgets;
         public List<Widget> getWidgets() { return widgets; }
         public void setWidgets(List<Widget> widgets) { this.widgets = widgets; }
+
+        private WidgetAdapter adapter;
+        public WidgetAdapter getAdapter() { return adapter; }
+        public void setAdapter(WidgetAdapter adapter) { this.adapter = adapter; }
 
         public void addWidget(Widget widget) {
             if (widgets == null)
@@ -309,25 +327,23 @@ public class Pagelet implements Jsonable {
             // name and type are mandatory
             name = json.getString("name");
             type = json.getString("type");
-            Map<String,String> map = JsonUtil.getMap(json);
 
-            for (String key : map.keySet()) {
-                if (!key.equals("name") && !key.equals("type") && !key.equals("options"))
+            for (String key : json.keySet()) {
+                if (key.equals("options")) {
+                    options = new ArrayList<>();
+                    JSONArray arr = json.getJSONArray("options");
+                    for (int i = 0; i < arr.length(); i++)
+                        options.add(arr.getString(i));
+                }
+                else if (key.equals("widgets")) {
+                    widgets = new ArrayList<>();
+                    JSONArray arr = json.getJSONArray("widgets");
+                    for (int i = 0; i < arr.length(); i++)
+                        widgets.add(new Widget(arr.getJSONObject(i)));
+                }
+                else if (!key.equals("name") && !key.equals("type")) {
                     setAttribute(key, json.getString(key));
-            }
-
-            if (json.has("options")) {
-                options = new ArrayList<>();
-                JSONArray arr = json.getJSONArray("options");
-                for (int i = 0; i < arr.length(); i++)
-                    options.add(arr.getString(i));
-            }
-
-            if (json.has("widgets")) {
-                widgets = new ArrayList<>();
-                JSONArray arr = json.getJSONArray("widgets");
-                for (int i = 0; i < arr.length(); i++)
-                    widgets.add(new Widget(arr.getJSONObject(i)));
+                }
             }
         }
 
@@ -335,6 +351,7 @@ public class Pagelet implements Jsonable {
             JSONObject json = create();
             json.put("name", name);
             json.put("type", type);
+            // don't populate label or hub will display it as an attribute
 
             if (attributes != null) {
                 for (String key : attributes.keySet())
