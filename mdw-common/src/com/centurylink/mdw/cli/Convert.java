@@ -21,16 +21,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+
+import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.dataaccess.AssetRevision;
 
-@Parameters(commandNames="convert", commandDescription="Convert mdw or application property files to yaml", separators="=")
+@Parameters(commandNames="convert", commandDescription="Convert mdw/app property files, or package.json files to yaml", separators="=")
 public class Convert extends Setup {
+
+    @Parameter(names="--packages", description="Update package.json files to package.yaml (ignores other options)")
+    private boolean packages;
+    public boolean isPackages() { return packages; }
+    public void setPackages(boolean packages) { this.packages = packages; }
 
     @Parameter(names="--input", description="Input property file")
     private File input;
@@ -61,6 +71,58 @@ public class Convert extends Setup {
     @Override
     public Convert run(ProgressMonitor... progressMonitors) throws IOException {
 
+        if (isPackages()) {
+            convertPackages();
+        }
+        else {
+            convertProperties();
+        }
+
+        return this;
+    }
+
+    protected void convertPackages() throws IOException {
+
+        System.out.println("Processing packages:");
+        Map<String,File> packageDirs = getAssetPackageDirs();
+        for (String packageName : packageDirs.keySet()) {
+            System.out.println("  " + packageName);
+            File packageDir = packageDirs.get(packageName);
+            File metaDir = new File(packageDir + "/" + META_DIR);
+            File yamlFile = new File(metaDir + "/package.yaml");
+            File jsonFile = new File(metaDir + "/package.json");
+            if (yamlFile.exists()) {
+                if (jsonFile.exists()) {
+                    System.out.println("    Removing redundant file: " + jsonFile);
+                    new Delete(jsonFile).run();
+                }
+                else {
+                    System.out.println("    Ignoring existing: " + yamlFile);
+                }
+            }
+            else {
+                System.out.println("    Converting: " + jsonFile);
+                JSONObject json = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFile.getPath()))));
+                Map<String,String> vals = new HashMap<>();
+                vals.put("name", json.getString("name"));
+                int version = AssetRevision.parsePackageVersion(json.getString("version"));
+                vals.put("version", AssetRevision.formatPackageVersion(++version));
+                String schemaVer = json.optString("schemaVer");
+                if (schemaVer.isEmpty() || schemaVer.startsWith("5") || schemaVer.equals("6.0")) {
+                    schemaVer = "6.1";
+                }
+                vals.put("schemaVersion", schemaVer);
+                YamlBuilder yamlBuilder = new YamlBuilder();
+                yamlBuilder.append(vals);
+                System.out.println("    Writing: " + yamlFile);
+                Files.write(Paths.get(yamlFile.getPath()), yamlBuilder.toString().getBytes());
+                System.out.println("    Deleting: " + jsonFile);
+                new Delete(jsonFile).run();
+            }
+        }
+    }
+
+    protected void convertProperties() throws IOException {
         InputStream mapIn;
         if (map == null) {
             mapIn = getClass().getClassLoader().getResourceAsStream("META-INF/mdw/configurations.map");
@@ -92,8 +154,6 @@ public class Convert extends Setup {
         catch (ReflectiveOperationException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
-
-        return this;
     }
 
 }

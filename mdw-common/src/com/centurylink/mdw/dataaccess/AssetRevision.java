@@ -73,4 +73,30 @@ public class AssetRevision {
         return major * 1000 + minor;
     }
 
+    public static int parsePackageVersion(String versionString) throws NumberFormatException {
+        if (versionString == null)
+            return 0;
+        int firstDot = versionString.indexOf('.');
+        int major, minor;
+        if (firstDot > 0) {
+            major = Integer.parseInt(versionString.substring(0, firstDot));
+            int secondDot = versionString.indexOf('.', firstDot + 1);
+            if (secondDot > 0)
+                minor = Integer.parseInt(versionString.substring(firstDot + 1, secondDot)) * 100 + Integer.parseInt(versionString.substring(secondDot + 1));
+            else
+                minor = Integer.parseInt(versionString.substring(firstDot + 1));
+        }
+        else {
+            major = 0;
+            minor = Integer.parseInt(versionString);
+        }
+        return major*1000 + minor;
+    }
+
+    public static String formatPackageVersion(int version) {
+        int major = version/1000;
+        int minor = version%1000;
+        int point = minor%100;
+        return major + "." + minor/100 + "." + (point >= 10 ? point : "0" + point);
+    }
 }
