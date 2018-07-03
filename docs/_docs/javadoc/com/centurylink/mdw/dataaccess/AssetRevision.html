@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -148,46 +148,54 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getComment--">getComment</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#formatPackageVersion-int-">formatPackageVersion</a></span>(int&nbsp;version)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getFormattedVersion--">getFormattedVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getComment--">getComment</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getFormattedVersion--">getFormattedVersion</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getModDate--">getModDate</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getModUser--">getModUser</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getVersion--">getVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#getVersionString--">getVersionString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#parsePackageVersion-java.lang.String-">parsePackageVersion</a></span>(java.lang.String&nbsp;versionString)</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#parseVersion-java.lang.String-">parseVersion</a></span>(java.lang.String&nbsp;versionString)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#setComment-java.lang.String-">setComment</a></span>(java.lang.String&nbsp;comment)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#setModDate-java.util.Date-">setModDate</a></span>(java.util.Date&nbsp;date)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#setModUser-java.lang.String-">setModUser</a></span>(java.lang.String&nbsp;user)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/AssetRevision.html#setVersion-int-">setVersion</a></span>(int&nbsp;ver)</code>&nbsp;</td>
 </tr>
@@ -332,7 +340,7 @@ extends java.lang.Object</pre>
 <a name="parseVersion-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>parseVersion</h4>
 <pre>public static&nbsp;int&nbsp;parseVersion(java.lang.String&nbsp;versionString)
@@ -341,6 +349,29 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.NumberFormatException</code></dd>
 </dl>
+</li>
+</ul>
+<a name="parsePackageVersion-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parsePackageVersion</h4>
+<pre>public static&nbsp;int&nbsp;parsePackageVersion(java.lang.String&nbsp;versionString)
+                               throws java.lang.NumberFormatException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.NumberFormatException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="formatPackageVersion-int-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>formatPackageVersion</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatPackageVersion(int&nbsp;version)</pre>
 </li>
 </ul>
 </li>
