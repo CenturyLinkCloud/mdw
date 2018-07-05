@@ -113,6 +113,7 @@ public class YamlBuilder {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setPrettyFlow(true);
         options.setIndent(2);
+        options.setSplitLines(false);
         return options;
     }
 }

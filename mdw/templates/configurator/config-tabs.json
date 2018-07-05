@@ -35,19 +35,19 @@
       "_template": "activityDefinition.json"
     },
     "Design": {
-      "_template": "Implementors/${it.implementor}"
+      "_template": "<implementor>"
     },
     "Events": {
-      "_template": "Implementors/${it.implementor}",
+      "_template": "<implementor>",
       "_categories": ["com.centurylink.mdw.activity.types.TaskActivity", "com.centurylink.mdw.activity.types.InvokeProcessActivity", "com.centurylink.mdw.activity.types.SynchronizationActivity"]
     },
     "Recipients": {
-      "_template": "Implementors/${it.implementor}",
+      "_template": "<implementor>",
       "_categories": ["com.centurylink.mdw.activity.types.NotificationActivity"]
     },
     "Authentication": {
       "_attributes": "auth",
-      "_template": "Implementors/${it.implementor}",
+      "_template": "<implementor>",
       "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
     },
     "Documentation": {
