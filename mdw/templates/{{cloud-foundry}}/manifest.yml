@@ -7,7 +7,7 @@ applications:
   path: mdw-boot-{{mdw-version}}.jar
 
 env:
-  JAVA_OPTS: -Dmdw.runtime.env=dev -Dmdw.property.manager=com.centurylink.mdw.config.PaaSPropertyManager -Dmdw.server.port=$PORT 
+  JAVA_OPTS: -Dmdw.runtime.env=pcfDev1 -Dmdw.property.manager=com.centurylink.mdw.config.YamlPropertyManager 
   
   MDW_APP_TOKEN: 
   JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: "[enabled: false]"
@@ -49,45 +49,48 @@ env:
     ]
   }'
     
-  mdw_properties: '{
-    "mdw.container.datasource_provider": "Tomcat",
-    "mdw.container.jms_provider": "ActiveMQ",
-    "mdw.container.threadpool_provider": "MDW",
-    "mdw.container.messenger": "jms",
-    
-    "mdw.database.driver": "{{database-driver}}",
-    "mdw.database.url": "{{database-url}}",
-    "mdw.database.username": "{{database-user}}",
-    "mdw.database.password": "{{database-password}}",
-    "mdw.database.poolsize": "20",
-    "mdw.database.poolMaxIdle": "5",
-    "mdw.database.validationQuery": "select 1 from dual",
-    
-    "mdw.server.list": "{{project}}.useast.appfog.ctl.io:80",
-    
-    "mdw.logging.level": "DEBUG",
-  
-    "mdw.temp.dir": "../mdw/.temp",
-    
-    "mdw.git.local.path": "./repo",
-    "mdw.git.remote.url": "{{git-remote-url}}",
-    "mdw.git.branch": "{{git-branch}}",
-    "mdw.git.user": "{{git-user}}",
-    "mdw.git.password": "{{git-password}}",
-  
-    "mdw.hub.url": "https://{{project}}.useast.appfog.ctl.io/mdw",
-    "mdw.services.url": "http://{{project}}.useast.appfog.ctl.io:80/mdw",
-    "mdw.discovery.url": "{{discovery-url}}",
-    "mdw.central.url": "https://mdw-central.com",
+  mdw_settings: |
+    application:
+      name: {{project}}
       
-    "mdw.application.name": "{{project}}",
+    servers:
+      {{project}}.pcfomactl.dev.intranet:
+        ports:
+        -80
+        
+    container:
+      datasource.provider: Tomcat
+      messenger: jms
+      jms.provider: ActiveMQ
+      threadpool.provider: MDW
+      
+    database:
+      driver: {{database-driver}}
+      url: {{database-url}}
+      username: {{database-user}}
+      password: {{database-password}}
+      poolsize: 20
+      poolMaxIdle: 5
+      validationQuery: select 1 from dual
+      
+    git:
+      local.path: ./repo
+      remote.url: {{git-remote-url}}
+      branch: {{git-branch}}
+      user: {{git-user}}
+      password: {{password}}
+      
+    temp.dir: ../mdw/.temp   
     
-    "mdw.script.executor.groovy": "com.centurylink.mdw.script.GroovyExecutor",
-    "mdw.script.executor.javascript": "com.centurylink.mdw.script.JavaScriptExecutor",
+    logging:
+      level: DEBUG 
     
-    "mdw.filepanel.root.dirs": ".",
-    "mdw.filepanel.exclude.patterns": ".git"
-  }'
+    filepanel:
+      root.dirs:  ./logs 
+        
+    hub.url: https://{{project}}.useast.appfog.ctl.io/mdw
+    services.url: http://{{project}}.useast.appfog.ctl.io:80/mdw
+    central.url: https://mdw-central.com
   
   mdw_access: |
     authMethod: mdw 
