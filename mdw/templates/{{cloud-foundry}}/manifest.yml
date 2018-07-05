@@ -78,7 +78,7 @@ env:
       remote.url: {{git-remote-url}}
       branch: {{git-branch}}
       user: {{git-user}}
-      password: {{password}}
+      password: {{git-password}}
       
     temp.dir: ../mdw/.temp   
     
