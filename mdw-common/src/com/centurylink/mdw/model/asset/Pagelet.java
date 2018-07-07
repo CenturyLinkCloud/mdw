@@ -267,14 +267,6 @@ public class Pagelet implements Jsonable {
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
 
-        private String label;
-        public String getLabel() {
-            return label == null ? name : label;
-        }
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
         private Object value;
         public Object getValue() { return value; }
         public void setValue(Object value) { this.value = value; }
