@@ -31,6 +31,7 @@ dependencies {
 
     schemas fileTree(dir: "../mdw/libs", include: "mdw-schemas.jar")
     schemas fileTree(dir: "../mdw/libs", include: "spring-xsds.jar")
+    schemas fileTree(dir: "../mdw/libs", include: "bpmn-schemas.jar")
     
     compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
     compile group: "javax.jms", name: "javax.jms-api", version: "2.0.1"
@@ -145,6 +146,12 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/system/ServerList.class"
         include "com/centurylink/mdw/util/file/MdwIgnore.class"
         include "com/centurylink/mdw/util/file/VersionProperties.class"
+        include "com/centurylink/mdw/model/workflow/Process.class"
+        include "com/centurylink/mdw/model/workflow/Activity.class"
+        include "com/centurylink/mdw/model/workflow/TextNote.class"
+        include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
+        include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"
+        include "com/centurylink/mdw/model/workflow/Transition.class"   
     }
     
     from configurations.cli.asFileTree.files.collect {
