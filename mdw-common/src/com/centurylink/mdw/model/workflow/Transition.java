@@ -216,7 +216,7 @@ public class Transition implements Serializable, Jsonable {
             logicalId = "T" + logicalId.substring(10);
         id = Long.valueOf(logicalId.substring(1));
         this.toId = Long.parseLong(json.getString("to").substring(1));
-        if (json.has("resultCode"))
+        if (json.has("resultCode") && json.getString("resultCode").length() > 0)
             this.completionCode = json.getString("resultCode");
         if (json.has("event"))
             this.eventType = EventType.getEventTypeFromName(json.getString("event"));
