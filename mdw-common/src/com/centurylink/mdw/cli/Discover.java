@@ -30,7 +30,7 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="discover", commandDescription="Discover asset packages from Maven or MDW", separators="=")
 public class Discover extends Setup {
 
-    @Parameter(names="--groupId", description="Maven group id")
+    @Parameter(names="--group-id", description="Maven group id")
     private String groupId;
     public String getGroupId() {
         return groupId;
