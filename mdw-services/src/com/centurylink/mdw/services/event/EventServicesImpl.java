@@ -21,10 +21,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -681,7 +684,7 @@ public class EventServicesImpl implements EventServices {
                     edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
                             ApplicationContext.getServer().toString());
                 }
-                if (event.getScheduledTime()==null) edao.deleteEventInstance(event.getName());
+                if (event.getScheduledTime()==null ||!(checkJobConfiguration(event.getName()))) edao.deleteEventInstance(event.getName());
                 else edao.updateEventInstance(event.getName(), null, null,
                         event.getScheduledTime(), null, null, 0, null);
             }     // else do nothing - may be processed by another server
@@ -691,7 +694,29 @@ public class EventServicesImpl implements EventServices {
             edao.stopTransaction(transaction);
         }
     }
-
+    /**
+     * @param eventName
+     * @return true if Scheduled Job configuration is present in mdw.yaml or properties file.
+     */
+    private boolean checkJobConfiguration(String eventName){
+        Properties timerTasksProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
+        List<String> timerTasks = new ArrayList<String>();
+        for (String pn : timerTasksProperties.stringPropertyNames()) {
+            String[] pnParsed = pn.split("\\.");
+            if (pnParsed.length==5) {
+                String name = pnParsed[3];
+                String attrname = pnParsed[4];
+                if(attrname.equals("TimerClass")){
+                    timerTasks.add(timerTasksProperties.getProperty(PropertyNames.MDW_TIMER_TASK+"."+name+"."+attrname));
+                }
+             }
+        }
+        String className=eventName.split("\\ScheduledJob.")[1];
+        if(timerTasks.contains(className))
+            return true;
+        else
+            return false;
+    }
     public boolean processUnscheduledEvent(String eventName) {
         TransactionWrapper transaction = null;
         boolean processed = false;
