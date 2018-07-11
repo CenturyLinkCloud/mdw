@@ -31,7 +31,8 @@ permalink: /docs/help/
   <li><a href='JmsAdapter.html'>JMS Adapter Activity</a></li>
   <li><a href='listener.html'>Listeners and Event Handlers</a></li>
   <li><a href='MDWWebServiceAdapter.html'>MDW Web Service Adapter Activity</a></li>
-  <li><a href='notification.html'>Notification Activity</a></li> 
+  <li><a href='MDWWebServiceAdapter.html'>MDW Web Service Adapter Activity</a></li>
+  <li><a href='MicroserviceOrchestrator.html'>Microservice Orchestrator</a></li> 
   <li><a href='process.html'>Processes</a></li>
   <li><a href='RestfulAdapter.html'>RESTful Adapter Activity</a></li>
   <li><a href='KafkaAdapter.html'>Kafka Adapter Activity</a></li>

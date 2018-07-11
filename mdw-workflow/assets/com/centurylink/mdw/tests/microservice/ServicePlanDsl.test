@@ -3,16 +3,30 @@ package com.centurylink.mdw.tests.microservice
 // creates two instances
 start process("ServicePlanTest") {
     variables = [ testCase: "defaultBindings",
-        request: asset("mainRequest.json").text
-    ]
+        request: '''{
+  "_type": "com.centurylink.mdw.tests.microservice.User",
+  "user": {
+    "id": "torvalds",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
+    "emailAddress": "torvalds@transmeta.com"
+  }
+}''' ]
 }
 
 wait process // ensure consistent ordering in yaml
 
 start process("ServicePlanTest") {
     variables = [ testCase: "customBindings",
-        request: asset("mainRequest.json").text
-    ]
+        request: '''{
+  "_type": "com.centurylink.mdw.tests.microservice.User",
+  "user": {
+    "id": "torvalds",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
+    "emailAddress": "torvalds@transmeta.com"
+  }
+}''' ]
 }
 
 wait process

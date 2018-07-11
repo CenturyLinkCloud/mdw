@@ -22,7 +22,7 @@ runtime view enabling users to track all services and their dependencies.</p>
 <h3><a id="servicePlan">Service Plan</a></h3>
 <p>The best way to understand how to create a Service Plan to drive your Microservice Orchestrator activity is to look
 at a working example.  The MDW automated tests include a straightforward example in the Microservice Orchestration process:</p> 
-<img style="width:800px" src="images/microserviceOrchestration.png" />
+<img style="width:800px;border:1px solid black;" src="images/microserviceOrchestration.png" />
 <p>Implementation for the Invoke Services activity starts upstream in the Create Plan 
 <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md">Kotlin Script</a>
 activity.  Here's the source code that populates the servicePlan variable according to runtime conditions:</p>
@@ -54,9 +54,9 @@ variables["servicePlan"] = servicePlan(runtimeContext) {
 <p>The left side of the assignment on the first line is what sets the variable value.  The special <code>servicePlan()</code> constructor
 uses a super friendly Kotlin DSL to specify which services are executed and with what values.  Each microservice represents a designated endpoint
 that's to be run zero or more times based on its setup.  For example, the first <code>microservice</code> declaration says to POST to the createUser service
-with a property-driven URL from <a href="https://centurylinkcloud.github.io/mdw/docs/guides/configuration/">mdw.yaml</a>.  It also spells out any
-input <a href="bindingExpressions.html">variable bindings</a> to be passed to the invocation subflow.  Dynamic values for each microservice can 
-be assigned using <code>variables["myvar"]</code> syntax, or Kotlin 
+with a property-driven URL from <a href="https://centurylinkcloud.github.io/mdw/docs/guides/configuration/">mdw.yaml</a>.  Using Kotlin infix notation,
+it also spells out any input <a href="bindingExpressions.html">variable bindings</a> to be passed to the invocation subflow.  Dynamic values for each 
+microservice can be assigned using <code>variables["myvar"]</code> syntax, or Kotlin 
 <a href="https://kotlinlang.org/docs/reference/basic-types.html#string-templates">String Template</a> expressions.  At runtime, all these values
 are substituted into the servicePlan YAML process variable.</p>
 
