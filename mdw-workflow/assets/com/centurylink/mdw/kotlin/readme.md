@@ -18,6 +18,7 @@ language, access to variables is not implicit like in Groovy scripts; instead, u
 ```kotlin
 var person: Person = variables["jsonablePerson"] as Person
 ```
+Kotlin script activities work the same way as other [MDW script activities](http://centurylinkcloud.github.io/mdw/docs/help/scriptActivity.html)
 Working examples are available in the 
 [script tests package](https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script).
 
