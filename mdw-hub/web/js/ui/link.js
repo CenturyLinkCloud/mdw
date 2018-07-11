@@ -718,7 +718,7 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
     else if (n == 2) {
       // auto ELBOW, ELBOWH, ELBOWV 
       xs = this.display.xs = [0, 0];
-      ys = this.display.xs = [0, 0];
+      ys = this.display.ys = [0, 0];
       this.calcAutoElbow();
     } 
     else {

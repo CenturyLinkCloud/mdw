@@ -30,6 +30,12 @@ In a clustered environment, a single server instance is identified as the db ser
 their own embedded db, but rather will connect through JDBC.  **Never** stipulate `localhost`
 as the embedded db or in the server list except for local development on your PC. 
 
+## macOS
+To ensure that MariaDB dependencies are installed locally, you can use homebrew to install the package:
+```
+brew install mariadb
+```
+
 ## Seed Users
 To effectively use MDW you'll want to create a user or users and grant them appropriate roles.
 This is needed to perform actions such as executing workflow processes, actioning manual tasks, etc.

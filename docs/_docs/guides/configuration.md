@@ -116,6 +116,12 @@ title: MDW Configuration
     timer.CheckInterval: 60  # (seconds) default=60
     timer.ThresholdForDelay: 30  # (minutes) default=60
     
+    # Custom JWT Provider    
+    jwt.custom:
+      issuer: cxg7i.test.intranet # issuer of token
+      userClaim: userid # claim containing the authenticated user
+      key: # actual public rsa encryption key to decrypt JWT
+         
     # https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/system/filepanel/readme.md
     filepanel:
       root.dirs: ./logs,./config
