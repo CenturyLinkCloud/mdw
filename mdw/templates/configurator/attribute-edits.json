@@ -1,0 +1,13 @@
+{
+  "languages": {
+    "Java": "java",
+    "Groovy": "groovy",
+    "JavaScript": "js",
+    "Kotlin Script": "kts",
+    "GPath": "groovy",
+    "XSLT": "xsl"
+  },
+  "languageAttributes": [
+      "SCRIPT", "PreScriptLang", "PostScriptLang", "Transform Language" 
+  ]
+}
