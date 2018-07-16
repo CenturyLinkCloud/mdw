@@ -125,7 +125,7 @@ task cliJar(type: Jar) {
               + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
               + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
               + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
-              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar");
+              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/limberest-1.2.4.jar ./lib/xmlbeans-2.4.0.jar");
     }
     
     from("build/classes") {
@@ -151,7 +151,14 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/workflow/TextNote.class"
         include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
         include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"
-        include "com/centurylink/mdw/model/workflow/Transition.class"   
+        include "com/centurylink/mdw/model/workflow/Transition.class" 
+        include "com/centurylink/mdw/model/Jsonable.class"
+        include "com/centurylink/mdw/util/JsonUtil.class"
+        include "com/centurylink/mdw/model/JsonObject.class"
+        include "com/centurylink/mdw/model/asset/Asset.class"
+        include "com/centurylink/mdw/model/attribute/Attribute.class"
+        include "com/centurylink/mdw/model/event/EventType.class"
+        include "com/centurylink/mdw/model/variable/Variable.class"
     }
     
     from configurations.cli.asFileTree.files.collect {

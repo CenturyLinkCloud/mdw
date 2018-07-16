@@ -60,6 +60,7 @@ public class Main {
         Convert convert = new Convert();
         Codegen codegen = new Codegen();
         Vercheck vercheck = new Vercheck();
+        Export export = new Export();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -78,6 +79,7 @@ public class Main {
             .addCommand("convert", convert)
             .addCommand("codegen", codegen)
             .addCommand("vercheck", vercheck)
+            .addCommand("export", export)
             .build();
 
         cmd.setProgramName("mdw");
@@ -128,6 +130,9 @@ public class Main {
                 }
                 else if (command.equals("vercheck")) {
                     op = vercheck;
+                }
+                else if (command.equals("export")) {
+                    op = export;
                 }
 
                 if (op == null) {
