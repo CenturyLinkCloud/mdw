@@ -98,10 +98,10 @@ public class BpmnHelper {
         XmlObject root = defs.addNewRootElement();
         root = substitute(root, ProcessDocument.type.getDocumentElementName(), TProcess.type);
         // Create the process element
-        TProcess myprocess = createProcess(root, processVO);
-        defs.addNewBPMNDiagram().addNewBPMNPlane().setBpmnElement(new QName(myprocess.getId()));
+        TProcess process = createProcess(root, processVO);
+        defs.addNewBPMNDiagram().addNewBPMNPlane().setBpmnElement(new QName(process.getId()));
 
-        addProcessElements(myprocess, processVO);
+        addProcessElements(process, processVO);
 
         if (validate(defdoc)) {
             // Save to file
@@ -110,17 +110,17 @@ public class BpmnHelper {
     }
 
     /**
-     * @param myprocess
+     * @param process
      * @param processVO
      * @throws XmlException
      */
-    private void addProcessElements(TBaseElement myprocess, Process processVO) {
+    private void addProcessElements(TBaseElement process, Process processVO) {
         // Add activities
-        addActivities(myprocess, processVO);
+        addActivities(process, processVO);
         // Add transitions
-        addTransitions(myprocess, processVO);
+        addTransitions(process, processVO);
         // Add subprocesses
-        addSubprocesses(myprocess, processVO);
+        addSubprocesses(process, processVO);
     }
 
     /**
@@ -171,16 +171,16 @@ public class BpmnHelper {
      * handler
      * </p>
      *
-     * @param myprocess
+     * @param process
      * @param processVO
      * @throws XmlException
      */
-    private void addSubprocesses(TBaseElement myprocess, Process processVO) {
+    private void addSubprocesses(TBaseElement process, Process processVO) {
         List<Process> subprocs = processVO.getSubprocesses();
         if (subprocs != null) {
             for (Process subproc : subprocs) {
                 // Add for subprocesses
-                XmlObject flow = getProcessFlowElement(myprocess);
+                XmlObject flow = getProcessFlowElement(process);
                 if (flow != null) {
                     // Convert for substitutes
                     flow = substitute(flow, SubProcessDocument.type.getDocumentElementName(),
@@ -195,13 +195,13 @@ public class BpmnHelper {
     }
 
     /**
-     * @param myprocess
+     * @param process
      * @param processVO
      */
-    private void addTransitions(TBaseElement myprocess, Process processVO) {
+    private void addTransitions(TBaseElement process, Process processVO) {
         List<com.centurylink.mdw.model.workflow.Transition> connectors = processVO.getTransitions();
         for (Transition conn : connectors) {
-            XmlObject flow = getProcessFlowElement(myprocess);
+            XmlObject flow = getProcessFlowElement(process);
             if (flow != null) {
                 flow = substitute(flow, SequenceFlowDocument.type.getDocumentElementName(),
                         TSequenceFlow.type);
@@ -233,14 +233,14 @@ public class BpmnHelper {
     }
 
     /**
-     * @param myprocess
+     * @param process
      * @param processVO
      * @throws XmlException
      */
-    private void addActivities(TBaseElement myprocess, Process processVO) {
+    private void addActivities(TBaseElement process, Process processVO) {
         List<Activity> acts = processVO.getActivities();
         for (Activity act : acts) {
-            XmlObject flow = getProcessFlowElement(myprocess);
+            XmlObject flow = getProcessFlowElement(process);
             String referrId = "";
             if (flow != null)
                 referrId = substituteActivityType(flow, act);
@@ -264,17 +264,17 @@ public class BpmnHelper {
     }
 
     /**
-     * @param myprocess
+     * @param process
      * @return XmlObject Process Flow Element
      */
-    private XmlObject getProcessFlowElement(TBaseElement myprocess) {
+    private XmlObject getProcessFlowElement(TBaseElement process) {
         XmlObject flow = null;
-        if (myprocess instanceof TProcess) {
-            flow = ((TProcess) myprocess).addNewFlowElement();
+        if (process instanceof TProcess) {
+            flow = ((TProcess) process).addNewFlowElement();
 
         }
-        else if (myprocess instanceof TSubProcess) {
-            flow = ((TSubProcess) myprocess).addNewFlowElement();
+        else if (process instanceof TSubProcess) {
+            flow = ((TSubProcess) process).addNewFlowElement();
 
         }
         return flow;
@@ -295,15 +295,15 @@ public class BpmnHelper {
     /**
      * @param root
      * @param processVO
-     * @return TProcess myprocess
+     * @return TProcess process
      */
     private TProcess createProcess(XmlObject root, Process processVO) {
-        TProcess myprocess = (TProcess) root.changeType(TProcess.type);
-        myprocess.setId("MainProcess");
-        myprocess.setName(processVO.getName());
-        myprocess.setIsExecutable(true);
-        myprocess.addNewExtensionElements().set(getExtentionElements(processVO));
-        return myprocess;
+        TProcess process = (TProcess) root.changeType(TProcess.type);
+        process.setId("MainProcess");
+        process.setName(processVO.getName());
+        process.setIsExecutable(true);
+        process.addNewExtensionElements().set(getExtentionElements(processVO));
+        return process;
     }
 
     /**
