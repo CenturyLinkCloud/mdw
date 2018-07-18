@@ -678,13 +678,17 @@ public class EventServicesImpl implements EventServices {
             ScheduledEvent event = edao.lockScheduledEvent(eventName);
             Date currentScheduledTime = event==null?null:event.getScheduledTime();
             ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
+            if(!checkJobConfiguration(event.getName())){
+               edao.deleteEventInstance(event.getName());
+               return;
+            }
             boolean processed = queue.processEventInEjb(eventName, event, now, edao);
             if (processed)  {
                 if (event.isScheduledJob()) {
                     edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
                             ApplicationContext.getServer().toString());
                 }
-                if (event.getScheduledTime()==null ||!(checkJobConfiguration(event.getName()))) edao.deleteEventInstance(event.getName());
+                if (event.getScheduledTime()==null) edao.deleteEventInstance(event.getName());
                 else edao.updateEventInstance(event.getName(), null, null,
                         event.getScheduledTime(), null, null, 0, null);
             }     // else do nothing - may be processed by another server
