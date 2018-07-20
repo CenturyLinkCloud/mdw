@@ -1,0 +1,6 @@
+package com.centurylink.mdw.tests.services
+
+send asset("GetEmployeeRequest.xml")
+verify response {
+    expected = asset("GetEmployeeResponse.xml").text
+}

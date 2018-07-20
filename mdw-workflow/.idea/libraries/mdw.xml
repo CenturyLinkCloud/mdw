@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="mdw">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../mdw/deploy/app/mdw-workflow-6.1.06-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../mdw/deploy/app/mdw-services-6.1.06-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../mdw/deploy/app/mdw-common-6.1.06-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../mdw/deploy/app/mdw-common-6.1.06-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../mdw/deploy/app/mdw-services-6.1.06-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../mdw/deploy/app/mdw-workflow-6.1.06-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

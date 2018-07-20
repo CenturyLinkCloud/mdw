@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "Variables": "FormDataVar,,Not Displayed,0,,com.centurylink.mdw.model.FormDataDocument;path,path,Not Displayed,0,,java.lang.String"
+  },
+  "category": "ORD",
+  "logicalId": "TaskEventTest:A3",
+  "name": "AutoForm Task with Non-Recurring Event",
+  "version": "0"
+}

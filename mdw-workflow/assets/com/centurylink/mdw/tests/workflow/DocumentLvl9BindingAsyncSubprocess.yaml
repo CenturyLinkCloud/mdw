@@ -1,0 +1,40 @@
+process: # 10157
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2017-01-17 15:19:27"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2017-01-17 15:19:27"
+    name: multiple processes ?
+    status: Completed
+    result: DocumentBinding
+  activity: # 34 "2017-01-17 15:19:27"
+    name: Invoke service lvl9 process
+    status: Completed
+  activity: # 11 "2017-01-17 15:19:27"
+    name: Process Finish
+    status: Completed
+  variable: # 10860
+    name: processCase
+    value: DocumentBinding
+process: # 10158
+  name: SmartProcessChild
+  instance: 1
+  activity: # 1 "2017-01-17 15:19:27"
+    name: Start
+    status: Completed
+  activity: # 3 "2017-01-17 15:19:27"
+    name: Set Info
+    status: Completed
+  activity: # 2 "2017-01-17 15:19:27"
+    name: Stop
+    status: Completed
+  variable: # 10861
+    name: inputVar
+    value: Some special variable value in here!
+  variable: # 10863
+    name: procName
+    value: SmartProcessChild
+  variable: # 10862
+    name: procVer
+    value: ${~\\d+\\.\\d+}

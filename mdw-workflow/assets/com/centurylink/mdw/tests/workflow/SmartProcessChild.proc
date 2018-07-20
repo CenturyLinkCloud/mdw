@@ -1,0 +1,59 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=91,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=176,ly=90,type=Elbow,xs=124&220,ys=111&111"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=420,y=94,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString(); ",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=224,y=85,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Info",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=376,ly=114,type=Elbow,xs=328&416,ys=114&114"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "WORK_DISPLAY_INFO": "x=32,y=16,w=172,h=27"
+  },
+  "variables": {
+    "inputVar": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "procName": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    },
+    "procVer": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

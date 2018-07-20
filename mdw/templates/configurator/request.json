@@ -1,0 +1,71 @@
+{
+  "category": "attributes",
+  "pagelet": {"widgets": [
+    {
+      "type": "dropdown",
+      "name": "requestMethod",
+      "label": "Method",
+      "options": [
+        "GET", "POST", "PUT", "DELETE", "PATCH"
+      ],
+      "default": "POST"
+    },
+    {
+      "type": "text",
+      "name": "requestPath",
+      "label": "Path"
+    },
+    {
+      "type": "text",
+      "name": "requestSummary",
+      "label": "Swagger Summary"
+    },    
+    {
+      "type": "table",
+      "name": "requestParameters",
+      "applier": "ObjectTableApplier",
+      "widgets": [
+        {
+          "label": "Parameter Name",
+          "name": "_key",
+          "type": "text"
+        },
+        {
+          "label": "Type",
+          "name": "type",
+          "type": "dropdown",
+          "options": [
+            "Path",
+            "Body",
+            "Query",
+            "Header",
+            "Form"
+          ],
+          "default": "Body"
+        },
+        {
+          "type": "checkbox",
+          "name": "required",
+          "label": "Required"
+        },
+        {
+          "name": "description",
+          "label": "Description",
+          "type": "text"
+        },
+	    {
+	      "type": "asset",
+	      "name": "dataType",
+	      "label": "Data Type",
+	      "source": "[java,kt]"
+	    }
+      ]
+    },
+    {
+      "name": "Workflow Request Help",
+      "section": "Request",
+      "type": "link",
+      "url": "help/workflowRequest.html"
+    }    
+  ]}
+}

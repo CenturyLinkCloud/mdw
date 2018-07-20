@@ -1,0 +1,16 @@
+{
+  "attributes": {
+    "ALERT_INTERVAL": "7200",
+    "Groups": "MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Indices": "intIndex,#{intVar},;stringIndex,#{stringVar},;constantIndex,'constIdxVal',;jaxbAttrOneIndex,#{jaxbVar.attributeOne},;jaxbElemTwoIndex,#{jaxbVar.elementTwo},;dateIndex,#{dateVar},;nonExistentIndex,#{nonExistentVar},;stringListItemIndex,#{stringListVar[0]},",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "TaskDescription": "For testing custom task features.",
+    "TaskSLA": "28800"
+  },
+  "category": "GEN",
+  "description": "For testing custom task features.",
+  "logicalId": "aCustomTask",
+  "name": "A Custom Task",
+  "version": "0"
+}

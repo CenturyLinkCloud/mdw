@@ -1,0 +1,8 @@
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+  <Action Name="acknowledge">
+    <Parameter name="orderNumber">12345678</Parameter>
+    <Parameter name="priority">NORMAL</Parameter>
+    <Parameter name="customerId">dxoakes</Parameter>
+    <Parameter name="contactTn">303-992-9747</Parameter>
+  </Action>
+</mdw:ActionRequest>

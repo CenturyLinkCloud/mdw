@@ -1,0 +1,64 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=133,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=174,ly=153,type=Elbow,xs=120&210,ys=153&153"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=476,y=133,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=214,y=123,w=155,h=55"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.tests.workflow.PopulateVar",
+      "name": "PopulateVariables",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=424,ly=153,type=Elbow,xs=373&472,ys=153&153"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=169,h=27"
+  },
+  "variables": {
+    "intListVar": {
+      "category": "LOCAL",
+      "type": "java.util.List<Integer>"
+    },
+    "longListVar": {
+      "category": "LOCAL",
+      "type": "java.util.List<Long>"
+    },
+    "stringListVar": {
+      "category": "LOCAL",
+      "type": "java.util.List<String>"
+    },
+    "stringMapVar": {
+      "category": "LOCAL",
+      "type": "java.util.Map<String,String>"
+    }
+  }
+}

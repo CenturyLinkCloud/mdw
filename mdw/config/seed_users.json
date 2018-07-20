@@ -1,0 +1,72 @@
+{
+  "users":  [
+    {
+      "name": "MDW Application",
+      "id": "mdwapp",
+      "attributes": {
+        "Email": "mdwapp@centurylink.com"
+      },      
+      "groups": [
+        "Developers",
+        "Site Admin"
+      ],
+      "roles": [
+        "User Admin",
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ]
+    },
+    {
+      "name": "Donald Oakes",
+      "id": "dxoakes",
+      "attributes": {
+        "Email": "donald.oakes@centurylink.com"
+      },      
+      "groups": [
+        "Developers",
+        "Site Admin"
+      ],
+      "roles": [
+        "User Admin",
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ]          
+    },
+    {
+      "name": "Manoj Agrawal",
+      "id": "aa56486",
+      "attributes": {
+        "Email": "manoj.agrawal@centurylink.com"
+      },      
+      "groups": [
+        "Developers",
+        "Site Admin"
+      ],
+      "roles": [
+        "User Admin",
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ]            
+    },
+    {
+      "name": "Jack Brojde",
+      "id": "jbrojde",
+      "attributes": {
+        "Email": "jack.brojde@centurylink.com"
+      },      
+      "groups": [
+        "Developers",
+        "Site Admin"
+      ],
+      "roles": [
+        "User Admin",
+        "Process Execution",
+        "Process Design",
+        "Task Execution"
+      ]            
+    }   
+  ]
+}

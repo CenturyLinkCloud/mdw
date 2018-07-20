@@ -1,0 +1,4 @@
+{
+  "handlerClass": "START_PROCESS?ProcessName=com.centurylink.mdw.tests.services/FindEmployee",
+  "path": "GetEmployee"
+}

@@ -1,0 +1,40 @@
+process: # 13743
+  name: MDWTestProcessAsService
+  instance: 1
+  activity: # 7 "2016-02-23 11:09:39"
+    name: Start
+    status: Completed
+  activity: # 13 "2016-02-23 11:09:39"
+    name: case?
+    status: Completed
+    result: Adapter
+  activity: # 8 "2016-02-23 11:09:39"
+    name: Set up request
+    status: Completed
+  activity: # 12 "2016-02-23 11:09:39"
+    name: Call a web service
+    status: Completed
+  activity: # 2 "2016-02-23 11:09:39"
+    name: Display Response
+    status: Completed
+  activity: # 3 "2016-02-23 11:09:39"
+    name: Stop
+    status: Completed
+  variable: # 20914
+    name: processCase
+    value: Adapter
+  variable: # 20915
+    name: req
+    value: |
+      <GetEmployee>
+        <workstationId>dxoakes</workstationId>
+      </GetEmployee>
+  variable: # 20919
+    name: response
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+          <sapId>DHO115360</sapId>
+          <workstationId>dxoakes</workstationId>
+          <firstName>Donald</firstName>
+          <lastName>Oakes</lastName>
+      </GetEmployeeResponse>

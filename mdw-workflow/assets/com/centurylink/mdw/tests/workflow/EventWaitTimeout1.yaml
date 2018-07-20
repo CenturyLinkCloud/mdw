@@ -1,0 +1,16 @@
+process: # 13655
+  name: MDWTestEventWaitTimeout
+  instance: 1
+  activity: # 2 "2016-02-22 13:34:10"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-22 13:34:10"
+    name: Event Wait
+    status: Completed
+    result: NonTaskAction
+  activity: # 1 "2016-02-22 13:34:18"
+    name: Check
+    status: Completed
+  activity: # 4 "2016-02-22 13:37:20"
+    name: Stop
+    status: Completed

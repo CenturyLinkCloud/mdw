@@ -1,0 +1,360 @@
+<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
+<Action Name="RegressionTest">
+<Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+<Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestProcessAsService</Parameter>
+<Parameter name="PerformanceLevel">3</Parameter>
+<Parameter name="processCase">XSLT</Parameter>
+<Parameter name="inputxml"><![CDATA[<OrderRetrieval xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.cramer.com/centurylink/srpf">
+  <RequestType>SRT</RequestType>
+  <OrderDetails>
+    <Customer>
+      <CustomerName />
+      <CustomerFullName>STATE OF OREGON-ETHERNET NORTH</CustomerFullName>
+      <CustomerACNA>G5061</CustomerACNA>
+      <CustomerType>Retail</CustomerType>
+      <CramerID>529</CramerID>
+      <Retail>
+        <BillingInformation isNewBAN="Yes">
+          <Name>SAIF CORPORATION</Name>
+          <Address1>400 HIGH ST SE</Address1>
+          <Address2 />
+          <City>SALEM</City>
+          <State>OR</State>
+          <Zip>97312</Zip>
+          <MCN>ZXXJG</MCN>
+          <BillPeriod>02</BillPeriod>
+          <CreditInformation>TRT JERRY DARCY AT 503-373-8333</CreditInformation>
+          <CRV>OSB5033738333-B</CRV>
+          <TaxStatus>
+            <TaxExempt>Yes</TaxExempt>
+            <Types>
+              <FederalTax>Yes</FederalTax>
+              <StateTax>Yes</StateTax>
+              <LocalSalesTax>Yes</LocalSalesTax>
+              <CityTax>Yes</CityTax>
+              <CountySalesTax>No</CountySalesTax>
+              <StateSalesTax>Yes</StateSalesTax>
+            </Types>
+          </TaxStatus>
+          <BillInArrears isTrue="No">
+            <TYA />
+          </BillInArrears>
+        </BillingInformation>
+        <SalesInformation>
+          <SalesPartnerName>RICH UNREIN</SalesPartnerName>
+          <SalesPartnerSalesCode>ACPF</SalesPartnerSalesCode>
+          <SalesPartnerPhoneNumber>503 425-3346</SalesPartnerPhoneNumber>
+          <SalesPartnerEmail>RICHARD.UNREIN@CENTURYLINK.COM</SalesPartnerEmail>
+          <PartnerCompanyName />
+          <SalesChannel>GES</SalesChannel>
+          <AC_ASR_PSRName>TIM HURRTLEY</AC_ASR_PSRName>
+          <AC_ASR_PSRPhone>503 425-3347</AC_ASR_PSRPhone>
+          <AC_ASR_PSREmail>TIM.HURTLEY@CENTURYLINK.COM</AC_ASR_PSREmail>
+          <ChannelIntegration order="No">
+            <DirectSalesRepName />
+            <SalesID />
+            <CIEConfirmationNumber />
+          </ChannelIntegration>
+        </SalesInformation>
+        <ContractInformation new="Yes">
+          <PricingOfferMgmt offer="Yes">
+            <FastTrackComplete>Yes</FastTrackComplete>
+          </PricingOfferMgmt>
+          <TLA apply="No">
+            <TLAWaiverContentID />
+          </TLA>
+          <QTACommitment contribute="No">
+            <DiscountGroup />
+            <OrionOrder />
+          </QTACommitment>
+          <Promotion offered="No">
+            <PromotionName />
+            <PromotionCode />
+          </Promotion>
+        </ContractInformation>
+      </Retail>
+      <DefaultBAN />
+      <EstimatedContractLength>36 Months</EstimatedContractLength>
+      <ContentID>265706</ContentID>
+      <ContractLength>36 Months</ContractLength>
+      <EffectiveDate>03/31/2009</EffectiveDate>
+      <AQCB>OR0900245</AQCB>
+      <Contacts>
+        <Contact srtID="1" srtEntityBound="Yes">
+          <ContactName>DARCY,JERRY:</ContactName>
+          <LastName>DARCY</LastName>
+          <FirstName>JERRY</FirstName>
+          <ContactRelationship>Billing Contact</ContactRelationship>
+          <ContactAvailability>24x7</ContactAvailability>
+          <ContactPhoneBook>
+            <ContactHomePhone />
+            <ContactMainPhone>503-378-3333</ContactMainPhone>
+            <ContactMainPhoneExtension />
+            <ContactWorkPhone />
+            <ContactWorkPhoneExtension />
+            <ContactFax />
+            <ContactPagerCell />
+            <ContactEmail />
+            <ContactMobilePhone />
+          </ContactPhoneBook>
+          <CUID />
+          <CramerID>266201</CramerID>
+        </Contact>
+      </Contacts>
+    </Customer>
+    <Locations>
+      <Location srtID="1">
+        <CramerID />
+        <Name />
+        <FullName>MOE SAIF CENTENNIAL</FullName>
+        <Address1>72 CENTENNIAL LOOP</Address1>
+        <Address2 />
+        <City>EUGENE</City>
+        <State>OR</State>
+        <Zip>97401</Zip>
+        <CLLI />
+        <Type>Customer Premises</Type>
+        <LSO>
+          <NPA>541</NPA>
+          <NXX>342</NXX>
+        </LSO>
+        <AddrIndepTerritory>No</AddrIndepTerritory>
+        <ICOName />
+        <L1_UNIs>
+          <L1_UNI srtID="1" portType="Electrical" portSpeed="100 Mbps" nameIsPreassigned="Yes" name="05/KXFS/87169//ACSO" isQoS="No" diversity="None" action="Create UNI" />
+        </L1_UNIs>
+        <L2_UNIs>
+          <UNI srtID="1" name="05/KXFS/87169//ACSO" action="Create UNI">
+            <CircuitName>05/KXFS/87169//ACSO</CircuitName>
+            <CircuitId />
+            <CustomerAccountId />
+            <CustomerName />
+            <CustomerFullName />
+            <CustomerACNA />
+            <CircuitStatus />
+            <CircuitType />
+            <CustomerCircuitID />
+            <BAN />
+            <Contacts />
+            <UNIProperties>
+              <WirePastDemarc>No</WirePastDemarc>
+              <ContactName />
+              <ContactNumber />
+              <Comments />
+              <Jurisdiction>Interstate</Jurisdiction>
+              <BandwidthProfile>100 Mbps</BandwidthProfile>
+              <PortType>100 Base TX</PortType>
+              <InterfaceType>Electrical</InterfaceType>
+              <NCCode>KQE-</NCCode>
+              <NCICodeCPE>04LN9.1CT</NCICodeCPE>
+              <NCICode>04CX9.1CT</NCICode>
+              <DiversityType>None</DiversityType>
+              <DiverseUNIID />
+              <LogicalPortType>TLS</LogicalPortType>
+              <Bundling>No</Bundling>
+              <Service_Multiplexing>No</Service_Multiplexing>
+              <All_to_One_Bundling>Yes</All_to_One_Bundling>
+              <RateLimitType>Port</RateLimitType>
+              <QoS exists="No">
+                <QoSP1Bandwidth />
+                <QoSTemplate />
+                <QoSQualifier />
+              </QoS>
+              <CustomerDesiredDueDate />
+              <CustomerCircuitID />
+              <Layer_2_Control_Protocol_Processing>
+                <Bridge_Block>Pass To EVC</Bridge_Block>
+                <GARP_Block>Pass To EVC</GARP_Block>
+                <All_LANs_BMG>Pass To EVC</All_LANs_BMG>
+              </Layer_2_Control_Protocol_Processing>
+              <Handling>
+                <CDP>Pass To EVC</CDP>
+                <VTP>Pass To EVC</VTP>
+                <PagP>Pass To EVC</PagP>
+                <LACP>Pass To EVC</LACP>
+                <STP>Pass To EVC</STP>
+                <UDLD>Pass To EVC</UDLD>
+              </Handling>
+              <ServiceType />
+            </UNIProperties>
+          </UNI>
+        </L2_UNIs>
+        <Contacts />
+      </Location>
+      <Location srtID="2">
+        <CramerID />
+        <Name />
+        <FullName>MOE 10TH AVE</FullName>
+        <Address1>112 E 10TH AVE</Address1>
+        <Address2 />
+        <City>EUGENE</City>
+        <State>OR</State>
+        <Zip>97401</Zip>
+        <CLLI />
+        <Type>Customer Premises</Type>
+        <LSO>
+          <NPA>541</NPA>
+          <NXX>342</NXX>
+        </LSO>
+        <AddrIndepTerritory>No</AddrIndepTerritory>
+        <ICOName />
+        <L1_UNIs>
+          <L1_UNI srtID="1" portType="Optical" portSpeed="100 Mbps" nameIsPreassigned="Yes" name="05/KXFS/87170//ACSO" isQoS="No" diversity="None" action="Create UNI" />
+        </L1_UNIs>
+        <L2_UNIs>
+          <UNI srtID="1" name="05/KXFS/87170//ACSO" action="Create UNI">
+            <CircuitName>05/KXFS/87170//ACSO</CircuitName>
+            <CircuitId />
+            <CustomerAccountId />
+            <CustomerName />
+            <CustomerFullName />
+            <CustomerACNA />
+            <CircuitStatus />
+            <CircuitType />
+            <CustomerCircuitID />
+            <BAN />
+            <Contacts />
+            <UNIProperties>
+              <WirePastDemarc>No</WirePastDemarc>
+              <ContactName />
+              <ContactNumber />
+              <Comments />
+              <Jurisdiction>Interstate</Jurisdiction>
+              <BandwidthProfile>100 Mbps</BandwidthProfile>
+              <PortType>1000 Base LX</PortType>
+              <InterfaceType>Opt. - SM</InterfaceType>
+              <NCCode>KRE1</NCCode>
+              <NCICodeCPE>02QBF.K02</NCICodeCPE>
+              <NCICode>02CXF.1GE</NCICode>
+              <DiversityType>None</DiversityType>
+              <DiverseUNIID />
+              <LogicalPortType>TLS</LogicalPortType>
+              <Bundling>No</Bundling>
+              <Service_Multiplexing>No</Service_Multiplexing>
+              <All_to_One_Bundling>Yes</All_to_One_Bundling>
+              <RateLimitType>Port</RateLimitType>
+              <QoS exists="No">
+                <QoSP1Bandwidth />
+                <QoSTemplate />
+                <QoSQualifier />
+              </QoS>
+              <CustomerDesiredDueDate />
+              <CustomerCircuitID />
+              <Layer_2_Control_Protocol_Processing>
+                <Bridge_Block>Pass To EVC</Bridge_Block>
+                <GARP_Block>Pass To EVC</GARP_Block>
+                <All_LANs_BMG>Pass To EVC</All_LANs_BMG>
+              </Layer_2_Control_Protocol_Processing>
+              <Handling>
+                <CDP>Pass To EVC</CDP>
+                <VTP>Pass To EVC</VTP>
+                <PagP>Pass To EVC</PagP>
+                <LACP>Pass To EVC</LACP>
+                <STP>Pass To EVC</STP>
+                <UDLD>Pass To EVC</UDLD>
+              </Handling>
+              <ServiceType />
+            </UNIProperties>
+          </UNI>
+        </L2_UNIs>
+        <Contacts />
+      </Location>
+    </Locations>
+    <EVCS>
+      <EVC srtID="1" action="Create EVC" nameIsPreassigned="Yes" name="05/VLXM/87172//ACSO">
+        <CramerID />
+        <status />
+        <EVCCircuitID>05/VLXM/87172//ACSO</EVCCircuitID>
+        <BAN />
+        <EVCServiceType>Multipoint-to-Multipoint (E-Lan)</EVCServiceType>
+        <EVCServiceSubType>TLS - TLS</EVCServiceSubType>
+        <EVCMembers>
+          <Member srtID="1" requiredForTurnup="No" action="Add">
+            <UNIID>05/KXFS/87169//ACSO</UNIID>
+            <CramerID />
+            <CustomerName />
+            <CustomerFullName>STATE OF OREGON-ETHERNET NORTH</CustomerFullName>
+            <CustomerACNA>G5061</CustomerACNA>
+            <BAN />
+            <LogicalPortType>TLS</LogicalPortType>
+            <RateLimitType>Port</RateLimitType>
+            <NCICode>02VLN.A2</NCICode>
+            <EVCBandwidth />
+            <QoS exists="No">
+              <QoSP1Bandwidth />
+              <QoSTemplate />
+              <QoSQualifier />
+            </QoS>
+            <CEVLANMapping>
+              <AcceptUntaggedVLAN>No</AcceptUntaggedVLAN>
+            </CEVLANMapping>
+          </Member>
+          <Member srtID="2" requiredForTurnup="No" action="Add">
+            <UNIID>05/KXFS/87170//ACSO</UNIID>
+            <CramerID />
+            <CustomerName />
+            <CustomerFullName>STATE OF OREGON-ETHERNET NORTH</CustomerFullName>
+            <CustomerACNA>G5061</CustomerACNA>
+            <BAN />
+            <LogicalPortType>TLS</LogicalPortType>
+            <RateLimitType>Port</RateLimitType>
+            <NCICode>02VLN.A2</NCICode>
+            <EVCBandwidth />
+            <QoS exists="No">
+              <QoSP1Bandwidth />
+              <QoSTemplate />
+              <QoSQualifier />
+            </QoS>
+            <CEVLANMapping>
+              <AcceptUntaggedVLAN>No</AcceptUntaggedVLAN>
+            </CEVLANMapping>
+          </Member>
+        </EVCMembers>
+        <CoreVLANID />
+        <Layer_2_Control_Protocol_Processing>
+          <Bridge_Block>Tunnel</Bridge_Block>
+          <GARP_Block>Tunnel</GARP_Block>
+          <All_LANs_BMG>Tunnel</All_LANs_BMG>
+        </Layer_2_Control_Protocol_Processing>
+        <EVC_Identifier />
+        <EVC_Type />
+        <CE-VLAN_ID_Preservation>Yes</CE-VLAN_ID_Preservation>
+        <CE-VLAN_CoS_Preservation>Yes</CE-VLAN_CoS_Preservation>
+        <Frame_Delivery>
+          <Unicast_Service_Frame_Delivery>Deliver Unconditionally</Unicast_Service_Frame_Delivery>
+          <Multicast_Service_Frame_Delivery>Deliver Unconditionally</Multicast_Service_Frame_Delivery>
+          <Broadcast_Service_Frame_Delivery>Deliver Conditionally</Broadcast_Service_Frame_Delivery>
+        </Frame_Delivery>
+      </EVC>
+    </EVCS>
+    <FulFillment>
+      <LetterOfFundingURL />
+      <FundingConfirmed>Yes</FundingConfirmed>
+      <ProjectManagerContact>
+        <Contact srtID="">
+          <ContactName />
+          <LastName />
+          <FirstName />
+          <ContactRelationship />
+          <ContactAvailability />
+          <ContactPhoneBook>
+            <ContactHomePhone />
+            <ContactMainPhone />
+            <ContactMainPhoneExtension />
+            <ContactWorkPhone />
+            <ContactWorkPhoneExtension />
+            <ContactFax />
+            <ContactPagerCell />
+            <ContactEmail />
+            <ContactMobilePhone />
+          </ContactPhoneBook>
+          <CUID />
+          <CramerID />
+        </Contact>
+      </ProjectManagerContact>
+    </FulFillment>
+  </OrderDetails>
+</OrderRetrieval>
+]]></Parameter>
+</Action>
+</ser:ActionRequest>

@@ -1,0 +1,29 @@
+{
+  "dateVar": {
+    "display": "Required",
+    "label": "Date Var",
+    "type": "java.util.Date",
+    "value": "2017-11-13T20:15:30Z"
+  },
+  "docVar": {
+    "display": "ReadOnly",
+    "type": "org.w3c.dom.Document",
+    "value": "<full>\n    <document content=\"xml\"/>\n<\/full>\n"
+  },
+  "jaxbVar": {
+    "display": "Optional",
+    "type": "javax.xml.bind.JAXBElement",
+    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ProcessJaxb xmlns:ns2=\"http://mdw.centurylink.com/serviceTypes\" attributeOne=\"attrOneValue\" attributeTwo=\"requiredAttributeValue\">\n    <elementOne>elementOneValue<\/elementOne>\n    <elementTwo>elementTwoValue<\/elementTwo>\n<\/ProcessJaxb>\n"
+  },
+  "objectVar": {
+    "display": "Required",
+    "type": "java.lang.Object",
+    "value": "flowmaster: Manoj"
+  },
+  "stringVar": {
+    "display": "Optional",
+    "label": "String Var",
+    "type": "java.lang.String",
+    "value": "Hello"
+  }
+}

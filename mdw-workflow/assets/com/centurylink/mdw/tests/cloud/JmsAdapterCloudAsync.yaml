@@ -1,0 +1,31 @@
+process: # 13674
+  name: JMS Adapter
+  instance: 1
+  activity: # 1 "2016-02-22 15:20:05"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-02-22 15:20:05"
+    name: Synchronous?
+    status: Completed
+    result: Asynchronous
+  activity: # 9 "2016-02-22 15:20:05"
+    name: Platform?
+    status: Completed
+    result: Cloud
+  activity: # 8 "2016-02-22 15:20:05"
+    name: |
+      Asynchronous Cloud
+      JMS Request
+    status: Completed
+  activity: # 2 "2016-02-22 15:20:05"
+    name: Stop
+    status: Completed
+  variable: # 20716
+    name: mode
+    value: Asynchronous
+  variable: # 20714
+    name: platform
+    value: Cloud
+  variable: # 20715
+    name: request
+    value: <hi>Async request</hi>

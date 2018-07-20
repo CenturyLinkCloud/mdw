@@ -1,0 +1,36 @@
+apply plugin: "eclipse-wtp"
+apply plugin: 'java'
+
+group = "${sourceGroup}"
+version = '1.0.01'
+
+description = "{{project}}"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir assetLoc
+        }
+    }
+}
+
+repositories {
+    maven { url repositoryUrl }
+}
+
+dependencies {
+    compile group: 'com.centurylink.mdw', name: 'mdw-common', version: mdwVersion
+    compile group: 'com.centurylink.mdw', name: 'mdw-services', version: mdwVersion
+    compile group: 'com.centurylink.mdw', name: 'mdw-workflow', version: mdwVersion
+
+    // asset package dependencies
+    compile fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
+    
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-core', version: springVersion
+}

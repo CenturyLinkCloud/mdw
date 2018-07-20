@@ -1,0 +1,19 @@
+{
+  "category": "object",
+  "pagelet": {"widgets": [
+    {
+      "type": "text",
+      "name": "id",
+      "label": "ID",
+      "readonly": true,
+      "vw": 50
+    },  
+    {
+      "type": "text",
+      "name": "content",
+      "label": "Content",
+      "multiline": true,
+      "rows": 4
+    }
+  ]}
+}

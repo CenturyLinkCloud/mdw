@@ -1,0 +1,129 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=69,y=118,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=258,ly=101,type=Elbow,xs=133&212,ys=138&138"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=609,y=120,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=378,y=105,w=110,h=71",
+        "processname": "com.centurylink.mdw.tests.services/ServiceSub",
+        "processversion": "[0.1,1)",
+        "synchronous": "FALSE",
+        "variables": "testCase=$testCase"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Async Invoke\r\nServiceSub",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=549,ly=140,type=Elbow,xs=492&605,ys=140&140"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Execution Plan": "execPlan",
+        "Force Parallel Execution": "TRUE",
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=382,y=237,w=138,h=73",
+        "processmap": "ServiceAsyncSub,com.centurylink.mdw.tests.services/ServiceSub,[0.1\\,1),",
+        "synchronous": "FALSE"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
+      "name": "Async Multi\r\nServiceSub",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=563,ly=272,type=Elbow,xs=524&603,ys=272&272"},
+        "event": "FINISH",
+        "id": "T13",
+        "to": "A12"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "/**\n * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.\n */\r\npackage com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\nimport java.util.ArrayList;\nimport java.util.List;\r\nimport com.centurylink.mdw.model.Subprocess;\nimport com.centurylink.mdw.model.ExecutionPlan;\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.model.workflow.WorkStatus;\n\npublic class CreatePlan_A10 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\n        List<Subprocess> subprocs = new ArrayList<>();\n        Subprocess subproc = new Subprocess();\n        subproc.setLogicalName(\"ServiceAsyncSub\");\n        subproc.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\n        subproc.getParameters().put(\"testCase\", \"$testCase\");\n        subprocs.add(subproc);\n        ExecutionPlan execPlan = new ExecutionPlan();\n        execPlan.setSubprocesses(subprocs);        \n        variables.put(\"execPlan\", execPlan);\n        return null;\n    }\n\n}\n",
+        "Output Documents": "execPlan",
+        "WORK_DISPLAY_INFO": "x=206,y=239,w=110,h=68"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Create Plan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=349,ly=273,type=Elbow,xs=320&378,ys=273&273"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "testCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=216,y=113,w=74,h=51"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Test\r\nCase",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=261,ly=185,type=Elbow,xs=253&253,ys=168&235"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "multiple",
+          "to": "A10"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=307,ly=117,type=Elbow,xs=294&374,ys=138&138"},
+          "event": "FINISH",
+          "id": "T10",
+          "resultCode": "single",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=607,y=252,w=60,h=40"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "WORK_DISPLAY_INFO": "x=39,y=43,w=112,h=27"
+  },
+  "variables": {
+    "execPlan": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

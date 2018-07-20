@@ -1,0 +1,85 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=55,y=100,w=60,h=40"},
+      "id": "A34",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=157,ly=119,type=Elbow,xs=119&191,ys=120&120"},
+        "event": "FINISH",
+        "id": "T27",
+        "to": "A31"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "1",
+        "Unit": "Minutes",
+        "WORK_DISPLAY_INFO": "x=384,y=94,w=100,h=60"
+      },
+      "id": "A32",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Wait for a while",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=523,ly=121,type=Elbow,xs=488&554,ys=122&122"},
+        "event": "FINISH",
+        "id": "T26",
+        "to": "A33"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=558,y=102,w=60,h=40"
+      },
+      "id": "A33",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Finish"
+    },
+    {
+      "attributes": {
+        "Rule": "result = argument * argument;   ",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=195,y=93,w=100,h=60"
+      },
+      "id": "A31",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Calculate sqaure",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=340,ly=123,type=Elbow,xs=299&380,ys=123&123"},
+        "event": "FINISH",
+        "id": "T28",
+        "to": "A32"
+      }]
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "START_TRANSITION_ID": "2326941",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=31,y=23,w=192,h=27"
+  },
+  "variables": {
+    "argument": {
+      "category": "INOUT",
+      "type": "java.lang.Integer"
+    },
+    "newvar": {
+      "category": "INOUT",
+      "type": "java.lang.Boolean"
+    },
+    "result": {
+      "category": "OUTPUT",
+      "type": "java.lang.Long"
+    },
+    "testxml": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    }
+  }
+}

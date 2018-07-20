@@ -1,0 +1,33 @@
+app:
+  id: mdw6
+  
+database:
+  driver: org.mariadb.jdbc.Driver
+  url: jdbc:mariadb://localhost:3308/mdw
+  username: mdw
+  password: mdw
+  poolsize: 5
+  poolMaxIdle: 3
+  validationQuery: select 1 from dual
+
+asset:
+  location: ../mdw-workflow/assets
+
+git:
+  local.path: ../
+  remote.url: https://github.com/CenturyLinkCloud/mdw.git
+  branch: master
+  user: anonymous
+
+temp.dir: ./temp
+
+hub.url: http://localhost:8080/mdw
+services.url: http://localhost:8080/mdw
+discovery.url: http://repo.maven.apache.org/maven2
+
+logging:
+  level: DEBUG
+
+filepanel:
+  root.dirs:
+    - ./logs

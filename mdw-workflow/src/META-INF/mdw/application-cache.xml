@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationCache xmlns="http://mdw.centurylink.com/bpm">
+  <Cache Name="TaskTemplateCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.task.TaskTemplateCache</Property>
+  </Cache>
+  <Cache Name="VariableTypeCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.VariableTypeCache</Property>
+  </Cache>
+  <Cache Name="EventHandlerCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.event.EventHandlerCache</Property>
+  </Cache>
+  <Cache Name="AssetCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetCache</Property>
+  </Cache>
+  <Cache Name="PackageCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.PackageCache</Property>
+  </Cache>
+  <Cache Name="CompiledJavaCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.java.CompiledJavaCache</Property>
+    <Property Name="dependsOn">PackageCache,AssetCache</Property>
+  </Cache>
+  <Cache Name="SpringAppCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.spring.SpringAppContext</Property>
+  </Cache>
+  <Cache Name="DataSourceCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.container.plugin.MdwDataSource</Property>
+    <Property Name="dependsOn">CompiledJavaCache,SpringAppCache</Property>
+  </Cache>
+  <Cache Name="UserGroupCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.task.UserGroupCache</Property>
+  </Cache>
+  <Cache Name="MdwSwaggerCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.api.MdwSwaggerCache</Property>
+  </Cache>
+  <Cache Name="AssetRefCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetRefCache</Property>
+  </Cache>
+  <Cache Name="AllowableTaskActions" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.services.task.AllowableTaskActions</Property>
+  </Cache>    
+  <Cache Name="ProcessRequests" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.process.ProcessRequests</Property>
+  </Cache>
+</ApplicationCache>

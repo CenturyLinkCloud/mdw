@@ -1,0 +1,128 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          {{solutionName}} <span class="mdw-heading-sub"> ({{solution.id}})</span>
+        </div>
+        <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('Task Execution')">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="setEdit(true)">
+            <span class="glyphicon glyphicon-edit"></span> Edit
+          </button>        
+          <button type="button" class="btn btn-danger mdw-btn" ng-click="setConfirm(true)">
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          </button>        
+        </div>
+      </div>
+      <div ng-if="!edit && !confirm" class="form-horizontal mdw-section">
+        <div class="form-group mdw-static-group">
+          <label class="control-label col-xs-2">Description:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{solution.description}}</p>
+          </div>
+        </div>
+        <div class="form-group mdw-static-group" ng-repeat="(valName, valValue) in solution.values" 
+          ng-if="valName.indexOf(':') < 0 && valValue.length > 0">
+          <label class="control-label col-xs-2">{{valName}}:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{valValue}}</p>
+          </div>
+        </div>
+      </div>      
+      <div ng-if="edit" ng-include="'solutions/solutionForm.html'">
+      </div>
+      <div ng-if="confirm" class="mdw-section">
+        <div class="mdw-form-footer">
+          <div class="mdw-message">{{solution.message}}</div>
+          <div class="mdw-buttons">
+            <button class="btn btn-danger mdw-btn" type="button" ng-click="deleteSolution()">Delete</button>
+            <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mdw-split-left">
+      <div class="panel panel-default mdw-panel">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-label">Requests</div>
+          <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('Task Execution')">
+            <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'solutions/findRequest.html'" 
+              popover-placement="left" pop-click>
+              <span class="glyphicon glyphicon-plus"></span> Add
+            </button>          
+          </div>
+        </div>
+        <ul class="mdw-list">
+          <li ng-repeat="request in solution.members.requests">
+            <div>
+              <a class="mdw-item-link" href="#/workflow/masterRequests/{{request.masterRequestId}}">{{request.masterRequestId}}</a>
+              <div class="mdw-item-action" ng-if="authUser.hasRole('Task Execution')">
+                <a uib-tooltip="Remove request {{request.masterRequestId}}" tooltip-placement="left" 
+                  ng-if="!edit && !confirm" ng-click="removeRequest(request)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </div>
+            </div>
+            <div class="mdw-item-sub">Process Instance ID: {{request.processInstanceId}}</div>
+            <div class="mdw-item-sub">Start Date: {{request.processStart}}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mdw-split-right">
+      <div class="panel panel-default mdw-panel">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-label">Tasks</div>
+          <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('Task Execution')">
+            <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'solutions/findTask.html'" 
+              popover-placement="left" pop-click>
+              <span class="glyphicon glyphicon-plus"></span> Add
+            </button>
+          </div>
+        </div>
+        <ul class="mdw-list">
+          <li ng-repeat="task in solution.members.tasks">
+            <div>
+              <a class="mdw-item-link" href="/mdw/tasks/taskDetail.jsf?taskInstanceId={{task.id}}">{{task.name}}</a>
+              <div class="mdw-item-action" ng-if="authUser.hasRole('Task Execution')">
+                <a uib-tooltip="Remove task {{task.id}}" tooltip-placement="left" 
+                  ng-if="!edit && !confirm" ng-click="removeTask(task)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </div>
+            </div>
+            <div class="mdw-item-sub">{{task.id}} - {{task.status}}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mdw-split-left">
+      <div class="panel panel-default mdw-panel">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-label">Processes</div>
+          <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('Task Execution')">
+            <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'solutions/findProcess.html'" 
+              popover-placement="left" pop-click>
+              <span class="glyphicon glyphicon-plus"></span> Add
+            </button>          
+          </div>
+        </div>
+        <ul class="mdw-list">
+          <li ng-repeat="process in solution.members.processes">
+            <div>
+              <a class="mdw-item-link" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
+              <div class="mdw-item-action" ng-if="authUser.hasRole('Task Execution')">
+                <a uib-tooltip="Remove process {{process.id}}" tooltip-placement="left" 
+                  ng-if="!edit && !confirm" ng-click="removeRequest(process)">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </div>
+            </div>
+            <div class="mdw-item-sub">{{process.status}}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

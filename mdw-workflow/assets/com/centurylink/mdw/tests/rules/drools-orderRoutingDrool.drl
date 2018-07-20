@@ -1,0 +1,50 @@
+package com.centurylink.mdw.tests;
+
+import java.util.Map;
+import java.util.Date;
+import com.centurylink.mdw.drools.DroolsActivity;
+
+global DroolsActivity activity;
+global Date now;
+
+rule "Echo"
+when
+  $vars : Map()
+then
+  System.out.println("vars: " + $vars);
+  System.out.println("act: " + activity);
+  System.out.println("now: " + now);
+end
+
+rule "Eastern Region Rule"
+when
+  $vars : Map(this['region'] == 'Eastern')
+then
+  System.out.println("REGION IS EASTERN");
+  activity.setReturnCode("EASTERN");
+end
+
+rule "Western Region Rule"
+when
+  $vars : Map(this['region'] == 'Western')
+then
+  System.out.println("REGION IS WESTERN");
+  activity.setReturnCode("WESTERN");
+end
+
+rule "Central Region"
+when
+  $vars : Map(this['region'] == 'Central')
+then
+  System.out.println("CENTRAL REGION ==> REROUTING TO EASTERN");
+  $vars.put("region", "Eastern");
+  activity.setReturnCode("EASTERN");
+end
+
+rule "Overdue"
+when
+  $vars : Map(this['dueDate'] < now)
+then
+  System.out.println("OVERDUE ==> REDUCING OFFER PRICE");
+  $vars.put("billedPrice", new Integer(((Integer)$vars.get("quotedPrice")).intValue() - 5));
+end

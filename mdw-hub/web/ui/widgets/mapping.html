@@ -1,0 +1,18 @@
+<div class="mdw-widget-tbl">
+  <div class="mdw-widget-tbl-head">
+    <div ng-if="!tblWidget.source">Input Variable</div>
+    <div ng-if="tblWidget.source">{{tblWidget.source}} Variable</div>
+    <div>Type</div>
+    <div>Mode</div>
+    <div>Binding Expression</div>
+  </div>
+  <div ng-repeat="bindingVar in tblWidget.bindingVars">
+    <div>{{bindingVar.name}}</div>
+    <div>{{bindingVar.type}}</div>
+    <div>{{bindingVar.category}}</div>
+    <div>
+      <input type="text" ng-disabled="tblWidget.readonly" ng-model="tblWidget.value[bindingVar.name]" 
+        ng-change="valueChanged(tblWidget)" style="width:{{tblWidget.width}}px;">
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "[\"Developers\",\"MDW Support\",\"Site Admin\"]",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "GEN",
+  "logicalId": "subtaskA",
+  "name": "Subtask A",
+  "version": "0.1"
+}

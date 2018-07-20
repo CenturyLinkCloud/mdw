@@ -1,0 +1,7 @@
+<ul class="dropdown-menu mdw-popover-menu">
+  <li ng-repeat="taskAction in taskActions">
+    <a href="" ng-if="taskAction.action == 'Assign'" uib-popover-template="'tasks/findAssignee.html'"
+      popover-placement="{{getAssigneePopPlace()}}" popover-append-to-body="true">{{taskAction.action}}</a>  
+    <a href="" ng-if="taskAction.action != 'Assign'" ng-click="performAction(taskAction.action)">{{taskAction.action}}</a>
+  </li>
+</ul>

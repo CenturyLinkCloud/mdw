@@ -1,0 +1,20 @@
+<ul>
+  <li class="{% if page.overview %}current{% endif %}">
+    <a href="{{ site.baseurl }}/">Home</a>
+  </li>
+  <li class="{% if page.url contains '/getting-started/' %}current{% endif %}">
+    <a href="{{ site.baseurl }}/docs/getting-started/">Getting Started</a>
+  </li>
+  <li class="{% if page.url contains '/guides/' %}current{% endif %}">
+    <a href="{{ site.baseurl }}/docs/guides/">Guides</a>
+  </li>
+  <li class="{% if page.url contains '/help/' %}current{% endif %}">
+    <a href="{{ site.baseurl }}/docs/help/">Help</a>
+  </li>
+  <li class="{% if page.url contains '/javadoc/' %}current{% endif %}">
+    <a href="{{ site.baseurl }}/docs/javadoc/">Javadoc</a>
+  </li>
+  <li>
+    <a href="https://github.com/CenturyLinkCloud/mdw">GitHub</a>
+  </li>
+</ul>

@@ -1,0 +1,7 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("RpcWebService") {
+    variables = [ requestDoc: asset("GetEmployeeRequest.xml").text ]
+}
+wait process
+verify process

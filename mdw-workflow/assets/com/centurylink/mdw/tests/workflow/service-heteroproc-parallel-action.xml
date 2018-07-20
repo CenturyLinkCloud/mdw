@@ -1,0 +1,8 @@
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestHeterogeneousProcessCall</Parameter>
+    <Parameter name="testcase">parallel</Parameter>
+    <Parameter name="PerformanceLevel">3</Parameter>
+  </Action>
+</mdw:ActionRequest>

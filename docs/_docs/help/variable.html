@@ -1,0 +1,268 @@
+<html>
+<head>
+<title>Variables</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Variables</h1>
+
+Variables are associated with processes, and their scope is within
+the same process, with the following exception:
+<ul>
+   <li>Embedded processes share the same variables as the parent processes</li>
+</ul>
+A variable is associated with a type, which defines the class name
+of the object that the variable can take as values. MDW provides a list
+of built-in variable types. To view them, <a href="http://centurylinkcloud.github.io/mdw/docs/development/built-in-variable-types/">follow this.</a> 
+<p>
+MDW variables are persisted in a database as Strings in order to preserve their values
+during long running business processes. Each variable type is associated
+with a variable translator, which translates between the persistent format
+(Strings) and the object format.
+<p>
+For simple data types (String, Integer, date, etc) and the variable values are 
+stored along with the variable instance in the VARIABLE_INSTANCE table. For
+complex data types, all the document related information is stored in DOCUMENT, 
+but the document itself is stored in DOCUMENT_CONTENT table.
+<p>
+Documents can also be used outside the context of variables, typically
+for storing messages received from or sent to external systems.
+<p>
+<h2>Variable Mode</h2>
+A variable can have one of the following five modes, which define
+how the variables receive and output their values when the process
+is invoked.
+<ul>
+  <li>Input. The initial value of the variable is passed in from the caller,
+      when a new process instance is created. Its value can be changed
+      within the process but will not impact variables of parent process instances.</li>
+  <li>Output. The initial value of the variable is not initialized. The
+      calling process needs to specify a variable of the parent process
+      to receive the value of this variable.</li>
+  <li>Input/Output. The calling process needs to specify a variable of the parent process
+      to map to this variable.
+      The initial value of the variable is copied from the variable of the parent,
+      and when the process instance terminates, the value of the variable
+      will be copied back to the variable of the parent.</li>
+  <li>Local. The variable does not receive value from the calling process or output it back to the calling process.</li>
+  <li>Static. The value of the variable is initialized at design time through the MDW Designer.</li>
+</ul>
+
+For the <em>Sub Process Invocation</em>, please refer to <a href="InvokeSubProcessActivity.html">this link</a> for details.
+
+<h2>Accessing Variables in Activity Implementors</h2>
+
+The base class for activity implementors, BaseActivity,
+defines quite a few methods for accessing variables.
+<p>
+To get or set values of variable instances, you can use
+the methods <code>getParameterValue</code> and <code>setParameterValue</code>,
+as in the examples:
+<pre>
+    Integer value = (Integer)this.getParameterValue("my_variable_name");
+    setParameterValue("my_variable_name", new Integer(123));
+</pre>
+Note:  You will need to ensure the object class matches the declared
+variable type of the given variable instance.
+For historical reasons, the method names refer to variables
+as "parameters", which are only appropriate when they are used
+for parameter passing (input/output modes).
+<p>
+The following table contains other methods related to variables,
+and refer to Javadocs (http://centurylinkcloud.github.io/mdw/docs/javadoc/) for more information on the methods.
+<table border="1">
+<tr><th>Example method</th><th>Purpose</th></tr>
+<tr><td>getVariableInstance(varname)</td><td>get the variable instance object,
+	which contains properties about the variable instance
+	in addition to the value</td></tr>
+<tr><td>getParameters()</td><td>return an array of all variable instance objects
+for the process instance</td></tr>
+<tr><td>VariableTranslator.realToString(getPackage(), docType, document)</td>
+     <td>Convert the value object to the string format in the database</td></tr>
+<tr><td>VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())</td>
+     <td>Convert the string format into an object of the given variable type</td></tr>
+</table>
+
+<h2><a id="documents">Documents</a></h2>
+The main difference between a document variable and a primitive (non-document)
+variable is that the former is bound to a reference (DocumentReference) to 
+a document (the real value), whereas the latter is bound directly to the value.
+<p>
+The type of the variable (the translator associated with the variable type)
+determines whether the variable is a document variable -- the translator
+for a document variable type must extend the class <code>DocumentReferenceTranslator</code>
+which itself extends the class <code>VariableTranslator</code>, whereas
+the translator for a non-document variable type extends <code>VariableTranslator</code>
+directly. A <code>DocumentReferenceTranslator</code> contains
+final implementation of the two abstract methods, <code>toString()</code>
+and <code>toObject()</code>, of <code>VariableTranslator</code>,
+while demands two additional abstract methods, <code>realToString</code>
+and <code>realToObject</code>, to be implemented by concrete classes.
+The basic methods translate between <code>String</code> and <code>DocumentReference</code>,
+whereas the two new methods translate between <code>String</code> and
+the actual object class such as <code>org.w3c.dom.Document</code>.
+<p>
+A document is stored in the database table DOCUMENT_CONTENT. The content
+of the document is stored as a string in a CLOB (in a JSON Object format).
+The database table contains a couple of additional columns
+for querying and life cycle handling. Their values are not
+essential for work flow execution but are needed for querying,
+cleaning up and archiving purposes. These fields include
+<ul>
+  <li>Owner type. This can be one of the following:
+     <ul>
+     	<li>VARIABLE_INSTANCE. The document is created for a variable
+     		instance.</li>
+     	<li>LISTENER_REQUEST. The document is used to store
+     		a message received by a listener from an external system.</li>
+     	<li>LISTENER_RESPONSE. The response message sent
+     		to the external system from which the listener received
+     		a message</li>
+     	<li>ADAPTOR_REQUEST. The document is used to store
+     		a message sent to an external system via an adaptor
+     		activity.</li>
+     	<li>ADAPTOR_RESPONSE. The document is used to store
+     		the synchronous response message received from an external system to
+     		which the adaptor activity has sent a message.</li>
+     </ul></li>
+  <li>Owner ID. The ID of the owner (with respect to the corresponding
+  		owner type).</li>
+  <li>Process instance ID. The process instance ID of the owner
+  		activity instance or variable. For documents owned by
+  		external events, the field contains the ID of the process
+  		instance the message is to be delivered to, or 0 if 
+  		such information is not available.</li>
+  <li>Type. The same as variable type. For documents that
+  		are not owned by variable instances, you should also
+  		set it to an appropriate variable type, because the
+  		document may be bound to variables later on.</li>
+  <li>Search key 1 and 2. These 2 fields are provided for speeding
+        up common queries specific to the type of documents.
+        For instance, you can use one of the field to store
+        BTN of service orders so that we can search on BTN for the 
+        documents. These fields are not used by MDW Framework
+        code itself. It is the application's responsibility to
+        ensure the values of the fields are consistent with
+        the content of the document.</li>
+</ul>
+
+<h2>Accessing Documents in Activity Implementors</h2>
+Variables bound to documents are actually taking objects of the class
+<code>DocumentReference</code>, which contains basically an ID for the document
+in the database table DOCUMENT.
+The methods mentioned above all perform on the objects of
+this class. The additional methods are used
+to access the actual objects (instead of the reference objects).
+<p>
+Here is an example for retrieving the document from variable:
+<pre>
+    DocumentReference docref = (DocumentReference)this.getParameterValue("my_variable_name");
+    Object doc = this.getDocument(docref);
+</pre>
+The following example shows how to create a new document
+and bind it to a variable:
+<pre>
+    Object doc;		// your object type, such as XmlObject
+    String varType;		// the variable type
+    DocumentReference docref = this.createDocument(varType, doc, OwnerType.VARIABLE_REFERENCE, new Long(0));
+    Long varInstId = this.setParameterValue(name, docref);
+    this.updateDocumentInfo(docref, null, null, null, varInstId, null, null);
+</pre>
+The following is an example for updating the document referenced by the variable:
+<pre>
+    Object doc;		// your object with updated value
+    DocumentReference docref = (DocumentReference)this.getParameterValue("my_variable_name");
+    this.updateDocument(docref, doc);
+</pre>
+Indeed there is a simpler way to perform the above two functions:
+<pre>
+    this.setParameterValueAsDocument(varName, varType, value);
+</pre>
+This creates the document and binds the variable instance with
+the document reference if the variable is not yet bound,
+or updates the document the variable instances references
+when the variable is already bound to a document reference.
+<p>
+The following method determines if a variable
+type is a document variable:
+<pre>
+   if (VariableTranslator.isDocumentReferenceVariable(package, varType)) {
+       ... ...
+   }
+</pre>
+
+<h2>Remote Document</h2>
+MDW allows documents stored in one MDW application to
+be accessed by another. The references to the documents
+are passed through remote process invocation or other
+means to other applications. The <code>DocumentReference</code>
+objects contain a server field referring to the owning
+application. The field is null for local document.
+<p>
+Remote documents are accessed in a similar way
+as local documents. We note there are following differences:
+<ul>
+   <li>Remote documents are read-only - cannot be updated.</li>
+   <li>When a local document reference variable is passed
+      to a remote process, MDW automatically converts it
+      to a remote document reference for the invoked process
+      instance. Similarly, if a document reference is returned
+      by a remote process back to the calling process,
+      the reference is updated automatically according to
+      the location of the document</li>
+   <li>You will need to configure the mapping from the logical
+      server name to physical locations in order to access
+      the documents. Refer to <a href='InvokeSubProcessActivity.html'>
+      this link</a> to configure the mapping.</li> 
+</ul>
+Because MDW automatically converts between local and remote
+document references during remote process invocation and return
+from it, you do not need to create remote document reference
+directly. In case you want to use remote document reference
+in other context, the second argument of the constructor
+for DocumentReference is used to specify the logical server name.
+<p>
+By using remote document references, we can avoid passing large
+documents between different workflow applications.
+<p>
+To check if a document reference object refers to a remote
+document, use
+<pre>
+    if (documentReference.getServer()!=null) ... ...
+</pre>
+
+<h2>Add Variable Types</h2>
+In most cases, the built-in variable types should be sufficient for use,
+as they include XML DOM document, XML Beans and JSON Object.
+Since we are not encouraging adding custom variable types, the designer
+does not include an interface to create, modify or delete variable types.
+<p>
+If there is a good reason to add an additional type, you need to 
+insert an entry in the database table VARIABLE_TYPE, as in
+<pre>
+  insert into variable_type values (501, 'org.apache.xmlbeans.XmlObject', sysdate, 
+     'cuid', '', '', '', 
+     'com.centurylink.mdw.common.translator.impl.XmlBeanTranslator');
+</pre>
+where 3 values are significant:
+<ul>
+  <li>ID. This is the first argument. The value does not matter as long as it is 
+      different from any existing entry.</li>
+  <li>Type name (second argument). Although not required, it is customarily the class name
+      of the object the variable is dealing with.</li>
+  <li>Translator class name (last argument). This is a class to provide
+      translation between the objects and their serialized form (String) in database.
+      More than likely you will use a document reference translator.</li>
+</ul>
+You will need to implement a variable translator.
+A variable translator class must extend the abstract class
+<code>com.centurylink.mdw.common.translator.VariableTranslator</code>.
+Indeed, since the new type you are adding is likely non-primitive, we require
+custom variable types to be implemented as documents,
+which requires your translator to extend the abstract class
+<code>com.centurylink.mdw.common.translator.DocumentReferenceTranslator</code>,
+which you will need to implement two methods: <code>realToString</code> and <code>realToObject</code>.
+
+
+</body>
+</html>

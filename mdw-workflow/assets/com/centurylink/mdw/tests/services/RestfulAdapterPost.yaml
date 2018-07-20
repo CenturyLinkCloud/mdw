@@ -1,0 +1,39 @@
+process: # 10293
+  name: RestfulServiceAdapter
+  instance: 1
+  activity: # 1 "2017-01-12 12:54:29"
+    name: Start
+    status: Completed
+  activity: # 7 "2017-01-12 12:54:29"
+    name: Set Request
+    status: Completed
+    result: POST
+  activity: # 9 "2017-01-12 12:54:29"
+    name: |
+      POST
+      Request
+    status: Completed
+  activity: # 5 "2017-01-12 12:54:32"
+    name: Stop
+    status: Completed
+  variable: # 10714
+    name: headersMap
+    value: {"my-header": "my-header-value"}
+  variable: # 11954
+    name: httpMethod
+    value: POST
+  variable: # 10717
+    name: requestDoc
+    value: |
+      <GetEmployee xmlns:ns2="http://mdw.centurylink.com/serviceTypes">
+          <workstationId>dxoakes</workstationId>
+      </GetEmployee>
+  variable: # 10726
+    name: responseDoc
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+                <sapId>DHO115360</sapId>
+                <workstationId>dxoakes</workstationId>
+                <firstName>Donald</firstName>
+                <lastName>Oakes</lastName>
+              </GetEmployeeResponse>

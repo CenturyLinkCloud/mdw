@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "CCGroups": "[\"MDW Support\"]",
+    "FormName": "Autoform",
+    "Groups": "[\"Developers\"]",
+    "Notices": "Open,com.centurylink.mdw.base/taskOpenEmail.html,[0.9\\,1),com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier,,,,;Assigned,,,,,,,;Completed,,,,,,,;Cancelled,,,,,,,;In Progress,,,,,,,;Alert,,,,,,,;Jeopardy,,,,,,,;Forward,,,,,,,",
+    "RecipientVar": "${recipientList ? recipientList : recipient}"
+  },
+  "category": "GEN",
+  "logicalId": "SmtpTask",
+  "name": "SmtpTask",
+  "version": "0"
+}

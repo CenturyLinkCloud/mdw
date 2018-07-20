@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "Variables": "dateVar,Date,Optional,2,dateIdx,java.util.Date;jaxbVar,Task JAXB,Not Displayed,3,,javax.xml.bind.JAXBElement;objectVar,Task Model,Not Displayed,4,,java.lang.Object;stringVar,String,Read Only,1,,java.lang.String;#{objectVar.taskmaster},Taskmaster,Required,5,tmIdx,;#{jaxbVar.elementOne},Element One,Optional,6,,;#{jaxbVar.elementTwo},Element Two,Read Only,7,,;#{jaxbVar.attributeOne},Attribute One,Not Displayed,8,,;unassignedVar,,Optional,9,,java.lang.String;docVar,,Optional,10,,org.w3c.dom.Document;#{jaxbVar.attributeTwo},Attribute Two,Required,11,,;jsonVar,jsonVar,Optional,12,,org.json.JSONObject"
+  },
+  "category": "COM",
+  "logicalId": "ManualTaskServices:A3",
+  "name": "AutoForm Task for Service Access",
+  "version": "0.3"
+}

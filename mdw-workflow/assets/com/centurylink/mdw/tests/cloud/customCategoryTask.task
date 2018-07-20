@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "Groups": "MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "Variables": "inputFloat,inputFloat,Not Displayed,0,,java.lang.Float;localFloat,localFloat,Not Displayed,0,,java.lang.Float"
+  },
+  "category": "PLN",
+  "logicalId": "customCategoryTask",
+  "name": "Custom Category Task",
+  "version": "0"
+}

@@ -1,0 +1,179 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=45,y=52,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Receive",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=100,ly=68,type=Elbow,xs=105&294&294,ys=72&72&138"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=626,y=532,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Response"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=428,y=284,w=121,h=77",
+        "parallel": "${parallel}",
+        "synchronous": "${synchronous}"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.microservice.OrchestratorActivity",
+      "name": "Invoke\r\nServices",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=489,ly=378,type=Elbow,xs=489&489,ys=365&402"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"servicePlan\"]",
+        "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\nimport com.centurylink.mdw.model.Jsonable\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n            enabled = (variables[\"request\"] as Jsonable).getJson().has(\"group\")\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/GroupRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n    }\r\n}",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=238,y=282,w=118,h=75"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Create\r\nPlan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=399,ly=320,type=Elbow,xs=360&424,ys=320&320"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=430,y=520,w=120,h=73",
+        "consolidator": "com.centurylink.mdw.microservice.CombiningConsolidator"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.microservice.ResponseCollector",
+      "name": "Consolidate\r\nResponses",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=590,ly=551,type=Elbow,xs=554&622,ys=552&552"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Validate": "[\"Query\",\"Body\"]",
+        "WORK_DISPLAY_INFO": "x=238,y=142,w=118,h=75"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.validate.SwaggerValidatorActivity",
+      "name": "Validate\r\nRequest",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=140,ly=178,type=Elbow,xs=234&109,ys=177&177"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A7"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=305,ly=238,type=Elbow,xs=297&297,ys=221&278"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "true",
+          "to": "A4"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=45,y=157,w=60,h=40"},
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Reject"
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=629,y=421,w=60,h=40"},
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Accepted"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"response\"]",
+        "Rule": "import com.centurylink.mdw.model.StatusResponse\nimport static com.centurylink.mdw.model.Status.ACCEPTED\n\nif (synchronous) {\n    return true\n}\nelse {\n    // populate the 202 response\n    response = new StatusResponse(ACCEPTED).getJson()\n    return false\n}\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=430,y=406,w=122,h=73"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Synchronous\nResponse?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=497,ly=491,type=Elbow,xs=490&490,ys=483&516"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "true",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=575,ly=423,type=Elbow,xs=556&625,ys=441&441"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "false",
+          "to": "A9"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "WORK_DISPLAY_INFO": "x=379,y=59,w=250,h=26",
+    "requestMethod": "POST",
+    "requestParameters": "[[\"User\",\"Body\",\"true\",\"User with optional groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.2,1)\"]]",
+    "requestPath": "/user",
+    "requestSummary": "Create a user and add to workgroups"
+  },
+  "variables": {
+    "parallel": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "org.json.JSONObject"
+    },
+    "responseHeaders": {
+      "category": "OUTPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "servicePlan": {
+      "category": "LOCAL",
+      "type": "org.yaml.snakeyaml.Yaml"
+    },
+    "serviceSummary": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "synchronous": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    }
+  }
+}

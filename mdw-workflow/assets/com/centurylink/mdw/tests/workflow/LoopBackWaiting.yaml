@@ -1,0 +1,36 @@
+process: # 10290
+  name: MDWTestLoopBackWaiting
+  instance: 1
+  activity: # 2 "2017-01-12 12:54:26"
+    name: Start
+    status: Completed
+  activity: # 4 "2017-01-12 12:54:26"
+    name: Loop Control
+    status: Completed
+    result: BACK
+  activity: # 4 "2017-01-12 12:55:27"
+    name: Loop Control
+    status: Completed
+    result: TEMP
+  activity: # 3 "2017-01-12 12:55:27"
+    name: Loop Back
+    status: Completed
+    result: BACK
+  activity: # 4 "2017-01-12 12:55:27"
+    name: Loop Control
+    status: Completed
+    result: BACK
+  activity: # 4 "2017-01-12 12:56:27"
+    name: Loop Control
+    status: Completed
+    result: BACK
+  activity: # 4 "2017-01-12 12:57:27"
+    name: Loop Control
+    status: Completed
+    result: DONE
+  activity: # 1 "2017-01-12 12:57:27"
+    name: Stop
+    status: Completed
+  variable: # 10713
+    name: n
+    value: 6

@@ -1,0 +1,50 @@
+package com.centurylink.mdw.tests.tasks
+
+today = new Date()
+start process("TaskIndexTesting") {
+    variables = [ isCustom: true,
+                  jaxbVar: asset("task-index-custom-jaxb.xml").text,
+                  stringVar: 'stringValue',
+                  intVar: 8,
+                  dateVar: today,
+                  stringListVar: '["one", "two", "three"]' ]
+}
+sleep 30
+def taskInst = action task("A Custom Task") {
+    outcome = "Claim"
+}
+
+println 'verifying initial indexes for task instance id: ' + taskInst.getId()
+def resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
+
+def indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
+assert indexes.dateIndex == today.toString()
+assert indexes.intIndex == "8"
+assert indexes.jaxbAttrOneIndex == "attr one val"
+assert indexes.jaxbElemTwoIndex == "elem two val"
+assert !indexes.nonExistentIndex
+assert indexes.stringIndex == "stringValue"
+assert indexes.stringListItemIndex == "one"
+
+laterToday = new Date()
+
+action task("A Custom Task") {
+    outcome = "Complete"
+    variables = [stringVar: 'updatedStringValue',
+                 intVar: 9,
+                 dateVar: laterToday,
+                 stringListVar: '["four", "five", "six"]' ]
+}
+
+sleep 30
+
+println 'verifying updated for task instance id: ' + taskInst.getId()
+resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
+
+indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
+assert indexes.dateIndex == laterToday.toString()
+assert indexes.stringIndex == "updatedStringValue"
+assert indexes.intIndex == "9"
+assert indexes.stringListItemIndex == "four"
+
+verify process

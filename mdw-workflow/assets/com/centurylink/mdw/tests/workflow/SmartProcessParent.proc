@@ -1,0 +1,174 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=141,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=165,ly=106,type=Elbow,xs=120&177,ys=161&161"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=686,y=173,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=350,y=55,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild",
+        "processversion": "[2.1,3)",
+        "synchronous": "TRUE",
+        "variables": "procName=#singleSubprocName;procVer=#singleSubprocVer"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Single",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=568,ly=141,type=Elbow,xs=454&682,ys=85&193"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "DELAY_BETWEEN": "1",
+        "Execution Plan": "executionPlan",
+        "Force Parallel Execution": "FALSE",
+        "STATUS_AFTER_EVENT": "Hold",
+        "WORK_DISPLAY_INFO": "x=354,y=332,w=107,h=64",
+        "processmap": "SmartProcessChild,com.centurylink.mdw.tests.workflow/SmartProcessChild,[2.3\\,3),;SmartProcessChild2,com.centurylink.mdw.tests.workflow/SmartProcessChild2,[0.3\\,1),",
+        "synchronous": "TRUE"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
+      "name": "Invoke Multiple",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=541,ly=389,type=Elbow,xs=465&531,ys=366&366"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A9"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "#{testCase}",
+        "SCRIPT": "javax.el",
+        "WORK_DISPLAY_INFO": "x=181,y=138,w=89,h=46"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Test\r\nCase?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=267,ly=130,type=Elbow,xs=274&346,ys=161&85"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "single",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=305,ly=205,type=Elbow,xs=270&297&297&354,ys=173&173&244&244"},
+          "event": "FINISH",
+          "id": "T4",
+          "resultCode": "multiple",
+          "to": "A8"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Output Documents": "executionPlan",
+        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\r\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance();\r\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan();\r\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance();\r\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\r\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\r\naddParameter(subprocinst, \"inputVar\", \"child11\");\r\naddParameter(subprocinst, \"procName\", \"\\$\");\r\naddParameter(subprocinst, \"procVer\", \"\\$\");\r\nsubprocinst = exeplan.addNewSubprocessInstance();\r\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\r\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\r\naddParameter(subprocinst, \"inputVar\", \"child12\");\r\nsubprocinst = exeplan.addNewSubprocessInstance();\r\nsubprocinst.setLogicalProcessName(\"SmartProcessChild2\");\r\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\r\naddParameter(subprocinst, \"inputVar\", \"\\$subprocInputVar\");\r\naddParameter(subprocinst, \"procName\", \"\\$\");\r\naddParameter(subprocinst, \"procVer\", \"\\$\");\r\n\r\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\r\n Parameter param = subprocinst.addNewParameter();\r\n param.setName(name);\r\n param.setStringValue(value);\r\n}\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=358,y=210,w=100,h=60"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Create Plan",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=408,ly=290,type=Elbow,xs=408&408,ys=274&328"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=535,y=337,w=100,h=60"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Assign Output",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=674,ly=285,type=Elbow,xs=639&716,ys=367&217"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=56,w=184,h=27"
+  },
+  "variables": {
+    "executionPlan": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "multipleSubprocName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "multipleSubprocName2": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "multipleSubprocVer": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "multipleSubprocVer2": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "singleSubprocName": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "singleSubprocNameOld": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "singleSubprocVer": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "singleSubprocVerOld": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "subprocInputVar": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

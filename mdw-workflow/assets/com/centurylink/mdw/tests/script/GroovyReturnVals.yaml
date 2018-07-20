@@ -1,0 +1,24 @@
+process: # 1329
+  name: GroovyReturnVals
+  instance: 1
+  activity: # 95 "2016-12-13 11:59:23"
+    name: Explicit Return Val
+    status: Completed
+    result: x
+  activity: # 97 "2016-12-13 11:59:23"
+    name: Start
+    status: Completed
+  activity: # 98 "2016-12-13 11:59:43"
+    name: Stop
+    status: Completed
+  activity: # 99 "2016-12-13 11:59:23"
+    name: Sync
+    status: Completed
+  activity: # 100 "2016-12-13 11:59:23"
+    name: No Return Val
+    status: Completed
+  activity: # 101 "2016-12-13 11:59:23"
+    name: |
+      No Return Val
+      (with SubProc)
+    status: Completed

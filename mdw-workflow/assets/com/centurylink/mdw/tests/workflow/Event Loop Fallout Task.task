@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+    "Notices": "$DefaultNotices",
+    "Variables": "N,N,Not Displayed,0,,java.lang.String;comp,comp,Not Displayed,0,,java.lang.String"
+  },
+  "category": "COM",
+  "logicalId": "MDWTestLoopBackWaiting:Activity6",
+  "name": "Event Loop Fallout Task",
+  "version": "0.1"
+}

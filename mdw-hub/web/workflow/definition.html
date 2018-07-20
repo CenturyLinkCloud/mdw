@@ -1,0 +1,39 @@
+<div class="row" style="display:flex;">
+  <div class="mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/process-nav.html'"></div>
+  <div class="mdw-panel-full-width">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          <a ng-href="#/packages/{{process.packageName}}">
+            {{process.packageName}}</a>
+            /
+          {{process.name}} {{process.version ? ' v' + process.version : ''}}
+        </div>
+        <div class="mdw-heading-actions">
+          <a ng-if="!process.startPageUrl" ng-href="#/workflow/run/{{process.packageName}}/{{process.name}}" 
+            class="btn btn-primary mdw-btn" title="Run">
+            <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
+          </a>            
+          <a ng-if="process.startPageUrl" ng-href="{{process.startPageUrl}}" 
+            class="btn btn-primary mdw-btn" title="Run">
+            <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
+          </a>            
+          <a ng-href="#/workflow/processes" ng-click="setProcessFilter()"
+            class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Instances">
+            <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span>
+          </a>            
+          <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc" ng-if="authUser.hasRole('Process Design')"
+            class="btn btn-primary mdw-btn" style="margin-left:5px;margin-right:5px;" title="Edit">
+            <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
+          </a>            
+        </div>        
+      </div>
+      <div class="mdw-section">
+        <mdw-workflow process="process" animate="false" activity="{{activity}}"
+          service-base="{{mdw.roots.services}}/services"
+          hub-base="{{mdw.roots.hub}}">
+        </mdw-workflow>
+      </div>
+    </div>  
+  </div>
+</div>

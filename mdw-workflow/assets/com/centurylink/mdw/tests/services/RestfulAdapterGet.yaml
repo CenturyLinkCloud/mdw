@@ -1,0 +1,39 @@
+process: # 10229
+  name: RestfulServiceAdapter
+  instance: 1
+  activity: # 1 "2017-01-03 10:40:19"
+    name: Start
+    status: Completed
+  activity: # 7 "2017-01-03 10:40:19"
+    name: Set Request
+    status: Completed
+    result: GET
+  activity: # 8 "2017-01-03 10:40:26"
+    name: |
+      GET
+      Request
+    status: Completed
+  activity: # 6 "2017-01-03 10:40:27"
+    name: Stop
+    status: Completed
+  variable: # 10486
+    name: httpMethod
+    value: GET
+  variable: # 10491
+    name: responseDoc
+    value: |
+      {
+        "appId": "${~mdw.*}",
+        "appVersion": "${~.*}",
+        "authMethod": "${~.*}",
+        "mdwBuild": "${~201.*}",
+        "mdwHubUrl": "${~http.*}",
+        "mdwVersion": "${~6.*}",
+        "repository": {
+          "branch": "master",
+          "commit": "${~.*}",
+          "provider": "Git",
+          "url": "${~http.*}"
+        },
+        "servicesUrl": "${~http.*}"
+      }

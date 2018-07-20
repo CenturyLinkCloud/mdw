@@ -1,0 +1,290 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=26,y=280,w=60,h=40"},
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=116,ly=300,type=Elbow,xs=90&143,ys=300&300"},
+        "event": "FINISH",
+        "id": "T21",
+        "to": "A13"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "count > 99 ?  'TRUE' : 'FALSE'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=704,y=392,w=90,h=47"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Count > 100?",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=856,ly=363,type=ElbowH,xs=798&896,ys=415&160",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T10",
+          "resultCode": "TRUE",
+          "to": "A3"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=749,ly=461,type=Elbow,xs=749&749,ys=443&483",
+            "TRANSITION_RETRY_COUNT": "200"
+          },
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "FALSE",
+          "to": "A9"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Rule": "println response",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=687,y=268,w=100,h=60"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Display Response",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=666,ly=261,type=Elbow,xs=791&896,ys=298&160"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "REQUEST_VARIABLE": "req",
+        "RESPONSE_VARIABLE": "response",
+        "SERVICE": "invokeWebService",
+        "WORK_DISPLAY_INFO": "x=564,y=272,w=100,h=60",
+        "WSDL": "#{props['mdw.services.url']}/SOAP/Employee.wsdl"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter",
+      "name": "Call a web service",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=660,ly=293,type=Elbow,xs=668&683,ys=300&300"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "/*document response;\n & $response = \"LoadTestResponse\";\n $response.Status = \"OK\";\n $count = 0;\n */\nimport javax.xml.parsers.DocumentBuilder;\nimport javax.xml.parsers.DocumentBuilderFactory;\nimport org.w3c.dom.Document;\nimport org.w3c.dom.Element;\n\nDocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();\nDocumentBuilder builder = dbf.newDocumentBuilder();\n\nDocument response = builder.newDocument();\nElement element = response.createElement(\"LoadTestResponse\");\nresponse.appendChild(element);\n\nElement itemElement = response.createElement(\"Status\");\nitemElement.appendChild(response.createTextNode('OK'));\nelement.appendChild(itemElement);\n\ncount=0",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=432,y=391,w=100,h=60"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "count = 0",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=622,ly=415,type=Elbow,xs=536&700,ys=415&415"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A1"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "req",
+        "Rule": "req = '''<GetEmployee>\r\n  <workstationId>dxoakes<\/workstationId>\r\n<\/GetEmployee>'''",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=435,y=272,w=100,h=60"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set up request",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=552,ly=302,type=ElbowH,xs=539&560,ys=302&302"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A12"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "count = count + 1;\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=699,y=487,w=100,h=60"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "count = count + 1",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=749,ly=413,type=ElbowH,xs=695&616&616&700,ys=504&504&416&416",
+          "TRANSITION_RETRY_COUNT": "200"
+        },
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A1"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=900,y=140,w=60,h=40"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "response",
+        "Rule": "import groovy.util.XmlParser\n\ndef orderDoc = new XmlParser().parseText(order)\ndef orderId = orderDoc.orderId.text()\nresponse = \"<orderId>\" + orderId + \"<\/orderId>\"",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=483,y=26,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Get OrderId",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=727,ly=107,type=ElbowH,xs=587&896,ys=56&160",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T16",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Input Documents": "inputxml",
+        "Output Documents": "response",
+        "Rule": "<xsl:stylesheet version=\"1.0\" \n   xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n   xmlns=\"http://www.cramer.com/centurylink/srpf\"\n   xmlns:s=\"http://www.cramer.com/centurylink/srpf\"\n   xmlns:bim=\"http://www.centurylink.com/XMLSchema/BIM\"\n   xmlns:q=\"http://mdw.centurylink.com/XMLSchema\">\n\n<xsl:output method=\"html\" indent=\"yes\" omit-xml-declaration=\"yes\"/>\n\n<xsl:template match=\"/\">\n  <html>\n   <body>\n     <h2>SeRT Order\n <xsl:value-of select='s:OrderRetrieval/s:RequestType'/>\n     <\/h2>\n     <table>\n       <tr><th>Field<\/th><th>Value<\/th><\/tr>\n       <tr><td>Customer Name<\/td>\n    <td><xsl:value-of select=\n   's:OrderRetrieval/s:OrderDetails/s:Customer/s:CustomerFullName'/>\n           <\/td><\/tr>\n     <\/table>\n   <\/body>\n  <\/html>\n<\/xsl:template>\n\n<\/xsl:stylesheet>\n\n",
+        "SCRIPT": "XSLT",
+        "Transform Language": "GPath",
+        "WORK_DISPLAY_INFO": "x=320,y=544,w=190,h=57"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.transform.TransformActivity",
+      "name": "XSLT transformation",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=748,ly=137,type=ElbowH,xs=514&846&846&896,ys=569&569&160&160",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T14",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "processCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=147,y=266,w=76,h=68"
+      },
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "case?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=397,ly=68,type=Elbow,xs=227&479,ys=300&56"},
+          "event": "FINISH",
+          "id": "T17",
+          "resultCode": "GetOrder",
+          "to": "A6"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=365,ly=310,type=Elbow,xs=227&431,ys=302&302"},
+          "event": "FINISH",
+          "id": "T18",
+          "resultCode": "Adapter",
+          "to": "A8"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=364,ly=388,type=Elbow,xs=227&428,ys=300&421"},
+          "event": "FINISH",
+          "id": "T19",
+          "resultCode": "LoadTest",
+          "to": "A10"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=362,ly=508,type=Elbow,xs=185&415,ys=338&540"},
+          "event": "FINISH",
+          "id": "T20",
+          "resultCode": "XSLT",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=392,ly=230,type=Elbow,xs=227&544,ys=300&166"},
+          "event": "FINISH",
+          "id": "T22",
+          "resultCode": "SyntaxError",
+          "to": "A14"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Java": "package com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class SyntaxError_A14 implements JavaExecutor {\r\n  \r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        this is not java\r\n    }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=548,y=136,w=100,h=60"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Syntax Error",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=774,ly=160,type=Elbow,xs=652&896,ys=160&160"},
+        "event": "FINISH",
+        "id": "T23",
+        "to": "A3"
+      }]
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "PerformanceLevel": "0",
+    "Response to Invoker": "When Terminate",
+    "START_TRANSITION_ID": "2331845",
+    "Transition with no Label": "Matches Any Return Code",
+    "WORK_DISPLAY_INFO": "x=48,y=37,w=248,h=27"
+  },
+  "variables": {
+    "count": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    },
+    "inputxml": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "order": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "processCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "req": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "org.w3c.dom.Document"
+    }
+  }
+}

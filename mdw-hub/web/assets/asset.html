@@ -1,0 +1,69 @@
+<div class="row" style="display:flex;">
+  <div class="mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="mdw-panel-full-width">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          <span class="glyphicon glyphicon-file mdw-item-icon"></span>
+          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> /
+          <a ng-if="process" href="#/workflow/definitions/{{packageName}}/{{assetName}}" mdw-route="#/workflow/definitions/{{packageName}}/{{assetName}}">{{assetName}} v{{asset.version}}</a>
+          <a ng-if="assetName.endsWith('.test')" href="#/tests/{{packageName}}/{{assetName}}">{{assetName}} v{{asset.version}}</a> 
+          <span ng-if="!process && !assetName.endsWith('.test')">{{assetName}} v{{asset.version}}</span>
+          <span class="mdw-diff" ng-if="asset.vcsDiff == 'DIFFERENT'">*</span>
+          <span class="mdw-diff" ng-if="asset.vcsDiff == 'EXTRA'"><sup>+</sup></span>
+          <span class="mdw-diff" ng-if="asset.vcsDiff == 'MISSING'"><sup>-</sup></span>
+          <span class="mdw-commit" ng-if="asset.commitInfo" title="{{asset.commitInfo.message}}"> ({{asset.commitInfo.committer}} 
+            <span class="mdw-commit-date">{{asset.commitInfo.date}}</span>)
+          </span>
+        </div>
+        <div class="radio mdw-heading-options" ng-if="!asset.isBinary && asset.vcsDiff">
+          <label class="radio-inline"><input type="radio" ng-model="asset.view" value="content">{{process ? 'Workflow' : 'Content'}}</label>
+          <label class="radio-inline"><input type="radio" ng-model="asset.view" value="gitDiff">Git Diff</label>
+        </div>
+        <div class="mdw-heading-actions">
+          <a ng-href="{{asset.url}}" class="btn btn-default">
+            <span class="glyphicon glyphicon-file"></span> View
+          </a>            
+          <a ng-href="{{asset.url}}?download=true" class="btn btn-default">
+            <span class="glyphicon glyphicon-download-alt"></span> Download
+          </a>            
+          <a ng-href="#/edit/{{asset.packageName}}/{{asset.name}}" class="btn btn-default" ng-if="authUser.hasRole('Process Design') && !asset.isBinary">
+            <span class="glyphicon glyphicon-pencil"></span> Edit
+          </a>            
+          <a href="" class="btn btn-default" ng-if="authUser.hasRole('Site Admin')" ng-click="deleteAsset()">
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          </a>  
+          <a ng-if="task" href="" class="btn btn-default" ng-click="viewInstances()">
+            <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span> Instances
+          </a>            
+        </div>
+      </div>
+      <div class="mdw-section" ng-if="process && asset.view == 'content' && asset.content">
+        <mdw-workflow process="process" service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+        </mdw-workflow>
+      </div>
+      <div class="mdw-section" ng-if="assetName.endsWith('.task') && asset.view == 'content' && asset.content">
+        <mdw-task-template task="asset.content">
+        </mdw-task-template>
+      </div>
+      <div class="mdw-item-content" ng-if="asset.view == 'content' && (asset.content || asset.isImage) && !process && !assetName.endsWith('.task')">
+        <pre ng-if="!asset.isBinary && !asset.isMarkdown && !process && !assetName.endsWith('.task')" class="mdw-line-nums">{{asset.lineNums}}</pre>
+        <pre ng-show="!asset.isBinary && !asset.isMarkdown && !process && !assetName.endsWith('.task')" class="mdw-resource-content"><code class="mdw-code" ng-bind-html="asset.content | highlight:asset.language | unsafe"></code></pre>
+        <div ng-show="asset.isMarkdown" class="mdw-resource-content"><div ng-bind-html="asset.content | markdown | unsafe"></div></div>
+        <img ng-if="asset.isImage" ng-src="{{asset.url}}" alt="asset.name" />
+      </div>
+      <div class="mdw-inner-content" ng-if="asset.view == 'gitDiff'">
+        <div class="col-md-6 mdw-split-left">
+          <div class="mdw-resource-heading">Local</div>
+          <pre class="mdw-line-nums" ng-if="asset.lineNums">{{asset.lineNums}}</pre>
+          <pre class="mdw-resource-content" ng-if="asset.content"><code class="mdw-code" ng-bind-html="asset.content | diff:asset.remoteContent | unsafe"></code></pre>
+        </div>      
+        <div class="col-md-6 mdw-split-right">
+          <div class="mdw-resource-heading">Remote</div>
+          <pre class="mdw-line-nums" ng-if="asset.remoteLineNums">{{asset.remoteLineNums}}</pre>
+          <pre class="mdw-resource-content" ng-if="asset.remoteContent"><code class="mdw-code" ng-bind-html="asset.remoteContent | diff:asset.content | unsafe"></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

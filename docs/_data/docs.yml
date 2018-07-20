@@ -1,0 +1,44 @@
+- title: Introduction
+  docs:
+  - intro
+  - overview
+  - features
+  
+- title: Getting Started
+  docs:
+  - getting-started/quick-start
+  - getting-started/cli
+  - guides/mdw-cookbook
+  
+- title: Guides
+  docs:
+  - guides/tomcat
+  - guides/spring-boot
+  - guides/docker
+  - guides/cloud-foundry
+  - guides/configuration
+  - guides/mdw-mobile
+  - guides/dashboard
+  
+- title: Designer
+  docs:
+  - getting-started/install-designer
+  - designer/user-guide
+
+- title: Workflow
+  docs:
+  - workflow/terminology
+  - workflow/built-in-activities
+  - workflow/built-in-variable-types
+  - help
+
+- title: Development
+  docs:
+  - link-to-javadoc
+  - link-to-demo
+  - guides/tuning
+  - releases
+
+- title: Presentations
+  docs:
+  - presentations/microservices

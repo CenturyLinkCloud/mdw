@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-include="'layout/request-nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label" ng-if="request.masterRequestId">
+          Master Response Headers: {{request.masterRequestId}} ({{request.responseId}})
+        </div>
+        <div class="mdw-heading-label" ng-if="!request.masterRequestId">
+          {{request.outbound ? 'Inbound' : 'Outbound'}} Response Headers: {{request.responseId}}
+        </div>
+      </div>
+      <div class="mdw-section">
+        <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="request.responseMetaHeaders | unsafe"></code></pre>
+      </div>
+    </div>  
+  </div>
+</div>

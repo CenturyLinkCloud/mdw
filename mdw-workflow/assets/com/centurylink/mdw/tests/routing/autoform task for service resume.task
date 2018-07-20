@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "Variables": "custom,custom,Not Displayed,0,,java.lang.Boolean;inputString,inputString,Optional,0,,java.lang.String;requiredString,requiredString,Required,0,,java.lang.String"
+  },
+  "category": "GEN",
+  "logicalId": "TaskResumeService:A4",
+  "name": "autoform task for service resume",
+  "version": "0"
+}

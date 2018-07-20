@@ -1,0 +1,162 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=21,y=154,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=52,ly=116,type=Elbow,xs=85&131,ys=174&174"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "changedJavaObject#unchangedJavaObject",
+        "Rule": "import com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\n// initial creation of binary java objects\r\nprintln 'creating java object documents....'\r\n\r\nchangedJavaObject = new AuthenticatedUser();\r\nchangedJavaObject.setCuid 'dxoakes';\r\nchangedJavaObject.setFirstName 'Donald';\r\nchangedJavaObject.setLastName 'Oakes';\r\n\r\nunchangedJavaObject = new AuthenticatedUser();\r\nunchangedJavaObject.setCuid 'dxoakes';\r\nunchangedJavaObject.setFirstName 'Donald';\r\nunchangedJavaObject.setLastName 'Oakes';\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=135,y=143,w=110,h=70"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Create\r\nJava Objects",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=275,ly=171,type=Elbow,xs=249&300,ys=171&171"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "println 'changing read-only doc vars'\r\n\r\nimport org.apache.xmlbeans.XmlObject\r\nimport org.json.JSONObject\r\n\r\nimport com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\nprintln 'changing some doc vars'\r\n\r\n// changedDomDoc\r\n//changedDomDoc = (org.w3c.dom.Document) changedDomDoc;\r\n//\r\n//def album = changedDomDoc.createElement('Album')\r\n//album.setAttribute('name', 'The Head on the Door')\r\n//album.setAttribute('year', '1985')\r\n//changedDomDoc.getDocumentElement().appendChild(album)\r\n//\r\n//def artist = changedDomDoc.createElement('Artist')\r\n//artist.setTextContent('The Cure')\r\n//album.appendChild(artist)\r\n\r\n// changedJavaObject\r\n//changedJavaObject = (AuthenticatedUser) changedJavaObject\r\n//changedJavaObject.setCuid 'sidhug'\r\n//changedJavaObject.setFirstName 'Gary'\r\n//changedJavaObject.setLastName 'Sidhu'\r\n\r\n// changedJson\r\n//changedJson = (JSONObject) changedJson;\r\n//room = new JSONObject('{  name: \"bathroom\", floor: \"second\" }');\r\n//changedJson.house.rooms.put(room);\r\n\r\n// changedStringDoc\r\n//changedStringDoc = 'Early to bed, early to rise; makes a man healthy, wealthy and wise.'\r\n\r\n// changedXmlBean\r\nchangedXmlBean = (XmlObject) changedXmlBean\r\ndef cursor = changedXmlBean.newCursor()\r\ncursor.toChild 'EightiesMusic'\r\ncursor.toChild 'Album'\r\ncursor.insertElement 'Album'\r\ncursor.toPrevSibling();\r\ncursor.toNextToken();\r\ncursor.insertAttributeWithValue 'name', 'Special Beat Service'\r\ncursor.insertAttributeWithValue 'year', '1982'\r\ncursor.insertElementWithText 'Artist', 'The English Beat'\r\ncursor.dispose()\r\n\r\n// changedXmlBeanWrapper\r\n//changedXmlBeanWrapper = (com.centurylink.mdw.model.ActionRequestXmlBeanWrapper) changedXmlBeanWrapper\r\n//changedXmlBeanWrapper.addParameter('frequency', 'EVERYDAY')",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=451,y=256,w=112,h=72"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Change\r\nNon-Output Docs",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=640,ly=230,type=Elbow,xs=567&691,ys=292&169"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=695,y=149,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "outcome",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=304,y=151,w=60,h=40"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Outcome",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=419,ly=147,type=Elbow,xs=368&507&507,ys=168&168&98"},
+          "event": "FINISH",
+          "id": "T1",
+          "resultCode": "change",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=416,ly=179,type=ElbowH,xs=368&506&506,ys=175&175&252"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "nochange",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Output Documents": "changedDomDoc#changedJavaObject#changedJson#changedStringDoc#changedXmlBean#changedXmlBeanWrapper",
+        "Rule": "import org.apache.xmlbeans.XmlObject\r\nimport org.json.JSONObject\r\n\r\nimport com.centurylink.mdw.model.user.AuthenticatedUser\r\n\r\nprintln 'changing some doc vars'\r\n\r\n// changedDomDoc\r\nchangedDomDoc = (org.w3c.dom.Document) changedDomDoc;\r\n\r\ndef album = changedDomDoc.createElement('Album')\r\nalbum.setAttribute('name', 'The Head on the Door')\r\nalbum.setAttribute('year', '1985')\r\nchangedDomDoc.getDocumentElement().appendChild(album)\r\n\r\ndef artist = changedDomDoc.createElement('Artist')\r\nartist.setTextContent('The Cure')\r\nalbum.appendChild(artist)\r\n\r\n// changedJavaObject\r\nchangedJavaObject = (AuthenticatedUser) changedJavaObject\r\nchangedJavaObject.setCuid 'sidhug'\r\nchangedJavaObject.setFirstName 'Gary'\r\nchangedJavaObject.setLastName 'Sidhu'\r\n\r\n// changedJson\r\nchangedJson = (JSONObject) changedJson;\r\nroom = new JSONObject('{  name: \"bathroom\", floor: \"second\" }');\r\nchangedJson.house.rooms.put(room);\r\n\r\n// changedStringDoc\r\nchangedStringDoc = 'Early to bed, early to rise; makes a man healthy, wealthy and wise.'\r\n\r\n// changedXmlBean\r\nchangedXmlBean = (XmlObject) changedXmlBean\r\ndef cursor = changedXmlBean.newCursor()\r\ncursor.toChild 'EightiesMusic'\r\ncursor.toChild 'Album'\r\ncursor.insertElement 'Album'\r\ncursor.toPrevSibling();\r\ncursor.toNextToken();\r\ncursor.insertAttributeWithValue 'name', 'Special Beat Service'\r\ncursor.insertAttributeWithValue 'year', '1982'\r\ncursor.insertElementWithText 'Artist', 'The English Beat'\r\ncursor.dispose()\r\n\r\n// changedXmlBeanWrapper\r\nchangedXmlBeanWrapper = (com.centurylink.mdw.common.service.types.ActionRequestMessage) changedXmlBeanWrapper\r\nchangedXmlBeanWrapper.addParameter('frequency', 'EVERYDAY')\r\n\r\n\r\n\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=451,y=21,w=113,h=73"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Change\r\nOutput Docs",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=632,ly=114,type=Elbow,xs=568&691,ys=57&169"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "START_TRANSITION_ID": "2346077",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=14,y=15,w=161,h=27"
+  },
+  "variables": {
+    "changedDomDoc": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "changedJavaObject": {
+      "category": "LOCAL",
+      "type": "java.lang.Object"
+    },
+    "changedJson": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
+    "changedStringDoc": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "changedXmlBean": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "changedXmlBeanWrapper": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.xml.XmlBeanWrapper"
+    },
+    "outcome": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "unchangedDomDoc": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "unchangedJavaObject": {
+      "category": "LOCAL",
+      "type": "java.lang.Object"
+    },
+    "unchangedJson": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
+    "unchangedStringDoc": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "unchangedXmlBean": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "unchangedXmlBeanWrapper": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.xml.XmlBeanWrapper"
+    }
+  }
+}

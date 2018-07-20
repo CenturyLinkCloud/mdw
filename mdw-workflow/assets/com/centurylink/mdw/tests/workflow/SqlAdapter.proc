@@ -1,0 +1,219 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=250,y=11,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=253,ly=9,type=Elbow,xs=246&207,ys=31&161"},
+          "event": "FINISH",
+          "id": "T1",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=283,ly=63,type=Elbow,xs=289&289,ys=55&84"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A10"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=322,ly=28,type=Elbow,xs=314&338,ys=32&32"},
+          "event": "FINISH",
+          "id": "T6",
+          "to": "A9"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=261,y=400,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
+        "Output Documents": "userDocument",
+        "PostScript": "import java.sql.ResultSet\r\nimport com.centurylink.mdw.model.user.User\r\n\r\nResultSet rs = (ResultSet) response;\r\nif (rs.next()) {\r\n    User user = new User();\r\n    user.setCuid(rs.getString(\"cuid\"))\r\n    user.setName(rs.getString(\"name\"))\r\n    userDocument = user.getJson();\r\n}\r\nelse {\r\n    throw new RuntimeException(\"User query returns no results: \" + runtimeContext.getAttributes().get(\"sqlQuery\"));\r\n}",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "WORK_DISPLAY_INFO": "x=101,y=124,w=102,h=75",
+        "jdbcDataSource": "MDWDataSource",
+        "parameterVariable": "userCuid",
+        "queryType": "Select",
+        "sqlQuery": "select * from user_info where cuid = ?"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
+      "name": "Query Using\r\nJDBC URL",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=181,ly=246,type=Elbow,xs=152&278,ys=203&289"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
+        "Output Documents": "mdwSupportUsers",
+        "PostScript": "import java.sql.ResultSet\r\n\r\nResultSet rs = (ResultSet) response;\r\nmdwSupportUsers = new ArrayList<String>();\r\nwhile (rs.next()) {\r\n  mdwSupportUsers.add(rs.getString(\"name\"));\r\n}\r\n",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "WORK_DISPLAY_INFO": "x=304,y=185,w=145,h=78",
+        "jdbcDataSource": "MDWDataSource",
+        "parameterVariable": "userCuids",
+        "queryType": "Select",
+        "sqlQuery": "select * from user_info ui, user_group_mapping ugm, user_group ug\r\nwhere ui.user_info_id = ugm.user_info_id\r\nand ugm.user_group_id = ug.user_group_id\r\nand ug.group_name = 'Site Admin'\r\nand (ui.cuid = ? or ui.cuid = ?) \r\norder by cuid desc"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
+      "name": "Query Multiple Params,\r\nMultiple Results",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=316,ly=276,type=Elbow,xs=316&316,ys=267&289"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "Synced Activities": "Query Using\r\nJDBC URL#Query Multiple Params,\r\nMultiple Results#Reset\r\nUser Name",
+        "WORK_DISPLAY_INFO": "x=228,y=293,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=291,ly=344,type=Elbow,xs=291&291,ys=357&396"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "DESCRIPTION": "Where clause is hard-coded to avoid any mishaps due to bad input data.",
+        "WORK_DISPLAY_INFO": "x=472,y=13,w=100,h=66",
+        "jdbcDataSource": "MDWDataSource",
+        "queryType": "Update",
+        "sqlQuery": "update user_info set name = 'Don Oakes' where cuid = 'dxoakes'"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
+      "name": "Update\r\nUser Name",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=525,ly=111,type=Elbow,xs=525&525,ys=83&149"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.donsservicemix",
+        "PostScript": "import java.sql.ResultSet\r\n\r\nResultSet rs = (ResultSet) response;\r\nif (rs.next()) {\r\n  return rs.getString(\"name\");\r\n}",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "WORK_DISPLAY_INFO": "x=479,y=153,w=100,h=72",
+        "jdbcDataSource": "MDWDataSource",
+        "queryType": "Select",
+        "sqlQuery": "select name from user_info where cuid = 'dxoakes'"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
+      "name": "Select User\r\nAnd Bind Name",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=535,ly=248,type=Elbow,xs=527&527,ys=229&287"},
+        "event": "FINISH",
+        "id": "T8",
+        "resultCode": "Don Oakes",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "DESCRIPTION": "Where clause is hard-coded to avoid any mishaps due to bad input data.",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "WORK_DISPLAY_INFO": "x=474,y=291,w=101,h=67",
+        "jdbcDataSource": "MDWDataSource",
+        "queryType": "Update",
+        "sqlQuery": "update user_info set name = 'Donald Oakes' where cuid = 'dxoakes'"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
+      "name": "Reset\r\nUser Name",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=401,ly=323,type=Elbow,xs=470&332,ys=323&323"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "60",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=342,y=13,w=100,h=60"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Wait 60s",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=457,ly=43,type=Elbow,xs=446&468,ys=43&43"},
+        "event": "FINISH",
+        "id": "T10",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "10",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=268,y=88,w=100,h=60"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Wait 10s",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=336,ly=166,type=Elbow,xs=336&336,ys=152&181"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=21,y=21,w=101,h=27"
+  },
+  "variables": {
+    "mdwSupportUsers": {
+      "category": "LOCAL",
+      "type": "java.util.List<String>"
+    },
+    "userCuid": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "userCuids": {
+      "category": "INPUT",
+      "type": "java.util.List<String>"
+    },
+    "userDocument": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    }
+  }
+}

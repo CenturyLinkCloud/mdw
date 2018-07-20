@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("MDWTestMainProcess") {
+  variables = [processCase: "RemoteSubProcess",N: 17]
+}
+wait process("MDWTestMainProcess") {
+    timeout = 180
+}
+verify processes("MDWTestMainProcess", "MDWTestSubProcess")

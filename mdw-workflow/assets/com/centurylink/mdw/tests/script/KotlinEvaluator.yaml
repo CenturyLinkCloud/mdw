@@ -1,0 +1,30 @@
+process: # 10441
+  name: KotlinTest
+  instance: 1
+  activity: # 1 "2018-04-03 11:49:22"
+    name: Start
+    status: Completed
+  activity: # 2 "2018-04-03 11:49:25"
+    name: Right
+    status: Completed
+  activity: # 3 "2018-04-03 11:49:23"
+    name: Decide
+    status: Completed
+    result: Chocolate
+  activity: # 10 "2018-04-03 11:49:22"
+    name: Which
+    status: Completed
+    result: decide
+  activity: # 11 "2018-04-03 11:49:23"
+    name: Boolean
+    status: Completed
+    result: true
+  variable: # 11019
+    name: flavor
+    value: Chocolate
+  variable: # 11020
+    name: numFlavs
+    value: 31
+  variable: # 11021
+    name: testCase
+    value: decide

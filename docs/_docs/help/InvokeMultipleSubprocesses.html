@@ -1,0 +1,257 @@
+<html>
+<head>
+<title>Invoke Multiple Subprocesses</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Invoke Multiple Subprocesses</h1>
+
+<p>This activity allows you to start multiple subprocess instances
+determined dynamically based on data (such as service orders) at run time.
+The subprocess instances may be of same process definition, different process
+definition, or a combination of them.
+
+<p>At runtime this activity uses an XML document, called the <em>execution plan</em>, to control
+which subprocesses to launch.  Typically the execution plan is created by
+a preceding activity, possibly by consulting with an external product/service
+catalog.
+
+<p>If you are not already familiar with concepts such as Smart Subprocess Versions,
+and parameter binding modes, please refer to <a href="InvokeSubProcessActivity.html">Invoke Subprocess Activity</a>
+for a description of these concepts, which are the same for single and multiple subprocesses. Here we focus on 
+aspects specific to multiple subprocess invocation, especially the syntax and semantics involved in creating an execution plan.</p>
+
+<h3>Activity Configuration</h3>
+Here's a shot of the Designer property tab for configuring Multiple Subprocess Invoke:
+<br/><br/>
+<img src="images/multiple_subprocesses.jpg" />
+<br/><br/>
+<p><span style="font-weight:bold">Note: </span>To open the subprocess definition, double-click on the process icon for a row under Subprocesses.</p>
+<p>The following attributes pertain:</p>
+<dl>
+  <dt>Execution Plan Variable</dt>
+  <dd>This points to the variable containing the execution plan.
+      The variable must be a document variable type (XmlObject, JAXBElement, etc).</dd>
+  <dt>synchronous</dt>
+  <dd>A boolean value indicating whether the parent process waits for completion
+      of subprocesses.</dd>
+  <dt>Force Parallel Execution</dt>
+  <dd>Normally, the engine will try to run with a single thread for 
+      all subprocesses as far as possible. This attribute is a boolean value
+      and when it is set to true, the engine will allocate one thread
+      for each subprocess so they can run in parallel.</dd>
+  <dt>Delay Between Instances (sec)</dt>
+  <dd>You can specify the number of seconds between launching two subprocesses.
+      If you leave it blank, the default value is 0 second.
+      For service processes running in synchronous mode, this attribute is ignored.
+      In other cases, setting this to a nonzero value can help avoid certain race conditions
+      where the JMS message travels faster than a needed database update.
+      For this case a value greater than 0 has the side effect of
+      forcing parallel execution (as if Force Parallel Execution is true),
+      as any delayed execution uses a new thread.</dd>
+  <dt>Events tab</dt>
+  <dd>See the section below <a href="#waitEvents">Wait For Unsolicited Events</a></dd>
+</dl>
+
+<h3>Execution Plan</h3>
+
+<p>The execution plan is an XML document and its XSD looks like (extracted from MDW source code)</p>
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;xsd:schema xmlns = "http://mdw.centurylink.com/bpm"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://mdw.centurylink.com/bpm"
+	elementFormDefault="unqualified"
+	attributeFormDefault="unqualified"&gt;
+    &lt;xsd:element name="Parameter"&gt;
+		&lt;xsd:complexType&gt;
+			&lt;xsd:simpleContent&gt;
+				&lt;xsd:extension base="xsd:string"&gt;
+					&lt;xsd:attribute name="Name" type="xsd:string" use="required"/&gt;
+				&lt;/xsd:extension&gt;
+			&lt;/xsd:simpleContent&gt;
+		&lt;/xsd:complexType&gt;
+	&lt;/xsd:element&gt;
+    &lt;xsd:element name="LogicalProcessName" type="xsd:string"/&gt;
+	&lt;xsd:element name="ProcessId" type="xsd:string"/&gt;
+    &lt;xsd:element name="InstanceId" type="xsd:string"/&gt;
+    &lt;xsd:element name="StatusCode" type="xsd:int"/&gt;
+   	&lt;xsd:element name="SubprocessInstance"&gt;
+        &lt;xsd:complexType&gt;
+            &lt;xsd:sequence&gt;
+	            &lt;xsd:element ref="LogicalProcessName"/&gt;
+    			&lt;xsd:element ref="ProcessId"/&gt;
+                &lt;xsd:element ref="InstanceId"/&gt;
+                &lt;xsd:element ref="StatusCode"/&gt;
+                &lt;xsd:element ref="Parameter" minOccurs="0" maxOccurs="unbounded" /&gt;
+            &lt;/xsd:sequence&gt;
+        &lt;/xsd:complexType&gt;
+    &lt;/xsd:element&gt;
+    &lt;xsd:element name="ProcessExecutionPlan"&gt;
+    	&lt;xsd:complexType&gt;
+            &lt;xsd:sequence&gt;
+            	&lt;xsd:element ref="SubprocessInstance" minOccurs="0" maxOccurs="unbounded"/&gt;
+             &lt;/xsd:sequence&gt;
+        &lt;/xsd:complexType&gt;
+    &lt;/xsd:element&gt;
+&lt;/xsd:schema&gt;
+</pre>
+<p>MDW has already created an XMLBean for this XSD, so you do not normally need
+to deal with the XSD. The following shows a piece of sample code using XMLBeans
+to construct the execution plan that contains 3 subprocess instances, 2
+for <code>UniSubProcess</code> and 1 for <code>EvcSubProcess</code>:</p>
+<pre>
+String createExecutionPlan() {
+	ProcessExecutionPlanDocument exeplan_doc = ProcessExecutionPlanDocument.Factory.newInstance();
+	ProcessExecutionPlan exeplan = exeplan_doc.addNewProcessExecutionPlan();
+	SubprocessInstance subprocinst = exeplan.addNewSubprocessInstance();
+	subprocinst.setLogicalProcessName("UniSubProcess");
+	subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());
+	addParameter(subprocinst, "OrderNumber", "C30234456");
+	addParameter(subprocinst, "UNI_ID", "UNI-101");
+	addParameter(subprocinst, "OrderContent", "$orderContent");
+	subprocinst = exeplan.addNewSubprocessInstance();
+	subprocinst.setLogicalProcessName("UniSubProcess");
+	subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());
+	addParameter(subprocinst, "OrderNumber", "C30234456");
+	addParameter(subprocinst, "UNI_ID", "UNI-102");
+	addParameter(subprocinst, "OrderContent", "$orderContent");
+	subprocinst = exeplan.addNewSubprocessInstance();
+	subprocinst.setLogicalProcessName("EvcSubProcess");
+	subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());
+	addParameter(subprocinst, "OrderNumber", "C30234456");
+	addParameter(subprocinst, "EVC_ID", "EVC-A");
+	addParameter(subprocinst, "OrderContent", "$orderContent");
+	addParameter(subprocinst, "DueDate", "$due_date");
+	return exeplan_doc.xmlText();
+}
+</pre>
+<p><span style="font-weight:bold">Note:</span> In Groovy script the $ character is used for templating and must be escaped.
+So, for example, the call to addParameter() should pass "\$orderContent" instead of "$orderContent"). Here is an example to 
+call: addParameter(subprocinst, "orderContent", "\$orderContent");</p>
+<p>The utility method <code>addParameter()</code> above is defined as</p>
+<pre>
+void addParameter(SubprocessInstance subprocinst, String name, String value) {
+	Parameter param = subprocinst.addNewParameter();
+	param.setName(name);
+	param.setStringValue(value);
+}
+</pre>
+<p>The following points need to be emphasized:</p>
+<ul>
+  <li>The subprocess names in the execution plan are logical names (not necessarily real process names),
+     and you will need to map the logical names to real process names in the designer (attribute configuration).</li>
+  <li>For each parameter passed to subprocesses, the parameter name must be the name of
+      an input and/or output variable for the corresponding subprocess.</li>
+  <li>For each process to launch, you must set the status code to <code>WorkStatus.STATUS_PENDING_PROCESS</code>,
+      as this entry will be updated by MDW engine to reflect the status of the subprocess execution</li>.
+  <li>For parameter values, you can bind variables such as <code>$orderContent</code> in the above example,
+  	  just like for single subprocess invocation. If you do bind constant values, the values must
+  	  contain just letters, numbers, "<code>_</code>", and space. Otherwise the value may
+  	  be misinterpretted as an expression. If you do have a need to pass constant values
+  	  with special characters, you can still do so by enclosing the value in double quotes (this will
+  	  not work if the value itself contains double quotes</li>
+</ul>
+
+<h3>Binding of Output Variable Values</h3> 
+<p>Because the activity can potentially launch multiple instances of
+the same subprocess, you may need multiple variables in the parent
+process to receive the bindings. For example, if one
+subprocess defines an output variable <code>foo</code>, the parent
+process cannot just have a single variable, say <code>parent_foo</code>,
+to receive the value of <code>foo</code> as there can be multiple
+instances of the variable (one for each subprocess). The number
+of parent process variables needed to receive the values may not
+even be known at design time.</p>
+<p>To alleviate the problem, the activity allows, in addition, a special binding
+for output variables in the execution plan, <code>$</code> (a single dollar sign without
+being followed by a parent process variable name). 
+The output variable value will be set in the execution plan itself
+(replacing the binding specification <code>$</code>), instead of to a parent variable.
+The application specific logic can retrieve the values as needed from the execution
+plan. The following sample code shows how to retrieve the variable
+bindings from the first subprocess instance:</p>
+<pre>
+protected String getParameter(SubprocessInstance subprocinst, String name) {
+	if (subprocinst.getParameterList()==null) return null;
+	for (Parameter p : subprocinst.getParameterList()) {
+		if (p.getName().equals(name)) return p.getStringValue();
+	}
+	return null;
+}
+
+ProcessExecutionPlanDocument plan = getProcessExecutionPlan();
+SubprocessInstance subprocinst = plan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);
+super.setParameterValue(<var>binding_varialbe_name</var>, getParameter(subprocinst, <var>output_variable_name</var>));
+</pre>
+<p>The processing logic can be implemented in a subsequent activity,
+or can be implemented by overriding the method <code>onFinish()</code>.</p>
+
+<h3>Activity Configuration</h3>
+
+<p>The following lists attributes that may need to be configured:</p>
+<dl>
+  <dt>Execution Plan Variable</dt>
+  <dd>This should holds the name of the variable containing the execution plan.
+      The type of the variable must be <code>org.apache.xmlbeans.XmlObject</code></dd>
+  <dt>synchronous</dt>
+  <dd>A boolean value indicating whether the parent process waits for completion
+  	  of subprocesses.</dd>
+  <dt>Force Parallel Execution</dt>
+  <dd>Normally, the engine will try to run with a single thread all
+      all subprocesses as far as possible. This attribute is a boolean value
+      and when it is set to true, the engine will allocate one thread
+      for each subprocess.</dd>
+  <dt>Delay Between Instances (sec)</dt>
+  <dd>You can specify the number of seconds between launching two subprocesses.
+      If you leave it blank, the default value is 0 second.
+      For service processes running in synchronous mode, this attribute is ignored.
+      In other cases, a value greater than 0 has the side effect of
+      forcing parallel execution (as if Force Parallel Execution is true),
+      as any delayed execution uses a new thread.</dd>
+  <dt>Events</dt>
+  <dd>See the section below on Wait For Unsolicited Events for details</dd>
+  <dt>Status after receiving event</dt>
+  <dd>See the section below on Wait For Unsolicited Events for details</dd>
+</dl>
+
+<h3><a id="waitEvents">Wait For Unsolicited Events</a></h3>
+It is often desired that when a process is waiting
+for all sub processes, it needs to handle
+unsolicited external events such as receiving a supplemental
+order or cancellation of the request.
+The activity allows to optionally register for listening
+to unsolicited events before all subprocesses terminate.
+It uses the same mechanism as <code>EventWaitActivity</code> to register
+the event waits (following <a href="EventWaitActivity.html">this link</a>
+for details of event wait registration and additional details).
+<p>
+When the activity instance receives an event before the timer expires,
+it can be left in one of the 2 statuses:
+
+<ul>
+  <li>Hold. The activity instance will be put on a hold status (showing cyan color
+  		in the designer's process instance view). While the activity instance in hold status,
+  		subprocess termination will be recorded but the activity will remain in hold
+  		status, without being completed. When the
+  		activity is put back on waiting status (see <a href="EventWaitActivity.html">this link</a>
+  		for discussion on how this can happen), if all subprocesses are already terminated, or
+  		another event it is waiting for has been received,
+  		the activity instance will process that.</li>
+  <li>Waiting. The activity instance continues waiting (i.e. still actively responds
+      to sub process termination as well as other unsolicited events).</li>
+</ul>
+
+We note that the activity can only listen to recurring events. This limitation
+is needed to avoid infinite looping when the activity instances resume
+waiting from hold status, non-recurring events that have already arrived
+would always trigger a transition.
+<p>
+To provide custom code handling unsolicited events, you will need to override 
+<code>TimerWaitActivity.processOtherMessage(String message)</code>. 
+The method is passed in with one argument, which is the entire message. The default
+method does nothing. The completion code after processing the message is configured
+in the designer, but you can override it in the code by invoking <code>setReturnCode()</code>.
+
+</body>
+</html>

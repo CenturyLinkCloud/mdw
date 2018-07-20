@@ -1,0 +1,34 @@
+process: # 10207
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2017-01-02 18:56:12"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2017-01-02 18:56:12"
+    name: multiple processes ?
+    status: Completed
+    result: Synchronization
+  activity: # 2 "2017-01-02 18:56:12"
+    name: Dummy - to fork out
+    status: Completed
+  activity: # 9 "2017-01-02 18:56:13"
+    name: N = 11
+    status: Completed
+  activity: # 20 "2017-01-02 18:56:14"
+    name: Synch both branches
+    status: Completed
+  activity: # 7 "2017-01-02 18:56:18"
+    name: Sum = 121
+    status: Completed
+  activity: # 11 "2017-01-02 18:56:19"
+    name: Process Finish
+    status: Completed
+  variable: # 10445
+    name: N
+    value: 11
+  variable: # 10441
+    name: processCase
+    value: Synchronization
+  variable: # 10457
+    name: Sum
+    value: 121

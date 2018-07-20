@@ -1,0 +1,20 @@
+process: # 13652
+  name: MDWTestSuppsEmbedded
+  instance: 1
+  activity: # 13 "2016-02-22 13:19:17"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-22 13:19:17"
+    name: which case?
+    status: Completed
+    result: custom-finish-event-on-event-wait
+  activity: # 22 "2016-02-22 13:19:17"
+    name: Wait for some event
+    status: Completed
+    result: custom-finish
+  activity: # 7 "2016-02-22 13:19:17"
+    name: Stop
+    status: Completed
+  variable: # 20678
+    name: testCase
+    value: custom-finish-event-on-event-wait

@@ -1,0 +1,14 @@
+package com.centurylink.mdw.tests.workflow
+
+masterRequestId = System.currentTimeMillis();
+assert masterRequestId > 0
+
+// helloMessage referenced through placeholder in expected result
+helloMessage = "Hello from MDW Test"
+start process("StartStopProcess") {
+    variables = [inputVar: helloMessage]
+}
+wait process("com.centurylink.mdw.tests.workflow/StartStopProcess") {
+    timeout = 60
+}
+verify process

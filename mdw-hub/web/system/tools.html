@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+<!--      <div class="panel panel-default mdw-panel">
+       <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Refresh Caches and Properties</div>
+      </div>
+      <div class="mdw-section" style="padding-top:16px;padding-bottom:16px;">
+        <button type="button" class="btn btn-primary mdw-btn" style="margin-left:8px;" ng-if="authUser.hasRole('Site Admin')" ng-click="cacheRefresh(true)">
+          <span class="glyphicon glyphicon-globe"></span> Global&nbsp;
+        </button>
+        <button type="button" class="btn btn-primary mdw-btn" style="margin-left:16px;" ng-if="authUser.hasRole('Site Admin')" ng-click="cacheRefresh(false)">
+          <span class="glyphicon glyphicon-refresh"></span> Local&nbsp;&nbsp;
+        </button>
+      </div>
+    </div>  -->
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Locate Class</div>
+      </div>
+      <form name="findClassForm" class="form-horizontal mdw-section" ng-submit="findClass(className)" role="form">      
+        <div class="form-group">
+          <label class="control-label col-xs-1">Loader:</label>
+          <div class="col-xs-10">
+            <div class="mdw-inner-addon mdw-right-addon" uib-dropdown style="width:420px;">
+              <input type="text" class="form-control mdw-inline mdw-dropfilter" 
+                value="{{classLoader}}" uib-dropdown-toggle readonly>
+                <i class="glyphicon glyphicon-chevron-down"></i>
+              </input>
+              <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                <li>
+                  <a href="" ng-click="setClassLoader(defaultClassLoader)">{{defaultClassLoader}}</a>
+                </li>
+                <li ng-repeat="package in packageList.packages">
+                  <a href="" ng-click="setClassLoader(package.name)">{{package.name}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-xs-1" for="className">Name:</label>
+          <div class="col-xs-10">
+            <input type="text" id="className" name="name" class="form-control" ng-model="className">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-1"></div>
+          <div class="col-xs-10">
+            <button type="submit" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Site Admin')">
+              <span class="glyphicon glyphicon-search"></span> Find&nbsp;&nbsp;
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-1"></div>
+          <div class="col-xs-10 mdw-message">
+            {{classInfo[0].sysInfos[0].value}}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

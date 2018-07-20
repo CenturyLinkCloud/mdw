@@ -1,0 +1,15 @@
+{
+  "name": "mdw-hub",
+  "version": "6.1.06",
+  "description": "mdw6",
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-cli": "^1.1.1",
+    "eslint-plugin-react": "^7.4.0",
+    "jshint": "^2.9.5"
+  },
+  "scripts": {
+    "jshint": "jshint web/js --config jshint.json",
+    "eslint": "eslint ../mdw-workflow/assets/**/*.js ../mdw-workflow/assets/**/*.jsx -c eslint.json --ignore-pattern node_modules/"
+  }
+}

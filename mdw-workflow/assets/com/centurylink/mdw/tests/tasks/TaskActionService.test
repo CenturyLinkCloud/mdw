@@ -1,0 +1,97 @@
+package com.centurylink.mdw.tests.tasks
+
+import groovy.json.JsonSlurper
+import org.json.JSONObject
+import com.centurylink.mdw.util.JsonUtil
+
+start process("ManualTaskServices") {
+    variables = [ jaxbVar: "<TaskJaxb/>" ] // missing required: #{jaxbVar.attributeTwo}
+}
+
+sleep 20
+
+// get instance id by claiming
+taskInst = action task("AutoForm Task for Service Access") {
+    outcome = "Claim"
+}
+
+// confirm assignee
+response = get http("services/Tasks/${taskInst.id}")
+def taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId != null
+
+// Release
+response = post http("services/Tasks/${taskInst.id}/Release") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Release","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
+}
+assert response.code == 200
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm Release
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == null
+
+// Claim
+response = post http("services/Tasks/${taskInst.id}/Claim") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Claim","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
+}
+assert response.code == 200
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm Claim
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == 'mdwapp'
+
+
+// Assign
+response = post http("services/Tasks/${taskInst.id}/Assign") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Assign","taskInstanceId":${taskInst.id},"user":"mdwapp","assignee":"mdwapp"}'
+}
+assert response.code == 200
+assert new JsonSlurper().parseText(response.content).status.code == 0
+
+// confirm Assign
+response = get http("services/Tasks/${taskInst.id}")
+taskInstVO = new JsonSlurper().parseText(response.content)
+assert taskInstVO.assigneeId == 'mdwapp'
+
+// Complete (without required attributeTwo)
+response = post http("services/Tasks/${taskInst.id}/Complete") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Complete","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
+}
+assert response.code == 400
+assert new JsonSlurper().parseText(response.content).status.message == "Missing required value(s): '#{jaxbVar.attributeTwo}'."
+
+// set required value
+def values = [:]
+values["#{jaxbVar.attributeTwo}"] = "RequiredAttrValue"
+def putPayload = JsonUtil.getJson(values);
+println 'PUT request:\n' + putPayload.toString(2)
+response = put http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = putPayload
+}
+assert response.code == 200
+
+// Complete (should succeed)
+response = post http("services/Tasks/${taskInst.id}/Complete") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Complete","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
+}
+assert response.code == 200
+
+sleep 30
+
+verify process

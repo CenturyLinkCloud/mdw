@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "AssigneeVar": "${jaxbWithAssignee.attributeOne}",
+    "AutoAssign": "Process Variable",
+    "FormName": "Autoform",
+    "Groups": "MDW Support",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "GEN",
+  "logicalId": "AutoAssignedFromJaxbAttr",
+  "name": "Auto Assigned From Jaxb Attr",
+  "version": "0.1"
+}

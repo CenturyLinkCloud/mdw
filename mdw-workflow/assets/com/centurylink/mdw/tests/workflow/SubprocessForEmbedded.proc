@@ -1,0 +1,55 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=57,y=87,w=60,h=40"},
+      "id": "A88",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=209,ly=67,type=Elbow,xs=121&241,ys=107&107"},
+        "event": "FINISH",
+        "id": "T68",
+        "to": "A90"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=477,y=87,w=60,h=40"},
+      "id": "A89",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "print 'value of fromParent: ' + fromParent;\r\ntoParent = 'returnedValue';\r\n\r\nreturn null;",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=245,y=78,w=100,h=60"
+      },
+      "id": "A90",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Assign Var Vals",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=410,ly=107,type=Elbow,xs=349&473,ys=107&107"},
+        "event": "FINISH",
+        "id": "T69",
+        "to": "A89"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2322718",
+    "WORK_DISPLAY_INFO": "x=17,y=18,w=232,h=27"
+  },
+  "variables": {
+    "fromParent": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "toParent": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

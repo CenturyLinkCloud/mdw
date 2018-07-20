@@ -1,0 +1,33 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=97,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=261,ly=117,type=Elbow,xs=120&402,ys=117&117"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=406,y=97,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "WORK_DISPLAY_INFO": "x=23,y=18,w=156,h=27"
+  },
+  "variables": {"inputVar": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }}
+}

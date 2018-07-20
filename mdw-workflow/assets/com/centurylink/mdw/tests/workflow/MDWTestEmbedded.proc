@@ -1,0 +1,461 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=27,y=328,w=60,h=40"},
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=374,ly=892,type=Elbow,xs=59&59,ys=372&537"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "$case = \"good\";",
+        "WORK_DISPLAY_INFO": "x=554,y=320,w=100,h=60"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "update case value",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=755,ly=445,type=Elbow,xs=658&847,ys=350&482"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "SetInMain = \"Hello\";\n\nreturn \"ERROR:\";\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=462,y=200,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Variable in Main",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=685,ly=323,type=Elbow,xs=566&847,ys=230&482"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=851,y=462,w=60,h=40"},
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "$+Id": "26997",
+        "STATUS_AFTER_EVENT": "Hold",
+        "TIMER_WAIT": "3",
+        "Unit": "Minutes",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true",
+        "WORK_DISPLAY_INFO": "x=357,y=299,w=100,h=60"
+      },
+      "id": "A15",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Wait for 3 min",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=518,ly=337,type=Elbow,xs=461&550,ys=339&339"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/TestEmbedded.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true",
+        "WORK_DISPLAY_INFO": "x=354,y=676,w=100,h=60"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Manual task with event wait",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=760,ly=465,type=ElbowH,xs=458&633&633&847,ys=709&709&506&506",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T15",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "print(\"Hello\");",
+        "WORK_DISPLAY_INFO": "x=352,y=476,w=100,h=60"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Sync arm1",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=478,ly=529,type=Elbow,xs=456&494,ys=530&530"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "launcher",
+        "Rule": "table launcher \n    with argument, result, retcode\n    option key=argument;\nvariable index;\ndo $index = 0;\ndo new (1, \"\", \"START\") in $launcher;\ndo new (2, \"\", \"START\") in $launcher;\ndo new (3, \"\", \"START\") in $launcher;\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=286,y=870,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "set up arg table",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=412,ly=901,type=Elbow,xs=390&433,ys=901&901"},
+        "event": "FINISH",
+        "id": "T20",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Waiting",
+        "TIMER_WAIT": "2",
+        "Unit": "Minutes",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true",
+        "WORK_DISPLAY_INFO": "x=352,y=776,w=100,h=60"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "timer wait - keep waiting",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=651,ly=644,type=Elbow,xs=456&847,ys=806&482"},
+        "event": "FINISH",
+        "id": "T17",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "table launcher;\n\ndo $case = 0;\n\nforeach row in $launcher\nif row.retcode == \"FINISH\"\nthen $case = $case + row.result;",
+        "WORK_DISPLAY_INFO": "x=680,y=878,w=100,h=60"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "sum up",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=805,ly=690,type=Elbow,xs=730&881,ys=874&506"},
+        "event": "FINISH",
+        "id": "T21",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "DELAY_BETWEEN": "5",
+        "KeyColumn": "argument",
+        "ParameterTable": "launcher",
+        "ReturnCodeColumn": "retcode",
+        "STATUS_AFTER_EVENT": "Hold",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true",
+        "WORK_DISPLAY_INFO": "x=437,y=873,w=100,h=60",
+        "processname": "MDWTestSubProcess",
+        "processversion": "1005",
+        "synchronous": "TRUE"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeMultipleProcessActivity",
+      "name": "3 subproceses",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=643,ly=749,type=Elbow,xs=541&676,ys=905&905"},
+        "event": "FINISH",
+        "id": "T19",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},Hold::CORRECT,true;Signal-{$MasterRequestID},,false",
+        "WORK_DISPLAY_INFO": "x=359,y=386,w=100,h=60"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait for some event",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=504,ly=391,type=Elbow,xs=463&550,ys=416&350"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "$+Id": "27875",
+        "STATUS_AFTER_EVENT": "Hold",
+        "Sync Expression": "Sync_arm1 && sync_arm2_delay_2_min_",
+        "Synced Activities": "Sync arm1#sync arm2\n(delay 2 min)",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true",
+        "WORK_DISPLAY_INFO": "x=498,y=524,w=100,h=60"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Synch with Wait",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=720,ly=499,type=ElbowH,xs=602&847,ys=554&482",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T13",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "testCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=32,y=541,w=60,h=40"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "which case?",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=296,ly=247,type=ElbowH,xs=96&458,ys=561&230",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "set-parameter-value",
+          "to": "A3"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=176,ly=289,type=ElbowH,xs=96&353,ys=561&329",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T4",
+          "resultCode": "correct-resume-on-hold",
+          "to": "A15"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=141,ly=386,type=Elbow,xs=96&355,ys=561&416"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "correct-resume-on-wait",
+          "to": "A9"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=283,ly=505,type=ElbowH,xs=96&202&202&348,ys=562&562&526&526",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "sync-wait",
+          "to": "A12"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=254,ly=681,type=ElbowH,xs=96&202&202&350,ys=562&562&708&708",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T14",
+          "resultCode": "task-wait",
+          "to": "A1"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=197,ly=776,type=Elbow,xs=96&348,ys=561&806"},
+          "event": "FINISH",
+          "id": "T16",
+          "resultCode": "timer-wait-keep-waiting",
+          "to": "A14"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=124,ly=879,type=ElbowH,xs=96&220&220&282,ys=571&571&909&909",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T18",
+          "resultCode": "subproc-hold",
+          "to": "A4"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "2",
+            "TRANSITION_DISPLAY_INFO": "lx=294,ly=598,type=Elbow,xs=96&368,ys=561&629"
+          },
+          "event": "FINISH",
+          "id": "T26",
+          "resultCode": "sync-wait",
+          "to": "A22"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Rule": "SetInMain = \"Ah hah!\";",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=372,y=599,w=100,h=60"
+      },
+      "id": "A22",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "sync arm2\r\n(delay 2 min)",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=486,ly=592,type=Elbow,xs=476&494,ys=629&554"},
+        "event": "FINISH",
+        "id": "T27",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "CORRECT_TRANSITION_ID": "157825",
+    "ERROR_TRANSITION_ID": "157824",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2327615",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=34,y=46,w=182,h=27"
+  },
+  "subprocesses": [
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=709,y=78,w=60,h=40"},
+          "id": "A17",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=787,ly=98,type=Elbow,xs=773&822,ys=98&98"},
+            "event": "FINISH",
+            "id": "T22",
+            "to": "A18"
+          }]
+        },
+        {
+          "attributes": {
+            "Rule": "SetInEmbedded = SetInMain + \", World!\";",
+            "SCRIPT": "Groovy",
+            "WORK_DISPLAY_INFO": "x=826,y=72,w=100,h=60"
+          },
+          "id": "A18",
+          "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+          "name": "Set Variable in Embedded",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=968,ly=101,type=Elbow,xs=930&978,ys=101&101"},
+            "event": "FINISH",
+            "id": "T23",
+            "to": "A16"
+          }]
+        },
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=982,y=81,w=60,h=40"},
+          "id": "A16",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+        "ENTRY_TRANSITION_ID": "2327617",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "START_TRANSITION_ID": "2327578",
+        "WORK_DISPLAY_INFO": "x=709,y=45,w=333,h=105"
+      },
+      "id": "P2",
+      "name": "Exception Handler",
+      "variables": {"EmbeddedSubProcessTaskAction": {
+        "category": "LOCAL",
+        "type": "java.lang.String"
+      }}
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=295,y=80,w=60,h=40"},
+          "id": "A20",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=441,ly=92,type=Elbow,xs=359&420,ys=100&100"},
+            "event": "FINISH",
+            "id": "T24",
+            "to": "A19"
+          }]
+        },
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=617,y=80,w=60,h=40"},
+          "id": "A21",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        },
+        {
+          "attributes": {
+            "TIMER_WAIT": "1",
+            "Unit": "Minutes",
+            "WORK_DISPLAY_INFO": "x=424,y=71,w=100,h=60"
+          },
+          "id": "A19",
+          "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+          "name": "wait 1 min",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=573,ly=100,type=Elbow,xs=528&613,ys=100&100"},
+            "event": "FINISH",
+            "id": "T25",
+            "to": "A21"
+          }]
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Correction Handler",
+        "ENTRY_TRANSITION_ID": "2327616",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "START_TRANSITION_ID": "2327569",
+        "WORK_DISPLAY_INFO": "x=255,y=40,w=440,h=120"
+      },
+      "id": "P3",
+      "name": "Correction Handler",
+      "variables": {"EmbeddedSubProcessTaskAction": {
+        "category": "LOCAL",
+        "type": "java.lang.String"
+      }}
+    }
+  ],
+  "variables": {
+    "SetInEmbedded": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "SetInMain": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "launcher": {
+      "category": "LOCAL",
+      "type": "com.qwest.mbeng.MbengTableArray"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

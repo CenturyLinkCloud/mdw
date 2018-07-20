@@ -1,0 +1,13 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("com.centurylink.mdw.tests.workflow/MDWTestTimerWait") {
+    variables = [testCase: "wait"]
+}
+sleep 20
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+wait process {
+    timeout = 120
+}
+verify process

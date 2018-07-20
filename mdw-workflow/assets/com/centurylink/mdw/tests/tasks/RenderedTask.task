@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "[\"Developers\"]",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "GEN",
+  "logicalId": "RenderedTask",
+  "name": "RenderedTask",
+  "version": "0.1"
+}

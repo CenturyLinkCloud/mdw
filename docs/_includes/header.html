@@ -1,0 +1,19 @@
+<header>
+    <link rel="stylesheet" href="{{ site.baseurl }}/css/screen.css">
+  <nav class="mobile-nav show-on-mobiles">
+    {% include primary-nav-items.html %}
+  </nav>
+  <div class="grid">
+    <div class="unit one-third center-on-mobiles">
+      <h1>
+        <a href="{{ site.baseurl }}/">
+          <span class="sr-only">MDW</span>
+          <img src="{{ site.baseurl }}/assets/images/mdw.png" width="125" height="55" alt="MDW Logo" class="mdw-logo-lg">
+        </a>
+      </h1>
+    </div>
+    <nav class="main-nav unit two-thirds hide-on-mobiles">
+      {% include primary-nav-items.html %}
+    </nav>
+  </div>
+</header>

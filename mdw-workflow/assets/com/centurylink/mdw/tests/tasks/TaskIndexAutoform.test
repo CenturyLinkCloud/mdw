@@ -1,0 +1,55 @@
+package com.centurylink.mdw.tests.tasks
+
+import java.text.DateFormat;
+
+Date date = new Date ();
+DateFormat df = DateFormat.getDateTimeInstance();
+df.setTimeZone(TimeZone.getTimeZone("UTC"));
+df.applyPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+
+today = df.format(date);
+start process("TaskIndexTesting") {
+    variables = [ isCustom: false,
+                  stringVar: 'before',
+                  intVar: 101,
+                  dateVar: today ]
+}
+
+sleep 30
+def taskInst = action task("An AutoForm Task") {
+    outcome = "Claim"
+}
+
+println 'verifying initial indexes for task instance id: ' + taskInst.getId()
+def resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
+
+DateFormat df2 = DateFormat.getDateTimeInstance();
+df2.applyPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+
+def indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
+println 'df.format(df2.parse(indexes.dateVarIndex)): "' + df.format(df2.parse(indexes.dateVarIndex)) + '"'
+println 'today: "' + today + '"'
+assert df.format(df2.parse(indexes.dateVarIndex)) == today
+assert indexes.intVarIndex == "101"
+assert indexes.stringVarIndex == "before"
+
+laterToday = df.format(date);
+
+action task("An AutoForm Task") {
+    outcome = "Complete"
+    variables = [ stringVar: 'after',
+                  intVar: 1001,
+                  dateVar: laterToday ]
+}
+
+sleep 30
+
+println 'verifying updated for task instance id: ' + taskInst.getId()
+resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
+
+indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
+assert df.format(df2.parse(indexes.dateVarIndex)) == laterToday.toString()
+assert indexes.stringVarIndex == "after"
+assert indexes.intVarIndex == "1001"
+
+verify process

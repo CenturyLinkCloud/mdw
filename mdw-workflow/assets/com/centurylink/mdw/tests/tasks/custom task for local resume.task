@@ -1,0 +1,10 @@
+{
+  "attributes": {
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "TST",
+  "logicalId": "TaskResumeLocal:A5",
+  "name": "custom task for local resume",
+  "version": "0"
+}

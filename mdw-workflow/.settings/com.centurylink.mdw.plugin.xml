@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdw-workflow>
+  <sourceProject name="mdw-workflow" author="aa56486"/>
+  <webProject name="mdw-hub" deployDir="deploy" />
+  <mdwFramework version="6.1.06-SNAPSHOT"/>
+  <server host="localhost" port="8080" contextRoot="mdw"/>
+  <repository provider="Git" branch="master" localPath="assets"/>
+</mdw-workflow>

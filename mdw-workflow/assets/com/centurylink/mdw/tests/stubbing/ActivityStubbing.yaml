@@ -1,0 +1,48 @@
+process: # 10027
+  name: TestActivityStub
+  instance: 1
+  activity: # 1 "2016-12-14 11:36:14"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-12-14 11:36:14"
+    name: Path
+    status: Completed
+    result: various
+  activity: # 3 "2016-12-14 11:36:14"
+    name: Stubbed Script
+    status: Completed
+    result: toTimer
+  activity: # 4 "2016-12-14 11:36:14"
+    name: Stubbed Timer
+    status: Completed
+  activity: # 6 "2016-12-14 11:36:18"
+    name: |
+      Stub Test
+      Subproc
+    status: Completed
+  activity: # 2 "2016-12-14 11:36:18"
+    name: Stop
+    status: Completed
+  variable: # 10082
+    name: flowPath
+    value: various
+  variable: # 10084
+    name: updatedDoc
+    value: <updated/>
+  variable: # 10083
+    name: updatedString
+    value: updated
+process: # 10028
+  name: TestActivityStubSubproc
+  instance: 1
+  activity: # 1 "2016-12-14 11:36:18"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-12-14 11:36:18"
+    name: |
+      Stubbed Event
+      Wait
+    status: Completed
+  activity: # 2 "2016-12-14 11:36:18"
+    name: Stop
+    status: Completed

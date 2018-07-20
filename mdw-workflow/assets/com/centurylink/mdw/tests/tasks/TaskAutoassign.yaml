@@ -1,0 +1,30 @@
+process: # 10015
+  name: TaskAutoAssign
+  instance: 1
+  activity: # 1 "2016-05-13 19:00:08"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-05-13 19:00:08"
+    name: |
+      AutoAssigned
+      Task
+    status: Waiting
+  activity: # 4 "2016-05-13 19:00:08"
+    name: |
+      AutoAssigned
+      From JAB Elem
+    status: Waiting
+  activity: # 5 "2016-05-13 19:00:08"
+    name: |
+      AutoAssigned
+      From JAXB Attr
+    status: Waiting
+  variable: # 10027
+    name: jaxbWithAssignee
+    value: |
+      <TaskJaxb attributeOne="dxoakes">
+          <elementOne>aa56486</elementOne>
+      </TaskJaxb>
+  variable: # 10028
+    name: stringAssignee
+    value: dxoakes

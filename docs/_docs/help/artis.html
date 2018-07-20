@@ -1,0 +1,182 @@
+<html>
+<head>
+<title>Guide to enable Artis logging in MDW</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Guide to enable Artis logging in MDW</h1>
+
+ ARTIS: Application Response Time Instrumentation System
+
+<h3>1) Artis Team Contact person</h3>
+
+<br>
+Contact the Artis team to create and map your environment in Artis Database.
+ So that your application activities will be logged into Artis Database .
+</br>
+
+<h5>Artis Team Contact person: </h5>
+
+
+<b>Name:</b>  John Keller <br>
+<b>Email Id:</b> John.Keller@centurylink.com<br>
+<b>Current Artis version:</b> 4.0.1<br>
+<br>
+<b>Artis Reports:</b>http://qtomasqlts3a/ARTISTEST/Pages/Report.aspx?ItemPath=%2fCommon+Services%2fDisplay+Merged+Records<br>
+
+</br>
+<h3>2) How to enable Artis 4.0.1 in MDW Tomcat environment?</h3>
+a) Add bellow entry in  config/mdw.properties
+<pre>
+  mdw.artis.key=ArtisMDW
+  mdw.artis.forceall=false
+  mdw.artis.forceallwithconfig=false
+</pre>
+
+b) Place the artis.properties in config directory (refer step 4)
+<br>
+
+c) Import artis 5.5.20 or greater version of assets and make sure all the Registered Services 
+   (ArtisActivityMonitor.java, ArtisAdapterMonitor.java and ArtisProcessMonitor.java) are imported.
+ <br>
+  In designer: Import->packages->Discover->Next->Artis
+ <br> 
+
+d)set sqljdbc4-3.0.jar, tibrvj.jar in classpath and export tibrv�s lib directory. 
+<br>
+<br>
+<b>Example:</b>
+<br>
+<pre>
+Modify mdwews-dev1.conf file( /foss/foss-ews/instances/mdwews-dev1/current/conf/mdwews-dev1.conf)
+<br>
+CLASSPATH=/opt/tib/MIDD50/tibrv/lib/tibrvj.jar:/tmp/mdw/sqljdbc4-3.0.jar
+<br>
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CATALINA_HOME/lib
+<br>
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/tib/MIDD50/tibrv/lib
+<br>
+</pre>
+<h3>3) How to enable Artis 4.0.1 in MDW ServiceMix and Fuse enviroment?</h3>
+
+a) Add bellow entry in  etc/ com.centurylink.mdw.cfg
+<br>
+b) Install MDW Artis,tibrvj.jar and sqljdbc4-4.0.jar features
+<br>
+
+<pre>
+   features:install mdw-artis
+   install wrap:file:/home/wlsmdt/mdwdemo/mdw/tibrvj.jar
+   install wrap:file:/ home/wlsmdt/mdwdemo/mdw /sqljdbc4-4.0.jar
+</pre>   
+
+Note: place tibrvj.jar and sqljdbc4-4.0.jar files in any directory in the server and give the same path in wrap install.
+   
+<br>
+c) Place artis.properties in etc directory (refer step 4)
+<br>
+d) Import artis 5.5.20 or greater version of assets and make sure all the Registered      Services (ArtisActivityMonitor.java, ArtisAdapterMonitor.java and ArtisProcessMonitor.java) are imported.
+
+<h3>4) Content of artis.properties?</h3>
+
+<pre>
+artis.enabled=true
+artis.malApplicationId=SYSGEN0787126173
+artis.applicationServerName=localDevMachine
+artis.sampleFrequency=1
+artis.configFileCheckInterval=900000
+
+artis.database.table=ARTIS_MDW_GENERIC_RAW_DATA
+artis.database.environment=DTST
+artis.database.driverName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+Name=ArtisNIC;useUnicode=false;characterEncoding=UTF-8;autoReconnect=true
+artis.database.uri=jdbc:sqlserver://artistestserver2:7116;databaseName=ArtisCommSvc;useUnicode=false;characterEncoding=UTF-8;autoReconnect=true
+artis.database.user=ArtisLogger
+artis.database.password=Art!5L0gger
+artis.database.dbPoolMinSize=30
+artis.database.dbPoolMaxSize=40
+artis.database.queueMaxSize=1000
+artis.database.bufferMaxSize=1
+artis.database.consumerThreadPoolMaxSize=11
+artis.database.consumerThreadPriority=4
+artis.database.consumerKeepAlive=5000
+
+artis.startInfoEnabled=true
+artis.supplementalInfoEnabled=true
+artis.storeRequestRecordOnThread=false
+
+artis.requestsFunctionsNumber=2
+
+artis.requestFunctionKey1=ConfigProcessOnly
+artis.requestServiceName1=ConfigProcessServiceName
+artis.requestFunctionLabel1=ConfigProcessFunctionLabel
+artis.requestParametersNumber1=0
+
+artis.requestFunctionKey2=ConfigProcessAndActivity
+artis.requestServiceName2=ConfigPAAServiceName
+artis.requestFunctionLabel2=ConfigPAAFunctionLabel
+artis.requestParametersNumber2=0
+
+artis.calloutsFunctionsNumber1=1
+
+artis.calloutFunctionKey1_1=ConfigPAAServiceName_A1_Start
+artis.calloutServiceName1_1=ConfigPAAServiceName
+artis.calloutFunctionLabel1_1=ConfigPAACalloutLabel
+artis.calloutParametersNumber1_1=0
+
+</pre>
+
+
+<h3>5) Process Instance Variables</h3>
+
+<pre>
+<h4>artisCache (Required)</h4>
+�Variable Name: artisCache
+�Type: java.lang.Object
+�Mode: Input
+<br>
+<h4>artisHeaders (Required)</h4>
+�Variable Name: artisHeaders
+�Type: java.lang.Object
+�Mode: Input
+<br>
+<h4>requestHeaders (optional)</h4>
+This variable is populated by the MDW Framework and contains incoming Header information from an external 
+call into MDW. If this process will be called by external applications, this variable will allow the Artis 
+MDW Adapter to tie this process to the external process in Artis.<br>
+�Variable Name: requestHeaders
+�Type: java.util.Map
+�Mode: Input
+
+<h4>Process Monitoring With Designer</h4>
+
+When enabled, the MDW process start and stop are tied to Artis request record creation. With the Artis MDW adapter installed, all processes will now have<br> an �Artis� tab associated with it in the MDW Designer. Selecting that tab will enable you to set three fields. 
+<br>
+</pre>
+
+<h3>6) How to migrate to Artis 4.0.1 in MDW 5.5.19 and bellow versions?</h3>
+Rename Artis.xxxx asset to Artis.pagelet and replace content with
+<pre>  
+   &lt;PAGELET APPLIES_TO="Process,Activity"&gt;
+   &lt;BOOLEAN NAME="ARTIS@Use" LABEL="Use Artis" &gt;
+   &lt;TEXT NAME="ARTIS@ServiceName" LABEL="Service Name" &gt;
+   &lt;TEXT NAME="ARTIS@FunctionLabel" LABEL="Function Label" &gt;
+  &lt;/PAGELET&gt;
+ </pre>
+It is no longer a separate feature in MDW framework. There is a new dependency to get artis working (in MDW 5.5.20 and above version)
+ 
+After above update you need to touch the processes which are using Artis pagelet so that new pagelet attributes are read instead of the old one.
+Place artis.properties in etc directory (refer step 4)
+Import artis 5.5.20 or greater version of assets and make sure all the Registered Services (ArtisActivityMonitor.java, ArtisAdapterMonitor.java and ArtisProcessMonitor.java) are imported.
+ <pre>
+ uninstall mdw-artis 
+install bellow artis  dependencies. 
+ install mvn:org.apache.commons/commons-dbcp2/2.1
+ install mvn:org.apache.commons/commons-pool2/2.4.1
+ install wrap:mvn:artis/artis/4.0.1
+ install wrap:file:/ home/wlsmdt/mdwdemo/mdw /sqljdbc4-4.0.jar 
+ install wrap:file:/home/wlsmdt/mdwdemo/mdw/tibrvj.jar
+</pre>
+ 
+</body>
+</html>

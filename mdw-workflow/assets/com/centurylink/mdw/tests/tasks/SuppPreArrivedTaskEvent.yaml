@@ -1,0 +1,31 @@
+process: # 13829
+  name: MDWTestSuppsEmbedded
+  instance: 1
+  activity: # 13 "2016-02-23 18:19:35"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-23 18:19:35"
+    name: which case?
+    status: Completed
+    result: task-wait
+  activity: # 1 "2016-02-23 18:19:36"
+    name: Manual task with event wait
+    status: Hold
+  activity: # 7 "2016-02-23 18:21:05"
+    name: Stop
+    status: Completed
+  variable: # 21151
+    name: testCase
+    value: task-wait
+process: # 13830
+  name: MDWTestSuppsEmbedded Correction Handler
+  instance: 1
+  activity: # 20 "2016-02-23 18:19:42"
+    name: Start
+    status: Completed
+  activity: # 19 "2016-02-23 18:19:42"
+    name: wait 1 min
+    status: Completed
+  activity: # 21 "2016-02-23 18:20:42"
+    name: Stop
+    status: Completed

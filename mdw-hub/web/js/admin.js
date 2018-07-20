@@ -1,0 +1,477 @@
+'use strict';
+
+var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
+ 'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwDiagram', 'mdwShape', 
+ 'mdwStep', 'mdwLink', 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwSelection', 'mdwInspector', 'mdwInspectorTabs', 
+ 'mdwToolbox', 'mdwConfigurator', 'mdwCompatibility', 'mdwTask', 'mdwMarkdown', 'authUser', 'mdw', 'util', 'mdwUtil', 'mdwJsx', 
+ 'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'processes', 'activities', 
+ 'requests', 'services', 'system', 'solutions', 'message', 'objectTableConverter', 'mdwSwagger', 'mdwCustom',
+ 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
+]);
+
+adminApp.config(function($httpProvider) {
+  $httpProvider.defaults.headers.get = { 'Content-Type': 'application/json' };
+  $httpProvider.defaults.headers.post = { 'Accept': 'application/json' };
+  $httpProvider.interceptors.push(function($q, mdw) {
+    return {
+      'request': function(config) {
+        if (config.url.startsWith(mdw.roots.services)) {
+          mdw.hubLoading(true);
+        }
+        return config;
+      },
+      'requestError': function(rejection) {
+        mdw.hubLoading(false);
+        return $q.reject(rejection);
+      },
+      'response': function(response) {
+        if (response.config.url.startsWith(mdw.roots.services)) {
+          mdw.hubLoading(false);
+          mdw.messages = null;
+        }
+        return response;
+      },
+      'responseError': function(rejection) {
+        mdw.hubLoading(false);
+        if (rejection.status === 401 || (rejection.status === -1 && rejection.config.url.endsWith(".html")))
+          window.location.href = $mdwHubRoot + "/login";
+        else
+          return $q.reject(rejection);
+      }
+    };
+  });
+});
+
+adminApp.config(['$routeProvider', function($routeProvider) {
+  
+  if (theRoutes) {
+    var allRoutes = theRoutes.def;
+    for (var i = 0; i < allRoutes.length; i++) {
+      var route = allRoutes[i];
+      $routeProvider.when(route.path, {
+        templateUrl: route.templateUrl,
+        controller: route.controller
+      });
+    }
+  }
+  // custom routes
+  if ($mdwCustomRoutes && !$mdwCustomRoutes.startsWith('${')) {
+    var customRoutes = JSON.parse($mdwCustomRoutes);
+    customRoutes.forEach(function(customRoute) {
+      if (customRoute.controller) {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: customRoute.asset,
+          controller: customRoute.controller
+        });
+      }
+      else if (customRoute.asset && customRoute.asset.endsWith('.html')) {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: customRoute.asset,
+          controller: 'CustomController'
+        });
+      }
+      else {
+        $routeProvider.when(customRoute.path, {
+          templateUrl: 'ui/custom-page.html',
+          controller: 'CustomController'
+        });
+      }
+    });
+  }
+  $routeProvider.otherwise({
+    redirectTo: function(params, path, search) {
+      var pathname = window.location.pathname;
+      var hubRoot = $mdwHubRoot;
+      if (!hubRoot.endsWith('/'))
+        hubRoot += '/';
+      if (pathname == hubRoot)
+        return '/workflow/processes';
+        
+      throw new Error("Cannot route: " + window.location);
+    }
+  });
+}]);
+
+adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$timeout', '$location', '$anchorScroll', 'mdw', 'authUser', 'util',
+                                        function($rootScope, $scope, $window, $timeout, $location, $anchorScroll, mdw, authUser, util) {
+  $scope.mdw = mdw;
+  console.log('mdw ' + mdw.version + ' ' + mdw.build);
+  
+  $scope.authUser = theUser;
+  $scope.authUser.setActiveTab($location.url());
+  
+  // one popover at a time
+  $scope.popElem = null;
+  $scope.setPopElem = function(elem) {
+    $scope.popElem = elem;
+  };
+  // for programmatic access
+  $scope.closePopover = function() {
+    if ($scope.popElem !== null) {
+      $scope.popElem[0].click();
+      $scope.popElem = null;
+    }
+  };
+  
+  $scope.isDescendant = function(parent, child) {
+    var node = child.parentNode;
+    while (node) {
+        if (node == parent)
+            return true;
+        node = node.parentNode;
+    }
+    return false;
+  };
+  
+  $scope.popHide = function(e) {
+    // enable popovers to stay open
+    if (e.target && e.target.getAttribute && e.target.getAttribute('popover-stay-open') !== null)
+      return;
+    var ignoreTarg = $scope.popElem ? $scope.popElem[0] : null;
+    if (ignoreTarg !== null && ignoreTarg.parentElement)
+      ignoreTarg = ignoreTarg.parentElement;
+    if ($scope.popElem !== null && ignoreTarg != e.target && !$scope.isDescendant(ignoreTarg, e.target))
+      $scope.closePopover();
+  };
+  
+  // only applies when fullWidth
+  $scope.getNavMenuWidthStyle = function(min) {
+    if ($scope.fullWidth) {
+      if ($scope.navMenuWidth)
+        return { width: $scope.navMenuWidth + 'px' };
+      else if (min)
+        return { 'min-width': min + 'px' };    
+    }
+  };
+  
+  // implies full width mode
+  $scope.setNavMenuWidth = function(w) {
+    if (w)
+      $scope.navMenuWidth = w;
+  };
+  
+  $scope.mobile = util.isMobile() || 'true' === util.urlParams().mdwMobile;
+  $scope.isMobile = function() {
+    return $scope.mobile;
+  };
+  
+  $scope.isDebug = function() {
+    return 'true' === util.urlParams().mdwDebug;
+  };
+  
+  $scope.isEdit = function() {
+    return $location.url().startsWith('/edit/');
+  };
+  
+  $scope.isFilePanel = function() {
+    return $location.url().startsWith('/system/filepanel');
+  };
+  
+  $scope.isFullWidth = function() {
+    return $scope.fullWidth;
+  };
+  $scope.setFullWidth = function(fullWidth) {
+    $scope.fullWidth = fullWidth;
+  };
+  
+  $scope.isFullView = function() {
+    return $scope.isMobile() || $scope.isEdit();
+  };
+
+  $scope.login = function() {
+    window.location.href = $mdwHubRoot + "/login";
+  };
+
+  $scope.logout = function() {
+    console.log('Logging out user: ' + $scope.authUser.id);
+    authUser.logout();
+  };
+  
+  $scope.getAuthUser = function() {
+    return $scope.authUser;
+  };
+}]);
+
+// container for one-at-a-time popovers
+adminApp.directive('popContainer', ['$window', function($window) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+
+      var win = angular.element($window); 
+      win.bind('click', scope.popHide);
+      win.bind('scroll', scope.popHide);
+      win.bind('resize', scope.popHide);
+      
+      scope.$on('$destroy', function() {
+        win.unbind('click', scope.popHide);
+        win.unbind('scroll', scope.popHide);
+        win.unbind('resize', scope.popHide);
+      });
+    }
+  };
+}]);
+
+adminApp.directive('popClick', [function() {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      elem.bind('click', function() {
+        if (scope.popElem === elem) {
+          // clicked to close
+          scope.setPopElem(null);
+        }
+        else {
+          scope.closePopover();
+          scope.setPopElem(elem);
+        }
+      });
+    }
+  };
+}]);
+
+adminApp.directive('hubLink', ['$window', function($window) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      elem.bind('click', function() {
+        $window.location.href = scope.mdw.roots.hub;
+      });
+    }
+  };
+}]);
+
+adminApp.directive('tabLink', ['$window', '$location', function($window, $location) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      var url = attrs.tabLink;
+      
+      elem.bind('click', function() {
+        $mdwMessages.clear();
+        var main = document.getElementById('mdw-main');
+        if (main) {
+          // navigating from full-screen (eg: filepanel)
+          main.style.padding = '20px';
+          main.style.height = '';
+          main.style.minHeight = '600px';
+          if (!$mdwMessages.currentBulletin) {
+              document.body.style.overflowX = 'visible';
+          }
+          document.body.style.overflowY = 'visible';
+        }
+        
+        if (url.startsWith('#')) {
+          getAuthUser(scope).setActiveTab(url);
+          $location.path(url.substring(1));
+          scope.$apply();
+        }
+        else {
+          $window.location.href = url;
+        }
+      });
+    }
+  };
+}]);
+
+adminApp.directive('navLink', ['$document', '$route', '$location', 
+                               function($document, $route, $location) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      if ($route.current) {
+        var active = $route.current.loadedTemplateUrl === attrs.navLink; // includes parameters
+        if (!active) {
+          if (attrs.navLink.endsWith('*') && $route.current.loadedTemplateUrl.indexOf('?') == -1) {
+            // wildcard (except urls with params)
+            active = $route.current.templateUrl.startsWith(attrs.navLink.substring(0, attrs.navLink.length - 1));
+          }
+          else {
+            // logical template
+            active = $route.current.templateUrl === attrs.navLink + '.html';
+          }
+        }
+        // scope.setFullWidth(false);
+        if (active) {
+          elem.addClass('mdw-active');
+          if (attrs.fullWidth)
+            scope.setFullWidth(true);
+        }
+        elem.bind('click', function() {
+          scope.setNavMenuWidth(); // clear full width
+          if (attrs.fullWidth) {
+            scope.setFullWidth(true);
+            var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
+            if (navMenu)
+              scope.setNavMenuWidth(navMenu[0].offsetWidth);
+          }
+          else {
+            scope.setFullWidth(false);
+          }
+        });
+      }
+    }
+  };
+}]);
+
+adminApp.directive('mdwRoute', ['$location', function($location) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      elem.bind('click', function() {
+        var path = attrs.mdwRoute;
+        if (!path.startsWith('#'))
+          path = '#' + path;
+        getAuthUser(scope).setActiveTab(path);
+        $location.path(path.substring(1));
+        scope.$apply();
+      });
+    }
+  };
+}]);
+
+adminApp.directive('onEnter', function() {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      elem.bind('keypress', function(event) {
+        if (event.which === 13) {
+          scope.$apply(function() {
+            scope.$eval(attrs.onEnter);
+          });
+          event.preventDefault();
+        }
+      });
+    }
+  };
+});
+
+adminApp.directive('focusMe', ['$timeout', function($timeout) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      if (attrs.focusMe.length === 0 || scope.$eval(attrs.focusMe)) {
+        $timeout(function() {
+          elem[0].focus();
+        });
+      }
+    }
+  };
+}]);
+
+adminApp.directive('fileUpload', [function() {
+  return {
+    restrict: 'A',
+    scope: {
+      fileUpload: '='
+    },
+    link: function(scope, elem, attrs) {
+      elem.bind('change', function(changeEvent) {
+        var fileName = changeEvent.target.files[0].name;
+        var reader = new FileReader();
+        reader.onload = function(loadEvent) {
+          scope.$apply(function() {
+            scope.fileUpload = {
+                content: new Uint8Array(loadEvent.target.result),
+                name: fileName
+            };
+          });
+        };
+        reader.readAsArrayBuffer(changeEvent.target.files[0]);
+      });
+    }
+  };
+}]);
+
+adminApp.filter('lineLimit', ['$filter', function($filter) {
+  return function(input, limit) {
+    if (input) {
+      input = input.getLines()[0]; // first line only
+      if (input.length <= limit)
+         return input;
+      return $filter('limitTo')(input, limit) + '...';
+    }
+  };
+}]);
+
+adminApp.filter('escape', function($sce) {
+  return function(input) {
+    if (input)
+      return input.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    else
+      return input;
+  };
+}).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
+adminApp.filter('diff', function($sce) {
+  return function(one, two) {
+    if (one) {
+      one = one.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+      if (two) {
+        two = two.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  
+        var diffs = JsDiff.diffWordsWithSpace(one, two);
+        var hlOne = '';
+        var pos = 0;
+        diffs.forEach(function(diff) {
+          if (diff.removed) {
+            var lines = diff.value.getLines();
+            if (lines.length == 1) {
+              hlOne += '<span class="mdw-diff-delta">' + lines[0] + '</span>';
+            }
+            else {
+              for (var i = 0; i < lines.length; i++) {
+                if (!(i == lines.length - 1 && lines[i] === ''))
+                  hlOne += '<span class="mdw-diff-delta">' + lines[i] + '</span>\n';
+              }
+            }
+          }
+          else if (!diff.added) {
+            hlOne += diff.value;
+          }
+        });
+        if (hlOne.length > 0) {
+          return hlOne;
+        }
+        else {
+          return one + '\n';
+        }
+      }
+      else {
+        return one + '\n';
+      }
+    }
+  };
+}).filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
+function getAuthUser(scope) {
+  var authUser = scope.authUser;
+  var parent = scope.$parent;
+  while (!authUser && parent) {
+    authUser = parent.authUser;
+    parent = parent.$parent;
+  }
+  return authUser;
+}
+
+// wait until the user is loaded to manually bootstrap angularjs
+var theUser;
+var theRoutes;
+angular.element(document).ready(function() {
+  var ng = angular.injector(['ng', 'adminApp']);
+  var authUser = ng.get('authUser');
+  theRoutes = ng.get('routes');
+  authUser.getAuthUser($mdwHubUser, window.location.hash).then(function(authUser) {
+    theUser = authUser;
+    if (theUser.cuid) {
+      document.cookie = 'mdw.redirect=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      angular.bootstrap(document, ['adminApp']);
+      $mdwUi.init(ng, theUser);
+    }
+    else {
+      // redirect to login
+      document.cookie = 'mdw.redirect=' + encodeURIComponent(window.location.href) + ';path=/';
+      window.location.href = $mdwHubRoot + "/login";
+    }
+  });
+});

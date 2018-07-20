@@ -1,0 +1,25 @@
+test: 'PUT:workgroups/{group-name}'
+request:
+  url: '${base-url}/Workgroups/${group-name}'
+  method: PUT
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing (updated)"
+    }
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

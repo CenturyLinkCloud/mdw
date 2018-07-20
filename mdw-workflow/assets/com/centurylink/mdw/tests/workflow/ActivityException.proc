@@ -1,0 +1,150 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=157,ly=294,type=Elbow,xs=124&149,ys=280&280"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=461,y=118,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "processCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=153,y=245,w=98,h=68"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Which Case?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=202,ly=217,type=Elbow,xs=202&202,ys=241&175"},
+          "event": "FINISH",
+          "id": "T2",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=258,ly=291,type=Elbow,xs=255&399,ys=281&281"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "error handler delegation",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Rule": "$xmldata.MINUTES = \"2\";\r\n\r\n$intarraytest = \"1~1~2~3~5~8\";\r\n\r\n$maptest = \"R=red~G=green~B=blue\";\r\n\r\nsyntax error here",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=136,y=112,w=133,h=59"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Script with syntax Error",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=342,ly=138,type=Elbow,xs=273&457,ys=138&138"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=403,y=249,w=176,h=65",
+        "processname": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
+        "processversion": "[0.4,1)",
+        "synchronous": "TRUE"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Subprocess with Error",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=491,ly=197,type=Elbow,xs=491&491,ys=245&162"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=159,h=27"
+  },
+  "subprocesses": [{
+    "activities": [
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=557,y=60,w=60,h=40"},
+        "id": "A7",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+        "name": "Start",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=652,ly=80,type=Elbow,xs=621&684,ys=80&80"},
+          "event": "FINISH",
+          "id": "T6",
+          "to": "A11"
+        }]
+      },
+      {
+        "attributes": {
+          "DoNotNotifyCaller": "false",
+          "WORK_DISPLAY_INFO": "x=857,y=60,w=60,h=40"
+        },
+        "id": "A10",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+        "name": "Stop"
+      },
+      {
+        "attributes": {
+          "STATUS_AFTER_EVENT": "Cancelled",
+          "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+          "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/activityExceptionFallout.task",
+          "TASK_TEMPLATE_assetVersion": "[0.2,1)",
+          "WORK_DISPLAY_INFO": "x=688,y=51,w=100,h=60",
+          "Wait for Task": "TRUE"
+        },
+        "id": "A11",
+        "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+        "name": "ActivityException Fallout",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=822,ly=80,type=Elbow,xs=792&853,ys=80&80"},
+          "event": "FINISH",
+          "id": "T7",
+          "to": "A10"
+        }]
+      }
+    ],
+    "attributes": {
+      "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+      "PROCESS_VISIBILITY": "EMBEDDED",
+      "WORK_DISPLAY_INFO": "x=544,y=20,w=386,h=116"
+    },
+    "id": "P9",
+    "name": "Exception Handler"
+  }],
+  "variables": {
+    "exception": {
+      "category": "LOCAL",
+      "type": "java.lang.Exception"
+    },
+    "processCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

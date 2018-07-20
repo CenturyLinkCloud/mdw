@@ -1,0 +1,43 @@
+package com.centurylink.mdw.tests.routing
+
+// Note: Needs package or global property: mdw.task.resume.notify.endpoint
+// See also com.centurylink.mdw.tests.tasks/task-resume-local.test
+// (this uses HTTP to notify workflow vs the usual in-VM
+// mechanism tested here).  YAML outcome should be the same.
+
+// autoform task
+start process("TaskResumeService") {
+    variables = [ custom: false, inputString: "autoformBeforeUpdate" ]
+}
+sleep 10
+action task("autoform task for service resume") {
+    outcome = "Claim"
+}
+sleep 10
+action task("autoform task for service resume") {
+    outcome = "Complete"
+    variables = [
+        inputString: "autoformAfterUpdate",
+        requiredString: "autoformRequiredValue" ]
+}
+wait process
+
+// custom task
+start process("TaskResumeService") {
+    variables = [ custom: true, inputString: "customBeforeUpdate" ]
+}
+sleep 10
+action task("custom task for service resume") {
+    outcome = "Claim"
+}
+sleep 10
+action task("custom task for service resume") {
+    outcome = "Complete"
+    variables = [
+        inputString: "customAfterUpdate",
+        requiredString: "customRequiredValue" ]
+}
+wait process
+
+// verify both instances vs yaml
+verify process("TaskResumeService")

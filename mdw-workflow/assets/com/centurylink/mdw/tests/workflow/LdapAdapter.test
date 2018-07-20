@@ -1,0 +1,11 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("LdapAdapter") {
+    variables = [ cuid: "dxoakes", lastNameInput: "Oakes", sapIdInput: "DHO115360" ]
+}
+wait process("LdapAdapter") {
+    timeout = 120
+}
+verify process {
+    resultsById = true
+}

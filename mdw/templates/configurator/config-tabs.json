@@ -1,0 +1,98 @@
+{
+  "process": {
+    "Definition": {
+      "ID": "id",
+      "Name": "name",
+      "Description": "description",
+      "Created": "created",
+      "_template": "processDefinition.json"
+    },
+    "Design": {
+      "_template": "process.json"
+    },
+    "Variables": {
+      "_template": "variables.json"
+    },
+    "Request": {
+      "_attribute": { "name": "Request" },
+      "_template": "request.json"
+    },
+    "Documentation": {
+      "_attribute": { "name": "Documentation", "markdown": true },
+      "_template": "documentation.json"
+    },
+    "Source": "source"
+  },
+  "activity": {
+    "Definition": {
+      "ID": "id",
+      "Name": "name",
+      "Implementor": "implementor",
+      "Description": "description",
+      "_template": "activityDefinition.json"
+    },
+    "Design": {
+      "_template": "<implementor>"
+    },
+    "Events": {
+      "_template": "<implementor>",
+      "_categories": ["com.centurylink.mdw.activity.types.TaskActivity", "com.centurylink.mdw.activity.types.InvokeProcessActivity", "com.centurylink.mdw.activity.types.SynchronizationActivity"]
+    },
+    "Recipients": {
+      "_template": "<implementor>",
+      "_categories": ["com.centurylink.mdw.activity.types.NotificationActivity"]
+    },
+    "Authentication": {
+      "_attributes": "auth",
+      "_template": "<implementor>",
+      "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
+    },
+    "Documentation": {
+      "_attribute": { "name": "Documentation", "markdown": true },
+      "_template": "documentation.json"
+    },
+    "Monitoring": {
+      "_attributes": "monitoring",
+      "_template": "monitoring.json"
+    },
+    "Stubbing": {
+      "_attributes": "stubbing",
+      "_template": "stubbing.json",
+      "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
+    },
+    "Source": "source"
+  },
+  "subprocess": {
+    "Definition": {
+      "ID": "id",
+      "Name": "name",
+      "Description": "description",
+      "_template": "processDefinition.json"
+    },
+    "Documentation": {
+      "_attribute": { "name": "Documentation", "markdown": true },
+      "_template": "documentation.json"
+    },
+    "Source": "source"
+  },
+  "transition": {
+    "Definition": {
+      "ID": "id",
+      "Result": "resultCode",
+      "Event": "event",
+      "_template": "transitionDefinition.json"
+    },
+    "Design": {
+      "_template": "transition.json"
+    },
+    "Source": "source"
+  },
+  "textNote": {
+    "Definition": {
+      "ID": "id",
+      "Text": "content",
+      "_template": "textNote.json"
+    },
+    "Source": "source"
+  }  
+}

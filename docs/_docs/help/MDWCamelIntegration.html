@@ -1,0 +1,341 @@
+<html>
+<head>
+<title>MDW Camel Integration</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>MDW Camel Integration</h1>
+
+<h2>Introduction to Apache Camel</h2>
+
+<h3><em>TODO: This file will be changed when MDW 6 is ready to support Camel Integration.</em></h3>
+
+  Apache Camel is a powerful open source integration framework based on known Enterprise Integration Patterns
+	with powerful Bean Integration.Camel lets you create the Enterprise Integration Patterns to implement routing
+	and mediation rules in either a Java based Domain Specific Language (or Fluent API), 
+	via Spring based Xml Configuration files or via the Scala DSL.
+	<br/><br/>
+	Apache Camel uses URIs so that it
+	can be easily work directly with any kind of Transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA,
+	MINA or CXF, as well as pluggable Components and Data Format options.
+	Apache Camel is a small library which has minimal dependencies for easy
+	embedding in any Java application. Apache Camel lets you work with the same API regardless which kind of Transport
+	used, so once you learn the API you will be able to interact with all the
+	Components that is provided out-of-the-box.
+	<br/><br/>
+  Apache Camel has powerful Bean Binding and integrated seamless with popular frameworks such as Spring,Blueprint and Guice.
+  <br/><br/>
+  Apache Camel has extensive Testing support allowing you to easily unit test your routes.
+  <br/><br/>
+  
+  Apache Camel can be used as a routing and mediation engine for the following projects:
+  <ul>
+    <li>Apache ServiceMix which is the most popular and powerful distributed open source ESB and JBI container</li>
+    <li>Apache ActiveMQ which is the most popular and powerful open source message broker</li>
+    <li>Apache CXF which is a smart web services suite (JAX-WS)</li>
+    <li>Apache Karaf - a small OSGi based runtime in which applications can be deployed</li>
+    <li>Apache MINA a networking framework</li>
+  </ul></br>
+<h3>Routes and Java DSL</h3>
+		A route is the step-by-step movement of a Message from an input queue, through arbitrary types of decision making
+	  (such as filters and routers) to a destination queue (if any).
+		Camel provides two ways for an application developer to specify routes.
+		One way is to specify route information in an XML file.The other way is through what Camel
+		calls a Java DSL (domain-specific language).</br></br>
+<h3>CamelContext</h3>
+		A CamelContext object represents the Camel runtime system.
+		You typically have one CamelContext object in an application.
+		Basically a Camel Context will hold the camel routes which you declare
+		and you can have multiple camel routes defined in your spring bean file.</br></br>
+<h3>Endpoint</h3> 
+    The term endpoint is often used when talking about inter-process communication.
+    For example,in client-server communication, the client is one endpoint and the server is the other endpoint.
+    Depending on the context, an endpoint might refer to an address, such as a host:port pair for
+    TCP-based communication, or it might refer to a software entity that is contactable at that address.
+</br></br>
+<p>Camel provides out-of-the-box support for endpoints implemented with many different communication technologies.
+   Here are some examples of the Camelsupported endpoint technologies.
+<li>A JMS queue.</li>
+<li>A web service.</li>
+<li>A file. A file may sound like an unlikely type of endpoint, until you realize that in some systems one application might write information to a file and, later, another application might read that file.</li>
+<li>An FTP server.</li>
+<li>An email address. A client can send a message to an email address, and a server can read an incoming message from a mail server.</li>
+<li>A POJO (plain old Java object).</li>
+</br></br>
+To get more details on Apache Camel See <a href="http://camel.apache.org/index.html">this link</a>
+
+</br>
+<h2>How to integrate MDW with Camel</h2>
+</br>
+During build time we need to add dependencies to the maven pom.xml file for mdw-camel.
+Additionally you can also add whichever Apache Camel features you want to use like 
+camel-core,camel-spring,camel-cxf shown in the snippet below.
+
+<pre>
+&lt;dependency&gt;
+&lt;groupId&gt;com.centurylink.mdw&lt;/groupId&gt;
+&lt;artifactId&gt;mdw-camel&lt;/artifactId&gt;
+&lt;version&gt;${mdw.version}&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+&lt;groupId&gt;org.apache.camel&lt;/groupId&gt;
+&lt;artifactId&gt;camel-core&lt;/artifactId&gt;
+&lt;version&gt;1.5.0&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+&lt;groupId&gt;org.apache.camel&lt;/groupId&gt;
+&lt;artifactId&gt;camel-spring&lt;/artifactId&gt;
+&lt;version&gt;1.5.0&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+To install in runtime container like ServiceMix/Fuse use below command :
+</br>
+<pre>
+feature:install mdw-camel
+</pre>
+MDW war for Tomcat container includes camel feature so no additional steps are needed
+</br>
+<h3>Configure Spring</h3>
+The Spring config file is placed under META-INF/spring as this is the default location.
+First we will need to do the standard schema declarations in the top.
+In the bundle-context.xml we have to use spring beans as the default bean: namespace and springs context:.
+ For configuring ActiveMQ we can use broker: and for Camel of course camel:.
+</br></br>
+We choose to integrate Camel in the Spring XML file so we add the camel namespace and the schema location like this:
+<pre>
+xmlns:camel="http://camel.apache.org/schema/spring"
+http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+</pre>
+Notice that we don't use version numbers for the camel-spring schema.
+</br></br>
+<h3>Dependency Injection</h3>(src/main/resources/META-INF/spring/bundle-context.xml)
+</br></br>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;beans xmlns="http://www.springframework.org/schema/beans"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt; 
+
+  &lt;!-- regular spring configuration file defining the beans for this bundle. The configuration of OSGi definitions can be kept in a separate configuration file so that this file can easily be used for integration testing outside of an OSGi environment --&gt;  
+
+  &lt;bean id="mdwCamelActivityProvider"  class="com.centurylink.mdw.workflow.provider.ActivityProviderBean" /&gt;
+</pre>  
+<h3>OSGI Injection</h3>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+ xmlns:osgi="http://www.springframework.org/schema/osgi"   
+ xsi:schemaLocation="http://www.springframework.org/schema/beans   
+ http://www.springframework.org/schema/beans/spring-beans.xsd   
+ http://www.springframework.org/schema/osgi 
+ http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd"&gt;  
+
+  &lt;osgi:service ref="mdwCamelActivityProvider"&gt;
+    &lt;osgi:interfaces&gt;
+      &lt;value&gt;com.centurylink.mdw.common.provider.ActivityProvider&lt;/value&gt;
+    &lt;/osgi:interfaces&gt;
+    &lt;osgi:service-properties&gt;
+      &lt;entry key="alias" value="mdwCamelActivities"/&gt;
+    &lt;/osgi:service-properties&gt;
+  &lt;/osgi:service&gt;
+</pre>
+The xml tag osgi:service will help to register our OSGI service top of the OSGI server and will publish the interfaces as available for another bundles who would like to use them.
+</br></br>
+<h3>Defining Camel Context</h3>
+Below snippet shows how to define your Camel Context which is the standard Camel syntax and this basically holds all the camel routes you declare.Multiple Camel routes can be declared in context xml file.
+<pre>
+&lt;camel:camelContext xmlns="http://camel.apache.org/schema/spring" xmlns:foo="http://centurylink.com/foo"&gt;
+&lt;!-- launch a process --&gt;
+&lt;route&gt;
+      &lt;from uri="file:data/inbox"/&gt;
+      &lt;!-- no namespace --&gt;
+      &lt;filter&gt;
+        &lt;xpath&gt;/Order&lt;/xpath&gt;
+        &lt;to uri="mdw:process?name=CamelDemoProcess&amp;masterRequestId=${Order/orderNumber/node()}"/&gt;
+      &lt;/filter&gt;
+&lt;/route&gt;
+&lt;/camel:camelContext&gt;
+</pre></br>
+<h3>Apache Camel File Component</h3>
+The File component provides access to file systems, allowing files to be processed by any other Camel Components or messages from other components to be saved to disk.
+</br></br>
+<h3>Define MDW Camel Component</h3>
+In order to support MDW you need MDW Camel component which gives you the ability to have MDW uri syntax (mdw:) to use as endpoints in your spring bean file(bundle-context.xml).
+Below is the snippet to define MDW Camel Component :
+</br>
+<pre>
+  &lt;!-- MDW camel component --&gt;
+  &lt;bean id="mdw" class="com.centurylink.mdw.camel.MdwComponent"&gt;
+    &lt;property name="namespaces"&gt;
+      &lt;map&gt;
+        &lt;entry key="foo" value="http://centurylink.com/foo" /&gt;
+      &lt;/map&gt;
+    &lt;/property&gt;
+  &lt;/bean&gt;
+</pre>
+</br>
+<h2>Using Camel to supplement existing MDW external event handler capability</h2>
+</br>
+One of the main reason of using Camel Vs MDW is to supplement the existing MDW external event handler capability.</br>
+ As we know in case of external event handlers we register xpath message pattern and whenever some document comes in as part of the request 
+ and it matches the x path expression, we need to either launch a process ,notify a process,etc.</br> 
+ Camel provides mechanism to do exactly the same thing plus they do have a lot of additional capabilities 
+ which you will see later.
+</br></br>
+In the MDW 5.2 sandbox environment(mdw/mdw) look into workflow package "Camel Demo" which contains processes and assets that illustrates the above functionality. </br>
+Or you can discover and import com.centurylink.mdw.demo.camel and com.centurylink.mdw.camel project for mdw-camel examples. 
+</br></br></br>
+<h2>Camel Protocol support</h2>
+
+Another biggest value of using Camel Vs MDW is Camel supports quite a number of 
+protocols and transports from which MDW supports only few of them.
+</br>
+For more details on Apache Camel transports see <a href="http://camel.apache.org/transport.html">this link</a>
+</br></br>
+</br>
+<h2>Using Camel Routes to launch MDW process</h2>
+</br>
+The below code snippet uses Camel File Component and illustrates that whenever something comes in to your 
+file system then based on the document message pattern i.e if the top element is /Order then you are launching a 
+process.You can also pass additional parameters which are required to launch a process.
+In below snippet ${Order/orderNumber/node()} will be replaced with the data from the incoming document.
+</br>
+<pre>
+&lt;from uri="file:data/inbox"/&gt;
+&lt;!-- no namespace --&gt;
+&lt;filter&gt;
+   &lt;xpath&gt;/Order&lt;/xpath&gt;
+   &lt;to uri="mdw:process?name=CamelDemoProcess&amp;masterRequestId=${Order/orderNumber/node()}"/&gt;
+&lt;/filter&gt;
+</pre>
+</br>
+<h2>XML with namespace</h2>
+
+The below code snippet illustrates that whenever any document (whose namespace top element is /foo:Order ) 
+comes in to your file system then you are launching a process.
+Please note that the namespace needs to be registered in Camel Context as shown below.
+</br><pre>
+&lt;camel:camelContext xmlns="http://camel.apache.org/schema/spring" xmlns:foo="http://centurylink.com/foo"&gt;
+
+&lt;from uri="file:data/inbox"/&gt;
+&lt;!-- with namespace:
+prefix for filtering xpath is declared in camelContext above;
+prefix for masterRequestId xpath is declared in mdw-process bean below --&gt;
+&lt;filter&gt;
+&lt;xpath&gt;/foo:Order&lt;/xpath&gt;
+&lt;to uri="mdw:process?name=CamelDemoProcess&amp;masterRequestId=${/foo:Order/foo:orderNumber/node()}"/&gt;
+&lt;/filter&gt;
+</pre>
+</br>
+<h2>Using Camel Routes to launch Service Process</h2>
+
+Below code snippet illustrates how to use Camel Routes to launch Service Process.
+</br><pre>
+&lt;filter&gt;
+&lt;xpath&gt;/GetEmployee&lt;/xpath&gt;
+&lt;to uri="mdw:process?name=FindEmployee&amp;masterRequestId=${GetEmployee/sapId/node()}"/&gt;
+&lt;/filter&gt;
+</pre>
+</br></br>
+<h2>Using Camel Routes to launch process using Custom Handler</h2>
+</br>
+Below code snippet illustrates how to use Camel Routes to launch process using custom handler.
+<pre>
+&lt;filter&gt;
+&lt;xpath&gt;/DesignOrder[@product='Ethernet']&lt;/xpath&gt;
+&lt;to uri="mdw:process?name=Design%20Order&amp;handlerClass=com.centurylink.mdwcamel.process.MyProcessLaunchHandler" 
+pattern="InOut"/&gt;
+&lt;/filter&gt;
+</pre>
+</br></br>
+<h2>Using Camel Routes to notify in-flight process</h2>
+</br>
+There are various scenarios where MDW process instance will be waiting to get notified.
+ With MDW we use external event handlers whereas with Camel we can
+use mdw:notify syntax to perform exactly the same behaviour.
+</br>
+Below code snippet illustrates example of route-based notify.
+</br>
+<pre>
+&lt;filter&gt;
+&lt;xpath&gt;/OrderUpdate&lt;/xpath&gt;
+&lt;to uri="mdw:notify?eventId=${/OrderUpdate/orderNumber/node()}"/&gt;
+&lt;/filter&gt;
+</pre>
+</br>
+Below code snippet illustrates example of notifying in-flight process using custom handler.
+</br>
+<pre>
+&lt;filter&gt;
+&lt;xpath&gt;/DesignOrderUpdate&lt;/xpath&gt;
+&lt;to uri="mdw:notify?handlerClass=com.centurylink.mdwcamel.event.MyNotifyHandler"/&gt;
+&lt;/filter&gt;
+</pre>
+</br>
+<h2>Camel Routes As a Dynamic Workflow Asset</h2>
+</br>
+At any point of time MDW Camel Route can be defined as a Dynamic Workflow Asset .
+Ex : Employee.wsdl (In the MDW 5.2 sandbox environment(mdw/mdw) look into workflow package "MDW Testing") is a dynamic webservice asset exposed through its wsdl which means we can change the wsdl any time without doing another deployment.
+Another example is OrderContext.spring as a dynamic asset in com.centurylink.mdw.demo.camel package
+</br></br>
+<h3>Configuring Camel Routes as Dynamic Workfow Assets</h3>
+To illustrate this capability of configuring Camel Routes as dynamic workflow assets see section 
+"Register Your Service through a Camel Route"</a>
+</br></br></br>
+<h2>You can hook up any other Camel endpoint to launch MDW process like cxf endpoint defined below:</h2>
+
+<pre>
+&lt;!-- CXF Web Service Route to MDW Process Launch --&gt;
+&lt;route&gt;
+   &lt;from uri="cxf:bean:employee-ws?dataFormat=PAYLOAD" /&gt; &lt;!-- specify MasterRequestID SOAP header --&gt;
+   &lt;to uri="mdw:process?name=FindEmployee" pattern="InOut" /&gt;
+&lt;/route&gt;
+</pre>
+</br>
+CXF Endpoint needs to be defined in your bundle-context.xml file as shown below.Here we are exposing service as a cxf webservice.
+<pre>
+&lt;!-- CXF Endpoint --&gt;
+  &lt;cxf:cxfEndpoint
+    id="employee-ws"
+    address="http://localhost:8282/CXF/SOAP/Employee"
+    endpointName="mdw:soap"
+    serviceName="mdw:EmployeeService"
+    wsdlURL="http://localhost:8181/MDWWeb/SOAP/Employee.wsdl"
+    xmlns:mdw="http://mdw-servicemix.centurylink.com" /&gt;
+</pre>
+</br>
+<h2>Using Camel Routes to handle SOAP/REST requests</h2>
+
+Below code snippet illustrates that whenever any SOAP/REST request comes in and matches /GetEmployee then launch FindEmployee process.</br>
+The routes declared here tells the MDW Camel component to register a SOAP-based/REST-based web service and launch FindEmployee process when invoked.</br>
+In order for the "mdw:" URI pattern to be supported, the MDW Component bean must be declared which you have already seen in previous section
+(Define MDW Camel Component).</br>Please notice that with the "from" URI in an MDW Camel route you will have the option of specifying a specific
+endpoint URL path(SOAP/GetEmployee or REST/GetEmployee), in contrast to the standard MDW External Event handler which all use the same endpoint.
+
+<pre>
+    &lt;!-- MDW Web Service (SOAP) --&gt;
+    &lt;route&gt;
+      &lt;from uri="mdw:SOAP/GetEmployee"/&gt; &lt;!-- specify MasterRequestID SOAP or HTTP header --&gt;
+      &lt;to uri="mdw:process?name=FindEmployee" pattern="InOut" /&gt;
+    &lt;/route&gt;
+    &lt;!-- MDW Web Service (REST) --&gt;
+    &lt;route&gt;
+      &lt;from uri="mdw:REST/GetEmployee"/&gt; &lt;!-- specify MasterRequestID HTTP header --&gt;
+      &lt;to uri="mdw:process?name=FindEmployee" pattern="InOut" /&gt;
+    &lt;/route&gt;
+</pre>
+</br></br>
+<h2>MDW Camel Adapter Activity</h2>
+
+You can also use MDW workflow to launch a Camel route. If you are using Camel Route inside a workflow process then you must define it as a Workflow Asset.</br>
+Ex : Look into the "Invoke Camel Route" process in Camel Demo package (MDW 5.2 sandbox environment mdw/mdw or import com.centurylink.mdw.demo.camel and com.centurylink.mdw.camel package)</br>
+This process basically launches Camel Route from MDW process,this goes to the routing and at the end the end result will populate as part of the response variable.</br>
+In this example the process uses Asset driven(MyCamelRoute.xml) activity defined as part of the Camel Route Adapter activity.
+</br></br>
+Please note that the syntax "&lt;from uri="mdw:workflow/this"/&gt;" used in MyCamelRoute.xml means the instance of workflow which is running(i.e. instance of Invoke Camel Route process)
+</br>
+</br>
+<h3>NOTE:</h3>
+
+With respect to MDW , Camel Route is a good substitute for external event handler but it is not a good substitute for workflow because it does not really accomplish the needs defined for BPM/workflows.Also it is not user friendly.
+</br>
+</body>
+</html>

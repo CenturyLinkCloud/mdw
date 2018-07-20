@@ -1,0 +1,59 @@
+// MDW automated tests (build must have been run already) 
+
+def getMdwCmd() {
+    if (System.properties['os.name'].startsWith('Windows')) {
+        return 'cli\\bin\\mdw.bat'
+    }
+    else {
+        return 'cli/bin/mdw'
+    }
+}
+
+task env {
+    tasks.withType(Exec) {
+        environment << [MDW_HOME: 'cli']
+    }
+}
+
+task install(type: Copy) {
+    from "deploy/app/mdw-boot-${mdwVersion}.jar"
+    into  bootJarLoc
+}
+
+task start(type: Exec) {
+    dependsOn install
+    commandLine getMdwCmd(), 'run', '--daemon', '--wait=90', '--retries=5'
+}
+
+def testSuccess = true
+
+task stop(type: Exec) {
+    commandLine getMdwCmd(), 'stop'
+    doLast {
+        if (!testSuccess)
+            ant.fail('TEST FAILURE(S)')
+    }
+}
+
+task runTests(type: Exec) {
+    def cmds = [getMdwCmd(), 'test', '--stubbing', '--threads=10']
+    
+    if (project.hasProperty('include'))
+        cmds.add('--include=' + include)
+    if (project.hasProperty('exclude'))
+        cmds.add('--exclude=' + exclude)
+    if (project.hasProperty('ignore'))
+        cmds.add('--ignore=' + ignore)
+    
+    commandLine cmds
+    ignoreExitValue true
+    doLast {
+        testSuccess = (execResult.exitValue == 0)
+    }
+}
+task test(dependsOn: [start, runTests, stop]) {
+}
+runTests.mustRunAfter start
+stop.mustRunAfter runTests
+
+// TODO: random tests

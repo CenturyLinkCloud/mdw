@@ -1,0 +1,25 @@
+test: 'POST:workgroups'
+request:
+  url: '${base-url}/Workgroups'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "name": "${group-name}",
+      "description": "a group for testing"
+    }
+response:
+  status:
+    code: 201
+    message: Created
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

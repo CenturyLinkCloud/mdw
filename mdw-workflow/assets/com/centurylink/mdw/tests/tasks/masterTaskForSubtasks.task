@@ -1,0 +1,17 @@
+{
+  "attributes": {
+    "ALERT_INTERVAL": "7200",
+    "FormName": "Autoform",
+    "Groups": "[\"MDW Support\",\"Site Admin\",\"Developers\"]",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "SubTaskStrategy": "com.centurylink.mdw.tests.tasks.SubtaskStrategy",
+    "SubtasksCompleteMaster": "true",
+    "TaskDescription": "Description for master task",
+    "TaskSLA": "86400"
+  },
+  "category": "GEN",
+  "description": "Description for master task",
+  "logicalId": "masterTaskForSubtasks",
+  "name": "Master Task for Subtasks",
+  "version": "0.3"
+}

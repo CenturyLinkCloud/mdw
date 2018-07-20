@@ -1,0 +1,21 @@
+package {{assetPackage}};
+
+import java.util.Map;
+
+import com.centurylink.mdw.java.JavaExecutionException;
+import com.centurylink.mdw.java.JavaExecutor;
+import com.centurylink.mdw.java.MdwJavaException;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+
+public class {{className}} implements JavaExecutor {
+    private ActivityRuntimeContext context;
+
+    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
+        this.context = context;
+    }
+
+    public Object execute(Map<String,Object> variables) throws JavaExecutionException  {
+        context.logDebug("Executing " + context.getActivity().getName());
+        return null;
+    }
+}

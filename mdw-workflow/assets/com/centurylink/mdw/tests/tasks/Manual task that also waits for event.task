@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "Groups": "Fallout#MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "TaskSLA": "172800"
+  },
+  "category": "ORD",
+  "logicalId": "manualTaskThatAlsoWaitsForEvents",
+  "name": "Manual task that also waits for event",
+  "version": "0"
+}

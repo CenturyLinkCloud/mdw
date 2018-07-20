@@ -1,0 +1,36 @@
+<html>
+  <body>
+    <div style="max-width:1024px;margin-left:auto;margin-right:auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+      <div style="width:100%;height:78px;"> 
+        <div style="float:left;margin-top:5px;">
+          <img src="${image:com.centurylink.mdw.base/mdw.png}" alt="MDW">
+          <img src="${image:com.centurylink.mdw.base/hub.png}" alt="Hub" style="margin-left:2px;">
+          <img src="${image:com.centurylink.mdw.base/hub_logo.png}" alt="Hub Logo" style="margin-left:2px;">
+        </div>
+        <div style="float:right;">
+          <img src="${image:com.centurylink.mdw.base/ctl.gif}" alt="CenturyLink(TM)">
+        </div>
+      </div>    
+
+      <div style="margin-left:15px;margin-right:25px;">
+        <p style="font-size:16px;font-weight:bold;">${taskName} ${taskInstanceId}</p>
+        <p>
+          MDW task instance ${taskInstanceId} has been opened.
+        </p>
+        <div>
+          To log in to MDWHub and act on this task, click here:
+          <a href="${taskInstanceUrl}">${taskInstanceUrl}</a>.
+        </div>
+      </div>     
+      
+      <div style="position:absolute;bottom:25px;padding-left:25px;padding-bottom:25px;width:100%;background-color:white;">
+        <div style="margin-top:15px;margin-bottom:5px;font-size:13px;">
+          Please do not reply to this automated email.
+        </div>
+        <div style="color:#666666;font-size:10px;">
+          Copyright &#169; 2018 CenturyLink, Inc. - All Rights Reserved.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

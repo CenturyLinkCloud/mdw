@@ -1,0 +1,7 @@
+package com.centurylink.mdw.tests.script
+
+start process("GroovyReturnVals")
+wait process
+verify process {
+    resultsById = true
+}

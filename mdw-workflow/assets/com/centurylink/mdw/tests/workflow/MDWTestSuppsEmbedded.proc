@@ -1,0 +1,376 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=24,y=438,w=60,h=40"},
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=245,ly=365,type=Elbow,xs=88&139,ys=458&458"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "$case = \"good\";",
+        "WORK_DISPLAY_INFO": "x=653,y=162,w=100,h=60"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "update case value",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=747,ly=355,type=Elbow,xs=703&809,ys=226&374"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=779,y=378,w=60,h=40"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Hold",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/Supps Embedded Manual Task.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},CORRECT,true,;Signal-{$MasterRequestID},,true,",
+        "WORK_DISPLAY_INFO": "x=414,y=430,w=100,h=60"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Manual task with event wait",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=704,ly=389,type=ElbowH,xs=518&656&656&775,ys=494&494&394&394",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T15",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},Hold::CORRECT,true,;Signal-{$MasterRequestID},,false,",
+        "WORK_DISPLAY_INFO": "x=420,y=169,w=100,h=60"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait for some event",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=609,ly=209,type=Elbow,xs=524&649,ys=195&195"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "testCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=143,y=383,w=48,h=151"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "which case?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=280,ly=213,type=Elbow,xs=195&416,ys=458&199"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "correct-resume-on-wait",
+          "to": "A9"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=334,ly=452,type=ElbowH,xs=195&410,ys=460&460",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "FINISH",
+          "id": "T14",
+          "resultCode": "task-wait",
+          "to": "A1"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=265,ly=205,type=Elbow,xs=195&416,ys=458&199"},
+          "event": "FINISH",
+          "id": "T26",
+          "resultCode": "finish-resume-on-wait",
+          "to": "A9"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=237,ly=298,type=Elbow,xs=195&420,ys=458&303"},
+          "event": "FINISH",
+          "id": "T27",
+          "resultCode": "custom-finish-event-on-event-wait",
+          "to": "A22"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=302,ly=378,type=Elbow,xs=191&300&300&410,ys=458&458&382&382"},
+          "event": "FINISH",
+          "id": "T29",
+          "resultCode": "correct-waiting-on-wait",
+          "to": "A24"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0s",
+            "TRANSITION_DISPLAY_INFO": "lx=246,ly=542,type=Elbow,xs=195&426,ys=458&586"
+          },
+          "event": "FINISH",
+          "id": "T32",
+          "resultCode": "cancel-on-event",
+          "to": "A25"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "Signal-{$MasterRequestID},custom-finish,false,",
+        "WORK_DISPLAY_INFO": "x=424,y=273,w=100,h=60"
+      },
+      "id": "A22",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait for some event",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=588,ly=276,type=Elbow,xs=528&775,ys=303&398"},
+        "event": "FINISH",
+        "id": "T30",
+        "resultCode": "custom-finish",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},Waiting::CORRECT,true,;Signal-{$MasterRequestID},,false,",
+        "WORK_DISPLAY_INFO": "x=410,y=352,w=100,h=60"
+      },
+      "id": "A24",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Wait for some event",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=659,ly=411,type=Elbow,xs=514&775,ys=395&395"},
+        "event": "FINISH",
+        "id": "T31",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "$+Id": "26997",
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "3",
+        "Unit": "Minutes",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},ABORT,true,",
+        "WORK_DISPLAY_INFO": "x=430,y=556,w=100,h=60"
+      },
+      "id": "A25",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Wait for 3 min",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=595,ly=489,type=Elbow,xs=534&775,ys=586&398"},
+        "event": "FINISH",
+        "id": "T33",
+        "to": "A7"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "CORRECT_TRANSITION_ID": "157825",
+    "ERROR_TRANSITION_ID": "157824",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "START_TRANSITION_ID": "2327615",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=237,h=27"
+  },
+  "subprocesses": [
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=837,y=73,w=60,h=40"},
+          "id": "A17",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=915,ly=93,type=Elbow,xs=901&950,ys=93&93"},
+            "event": "FINISH",
+            "id": "T22",
+            "to": "A18"
+          }]
+        },
+        {
+          "attributes": {
+            "Rule": "SetInEmbedded = SetInMain + \", World!\";",
+            "SCRIPT": "Groovy",
+            "WORK_DISPLAY_INFO": "x=954,y=67,w=100,h=60"
+          },
+          "id": "A18",
+          "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+          "name": "Set Variable in Embedded",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1096,ly=96,type=Elbow,xs=1058&1106,ys=96&96"},
+            "event": "FINISH",
+            "id": "T23",
+            "to": "A16"
+          }]
+        },
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=1110,y=76,w=60,h=40"},
+          "id": "A16",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+        "ENTRY_TRANSITION_ID": "2327617",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "START_TRANSITION_ID": "2327578",
+        "WORK_DISPLAY_INFO": "x=837,y=40,w=333,h=105"
+      },
+      "id": "P2",
+      "name": "Exception Handler",
+      "variables": {"EmbeddedSubProcessTaskAction": {
+        "category": "LOCAL",
+        "type": "java.lang.String"
+      }}
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=859,y=386,w=60,h=40"},
+          "id": "A20",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=991,ly=398,type=Elbow,xs=923&970,ys=406&406"},
+            "event": "FINISH",
+            "id": "T24",
+            "to": "A19"
+          }]
+        },
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=1133,y=386,w=60,h=40"},
+          "id": "A21",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        },
+        {
+          "attributes": {
+            "STATUS_AFTER_EVENT": "Cancelled",
+            "TIMER_WAIT": "1",
+            "Unit": "Minutes",
+            "WORK_DISPLAY_INFO": "x=974,y=377,w=100,h=60"
+          },
+          "id": "A19",
+          "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+          "name": "wait 1 min",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1104,ly=406,type=Elbow,xs=1078&1129,ys=406&406"},
+            "event": "FINISH",
+            "id": "T25",
+            "to": "A21"
+          }]
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Correction Handler",
+        "ENTRY_TRANSITION_ID": "2327616",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "START_TRANSITION_ID": "2327569",
+        "WORK_DISPLAY_INFO": "x=858,y=349,w=342,h=114"
+      },
+      "id": "P3",
+      "name": "Correction Handler",
+      "variables": {"EmbeddedSubProcessTaskAction": {
+        "category": "LOCAL",
+        "type": "java.lang.String"
+      }}
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=862,y=222,w=60,h=40"},
+          "id": "A27",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=954,ly=242,type=Elbow,xs=926&959,ys=242&242"},
+            "event": "FINISH",
+            "id": "T34",
+            "to": "A30"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=1101,y=222,w=60,h=40"
+          },
+          "id": "A28",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        },
+        {
+          "attributes": {
+            "STATUS_AFTER_EVENT": "Cancelled",
+            "TIMER_WAIT": "1",
+            "Unit": "Minutes",
+            "WORK_DISPLAY_INFO": "x=963,y=215,w=100,h=60"
+          },
+          "id": "A30",
+          "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+          "name": "wait 1 min",
+          "transitions": [{
+            "attributes": {"TRANSITION_DISPLAY_INFO": "lx=1082,ly=242,type=Elbow,xs=1067&1097,ys=242&242"},
+            "event": "FINISH",
+            "id": "T35",
+            "to": "A28"
+          }]
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=846,y=178,w=327,h=124"
+      },
+      "id": "P26",
+      "name": "Cancellation Handler"
+    }
+  ],
+  "variables": {
+    "SetInEmbedded": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "SetInMain": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "launcher": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

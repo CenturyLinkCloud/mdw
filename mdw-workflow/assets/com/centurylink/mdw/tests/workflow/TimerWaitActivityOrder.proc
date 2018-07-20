@@ -1,0 +1,108 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=26,y=76,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=155,ly=96,type=Elbow,xs=90&220,ys=96&96"},
+          "event": "FINISH",
+          "id": "T7",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=157,ly=141,type=Elbow,xs=90&223,ys=96&188"},
+          "event": "FINISH",
+          "id": "T8",
+          "to": "A4"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=493,y=269,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "20",
+        "Unit": "Seconds",
+        "WORK_DISPLAY_INFO": "x=224,y=68,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Wait 20s",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=348,ly=101,type=Elbow,xs=328&365,ys=98&98"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "def appendVal = {\r\n    sleep 100;\r\n    cumulativeResult += it\r\n}\r\n0.upto(9, appendVal)",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=227,y=154,w=98,h=68"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Should Finish\r\nQuickly",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=404,ly=168,type=Elbow,xs=329&468,ys=192&192"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "Synced Activities": "New Execute Script",
+        "WORK_DISPLAY_INFO": "x=472,y=162,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=523,ly=245,type=Elbow,xs=523&523,ys=226&265"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "cumulativeResult += '_update'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=369,y=61,w=106,h=68"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Update\r\nResult",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=444,ly=74,type=Elbow,xs=479&522&522,ys=90&90&162"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A5"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=29,y=21,w=210,h=27"
+  },
+  "variables": {"cumulativeResult": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }}
+}

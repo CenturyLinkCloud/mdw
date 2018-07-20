@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>Using Adapter Activities</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+<style>
+var {
+  font-style: italic;
+  color: #0000a0;
+}
+dfn { color: brown; }
+</style>
+</head>
+<body>
+<h1>Using Adapter Activities</h1>
+
+<p>TODO: Need to remove all references to connection pools and add correct information about using the PoolableAdapterBase API.</p>
+
+
+<p>The class <code>AdapterActivityBase</code> is an abstract
+class that provides common base for all adapter activities,
+and most activities extend this base class directly.</p>
+
+<p>The adapters can be directly used and support automatic retries through adapter configuration rather than a retry loop (a link from
+it to itself) as typically used with old implementors.
+In order to keep backward compatibility, we introduced a new
+base class, <code>PoolableAdapterBase</code>, to support the new functionalities. This is a new implementation of JMS Adapter which can be 
+configured through Designer and does not implement ControlledAdapterActivity interface.
+
+<p>MDW provides a set of common adapters for common protocols such
+as SOAP based MDW web services, JMS, as well as the adapter activity, mentioned above.
+These adapters are highly configurable and hence
+can meet common needs in many cases. You may however
+encounter situations where further customization beyond configuration is needed.
+Here is a list of common reasons:</p>
+<ul>
+  <li>The built-in adapters all take requests (messages to be sent to
+    external systems) from a process variable, specified during configuration.
+    If there is a need to get request messages from a place other than a variable,
+    it can be achieved by overriding the <code>getRequestData</code>
+    method to be described below.</li>
+  <li>Similarly, the built-in adapters all put responses (messages received
+    as responses from external systems in synchronous transport protocols)
+    an a configured process variable. If there is a need to store the responses
+    elsewhere, it can be achieved by overriding the method <code>onSuccess</code>.
+    This method may also be needed to perform custom logics such as extracting
+    or translating the responses before persistence.</li>
+  <li>The built-in adapters consider reception of any response data from
+    the external systems as a success, even though the response may
+    indicate an error condition and may need to be retried, because such
+    knowledge is external systems specific. It is common to have a need
+    to convert the seemingly successful responses into failures (retriable
+    and non-retriable). This can be achieved by overriding the method <code>invoke</code>.</li>
+  <li>Performing custom retry logic and other business logic in case of failure:
+    you can override the method <code>onFailure</code>.</li>   
+  <li>Passing meta information in addition to the request messages. Meta data
+    are transport protocol specific. Example is correlation ID for
+    JMS adapter, in addition to the standard <code>DATA</code> field for request data.</li>
+  <li>You may have a need to send messages to a system using a protocol
+    not supported by any of the built-in adapters. One common case is invoking
+    SOAP-based web services. In this case you will need to implement
+    a brand new adapter by extending <code>PoolableAdapterBase</code>
+    directly.</li>
+</ul>
+<p>The next section describes such customizations in details.</p>
+
+<h2>Implementing Poolable Adapters</h2>
+<p>A new poolable adapter should extend the abstract base class
+<code>com.centurylink.mdw.workflow.adapter.PoolableAdapterBase</code>.
+The following methods may be overridden less commonly:</p>
+<ul>
+<li><code>getRequestData()</code>: this method returns the request message. The default
+implementation reads it from a variable configured in the designer. You can override it
+to get the message from elsewhere.</li>
+<li><code>onSuccess(String response)</code>: the method is invoked when the external system
+returns a successful response. The method may convert external-system-detected errors into failure
+by throwing an exception here (ConnectionException for retriable errors and
+AdapterException for non-retriable errors), although it is preferable to perform such interpretation
+in the method <code>invoke</code>, as the logic can be shared with connection pools.
+Throwing an exception here
+also triggers the method <code>onFailure</code> to be called.
+This method is also the place to translate external responses
+into internal format and persist them somewhere, if these are needed.
+The default implementation stores the message in a variable configured in the designer.
+</li>
+<li><code>onFailure(int tryCount, int maxTries, Throwable errorCause)</code>: 
+The method is invoked on the failure of each try.
+The outcome of the method must be one of the following:
+  <ul>
+    <li>throw ConnectionException. The engine will put the activity in error status,
+	    and schedule automatically retry of the activity.</li>
+	<li>throw AdapterException. The engine will put the activity in error status,
+	    and transition based on ERROR event (typically lead to exception handler).</li>
+	<li>return a completion code w/o throwing exception. The engine will complete
+	    the activity and transition accordingly.</li>
+  </ul>
+The default implementation does the following:
+  <ul>
+    <li>if <var>errorCause</var> is an AdapterException, throws it.</li>
+    <li>if <var>errorCause</var> is a ConnectionException:
+        <ul>
+          <li>if <var>tryCount</var> (the number of tries already made) is less than 
+          	<var>maxTries</var> (maximum allowed tries, as configured in the designer), throws it</li>
+          <li>otherwise throws AdapterException with error code 
+          	<code>AdapterConnectionPool.EXCEPTION_EXCEED_MAXTRIES</code>
+        </ul></li>
+    <li>in any other case, throw AdapterException with <var>errorCode</var> as its error code</li>
+  </ul>
+When you override this method, you would normally invoke this super method as the last thing,
+to preserve the above logic.
+</li>
+</ul>
+<p>You can look at built-in poolable adapters as samples.
+We note that the built-in adapters typically do not throw exceptions when
+it receives any messages from external systems, even the messages may indicate
+some error conditions (e.g. an XML message that contains an error message).
+This is obviously due to the fact that there is no generic way to identify what messages indicate
+errors. When you implement your application-specific adapters, which you may
+have knowledge as to what response messages indicate errors, you should throw
+exceptions as described above appropriately, so that the auto-retry mechanism can
+function properly. </p>
+
+<h2>Implementing Poolable Adapter Activities</h2>
+<p>The built-in implementor <a href='../javadoc/com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html'>PoolableAdapterBase</a>
+is implemented as a subclass of <code>DefaultActivityImpl</code> as well. The methods that may need to be overridden include:</
+<ul>
+  <li><code>doInvoke</code></li>
+  <li><code>onSuccess</code></li>
+  <li><code>onFailure</code></li>
+  <li><code>getRequestData</code></li>
+</ul>
+</body>
+</html>

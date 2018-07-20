@@ -1,0 +1,32 @@
+process: # 12829
+  name: KafkaProducer
+  instance: 1
+  activity: # 1 "2017-11-13 22:30:35"
+    name: Start
+    status: Completed
+  activity: # 3 "2017-11-13 22:30:51"
+    name: Publish Kafka Message
+    status: Completed
+  activity: # 4 "2017-11-13 22:30:53"
+    name: |
+      Receive Kafka Message
+       Event Wait Activity
+    status: Completed
+  activity: # 2 "2017-11-13 22:30:53"
+    name: Stop
+    status: Completed
+  variable: # 16839
+    name: producerProperties
+    value: ${~.*}
+  variable: # 16842
+    name: rcvdKafkaMessage
+    value: <MyAppKafkaHandler>${~.*}</MyAppKafkaHandler>
+  variable: # 16840
+    name: recordProperties
+    value: {key=${~.*}, topic=testMdwInbound, partition=0}
+  variable: # 16838
+    name: request
+    value: ${~.*}
+  variable: # 16841
+    name: response
+    value: sent record${~.*}

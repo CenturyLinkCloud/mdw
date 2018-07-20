@@ -1,0 +1,63 @@
+process: # 10288
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2017-01-12 12:54:24"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2017-01-12 12:54:24"
+    name: multiple processes ?
+    status: Completed
+    result: error handler delegation
+  activity: # 15 "2017-01-12 12:54:24"
+    name: Create argument
+    status: Completed
+  activity: # 10 "2017-01-12 12:54:25"
+    name: Invoke process that errs
+    status: Completed
+  activity: # 11 "2017-01-12 12:55:32"
+    name: Process Finish
+    status: Completed
+  variable: # 10712
+    name: processCase
+    value: error handler delegation
+process: # 10307
+  name: MDWTestMainProcess Exception Handler
+  instance: 1
+  activity: # 29 "2017-01-12 12:55:01"
+    name: Process Start
+    status: Completed
+  activity: # 28 "2017-01-12 12:55:01"
+    name: My fallout task
+    status: Completed
+  activity: # 30 "2017-01-12 12:55:31"
+    name: Process Finish
+    status: Completed
+process: # 10292
+  name: MDWTestMainProcess Exception Handler
+  instance: 2
+  activity: # 29 "2017-01-12 12:54:25"
+    name: Process Start
+    status: Completed
+  activity: # 28 "2017-01-12 12:54:26"
+    name: My fallout task
+    status: Completed
+  activity: # 30 "2017-01-12 12:55:00"
+    name: Process Finish
+    status: Completed
+process: # 10291
+  name: MDWTestSubProcess2
+  instance: 1
+  activity: # 30 "2017-01-12 12:54:25"
+    name: Start
+    status: Completed
+  activity: # 26 "2017-01-12 12:54:25"
+    name: Throw an Exception
+    status: Cancelled
+    result: java.lang.RuntimeException: Help me, I'm an error...
+  activity: # 26 "2017-01-12 12:55:00"
+    name: Throw an Exception
+    status: Completed
+    result: java.lang.RuntimeException: Help me, I'm an error...
+  activity: # 28 "2017-01-12 12:55:32"
+    name: Stop
+    status: Completed

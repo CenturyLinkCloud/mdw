@@ -1,0 +1,12 @@
+package com.centurylink.mdw.tests.rules
+
+cal = Calendar.getInstance()
+cal.add(Calendar.DATE, -1)
+yesterday = cal.getTime()
+
+start process("DroolsActivity") {
+    variables = [dueDate: yesterday, region: "Eastern",
+                 quotedPrice: 1500, orderNumber: masterRequestId]
+}
+wait process
+verify process

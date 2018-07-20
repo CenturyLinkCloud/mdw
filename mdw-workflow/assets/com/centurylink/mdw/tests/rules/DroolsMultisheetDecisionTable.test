@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.rules
+
+start process("DroolsDecisionTableMultisheet") {
+    variables = [geography: "EastWest",
+                 region: "Western",
+                 quotedPrice: 1]
+}
+wait process
+verify process

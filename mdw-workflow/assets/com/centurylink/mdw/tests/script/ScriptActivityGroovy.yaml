@@ -1,0 +1,81 @@
+process: # 10008
+  name: ScriptTest
+  instance: 1
+  activity: # 3 "2017-02-10 22:41:11"
+    name: Start
+    status: Completed
+  activity: # 8 "2017-02-10 22:41:11"
+    name: Script Flavor?
+    status: Completed
+    result: Groovy
+  activity: # 7 "2017-02-10 22:41:11"
+    name: Groovy
+    status: Completed
+    result: groovyOutcome
+  activity: # 9 "2017-02-10 22:41:11"
+    name: Access Library
+    status: Completed
+    result: Valid
+  activity: # 6 "2017-02-10 22:41:11"
+    name: Looking Good?
+    status: Completed
+    result: Yep
+  activity: # 1 "2017-02-10 22:41:11"
+    name: Still Okay?
+    status: Completed
+    result: Sure
+  activity: # 2 "2017-02-10 22:41:11"
+    name: Stop
+    status: Completed
+  variable: # 10031
+    name: bystanderDomDoc
+    value: <xml>I won't change</xml>
+  variable: # 10032
+    name: bystanderXmlBean
+    value: <xml>I won't change</xml>
+  variable: # 10037
+    name: createdDomDoc
+    value: |
+      <records>
+          <car make="Infiniti" model="G35x" year="2005">
+              <country>Japan</country>
+              <aspect type="Sedan">Not too big</aspect>
+          </car>
+      </records>
+  variable: # 10036
+    name: createdInt
+    value: 8
+  variable: # 10038
+    name: createdString
+    value: createdStringValue
+  variable: # 10039
+    name: createdXmlBean
+    value: |
+      <createdXmlBean>
+          <innerElement attr="attrVal"/>
+      </createdXmlBean>
+  variable: # 10034
+    name: modifiedDomDoc
+    value: |
+      <records>
+          <car make="Infiniti" model="G35x" year="2005">
+              <country>Japan</country>
+              <aspect type="Sedan">Not too big</aspect>
+          </car>
+          <newCar shiny="new"/>
+      </records>
+  variable: # 10029
+    name: modifiedInt
+    value: 12
+  variable: # 10035
+    name: modifiedString
+    value: HereIsAString has been modified
+  variable: # 10028
+    name: modifiedXmlBean
+    value: <xmlBeanToBeModified>MODIFIED</xmlBeanToBeModified>
+  variable: # 10030
+    name: scriptFlavor
+    value: Groovy
+  variable: # 10033
+    name: telephoneNumbers
+    value: ["303-555-7861","303-555-1952"]

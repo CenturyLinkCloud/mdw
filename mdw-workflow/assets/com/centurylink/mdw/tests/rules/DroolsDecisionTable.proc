@@ -1,0 +1,147 @@
+{
+  "activities": [
+    {
+      "attributes": {
+        "Parameters": "{\"orderNumber\":\"${request.orderNumber}\",\"dueDate\":\"${request.dueDate}\",\"region\":\"${request.regionString}\",\"quotedPrice\":\"${request.quotedPrice}\"}",
+        "WORK_DISPLAY_INFO": "x=183,y=47,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=78,type=Elbow,xs=213&213,ys=91&138"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.donsfuse",
+        "Output Documents": "xmlBeanVar",
+        "Rule": "import com.centurylink.mdw.service.ApplicationSummaryDocument \r\nimport com.centurylink.mdw.service.ApplicationSummaryDocument.ApplicationSummary     \r\n\r\nxmlBeanVar = ApplicationSummaryDocument.Factory.newInstance();  \r\nApplicationSummary appSummary = xmlBeanVar.addNewApplicationSummary(); \r\nappSummary.setMdwVersion('6.1');",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=163,y=142,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Setup XMLBean",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=217,ly=232,type=Elbow,xs=217&217,ys=206&258"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A1"
+      }]
+    },
+    {
+      "attributes": {
+        "KnowledgeBase": "com.centurylink.mdw.tests.rules/drools-orderRoutingDecisionTable.xlsx",
+        "KnowledgeBase_assetVersion": "[0.2,1)",
+        "Logging": "true",
+        "Output Documents": "xmlBeanVar",
+        "RuleVersionVar": "ruleVersion",
+        "Rules Language": "Drools",
+        "Stateful": "FALSE",
+        "WORK_DISPLAY_INFO": "x=172,y=262,w=105,h=72"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.drools.DroolsDecisionTableActivity",
+      "name": "Drools \r\nDecision Table",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=270,ly=392,type=Elbow,xs=223&223&371&371,ys=338&385&385&435"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "WESTERN",
+          "to": "A7"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=329,ly=277,type=Elbow,xs=281&395,ys=298&435"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "EASTERN",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=523,y=446,w=60,h=40"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"response\"]",
+        "Rule": "response = new org.json.JSONObject()\nresponse.put('workgroup', workgroup)",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=345,y=439,w=100,h=60"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Response",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=484,ly=466,type=Elbow,xs=449&519,ys=466&466"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A5"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "START_TRANSITION_ID": "2345108",
+    "WORK_DISPLAY_INFO": "x=356,y=87,w=196,h=26",
+    "requestMethod": "POST",
+    "requestParameters": "[[\"Order\",\"Body\",\"true\",\"Order for Rules\",\"com.centurylink.mdw.tests.rules/Order.java\",\"[0.1,1)\"]]",
+    "requestPath": "/order",
+    "requestSummary": "Order for Rules testing"
+  },
+  "variables": {
+    "dueDate": {
+      "category": "INPUT",
+      "type": "java.util.Date"
+    },
+    "orderNumber": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "quotedPrice": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "region": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "org.json.JSONObject"
+    },
+    "ruleVersion": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "workgroup": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "xmlBeanVar": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    }
+  }
+}

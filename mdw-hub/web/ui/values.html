@@ -1,0 +1,31 @@
+<form name="valuesForm" class="form-horizontal" role="form">
+  <div ng-repeat="value in values" class="form-group" ng-class="{'has-error': value.error}">
+    <label class="control-label col-xs-2" ng-class="{'mdw-required': value.display == 'Required'}" for="value.name">
+      {{value.label ? value.label : value.name}}
+    </label>
+    <div ng-class="value.isDocument ? 'col-md-10' : 'col-xs-4'">
+      <!-- TODO: currently unsupported: collections, numbers -->
+      <!-- TODO: add this once value labels become links: ng-style="{'overflow-y': value.editable ? 'auto' : 'hidden'}" -->
+      <textarea ng-if="value.isException" class="form-control mdw-document-input"
+        rows="{{value.showLines}}" id="{{value.name}}" name="{{value.name}}" ng-readonly="true">{{asException(value)}}</textarea>
+      <textarea ng-if="value.isDocument && !value.isException" class="form-control mdw-document-input" 
+        rows="{{value.showLines}}" id="{{value.name}}" name="{{value.name}}" 
+        ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
+      </textarea>
+      <input type="checkbox" ng-if="value.type === 'java.lang.Boolean'" class="checkbox mdw-boolean-input" 
+        id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
+      <div ng-if="value.type === 'java.util.Date'">
+        <input type="text" class="form-control mdw-date-input" ng-style="{width: (dateDisplayFormat.length * 10) + 'px'}"
+          id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)"                
+          uib-datepicker-popup={{dateDisplayFormat}} is-open="datePopups[value.name]">
+        <button type="button" ng-if="value.editable" class="btn mdw-btn btn-default mdw-float-left" 
+          ng-click="openDatePopup(value.name)" >
+          <i class="glyphicon glyphicon-calendar"></i>
+        </button>
+      </div>
+      <input type="text" ng-if="!value.isDocument && value.type !== 'java.lang.Boolean' && value.type !== 'java.util.Date'" 
+        class="form-control" 
+        id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
+    </div>
+  </div>
+</form>

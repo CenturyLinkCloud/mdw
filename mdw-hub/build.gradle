@@ -1,0 +1,242 @@
+apply plugin: "war"
+
+configurations {
+    wtpExclude
+    runtimeExtra // runtime libs excluded due to gradle's funky transitive mechanism
+    springBoot
+    springBootLoader
+}
+
+eclipse {
+    wtp {
+        component {
+            resource sourcePath: "/web", deployPath: "/"
+            // TODO: this creates a duplicate entry (because "/src" needed instead of "src")
+            resource sourcePath: "/src", deployPath: "/WEB-INF/classes"
+
+            // exclude mdw-common, mdw-services and mdw-workflow (found from WEB-INF/classes)
+            minusConfigurations << configurations.wtpExclude            
+        }
+        facet {
+            facet type: "fixed", name: "jst.web"
+            file.whenMerged {
+                facets.find { it.type.name() == "installed" && it.name == "jst.web" }.version = "3.0"
+            }
+        }
+    }
+}
+    
+dependencies {
+    compile project(":mdw-common")
+    compile project(":mdw-services")
+    compile project(":mdw-workflow")
+    
+    wtpExclude project(":mdw-common")
+    wtpExclude project(":mdw-services")
+    wtpExclude project(":mdw-workflow")
+
+    // schemas are included in mdw-common
+    providedCompile fileTree(dir: '../mdw/libs', include: 'mdw-schemas.jar')
+    providedCompile fileTree(dir: '../mdw/libs', include: 'bpmn-schemas.jar')
+    
+    providedCompile group: "javax.jms", name: "javax.jms-api", version: "2.0.1"
+    
+    providedCompile group: "javax.el", name: "el-api", version: "1.0"
+    providedCompile group: "javax.servlet", name: "javax.servlet-api", version: "3.1.0"
+    providedCompile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
+    providedCompile group: "javax.servlet.jsp.jstl", name: "jstl-api", version: "1.2"
+    providedCompile group: "junit", name: "junit", version: "4.8.1"
+    providedCompile group: "aopalliance", name: "aopalliance", version: "1.0"
+    providedCompile(group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.3") { transitive = false }
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/camel", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/drools", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/node", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/mysql", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/kotlin", includes: ["*.jar"])
+    providedCompile fileTree(dir: "../mdw-workflow/assets/com/centurylink/mdw/microservice", includes: ["*.jar"])
+    
+    compile group: "commons-beanutils", name: "commons-beanutils", version: "1.8.3"
+    compile group: "commons-cli", name: "commons-cli", version: "1.4"
+    compile group: "commons-codec", name: "commons-codec", version: "1.3"
+    compile group: "commons-collections", name: "commons-collections", version: "3.2.2"
+    compile group: "commons-digester", name: "commons-digester", version: "1.8.1"
+    compile group: "commons-discovery", name: "commons-discovery", version: "0.4"
+    compile group: "commons-el", name: "commons-el", version: "1.0"
+    compile group: "commons-fileupload", name: "commons-fileupload", version: "1.2.1"
+    compile group: "commons-httpclient", name: "commons-httpclient", version: "3.0.1"
+    compile group: "commons-io", name: "commons-io", version: "2.4"
+    compile group: "commons-lang", name: "commons-lang", version: "2.4"
+    compile(group: "commons-validator", name: "commons-validator", version: "1.3.1") { exclude(module: "commons-digester") } 
+    compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
+    compile group: "el-impl", name: "el-impl", version: "1.0"
+    
+    // spring boot
+    providedCompile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    springBoot group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    providedCompile group: "org.springframework", name: "spring-web", version: springVersion
+    springBoot group: "org.springframework", name: "spring-web", version: springVersion
+    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.15"
+    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.15"
+    providedCompile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.15"
+    springBoot group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
+    springBoot group: "javax.el", name: "el-api", version: "1.0"  // why?
+    springBootLoader group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion
+    
+    runtimeExtra group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
+    runtimeExtra group: "org.springframework", name: "spring-beans", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-context", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-core", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-expression", version: springVersion
+    runtimeExtra group: "org.springframework", name: "spring-aop", version: springVersion
+    runtimeExtra fileTree(dir: "../mdw-common/mdw/libs", include: "spring-xsds.jar")
+}
+
+task mdwWarSourcesJar(type: Jar) {
+    archiveName = "mdw-${mdwVersion}-sources.jar"
+    
+    from "src"
+    from "../mdw-common/src"
+    from "../mdw-services/src"
+    from "../mdw-workflow/src"
+    include "**/*.java"
+}
+
+sourcesJar {
+    dependsOn mdwWarSourcesJar
+}
+
+task cleanDist(type: Delete) {
+    delete "dist"
+}
+
+clean {
+    dependsOn(cleanDist, cleanWar)
+}
+
+task jsHint(type: Exec) {
+    if (System.properties["os.name"].startsWith("Windows")) {
+        commandLine 'cmd', '/c', 'npm', 'run', '--no-color', 'jshint'
+    }
+    else if (System.properties["os.name"].startsWith("Mac OS X")) {
+        environment PATH: "${System.env.PATH}:/usr/local/bin"
+        commandLine '/usr/local/bin/npm', 'run', '--no-color', 'jshint'
+    }
+    else {
+        commandLine 'npm', 'run', '--no-color', 'jshint'
+    }
+}
+
+task esLint(type: Exec) {
+    if (System.properties["os.name"].startsWith("Windows")) {
+        commandLine 'cmd', '/c', 'npm', 'run', '--no-color', 'eslint'
+    }
+    else if (System.properties["os.name"].startsWith("Mac OS X")) {
+        environment PATH: "${System.env.PATH}:/usr/local/bin"
+        commandLine '/usr/local/bin/npm', 'run', '--no-color', 'eslint'
+    }
+    else {
+        commandLine 'npm', 'run', '--no-color', 'eslint'
+    }
+}
+
+task lint {
+  dependsOn(jsHint, esLint)
+}
+
+war {
+    dependsOn(lint)
+    
+    archiveName = "mdw-${version}.war"
+    
+    classpath = war.classpath.plus(configurations.runtimeExtra)
+
+    manifest {
+        attributes("MDW-Version": mdwVersion, "MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+    
+    from("src") {
+        include "META-INF/mdw/**"
+        include "META-INF/services/**" 
+    }
+    from("web") {
+        include "**/*"
+    }
+    from("../mdw-common/src") {
+        include "META-INF/mdw/spring/*"
+    }
+    from("../mdw-workflow/src") {
+        include "META-INF/mdw/**"
+    }
+    from("../mdw") {
+        include "cli/mdw-cli.jar"
+    }
+    
+    webXml = file("web/WEB-INF/web.xml")
+    exclude "**/.*ignore";
+    rootSpec.exclude "WEB-INF/web.xml"  // specified above
+    rootSpec.exclude "**/.*ignore"
+}
+
+task springBootJar(type: Jar) {
+    dependsOn compileJava
+    
+    archiveName = "mdw-boot-${version}.jar"
+    manifest {
+        attributes (
+            "MDW-Version": mdwVersion, 
+            "MDW-Build": new Date().format(mdwBuildTimeFormat),
+            "Main-Class": "org.springframework.boot.loader.JarLauncher",
+            "Start-Class": "com.centurylink.mdw.hub.SpringBootApplication",
+            "Spring-Boot-Classes": "BOOT-INF/classes/",
+            "Spring-Boot-Lib": "BOOT-INF/lib/",
+            "Spring-Boot-Version": springBootVersion
+        )
+    }
+    
+    from("src") {
+        include "META-INF/mdw/**"
+        include "META-INF/services/**"
+    }
+    from("../mdw-common/src") {
+        include "META-INF/mdw/spring/*"
+    }
+    from("../mdw-workflow/src") {
+        include "META-INF/mdw/**"
+    }
+    
+    into("BOOT-INF/classes") {
+        from sourceSets.main.output
+        exclude "META-INF/**"
+    }
+    into("BOOT-INF/lib") {
+        entryCompression = org.gradle.api.tasks.bundling.ZipEntryCompression.STORED
+        from configurations.compile.minus(configurations.providedCompile).plus(configurations.springBoot)
+    }
+    into("web") {
+        from "web"
+        exclude "WEB-INF/"
+    }
+
+
+    from configurations.springBootLoader.asFileTree.files.collect {
+        zipTree(it)
+    }
+}
+
+war {
+    dependsOn springBootJar
+    
+    exclude "**/.*ignore";
+    rootSpec.exclude "**/.*ignore"
+
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+}
+
+archivesBaseName = "mdw"
+artifacts {
+    archives war, javadocJar, sourcesJar
+}

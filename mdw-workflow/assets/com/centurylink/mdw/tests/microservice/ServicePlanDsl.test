@@ -1,0 +1,50 @@
+package com.centurylink.mdw.tests.microservice
+
+// creates two instances
+start process("ServicePlanTest") {
+    variables = [ testCase: "defaultBindings",
+        language: "Kotlin",
+        request: '''{
+  "_type": "com.centurylink.mdw.tests.microservice.User",
+  "user": {
+    "id": "torvalds",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
+    "emailAddress": "torvalds@transmeta.com"
+  }
+}''' ]
+}
+
+wait process // ensure consistent ordering in yaml
+
+start process("ServicePlanTest") {
+    variables = [ testCase: "customBindings",
+        language: "Kotlin",
+        request: '''{
+  "_type": "com.centurylink.mdw.tests.microservice.User",
+  "user": {
+    "id": "torvalds",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
+    "emailAddress": "torvalds@transmeta.com"
+  }
+}''' ]
+}
+
+wait process
+
+start process("ServicePlanTest") {
+    variables = [ testCase: "customBindings",
+        language: "Java",
+        request: '''{
+  "_type": "com.centurylink.mdw.tests.microservice.User",
+  "user": {
+    "id": "torvalds",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
+    "emailAddress": "torvalds@transmeta.com"
+  }
+}''' ]
+}
+
+verify process

@@ -1,0 +1,12 @@
+{
+  "category": "attributes",
+  "pagelet": {"widgets": [
+    {
+      "type": "editor",
+      "name": "Documentation",
+      "editing": true,
+      "multiline": true,
+      "language": "markdown"
+    }
+  ]}
+}

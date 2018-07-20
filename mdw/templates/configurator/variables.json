@@ -1,0 +1,85 @@
+{
+  "category": "object",
+  "pagelet": {"widgets": [
+    {
+      "type": "table",
+      "name": "variables",
+      "applier": "ObjectTableApplier",
+      "widgets": [
+        {
+          "label": "Variable Name",
+          "name": "_key",
+          "type": "text"
+        },
+        {
+          "label": "Type",
+          "name": "type",
+          "type": "dropdown",
+          "options": [
+            "java.lang.String",
+            "java.lang.Boolean",
+            "java.lang.Exception",
+            "java.lang.Float",
+            "java.lang.Integer",
+            "java.lang.Long",
+            "java.lang.Object",
+            "java.net.URI",
+            "java.util.Date",
+            "java.util.List<Integer>",
+            "java.util.List<Long>",
+            "java.util.List<String>",
+            "java.util.Map<String,String>",
+            "org.json.JSONObject",
+            "com.centurylink.mdw.model.Jsonable",
+            "com.centurylink.mdw.model.StringDocument",
+            "javax.xml.bind.JAXBElement",
+            "org.apache.xmlbeans.XmlObject",
+            "org.w3c.dom.Document",
+            "org.yaml.snakeyaml.Yaml"
+          ]
+        },
+        {
+          "label": "Mode",
+          "name": "category",
+          "type": "dropdown",
+          "options": [
+            "LOCAL",
+            "INPUT",
+            "OUTPUT",
+            "INOUT",
+            "STATIC"
+          ]
+        },
+        {
+          "label": "Label",
+          "name": "label",
+          "type": "text"
+        },
+        {
+          "label": "Display",
+          "name": "display",
+          "type": "dropdown",
+          "options": [
+            "",
+            "Required",
+            "Optional",
+            "ReadOnly",
+            "Hidden"
+          ]
+        },
+        {
+          "label": "Sequence",
+          "name": "sequence",
+          "type": "number",
+          "vw": 50
+        }        
+      ]
+    },
+    {
+      "name": "Process Variables Help",
+      "section": "Variables",
+      "type": "link",
+      "url": "help/variable.html"
+    }    
+  ]}
+}

@@ -1,0 +1,132 @@
+applications:
+- name: {{project}}
+  instances: 1
+  host: {{project}}
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  timeout: 180
+  path: mdw-boot-{{mdw-version}}.jar
+
+env:
+  JAVA_OPTS: -Dmdw.runtime.env=pcfDev1 -Dmdw.property.manager=com.centurylink.mdw.config.YamlPropertyManager 
+  
+  MDW_APP_TOKEN: 
+  JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: "[enabled: false]"
+  MDW_ASSET_LOCATION: "./repo/{{asset-loc}}"
+  
+  mdw_seed_users: '{
+    "users":  [
+      {
+        "name": "{{user}}",
+        "cuid": "{{user}}",
+        "groups": [
+          "Developers",
+          "Site Admin"
+        ],
+        "roles": [
+          "User Admin",
+          "Process Execution",
+          "Process Design",
+          "Task Execution"
+        ]            
+      },
+      {
+        "name": "MDW Application",
+        "id": "mdwapp",
+        "attributes": {
+          "Email": "mdwapp@centurylink.com"
+        },      
+        "groups": [
+          "Developers",
+          "Site Admin"
+        ],
+        "roles": [
+          "User Admin",
+          "Process Execution",
+          "Process Design",
+          "Task Execution"
+        ]            
+      }
+    ]
+  }'
+    
+  mdw_settings: |
+    application:
+      name: {{project}}
+      
+    servers:
+      {{project}}.localhost:
+        ports:
+        -80
+        
+    container:
+      datasource.provider: Tomcat
+      messenger: jms
+      jms.provider: ActiveMQ
+      threadpool.provider: MDW
+      
+    database:
+      driver: {{database-driver}}
+      url: {{database-url}}
+      username: {{database-user}}
+      password: {{database-password}}
+      poolsize: 20
+      poolMaxIdle: 5
+      validationQuery: select 1 from dual
+      
+    git:
+      local.path: ./repo
+      remote.url: {{git-remote-url}}
+      branch: {{git-branch}}
+      user: {{git-user}}
+      password: {{git-password}}
+      
+    temp.dir: ../mdw/.temp   
+    
+    logging:
+      level: DEBUG 
+    
+    filepanel:
+      root.dirs:  ./logs 
+        
+    hub.url: https://{{project}}.useast.appfog.ctl.io/mdw
+    services.url: http://{{project}}.useast.appfog.ctl.io:80/mdw
+    central.url: https://mdw-central.com
+  
+  mdw_access: |
+    authMethod: mdw 
+    
+    devUser: {{user}}
+    
+    requireHttps:
+     - '/login'
+    
+    responseHeaders:  
+      X-UA-Compatible: IE=Edge
+      
+    sessionTimeout: 3600
+    
+    authExclusions:
+      - '/login'
+      - '/error'
+      - '/js/nav.json'
+      - '/noIe.html'
+      - '/images/*'
+      - '/css/*'
+      - '/docs/*'
+      - '/api-docs/*'
+      - '/services/AppSummary'
+      - '/services/System/sysInfo'
+      - '/services/com/centurylink/mdw/slack'
+      - '/services/com/centurylink/mdw/slack/event'
+      - '*.css'
+      - '*.jsx'
+      - '*.png'
+      - '*.js'
+      - '*.woff'
+      - '*.woff2'
+      - '*.ttf'
+    
+    loggingOptions:
+      logResponseTimes: false  
+      logHeaders: false
+      logParameters: false

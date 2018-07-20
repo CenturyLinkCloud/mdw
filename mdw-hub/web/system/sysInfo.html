@@ -1,0 +1,34 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">System Info</div>
+      </div>
+      <ul class="mdw-list">
+        <li ng-repeat="sysInfoCategory in sysInfoCategories">
+          <div>
+            <a class="mdw-item-link" href="" ng-click="sysInfoCategory.expanded = !sysInfoCategory.expanded">
+              <span class="glyphicon glyphicon-plus mdw-expand-icon" ng-if="!sysInfoCategory.expanded"></span><span class="glyphicon glyphicon-minus mdw-expand-icon" ng-if="sysInfoCategory.expanded"></span>{{sysInfoCategory.name}}
+            </a>
+          </div>
+          <div class="mdw-sys-info" ng-if="sysInfoCategory.expanded">
+            <div ng-repeat="sysInfo in sysInfoCategory.sysInfos">
+              <span style="font-weight:bold">{{sysInfo.name}}</span>: {{sysInfo.value}}
+              <div class="mdw-sys-info-value" ng-if="sysInfo.values" ng-repeat="sysInfoValue in sysInfo.values track by $index">
+                {{sysInfoValue}}
+              </div>
+              <!-- two levels deep possibly -->
+              <div class="mdw-sys-info-value" ng-repeat="subInfo in sysInfo.sysInfos">
+                <span style="font-weight:bold">{{subInfo.name}}</span>: {{subInfo.value}}
+                <div class="mdw-sys-info-value" ng-if="subInfo.values" ng-repeat="subInfoValue in subInfo.values track by $index">
+                  {{subInfoValue}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

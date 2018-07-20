@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "Groups": "MDW Support",
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "TaskSLA": "172800"
+  },
+  "category": "GEN",
+  "logicalId": "TaskEventTest:A12",
+  "name": "Custom Manual Task w Recurring Event",
+  "version": "0"
+}

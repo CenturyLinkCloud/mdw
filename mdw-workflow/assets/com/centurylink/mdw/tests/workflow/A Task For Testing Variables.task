@@ -1,0 +1,14 @@
+{
+  "attributes": {
+    "Groups": "Fallout Specialists",
+    "Notices": "$DefaultNotices",
+    "TaskDescription": "Testing variable display and entry.",
+    "TaskSLA": "86400",
+    "Variables": "order,order,Not Displayed,0,,com.qwest.mbeng.MbengDocument;Sum,Sum,Not Displayed,0,,java.lang.Integer;intarraytest,intarraytest,Not Displayed,0,,java.lang.Integer[];maptest,maptest,Not Displayed,0,,java.util.Map;BTN,BTN,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;N,N,Not Displayed,0,,java.lang.Integer;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray;xmldata,xmldata,Not Displayed,0,,org.w3c.dom.Document"
+  },
+  "category": "ORD",
+  "description": "Testing variable display and entry.",
+  "logicalId": "MDWTestMainProcess:A28",
+  "name": "A Task For Testing Variables",
+  "version": "0"
+}

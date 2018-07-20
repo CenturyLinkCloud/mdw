@@ -1,0 +1,174 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=117,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=179,ly=137,type=Elbow,xs=136&202,ys=137&137"},
+        "event": "FINISH",
+        "id": "T13",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=595,y=119,w=60,h=40"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=680,y=229,w=60,h=40"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "ConnectTimeout": "60000",
+        "DO_LOGGING": "True",
+        "EndpointUri": "#{props['mdw.services.url']}/Services/REST",
+        "HeadersVariable": "headersMap",
+        "HttpMethod": "POST",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "REQUEST_VARIABLE": "requestDoc",
+        "RESPONSE_VARIABLE": "responseDoc",
+        "ReadTimeout": "60000",
+        "WORK_DISPLAY_INFO": "x=442,y=213,w=121,h=76"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "POST\r\nRequest",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=633,ly=247,type=Elbow,xs=567&676,ys=249&249"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "EndpointUri": "#{props['mdw.services.url']}/services/AppSummary",
+        "HeadersVariable": "headersMap",
+        "HttpMethod": "GET",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "RESPONSE_VARIABLE": "responseDoc",
+        "WORK_DISPLAY_INFO": "x=412,y=104,w=116,h=74"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "GET\r\nRequest",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=566,ly=143,type=Elbow,xs=532&591,ys=139&139"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "package com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\r\nimport java.util.HashMap;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.user.User;\r\nimport com.centurylink.mdw.model.user.Workgroup;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\nimport com.centurylink.mdw.tests.services.GetEmployee;\r\n\r\npublic class SetRequest_A10 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        String httpMethod = (String) variables.get(\"httpMethod\");\r\n        if (httpMethod.equals(\"POST\")) {\r\n            GetEmployee requestDoc = new GetEmployee();\r\n            requestDoc.setWorkstationId(\"dxoakes\");\r\n            variables.put(\"requestDoc\", requestDoc);\r\n            Map<String,String> headers = new HashMap<String,String>();\r\n            headers.put(\"my-header\", \"my-header-value\");\r\n            variables.put(\"headersMap\", headers);\r\n        }\r\n        else if (httpMethod.equals(\"PATCH\")) {\r\n            Workgroup workgroup = new Workgroup(0L, \"Patchy Developers\", \"Dev Group for PATCH\");\r\n            workgroup.setUsers(new User[] { new User(\"dxoakes\") });\r\n            try {\r\n                variables.put(\"patchRequest\", workgroup.getJson());\r\n            }\r\n            catch (org.json.JSONException ex) {\r\n                throw new JavaExecutionException(ex.getMessage(), ex);\r\n            }\r\n        }\r\n        return httpMethod;\r\n    }\r\n\r\n}\r\n",
+        "Output Documents": "requestDoc#patchRequest#headersMap",
+        "WORK_DISPLAY_INFO": "x=206,y=104,w=120,h=74"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Set Request",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=358,ly=149,type=Elbow,xs=330&408,ys=141&141"},
+          "event": "FINISH",
+          "id": "T14",
+          "resultCode": "GET",
+          "to": "A8"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=337,ly=226,type=ElbowV,xs=310&310&438,ys=182&250&250"},
+          "event": "FINISH",
+          "id": "T15",
+          "resultCode": "POST",
+          "to": "A9"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=272,ly=271,type=Elbow,xs=266&266,ys=182&317"},
+          "event": "FINISH",
+          "id": "T16",
+          "resultCode": "PATCH",
+          "to": "A11"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "ConnectTimeout": "30000",
+        "DO_LOGGING": "True",
+        "EndpointUri": "#{props['mdw.services.url']}/services/com/centurylink/mdw/tests/services/PatchHandler",
+        "HttpMethod": "PATCH",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "REQUEST_VARIABLE": "patchRequest",
+        "RESPONSE_VARIABLE": "patchResponse",
+        "ReadTimeout": "30000",
+        "WORK_DISPLAY_INFO": "x=205,y=321,w=126,h=79"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "PATCH\r\nRequest",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=394,ly=361,type=Elbow,xs=335&453,ys=361&361"},
+        "event": "FINISH",
+        "id": "T17",
+        "to": "A12"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=457,y=341,w=60,h=40"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "NodeStyle": "BoxIcon",
+    "WORK_DISPLAY_INFO": "x=39,y=38,w=202,h=27"
+  },
+  "variables": {
+    "headersMap": {
+      "category": "LOCAL",
+      "type": "java.util.Map<String,String>"
+    },
+    "httpMethod": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "patchRequest": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "patchResponse": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "requestDoc": {
+      "category": "LOCAL",
+      "type": "javax.xml.bind.JAXBElement"
+    },
+    "responseDoc": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    }
+  }
+}

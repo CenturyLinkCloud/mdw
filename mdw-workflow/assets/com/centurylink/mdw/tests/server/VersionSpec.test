@@ -1,0 +1,73 @@
+package com.centurylink.mdw.tests.server
+
+// unit tests for version spec parsing
+import static com.centurylink.mdw.model.asset.AssetVersionSpec.parse;
+import com.centurylink.mdw.model.workflow.Process;
+
+println 'testing asset version spec processing...'
+
+assert onServer
+
+def myProcV_1 = new Process()
+myProcV_1.setName("MyProcess")
+myProcV_1.setVersion(1000)
+
+def myProcV_1pt5 = new Process()
+myProcV_1pt5.setName("MyProcess")
+myProcV_1pt5.setVersion(1005)
+
+def myProcV_2 = new Process()
+myProcV_2.setName("MyProcess")
+myProcV_2.setVersion(2000)
+
+def myProcV_10pt2 = new Process()
+myProcV_10pt2.setName("MyProcess")
+myProcV_10pt2.setVersion(10002)
+
+def assetSpec = "MyProcess v1.0"  // no package def
+def spec = parse(assetSpec)
+assert spec.getName() == "MyProcess"
+assert spec.getVersion() == "1.0"
+assert myProcV_1.meetsVersionSpec(spec.getVersion())
+assert !myProcV_1pt5.meetsVersionSpec(spec.getVersion())
+
+assetSpec = "MyPackage/MyProcess v1.0"
+spec = parse(assetSpec);
+assert spec.getPackageName() == "MyPackage"
+assert spec.getName() == "MyProcess"
+assert spec.getVersion() == "1.0"
+assert myProcV_1.meetsVersionSpec(spec.getVersion())
+assert !myProcV_1pt5.meetsVersionSpec(spec.getVersion())
+
+assetSpec = "MyPackage/MyProcess v[1.2,2)"  // half-open range
+spec = parse(assetSpec);
+assert spec.getVersion() == "[1.2,2)"
+assert !myProcV_1.meetsVersionSpec(spec.getVersion())
+assert myProcV_1pt5.meetsVersionSpec(spec.getVersion())
+assert !myProcV_2.meetsVersionSpec(spec.getVersion())
+assert !myProcV_10pt2.meetsVersionSpec(spec.getVersion())
+
+assetSpec = "MyPackage/MyProcess v[1.2"  // unbounded range
+spec = parse(assetSpec);
+assert spec.getVersion() == "[1.2"
+assert !myProcV_1.meetsVersionSpec(spec.getVersion())
+assert myProcV_1pt5.meetsVersionSpec(spec.getVersion())
+assert myProcV_2.meetsVersionSpec(spec.getVersion())
+assert myProcV_10pt2.meetsVersionSpec(spec.getVersion())
+
+assetSpec = "MyPackage/MyProcess v10.2"  // two digit major ver
+spec = parse(assetSpec);
+assert spec.getVersion() == "10.2"
+assert !myProcV_1.meetsVersionSpec(spec.getVersion())
+assert !myProcV_1pt5.meetsVersionSpec(spec.getVersion())
+assert !myProcV_2.meetsVersionSpec(spec.getVersion())
+assert myProcV_10pt2.meetsVersionSpec(spec.getVersion())
+
+assetSpec = "MyPackage/MyProcess v0"  // latest (compatibility)
+spec = parse(assetSpec);
+assert spec.getVersion() == "0"
+assert myProcV_1.meetsVersionSpec(spec.getVersion())
+assert myProcV_1pt5.meetsVersionSpec(spec.getVersion())
+assert myProcV_2.meetsVersionSpec(spec.getVersion())
+assert myProcV_10pt2.meetsVersionSpec(spec.getVersion())
+

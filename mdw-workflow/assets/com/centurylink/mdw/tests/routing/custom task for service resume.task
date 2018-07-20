@@ -1,0 +1,10 @@
+{
+  "attributes": {
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "INV",
+  "logicalId": "TaskResumeService:A5",
+  "name": "custom task for service resume",
+  "version": "0"
+}

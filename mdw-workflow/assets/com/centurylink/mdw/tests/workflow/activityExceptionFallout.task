@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "MDW Support",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "TaskDescription": "For testing implicit exception variable."
+  },
+  "category": "GEN",
+  "description": "For testing implicit exception variable.",
+  "logicalId": "activityExceptionFallout",
+  "name": "Activity Exception Fallout",
+  "version": "0.2"
+}

@@ -1,0 +1,189 @@
+process: # 14209
+  name: ActivityException
+  instance: 1
+  activity: # 1 "2016-06-27 17:59:24"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-06-27 17:59:24"
+    name: Which Case?
+    status: Completed
+    result: error handler delegation
+  activity: # 6 "2016-06-27 18:00:30"
+    name: Invoke Subprocess with Error
+    status: Completed
+  activity: # 2 "2016-06-27 18:00:31"
+    name: Stop
+    status: Completed
+  variable: # 20669
+    name: exception
+    value: |
+      {
+        "message": "java.lang.RuntimeException: Help me, I'm an error",
+        "runtimeContext": {
+          "activity": {
+            "attributes": {
+              "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\n\npackage com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\n/**\n * Dynamic Java to force an error.\n */\npublic class ThrowanException_A26 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\n        throw new RuntimeException(\"Help me, I'm an error\");\n    }\n\n}\n",
+              "WORK_DISPLAY_INFO": "x=166,y=176,w=132,h=69"
+            },
+            "id": "A26",
+            "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+            "name": "Throw an Exception"
+          },
+          "activityInstance": {
+            "activityId": 26,
+            "id": ${~\\d*},
+            "processInstanceId": ${~\\d*},
+            "startDate": "${today} ${~.*}",
+            "statusCode": 2
+          },
+          "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
+          "processInstance": {
+            "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow/MDWTestSubProcess2 v\\d.\\d}",
+            "id": ${~\\d*},
+            "masterRequestId": "${masterRequestId}",
+            "owner": "PROCESS_INSTANCE",
+            "ownerId": ${~\\d*},
+            "packageName": "com.centurylink.mdw.tests.workflow",
+            "processId": ${~\\d*},
+            "processName": "MDWTestSubProcess2",
+            "secondaryOwner": "ACTIVITY_INSTANCE",
+            "secondaryOwnerId": ${~\\d*},
+            "statusCode": 2,
+            "variables": []
+          }
+        },
+        "stackElements": [
+          {
+            "class": "com.centurylink.mdw.tests.workflow.ThrowanException_A26",
+            "file": "ThrowanException_A26.java",
+            "line": 23,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+            "file": "DynamicJavaActivity.java",
+            "line": 101,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+            "file": "DefaultActivityImpl.java",
+            "line": 41,
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.BaseActivity",
+            "file": "BaseActivity.java",
+            "line": ${~\\d*},
+            "method": "execute"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.BaseActivity",
+            "file": "BaseActivity.java",
+            "line": ${~\\d*},
+            "method": "executeTimed"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
+            "file": "ProcessEngineDriver.java",
+            "line": ${~\\d*},
+            "method": "executeActivity"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
+            "file": "ProcessEngineDriver.java",
+            "line": ${~\\d*},
+            "method": "processEvent"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.ProcessEngineDriver",
+            "file": "ProcessEngineDriver.java",
+            "line": ${~\\d*},
+            "method": "processEvents"
+          },
+          {
+            "class": "com.centurylink.mdw.services.process.InternalEventDriver",
+            "file": "InternalEventDriver.java",
+            "line": ${~\\d*},
+            "method": "run"
+          },
+          {
+            "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$Work",
+            "file": "CommonThreadPool.java",
+            "line": ${~\\d*},
+            "method": "run"
+          },
+          {
+            "class": "java.util.concurrent.ThreadPoolExecutor",
+            "file": "ThreadPoolExecutor.java",
+            "line": ${~\\d*},
+            "method": "runWorker"
+          },
+          {
+            "class": "java.util.concurrent.ThreadPoolExecutor$Worker",
+            "file": "ThreadPoolExecutor.java",
+            "line": ${~\\d*},
+            "method": "run"
+          },
+          {
+            "class": "java.lang.Thread",
+            "file": "Thread.java",
+            "line": ${~\\d*},
+            "method": "run"
+          },
+          {
+            "class": "com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread",
+            "file": "CommonThreadPool.java",
+            "line": ${~\\d*},
+            "method": "run"
+          }
+        ],
+        "throwable": "com.centurylink.mdw.activity.ActivityException"
+      }
+  variable: # 20668
+    name: processCase
+    value: error handler delegation
+process: # 14212
+  name: ActivityException Exception Handler
+  instance: 1
+  activity: # 7 "2016-06-27 18:00:00"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-06-27 18:00:30"
+    name: ActivityException Fallout
+    status: Completed
+  activity: # 10 "2016-06-27 18:00:30"
+    name: Stop
+    status: Completed
+process: # 14211
+  name: ActivityException Exception Handler
+  instance: 2
+  activity: # 7 "2016-06-27 17:59:25"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-06-27 18:00:00"
+    name: ActivityException Fallout
+    status: Completed
+  activity: # 10 "2016-06-27 18:00:00"
+    name: Stop
+    status: Completed
+process: # 14210
+  name: MDWTestSubProcess2
+  instance: 1
+  activity: # 30 "2016-06-27 17:59:24"
+    name: Start
+    status: Completed
+  activity: # 26 "2016-06-27 18:00:00"
+    name: Throw an Exception
+    status: Cancelled
+    result: java.lang.RuntimeException: Help me, I'm an error...
+  activity: # 26 "2016-06-27 18:00:30"
+    name: Throw an Exception
+    status: Completed
+    result: java.lang.RuntimeException: Help me, I'm an error...
+  activity: # 29 "2016-06-27 18:00:30"
+    name: Alternate path
+    status: Completed
+  activity: # 28 "2016-06-27 18:00:30"
+    name: Stop
+    status: Completed

@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>SQL Adapter Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>SQL Adapter Activity</h1>
+
+The MDW JDBC SQL Adapter Activity provides the ability to query a database to select values and perform updates.
+<strong>Note:</strong> this is not compatible with Oracle JDBC.
+<br/>
+<h3>Design Attributes</h3>
+The basic design parameters for configuring a SQL Adapter Activity are illustrated in the screenshot below.
+<br/><br/>
+<img src="images/sqlDesignTab.jpg" />
+<br/><br/>
+The JDBC DataSource example in the screenshot shows how to specify a simple JDBC URL as your DataSource.
+While this is acceptable for testing, in a real deployment you should use an actual DataSource that provides
+database connection pooling.
+<br/><br/>
+Queries are executed using <a href='http://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html'>JDBC Prepared Statements</a>, and the dynamic parameters used in the query are designated using the question mark syntax.
+Values for bind variables are populated from a process variable with one of the following types:
+     <ul>
+       <li>java.lang.String</li>
+       <li>java.lang.Integer</li>
+       <li>java.lang.Long</li>
+       <li>java.util.Date</li>
+       <li>java.lang.String[]</li>
+       <li>java.lang.Integer[]</li>
+       <li>java.lang.Long[]</li>
+       <li>java.lang.Object (as long as its value is one of the supported types, or an Array of supported types)</li>
+       <li>null (no parameters)</li>
+     </ul>
+If no parameter variable is set, this behaves the same as if the variable value is null (no dynamic parameters).
+<br/><br/>
+When the Query Type is "Select", the JDBC ResultSet is made available as the implicit "response" variable in the adapter Post-Script.
+Here's an example Groovy script that updates a UserDocument variable based on the ResultSet from the user selection query above:
+<pre>
+import java.sql.ResultSet
+import com.centurylink.mdw.user.UserDocument
+import com.centurylink.mdw.user.UserDocument.User
+
+ResultSet rs = (ResultSet) response;
+if (rs.next()) {
+  userDocument = UserDocument.Factory.newInstance();
+  User user = userDocument.addNewUser();
+  user.setCuid(rs.getString("cuid"));
+  String name = rs.getString("name");
+  String[] names = name.split(" ");
+  user.setFirstName(names[0]);
+  user.setLastName(names[1]);
+}
+</pre>
+If the Query Type is "Update", then the response is a java.lang.Integer indicating the number of rows updated.
+<br/><br/>
+
+</body>
+</html>

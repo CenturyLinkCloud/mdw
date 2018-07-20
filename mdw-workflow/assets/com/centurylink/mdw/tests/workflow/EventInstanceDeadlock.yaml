@@ -1,0 +1,117 @@
+process: # 12075
+  name: EventInstanceDeadlock-Main
+  instance: 1
+  activity: # 1 "2017-08-11 14:40:51"
+    name: Start
+    status: Completed
+  activity: # 5 "2017-08-11 14:40:53"
+    name: |
+      Publish
+      First?
+    status: Completed
+    result: false
+  activity: # 4 "2017-08-11 14:40:53"
+    name: Build Plan
+    status: Completed
+  activity: # 3 "2017-08-11 14:40:53"
+    name: Invoke Subs
+    status: Completed
+  activity: # 2 "2017-08-11 14:40:54"
+    name: Stop
+    status: Completed
+  variable: # 15249
+    name: plan
+    value: |
+      !!com.centurylink.mdw.model.ExecutionPlan {
+        subprocesses: [
+          {
+            instanceId: ${~.*},
+            logicalName: sub1,
+            parameters: {
+              serviceSummary: $serviceSummary
+            },
+            statusCode: 2
+          },
+          {
+            instanceId: ${~.*},
+            logicalName: sub2,
+            parameters: {
+              serviceSummary: $serviceSummary
+            },
+            statusCode: 2
+          },
+          {
+            instanceId: ${~.*},
+            logicalName: sub1,
+            parameters: {
+              serviceSummary: $serviceSummary
+            },
+            statusCode: 2
+          },
+          {
+            instanceId: ${~.*},
+            logicalName: sub2,
+            parameters: {
+              serviceSummary: $serviceSummary
+            },
+            statusCode: 2
+          },
+          {
+            instanceId: ${~.*},
+            logicalName: sub1,
+            parameters: {
+              serviceSummary: $serviceSummary
+            },
+            statusCode: 2
+          },
+          {
+            instanceId: ${~.*},
+            logicalName: sub2,
+            parameters: {
+              serviceSummary: $serviceSummary
+            },
+            statusCode: 2
+          },
+          {
+            instanceId: ${~.*},
+            logicalName: notify,
+            parameters: {
+              },
+            statusCode: 2
+          }]
+        
+      }
+  variable: # 15248
+    name: publishFirst
+    value: false
+  variable: # 1569
+    name: serviceSummary
+    value: |
+      {
+        "masterRequestId": "sdwf35b84c94f241c3",
+        "microservices": [{
+          "instances": [{
+            "invocations": [{
+              "requestId": 601957,
+              "responseId": 601959,
+              "sent": "2018-04-25T14:20:29.280Z",
+              "status": {
+                "code": 202,
+                "message": "Accepted"
+              }
+            }],
+            "updates": [{
+              "received": "2018-04-25T14:20:29.280Z",
+              "requestId": 0,
+              "status": {
+                "code": 202,
+                "message": "focaccept"
+              }
+            }]
+          }],
+          "name": "portster/PortIn"
+        }]
+      }
+  variable: # 15246
+    name: subCount
+    value: 3

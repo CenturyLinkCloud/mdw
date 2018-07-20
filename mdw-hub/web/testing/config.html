@@ -1,0 +1,31 @@
+<div>
+  <label class="mdw-config">
+    Threads
+    <input type="number" max="20" min="1" ng-model="config.threads">
+  </label>
+  <label class="mdw-config">
+    Interval&nbsp;
+    <input type="number" max="60" min="1" ng-model="config.interval">
+    sec
+  </label>
+  <label class="mdw-config">
+    <input type="checkbox" ng-model="config.stubbing">
+    Stubbing
+  </label>
+  <label class="mdw-config">
+    <input type="checkbox"  ng-model="config.loadTest">
+    Load Test
+  </label>
+  <label class="mdw-config">
+    <input type="checkbox" ng-model="config.verbose">
+    Verbose
+  </label>
+  <label class="mdw-config">
+    <input type="checkbox" ng-model="config.createReplace">
+    Create/Replace
+  </label>
+  <label class="mdw-config">
+    <input type="checkbox" ng-model="config.includePostmanItems">
+    Postman Items
+  </label>
+</div>

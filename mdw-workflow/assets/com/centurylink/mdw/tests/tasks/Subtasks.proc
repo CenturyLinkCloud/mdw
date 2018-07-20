@@ -1,0 +1,75 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=27,y=74,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=180,ly=94,type=Elbow,xs=91&270,ys=94&94"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=579,y=76,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/masterTaskForSubtasks.task",
+        "TASK_TEMPLATE_assetVersion": "[0.3,1)",
+        "WORK_DISPLAY_INFO": "x=274,y=72,w=100,h=60",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "Master Task",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=491,ly=96,type=Elbow,xs=378&575,ys=96&96"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/subtaskA.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=273,y=150,w=100,h=60",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "Subtask A"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/subtaskB.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=274,y=232,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Subtask B"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=40,y=26,w=84,h=27"
+  }
+}

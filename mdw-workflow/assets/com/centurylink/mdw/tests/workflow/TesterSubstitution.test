@@ -1,0 +1,30 @@
+package com.centurylink.mdw.tests.workflow
+
+// this is to test the MDW test tool itself
+name = "Donald"
+helloMessage = "Hello, " + name
+masterRequestId = "tester-" + System.currentTimeMillis()
+
+// test send/response with substitutions
+response = post http("services/Ping") {
+    user  = 'mdwapp'
+    password = 'mdwapp'
+    payload = asset("tester-ping.json").text
+}
+verify response {
+    expected = asset("tester-pong.json").text
+}
+
+// test launch process with substitutions
+// helloMessage referenced through placeholder in expected result
+helloMessage = "Hello from MDW Test"
+start process("StartStopProcess") {
+    variables = [inputVar: helloMessage]
+}
+wait process
+verify process
+
+assert processInstances.size() == 1
+println "master process instance id: " + masterProcessInstance.id
+assert masterProcessInstance.masterRequestId == masterRequestId
+assert masterProcessInstance.variable["inputVar"] == helloMessage

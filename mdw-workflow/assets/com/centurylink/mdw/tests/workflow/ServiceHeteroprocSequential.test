@@ -1,0 +1,22 @@
+package com.centurylink.mdw.tests.workflow
+
+masterRequestId = "tester-" + System.currentTimeMillis()
+
+start process("MDWTestHeterogeneousProcessCall"){
+	variables = [testcase: "sequential",
+		request:	"""\
+<ser:ActionRequest xmlns:ser='http://mdw.centurylink.com/services'>
+<Action Name="RegressionTest">
+<Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+<Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestHeterogeneousProcessCall</Parameter>
+<Parameter name="testcase">sequential</Parameter>
+<Parameter name="PerformanceLevel">3</Parameter>
+</Action>
+</ser:ActionRequest>"""]
+}
+
+wait process("MDWTestHeterogeneousProcessCall") {
+timeout = 90
+}
+verify processes("MDWTestHeterogeneousProcessCall", "MDWTestSubProcess3", "MDWTestSubProcess4")
+

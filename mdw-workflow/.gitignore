@@ -1,0 +1,11 @@
+build/
+.temp/
+temp/
+testResults/
+data/
+projects/
+packages/
+*.launch
+bin/
+out/
+activemq-data/

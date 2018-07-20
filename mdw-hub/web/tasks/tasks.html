@@ -1,0 +1,93 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-checklist">
+          <input type="checkbox" ng-if="!create" ng-model="model.taskList.selectedState.all" ng-change="model.taskList.toggleAll()"></input>
+          <span ng-if="!create">{{tasksLabel ? tasksLabel : 'Tasks'}}</span>
+          <span class="mdw-heading-sub" ng-if="!create"> ({{model.taskList.total}})</span>
+          <div class="mdw-heading-label" ng-if="create">New Task</div>
+        </div>
+        <div class="mdw-heading-input" ng-if="!create">
+          <div class="mdw-inner-addon mdw-right-addon">
+            <i class="glyphicon glyphicon-search"></i>
+            <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
+              ng-model="model.typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
+              typeahead-editable="false" typeahead-on-select="typeaheadSelect()" ng-change="typeaheadChange()">
+          </div>
+          <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+            <i class="glyphicon glyphicon-chevron-down"></i>
+            <input type="text" class="form-control mdw-inline mdw-dropfilter mdw-med-indent mdw-med-width3"  
+              value="{{model.taskFilter.workgroups}}" uib-dropdown-toggle readonly>
+            <ul class="dropdown-menu mdw-dropdown-menu mdw-med-indent" uib-dropdown-menu aria-labelledby="simple-dropdown">
+              <li>
+                <a href="" ng-click="model.taskFilter.workgroups = '[My Workgroups]'">[My Workgroups] </a>
+              </li>
+              <li class="divider"></li>
+                <li ng-repeat="workgroup in authUser.workgroups" ng-if="workgroup != 'Common' && workgroup != 'Site Admin'">
+                <a href="" ng-click="model.taskFilter.workgroups = workgroup">{{workgroup}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+            <i class="glyphicon glyphicon-chevron-down"></i>
+            <input type="text" class="form-control mdw-dropfilter mdw-med-indent mdw-med-width3" autofocus 
+              placeholder="assignee" spellcheck="false" uib-dropdown-toggle
+              ng-model="model.typeaheadUser" uib-typeahead="user as user.name for user in findTypeaheadAssignees($viewValue)" 
+              typeahead-editable="false" typeahead-on-select="typeaheadUserSelect()" ng-change="typeaheadUserChange()">
+            <ul id="assigneeDropdownList" class="dropdown-menu mdw-dropdown-menu mdw-med-indent"
+              uib-dropdown-menu aria-labelledby="simple-dropdown" style="z-index:1;">
+              <li>
+                <a href="" ng-click="setAssigneeFilter('[My Tasks]')">[My Tasks]</a>
+              </li>
+              <li>
+                <a href="" ng-click="setAssigneeFilter('[Everyone\'s Tasks]')">[Everyone's Tasks]</a>
+              </li>
+              <li>
+                <a href="" ng-click="setAssigneeFilter('[Unassigned]')">[Unassigned]</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="" ng-click="setAssigneeFilter(null)">Type to search...</a>
+              </li>
+            </ul>
+          </div>        
+        </div>
+        
+        <!-- NOTE: wrap attribute must be adjusted if more action buttons are added
+             TODO: include this wrap calculation in the directive so it's not hard-coded in each usage,
+             ALSO: adjust for mobile to exclude nav bar width -->
+        <mdw-actions ng-if="!create" wrap="1420">
+          <!-- TODO: Action is only when something selected -->
+          <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskActions.html'"> 
+            <span class="glyphicon glyphicon-ok"></span> Action
+          </button>
+          <!-- 
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="setCreate(true)">
+            <span class="glyphicon glyphicon-plus"></span> New
+          </button>
+           -->        
+          <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskFilters.html'"> 
+            <span class="glyphicon glyphicon-filter"></span> Filter
+          </button>        
+          <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskSort.html'"> 
+            <span class="glyphicon glyphicon-sort"></span> Sort
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="model.taskList.downloadExcel()">
+            <span class="glyphicon glyphicon-download-alt"></span> Export
+          </button>        
+          <button type="button" class="btn btn-primary mdw-btn" mdw-route="#/dashboard/tasks">
+            <span class="glyphicon glyphicon-stats"></span> Chart
+          </button>        
+        </mdw-actions>
+      </div>
+
+      <mdw-list class="mdw-checklist" ng-if="!create" mdw-list-service="/services/Tasks" mdw-list-model="model.taskList" 
+        mdw-list-items="tasks" mdw-list-filter="model.taskFilter" mdw-list-item="tasks/taskItem.html">
+      </mdw-list>
+      <div ng-if="create" ng-include="'tasks/createTask.html'">
+      </div>
+    </div>
+  </div>
+</div>

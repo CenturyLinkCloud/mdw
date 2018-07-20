@@ -1,0 +1,238 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=25,y=300,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=126,ly=309,type=Elbow,xs=89&143,ys=320&320"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=968,y=221,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "Queue Name": "com.centurylink.mdw.external.event.queue",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "syncResponse",
+        "WORK_DISPLAY_INFO": "x=403,y=10,w=125,h=72",
+        "Wait for response?": "True"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
+      "name": "Synchronous Cloud\r\nJMS Request",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=648,ly=69,type=Elbow,xs=532&765,ys=69&69"},
+        "event": "FINISH",
+        "id": "T16",
+        "to": "A12"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "mode",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=147,y=284,w=95,h=74"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Synchronous?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=365,ly=205,type=Elbow,xs=194&424,ys=286&155"},
+          "event": "FINISH",
+          "id": "T7",
+          "resultCode": "Synchronous",
+          "to": "A6"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=314,ly=421,type=Elbow,xs=194&429,ys=357&537"},
+          "event": "FINISH",
+          "id": "T13",
+          "resultCode": "Asynchronous",
+          "to": "A9"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Expression": "platform",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=428,y=118,w=95,h=74"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Platform?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=475,ly=100,type=Elbow,xs=475&475,ys=114&86"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "Cloud",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=475,ly=193,type=Elbow,xs=475&475,ys=196&217"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "OSGi",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "JNDI Server URL": "mdw-activemq",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "Queue Name": "com.centurylink.mdw.external.event.queue",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "syncResponse",
+        "WORK_DISPLAY_INFO": "x=411,y=221,w=129,h=70",
+        "Wait for response?": "True"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
+      "name": "Synchronous OSGi\r\nJMS Request",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=654,ly=175,type=Elbow,xs=544&765,ys=256&93"},
+        "event": "FINISH",
+        "id": "T17",
+        "to": "A12"
+      }]
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "Queue Name": "com.centurylink.mdw.external.event.queue",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "syncResponse",
+        "WORK_DISPLAY_INFO": "x=413,y=385,w=125,h=72",
+        "Wait for response?": "False"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
+      "name": "Asynchronous Cloud\r\nJMS Request",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=769,ly=349,type=Elbow,xs=542&964,ys=421&241"},
+        "event": "FINISH",
+        "id": "T14",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "platform",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=433,y=500,w=95,h=74"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Platform?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=480,ly=469,type=Elbow,xs=480&480,ys=496&461"},
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "Cloud",
+          "to": "A8"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=486,ly=591,type=Elbow,xs=480&480,ys=578&598"},
+          "event": "FINISH",
+          "id": "T12",
+          "resultCode": "OSGi",
+          "to": "A10"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "JNDI Server URL": "mdw-activemq",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "Queue Name": "com.centurylink.mdw.external.event.queue",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "syncResponse",
+        "WORK_DISPLAY_INFO": "x=411,y=602,w=129,h=70",
+        "Wait for response?": "False"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.adapter.jms.JmsAdapter",
+      "name": "Asynchronous OSGi\r\nJMS Request",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=775,ly=454,type=Elbow,xs=544&964,ys=637&241"},
+        "event": "FINISH",
+        "id": "T15",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "DESCRIPTION": "For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results",
+        "Java": "/**\n * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.\n */\r\n\r\npackage com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\nimport com.centurylink.mdw.bpm.MDWStatusMessageDocument;\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class SetResponseJMSMessageId_A12 implements JavaExecutor\r\n{\r\n\r\n  public void initialize(ActivityRuntimeContext context) throws MdwJavaException\r\n  {\r\n    // TODO Auto-generated method stub\r\n  }\r\n\r\n  public Object execute(Map<String,Object> variables) throws JavaExecutionException\r\n  {\n    System.out.println(variables.get(\"syncResponse\"));\r\n    MDWStatusMessageDocument doc = (MDWStatusMessageDocument)variables.get(\"syncResponse\");\n    if (doc !=null) {\n      variables.put(\"jmsMessageId\", doc.getMDWStatusMessage().getRequestID());\n    }\n    return null;\n  }\r\n\r\n}\r\n",
+        "WORK_DISPLAY_INFO": "x=769,y=57,w=100,h=73"
+      },
+      "description": "For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results",
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Set Response\r\nJMS Message Id",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=935,ly=154,type=Elbow,xs=873&998,ys=93&217"},
+        "event": "FINISH",
+        "id": "T18",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=26,y=31,w=115,h=27"
+  },
+  "variables": {
+    "asyncResponse": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "jmsMessageId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "mode": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "platform": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "syncResponse": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    }
+  }
+}

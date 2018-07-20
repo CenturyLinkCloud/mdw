@@ -1,0 +1,36 @@
+package com.centurylink.mdw.tests.workflow
+
+// creates two instances
+start process("DocumentChange") {
+    variables = [ outcome: "change",
+                  changedDomDoc: asset("doc-changedDomDoc.xml").text,
+                  changedJson: asset("doc-changedJson.json").text,
+                  changedStringDoc: asset("doc-changedStringDoc.txt").text,
+                  changedXmlBean: asset("doc-changedXmlBean.xml").text,
+                  changedXmlBeanWrapper: asset("doc-changedXmlBeanWrapper.txt").text,
+                  unchangedDomDoc: asset("doc-unchangedDomDoc.xml").text,
+                  unchangedJson: asset("doc-unchangedJson.json").text,
+                  changedStringDoc: asset("doc-unchangedStringDoc.txt").text,
+                  unchangedXmlBean: asset("doc-unchangedXmlBean.xml").text,
+                  unchangedXmlBeanWrapper: asset("doc-unchangedXmlBeanWrapper.txt").text ]
+}
+
+sleep 15 // ensure consistent ordering in YAML
+
+start process("DocumentChange") {
+    variables = [ outcome: "nochange",
+                  changedDomDoc: asset("doc-changedDomDoc.xml").text,
+                  changedJson: asset("doc-changedJson.json").text,
+                  changedStringDoc: asset("doc-changedStringDoc.txt").text,
+                  changedXmlBean: asset("doc-changedXmlBean.xml").text,
+                  changedXmlBeanWrapper: asset("doc-changedXmlBeanWrapper.txt").text,
+                  unchangedDomDoc: asset("doc-unchangedDomDoc.xml").text,
+                  unchangedJson: asset("doc-unchangedJson.json").text,
+                  changedStringDoc: asset("doc-unchangedStringDoc.txt").text,
+                  unchangedXmlBean: asset("doc-unchangedXmlBean.xml").text,
+                  unchangedXmlBeanWrapper: asset("doc-unchangedXmlBeanWrapper.txt").text ]
+}
+
+sleep 70
+
+verify process("DocumentChange")

@@ -1,0 +1,46 @@
+process: # 13702
+  name: TaskIndexTesting
+  instance: 1
+  activity: # 1 "2016-02-23 09:39:22"
+    name: Start
+    status: Completed
+  activity: # 5 "2016-02-23 09:39:22"
+    name: |
+      Custom
+      ?
+    status: Completed
+    result: true    
+  activity: # 6 "2016-02-23 09:39:22"
+    name: |
+      Provider
+      ?
+    status: Completed
+    result: true    
+  activity: # 7 "2016-02-23 09:39:22"
+    name: Another Custom Task
+    status: Completed
+  activity: # 2 "2016-02-23 09:39:52"
+    name: Stop
+    status: Completed
+  variable: # 20797
+    name: dateVar
+    value: ${laterToday}
+  variable: # 20793
+    name: intVar
+    value: 456
+  variable: # 20798
+    name: isCustom
+    value: true
+  variable: # 20794
+    name: isIndexProvider
+    value: true
+  variable: # 20795
+    name: jaxbVar
+    value: |
+      <TaskJaxb attributeOne="attrOneValue" attributeTwo="attrTwoValue">
+          <elementOne>elementOneValue</elementOne>
+          <elementTwo>elementTwoValue</elementTwo>
+      </TaskJaxb>
+  variable: # 20796
+    name: stringVar
+    value: yetAnotherStringValue

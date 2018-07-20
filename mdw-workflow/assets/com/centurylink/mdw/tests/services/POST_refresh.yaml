@@ -1,0 +1,28 @@
+test: 'POST:refresh'
+request:
+  url: '${base-url}/WorkflowCache'
+  method: POST
+  headers:
+    Content-Type: application/json
+  body: |-
+    {
+      "distributed": true,
+      "excludeFormats": [
+        "JAVA",
+        "PROPERTIES"
+      ]
+    }
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~[0-9]*}'
+  body: |-
+    {
+      "status": {
+        "code": 0,
+        "message": "Success"
+      }
+    }

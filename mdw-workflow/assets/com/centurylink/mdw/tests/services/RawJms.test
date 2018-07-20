@@ -1,0 +1,15 @@
+package com.centurylink.mdw.tests.services
+
+send message("JMS") {
+    payload = '''\
+<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+  <Action Name="RegressionTest">
+    <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
+    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestMainProcess</Parameter>
+    <Parameter name="processCase">ServiceOrder</Parameter>
+    <Parameter name="order"><![CDATA[<Order><orderId>30/KQGS/662822//CTRL</orderId></Order>]]></Parameter>
+  </Action>
+</mdw:ActionRequest>'''
+}
+sleep 45
+verify process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess")

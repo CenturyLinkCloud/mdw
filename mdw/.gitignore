@@ -1,0 +1,12 @@
+build/
+deploy/
+.gradle/
+.settings/
+bin/
+notes/
+local.gradle
+.temp/
+temp/
+mdw.log
+/deps.txt
+/buildSrc/

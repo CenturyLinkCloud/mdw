@@ -1,0 +1,501 @@
+<html>
+<head>
+<title>Groovy Test Script Syntax</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Groovy Test Script Syntax</h1>
+
+<p>The <a href="automatedTesting.html">MDW Automated Testing</a> facility uses <a href="http://docs.groovy-lang.org//">Groovy</a>
+DSL as its scripting language.  Groovy runs on the Java platform and supports Java language semantics, so it's
+readily adopted by developers.  But in addition, MDW test case scripting offers a friendly  
+<a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> syntax that makes it easy for anyone with a 
+technical background to quickly build and run automated tests.</p>
+
+<p><span style="text-decoration:underline">Note:</span> To run Groovy test cases in Eclipse you'll need to follow this link 
+<a href="http://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/">Recommended Plug-Ins</a> to install Groovy Plug-In.  This will
+make the following examples more readable since they'll appear syntax-highlighted in the editor.</p>
+
+<h3>Sections in This Guide</h3>
+
+<ul>
+  <li><a href="#generalSemantics">General Semantics</a></li>
+  <li><a href="#launchProcess">Launch a Process</a></li>
+  <li><a href="#performTaskAction">Perform a Task Action</a></li>
+  <li><a href="#notifyWaitingProcesses">Notify Waiting Processes</a></li>
+  <li><a href="#waitForProcessCompletion">Wait for Process Completion</a></li>
+  <li><a href="#verifyProcessResults">Verify Process Results</a></li>
+  <li><a href="#stubAdapterResponse">Stub an Adapter Response</a></li>
+  <li><a href="#stubEndpointResponse">Stub an Endpoint Response</a></li>
+  <li><a href="#stubSubstitutions">Stub Substitutions</a></li>
+  <li><a href="#stubActivity">Stub Any Activity</a></li>
+  <li><a href="#serviceApiTesting">Service API Testing</a></li>
+  <li><a href="#submitHttpRequest">Submit an HTTP Request</a></li>
+  <li><a href="#sendMessage">Send a Message</a></li>
+  <li><a href="#verifyMessageResponse">Verify a Message Response</a></li>
+  <li><a href="#unitTests">Unit Tests</a></li>
+</ul>
+
+<h3><a id="generalSemantics">General Semantics</a></h3>
+<p>Groovy and Java provide their own exhaustive documentation.  For a quick understanding of basic Groovy language constructs,
+such as comments, the Groovy <a href="http://groovy-lang.org/semantics.html">Statements</a> and 
+<a href="http://groovy-lang.org/operators.html">Operators</a> reference pages are helpful.</p> 
+
+<p>STDOUT is directed to the test results execute.log file, and is also visible in Designer's Test Exec view output pane.
+Standard Groovy variable substitutions are applied to double-quoted strings, so the following lines both display the master request id for a run:</p> 
+<pre>
+println "masterRequestId: " + masterRequestId
+println "masterRequestId: ${masterRequestId}"
+</pre>
+<p>The context for variable substitutions is an instance of <a href="">GroovyTestCaseScript</a>.  By default the master request id for the test
+is auto-generated, but you can assign it yourself as well.  You can also use the standard Groovy <em>assert</em> keyword to check values
+and fail the test if some condition is not met:</p>
+<pre>
+// ensure a numeric master request id
+masterRequestId = System.currentTimeMillis();
+assert masterRequestId > 0
+</pre>
+
+<h3><a id="launchProcess">Launch a Process</a></h3>
+<p>One of the key functions of an MDW test is to run a workflow process and compare the outcome versus the expected
+result.  This concept is explained in detail in the <a href="automatedTesting.html">automated testing documentation</a>.
+The simplest way to start a process is like this:</p>
+<pre>
+start "MyProcess"
+</pre>
+<p>This kicks off the latest version of the process named <em>MyProcess</em> in any workflow package..
+To specify a particular package and process version you can use this form:</p>
+<pre>
+start "com.centurylink.mdw.mytests/MyProcess v1.2"
+</pre>
+<p>To designate a version range using <a href="InvokeSubProcessActivity.html#smartProcessVersioning">Smart Versioning</a>
+ (this example specifies a minimum version of 1.2 and a maximum version up to, but not including, 2.0):
+ <span style="font-variant:small-caps;font-size:small;">todo: smart versioning not fully implemented</span></p>
+<pre>
+start "com.centurylink.mdw.mytests/MyProcess v[1.2,2)"
+</pre>
+
+<p>Frequently when launching a process you"ll want to specify input variable values, which can be done this way:</p>
+<pre>
+start process("com.centurylink.mdw.mytests/MyProcess") {
+    // set the input variables firstName and LastName
+    variables = [firstName: "Donald", lastName: "Oakes"]
+}
+</pre>
+
+<p>For multiline strings you can use three quote characters to start and end the value:</p>
+<pre>
+start process("com.centurylink.mdw.mytests/MyProcess") {
+    variables = [employee: """&lt;Employee&gt;
+  &lt;workstationId&gt;dxoakes&lt;/workstationId&gt;
+  &lt;firstName&gt;Donald&lt;/firstName&gt;
+  &lt;lastName&gt;Oakes&lt;/lastName&gt;
+&lt;/Employee&gt;"""]
+}
+</pre>
+
+<p>Or it's frequently convenient to externalize a long string as a separate asset:</p>
+<pre>
+start process("com.centurylink.mdw.mytests/MyProcess") {
+    variables = [employee: asset("Employee.xml").text]
+}
+</pre>
+<p>By default the Employee.xml asset is loaded from the same workflow package where the test case resides,
+but this path can also be qualified with the package name ("com.centurylink.mdw.mytests/Employee.xml"). 
+
+<h3><a id="performTaskAction">Perform a Task Action</a></h3>
+<p>For processes that include manual task activities, you can trigger a task action like so:</p>
+<pre>
+action task("My Manual Task") {
+    outcome = "Claim"
+}
+</pre>
+<p>This assigns the manual task to the user executing the tests.  The <em>outcome</em> keyword indicates
+the action to be performed on the task, which can be any standard or custom <a href="taskAction.html">Task Action</a>.</p>
+<p>Completing a manual task frequently requires that input data be entered along with the action.  This can be 
+accomplished using the <em>variables</em> keyword just like initializing input variables for a process:</p>
+<pre>
+action task("My Manual Task") {
+    outcome = "Complete"
+    variables = [customer: "Donald Oakes", ackDate: new java.util.Date()]
+}
+</pre> 
+If you need to launch multiple processes with the same task name then you can specify the task instance you want to 
+target by appending [task number -1]  at the end of task name. Example:
+<pre>
+action task("My Manual Task[1]") {
+  outcome = "Claim"
+}
+</pre>
+In above example you would be Claiming a Task named "My Manual Task" in second process instance of same master request id.
+
+<h3><a id="notifyWaitingProcesses">Notify Waiting Processes</a></h3>
+<p>For test cases that need to notify waiting in-flight processes, the following syntax can be used:</p>
+<pre>
+notify event("CorrectionEvent-${masterRequestId}") {
+    message = file("CorrectionEventMessageContent.xml").text
+}
+</pre>
+<p>The event ID parameter (to correlate with the waiting process instance) can embed the following
+server-side placeholders, which will be substituted with the appropriate runtime values:
+<code>${masterRequestId}</code>, <code>${processInstanceId}</code>, <code>${activityInstanceId}</code>,
+<code>${&lt;variable_name&gt;}</code>.</p>
+<p><span style="text-decoration:underline">Note:</span> Although the syntax looks the same as the general
+variable substitution syntax, this special usage involves substitution on the server (the raw placeholders are passed
+in Designer's message to the server, and substitution happens on that side).  In this usage, only the specific expressions
+above are supported.  Unlike the general mechanism, your custom Groovy script bindings cannot be substituted.</p>   
+<p>In order for <code>${processInstanceId}</code> to be correctly substituted, you'll need to specify processName 
+for your event, and for <code>${activityInstanceId}</code> you'll also need to specify activityLogicalId:</p>
+<pre>
+notify event("CorrectionEvent-${processInstanceId}-${activityInstanceId}") {
+    message = file("CorrectionEventMessageContent.xml").text
+    processName = "com.centurylink.mdw.mytests/OrderProcess"
+    activityLogicalId = "A7"
+}
+</pre>
+<p>In order for <code>${&lt;variable_name&gt;}</code> to be correctly substituted, you'll need to load the process that has this variable 
+and read the variable value
+</p>
+<pre>
+load process("MyProcess")
+notify event("CorrectionEvent-${variable("varName")}") {
+    message = file("CorrectionEventMessageContent.xml").text
+}
+</pre>
+
+<h3><a id="waitForProcessCompletion">Wait for Process Completion</a></h3>
+<p>Before the process outcome can be compared against the expected results, the test execution
+needs to wait for the process to be completed.  The simplest form of the <span class="cmd">wait</span> command is like this:</p>
+<pre>
+wait process
+</pre>
+<p>This waits for completion of the process most recently launched through the <span class="cmd">start</span> command, using the default timeout of 60 seconds.
+If the process was launched through an event message, you'll need to specify it by name:</p>
+<pre>
+wait process("com.centurylink.mdw.mytests/MyProcess") {
+    timeout = 120
+}
+</pre>
+<p>The example above designates a timeout value to override the default of 60 seconds.  In either case,
+if the process finishes before the allotted timeout, the test case will proceed right away rather than continuing to 
+wait.  By default this waits for process "Completed" status.  You can also wait for other statuses like this:</p>
+<pre>
+wait process("com.centurylink.mdw.mytests/MyProcess") {
+    status = "Cancelled"  // valid values are Completed, Cancelled, Failed, Waiting and Hold
+    timeout = 90
+}
+</pre>
+<p>For even greater granularity you can wait for a specific activity within a process by designating its
+logical ID:</p>
+<pre>
+wait process("com.centurylink.mdw.mytests/MyProcess") {
+    activityLogicalId = "A16"
+    status = "Cancelled"  // valid values are Completed, Cancelled, Failed, Waiting and Hold
+    timeout = 90
+}
+</pre>
+<p>The <span class="cmd">sleep</span> command tells process execution to pause for a designated period.  The syntax for sleep is very simple:</p>
+<pre>
+sleep 10 // wait for ten seconds
+</pre>
+
+<h3><a id="verifyProcessResults">Verify Process Results</a></h3>
+<p>This compares the expected results file versus the actual results for a process that was
+started through either <em><a href="#launchProcess">start process</a></em> or <em><a href="#sendMessage">send message</a></em>.
+These are stored as files, in the format described in <a href="testResultsFormat.html">MDW Test Results Format</a>
+(this document also describes the Groovy expression mechanism for substituting dynamic values in expected results).
+If the comparison show differences, the test case fails with a message identifying the line number of the first delta.</p>
+<p>If a single process was launched using the <span class="cmd">start</span> command, the following simple form can be used:</p>
+<pre>
+verify process
+</pre>
+<p>Otherwise you'll need to designate which process to verify:</p>
+<pre>
+verify process("com.centurylink.mdw.mytests/MyProcess")
+</pre>
+<p>If your process launches any subprocesses, use <span class="cmd">verify processes</span>:</p>
+<pre>
+verify processes("MyProcess", "MySubprocess")
+</pre>
+<p>There's no need to include embedded subprocesses like Exception Handlers in your <span class="cmd">verify</span> command.
+These are automatically included in the actual results YAML output.</p>
+<p>If your process executes activities in parallel and they run in an unpredictable order, you may choose to sort
+activities in the results YAML by ID rather than the default sort of start time:</p>
+<pre>
+verify process {
+  resultsById = true
+}
+</pre> 
+<p>Some cases need to compare only specific values from a complex document variable instead of the entire results.
+The result document may have many subelements that are dynamic and yet are not relevant to the test's success.
+Here's an example of how to handle that scenario:</p>
+<pre>
+start process("com.centurylink.mdw.tests/MyJaxbTest")
+wait process
+load process
+
+assert masterProcessInstance.status == 'Completed'
+// test individual element values in a JAXB variable
+def jaxbVarXml = masterProcessInstance.variable['myJaxbVar']
+def jaxbVar = new XmlSlurper().parseText(jaxbVarXml)
+assert jaxbVar.RequiredElement.text() == 'requiredElementValue'
+</pre>
+<p>In this example "load process" is used instead of "verify process" (which would fail due to unrelated dynamic elements).
+Then the master process instance status is checked, along with selected values from a specific jaxb variable.</p>
+
+<h3><a id="stubAdapterResponse">Stub an Adapter Response</a></h3>
+<p>If your test process involves an adapter activity, you may want to inject a stubbed response
+to the adapter call so that the test doesn't depend on availability of an external system.
+To inject a stubbed response based on an XPath test condition, use a snippet like this:
+<pre>
+stub adapter(xpath("GetEmployee")) {
+    delay = 2
+    response = file("GetEmployeeResponse.xml").text
+}
+</pre>
+<p>This registers a stub handler to respond to any adapter whose request content is XML with a
+"GetEmployee" root node (based on <a href="xpath.html">MDW XPath</a> evaluation), and set the response
+to the contents of the file GetEmployeeResponse.xml.  You can do the same thing 
+using <a href="http://groovy-lang.org/processing-xml.html#_gpath">GPath</a>:</p>
+<pre>
+stub adapter(gpath("request.name() == 'GetEmployee'")) {
+    delay = 2
+    response = file("GetEmployeeResponse.xml").text
+}
+</pre>
+<p><span style="text-decoration:underline">Note:</span> For adapter stubbing to be applied, the
+"Use Stubbing" checkbox must be selected on the test case launch dialog.</p>
+
+<p>Multiple stub declarations can be included in a test case (before triggering any processes with the adapters you wish to
+stub).  Stubs are consulted in the order they were declared.  If no matching stub is encountered
+for an adapter, then it will be invoked according to its design attributes.</p>
+
+<p>You're not limited to simple XPath or GPath expressions for matching requests.  For example,
+the following script matches JSON requests if the top-level object name is "employee" and the employee type is "manager":</p> 
+<pre>
+// json stub for "employee" object
+def jsonMatcher = { Object request ->
+    def result = new groovy.json.JsonSlurper().parseText(request);
+    return result.employee != null &amp;&amp; result.employee.type == "manager"
+}
+
+stub adapter(jsonMatcher) {
+    delay = 2
+    response = file("employeeResponse.json").text
+}
+</pre>
+
+<h3><a id="stubEndpointResponse">Stub an Endpoint Response</a></h3>
+<p>In mdw6 there is a more flexible option for stubbing adapters.  Whereas the <code>stub adapter</code> option allows you
+to control stubbing according to the request payload, <code>stub endpoint</code> give you the ability to consider other factors
+such as the endpoint URL and HTTP method.  Instead of a string, the input into the <code>stub endpoint</code> matching closure
+is an instance of <a href="../javadoc/com/centurylink/mdw/model/event/AdapterStubRequest.html">AdapterStubRequest</a>.
+So, for example, to stub a specific REST endpoint URL, you could do something like this:
+<pre>
+stub endpoint({ request ->
+    request.method == 'POST' && request.url.endsWith("e911ServiceProfile/phoneNumber/${tn}")
+}) {
+    response = asset("sd.v1.api.samples/e911_PostResponse.json").text
+    statusCode = 202
+    statusMessage = 'Accepted'
+}
+</pre>
+
+<h3><a id="stubSubstitutions">Stub Substitutions</a></h3>
+<p>Expressions in a stubbed response are automatically processed using Groovy variable substitutions.  So, for
+example, the following stub response in EmployeeLookupResponse.xml will contain the actual master request ID at runtime:</p>
+<pre>
+&lt;EmployeeLookupResponse>
+  &lt;masterRequestId>${masterRequestId}&lt;/masterRequestId>
+  &lt;name>Donald Oakes&lt;/name>
+&lt;/EmployeeLookupResponse>
+</pre>
+
+<p>A common scenario requires including some values from the request in the response.  In that case you can make use
+of the implicit <em>request</em> variable, and assign response values using GPath expressions:</p>
+<pre>
+&lt;EmployeeLookupResponse>
+  &lt;masterRequestId>${masterRequestId}&lt;/masterRequestId>
+  &lt;workstationId>${request.userId}&lt;/workstationId>
+  &lt;name>Donald Oakes&lt;/name>
+&lt;/EmployeeLookupResponse>
+</pre>
+
+<p>In case this built-in GPath substitution mechanism does not exactly fulfill your requirements, you can define a custom
+Groovy closure to populate the stubbed response based on the raw request string.  Here we simply echo the request:</p>
+<pre>
+def responder = { Object request ->
+    return request;
+}
+stub adapter(gpath("request.name() == 'EmployeeLookup'"), responder) {
+    delay = 2
+}
+</pre>
+
+<h3><a id="stubActivity">Stub Any Activity</a></h3>
+<p>In fact you can stub any activity in your workflow.  This is particularly useful for Timer Waits, Event Waits, 
+Manual Tasks, an other long-running steps that should be short-circuited during automated testing.  The following example
+starts a process and stubs the activity named My Timer and after two seconds initiates the default outbound transition.
+It also stubs another activity with logical id = A4, sets some process variables and then transitions to myOutcome.
+Finally, it also stubs the A3 activity in MySubProcess with the default outcome.</p>
+<pre>
+start process("com.centurylink.mdw.tests/MyProcess") {
+    activityStubs = [
+        activity("My Timer") {
+            sleep = 2     // wait two seconds instead of configured time 
+            return null // default transition
+        },
+        activity("A4") { // logical id for some other activity
+            variables = [updatedString: "updated", updatedDoc: "&lt;updated/>"]
+            return 'myOutcome'  // non-null result code controls outbound flow
+        },
+        activity("MySubProcess:A3") { // subproc logical id
+            // no need to return null for default transition
+            // NOTE: this only works when variables/sleep not specified
+        }]
+}        
+</pre>
+<p><span style="text-decoration:underline">Note:</span> Activity stubbing requires MDW workflow package
+com.centurylink.mdw.testing to be imported into the environment where the test cases are run.  For adapter
+activities, it's still usually better to use <a href="#stubAdapterResponse">Adapter Stubbing</a> since this
+actually populates the request and response documents.</p>
+
+<p>Sometimes its useful to stub all timer waits in a test case.  For that, you can implement a custom closure
+to be executed which determines whether each activity is stubbed.  Here's an example that automatically stubs
+every TimeWaitActivity instance.</p>
+<pre>
+def timerStubMatcher = { Object runtimeContext -> // instance of ActivityRuntimeContext
+    return "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity"
+        .equals(runtimeContext.getActivity().getImplementorClassName());
+}
+
+start process("com.centurylink.mdw.tests/TestActivityStub") {
+    variables = [flowPath: "all timers"]
+    activityStubs = [
+        activity(timerStubMatcher) { // logical id for timer activity
+            return null // default transition
+        }]
+}
+</pre>
+
+<h3><a id="serviceApiTesting">Service API Testing</a></h3>
+<p>
+Service API tests start with request template assets that are most easily created in
+<a href="https://www.getpostman.com">Postman</a>.  Export your Postman test collection
+to an asset with extension '.postman'.  You can then execute the Postman tests directory,
+or you can use them in a Groovy test.
+</p>
+<p>In the following example <em>admin-apis.postman</em> is the asset, <em>GET</em>
+is the HTTP method, and <em>workgroups/{group-name}</em> is the Postman test:</p>
+<pre>
+def res = submit request('admin-apis.postman/GET:workgroups/{group-name}') {
+  values = ['group-name': 'GroupA']
+}
+assert res.time &lt; 1000 // less than a second
+assert res.status.code == 200
+assert res.headers['content-type'] == 'application/json'
+def workgroup = new JsonSlurper().parseText(res.body)
+assert workgroup.name == 'GroupA'
+</pre> 
+<p>The response for each <code>submit</code> in a test case is appended to the yaml results file,
+so multiple tests can be chained together, and their output compared.  Process verification
+outcomes can also be included, so that the overall results for service orchestration workflows
+can be verified</p> 
+
+<h3><a id="submitHttpRequest">Submit an HTTP Request</a></h3>
+<p><strong>NOTE:</strong> The <a href="#serviceApiTesting">Service API Testing</a> section
+above describes a better to perform this testing that supports declarative results expectations.
+Sometimes it can be useful to submit a raw HTTP request to an MDW service or other endpoint.
+An example usage is to invoke a REST resource request to verify some test case outcome.</p>
+<pre>
+def resp = get http("Services/Tasks/" + task.getId() + "/indexes?format=json")
+</pre>
+<p>This submits an HTTP GET request and captures the response in a TestCaseResponse object named 'resp'.
+The response contents can them be accessed to compare with what's expected:</p>
+<pre>
+def indexes = new groovy.json.JsonSlurper().parseText(resp.getContent())
+assert indexes.dateIndex == today.toString()
+</pre>
+<p>The parameter to the get() method can be a full HTTP URL, or a path relative to the 
+MDW services endpoint URL.
+</p>
+<p>
+Similarly, an HTTP POST request can be submitted:
+</p>
+<pre>
+def resp = post http("Services/MyUpdateService") {
+    payload = asset('com.centurylink.mytests/my-request.yaml').text
+}
+</pre>
+<p>
+The HTTP PUT and DELETE methods are also supported using the same syntax.
+You can verify the response vs. an asset (with expression substitutions) this way:
+</p>
+<pre>
+assert response.code == 200
+verify response {
+  expected = asset("my-json-asset.json").text
+}
+</pre>
+
+<h3><a id="sendMessage">Send a Message</a></h3>
+<p>Another way to trigger your workflow is to send an event message:</p>
+<pre>
+send asset("GetEmployeeRequest.xml").text
+</pre>
+<p>This sends a message to MDW with the contents of the specified file over the default REST protocol.
+To send a message using another supported protocol use a form like this:</p>
+<pre>
+send message("SOAP") {
+    payload = '''\
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;EmployeeLookupRequest&gt;
+         &lt;workstationId&gt;dxoakes&lt;workstationId&gt;
+      &lt;/EmployeeLookupRequest&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;'''
+}
+println "Message Sent..."
+</pre>
+<p>The <em>payload</em> keyword indicates the contents to send to MDW.
+(Naturally, the SOAP protocol requires that the payload include a SOAP envelope element).
+In either form, the raw message contents can contain dynamic values in the form
+${myRequestPlaceholder}.  Standard Groovy expression evaluation is performed for these values.
+The evaluation context is the same as described in 
+<a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
+
+<h3><a id="verifyMessageResponse">Verify Message Response</a></h3>
+<p>When a test case involves a <em><a href="#sendMessage">send message</a></em> step to a service process,
+frequently success needs to be evaluated according to the contents of the response:</p>
+<pre>
+verify response {
+    expected = '''\
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;EmployeeLookupResponse&gt;
+         &lt;workstationId&gt;dxoakes&lt;workstationId&gt;
+         &lt;sapId&gt;DHO115360&lt;sapId&gt;
+         &lt;firstName&gt;dxoakes&lt;firstName&gt;
+         &lt;lastName&gt;dxoakes&lt;lastName&gt;
+      &lt;/EmployeeLookupResponse&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;'''
+}
+</pre>
+<p>Usually it's handy to keep the expected response in a separate asset:</p>
+<pre>
+verify response {
+    expected = asset("EmployeeLookupResponse.xml").text
+}
+</pre>
+<p>An easy way to initially populate the expected response is to run the test case once and copy/paste
+the actual response from the Text Exec view console window.  In your expected response content you can 
+embed dynamic expressions as described in <a href="testResultsFormat.html#dynamicValues">MDW Test Results Format</a>.</p>
+
+<h3><a id="unitTests">Unit Tests</a></h3>
+<p>TODO: describe unit tests with examples</p>
+</body>
+</html>

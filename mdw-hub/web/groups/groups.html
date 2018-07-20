@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label" ng-if="create">New Workgroup</div>
+        <div class="mdw-heading-label" ng-if="!create">Workgroups <span class="mdw-heading-sub">({{getGroupList().workgroups.length}})</span></div>
+        <div class="mdw-heading-actions" ng-if="!create && authUser.hasRole('User Admin')">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="setCreate(true)">
+            <span class="glyphicon glyphicon-plus"></span> New
+          </button>        
+        </div>
+      </div>
+      <ul class="mdw-list" ng-if="!create">
+        <li ng-repeat="workgroup in getGroupList().workgroups">
+          <div>
+            <a class="mdw-item-link" href="#/groups/{{workgroup.name}}">{{workgroup.name}}</a>
+          </div>
+          <div class="mdw-item-sub">{{workgroup.description}}</div>
+        </li>
+      </ul>
+      <div ng-if="create" ng-include="'groups/groupForm.html'">
+      </div>
+    </div>
+  </div>
+</div>

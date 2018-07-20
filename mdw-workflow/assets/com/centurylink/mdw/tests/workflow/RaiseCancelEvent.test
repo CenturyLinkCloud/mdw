@@ -1,0 +1,7 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("MDWTestMainProcess") {
+    variables = [processCase: "AbortEvent"]
+}
+wait process
+verify process

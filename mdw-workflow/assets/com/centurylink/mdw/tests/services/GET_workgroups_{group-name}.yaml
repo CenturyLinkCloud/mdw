@@ -1,0 +1,21 @@
+test: 'GET:workgroups/{group-name}'
+request:
+  url: '${base-url}/Workgroups/${group-name}'
+  method: GET
+  headers:
+    header-a: header-a-value
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "attributes": {
+        "Slack Channel(s)": ""
+      },
+      "description": "${~.*}",
+      "name": "${group-name}",
+      "users": []
+    }

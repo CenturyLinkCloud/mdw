@@ -1,0 +1,64 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=121,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=193,ly=118,type=Elbow,xs=136&234,ys=141&141"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=487,y=120,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "REQUEST_VARIABLE": "requestDoc",
+        "RESPONSE_VARIABLE": "responseDoc",
+        "WORK_DISPLAY_INFO": "x=238,y=112,w=118,h=71",
+        "WSDL": "#{props['mdw.services.url']}/SOAP/Employee.wsdl",
+        "max_tries": "3",
+        "retry_interval": "30"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter",
+      "name": "Invoke\r\nEmployee Service",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=422,ly=140,type=Elbow,xs=360&483,ys=140&140"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=30,y=29,w=200,h=27"
+  },
+  "variables": {
+    "requestDoc": {
+      "category": "INPUT",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "responseDoc": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    }
+  }
+}

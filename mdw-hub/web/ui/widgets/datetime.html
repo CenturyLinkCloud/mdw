@@ -1,0 +1,12 @@
+<input type="number" ng-disabled="widget.readonly" 
+  ng-model="widget.value" ng-change="valueChanged(widget)" style="width:50px;">
+<label>
+  <input type="radio" ng-model="widget.units" value="Hours" 
+    ng-disabled="widget.readonly" ng-change="valueChanged(widget)">
+  Hours
+</label>
+<label>
+  <input type="radio" ng-model="widget.units" value="Days" 
+    ng-disabled="widget.readonly" ng-change="valueChanged(widget)">
+  Days
+</label>

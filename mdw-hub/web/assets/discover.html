@@ -1,0 +1,61 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default">
+      <div class="panel-heading mdw-heading">Discover Asset Packages</div>
+      <form name="discoveryForm" class="form-horizontal" role="form">
+      <div class="form-group mdw-static-group" style="padding:15px 0 0 35px">
+          <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="distributed" ng-change='clear()'>Distributed Discovery</label>
+          <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="central" ng-change='clear()'>Central Discovery</label> 
+       </div>
+        <div class="form-group mdw-static-group" style="padding:15px 15px 0 0">
+          <label class="control-label col-xs-2"  ng-if="discoveryType === 'distributed'">Discovery URL:</label>
+          <label class="control-label col-xs-2"  ng-if="discoveryType === 'central'">Group Id:</label>
+          <div class="col-md-8" ng-if="discoveryType === 'distributed'">
+            <input class="form-control col-md-6" type="text" ng-model="discoveryUrl" required>
+          </div>
+          <div class="col-md-8" ng-if="discoveryType === 'central'">
+            <input class="form-control col-md-6" type="text" ng-model="groupId" required>
+          </div>
+            <button class="btn btn-primary mdw-btn" type="submit" ng-click="discover()" 
+              ng-disabled="!authUser.hasRole('Process Design') || !discoveryUrl">
+              <span class="glyphicon glyphicon-search"></span> Discover
+            </button>
+        </div>
+      </form>
+      <div class="panel panel-default mdw-panel mdw-panel-embedded">
+        <div class="panel-heading mdw-heading">
+          <div class="mdw-heading-checklist">
+            <input type="checkbox" ng-model="discoveredPkgList.selectedState.all" ng-change="discoveredPkgList.toggleAll()" 
+              ng-if="discoveredPkgList && discoveredPkgList.packages && discoveredPkgList.packages.length > 0"></input>
+            Discovered Packages
+          </div>
+        </div>
+        <ul class="mdw-checklist">
+          <li ng-repeat="discoveredPkg in discoveredPkgList.packages | orderBy : 'name' " ng-if="discoveredPkg.vcsDiff != 'MISSING'">
+            <div style="float:left;">
+              <input type="checkbox" ng-model="discoveredPkg.selected" ng-change="discoveredPkgList.notAllSelected()"></input>
+            </div>
+            <div class="mdw-item">
+              <span class="glyphicon glyphicon-folder-open mdw-item-icon"></span>{{discoveredPkg.name}} v{{discoveredPkg.version}}</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <form name="importForm" class="form-horizontal mdw-section" role="form">
+        <fieldset ng-disabled="fileImportUploading">
+          <div class="mdw-form-footer">
+            <div class="mdw-message mdw-form-message">{{discoveryMessage}}</div>
+            <div class="mdw-buttons">
+              <button class="btn btn-success mdw-btn" ng-click="importDiscovered()" 
+                ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot || !discoveredPkgList || !discoveredPkgList.packages || discoveredPkgList.packages.length == 0 || discoveredPkgList.getSelected().length == 0">
+                <span class="glyphicon glyphicon-import"></span> Import
+              </button>
+              <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>                 
+            </div>
+          </div>
+        </fieldset>              
+      </form>
+    </div>
+  </div>
+</div>

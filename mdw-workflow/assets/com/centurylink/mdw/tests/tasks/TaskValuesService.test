@@ -1,0 +1,131 @@
+package com.centurylink.mdw.tests.tasks
+
+import org.json.JSONObject
+
+def getJson(Map<String,String> map) {
+    if (map == null)
+        return null;
+    JSONObject jsonObj = new JSONObject();
+    for (String key : map.keySet()) {
+        String value = map.get(key);
+        if (value != null)
+            jsonObj.put(key, value);
+    }
+    return jsonObj;
+}
+
+// task-values-service
+start process("ManualTaskServices") {
+    variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 14:36:00"),
+                  stringVar: "Hello",
+                  docVar: "<full>\n  <document content='xml'/>\n</full>",
+                  jaxbVar: '''<TaskJaxb
+  attributeOne="attrOneValue"
+  attributeTwo="requiredAttributeValue">
+  <elementOne>elementOneValue</elementOne>
+  <elementTwo>elementTwoValue</elementTwo>
+</TaskJaxb>''',
+                 jsonVar: '''{
+  "objOne": {
+    "obj1string": "obj1stringval",
+    "obj1int": 12345,
+    "obj1bool": true,
+    "obj1Date": "Thu Sep 01 13:52:01 MDT 2016"
+  },
+  "stringProp": "stringProp",
+  "intProp": 67890,
+  "objTwo": { "obj2string": "obj2stringval"}
+}''' ]
+}
+
+sleep 20
+def taskInst = action task("AutoForm Task for Service Access") {
+    outcome = "Claim"
+}
+
+// assign to mdwapp so that this case succeeds locally
+// when executed by another user
+response = post http("services/Tasks/${taskInst.id}/Assign") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '''{
+      "taskAction" : "Assign",
+      "user": "mdwapp",
+      "assignee": "mdwapp",
+      "taskInstanceId": ''' + taskInst.id + '\n}'
+}
+
+// check the values through the REST API
+println "Checking values for task instance: ${taskInst.id} ..."
+def response = get http("services/Tasks/${taskInst.id}/values")
+assert response.code == 200
+response.expected = asset("task-values-json-1.json").text
+//assert verify(response).success
+
+// update some values through the REST API
+def values = [:]
+values["dateVar"] = "Fri Apr 01 15:36:00 MDT 2016"
+values["#{jaxbVar.elementOne}"] = "newElementOneValue"
+values["#{objectVar.taskmaster}"] = "dxoakes"
+values["docVar"] = "<empty/>"
+values["unassignedVar"] = "now assigned"
+def json = getJson(values);
+println "PUT request JSON:\n" + json.toString(2) + "\n"
+response = put http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = json
+}
+assert response.code == 200
+
+// check the values through the REST API
+response = get http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+}
+assert response.code == 200
+response.expected = asset("task-values-json-2.json").text
+assert verify(response).success
+
+// try to set a read-only var (nothing should update)
+values = [:]
+values["dateVar"] = "Fri Apr 01 16:36:00 MDT 2016"
+values["stringVar"] = "do not update"
+response = put http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = getJson(values)
+}
+// TODO fix HttpHelper.put() to capture response for errored requests
+//def statusMsg = new groovy.json.JsonSlurper().parseText(response.content)
+//assert statusMsg.code == 400
+//assert statusMsg.status.message == "Read-only value: stringVar"
+
+// nothing should have changed
+response = get http("services/Tasks/${taskInst.id}/values")
+assert response.code == 200
+response.expected = asset("task-values-json-2.json").text
+assert verify(response).success
+
+// complete the task through REST
+response = post http("services/Tasks/${taskInst.id}/Complete") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '''{
+      "taskAction" : "Complete",
+      "user": "mdwapp",
+      "taskInstanceId": ''' + taskInst.id + '\n}'
+}
+assert response.code == 200
+assert new groovy.json.JsonSlurper().parseText(response.content).status.code == 0
+
+verify process
+
+// check values again
+response = get http("services/Tasks/${taskInst.id}/values") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+}
+assert response.code == 200
+response.expected = asset("task-values-json-3.json").text
+verify response

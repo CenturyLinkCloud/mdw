@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Task Routing</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Task Routing</h1>
+<a name="workgroupRouting"><h2>Workgroup Routing</h2></a>
+MDW users can belong to one or more Workgroups (sometimes referred to simply as Groups or User Groups) for the purpose of queueing or &quot;bucketizing&quot; Manual Task instances.
+ 
+<br/><br/>
+Task instances can be dynamically routed to appropriate workgroups based on based on runtime criteria such as Due Date and Priority.
+The starting point for this routing is the task/workgroup relationships specified in the task definition (or Task Template).
+By default task instances are associated with the group(s) spelled out in the template.
+However, this default behavior can be overridden by specifying a Task Routing Strategy on the Workgroups property tab for a task activity in Designer:
+<br/>
+<img src="images/taskRouting.jpg" />
+<br/><br/>
+Strategies are provided in the form of Java classes that implement the <b>RoutingStrategy</b> interface.
+One routing strategy implementation is provided as a built-in with MDW:
+<ul>
+  <li>Rules-Based:<br/>Determines routing based on a configured rules definition <a href="assets.html">asset</a> (either a Drools DRL document or an Excel decision table).<br/></li> 
+</ul>
+To select a pre-built routing strategy, use the dropdown on the Manual Task activity Workgroups tab (see screenshot above).
+For a completely custom strategy, simply type your fully-qualified implementor class name in the same combo box.
+However, a high degree of customization can be achieved through the prebuilt rules-based strategy.
+<br/><br/>
+The task <a href="taskSLA.html">Due Date and Priority</a> values are available as inputs to your rules-based or custom strategy.
+Task template attributes and indexed process variable values are also available as inputs (through the getParameters() method).
+<a name="assignment"><h2>Assignment</h2></a>
+After workgroup routing, the next stage in the manual task lifecycle is usually <i>assignment</i>, whereby a task instance is assigned to a particular individual for completion (see flow diagram below).
+The Task Manager webapp provides a user interface for users to manually assign or claim tasks individually or in bulk.
+However, the assignment step can be automated as well by specifying an Auto-Assign Strategy (see Designer screenshot above).
+As with routing, the strategy implementor for auto-assign can be a custom Java class, or one of the MDW built-in options:
+<ul>
+  <li style="margin-top:15px;">Round Robin:<br/>Cycles through each member of the workgroup(s), assigning to the next user in alphabetical order.<br/></li> 
+  <li>Shortest Queue:<br/>Assigns to the person in the workgroup(s) who presently has the lowest number of open tasks in progress.<br/></li> 
+  <li>Process Variable:<br/>Consults a process variable value to determine the assignee.<br/></li> 
+</ul>
+<br/><br/>
+<img src="images/taskRoutingFlow.jpg" />
+<br/><br/>
+</body>
+</html>

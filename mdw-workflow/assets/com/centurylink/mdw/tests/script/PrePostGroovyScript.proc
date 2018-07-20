@@ -1,0 +1,172 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=33,y=102,w=67,h=38"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=146,ly=121,type=Elbow,xs=104&175,ys=121&121"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=674,y=100,w=60,h=40"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Finish"
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.myservicemix",
+        "Rule": "import org.w3c.dom.Node;\r\n\r\nNode orderNumNode   =   orderDoc.getFirstChild().getFirstChild().getNextSibling();\r\nprintln(\"orderNum Node: \"+orderNumNode);\r\norderNumber         =   orderNumNode.getFirstChild().getNodeValue();\r\nprintln(\"orderNumber: \"+orderNumber);\r\nvalidationResult    =   orderNumNode.getLocalName().equals(\"orderNumber\") && !Character.isDigit(orderNumber.charAt(0));\r\ncustomerId          =   orderNumNode.getNextSibling().getNextSibling().getFirstChild().getNodeValue();\r\nreturn validationResult;\r\n",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=179,y=93,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Perform Validation",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=298,ly=103,type=Elbow,xs=283&341,ys=123&123"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "true",
+          "to": "A8"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=237,ly=163,type=Elbow,xs=233&233,ys=157&197"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "false",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=203,y=201,w=60,h=40"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "OsgiBundleSymbolicName": "com.centurylink.mdw.workflow",
+        "PostScript": "import org.w3c.dom.Node;\r\nimport org.w3c.dom.NodeList;\r\n\r\nString firstName    =   null;\r\nString lastName     =   null;\r\n\r\nprintln(\"employeeServiceResponse: \"+employeeServiceResponse);\r\nNodeList nodes  =   employeeServiceResponse.getFirstChild().getChildNodes();\r\nfor(int i=0;i<nodes.getLength();i++)\r\n{\r\n    Node node   =   nodes.item(i);\r\n    println(\"Node Local Name: \"+node.getLocalName());\r\n    if(node.getLocalName()!=null) {\r\n     if(\"firstName\".equals(node.getLocalName()))\r\n     {\r\n      firstName=node.getFirstChild().getNodeValue();\r\n     }else if(\"lastName\".equals(node.getLocalName()))\r\n     {\r\n         lastName=node.getFirstChild().getNodeValue();\r\n     }\r\n    }\r\n} \r\nif(firstName!=null && lastName!=null)\r\n{\r\n  println(\"Found Employee: \" + firstName + \" \" + lastName);\r\n  discountPercent =   10;\r\n  return true;\r\n} else\r\n{\r\n  println(\"Employee Not Found \" + customerId);\r\n  discountPercent =   0;\r\n  return false;\r\n}\r\nprintln(\"Found Employee: \" + firstName + \" \" + lastName);\r\nreturn true;",
+        "PostScriptLang": "Groovy",
+        "PreScript": "return '''<GetEmployee><sapId>'''+customerId+'''<\/sapId><\/GetEmployee>''';",
+        "PreScriptLang": "Groovy",
+        "REQUEST_VARIABLE": "employeeServiceRequest",
+        "RESPONSE_VARIABLE": "employeeServiceResponse",
+        "WORK_DISPLAY_INFO": "x=345,y=93,w=100,h=60",
+        "WSDL": "#{props['mdw.services.url']}/SOAP"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter",
+      "name": "Check Employee",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=409,ly=161,type=Elbow,xs=402&402,ys=157&195"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A9"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=456,ly=105,type=Elbow,xs=449&508,ys=123&123"},
+          "event": "FINISH",
+          "id": "T7",
+          "resultCode": "true",
+          "to": "A14"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=372,y=199,w=60,h=40"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Finish"
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.myservicemix",
+        "Rule": "arg0=2;\r\narg1=3;",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=512,y=93,w=100,h=60"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set Variables",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=643,ly=120,type=Elbow,xs=616&670,ys=120&120"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A6"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=25,y=32,w=189,h=27"
+  },
+  "variables": {
+    "arg0": {
+      "category": "STATIC",
+      "type": "java.lang.Integer"
+    },
+    "arg1": {
+      "category": "STATIC",
+      "type": "java.lang.Integer"
+    },
+    "customerId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "discountPercent": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    },
+    "employeeServiceRequest": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "employeeServiceResponse": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "orderDoc": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "orderNumber": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "return": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    },
+    "validationResult": {
+      "category": "LOCAL",
+      "type": "java.lang.Boolean"
+    },
+    "webserviceRequestVariable": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    }
+  }
+}

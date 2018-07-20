@@ -1,0 +1,10 @@
+{
+  "attributes": {
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "COM",
+  "logicalId": "falloutTestTask",
+  "name": "Fallout Test Task",
+  "version": "0"
+}

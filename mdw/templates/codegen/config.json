@@ -1,0 +1,7 @@
+{
+  "autogenComment": false,
+  "validateRequest": true,
+  "useBeanValidation": true,
+  "trimApiPaths": true,
+  "sourceFolder": "."
+}

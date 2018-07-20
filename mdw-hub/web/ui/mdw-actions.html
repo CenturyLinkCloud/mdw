@@ -1,0 +1,22 @@
+<!-- transcluded content for mdw-actions buttons -->
+<style scoped>
+.mdw-actions-wrap-transclude {
+  float: right;
+  margin-left: 10px;
+}
+.mdw-actions-wrap-transclude > a {
+  font-size: 13px;
+  padding: 4px 6px;
+}
+@media (max-width: {{wrapWidth}}) {
+  .mdw-actions-wrap-transclude {
+    clear: both;
+    float: left;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}
+</style>
+<div class="mdw-actions-wrap-transclude">
+  <div ng-transclude></div>
+</div>

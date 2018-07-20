@@ -1,0 +1,24 @@
+.mdw-task-process {
+  float: left;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 15px 10px 5px 20px;
+}
+.mdw-task-template {
+  float: right;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 15px 35px 5px 10px;
+}
+.mdw-task-workflow {
+  height: calc(100vh - 250px);
+  overflow: auto;
+  border: 1px solid #757575;
+  border-radius: 4px;
+  box-shadow: 4px 4px 16px #757575;
+  margin: 20px;
+  clear: both;
+}
+.rbt-body-container .dropdown-menu > li > a:hover {
+	background-color: #bbdefb;
+}

@@ -1,0 +1,29 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=40,y=40,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=220,ly=60,xs=104&336,ys=60&60"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=340,y=40,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "EMBEDDED_PROCESS_TYPE": "Cancelation Handler",
+    "PROCESS_VISIBILITY": "EMBEDDED",
+    "WORK_DISPLAY_INFO": "x=0,y=0,w=440,h=120"
+  },
+  "id": "P1",
+  "name": "Cancelation Handler"
+}

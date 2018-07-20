@@ -1,0 +1,118 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=295,y=71,w=60,h=40"},
+      "id": "A97",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=173,ly=74,type=Elbow,xs=291&126&126,ys=91&91&184"},
+          "event": "FINISH",
+          "id": "T73",
+          "to": "A95"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=312,ly=151,type=Elbow,xs=309&309,ys=115&191"},
+          "event": "FINISH",
+          "id": "T74",
+          "to": "A100"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=369,ly=164,type=Elbow,xs=325&437,ys=115&210"},
+          "event": "FINISH",
+          "id": "T78",
+          "to": "A101"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "Synced Activities": "Explicit Return Val#No Return Val#No Return Val\r\n(with SubProc)",
+        "WORK_DISPLAY_INFO": "x=339,y=387,w=100,h=60"
+      },
+      "id": "A99",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=369,ly=461,type=Elbow,xs=367&367,ys=451&475"},
+        "event": "FINISH",
+        "id": "T76",
+        "to": "A98"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "x = \"myString\";",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=223,y=195,w=100,h=60"
+      },
+      "id": "A100",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "No Return Val",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=262,ly=329,type=Elbow,xs=253&253&335,ys=259&394&394"},
+        "event": "FINISH",
+        "id": "T75",
+        "to": "A99"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "return \"x\";",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=82,y=188,w=100,h=60"
+      },
+      "id": "A95",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Explicit Return Val",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=209,ly=396,type=Elbow,xs=136&136&136&335,ys=252&252&405&405"},
+        "event": "FINISH",
+        "id": "T77",
+        "resultCode": "x",
+        "to": "A99"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=336,y=479,w=60,h=40"
+      },
+      "id": "A98",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "\r\nx = myFunc();\r\n\r\ndef myFunc() {\r\n return \"y\";\r\n}",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=385,y=214,w=105,h=70"
+      },
+      "id": "A101",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "No Return Val\r\n(with SubProc)",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=419,ly=319,type=Elbow,xs=392&392&392,ys=288&394&394"},
+        "event": "FINISH",
+        "id": "T79",
+        "to": "A99"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "START_TRANSITION_ID": "2322854",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=44,y=20,w=166,h=27"
+  },
+  "variables": {"returnVal": {
+    "category": "LOCAL",
+    "type": "java.lang.String"
+  }}
+}

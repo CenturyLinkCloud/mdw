@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>Notification Activities</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Notifications</h1>
+<h2>Notification Impls</h2>
+<table>
+  <tr>
+    <th>Type</th>
+    <th>Workflow Activity</th>
+    <th>Task Notifier</th>
+  </tr>
+  <tr>
+    <td>SMTP</td>
+    <td>Email Notification</td>
+    <td>com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier</td>
+  </tr>
+  <tr>
+    <td>SendGrid</td>
+    <td>SendGrid Email (in asset package com.centurylink.mdw.sendgrid)</td>
+    <td>com.centurylink.mdw.sendgrid.TaskNotifier</td>
+  </tr>
+  <tr>
+    <td>Slack</td>
+    <td>Slack Notify (in asset package com.centurylink.mdw.slack)</td>
+    <td>com.centurylink.mdw.slack.TaskNotifier</td>
+  </tr>
+</table>
+
+<h2>Workflow Email Notices</h2>
+An email notification activity is used in a process definition at locations where you want to send an email to interested parties.
+<br/>
+<h2>Task Email Notices</h2>
+For a discussion of how to configure notifications based on task instance lifecycle events, see the topic <a href="taskNotices.html">Task Notices</a>.
+<br/>
+
+<h3>Email Templates</h3>
+Email templates are parameterized HTML <a href="assets.html">assets</a>.
+that govern the format of your email notices.
+The parameterized values in a template are embedded using MDW <a href="bindingExpressions.html">binding expressions</a> syntax.
+Using these parameters you can insert appropriate values, such as an Order Number, into both the email body and the subject.
+
+<h3>Examples</h3>
+A pre-built sample template comes with the MDW Base asset package:<br/>
+<a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/emailTemplate.html">
+https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/emailTemplate.html
+</a>
+
+<h3>Images</h3>
+You may also insert image attachments into your e-mail body by specifying the file name as follows: &lt;img src="${image:ctl.png}"/&gt;.
+This syntax is identical regardless of the template format.
+The image file referenced can come from the database in the form of a workflow asset, or from the file system via the application classpath.
+For images stored as workflow assets, the resource name should include a logical file extension (such as .gif, .png or .jpeg) to enable the notifier to infer a MIME type for the image.
+The advantage of inserting images as attachments is that this avoids the problem of e-mail clients which for security reasons refuse to display images referenced via external URLs. 
+
+<h3>Recipients</h3>
+Notification recipients are configured on the "Recipients" tab in Designer.  They can be designated by selecting MDW workgroups, by specifying 
+an expression that resolves to recipient(s), or a combination of both.  If an expression is specified, it should resolve to a string or
+a List of strings.  These string value(s) must be valid MDW usernames, e-mail addresses, or Workgroup names.
+
+<h3>Attachments</h3>
+MDW provides the ability to upload attachments through MDWHub.  These attachments can be files in any arbitrary format, and they
+can be associated with either individual task instances or at the Master Request ID level.  Either type of attachment can be configured
+to accompany Notifications.  To designate which files should be attached to a notification, enter a filename pattern such as *.doc on the Design tab.
+Multiple attachment patterns can be specified by delimiting with the tilde character (~).  
+
+<br/><br/><br/>
+If you require customized behavior, you can extend EmailNotificationActivity and populate your own dynamic values for your template.
+<br/><br/>
+
+<h2>Slack Notifications</h2>
+Import asset package com.centurylink.mdw.slack, and use the Slack Notify activity in your workflow.
+TODO: <a href="https://github.com/CenturyLinkCloud/mdw/issues/270">https://github.com/CenturyLinkCloud/mdw/issues/270</a>.
+</body>
+</html>

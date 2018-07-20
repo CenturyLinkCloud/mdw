@@ -1,0 +1,60 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=49,y=112,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=169,ly=91,type=Elbow,xs=113&222,ys=132&132"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=469,y=112,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DO_LOGGING": "True",
+        "EndpointUri": "http://purposely_bogus:10001/MDWHub/Services/REST",
+        "HttpMethod": "POST",
+        "REQUEST_VARIABLE": "request",
+        "RESPONSE_VARIABLE": "response",
+        "WORK_DISPLAY_INFO": "x=226,y=107,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "GetEmployee",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=397,ly=132,type=Elbow,xs=330&465,ys=132&132"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=26,y=26,w=151,h=27"
+  },
+  "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "response": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "rules": {
+    "semi": "error",
+    "react/prop-types": 0,
+    "react/no-string-refs": 0
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "$mdwUi": false,
+    "$mdwHubRoot": false,
+    "$mdwServicesRoot": false,
+    "$mdwWebSocketUrl": false,
+    "$mdwMessages": true,
+    "require": false,
+    "location": true,
+    "Int8Array": false
+  }
+}

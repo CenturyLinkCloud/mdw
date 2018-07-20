@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+    "Notices": "$DefaultNotices"
+  },
+  "category": "COM",
+  "logicalId": "MDWTestEventWaitTimeout:A7",
+  "name": "Event Wait Fallout",
+  "version": "0.1"
+}

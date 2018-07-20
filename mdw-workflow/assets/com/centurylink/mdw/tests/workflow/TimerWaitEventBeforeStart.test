@@ -1,0 +1,14 @@
+package com.centurylink.mdw.tests.workflow
+
+masterRequestId = System.currentTimeMillis();
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+sleep 30
+start process("MDWTestEmbedded") {
+    variables = [testCase: "correct-resume-on-hold"]
+}
+wait process {
+    timeout = 300
+}
+verify process

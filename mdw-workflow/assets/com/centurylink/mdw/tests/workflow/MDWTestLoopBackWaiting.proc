@@ -1,0 +1,90 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=144,y=76,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=199,ly=185,type=Straight,xs=174&226,ys=116&259"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "RETURN_CODE": "comp",
+        "Rule": "return \"BACK\"",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=498,y=281,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Loop Back",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=382,ly=328,type=Curve,xs=494&350&280,ys=292&331&323"},
+        "event": "FINISH",
+        "id": "T7",
+        "resultCode": "BACK",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=146,y=431,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "N = N + 1;\nif (N==3) {\n    comp = \"TEMP\";\n} else if (N>5) {\n    comp = \"DONE\";\n} else {\n    comp = \"RETRY\";\n}",
+        "RETURN_CODE": "comp",
+        "Rule": "n++\nif (n == 3)\n    return \"TEMP\"\nelse if (n > 5)\n    return \"DONE\"\nelse\n    return \"BACK\"",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=176,y=259,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Loop Control",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=201,ly=375,type=Straight,xs=226&176,ys=319&431"},
+          "event": "FINISH",
+          "id": "T4",
+          "resultCode": "DONE",
+          "to": "A1"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "1",
+            "TRANSITION_DISPLAY_INFO": "lx=242,ly=149,type=Curve,xs=226&247,ys=289&176",
+            "TRANSITION_RETRY_COUNT": "3"
+          },
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "BACK",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=374,ly=205,type=Curve,xs=280&365&494,ys=255&230&277"},
+          "event": "FINISH",
+          "id": "T6",
+          "resultCode": "TEMP",
+          "to": "A3"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "ERROR_PROCESS_ID": "262002",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2325804",
+    "WORK_DISPLAY_INFO": "x=27,y=26,w=239,h=27"
+  },
+  "variables": {"n": {
+    "category": "INPUT",
+    "type": "java.lang.Integer"
+  }}
+}

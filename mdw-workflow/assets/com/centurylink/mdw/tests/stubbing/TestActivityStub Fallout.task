@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+    "Variables": "scriptActivityExecuted,scriptActivityExecuted,Not Displayed,0,,java.lang.Boolean"
+  },
+  "category": "COM",
+  "logicalId": "TestActivityStub:A7",
+  "name": "TestActivityStub Fallout",
+  "version": "0.1"
+}

@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.ScriptActivity",
+  "icon": "script.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+  "label": "Execute Script",
+  "pagelet": "<PAGELET>\n  <RULE NAME='Rule' TYPE='ACTION' LANGUAGES='Groovy,Kotlin Script,JavaScript'/>\n  <LIST NAME='Output Documents' SOURCE='DocumentVariables'/>\n  <HYPERLINK URL='help/scriptActivity.html'>Script Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+}

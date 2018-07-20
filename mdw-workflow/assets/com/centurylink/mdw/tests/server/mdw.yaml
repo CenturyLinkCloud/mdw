@@ -1,0 +1,41 @@
+# subset of actual mdw.yaml for testing
+
+database:
+  driver: org.mariadb.jdbc.Driver
+
+git:
+  remote.url: https://github.com/CenturyLinkCloud/mdw.git
+
+servers:
+  192.168.0.115:
+    ports:
+      - 8080
+  localhost:
+    ports:
+      - 8080
+
+hub.url: http://localhost:8080/mdw
+
+application:
+  name: mdw6
+  configs:
+    - myapp.yaml
+    - myapp.properties
+
+filepanel:
+  root.dirs:
+    - /etc/mdw/config
+    - /var/log/mdw
+  exclude.patterns: 
+    - '**/empty'
+    - '**/*.txt'
+    
+timer.task:
+  ProcessCleanup: # run daily at 2:30 am
+    TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
+    Schedule: 30 2 * * ? *
+  EmailReader: # run every 5 min
+    TimerClass: com.centurylink.mdw.timer.email.EMailReader
+    Schedule: 0-59/5 * * * ? *
+    
+ 

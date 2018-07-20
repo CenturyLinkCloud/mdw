@@ -1,0 +1,43 @@
+repository: "CenturyLinkCloud/mdw"
+theme: jekyll-theme-cayman
+baseurl: /mdw
+
+markdown: kramdown
+highlighter: rouge
+
+help_url: http://centurylinkcloud.github.io/mdw/
+
+defaults:
+  -
+    scope:
+      path: "_docs"
+      type: "docs"
+    values:
+      layout: "docs"
+
+title: MDW workflow framework with built-in microservices
+name: MDW
+description: Feature rich custumizable workflow engine
+url: http://centurylinkcloud.github.io/mdw/
+
+logo: /assets/imgages/mdw.png
+
+collections:
+  docs:
+    permalink: /:collection/:path/
+    output: true
+    
+gems:
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jemoji
+
+exclude:
+  - .gitignore
+  
+#exclude:
+#  - .gitignore
+#  - _docs/help
+#  - _docs/javadoc
+  

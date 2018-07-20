@@ -1,0 +1,48 @@
+task stopTomcat(type: Exec) {
+    workingDir tomcatBinDir
+    
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine "stop.bat"
+    else
+        commandLine "./stop.sh"
+    
+    ignoreExitValue true
+    
+    // give the server a chance to exit gracefully
+    doLast {
+        sleep(30 * 1000)
+    }
+}
+
+task deleteWars(type: Delete) {
+    delete "${deployWarDir}/mdw.war"
+    delete "${deployWarDir}/mdw"
+}
+deleteWars.mustRunAfter stopTomcat
+
+task deployMdwWar(type: Copy) {
+    from "../mdw/deploy/app"
+    into "${deployWarDir}"
+    include "mdw-${mdwVersion}.war"
+    rename("mdw-${mdwVersion}.war", "mdw.war")
+}
+deployMdwWar.mustRunAfter deleteWars
+
+
+// doesn't work on windows (blocks build task thread)
+// http://forums.gradle.org/gradle/topics/exec_task_issues_details
+// We should try this https://github.com/bmuschko/gradle-tomcat-plugin
+task startTomcat(type: Exec) {
+    workingDir tomcatBinDir
+    if (System.properties["os.name"].startsWith("Windows"))
+        commandLine "start.bat"
+    else
+        commandLine "./start.sh"        
+}
+startTomcat.mustRunAfter(stopTomcat, deployMdwWar)
+
+task deployMdw(dependsOn: [stopTomcat, deleteWars, deployMdwWar, startTomcat]) {
+    doLast {
+        println "*** MDW build ${mdwVersion} published to ${deployWarDir} ***"
+    }
+}

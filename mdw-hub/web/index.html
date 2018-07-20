@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" style="height:100%">
+<head>
+  <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="application-name" content="mdw-hub" data-version="${mdw.version} ${mdw.build}" />
+  <title>MDWHub</title>
+  <link rel="stylesheet" href="lib/bootstrap-css-only/css/bootstrap.css">
+  <link rel="stylesheet" href="lib/highlightjs/styles/default.css">
+  <link rel="stylesheet" href="css/mdw.css">
+  <link rel="stylesheet" href="css/mdw-hub.css">
+  <link rel="stylesheet" href="css/mdw-admin.css">
+  <link rel="stylesheet" href="lib/simplemde/simplemde.min.css">
+  <link rel="stylesheet" href="lib/swagger-ui/swagger-ui.css" >
+  <link rel="stylesheet" href="lib/swagger-ui/fonts.css" >
+
+  <link rel="icon" type="image/png" href="images/mdw.ico" />
+ 
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/angular-touch/angular-touch.min.js"></script>
+  <script src="lib/angular-animate/angular-animate.min.js"></script>
+  <script src="lib/angular-route/angular-route.min.js"></script>
+  <script src="lib/angular-resource/angular-resource.min.js"></script>
+  <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
+  <script src="lib/angular-websocket/dist/angular-websocket.min.js"></script>
+  <script src="lib/angular-cookies/angular-cookies.min.js"></script>
+  <script src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  <script src="lib/jsdiff/diff.min.js"></script>
+  <script src="lib/Chart.js/dist/Chart.min.js"></script>
+  <script src="lib/ace-builds/src-min-noconflict/ace.min.js"></script>
+  <script src="lib/highlightjs/highlight.pack.js"></script>  
+  <script src="lib/angular-chart.js"></script>
+  <script src="lib/ng-infinite-scroll-1.2.0.js"></script>
+  <script src="lib/marked.min.js"></script>
+  <script src="lib/simplemde/simplemde.min.js"></script>
+  <script src="js/mdw.js"></script>
+  <script src="js/ui/mdwUi.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/routes.js"></script>
+  <script src="js/authUser.js"></script>
+  <script src="js/users.js"></script>
+  <script src="js/groups.js"></script>
+  <script src="js/roles.js"></script>
+  <script src="js/assets.js"></script>
+  <script src="js/tests.js"></script>
+  <script src="js/system/message.js"></script>
+  <script src="js/system/system.js"></script>
+  <script src="js/tasks/tasks.js"></script>
+  <script src="js/workflow/processes.js"></script>
+  <script src="js/workflow/activities.js"></script>
+  <script src="js/workflow/solutions.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/requests.js"></script>
+  <script src="js/edit.js"></script>
+  <script src="js/ui/chart.js"></script>
+  <script src="js/ui/actions.js"></script>
+  <script src="js/ui/list.js"></script>
+  <script src="js/ui/values.js"></script>
+  <script src="js/ui/panel.js"></script>
+  <script src="js/ui/workflow.js"></script>
+  <script src="js/ui/diagram.js"></script>
+  <script src="js/ui/selection.js"></script>  
+  <script src="js/ui/label.js"></script>
+  <script src="js/ui/shape.js"></script>
+  <script src="js/ui/step.js"></script>
+  <script src="js/ui/link.js"></script>
+  <script src="js/ui/subflow.js"></script>
+  <script src="js/ui/note.js"></script>
+  <script src="js/ui/marquee.js"></script>
+  <script src="js/ui/inspector.js"></script>
+  <script src="js/ui/inspector-tabs.js"></script>
+  <script src="js/ui/configurator.js"></script>
+  <script src="js/ui/compatibility.js"></script>
+  <script src="js/ui/toolbox.js"></script>  
+  <script src="js/ui/drawing-constants.js"></script>
+  <script src="js/ui/editor.js"></script>
+  <script src="js/ui/ui-util.js"></script>
+  <script src="js/ui/task.js"></script>
+  <script src="js/ui/converters/object-table.js"></script>
+  <script src="js/ui/swagger.js"></script>
+  <script src="js/ui/jsx.js"></script>
+  <script src="js/ui/custom.js"></script>
+  <script src="js/ui/console.js"></script>
+  <script src="js/ui/messages.js"></script>
+  <script src="js/ui/markdown.js"></script>
+  <script src="js/dashboard/processes.js"></script>
+  <script src="js/dashboard/requests.js"></script>
+  <script src="js/dashboard/activities.js"></script>
+  <script src="js/dashboard/tasks.js"></script>
+  <script src="lib/swagger-ui/swagger-ui-bundle.js"></script>
+  <script src="lib/swagger-ui/swagger-ui-standalone-preset.js"></script>
+</head>
+<body class="mdw-body" ng-controller="AdminController" pop-container>
+  <script>
+    var $mdwHubRoot = '${mdw.hubRoot}';
+    var $mdwServicesRoot = '${mdw.servicesRoot}';
+    var $mdwDocsRoot = '${mdw.docsRoot}';
+    var $mdwCentralRoot = '${mdw.centralRoot}';
+    var $mdwVersion = '${mdw.version}';
+    var $mdwBuild = '${mdw.build}';
+    var $mdwHubUser = '${mdw.hubUser}';
+    var $mdwAuthMethod = '${mdw.authMethod}';
+    var $mdwAppId = '${mdw.appId}';
+    var $mdwWebSocketUrl = '${mdw.webSocketUrl}';
+    var $mdwDiscoveryUrl = '${mdw.discoveryUrl}';
+    var $mdwCustomRoutes = '${mdw.customRoutes}';
+  </script>
+  <style type="text/css" ng-if="isMobile()">
+    .col-md-10 {
+      width: 100%;
+    }
+  </style>
+  <div id="mdw-header" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/header.html'"></div>
+  <div id="mdw-tabs" class="mdw-normalize" ng-if="!isFullView()" ng-include="'layout/tabs.html'"></div>
+  <div id="mdw-main" ng-class="{content: true, container: true, 'mdw-content': !isFullView(), 'mdw-mobile-content': isFullView(), 'mdw-full-width': isFullWidth()}" ng-view></div>
+  <div id="mdw-footer" ng-if="!isFullView() && !isFilePanel()" ng-include="'layout/footer.html'"></div>
+</body>
+</html>

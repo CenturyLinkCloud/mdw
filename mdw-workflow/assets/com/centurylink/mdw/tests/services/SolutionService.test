@@ -1,0 +1,92 @@
+package com.centurylink.mdw.tests.services
+
+import org.json.JSONObject
+
+// solution-service
+def test1001 = masterRequestId + "-test1001";
+def test1002 = masterRequestId + "-test1002";
+def test1003 = masterRequestId + "-test1003";
+
+def sol1 = new JSONObject(asset('NewSolution1.json').text)
+sol1.put('id', test1001)
+sol1.put('name', test1001)
+def sol2 = new JSONObject(asset('NewSolution2.json').text)
+sol2.put('id', test1002)
+sol2.put('name', test1002)
+def sol3 = new JSONObject(asset('NewSolution3.json').text)
+sol3.put('id', test1003)
+sol3.put('name', test1003)
+
+def postReq = post http("Services/Solutions/" + test1001 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = sol1.toString(2)
+}
+def solutions = new groovy.json.JsonSlurper().parseText(postReq.getContent())
+assert solutions.status.message == "Success"
+
+def post2Req = post http("Services/Solutions/" + test1002 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = sol2.toString(2)
+}
+solutions = new groovy.json.JsonSlurper().parseText(post2Req.getContent())
+assert solutions.status.message == "Success"
+
+def post3Req = post http("Services/Solutions/" + test1003 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = sol3.toString(2)
+}
+solutions = new groovy.json.JsonSlurper().parseText(post3Req.getContent())
+assert solutions.status.message == "Success"
+
+println 'Add a memebr to solution /solutionID/solutions/memberSolID'
+def postMemberReq = post http("Services/Solutions/" + test1001 + "/solutions/" + test1002 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = "{}"
+}
+solutions = new groovy.json.JsonSlurper().parseText(postMemberReq.getContent())
+assert solutions.status.message == "Success"
+
+println 'Add a memebr to solution /solutionID/solutions/memberSolID'
+def postMember2Req = post http("Services/Solutions/" + test1002 + "/solutions/" + test1003 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = "{}"
+}
+solutions = new groovy.json.JsonSlurper().parseText(postMember2Req.getContent())
+assert solutions.status.message == "Success"
+
+println 'Solution get Service'
+def getResp = get http("Services/Solutions/" + test1001 + "/solutions?format=json")
+solutions = new groovy.json.JsonSlurper().parseText(getResp.getContent())
+assert solutions.members.solutions[0].id == test1002
+
+println 'Delete solution 3'
+def delReq = delete http("Services/Solutions/" + test1003 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = {}
+}
+solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
+assert solutions.status.message == "Success"
+
+println 'Delete solution 2'
+delReq = delete http("Services/Solutions/" + test1002 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = {}
+}
+solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
+assert solutions.status.message == "Success"
+
+println 'Delete solution 1'
+delReq = delete http("Services/Solutions/" + test1001 + "?format=json") {
+  user  = 'mdwapp'
+  password = 'mdwapp'
+  payload = {}
+}
+solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
+assert solutions.status.message == "Success"

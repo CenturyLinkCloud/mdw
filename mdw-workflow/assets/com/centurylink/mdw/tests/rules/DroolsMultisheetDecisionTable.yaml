@@ -1,0 +1,29 @@
+process: # 13609
+  name: DroolsDecisionTableMultisheet
+  instance: 1
+  activity: # 142 "2016-02-22 11:55:29"
+    name: Start
+    status: Completed
+  activity: # 139 "2016-02-22 11:55:29"
+    name: Geography
+    status: Completed
+    result: EastWest
+  activity: # 137 "2016-02-22 11:55:29"
+    name: EastWest DecisionTable
+    status: Completed
+    result: WESTERN
+  activity: # 143 "2016-02-22 11:55:29"
+    name: Stop
+    status: Completed
+  variable: # 20615
+    name: geography
+    value: EastWest
+  variable: # 20616
+    name: quotedPrice
+    value: 1
+  variable: # 20614
+    name: region
+    value: Western
+  variable: # 20617
+    name: workgroup
+    value: Cheapskates

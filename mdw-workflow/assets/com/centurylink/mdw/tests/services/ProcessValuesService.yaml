@@ -1,0 +1,22 @@
+process: # 19154
+  name: ProcessValues
+  instance: 1
+  variable: # 33466
+    name: dateVar
+    value: 2017-11-13T20:15:30.00Z
+  variable: # 33463
+    name: docVar
+    value: |
+      <full>
+          <document content="xml"/>
+      </full>
+  variable: # 33464
+    name: jaxbVar
+    value: |
+      <ProcessJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue" xmlns:ns2="http://mdw.centurylink.com/serviceTypes">
+          <elementOne>elementOneValue</elementOne>
+          <elementTwo>elementTwoValue</elementTwo>
+      </ProcessJaxb>
+  variable: # 33465
+    name: stringVar
+    value: Hello

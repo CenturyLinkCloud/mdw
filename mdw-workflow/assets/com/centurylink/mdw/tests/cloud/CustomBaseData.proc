@@ -1,0 +1,78 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=64,y=123,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=190,ly=91,type=Elbow,xs=128&201,ys=143&143"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=570,y=121,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "localFloat = 3.1416f",
+        "WORK_DISPLAY_INFO": "x=205,y=104,w=99,h=74"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Assign\r\nLocal Float",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=349,ly=142,type=Elbow,xs=308&393,ys=142&142"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.cloud/customCategoryTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=397,y=106,w=99,h=72"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Custom\r\nCategory Task",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=533,ly=141,type=Elbow,xs=500&566,ys=141&141"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=36,y=27,w=155,h=27"
+  },
+  "variables": {
+    "assignedFloat": {
+      "category": "LOCAL",
+      "type": "java.lang.Float"
+    },
+    "inputFloat": {
+      "category": "INPUT",
+      "type": "java.lang.Float"
+    },
+    "localFloat": {
+      "category": "LOCAL",
+      "type": "java.lang.Float"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("SmartProcessParent") {
+    variables = [ testCase: "single" ]
+}
+wait process
+verify processes(
+    "SmartProcessParent",
+    "SmartProcessChild")

@@ -1,0 +1,45 @@
+process: # 10310
+  name: SmartProcessChild
+  instance: 1
+  activity: # 1 "2018-04-25 10:07:18"
+    name: Start
+    status: Completed
+  activity: # 3 "2018-04-25 10:07:18"
+    name: Set Info
+    status: Completed
+  activity: # 2 "2018-04-25 10:07:18"
+    name: Stop
+    status: Completed
+  variable: # 10840
+    name: procName
+    value: SmartProcessChild
+  variable: # 10839
+    name: procVer
+    value: 2.3
+process: # 10306
+  name: SmartProcessParent
+  instance: 1
+  activity: # 1 "2018-04-25 10:07:18"
+    name: Start
+    status: Completed
+  activity: # 5 "2018-04-25 10:07:18"
+    name: |
+      Test
+      Case?
+    status: Completed
+    result: single
+  activity: # 3 "2018-04-25 10:07:18"
+    name: Invoke Single
+    status: Completed
+  activity: # 2 "2018-04-25 10:07:18"
+    name: Stop
+    status: Completed
+  variable: # 10842
+    name: singleSubprocName
+    value: SmartProcessChild
+  variable: # 10841
+    name: singleSubprocVer
+    value: 2.3
+  variable: # 10832
+    name: testCase
+    value: single

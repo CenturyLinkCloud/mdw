@@ -1,0 +1,77 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=127,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=156,ly=116,type=Elbow,xs=120&181,ys=147&147"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=555,y=131,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.services/Fallout.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=384,y=118,w=100,h=60",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "Fallout",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=523,ly=151,type=Elbow,xs=488&551,ys=151&151"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "stackTrace",
+        "Rule": "import java.io.ByteArrayOutputStream\r\nimport java.io.PrintWriter\r\n\r\ndef baos = new ByteArrayOutputStream()\r\ndef writer = new PrintWriter(baos)\r\nexception.printStackTrace(writer)\r\nwriter.flush()\r\nstackTrace = baos.toString()",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=185,y=119,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set stackTrace",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=335,ly=148,type=Elbow,xs=289&380,ys=148&148"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=46,y=41,w=48,h=27"
+  },
+  "variables": {
+    "exception": {
+      "category": "INPUT",
+      "type": "java.lang.Exception"
+    },
+    "stackTrace": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    }
+  }
+}

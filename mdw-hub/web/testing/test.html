@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label"
+          ng-class="{'mdw-okay':testCase.status == 'Passed', 'mdw-warn':testCase.status == 'Failed' || testCase.status=='Errored'}">        
+          <span class="glyphicon mdw-test-status"
+            ng-class="{'glyphicon-ok-sign':testCase.status == 'Passed', 'glyphicon-remove-sign':testCase.status == 'Failed', 'glyphicon-exclamation-sign':testCase.status=='Errored'}"></span>
+          {{testCasePackage}}&nbsp;/&nbsp;{{testCase.baseName}}
+          <span class="mdw-commit" ng-if="testCase.commitInfo.committer" title="{{testCase.commitInfo.message}}"> ({{testCase.commitInfo.committer}} 
+            <span class="mdw-commit-date">{{testCase.commitInfo.date}}</span>)
+          </span>
+        </div>
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution') && (testCaseItem || !testCase.name.endsWith('.postman'))">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="runTest(testCasePackage, testCaseName, testCaseItem)">
+            <span class="glyphicon glyphicon-play"></span> Run
+          </button> 
+        </div>
+      </div>
+      <div class="mdw-tabbed-section">
+        <uib-tabset>
+          <uib-tab heading="{{testCaseItem ? 'Test Case Item' : 'Test Case'}}">
+            <div class="mdw-inner-content">
+              <div class="mdw-resource-heading">{{testCase.name}}</div>
+              <pre class="mdw-line-nums">{{testCase.commands.lineNumbers}}</pre>
+              <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="testCase.commands.content | highlight:testCase.language | assetLinks:testCasePackage | unsafe"></code></pre>
+            </div>
+          </uib-tab>
+          <uib-tab heading="Results" ng-if="testCase.expected">
+            <div class="mdw-test-message" ng-if="testCase.message">{{testCase.message}}</div>
+            <div class="mdw-inner-content">
+              <div class="col-md-6 mdw-split-left" ng-if="testCase.expectedResults">
+                <div class="mdw-resource-heading"><a href="#/asset/{{testCase.expected}}">{{testCase.expected}}</a></div>
+                <pre class="mdw-line-nums">{{testCase.expectedResults.lineNumbers}}</pre>
+                <pre class="mdw-resource-content"><code class="mdw-code" 
+                  ng-bind-html="testCase.expectedResults.content | yamlDiff:testCase.actualResults.content:testCaseItem | unsafe"></code></pre>
+              </div>      
+              <div class="col-md-6 mdw-split-right" ng-if="testCase.actualResults">
+                <div class="mdw-resource-heading">Actual Results</div>
+                <pre class="mdw-line-nums">{{testCase.actualResults.lineNumbers}}</pre>
+                <pre class="mdw-resource-content"><code class="mdw-code" 
+                  ng-bind-html="testCase.actualResults.content | yamlDiff:testCase.expectedResults.content:testCaseItem | instanceLinks | unsafe"></code></pre>
+              </div>
+            </div>
+          </uib-tab>
+          <uib-tab heading="Log" ng-if="testCase.executeLog">
+            <div class="mdw-inner-content">
+              <div class="mdw-resource-heading">{{testCase.executeLog}}</div>
+              <pre class="mdw-resource-content">{{testCase.log.content}}</pre>
+            </div>
+          </uib-tab>
+        </uib-tabset>      
+      </div>
+    </div>
+  </div>
+</div>

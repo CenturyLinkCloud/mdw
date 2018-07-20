@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.InvokeProcessActivity",
+  "icon": "orchestrator.png",
+  "implementorClass": "com.centurylink.mdw.microservice.OrchestratorActivity",
+  "label": "Microservice Orchestrator",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='synchronous' LABEL='Synchronous' DEFAULT='${true}' VW='100'/>\n  <TEXT NAME='parallel' LABEL='Parallel' DEFAULT='${false}' VW='100'/>\n  <TEXT NAME='delay' LABEL='Delay (sec)' LW='200' VX='220' VW='40'/>\n  <TABLE NAME='WAIT_EVENT_NAMES' LABEL='Events' SECTION='Events'>\n    <TEXT LABEL='Event Name'/>\n    <TEXT LABEL='Completion Code'/>\n   </TABLE>\n  <DROPDOWN NAME='STATUS_AFTER_EVENT' LABEL='Status after receiving event' DEFAULT='Hold' LW='175' VX='200' VW='120' SECTION='Events'>\n    <OPTION>Hold</OPTION>\n    <OPTION>Waiting</OPTION>\n  </DROPDOWN>\n  <HYPERLINK URL='help/MicroserviceOrchestrator.html'>Microservice Orchestrator Help</HYPERLINK>\n</PAGELET>"
+}

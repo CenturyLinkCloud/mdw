@@ -1,0 +1,8 @@
+package com.centurylink.mdw.tests.cloud
+
+start process("ReflectChildDocUpdate") {
+    variables = [actionRequest: asset("jaxb-action-request.xml").text,
+                 assetDefinedJaxbIn: file("jaxb-asset.xml").text]
+}
+wait process
+verify processes("ReflectChildDocUpdate", "JaxbDocument")

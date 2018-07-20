@@ -1,0 +1,171 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=21,y=306,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=135,ly=325,type=Elbow,xs=85&174,ys=326&326"},
+        "event": "FINISH",
+        "id": "T23",
+        "to": "A23"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=353,y=320,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WAIT_EVENT_NAMES": "C-{$MasterRequestID},Cancelled::ABORT,false,;M-{$MasterRequestID},FINISH,false,;S-{$MasterRequestID},Completed::CORRECT,false,;H-{$MasterRequestID},Hold::CORRECT,true,",
+        "WORK_DISPLAY_INFO": "x=178,y=298,w=117,h=75",
+        "rcvdMsgDocVar": "response"
+      },
+      "id": "A23",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventCheckActivity",
+      "name": "Event Check \nActivity",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=324,ly=340,type=Elbow,xs=299&349,ys=340&340"},
+        "event": "FINISH",
+        "id": "T24",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=110,h=27"
+  },
+  "subprocesses": [
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=266,y=139,w=60,h=40"},
+          "id": "A7",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {
+              "TRANSITION_DELAY": "5s",
+              "TRANSITION_DISPLAY_INFO": "lx=446,ly=159,type=Elbow,xs=330&562,ys=159&159"
+            },
+            "event": "FINISH",
+            "id": "T27",
+            "to": "A8"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=566,y=139,w=60,h=40"
+          },
+          "id": "A8",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Correction Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=226,y=99,w=440,h=120"
+      },
+      "id": "P6",
+      "name": "Correction Handler"
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=733,y=141,w=60,h=40"},
+          "id": "A14",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {
+              "TRANSITION_DELAY": "10s",
+              "TRANSITION_DISPLAY_INFO": "lx=913,ly=161,type=Elbow,xs=797&1029,ys=161&161"
+            },
+            "event": "FINISH",
+            "id": "T28",
+            "to": "A15"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=1033,y=141,w=60,h=40"
+          },
+          "id": "A15",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=693,y=101,w=440,h=120"
+      },
+      "id": "P13",
+      "name": "Cancellation Handler"
+    },
+    {
+      "activities": [
+        {
+          "attributes": {"WORK_DISPLAY_INFO": "x=471,y=425,w=60,h=40"},
+          "id": "A25",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+          "name": "Start",
+          "transitions": [{
+            "attributes": {
+              "TRANSITION_DELAY": "10s",
+              "TRANSITION_DISPLAY_INFO": "lx=651,ly=445,type=Elbow,xs=535&767,ys=445&445"
+            },
+            "event": "FINISH",
+            "id": "T29",
+            "to": "A27"
+          }]
+        },
+        {
+          "attributes": {
+            "DoNotNotifyCaller": "false",
+            "WORK_DISPLAY_INFO": "x=771,y=425,w=60,h=40"
+          },
+          "id": "A27",
+          "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+          "name": "Stop"
+        }
+      ],
+      "attributes": {
+        "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+        "PROCESS_VISIBILITY": "EMBEDDED",
+        "WORK_DISPLAY_INFO": "x=431,y=385,w=440,h=120"
+      },
+      "id": "P24",
+      "name": "Exception Handler"
+    }
+  ],
+  "variables": {
+    "CustomerAccountId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "response": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    }
+  }
+}

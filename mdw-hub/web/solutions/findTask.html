@@ -1,0 +1,3 @@
+<input type="text" class="form-control mdw-inline" focus-me placeholder=" find task" 
+  ng-model="selectedTask" uib-typeahead="task as task.id + ' - ' + task.name for task in findTask($viewValue)" 
+  typeahead-editable="false" typeahead-on-select="addSelectedTask($item)">

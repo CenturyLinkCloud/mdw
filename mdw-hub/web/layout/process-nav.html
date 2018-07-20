@@ -1,0 +1,34 @@
+<ul id="process-nav" class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
+  <li nav-link="workflow/process" full-width="process-nav" ng-if="process.id">
+    <a href="#/workflow/processes/{{process.id}}">
+      Workflow Process
+    </a>
+  </li>
+  <li nav-link="workflow/value*" ng-if="process.id">
+    <a href="#/workflow/processes/{{process.id}}/values">
+      Values
+    </a>
+  </li>
+  <li nav-link="workflow/definition" full-width="process-nav" ng-if="!process.template">
+    <a href="#/workflow/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}">
+      Definition
+    </a>
+  </li>
+  <li nav-link="workflow/definition" full-width="process-nav" ng-if="process.template">
+    <a href="#/workflow/definitions/{{process.templatePackage ? process.templatePackage : process.packageName}}/{{process.templateVersion ? process.template + '/v' + process.templateVersion : process.template}}">
+      Template
+    </a>
+  </li>
+</ul>
+<ul class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
+  <li nav-link="workflow/processes">
+    <a href="#/workflow/processes">
+      Process List
+    </a>
+  </li>
+  <li nav-link="workflow/definitions">
+    <a href="#/workflow/definitions">
+      Definitions
+    </a>
+  </li>
+</ul>

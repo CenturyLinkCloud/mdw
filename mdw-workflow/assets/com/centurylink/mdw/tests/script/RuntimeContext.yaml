@@ -1,0 +1,17 @@
+process: # 10262
+  name: RuntimeContext
+  instance: 1
+  activity: # 1 "2017-01-03 11:31:29"
+    name: Start
+    status: Completed
+  activity: # 3 "2017-01-03 11:31:29"
+    name: |
+      Set mrid variable
+      from runtimeContext
+    status: Completed
+  activity: # 2 "2017-01-03 11:31:30"
+    name: Stop
+    status: Completed
+  variable: # 10610
+    name: mrid
+    value: ${masterRequestId}

@@ -1,0 +1,39 @@
+<div style="position:absolute;width:100%;top:-30px;">
+ <div id="mdwMainMessages" class="mdw-messages">{{message ? message : mdw.getMessage()}}</div>
+</div> 
+<div class="row" style="display:flex;">
+  <div class="mdw-panel-full-width mdw-edit-panel">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading mdw-edit-heading">
+        <div class="mdw-heading-label" style="margin-top:0px;">
+          <img class="mdw-heading-icon" src="images/mdw_48.png" alt="mdw" hub-link>
+          <a ng-href="#/packages/{{packageName}}">{{packageName}}</a> / {{assetName}}
+          <span ng-if="asset.version"> v{{asset.version}}</span>
+          <span ng-class="{'mdw-dirty':isDirty(),'mdw-not-dirty':!isDirty()}"> *</span>
+          <a class="mdw-raw-link" ng-if="process" ng-href="{{asset.url}}" target="_blank">Raw</a>  
+        </div>
+        <div class="mdw-heading-actions mdw-edit-actions">
+          <a class="btn btn-default" href="" ng-disabled="!isDirty()"
+            uib-popover-template="'edit/savePop.html'" popover-placement="bottom" pop-click>
+            Save
+          </a>            
+          <a class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
+            Cancel
+          </a>  
+        </div>
+      </div>
+      <div mdw-editor="aceOptions" ng-if="!process && !assetName.endsWith('.task') && !assetName.endsWith('.md')"
+          ng-model="asset.content" class="mdw-editor">
+      </div>
+      <mdw-workflow ng-if="process" process="process" editable="true" on-process-change="onProcessChange"
+          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+      </mdw-workflow>
+      <mdw-task-template ng-if="assetName.endsWith('.task')" task-asset="{{packageName + '/' + assetName}}" 
+          editable="true" class="mdw-task-editor">
+      </mdw-task-template>
+      <mdw-markdown ng-if="assetName.endsWith('.md')" markdown-asset="{{packageName + '/' + assetName}}"
+          editable="true" class="mdw-markdown-editor">
+      </mdw-markdown>
+    </div>
+  </div>
+</div>

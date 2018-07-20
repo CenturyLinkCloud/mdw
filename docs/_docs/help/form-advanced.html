@@ -1,0 +1,308 @@
+<html>
+<head>
+<title>Advanced Form Features</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Advanced Form Features</h1>
+
+Model-view-control is a well accepted pattern for GUI development.
+With the simple form mechanism introduced at <a href="form.html">this link</a>,
+we can see that:
+<ul>
+  <li>Form data documents represent the "model" part</li>
+  <li>Forms represent the "view" part - they define how the data are to be viewed.</li>
+  <li>For controls, a set of limited actions are allowed by MDW, including
+     <ul>
+       <li>For pre-flow tasks, submit the form, which starts a process instance</li>
+	   <li>For in-flow tasks, you can choose predefined actions such as Complete and Retry</li>
+	   <li>Limited customization are allowed for in-flow tasks through process definitions
+	   		(custom task actions)</li>
+	 </ul>
+  </li>
+</ul>
+
+The advanced features we describe in this page are mostly related to allow much richer
+controls (custom actions). These include mainly:
+<ul>
+   <li>Ability to navigate to different pages (for example, it may take more than one
+       screen to complete entries for a pre-flow task before submission, as
+       	in the case of a service order or complex trouble ticket).</li> 
+   <li>Ability to use pop-up dialogs</li>
+   <li>Ability to obtain data from external systems.</li>
+   <li>Ability to perform cross-field form data validation using external rules engine.</li>
+</ul>
+
+<h2>Communications between Process Engine and Task Manager</h2>
+
+The communication between the process engine and the task manager
+is all through form data documents on JMS or EJB.
+The actions that the sender expects the receiver to perform
+are included in the form data documents as root-element attributes and meta fields.
+The following is an example of form data documents sent from the engine
+to the task manager when creating an in-flow task instance:
+
+<pre>
+&lt;FORMDATA ID='TaskInstance:13345' ACTION='@CREATE_TASK'
+		FORM='Fallout Task' APPNAME='CCWF'>
+  &lt;META NAME='DUE_IN_SECONDS'>86400&lt;/META>
+  &lt;FIELD NAME='COUNTRY'>USA&lt;/FIELD>
+  &lt;FIELD NAME='STATE'>Utah&lt;/FIELD>
+  &lt;FIELD NAME='CITY'>&lt;/FIELD>
+  &lt;FIELD NAME='STREET'>&lt;/FIELD>
+&lt;/FORMDATA>
+</pre>
+
+And the following is an example of form data documents sent from the task manager
+to the engine after the user selects "Complete" action on a task instance:
+
+<pre>
+&lt;FORMDATA ID='TaskInstance:13345' ACTION='@TASK_ACTION'>
+  &lt;META NAME='TASK_ACTION'>Complete&lt;/META>
+  &lt;FIELD NAME='COUNTRY'>USA&lt;/FIELD>
+  &lt;FIELD NAME='STATE'>Colorado&lt;/FIELD>
+  &lt;FIELD NAME='CITY'>Denver&lt;/FIELD>
+  &lt;FIELD NAME='STREET'>930 15th&lt;/FIELD>
+&lt;/FORMDATA>
+</pre>
+In the following we describe all the meta information that may be present
+in form data documents.
+
+<h3>Meta Information on Form Data Documents</h3>
+
+In addition to actual data to be presented, 
+form data documents may contain 3 types of meta information.
+
+<h4>Root-element attributes</h4>
+  <table border='1'>
+  <tr><td>ID</td><td>ID of the task instance. For in-flow tasks, this is in the form
+       <code>TaskInstance:</code><i>id</i>, where <i>id</i> is the activity instance
+       ID of the activity creating the manual task (not the ID of TASK_INSTANCE in the 
+       task manager!) For custom actions described below, this
+       is in the form of <code>w.<i>cuid</i>.<i>window_name</i></code></td></tr>
+  <tr><td>FORM</td><td>The form name to be used to present the data</td></tr>
+  <tr><td>ACTION</td><td>Action to be taken (see below)</td></tr>
+  <tr><td>APPNAME</td><td>This is used to look up engine URL from configuration.</td></tr>
+  </table>
+  
+<h4>Meta data fields</h4>
+  <table border='1'>
+  <tr><td>PROCESS_INSTANCE_ID</td><td>The process instance ID where the task is created.
+		not used when the task is not associated with a process instance.</td></tr>
+  <tr><td>MASTER_REQUEST_ID</td><td>the master request ID of associated process instance.
+		not used when the task is not associated with a process instance.</td></tr>
+  <tr><td>DUE_IN_SECONDS</td><td>Due date/time in seconds. The GUI will convert 
+ 		the data into a user friendly unit such as days and hours</td></tr>
+  <tr><td>TASK_ACTION</td><td>Only used with @TASK_ACTION to specify which action
+		the user has submitted</td></tr>
+  <tr><td>@PROMPT</td><td>for post-actions</td></tr>
+  <tr><td>@TITLE</td><td>Browser title</td></tr>
+</table>
+
+The role of the root element attributes and meta data fields are very similar.
+The main distinction is that the former are needed for almost all task actions
+(except synchronous responses),
+whereas the latter are needed only for some task actions (e.g. PROCESS_INSTANCE_ID
+is not used for pre-flow tasks).
+
+<h4>Error Messages</h4>
+
+<table border='1'>
+  <tr><td>ERROR</td><td></td></tr>
+
+</table>
+<em>To be completed</em>
+
+<h3>Built-in Actions</h3>
+
+The following lists the built-in actions communicated between the client (browser),
+the task manager, and the engine.
+<dl>
+  <dt>@ASSIGN_TASK</dt>
+  		<dd>This action is used within task manager (from client to task manager)
+  		   to assign task to a user,
+  		   claim a task, release a task, or forward the task to a different user.
+  		   Without argument, this action will claim the task for the current
+  		   user if the task status is Open, or it will release the task
+  		   if the task status is Assigned and the assignee is the current user.
+  		   <em>to be completed: arguments for assigning to a user,
+  		   or forwarding to a user.</em>
+  		</dd>
+  <dt>@COMPLETE_TASK</dt>
+  		<dd>This is sent from the task manager to the engine when the user
+  		    completes a task instance. No argument is required,
+  		    but you can specify optionally a completion code,
+  		    as in <code>@COMPLETE_TASK?completionCode=foo</code>.
+  		    The completion code will be used by the process engine
+  		    in determining how to transition to the next activity.
+  		</dd>
+  <dt>@CANCEL_TASK</dt>
+  		<dd>This is sent from the task manager to the engine  when the user
+  			cancels a task instance.
+  		   <em>to be completed: argument to abort the process</em>
+  		</dd>
+  <dt>@CREATE_TASK</dt>
+  		<dd>This is sent from the engine to the task manager for creating an in-flow task instance.
+  		   The following meta information are needed: <em>to be completed</em>
+  		</dd>
+  <dt>@START_PROCESS</dt>
+  		<dd>This is sent from the task manager to the engine when the user
+  		   submit a pre-flow task to start a process.
+  		   The following meta information are needed: <em>to be completed</em>
+  		</dd>  
+  <dt>@GET_TASK</dt>
+    	<dd>This is used internally and sent from the engine to the task manager 
+    	   for getting task instance data, to be displayed in the designer.
+  		   The following meta information are needed: <em>to be completed</em>
+  		</dd>
+</dl>
+
+<h2>Custom Actions</h2>
+
+The actions we described so far are mostly triggered by features built-in to
+MDW process engine and task manager.
+<p>
+The form designer allows to associate custom actions to BUTTON and MENUITEM widgets.
+MENUITEM must be owned by a MENU, which is typically owned by a MENUBAR,
+and can also be owned by another MENU (thereby behaves as a submenu), or some other
+container widgets such as PANEL, PAGELET and TAB (thereby behaves as a pop-up menu).
+<p>
+A <em>custom form action</em> is implemented as a java class
+that implements <code>com.centurylink.mdw.common.utilities.form.FormAction</code>.
+The class needs to implement the method <code>handleAction</code>, which
+should take the current form data document
+and the action name as input and return another form data document to
+be presented. The returned form data document may specify
+a different form to present the data, through the root-element attribute FORM.
+Form actions are triggered by the users
+(pressing a button or selecting a menu item)
+and the task manager sends the action to the engine, which instantiates the 
+form action class and invokes its handleAction method.
+<p>
+Form actions can also be associated with a DROPDOWN, in which case any time
+the user changes the drop down value, the action will be triggered the same
+way as pressing a button. Similarly, you can also associate an action with
+a radio button group. Additionally, you can associate an action with 
+a COLUMN in a TABLE, in which case, the data fields in the column
+will become hyper links and clicking on a link will trigger an action as above.
+<p>
+
+The actions can also be the built-in action <code>@START_PROCESS</code>,
+as well as one of the following additional built-in actions:
+<dl>
+  <dt>@DIALOG</dt>
+  		<dd>This is to open a dialog. The form associated with the dialog 
+  		   is specified in the argument <code>form</code>, and the data document
+  		   for the dialog is a copy of the current window's (the parent).</dd>
+  <dt>@OK</dt>
+  		<dd>This action is used in a modal dialog. It copies the form data document of the dialog
+  		    to the parent window and closes the dialog.</dd>
+  <dt>@CANCEL</dt>
+  		<dd>This action is used in a modal dialog. It discards the form data document of the dialog
+  		    and closes the dialog. <em>To be implemented: use this to close
+  		       window and log out as well.</em></dd>
+  <dt>@WINDOW</dt>
+  		<dd>This action is used to open a new window. The form associated with the new window 
+  		   is specified in the argument <code>form</code>, , and the data document
+  		   for the dialog is a copy of the current window's.</dd>
+  <dt>@PAGE</dt>
+  		<dd>TThis action is used to switch to a new page
+  			(new form). The data document is not changed.</dd>
+  <dt>@REPAINT</dt>
+  		<dd>This action is used to refresh the entire page or some widgets on the page 
+  		(through Ajax).</dd>
+  <dt>@SKIN</dt>
+  		<dd>This action is used to set a different skin (background color, font side, etc)</dd>
+  <dt>@PROMPT</dt>
+  		<dd>This action is for post action only -- described later</dd>
+  <dt>@ASSIGN_TASK</dt>
+  		<dd>This action is used within task manager (from client to task manager)
+  		   to assign task to a user,
+  		   claim a task, release a task, or forward the task to a different user.
+  		   The following meta information are needed: <em>to be completed</em>
+  		</dd>
+  <dt>@COMPLETE_TASK</dt>
+  		<dd>This is sent from the task manager to the engine when the user
+  		    completes a task instance. No argument is required,
+  		    but you can specify optionally a completion code,
+  		    as in <code>@COMPLETE_TASK?completionCode=foo</code>.
+  		    The completion code will be used by the process engine
+  		    in determining how to transition to the next activity.
+  		</dd>
+  <dt>@CANCEL_TASK</dt>
+  		<dd>This is sent from the task manager to the engine  when the user
+  			cancels a task instance.
+  		   <em>to be completed: argument to abort the process</em>
+  		</dd>
+</dl>
+When an action needs arguments (for both built-in and custom actions),
+we use URL-like syntax, as in:
+<pre>
+   @DIALOG?form=Dialog test
+   com.qwest.roms.action.CreateOrder?ORDT=CHG&ORDN=C12334550
+</pre>
+
+<h3>Post Actions</h3>
+As we mentioned above, if a custom action sets the root-element attribute FORM,
+then the task manager will present the return data document using that form
+instead of the current form (the one triggered the action). This effectively
+allows the custom code to control which page to display next.
+<p>
+There are times that we would like to have other special behavior controlled
+by the custom form actions, after returning the data document to be displayed.
+We call this type of special behavior as <em>post actions</em>, and they are
+achieved by setting the root-element attribute ACTION in the return form data
+documents. Many of the built-in actions above can be used as post actions
+as well. Here is a list of all actions allowed to be post actions:
+
+<table border='1'>
+  <tr><th>Post Action</th><th>Behavior</th></tr>
+  <tr><td>@DIALOG</td><td>Open a dialog window. The form is specified in the
+  			root-element attribute FORM</td></tr>
+  <tr><td>@OK</td><td>Close the dialog and copy the form document to the parent page</td></tr>
+  <tr><td>@CANCEL</td><td>Close the dialog and discard its form document</td></tr>
+  <tr><td>@WINDOW</td><td>Open a new window. The form is specified in the
+  			root-element attribute FORM</td></tr>
+  <tr><td>@PROMPT</td><td>This action is for post action use only. It triggers
+  		a prompt dialog on the next page, and the prompt text is taken from
+  		the meta data field @PROMPT</td></tr>
+</table>
+
+<h2>Asynchronous Call to Engine</h2>
+<p>To be completed</p>
+
+<h2>To be completed</h2>
+  <ul>
+    <li>Style sheets, templates and images</li>
+    <li>Form XML and XSD</li>
+    <li>Editing form XML directly</li>
+  	<li>force ID and Ajax; Repaint action for DROPDOWN and RADIOBUTTONS</li>
+	<li>DATA attribute using more than simple names (subforms)</li>
+	<li>Use file copy of forms</li>
+	<li>Refresh forms through URL</li>
+	<li>Selected row in a table
+	<pre>
+&lt;FORMDATA>
+  &lt;TABLE NAME='TABLE_DATA'>
+     &lt;ROW>
+        &lt;ENTRY NAME='CUID'>jxxu&lt;/ENTRY>
+        &lt;ENTRY NAME='FirstName'>Jiyang&lt;/ENTRY>
+        &lt;ENTRY NAME='LastName'>Xu&lt;/ENTRY>
+     &lt;/ROW>
+     &lt;ROW SELECTED='TRUE'>
+        &lt;ENTRY NAME='CUID'>doakes&lt;/ENTRY>
+        &lt;ENTRY NAME='FirstName'>Don&lt;/ENTRY>
+        &lt;ENTRY NAME='LastName'>Oakes&lt;/ENTRY>
+     &lt;/ROW>
+  &lt;/TABLE>
+&lt;/FORMDATA>
+</pre>
+	</li>
+	<li>Editing a table in general</li>
+	<li>Validation consideration when there are multiple tabs/pages.</li>
+	<li>Validation using external rules engines - potentially with external
+	    data for assistance.</li>
+  </ul>
+
+</body>
+</html>

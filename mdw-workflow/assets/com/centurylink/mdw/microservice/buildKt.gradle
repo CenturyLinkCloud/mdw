@@ -1,0 +1,35 @@
+// build service-plan.jar (as needed -- delivered as asset)
+apply plugin: 'kotlin'
+
+buildscript {
+    ext.kotlin_version = '1.2.31'
+    repositories {
+      mavenCentral()
+    }
+    dependencies {
+      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: '../kotlin', includes: ["kotlin-*.jar"])
+    compile fileTree(dir: '../../../../../../mdw/deploy/app', includes: ["mdw-*.jar"])
+    compile 'io.limberest:limberest:1.2.3'
+    compile group: "org.glassfish", name: "javax.el", version: "3.0.0"
+}
+
+sourceSets {
+    main.kotlin {
+        srcDirs '.'
+        exclude 'build'
+    }
+}
+
+jar {
+    destinationDir = file('.')
+    baseName 'service-plan'
+}

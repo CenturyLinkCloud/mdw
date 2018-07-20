@@ -1,0 +1,7 @@
+package com.centurylink.mdw.tests.script
+
+start process("MDWTestJavaScript") {
+    variables = [ inputString: "Such_a_thing", inputInt: 32 ]
+}
+wait process
+verify process

@@ -1,0 +1,14 @@
+secring.gpg
+secret.properties
+secrets.tar
+.metadata/
+.gradle/
+.recommenders/
+.JETEmitters/
+RemoteSystemsTempFiles/
+Servers/
+testResults/
+npm-debug.log
+notes.txt
+activemq-data/
+.DS_Store

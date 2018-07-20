@@ -1,0 +1,58 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=65,y=114,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=231,ly=114,type=Elbow,xs=129&245,ys=134&134"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=485,y=114,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "notGonnaHappen-{$MasterRequestID},,false,",
+        "WORK_DISPLAY_INFO": "x=249,y=112,w=99,h=72",
+        "rcvdMsgDocVar": "notifyPayload"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Stubbed Event\r\nWait",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=417,ly=134,type=Elbow,xs=352&481,ys=134&134"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=33,y=29,w=222,h=27"
+  },
+  "variables": {
+    "notifyPayload": {
+      "category": "LOCAL",
+      "type": "org.apache.xmlbeans.XmlObject"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    }
+  }
+}

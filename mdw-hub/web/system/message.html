@@ -1,0 +1,135 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+       <div class="mdw-tabbed-section">
+        <uib-tabset>
+          <uib-tab heading="HTTP Poster">
+              <div class="mdw-inner-content">
+               <form name="httpHelperForm" class="form-horizontal" role="form">
+                <fieldset ng-disabled="waitingForResponse">
+                  <div class="form-group">
+                    <div class="col-xs-2">
+                      <div class="mdw-inner-addon mdw-right-addon" style="width:125px;float:right;" uib-dropdown dropdown-append-to-body="true">
+                        <i class="glyphicon glyphicon-chevron-down"></i>
+                        <input type="text" class="form-control mdw-dropfilter"
+                          placeholder="POST" uib-dropdown-toggle readonly value="{{httpHelper.httpMethod}}">
+                        <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu>
+                          <li ng-repeat="httpMethod in httpHelper.httpMethods">
+                            <a href="" ng-click="httpHelper.httpMethod = httpMethod">{{httpMethod}}</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-xs-1" style="width:40px;">
+                       <label class="control-label" for="httpUrl">URL:</label>
+                    </div>
+                    <div class="col-xs-8">
+                      <input type="text" id="httpUrl" name="url" class="form-control" ng-model="httpHelper.url" required maxlength="128"
+                         ng-blur="httpHelper.url = httpHelper.url === '' ? undefined : httpHelper.url">
+                    </div>
+                    <div class="col-xs-1">
+                      <button class="btn btn-primary mdw-btn" type="submit" ng-click="sendHttpMessage()" 
+                        ng-disabled="!authUser.hasRole('Process Design')">
+                        <span class="glyphicon glyphicon-send"></span> Send
+                      </button>
+                    </div>
+                  </div>     
+                  <div class="form-group">
+                    <label class="control-label col-xs-2" for="headersTextarea">Headers (x=1,y=2,etc):</label>
+                    <div class="col-xs-10">
+                      <textarea id="headersTextarea" name="headers" class="form-control" ng-model="httpHelper.headers"
+                      rows="2" ng-blur="httpHelper.headers = httpHelper.headers === '' ? undefined : httpHelper.headers">
+                     </textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-xs-2" for="requestMessageTextarea">Message Body:</label>
+                    <div class="col-xs-10">
+                      <textarea id="requestMessageTextarea" name="requestMessage" class="form-control mdw-request" ng-model="httpHelper.requestMessage" 
+                      rows="10"  ng-blur="httpHelper.requestMessage = httpHelper.requestMessage === '' ? undefined : httpHelper.requestMessage">
+                     </textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-xs-2 mdw-required" for="timeOutInput">Timeout (ms):</label>
+                    <div class="col-xs-4">
+                      <input type="text" id="timeOutInput" name="timeOut" class="form-control" ng-model="httpHelper.timeOut" maxlength="128"
+                         ng-blur="httpHelper.timeOut = httpHelper.timeOut === '' ? undefined : httpHelper.timeOut">
+                    </div>
+                  </div>
+                  <div class="form-group" ng-if="httpHelper.responseCode">
+                    <label class="control-label col-xs-2">Response Code:</label>
+                    <div class="col-xs-10" style="padding-top:7px;">{{httpHelper.responseCode}}</div>
+                  </div>
+                  <div class="form-group" ng-if="httpHelper.response">
+                    <label class="control-label col-xs-2">Response:</label>
+                    <div class="col-xs-10"><pre>{{httpHelper.response}}</pre></div>
+                  </div>
+                </fieldset>            
+              </form>
+            </div>
+          </uib-tab>
+          <uib-tab heading="JMS Messenger">
+              <div class="mdw-inner-content">
+                <form name="jmsHelperForm" class="form-horizontal mdw-section" role="form">
+                  <fieldset ng-disabled="waitingForResponse">
+                    <div class="form-group">
+                      <label class="control-label col-xs-2 mdw-required" for="endPointInput">Endpoint:</label>
+                      <div class="col-xs-10">
+                        <input type="text" id="endPointInput" name="endPoint" class="form-control" ng-model="jmsHelper.endPoint" required maxlength="128"
+                           ng-blur="jmsHelper.endPoint = jmsHelper.endPoint === '' ? undefined : jmsHelper.endPoint">
+                      </div>
+                    </div>     
+                    <div class="form-group">
+                      <label class="control-label col-xs-2 mdw-required" for="queueName">Queue Name:</label>
+                      <div class="mdw-float-right col-xs-10">
+                        <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true">
+                          <i class="glyphicon glyphicon-chevron-down"></i>
+                          <input type="text" class="form-control mdw-dropfilter"
+                             uib-dropdown-toggle readonly value="{{jmsHelper.queueName}}">
+                          <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                            <li ng-repeat="queueName in jmsHelper.queueNames">
+                              <a href="" ng-click="jmsHelper.queueName = queueName">{{queueName}}</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div> 
+                    <div class="form-group">
+                      <label class="control-label col-xs-2 mdw-required" for="requestMessageTextarea">JMS Message:</label>
+                      <div class="col-xs-10">
+                        <textarea id="requestMessageTextarea" name="requestMessage" class="form-control" ng-model="jmsHelper.requestMessage" required
+                        rows="10" ng-blur="jmsHelper.requestMessage = jmsHelper.requestMessage === '' ? undefined : jmsHelper.requestMessage">
+                       </textarea>
+                      </div>
+                    </div>
+                     <div class="form-group">
+                        <label class="control-label col-xs-2 mdw-required" for="timeOutInput">Timeout (s):</label>
+                        <div class="col-xs-4">
+                          <input type="text" id="timeOutInput" name="timeOut" class="form-control" ng-model="jmsHelper.timeOut" maxlength="128"
+                             ng-blur="jmsHelper.timeOut = jmsHelper.timeOut === '' ? undefined : jmsHelper.timeOut">
+                        </div>
+                      </div>
+                    
+                    <div class="form-group">
+                     <label class="control-label col-xs-2">Response:</label>
+                      <div class="col-xs-10"><pre>{{jmsHelper.response}}</pre></div>
+                      </div>
+                    <div class="form-group">
+                      <div class="mdw-buttons">
+                        <button class="btn btn-success mdw-btn" type="submit" ng-click="sendJmsMessage()" 
+                          ng-disabled="!authUser.hasRole('Process Design')">
+                          <span class="glyphicon glyphicon-send"></span> Send Message
+                        </button>
+                      </div>
+                    </div>
+                  </fieldset>            
+                </form>
+            </div>
+          </uib-tab>
+        </uib-tabset>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+package com.centurylink.mdw.tests.workflow
+
+send message("REST") {
+    payload = "<Signal>${masterRequestId}</Signal>"
+}
+
+start process("MDWTestSuppsEmbedded") {
+    variables = [testCase: "finish-resume-on-wait"]
+}
+
+wait process
+verify process

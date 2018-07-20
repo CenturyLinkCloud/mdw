@@ -1,0 +1,111 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=41,y=103,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=188,ly=126,type=Elbow,xs=105&211,ys=123&123"},
+          "event": "FINISH",
+          "id": "T1",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=161,ly=169,type=Elbow,xs=105&213,ys=123&214"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=71,ly=201,type=Elbow,xs=71&71,ys=147&255"},
+          "event": "FINISH",
+          "id": "T5",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=461,y=103,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/AutoAssignTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=215,y=88,w=114,h=74",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "AutoAssigned\r\nTask",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=398,ly=123,type=Elbow,xs=333&457,ys=123&123"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/AutoAssignedFromJaxbElem.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=217,y=181,w=115,h=66"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "AutoAssigned\r\nFrom JAB Elem",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=397,ly=167,type=Elbow,xs=336&457,ys=214&123"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/AutoAssignedFromJaxbAttr.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=29,y=259,w=112,h=66",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "AutoAssigned\r\nFrom JAXB Attr",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=205,ly=288,type=Elbow,xs=141&491&491,ys=292&292&143"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=32,y=29,w=146,h=27"
+  },
+  "variables": {
+    "jaxbWithAssignee": {
+      "category": "INPUT",
+      "type": "javax.xml.bind.JAXBElement"
+    },
+    "stringAssignee": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

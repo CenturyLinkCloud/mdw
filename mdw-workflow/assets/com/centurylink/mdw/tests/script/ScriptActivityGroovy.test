@@ -1,0 +1,21 @@
+package com.centurylink.mdw.tests.script
+
+def domDoc = '''<records>
+  <car make="Infiniti" model="G35x" year="2005">
+    <country>Japan</country>
+    <aspect type="Sedan">Not too big</aspect>
+  </car>
+</records>'''
+
+start process("ScriptTest") {
+    variables = [ scriptFlavor: "Groovy",
+                  modifiedInt: 2,
+                  modifiedString: "HereIsAString",
+                  modifiedDomDoc: domDoc,
+                  bystanderDomDoc: "<xml>I won't change</xml>",
+                  modifiedXmlBean: "<xmlBeanToBeModified/>",
+                  bystanderXmlBean: "<xml>I won't change</xml>",
+                  telephoneNumbers: '["303-555-7861","303-555-1952"]' ]
+}
+wait process
+verify process

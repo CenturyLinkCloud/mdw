@@ -1,0 +1,104 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=21,y=179,w=60,h=40"},
+      "id": "A30",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=124,ly=256,type=Elbow,xs=85&162,ys=199&199"},
+        "event": "FINISH",
+        "id": "T24",
+        "to": "A26"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=448,y=287,w=100,h=60"},
+      "id": "A27",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Not executed",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=633,ly=242,type=Elbow,xs=552&701,ys=317&176"},
+        "event": "FINISH",
+        "id": "T23",
+        "to": "A28"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=705,y=156,w=60,h=40"
+      },
+      "id": "A28",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Java": "/**\n * Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n */\n\npackage com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\n/**\n * Dynamic Java to force an error.\n */\npublic class ThrowanException_A26 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\n        throw new RuntimeException(\"Help me, I'm an error\");\n    }\n\n}\n",
+        "WORK_DISPLAY_INFO": "x=166,y=176,w=132,h=69"
+      },
+      "id": "A26",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Throw an Exception",
+      "transitions": [
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=373,ly=126,type=Elbow,xs=302&444,ys=210&54",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "RESUME",
+          "id": "T20",
+          "resultCode": "AltAction",
+          "to": "A29"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=380,ly=265,type=Elbow,xs=302&444,ys=210&317"},
+          "event": "FINISH",
+          "id": "T22",
+          "resultCode": "no",
+          "to": "A27"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=508,ly=186,type=ElbowV,xs=302&701,ys=186&186"},
+          "event": "FINISH",
+          "id": "T25",
+          "resultCode": "yes",
+          "to": "A28"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "OsgiBundleSymbolicName": "com.centurylink.mdw.workflow",
+        "Rule": "runtimeContext.logInfo(\"In alternate path\");",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=448,y=24,w=100,h=60"
+      },
+      "id": "A29",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Alternate path",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=605,ly=126,type=Elbow,xs=552&701,ys=54&176",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T21",
+        "to": "A28"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "START_TRANSITION_ID": "2326876",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=43,y=29,w=202,h=27"
+  }
+}

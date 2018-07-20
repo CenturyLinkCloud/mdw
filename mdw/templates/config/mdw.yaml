@@ -1,0 +1,34 @@
+app:
+  id: {{project}}
+
+database:
+  driver: {{database-driver}}
+  url: {{database-url}}
+  username: {{database-user}}
+  password: {{database-password}}
+  poolsize: 5
+  poolMaxIdle: 3
+  validationQuery: select 1 from dual
+
+# optional mongodb
+# mongodb:
+#   host: localhost
+#   port: 27017
+
+# asset location info (use absolute paths when running thru eclipse wtp) 
+asset:
+  location: {{asset-loc}}
+
+git:
+  local.path: .
+  remote.url: {{git-remote-url}}
+  branch: {{git-branch}}
+
+temp.dir: {{asset-loc}}/../temp
+
+hub.url: http://localhost:8080/mdw
+services.url: http://localhost:8080/mdw
+discovery.url: {{discovery-url}}
+
+logging:
+  level: DEBUG

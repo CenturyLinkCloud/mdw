@@ -1,0 +1,140 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=36,y=208,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=188,ly=195,type=Elbow,xs=100&230,ys=228&228"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=490,y=212,w=60,h=40"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "TIMER_WAIT": "2",
+        "Unit": "Minutes",
+        "WORK_DISPLAY_INFO": "x=159,y=363,w=100,h=60"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Check",
+      "transitions": [{
+        "attributes": {
+          "TRANSITION_DELAY": "0",
+          "TRANSITION_DISPLAY_INFO": "lx=325,ly=316,type=Elbow,xs=263&263&320&320,ys=359&307&307&262",
+          "TRANSITION_RETRY_COUNT": "0"
+        },
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "$+Id": "472083",
+        "STATUS_AFTER_EVENT": "Hold",
+        "STATUS_AFTER_TIMEOUT": "Hold",
+        "WAIT_EVENT_NAMES": "NonTaskAction-{$MasterRequestID},NonTaskAction,false",
+        "WORK_DISPLAY_INFO": "x=234,y=200,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Event Wait",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=390,ly=233,type=Elbow,xs=338&486,ys=232&232"},
+          "event": "FINISH",
+          "id": "T2",
+          "to": "A4"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "0",
+            "TRANSITION_DISPLAY_INFO": "lx=200,ly=293,type=Elbow,xs=246&246,ys=264&359",
+            "TRANSITION_RETRY_COUNT": "0"
+          },
+          "event": "DELAY",
+          "id": "T3",
+          "to": "A1"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "ERROR_PROCESS_ID": "-3",
+    "ERROR_TRANSITION_ID": "68528",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "START_TRANSITION_ID": "2327302",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=38,y=63,w=248,h=27"
+  },
+  "subprocesses": [{
+    "activities": [
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=398,y=71,w=60,h=40"},
+        "id": "A5",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+        "name": "Start",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=491,ly=91,type=Elbow,xs=462&519,ys=91&91"},
+          "event": "FINISH",
+          "id": "T6",
+          "to": "A7"
+        }]
+      },
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=698,y=71,w=60,h=40"},
+        "id": "A6",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+        "name": "Stop"
+      },
+      {
+        "attributes": {
+          "Category": "COM",
+          "FormName": "Autoform",
+          "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+          "Notices": "$DefaultNotices",
+          "STATUS_AFTER_EVENT": "Cancelled",
+          "TaskLogicalId": "MDWTestEventWaitTimeout:A7",
+          "TaskName": "Event Wait Fallout",
+          "WORK_DISPLAY_INFO": "x=523,y=61,w=105,h=61",
+          "Wait for Task": "TRUE"
+        },
+        "id": "A7",
+        "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+        "name": "Event Wait Fallout",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=663,ly=91,type=Elbow,xs=632&694,ys=91&91"},
+          "event": "FINISH",
+          "id": "T5",
+          "to": "A6"
+        }]
+      }
+    ],
+    "attributes": {
+      "ENTRY_TRANSITION_ID": "2327303",
+      "PROCESS_VISIBILITY": "EMBEDDED",
+      "START_TRANSITION_ID": "2327293",
+      "WORK_DISPLAY_INFO": "x=358,y=31,w=440,h=120"
+    },
+    "id": "P2",
+    "name": "Exception Handler",
+    "variables": {"EmbeddedSubProcessTaskAction": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }}
+  }]
+}

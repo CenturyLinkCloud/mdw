@@ -1,0 +1,105 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=119,y=74,w=32,h=32"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=93,ly=197,type=Elbow,xs=136&136,ys=110&217"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "bad script",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=124,y=221,w=24,h=24"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Force Error",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=136,ly=304,type=Elbow,xs=136&136,ys=249&362"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=121,y=366,w=32,h=32"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "ERROR_TRANSITION_ID": "84481",
+    "NodeStyle": "Icon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2328555",
+    "WORK_DISPLAY_INFO": "x=23,y=20,w=242,h=27"
+  },
+  "subprocesses": [{
+    "activities": [
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=333,y=63,w=32,h=32"},
+        "id": "A5",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+        "name": "Start",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=422,ly=75,type=Elbow,xs=369&474,ys=75&75"},
+          "event": "FINISH",
+          "id": "T1",
+          "to": "A4"
+        }]
+      },
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=633,y=63,w=32,h=32"},
+        "id": "A6",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+        "name": "Stop"
+      },
+      {
+        "attributes": {
+          "WORK_DISPLAY_INFO": "x=478,y=65,w=20,h=20",
+          "processname": "SubprocessForEmbedded",
+          "processversion": "[0.4,1)",
+          "synchronous": "TRUE",
+          "variables": "fromParent=$passToSub;toParent=$receiveFromSub"
+        },
+        "id": "A4",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+        "name": "Subprocess From Embedded",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=565,ly=75,type=Elbow,xs=502&629,ys=75&75"},
+          "event": "FINISH",
+          "id": "T2",
+          "to": "A6"
+        }]
+      }
+    ],
+    "attributes": {
+      "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+      "ENTRY_TRANSITION_ID": "2328556",
+      "PROCESS_VISIBILITY": "EMBEDDED",
+      "START_TRANSITION_ID": "2328549",
+      "WORK_DISPLAY_INFO": "x=293,y=23,w=395,h=110"
+    },
+    "id": "SubProcess1",
+    "name": "Exception Handler"
+  }],
+  "variables": {
+    "passToSub": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "receiveFromSub": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

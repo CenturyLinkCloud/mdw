@@ -1,0 +1,17 @@
+package com.centurylink.mdw.tests.tasks
+
+start process("MDWTestTaskAndEvent")
+sleep 30
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+sleep 60
+action task("Manual task that also waits for event") {
+    outcome = "Claim"
+}
+sleep 15
+action task("Manual task that also waits for event") {
+    outcome = "Complete"
+}
+sleep 15
+verify process

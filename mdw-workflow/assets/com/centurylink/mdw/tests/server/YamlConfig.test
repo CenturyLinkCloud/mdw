@@ -1,0 +1,45 @@
+package com.centurylink.mdw.tests.server
+
+import com.centurylink.mdw.config.YamlProperties
+import com.centurylink.mdw.model.system.Server
+import com.centurylink.mdw.yaml.YamlLoader
+
+def mdwYaml = asset('mdw.yaml').file()
+def yamlProps = new YamlProperties(mdwYaml)
+assert yamlProps.getString('mdw.database.driver') == 'org.mariadb.jdbc.Driver'
+assert yamlProps.getString('mdw.git.remote.url') == 'https://github.com/CenturyLinkCloud/mdw.git'
+assert yamlProps.getString('mdw.hub.url') == 'http://localhost:8080/mdw'
+assert yamlProps.getString('mdw.garbage.prop') == null
+assert yamlProps.getString('not.even.mdw') == null
+
+assert String.valueOf(yamlProps.getList('mdw.filepanel.root.dirs')) == '[/etc/mdw/config, /var/log/mdw]'
+assert String.valueOf(yamlProps.getList("mdw.filepanel.exclude.patterns"))  == '[**/empty, **/*.txt]'
+
+def loader = yamlProps.getLoader()
+def application = loader.getMap('application', yamlProps.getRoot())
+assert application != null
+def appConfigs = loader.getList('configs', application)
+assert appConfigs != null
+assert appConfigs.contains('myapp.yaml')
+assert appConfigs.contains('myapp.properties')
+
+def groupMap = yamlProps.getGroup('mdw.timer.task')
+assert groupMap['mdw.timer.task.ProcessCleanup.TimerClass'] == 'com.centurylink.mdw.timer.cleanup.ProcessCleanup'
+assert groupMap['mdw.timer.task.ProcessCleanup.Schedule'] == '30 2 * * ? *'
+assert groupMap['mdw.timer.task.EmailReader.TimerClass'] == 'com.centurylink.mdw.timer.email.EMailReader'
+assert groupMap['mdw.timer.task.EmailReader.Schedule'] == '0-59/5 * * * ? *'
+
+// server info
+def servers = []
+def serverMap = loader.getMap('servers', loader.getTop())
+for (def name : serverMap.keySet()) {
+    def host = name.toString()
+    def config = serverMap.get(host)
+    def ports = config.get('ports')
+    for (def port : ports) {
+        def server = new Server(host, port, config)
+        servers.push(server.toString())
+    }
+}
+assert servers.contains('192.168.0.115:8080')
+assert servers.contains('localhost:8080')

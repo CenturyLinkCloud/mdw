@@ -1,0 +1,118 @@
+<html>
+<head>
+<title>Using SynchronousBusAdapter Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Synchronous Bus Adapter Activities</h1>
+
+<p>The class <code>
+<a href="../javadoc/com/centurylink/mdw/workflow/adapter/tibco/PoolableTibcoBusAdapter.html">
+com.centurylink.mdw.workflow.adapter.tibco.PoolableTibcoBusAdapter</a></code>
+implements an adapter activity that can be used to send a request-reply type
+of Tibco BUS message.
+The adapter is intended for asynchronous messages as well, but this has
+not been implemented yet.
+
+The new implementor uses the poolable adapter mechanism (see <a href='AdapterActivityBase.html'>
+Using Adapter Activities</a> for its introduction), which allows
+the adapter to be used with a connection pool, and also allows to configure
+automatic retries with the activity. The new implementor also allows to configure
+bus URL as an attribute, rather than using the <code>busConnector.xml</code>,
+which is no longer needed. </p>
+
+<p><em>Important note</em>: with the new implementor, you should not use
+the retry loop (a link to itself with the label <code>ERROR:RETRY</code>) 
+for the old implementor.</p>
+
+<h2>Attributes</h2>
+The following attributes are used by both implementors, new and old:
+
+<ul>
+  <li>Request Variable. This is a variable name. The request message sent to external
+      system is taken from the value of this variable.</li>
+  <li>Response Variable. This is also a variable name, and the response message
+      received from the external system will be bound to the variable.</li>
+  <li>Log req/resp. This is a Boolean flag to turn on or off logging of messages
+  	  to and from the external systems. The messages are logged in the database table
+  	  DOCUMENT for MDW 5.* and ADAPTER_INSTANCE for MDW 4.*.</li>
+  <li>Bus Topic. This attribute specifies topic to which the message is published.
+	  More than likely, the value is
+      deployment specific (different between development, testing and production environment).
+      So it is typically specified using MDW <a href="bindingExpressions.html">binding expression</a> syntax 
+      <code>#{props['my.bus.topic']}</code>.</li>
+  <li>Response Timeout. This is the time out value, in seconds, for waiting for responses.</li>
+  <li>Override Inbox. This is used to pass the BUS policy option <code>OverrideInbox</code>.</li>
+  <li>Request XSD. This is for documentation purpose only. If a valid URL is specified,
+      you can open the request XSD directly from the designer by clicking the "Open Link" button 
+      on the right side of the attribute specification.</li>
+  <li>Response XSD. This is for documentation purpose only. If a valid URL is specified,
+      you can open the response XSD directly from the designer by clicking the "Open Link" button 
+      on the right side of the attribute specification.</li>
+</ul>
+<p>The following additional attributes are supported by the new implementor only:</p>
+<ul>
+  <li>Bus URL: RVD URL, e.g. <code>rvd://239.75.2.3:7523/denvzd.qwest.net:7523</code>.
+  		For the old implementor, this information must be specified in a bus connector
+  		configuration file (typically named <code>busConnector.xml</code>). The file
+  		is no longer needed by the new implementor, but if you leave this attribute
+  		blank, it will still read from the configuration file.</li>
+  <li>Max tries: the maximum number of tries (original and retries) when
+  		there is a connection failure (when <code>ConnectionException</code> is thrown).
+  		If it is not specified, the default value is 1, namely does not retry.</li>
+  <li>Retry interval: the number of seconds to wait for the next retry attempt.
+  		If the value is not specified, 120 seconds is used as the default.</li>
+</ul>
+
+<h2>Extending the (Poolable) Implementor</h2>
+<p>Refer to <a href='AdapterActivityBase.html'>
+Using Adapter Activities</a> for documentation on extending adapter in general.</p>
+
+<p>The following lists some potential needs of customization
+   and how they can be achieved:</p>
+<ul>
+  <li>Passing meta information in addition to the request data which by default
+    is passed in through <code>DATA</code> field to the bus: this can be achieved
+    by overriding the method <code>getMetaData</code> in the adapter to return
+    a map of such data (name-value pairs).</li>
+  <li>Converting responses received normally but indicating error conditions
+  	to retriable or non-retriable errors: this can be achieved by overridding
+  	the <code>invoke</code> method to 
+  	throw <code>ConnectionException</code> or <code>AdapterException</code>
+  	accordingly.</li>
+  <li>Obtaining request data from a place other than a variable configured in
+    the designer: this can be achieved by overriding the <code>getRequestData</code>
+    method.</li>
+  <li>Saving the response to a place other than a variable configured through the 
+    designer, and/or performing other post processing business logic:
+    this can be achieved by overriding <code>onSuccess</code>.</li>
+  <li>Performing custom retry logic and other business logic in case of failure:
+    you can override <code>onFailure</code>.</li>
+</ul>
+
+<h2>Extending the Old Implementor</h2>
+If your customization needs cannot be completely met by 
+the attributes above, you can consider subclassing this implementor.
+Refer to <a href="AdapterActivityBase.html">this link</a>
+for description of overridable methods.
+Additionally, you can override the methods implemented
+in this class, which include:
+<ul>
+   <li><code>getTopicName</code></li>
+   <li><code>getRequestData</code></li>
+   <li><code>getResponseTimeOut</code></li>
+   <li><code>getDataFieldName</code></li>
+   <li><code>createBusMessage</code></li>
+   <li><code>getOverrideInbox</code></li>
+   <li><code>getAccount</code></li>
+   <li><code>getCredential</code></li>
+   <li><code>invoke</code></li>
+   <li><code>openConnection</code></li>
+   <li><code>closeConnection</code></li>
+</ul>
+Refer to the class's <a href="../javadoc/com/qwest/mdw/workflow/activity/impl/SynchronousBusAdapter.html">
+javadoc</a> for more details.
+
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ActionRequest>
+  <Action Name="MyAction">
+    <Parameter name="appName">MDW</Parameter>
+  </Action>
+</ActionRequest>

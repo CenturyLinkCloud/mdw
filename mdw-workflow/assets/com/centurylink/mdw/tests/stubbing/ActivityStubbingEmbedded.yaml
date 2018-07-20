@@ -1,0 +1,32 @@
+process: # 13196
+  name: TestActivityStub
+  instance: 1
+  activity: # 1 "2016-02-17 12:47:48"
+    name: Start
+    status: Completed
+  activity: # 11 "2016-02-17 12:47:48"
+    name: Path
+    status: Completed
+    result: various
+  activity: # 3 "2016-02-17 12:47:48"
+    name: Stubbed Script
+    status: Completed
+    result: com.centurylink.mdw.activity.ActivityException: Error executing Groovy script: 'TestActivityStubv0_5_StubbedScript_3'...
+  activity: # 5 "2016-02-17 12:47:48"
+    name: Finish
+    status: Completed
+  variable: # 19309
+    name: flowPath
+    value: various
+process: # 13197
+  name: TestActivityStub Exception Handler
+  instance: 1
+  activity: # 9 "2016-02-17 12:47:48"
+    name: Start
+    status: Completed
+  activity: # 7 "2016-02-17 12:47:48"
+    name: Stubbed Task
+    status: Completed
+  activity: # 10 "2016-02-17 12:47:48"
+    name: Stop
+    status: Completed

@@ -1,0 +1,68 @@
+ body {
+   font-family: arial;
+ } 
+ dt {
+   font-family: courier new;
+   font-weight: bold;
+   color: darkgreen;
+ }
+ .descitem {
+   font-family: courier new;
+   font-weight: bold;
+   color: red;
+ }
+ var {
+   font-family: times;
+ }
+ body {
+   counter-reset: chapter;
+ }
+ h1 { color: darkblue; text-align: center; }
+ h2 { color: darkblue; text-decoration: underline;}
+ h3 { color: darkblue; }
+ h4 { color: darkblue; font-style: italic; }
+ pre {
+   border-style: ridge;
+   border-width: thin;
+   border-radius: 5px;
+   padding: 8px;
+   margin: 5px;
+   background-color: #e3e3e3;
+ }
+ samp {
+   font-family: courier new;
+   font-weight: bold;
+   font-size: small;
+   color: red;
+ }
+ code {
+   font-family: monospace;
+   font-weight: bold;
+   font-size: medium;
+ }
+ em { 
+   color: navy;
+ }
+ table {
+   border-style: solid;
+   border-width: 1px;
+   border-color: black;
+ }
+ th {
+   border-style: solid;
+   border-width: 1px;
+   border-color: black;
+ }
+ td {
+   border-style: solid;
+   border-width: 1px;
+   border-color: black;
+ }
+ img {
+   border-width: 0;
+ }
+ .cmd {
+   font-weight: bold;
+   font-size: 14px;
+ }
+ 

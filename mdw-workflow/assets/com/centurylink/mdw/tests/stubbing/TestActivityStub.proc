@@ -1,0 +1,248 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=35,y=58,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=200,ly=29,type=Elbow,xs=99&151,ys=78&148"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A11"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=574,y=233,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "throw new Exception('Help!')",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=242,y=143,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Stubbed Script",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=354,ly=153,type=Elbow,xs=346&410,ys=177&177"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "toTimer",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=293,ly=214,type=Elbow,xs=294&294,ys=207&225"},
+          "event": "FINISH",
+          "id": "T4",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=414,y=151,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Stubbed Timer",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=541,ly=169,type=Elbow,xs=518&550,ys=179&179"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=264,y=229,w=60,h=40"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Finish"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=554,y=147,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.stubbing/TestActivityStubSubproc",
+        "processversion": "[0.1,1)",
+        "synchronous": "TRUE"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Stub Test\r\nSubproc",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=604,ly=220,type=Elbow,xs=604&604,ys=211&229"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "flowPath",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=121,y=152,w=60,h=40"
+      },
+      "id": "A11",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Path",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=186,ly=150,type=Elbow,xs=185&238,ys=172&172"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "various",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=163,ly=213,type=Elbow,xs=151&151,ys=196&290"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "all timers",
+          "to": "A12"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=104,y=294,w=100,h=60"
+      },
+      "id": "A12",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Timer 1",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=224,ly=324,type=Elbow,xs=208&241,ys=324&324"},
+        "event": "FINISH",
+        "id": "T10",
+        "to": "A13"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=245,y=294,w=100,h=60"
+      },
+      "id": "A13",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Timer 2",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=361,ly=323,type=Elbow,xs=349&373,ys=323&323"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A14"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "WORK_DISPLAY_INFO": "x=377,y=293,w=100,h=60"
+      },
+      "id": "A14",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Timer 3",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=503,ly=325,type=Elbow,xs=481&525,ys=325&325"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A15"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=529,y=305,w=60,h=40"
+      },
+      "id": "A15",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Done"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "24",
+    "SLA_UNIT": "Hours",
+    "WORK_DISPLAY_INFO": "x=23,y=15,w=149,h=27"
+  },
+  "subprocesses": [{
+    "activities": [
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=273,y=45,w=60,h=40"},
+        "id": "A9",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+        "name": "Start",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=369,ly=65,type=Elbow,xs=337&401,ys=65&65"},
+          "event": "FINISH",
+          "id": "T6",
+          "to": "A7"
+        }]
+      },
+      {
+        "attributes": {
+          "AlertIntervalUnits": "Hours",
+          "Category": "COM",
+          "IndexProvider": "com.centurylink.mdw.services.task.CustomTaskIndexProvider",
+          "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;",
+          "SLAUnits": "Hours",
+          "STATUS_AFTER_EVENT": "Cancelled",
+          "TaskLogicalId": "TestActivityStub:A7",
+          "TaskName": "TestActivityStub Fallout",
+          "Variables": "scriptActivityExecuted,scriptActivityExecuted,Not Displayed,0,,java.lang.Boolean",
+          "WORK_DISPLAY_INFO": "x=405,y=34,w=100,h=60"
+        },
+        "id": "A7",
+        "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+        "name": "Stubbed Task",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=539,ly=65,type=Elbow,xs=509&566,ys=65&65"},
+          "event": "FINISH",
+          "id": "T7",
+          "to": "A10"
+        }]
+      },
+      {
+        "attributes": {
+          "DoNotNotifyCaller": "false",
+          "WORK_DISPLAY_INFO": "x=570,y=45,w=60,h=40"
+        },
+        "id": "A10",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+        "name": "Stop"
+      }
+    ],
+    "attributes": {
+      "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+      "PROCESS_VISIBILITY": "EMBEDDED",
+      "WORK_DISPLAY_INFO": "x=232,y=20,w=449,h=87"
+    },
+    "id": "P8",
+    "name": "Exception Handler"
+  }],
+  "variables": {
+    "flowPath": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "updatedDoc": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "updatedString": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

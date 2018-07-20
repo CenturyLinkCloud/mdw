@@ -1,0 +1,34 @@
+process: # 10208
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2017-01-02 18:56:13"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2017-01-02 18:56:13"
+    name: multiple processes ?
+    status: Completed
+    result: Sync with custom expr
+  activity: # 8 "2017-01-02 18:56:13"
+    name: Another Dummy
+    status: Completed
+  activity: # 18 "2017-01-02 18:56:14"
+    name: N 13
+    status: Completed
+  activity: # 16 "2017-01-02 18:56:14"
+    name: Another sync
+    status: Completed
+  activity: # 19 "2017-01-02 18:56:18"
+    name: Sum 169
+    status: Completed
+  activity: # 11 "2017-01-02 18:56:21"
+    name: Process Finish
+    status: Completed
+  variable: # 10446
+    name: N
+    value: 13
+  variable: # 10442
+    name: processCase
+    value: Sync with custom expr
+  variable: # 10456
+    name: Sum
+    value: 169

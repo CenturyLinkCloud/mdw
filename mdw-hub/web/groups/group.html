@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          {{groupName}}
+        </div>
+        <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('User Admin')">
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="setEdit(true)">
+            <span class="glyphicon glyphicon-edit"></span> Edit
+          </button>        
+          <button type="button" class="btn btn-danger mdw-btn" ng-click="setConfirm(true)">
+            <span class="glyphicon glyphicon-remove"></span> Delete
+          </button>        
+        </div>
+      </div>
+      <div ng-if="!edit && !confirm" class="form-horizontal mdw-section">
+        <div class="form-group mdw-static-group">
+          <label class="control-label col-xs-2">Description:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{workgroup.description}}</p>
+          </div>
+        </div>
+        <div class="form-group mdw-static-group" ng-if="workgroup.parent">
+          <label class="control-label col-xs-2">Parent:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{workgroup.parent}}</p>
+          </div>
+        </div>
+        <div class="form-group mdw-static-group" ng-repeat="(attrName, attrVal) in workgroup.attributes" 
+          ng-if="attrName.indexOf(':') < 0 && attrVal.length > 0">
+          <label class="control-label col-xs-2">{{attrName}}:</label>
+          <div class="col-xs-10">
+            <p class="form-control-static mdw-static">{{attrVal}}</p>
+          </div>
+        </div>
+      </div>      
+      <div ng-if="edit" ng-include="'groups/groupForm.html'">
+      </div>
+      <div ng-if="confirm" class="mdw-section">
+        <div class="mdw-form-footer">
+          <div class="mdw-message">{{workgroup.message}}</div>
+          <div class="mdw-buttons">
+            <button class="btn btn-danger mdw-btn" type="button" ng-click="deleteWorkgroup()">Delete</button>
+            <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Users <span class="mdw-heading-sub">({{workgroup.users.length}})</span></div>
+        <div class="mdw-heading-actions" ng-if="!edit && !confirm && authUser.hasRole('User Admin')">
+          <button type="button" class="btn btn-primary mdw-btn" uib-popover-template="'groups/findUser.html'" 
+            popover-placement="left" pop-click>
+            <span class="glyphicon glyphicon-plus"></span> Add
+          </button>        
+        </div>
+      </div>
+      <ul class="mdw-list">
+        <li ng-repeat="user in workgroup.users">
+          <div>
+            <a class="mdw-item-link" href="#/users/{{user.cuid}}">{{user.name}}</a>
+            <div class="mdw-item-action" ng-if="!edit && !confirm && authUser.hasRole('User Admin')">
+              <a uib-tooltip="Remove {{user.name}} from {{workgroup.name}}" tooltip-placement="left" 
+                 ng-click="removeUser(user.cuid)">
+                <span class="glyphicon glyphicon-remove"></span>
+              </a>
+            </div>
+          </div>
+          <div class="mdw-item-sub">{{user.id}}</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

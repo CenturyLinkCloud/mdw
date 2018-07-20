@@ -1,0 +1,30 @@
+package com.centurylink.mdw.tests.workflow
+
+masterRequestId = System.currentTimeMillis();
+
+send message("REST") {
+    payload = asset("xslt-transform-request.xml").text
+}
+
+sleep 30
+
+verify response {
+    expected = '''<html xmlns="http://www.cramer.com/centurylink/srpf"
+    xmlns:bim="http://www.centurylink.com/XMLSchema/BIM"
+    xmlns:q="http://mdw.centurylink.com/XMLSchema" xmlns:s="http://www.cramer.com/centurylink/srpf">
+    <body>
+        <h2>SeRT Order
+ SRT</h2>
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Customer Name</td>
+                <td>STATE OF OREGON-ETHERNET NORTH</td>
+            </tr>
+        </table>
+    </body>
+</html>'''
+}

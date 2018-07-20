@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.workflow
+
+notify event("H-${masterRequestId}") {
+    message = "<EventCheck/>"
+}
+sleep 20
+start process("EventCheck")
+wait process
+verify process

@@ -1,0 +1,10 @@
+package com.centurylink.mdw.tests.script
+
+start process("PrePostGroovyScript") {
+    variables = [orderDoc: '''<order>
+  <orderNumber>x12345678</orderNumber>
+  <customerId>DHO115360</customerId>
+</order>''']
+}
+wait process
+verify process

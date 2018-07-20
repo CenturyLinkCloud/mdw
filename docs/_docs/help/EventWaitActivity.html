@@ -1,0 +1,277 @@
+<html>
+<head>
+<title>Using EventWaitActivity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Using Activity Implementor EventWaitActivity</h1>
+
+This implementor is used to wait for external messages, solicited
+(asynchronous response messages) or unsolicited (such as
+order cancellation messages). This implementor works with the <em><a href="TimerWaitActivity.html">Timer Wait</a></em> activity.
+
+<h2>Attributes</h2>
+
+<h3>Events</h3>
+The attribute <em>Events</em> specifies one or more events the activity instance is waiting for.
+Each event specification contains three entries:
+<ul>
+  <li>Event Name. This is an event name that is used to match with event names generated
+      by external event handlers. The event name can contain place holders or <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java EL Expressions</a> 
+      (e.g. "#{my_variable_1}" or "${my_variable_1}") 
+      for including dynamic contents such as process instance IDs.</li>
+  <li>Completion code. This is used to set the completion code after the activity
+      instance is waken by an external message. To set a transition event type
+      other than FINISH, prepend the event type name and colon, such as "<code>ERROR</code>"
+      or "<code>ABORT:ByUser</code>".</li>
+  <li>Recurring. This is a check box. If checked, it indicates the event can occur
+      multiple times for the given process instance. A typical example is pending order change.</li> 
+</ul>
+The syntax for a place holder is a "$" and a variable name enclosed in braces ("{" and "}"),
+such as <code>{$my_variable_1}</code>. Make sure to note the difference between having the "$" inside versus outside the "{}".  
+Inside the curly brackets ( "{$my_variable_1}" ) means it's a Place Holder, while outside ( "${my_variable_1}" ) means it's a Java expression. 
+Besides process variables, the following variable names
+have predefined meanings:
+<table>
+  <tr><td>{$ProcessInstanceID}</td><td>Has the value of the process instance ID</td></tr>
+  <tr><td>{$MasterRequestID}</td><td>Has the value of the master request ID</td></tr>
+  <tr><td>{$ActivityInstanceID}</td><td>Has the value of the activity instance ID</td></tr>
+</table>
+
+<h3>Timeout and Status after Timeout</h3>
+The time out attribute specifies how long we should time out the waiting.
+When the value is 0 or negative, the activity waits indefinitely.
+<p>
+The activity should have an Event Type for <em>DELAY</em> outgoing 
+transition from the <em>Event Wait Activity</em> to <em><a href="TimerWaitActivity.html">Timer Wait</a></em> activity to indicate what should
+be done when a timeout happens. If a DELAY transition is not defined,
+the DELAY embedded process will be looked at next. If that does not exist
+either, the DELAY embedded process of the parent process instance will be
+invoked, and so on. If no process instances in the chain has embedded
+DELAY process, no transition is made (and no exception will be reported).
+<p>
+The attribute "Status after Timeout" specifies what status the activity
+should be set when a timeout situation occurs. There are 3 statuses possible:
+<ul>
+  <li>Canceled. The activity instance will be canceled.</li>
+  <li>Hold. The activity instance will be put on a hold status (showing cyan color
+  		in the designer's process instance view). The activity instance in hold status
+  		will not react to external messages received until it is resumed waiting
+  		(discussed below).</li>
+  <li>Waiting. The activity instance continues waiting (i.e. still actively listening for
+      events).</li>
+</ul>
+
+<h3>Notes About Timeouts</h3>
+<ul>
+  <li>The mdw.timer.ThresholdForDelay setting (in minutes, with a default of 60) controls whether JMS or DB is used for storing timeouts (values below the threshold use JMS; those above use DB).</li>
+  <li>The MDW scheduled event monitor runs at a frequency specified by mdw.timer.CheckInterval (in seconds with a default of 60), and with an initial startup delay of mdw.timer.InitialDelay (in seconds with a default value of 300).  So this means that db timeouts cannot be expected to be more accurate +/- 1 minute.  It also means that when the server is initially started the check will not be performed for at least 5 minutes.</li>
+  <li>It is highly recommended that the value of ThresholdForDelay NOT be set below 5 minutes.</li>
+  <li>During testing, you may desire shorter timeouts than those expected in real-world scenarios.  In that case, it's important that you understand that the delays may not be accurate down to the minute if they're stored in the db.</li>
+  <li>Also, you should understand that if the delay is stored in JMS then it can be lost after a server shutdown.  Furthermore, if your scenario calls for the timeout to be rescheduled, this can only be accommodated in the database as JMS timeouts cannot be changed once established.</li>
+</ul>
+
+If a DELAY transition is defined, to resume the activity instance into waiting status,
+there must be another transition leading into the activity. If a DELAY transition is not
+defined but there is a DELAY embedded subprocess (in the current or ancestor process instances),
+the activity instance is resumed to waiting status when the embedded subprocess terminates.
+When the activity instance is resumed to waiting status, it immediately processes
+any events received while in holding status, so the activity instance may actually be
+set to COMPLETED status immediately, depending on the result of event processing.
+
+<h2>Processing Events</h2>
+With this built-in implementor, you can only configure it to transition to specified
+next activities. More often than not, you may need to process the messages received
+with the event and perform some business logic.
+This can be achieved by subclassing this implementor and override the method
+<code>Integer processMessage(String message)</code>. The only argument to the method
+is the XML message (in String form) received along with the event (probably from external
+systems and stored in DOCUMENT table). After this method call is complete, it will call handleCompletionCode() method
+to return an activity status, dictating the status of the activity instance to be set after processing the message. 
+The valid statuses include:
+<ul>
+	<li><code>WorkStatus.STATUS_COMPLETED</code>: the activity instance is set to completed
+		and transitions are made to next activities according to completion code
+		specified in the configuration, which can be overriden using <code>setReturnCode()</code>.
+		This is probably the return value of the choice in most cases.</li>
+	<li><code>WorkStatus.STATUS_WAITING</code>: the activity instance is kept as in waiting status. 
+	    No transition is made unless the completion code indicates a CORRECT or ABORT event type, in which
+	    case it makes that transition while still waiting for events (in parallel).</li>
+	<li><code>WorkStatus.STATUS_HOLD</code>: the activity instance is set to hold status. 
+		No transition is made unless the completion code indicates a CORRECT or ABORT event type, in which
+	    case it makes that transition. Typically you will need to specify a transition out to CORRECT, as there will be
+	    no way to resume the activity instance without that.</li>
+	<li><code>WorkStatus.STATUS_CANCELLED</code>: the activity instance is set to cancel status. 
+		No transition is made unless the completion code indicates a CORRECT or ABORT event type, in which
+	    case it makes that transition.</li>
+</ul>
+The default method <code>processMessage(String)</code> does nothing if Received Message Variable is not defined and returns <code>WorkStatus.STATUS_COMPLETED</code>.
+<p>
+If you do not have a need to override the method but would like to leave the activity in a status 
+other than Completed, you can configure the completion code in designer by prepending "<code>Waiting::</code>", "<code>Hold::</code>", 
+or "<code>Cancelled::</code>" to regular completion code. Examples include "<code>Hold::CORRECT</code>" and "<code>Waiting::</code>".
+
+<br><br>Following table  compares 2 different types  of activities  and how to set the completion code with activity status = Hold. You can replace Hold with Waiting and Cancelled if that is what you want.<br><table
+			width="100%" >
+			<thead>
+				<tr>
+					<th>Activity Name</th>
+					<th style="width: 264px;">Event Wait</th>
+					<th>Timer Wait/Manual Task/Sync/Heterogeneous</th>
+				</tr>
+			</thead>
+			<tr>
+				<td>Invoke Correction Handler with activity in Hold</td>
+				<td>Completion code = Hold::CORRECT</td>
+				<td>Completion code =CORRECT and select Hold from drop down on
+					&quot;status after receiving  event&quot;</td>
+			</tr>
+			<tr>
+				<td>Invoke CancellationHandler with activity in Hold</td>
+				<td>Completion code = Hold:ABORT</td>
+				<td>Completion code =ABORT and select Hold from drop down on
+					&quot;status after receiving  event&quot;</td>
+			</tr>
+		</table>
+		
+		<h2>Return from Embedded Process</h2>
+If a transition is made to a CORRECT, ABORT, ERROR or DELAY embedded process (the ERROR embedded process
+is possible when the activity instance throws an exception), when the embedded process terminates:
+<ul>
+  <li>For ABORT embedded processes, it never comes back to the parent process, so there is never an impact.</li>
+  <li>If the activity instance is in Hold status, it will be put back in Waiting status (just like DELAY discussed above).
+      If there are any events received while in hold status, the method <code>processMessage()</code> will be invoked again, 
+      which may immediately put the activity instance in a different status described above.</li>
+  <li>If the activity instance is in any other status (possibly Waiting, Cancelled, Completed and Error),
+      nothing will be done (especially, there will be
+      no transition made to the next activities). </li>
+</ul>
+You can override the behavior (except for ABORT embedded processes, whose behavior cannot be overriden) 
+by setting the completion code of the embedded process
+(by calling <code>setProcessInstanceCompletionCode()</code>, or by selecting certain task actions described below
+in a manual task in the ERROR embedded process). The following table summarizes the impacts:
+
+<table border='1'>
+  <tr><th>Subprocess completion code</th>
+  		<th>Activity instance status is Hold</th>
+  		<th>Activity instance status is Waiting,Cancelled or Failed</th>
+  		<th>Activity instance status is Completed</th></tr>
+  <tr><td>null (this is default) or <code>RESUME</code></td>
+  		<td>put the activity in waiting status again and process pending events if there are any, as described above.</td>
+  		<td>do nothing for Waiting and Cancelled statuses. For Failed status, complete the activity instance
+  			and transition with null completion code.</td>
+  		<td>do nothing</td></tr>
+  <tr><td><code>START</code> (corresponding to task action Retry)</td>
+  		<td>(undefined)</td>
+  		<td>cancel current activity instance
+  			and restart another instance of the activity</td>
+  		<td>restart another instance of the activity</td></tr>
+  <tr><td><code>ABORT</code> (corresponding to task action Cancel)</td>
+  		<td>(undefined)</td>
+  		<td>Cancel the activity</td>
+  		<td>Do nothing</td></tr>
+  <tr><td><code>ABORT:this_process</code> (corresponding to task action Abort)</td>
+  		<td>(undefined)</td>
+  		<td>cancel the activity and terminate (complete) the parent process</td>
+  		<td>terminate (complete) the parent process</td></tr>
+  <tr><td><code>FINISH</code> (corresponding to task action Complete)</td>
+  		<td>(undefined)</td>
+  		<td>complete the activity instance, and
+  			transition accordingly (using transitions with no completion code)</td>
+  		<td>transition accordingly (using transitions with no completion code)</td></tr>
+  <tr><td><code>FINISH:<i>compcode</i></code> (corresponding to custom task action <i>compcode</i>)</td>
+  		<td>(undefined)</td>
+  		<td>complete the activity instance, and
+  			transition accordingly (first looking at transitions with <code>RESUME:<i>compcode</i></code> then <code><i>compcode</i></code> )</td>
+  		<td>transition accordingly (first looking at transitions with <code>RESUME:<i>compcode</i></code> then <code><i>compcode</i></code> )</td></tr>
+</table>
+
+<h2>Impact of Recurring Flag</h2>
+When the recurring flag is not checked (default),
+we have made the assumption that the event with the same name
+will never occur again. In this case, MDW allows multiple
+recipients for the event. In another word, if there are multiple
+event wait activities registered for waiting the same event,
+then all activities will be informed.
+<p>
+When the recurring flag is checked, it is an indication
+that potentially multiple events with the same name can be 
+received. To prevent processing of an old event, MDW restricts
+that only one activity instance can wait for an event.
+This is achieved as follows: when an event wait activity registers
+to wait for a multiple occurrence event, the system automatically
+de-register other activities registered for waiting the same event
+(if there is any). Once the event is processed, it is marked
+as finished, so future registration for the same event will
+wait for another message.
+<p>
+<font color='red'>Important note: you should never put the activity
+in Hold or Waiting status for a non-recurring event</font>. This is because, for Hold status, when the CORRECT embedded
+process returns, it sees the non-recurring event again and invoke the CORRECT embedded
+process again, causing infinite loop; and for Waiting status, it sees the same event again
+immediately.
+
+<h2>Event Wait in Other Activities</h2>
+Besides <code>EventWaitActivity</code> (event wait), several other activities allow
+to wait for unsolicited events:
+<ul>
+    <li><a href="TimerWaitActivity.html">Timer Wait</a></li>   
+    <li><a href="taskAction.html">Custom Manual Task</a></li>  
+    <li><a href="InvokeMultipleSubprocesses.html">Invoke Multiple Subprocesses</a></li>  
+    <li><a href="synchronization.html">Synchronization Activity</a></li>  
+</ul>
+The same event configuration mechanism is used to register event waits.
+Additionally, you must specify the status of the activity instance to be left when
+unsolicited event arrives. The default status is Hold. The following table lists allowed
+statuses:
+<table border='1'>
+  <tr><th>Activity</th><th>Hold</th><th>Waiting</th><th>Cancelled</th></tr>
+  <tr><td><a href="TimerWaitActivity.html">Timer Wait</a></td>
+  		<td>hold on timer expiration until the activity instance is resumed waiting</td>
+  		<td>continue responding to timer expiration in parallel</td>
+  		<td>cancel the activity</td></tr>
+<tr><td><a href="taskAction.html">Custom Manual Task</a></td>
+  		<td>hold on task completion until the activity instance is resumed waiting</td>
+  		<td>continue responding to task completion event in parallel</td>
+  		<td>cancel the activity, <i>as well as</i> the task</td></tr>
+<tr><td><a href="InvokeMultipleSubprocesses.html">Invoke Multiple Subprocesses</a></td>
+  		<td>hold on checking for all subprocess termination until the activity instance is resumed waiting</td>
+  		<td>continue responding to subprocess termination in parallel</td>
+  		<td>not allowed (designer does not give the option)</td></tr>
+<tr><td><a href="synchronization.html">Synchronization Activity</a></td>
+  		<td>hold on checking for synchronization until the activity instance is resumed waiting</td>
+  		<td>continue checking synchronization as incoming transitions arrive, in parallel</td>
+  		<td>not allowed (designer does not give the option)</td></tr>
+</table>
+To customize event processing, you will need to override <code>TimerWaitActivity.processOtherMessage(String message)</code>
+(not <code>processMessage()</code> which is for event wait). The method does not return anything, the default method does nothing.
+<p>
+When an embedded process returns, the same behavior as event wait activity described above applies, except
+when resuming waiting from a hold status, each activity behaves in its native way:
+<ul>
+   <li>For timer wait, it checks if the timer is already expired while in holding status. If yes, completes the activity,
+   		otherwise check if another unsolicited event arrived. If yes, invoke processOtherMessage() again.</li>
+   <li>For manual task, it checks if the task has been completed. If yes, process the task action accordingly;
+   		otherwise check if another unsolicited event arrived. If yes, invoke processOtherMessage() again.</li>
+   <li>For invoke multiple processes, it checks if all subprocesses are terminated. If yes, completes the activity,
+   		otherwise check if another unsolicited event arrived. If yes, invoke processOtherMessage() again.</li>
+   <li>For synchronization activity, it checks if the synchronization condition is satisfied. If yes, completes the activity,
+   		otherwise check if another unsolicited event arrived. If yes, invoke processOtherMessage() again.</li>
+</ul>
+<h2>Event Wait: How to store received message in a process variable</h2>
+If you want to store the message received by an Event wait you need to do following
+<br/>
+Define a process variable of Document type.
+<br/>
+Some of the common one used are as follows
+<ul>
+   	<li>org.w3c.dom.Document</li>
+	<li>org.apache.xmlbeans.XmlObject</li>
+	<li>com.centurylink.mdw.model.StringDocument</li>
+</ul>
+
+Once you have defined then you have to go to Design tab on the Event Wait activity. There this variable would be available
+in drop down of attribute named "Received Message Variable", if variable is defined of Document type.
+This variable would store the received message when Event wait receives the event. 
+</body>
+</html>

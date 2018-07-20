@@ -1,0 +1,22 @@
+package com.centurylink.mdw.tests.tasks
+
+send message("REST") {
+    payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
+}
+sleep 10
+start process("com.centurylink.mdw.tests.workflow/MDWTestSuppsEmbedded") {
+    variables = [testCase: "task-wait"]
+}
+sleep 60
+action task("Supps Embedded Manual Task") {
+    outcome = "Claim"
+}
+sleep 30
+send message("REST") {
+    payload = "<Signal>${masterRequestId}</Signal>"
+}
+
+wait process
+verify process
+
+

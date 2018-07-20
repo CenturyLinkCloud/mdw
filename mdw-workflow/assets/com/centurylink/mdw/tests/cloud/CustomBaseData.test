@@ -1,0 +1,17 @@
+package com.centurylink.mdw.tests.cloud
+
+// TODO: confirm created task category
+start process("CustomBaseData") {
+    variables = [ inputFloat: 2.7183f ]
+}
+sleep 15
+action task("Custom Category Task") {
+    outcome = "Claim"
+}
+sleep 15
+action task("Custom Category Task") {
+    outcome = "Complete"
+    variables = [ assignedFloat: 6.022f ]
+}
+wait process
+verify process

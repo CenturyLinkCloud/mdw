@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading" style="padding-left:20px;">
+        <div class="mdw-heading-label">
+          Task Templates
+          <a href="" ng-click="collapseAll()">
+            <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
+          </a> 
+          <a href="" ng-click="expandAll()">
+            <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
+          </a> 
+        </div>
+      </div>
+      <div class="mdw-sub" ng-repeat="pkg in templateList.packages | orderBy : 'name'">
+        <div class="panel-heading mdw-sub-heading">
+          <div class="mdw-heading">
+            {{pkg.name}} v{{pkg.version}}
+            <a href="" ng-if="!pkg.collapsed" ng-click="collapse(pkg)">
+              <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
+            </a> 
+            <a href="" ng-if="pkg.collapsed" ng-click="expand(pkg)">
+              <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
+            </a> 
+          </div>
+        </div>
+        <ul class="mdw-list" uib-collapse="pkg.collapsed">
+          <li ng-repeat="template in pkg.templates" ng-class="{'mdw-last-item': $last}">
+            <div>
+              <a class="mdw-item-link mdw-item-in" href="#/asset/{{pkg.name}}/{{template.name}}">
+                {{template.baseName}} v{{template.version}}
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

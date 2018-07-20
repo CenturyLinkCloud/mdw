@@ -1,0 +1,30 @@
+process: # 13223
+  name: TestAdapterStub
+  instance: 1
+  activity: # 1 "2016-02-17 14:16:10"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-17 14:16:10"
+    name: GetEmployee
+    status: Completed
+  activity: # 2 "2016-02-17 14:16:15"
+    name: Stop
+    status: Completed
+  variable: # 19345
+    name: request
+    value: |
+      {
+        "employee": {
+          "id": "dxoakes"
+        }
+      }
+  variable: # 19346
+    name: response
+    value: |
+      {
+        "employee": {
+          "id": "dxoakes",
+          "firstName": "Donald",
+          "lastName": "Oakes"
+        }
+      }

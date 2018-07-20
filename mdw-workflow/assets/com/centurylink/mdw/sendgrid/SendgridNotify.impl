@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.NotificationActivity",
+  "icon": "sendgrid.png",
+  "implementorClass": "com.centurylink.mdw.sendgrid.SendgridActivity",
+  "label": "SendGrid Email",
+  "pagelet": "<PAGELET>\n  <TEXT NAME='from' LABEL='From' VW='200' DEFAULT='support@example.com'/>\n  <TEXT NAME='subject' LABEL='Subject' VW='450'/>\n  <DROPDOWN NAME='template' LABEL='Template' SOURCE='RuleSets' TYPE='HTML,JSON' VW='350'/>\n  <TEXT NAME='attachments' LABEL='Attachment(s)' VW='450'/>\n  <BOOLEAN NAME='ContinueDespiteMessagingException' LABEL='Continue Despite Messaging Exception'/>\n  <HYPERLINK URL='help/notification.html'>Notification Activity Help</HYPERLINK>\n  <TEXT NAME='RecipientsExpression' LABEL='Recipient(s) Expression' SECTION='Recipients' />\n  <LIST NAME='NoticeGroups' LABEL='Notice Groups' SOURCE='UserGroup' SECTION='Recipients'/>\n  <LIST NAME='CCGroups' LABEL='CC Groups' SOURCE='UserGroup' SECTION='Recipients'/>\n</PAGELET>"
+}

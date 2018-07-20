@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.NotificationActivity",
+  "icon": "notice.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.notification.EmailNotificationActivity",
+  "label": "Email Notification",
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='noticeType' LABEL='Notice Type' VW='75' DEFAULT='SMTP'>\n    <OPTION>SMTP<\/OPTION>\n  <\/DROPDOWN>\n  <TEXT NAME='from' LABEL='From' VW='200' DEFAULT='mdw@centurylink.com'/>\n  <TEXT NAME='subject' LABEL='Subject' VW='450'/>\n  <DROPDOWN NAME='template' LABEL='Template' SOURCE='RuleSets' TYPE='HTML,JSON' VW='350'/>\n  <TEXT NAME='attachments' LABEL='Attachment(s)' VW='450'/>\n  <BOOLEAN NAME='ContinueDespiteMessagingException' LABEL='Continue Despite Messaging Exception'/>\n  <HYPERLINK URL='help/notification.html'>Notification Activity Help<\/HYPERLINK>\n  <TEXT NAME='RecipientsExpression' LABEL='Recipient(s) Expression' SECTION='Recipients' />\n  <LIST NAME='NoticeGroups' LABEL='Notice Groups' SOURCE='UserGroup' SECTION='Recipients'/>\n  <LIST NAME='CCGroups' LABEL='CC Groups' SOURCE='UserGroup' SECTION='Recipients'/>\n</PAGELET>"
+}

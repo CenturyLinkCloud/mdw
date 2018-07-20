@@ -1,0 +1,404 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+configurations {
+    assets { 
+        extendsFrom archives
+    }
+}
+
+if ('true'.equals(findProperty('devBuild'))) {
+    subprojects {
+        tasks.withType(Javadoc).all { enabled = false }
+    }
+}
+
+task env {
+    tasks.withType(Exec) {
+        environment << [MDW_HOME: 'cli']
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "eclipse-wtp"
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    eclipse {
+        classpath {
+            defaultOutputDir = file("build/classes")
+        }
+    }
+
+    sourceCompatibility = 1.8
+    version = "${mdwVersion}"
+
+    libsDirName = "../../${mdwOutputDir}"
+
+    sourceSets {
+        main {
+            java {
+                srcDir "src"
+            }
+            output.classesDir = "build/classes"
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    // copy into output dir rather than including directly in jar
+    // this works better in local development where deployment happens from build/classes
+    task copyMeta(type: Copy) {
+        from("src") {
+            include "META-INF/mdw/**"
+            include "META-INF/spring/**"
+            exclude "META-INF/**/.metadata"
+            exclude "META-INF/**/.*ignore"
+        }
+        into sourceSets.main.output.classesDir
+    }
+
+    processResources {
+        dependsOn copyMeta
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+        exclude "META-INF"
+        exclude "**/.metadata/"
+        exclude "**/.*ignore"
+    }
+
+    def packaging = 'jar'
+
+    task javadocJar(type: Jar) {
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        classifier = 'javadoc'
+        from javadoc
+    }
+}
+
+task cleanJavadocs(type: Delete) {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    delete "../docs/_docs/javadoc"
+}
+
+task packageSources(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["sourcesJar"]
+}
+
+allprojects {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.noTimestamp = "true"
+    }
+}
+
+task javadocs(type: Javadoc) {
+    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+    dependsOn "cleanJavadocs"
+    source subprojects.collect {project -> project.sourceSets.main.java }
+    classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
+    title = "MDW 6 API JavaDocs"
+    maxMemory = "256m"
+    options.links "http://docs.oracle.com/javase/8/docs/api/"
+    options.bottom "<i>Copyright &#169; 2018 CenturyLink, Inc.</i>"
+    destinationDir = file('../docs/_docs/javadoc')
+}
+
+task zipAssetPackages(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["zipAllAssets"]
+}
+
+task updateRestApiDefinition(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["updateRestApiDefinition"]
+}
+
+task updateMdwVerInFiles(type: GradleBuild) {
+    buildFile = "publish.gradle"
+    tasks = ["updateMdwVerInFiles"]
+}
+
+task versions {
+    doLast {
+        println "Java Version: " + System.getProperty("java.version")
+        println GradleVersion.current().prettyPrint()
+        println "MDW Version: ${mdwVersion}"
+    }
+}
+
+allprojects {
+    group = "com.centurylink.mdw"
+    version = "${mdwVersion}"
+    ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
+    ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
+
+    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+        signing {
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            sign configurations.archives
+         }
+    }
+
+    uploadArchives {
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        repositories {
+            mavenDeployer {
+                beforeDeployment {
+                    MavenDeployment deployment -> signing.signPom(deployment)
+                }
+                repository(url: mavenRepoUrl) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                snapshotRepository(url: mavenSnapshotRepoUrl) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+                pom.project {
+                    name 'MDW framework'
+                    groupId 'com.centurylink.mdw'
+                    version = mdwVersion
+                    packaging = 'zip'
+                    description 'MDW is a microservices based workflow framework'
+                    url 'http://centurylinkcloud.github.io/mdw/'
+                    scm {
+                        connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                        developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                        url 'https://github.com/CenturyLinkCloud/mdw.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'mdw.development'
+                            name 'MDW Development Team'
+                            email 'mdw.development@centurylink.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * The artifact for this build is mdw-templates (only because each maven artifact
+ * needs a build project, and we don't want one especially for templates).
+ */
+/**
+ * Ant zip is the workaround to ensure .gitignore is included.
+ */
+task zipTemplates(type: Zip) {
+    destinationDir = file("../${mdwOutputDir}")
+    archiveName = "mdw-templates-${mdwVersion}.zip"
+    from "templates"
+    include "**/*"
+    doLast {
+        ant.zip(destfile: "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip") {
+            fileset(dir: 'templates', defaultexcludes: "no")
+        }
+    }
+}
+
+artifacts {
+    archives zipTemplates
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                artifactId = "mdw-templates"
+            }
+        }
+    }
+}
+
+task buildAll(type: GradleBuild) {
+    dependsOn(packageSources, zipTemplates)
+    buildFile = "build.gradle"
+    tasks = ["build"]
+}
+
+task buildDev(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["build"]
+    startParameter.projectProperties = [devBuild: 'true']
+}
+
+task javaNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', '**/*.java']
+    workingDir = '..'
+}
+
+task jsNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-hub/web/js/**/*.js mdw-hub/web/js/*.js']
+    workingDir = '..'
+}
+
+task jsxNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-workflow/assets/**/*.jsx']
+    workingDir = '..'
+}
+
+task htmlNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-hub/web/**/*.html']
+    workingDir = '..'
+}
+
+task cssNoTabs(type: JavaExec) {
+    classpath = files(project(':mdw-services').sourceSets.main.compileClasspath)
+    main = 'com.centurylink.mdw.util.file.Grep'
+    args = ['\t', 'mdw-hub/web/css/**/*.css']
+    workingDir = '..'
+}
+
+task codeFormat {
+    dependsOn(javaNoTabs, jsNoTabs, jsxNoTabs, htmlNoTabs, cssNoTabs)
+}
+
+task checkAssetVersions(type: Exec) {
+    def mdwCmd
+    if (System.properties['os.name'].startsWith('Windows')) {
+        mdwCmd = 'cli\\bin\\mdw.bat'
+    }
+    else {
+        mdwCmd = 'cli/bin/mdw'
+    }
+    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn']
+    commandLine cmds
+}
+
+task testAll(type: GradleBuild) {
+    dependsOn(buildAll, codeFormat, checkAssetVersions)
+    buildFile = "test.gradle"
+    tasks = ["test"]
+    startParameter.projectProperties = [include: '**/*.test',
+exclude: "com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/AdminApisWorkgroups.test,com/centurylink/mdw/tests/services/InflightHandling.test"]
+}
+
+task test {
+    dependsOn testAll
+}
+
+task archiveAssetZips {
+    dependsOn zipAssetPackages
+    doLast{
+        signing {
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            sign configurations.assets
+        }
+        ext.discoveredFiles = []
+        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
+            def filterName = file.name - ".zip"
+            def artifactName = filterName - "-SNAPSHOT"
+            def versionStart = artifactName.lastIndexOf("-")
+            def artifactId = artifactName.substring(0, versionStart)
+            discoveredFiles.add(artifactId)
+            artifacts {
+                assets file:file, name:artifactId, type:"zip"
+            }
+        }
+        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.asc').each { file ->
+            artifacts {
+                assets file:file, type:"asc"
+            }
+        }
+    }
+}
+
+task configureUploadAssets {
+    dependsOn archiveAssetZips
+    doLast {
+        uploadAssets {
+            ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
+            ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
+            repositories {
+                mavenDeployer {
+                    beforeDeployment {
+                        MavenDeployment deployment -> signing.signPom(deployment)
+                    }
+                    repository(url: mavenRepoUrl) {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+                    snapshotRepository(url: mavenSnapshotRepoUrl) {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+                    archiveAssetZips.discoveredFiles.each { artifactId ->
+                        def filterName = artifactId
+                        addFilter(filterName) { artifact, file ->
+                            artifact.name == artifactId
+                        }
+                        pom(filterName).artifactId = artifactId
+                        pom(filterName).groupId = "com.centurylink.mdw.assets"
+                        pom(filterName).name = 'MDW Core Assets'
+                        pom(filterName).withXml { provider ->
+                            def node = provider.asNode()
+                            node.appendNode('description',
+                                'MDW is a microservices based workflow framework')
+                            node.appendNode('url', 'http://centurylinkcloud.github.io/mdw/')
+                            def licenses = node.appendNode('licenses')
+                            def license = licenses.appendNode('license')
+                            license.appendNode('name', 'The Apache License, Version 2.0')
+                            license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                            def developers = node.appendNode('developers')
+                            def developer  = developers.appendNode('developer')
+                            developer.appendNode('id', 'mdw.development')
+                            developer.appendNode('name', 'MDW Development Team')
+                            developer.appendNode('email', 'mdw.development@centurylink.com')
+                            def scm = node.appendNode('scm')
+                            scm.appendNode('connection', 'scm:git:git://github.com/CenturyLinkCloud/mdw.git')
+                            scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
+                            scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
+                        }
+                    }                    
+                }
+            }
+        }
+    }
+}
+
+uploadAssets.dependsOn configureUploadAssets
+
+task cleanAll(type: GradleBuild) {
+    dependsOn cleanJavadocs
+    buildFile = "build.gradle"
+    tasks = ["clean"]
+}
+
+task publishAll(type: GradleBuild) {
+    dependsOn testAll
+    buildFile = "publish.gradle"
+    tasks = ["publishToMavenCentral"]
+}
+
+// to be run standalone, after successful publish
+task publishAssets(type: GradleBuild) {
+    dependsOn javadocs
+    buildFile = "publish.gradle"
+    tasks = ["publishAssetsToMavenCentral"]
+}
+
+// update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
+task updateMDWDemo(type: GradleBuild) {
+    buildFile = "local.gradle"
+    tasks = ["updateMDWDemoWorkspace"]
+}

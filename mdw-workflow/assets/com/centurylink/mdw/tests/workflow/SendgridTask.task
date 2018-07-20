@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "CCGroups": "[\"Developers\"]",
+    "FormName": "Autoform",
+    "NoticeGroups": "[\"MDW Support\"]",
+    "Notices": "[[\"Open\",\"com.centurylink.mdw.base/taskOpenEmail.html\",\"[0.9,1)\",\"com.centurylink.mdw.sendgrid.TaskNotifier\",\"\"],[\"Assigned\",\"\",\"\",\"\",\"\"],[\"Completed\",\"\",\"\",\"\",\"\"],[\"Cancelled\",\"\",\"\",\"\",\"\"],[\"In Progress\",\"\",\"\",\"\",\"\"],[\"Alert\",\"\",\"\",\"\",\"\"],[\"Jeopardy\",\"\",\"\",\"\",\"\"],[\"Forward\",\"\",\"\",\"\",\"\"]]",
+    "RecipientVar": "${recipientList ? recipientList : recipient}"
+  },
+  "category": "GEN",
+  "logicalId": "SendgridTask",
+  "name": "SendgridTask",
+  "version": "0"
+}

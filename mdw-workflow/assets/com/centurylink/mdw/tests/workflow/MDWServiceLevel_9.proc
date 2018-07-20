@@ -1,0 +1,97 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=261,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=126,ly=281,type=Elbow,xs=120&153,ys=281&281"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=561,y=125,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=323,y=115,w=183,h=59",
+        "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild",
+        "processversion": "[2.3,3)",
+        "synchronous": "FALSE",
+        "variables": "{\"inputVar\":\"#{myvar}\"}"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke regular Async Subprocess",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=540,ly=144,type=Elbow,xs=510&557,ys=145&145"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "myvar",
+        "Rule": "myvar=\"Some special variable value in here!\";",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=168,y=117,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Set document",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=306,ly=148,type=Elbow,xs=272&319,ys=145&145"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "processCase",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=157,y=250,w=122,h=61"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Which Test Case?",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=118,ly=207,type=Elbow,xs=218&218,ys=246&181"},
+        "event": "FINISH",
+        "id": "T4",
+        "resultCode": "DocumentBinding",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "PerformanceLevel": "9",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=185,h=27"
+  },
+  "variables": {
+    "myvar": {
+      "category": "LOCAL",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "processCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

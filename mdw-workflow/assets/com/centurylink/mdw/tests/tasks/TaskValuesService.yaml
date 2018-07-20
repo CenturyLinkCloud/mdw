@@ -1,0 +1,52 @@
+process: # 15429
+  name: ManualTaskServices
+  instance: 1
+  activity: # 1 "2016-04-01 22:51:46"
+    name: Start
+    status: Completed
+  activity: # 4 "2016-04-01 22:51:46"
+    name: |
+      Assign
+      Obj Var
+    status: Completed
+  activity: # 3 "2016-04-01 22:51:46"
+    name: |
+      AutoForm Task 
+      for Service Access
+    status: Waiting
+  variable: # 25525
+    name: dateVar
+    value: Fri Apr 01 15:36:00 MDT 2016
+  variable: # 25522
+    name: docVar
+    value: <empty/>
+  variable: # 25523
+    name: jaxbVar
+    value: |
+      <TaskJaxb attributeOne="attrOneValue" attributeTwo="requiredAttributeValue">
+          <elementOne>newElementOneValue</elementOne>
+          <elementTwo>elementTwoValue</elementTwo>
+      </TaskJaxb>
+  variable: # 25526
+    name: jsonVar
+    value: |
+      {
+        "intProp": 67890,
+        "objOne": {
+          "obj1Date": "Thu Sep 01 13:52:01 MDT 2016",
+          "obj1bool": true,
+          "obj1string": "obj1stringval",
+          "obj1int": 12345
+        },
+        "objTwo": {"obj2string": "obj2stringval"},
+        "stringProp": "stringProp"
+      }
+  variable: # 12110
+    name: objectVar
+    value: taskmaster: dxoakes
+  variable: # 25524
+    name: stringVar
+    value: Hello
+  variable: # 25527
+    name: unassignedVar
+    value: now assigned

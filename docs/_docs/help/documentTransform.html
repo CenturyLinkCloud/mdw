@@ -1,0 +1,164 @@
+<html>
+<head>
+<title>Document Transform Activities</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Document Transform Activities</h1>
+
+Document Transform activities can be used when you need to draw from elements from a process variable whose type is document to populate elements on another document variable.  
+The transformation rules are specified declaratively as an attribute of your transform activity.
+Two distinct syntaxes are supported: <a href='http://www.groovy-lang.org/processing-xml.html#_gpath'>Groovy GPath</a> and <a href='http://www.w3.org/TR/xslt'>XSLT</a>.  
+Configuration of the transform activity is the same whichever syntax you decide to use; only the language constructs in your transform specification are different. 
+<br/><br/>
+To illustrate the workings of a Document Transform activity, assume that you have an input variable named vacationPlan whose type is XmlBean.
+Let's say the document content looks like this:
+<pre>
+&lt;VacationPlan xmlns="http://mdw.centurylink.com/XMLSchema"&gt;
+  &lt;Request id="12345678" /&gt;
+  &lt;Traveler cuid="dxoakes"&gt;
+    &lt;Name&gt;Donald Oakes&lt;/Name&gt;
+    &lt;Department&gt;IT&lt;/Department&gt;
+    &lt;Supervisor cuid="tfujimu"&gt;
+      &lt;Name&gt;Tai Fujimura&lt;/Name&gt;
+    &lt;/Supervisor&gt;
+  &lt;/Traveler&gt;
+  &lt;Departure&gt;15-Dec-2008&lt;/Departure&gt;
+  &lt;Return&gt;31-Dec-2008&lt;/Return&gt;
+  &lt;VacationPackage&gt;Ski Trip&lt;/VacationPackage&gt;
+  &lt;TravelPrefs&gt;
+    &lt;Smoking&gt;No&lt;/Smoking&gt;
+    &lt;Vegetarian&gt;Yes&lt;/Vegetarian&gt;
+  &lt;/TravelPrefs&gt;
+  &lt;Hotel id="1234567"&gt;
+    &lt;Name&gt;The Lodge at Breckenridge&lt;/Name&gt;
+    &lt;Address&gt;112 Overlook Drive, Breckenridge, Colorado 80424&lt;/Address&gt;
+  &lt;/Hotel&gt;
+&lt;/VacationPlan&gt;
+</pre>
+<br/>
+You would like to transform the vacationPlan document into a ManagerApprovalRequest which will be sent via some interface downstream in your process.
+In the Designer configuration for your activity, you select your vacationPlanner variable as the input document.
+For a GPath transform with an output document variable called gpathOutput, your transform declaration would be as follows:
+<pre>
+def managerName = vacationPlan.Traveler.Supervisor.Name =~ /(.*)\s(.*)/
+def requesterName = vacationPlan.Traveler.Name =~ /(.*)\s(.*)/
+
+gpathOutput.ManagerApprovalRequest(xmlns:'http://mdw.centurylink.com/XMLSchema', 'xmlns:bim':'http://www.centurylink.com/XMLSchema/BIM') {
+  Request(id:'12345') {
+    Date(new Date().format('MM/dd/yyyy'))
+  }
+  Approver() {
+    'bim:CUID'(vacationPlan.Traveler.Supervisor.'@cuid')
+    'bim:FirstName'(managerName[0][1])
+    'bim:LastName'(managerName[0][2])
+  }
+  Requester() {
+    'bim:CUID'(vacationPlan.Traveler.'@cuid')
+    'bim:FirstName'(requesterName[0][1])
+    'bim:LastName'(requesterName[0][2])
+  }
+  TimeOff(local:vacationPlan.FlightPlan == '') {
+    StartDate(Date.parse('dd-MMM-yyyy', vacationPlan.Departure.text()).format('MM/dd/yyyy'))
+    EndDate(Date.parse('dd-MMM-yyyy', vacationPlan.Return.text()).format('MM/dd/yyyy'))
+  }
+}
+</pre>
+<br>
+This syntax builds a new document from scratch based on the appropriate values from the input document.
+In your process downstream of the transform activity the gpathOutput variable would be available as follows:
+<pre>
+&lt;ManagerApprovalRequest xmlns="http://mdw.centurylink.com/XMLSchema" xmlns:bim="http://www.centurylink.com/XMLSchema/BIM"&gt;
+  &lt;Request id="12345"&gt;
+    &lt;Date&gt;01/20/2009&lt;/Date&gt;
+  &lt;/Request&gt;
+  &lt;Approver&gt;
+    &lt;bim:CUID&gt;tfujimu&lt;/bim:CUID&gt;
+    &lt;bim:FirstName&gt;Tai&lt;/bim:FirstName&gt;
+    &lt;bim:LastName&gt;Fujimura&lt;/bim:LastName&gt;
+  &lt;/Approver&gt;
+  &lt;Requester&gt;
+    &lt;bim:CUID&gt;dxoakes&lt;/bim:CUID&gt;
+    &lt;bim:FirstName&gt;Donald&lt;/bim:FirstName&gt;
+    &lt;bim:LastName&gt;Oakes&lt;/bim:LastName&gt;
+  &lt;/Requester&gt;
+  &lt;TimeOff local="true"&gt;
+    &lt;StartDate&gt;12/15/2008&lt;/StartDate&gt;
+    &lt;EndDate&gt;12/31/2008&lt;/EndDate&gt;
+  &lt;/TimeOff&gt;
+&lt;/ManagerApprovalRequest&gt;
+</pre>
+<br>
+To perform a similar transformation using XSLT syntax, you would specify the following stylesheet:
+<pre>
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://mdw.centurylink.com/XMLSchema" xmlns:bim="http://www.centurylink.com/XMLSchema/BIM" xmlns:q="http://mdw.centurylink.com/XMLSchema"&gt;
+
+&lt;xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/&gt;
+
+&lt;xsl:template match="q:VacationPlan"&gt;
+  &lt;ManagerApprovalRequest&gt;
+    &lt;xsl:apply-templates select="q:Request | q:Traveler"/&gt;
+  &lt;/ManagerApprovalRequest&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="q:Request"&gt;
+  &lt;Request&gt;&lt;xsl:attribute name="id"&gt;&lt;xsl:value-of select="./@id"/&gt;&lt;/xsl:attribute&gt;
+    &lt;Date&gt;12/15/2008&lt;/Date&gt;
+  &lt;/Request&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="q:Traveler"&gt;
+  &lt;xsl:variable name="managerName" select="q:Supervisor/q:Name"/&gt;
+  &lt;Approver&gt;
+    &lt;bim:CUID&gt;&lt;xsl:value-of select="./q:Supervisor/@cuid"/&gt;&lt;/bim:CUID&gt;
+    &lt;bim:FirstName&gt;&lt;xsl:value-of select="substring-before($managerName, ' ')"/&gt;&lt;/bim:FirstName&gt;
+  &lt;/Approver&gt;
+&lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+</pre>
+<br/>
+You can also use GPath syntax to manipulate a pre-existing document variable rather than building one from scratch.
+Say you had a document variable called gpathInputOutput whose contents looked like this:
+<pre>
+&lt;GPathInputOutputDoc&gt;
+  &lt;Request id="54321"&gt;
+    &lt;Date&gt;01/20/2009&lt;/Date&gt;
+  &lt;/Request&gt;
+  &lt;ToBeFilledInElement id="12345"/&gt;
+  &lt;ElementWithMissingAttribute/&gt;
+  &lt;ElementWithSomeChildren&gt;
+    &lt;ChildOne&gt;ChildOneValue&lt;/ChildOne&gt;
+    &lt;ChildTwo/&gt;
+  &lt;/ElementWithSomeChildren&gt;
+&lt;/GPathInputOutputDoc&gt;
+</pre>
+<br/>
+You could configure your GPath transform as follows:
+<pre>
+def tbf = gpathInputOutput.findAll{ it.@id == '12345' }
+tbf.each { t ->
+    t.value = vacationPlan.Traveler.@cuid
+}
+gpathInputOutput.ElementWithMissingAttribute.@newAttr = 'newAttrValue'
+gpathInputOutput.ElementWithSomeChildren.ChildTwo[0].value = 'ChildTwoValue'
+gpathInputOutput.ElementWithSomeChildren[0].appendNode('ChildThree', 'ChildThreeValue')
+</pre>
+<br/>
+In this case after the transform activity executes, your document would look like this:
+<pre>
+&lt;GPathInputOutputDoc&gt;
+  &lt;Request id="54321"&gt;
+    &lt;Date&gt;01/20/2009&lt;/Date&gt;
+  &lt;/Request&gt;
+  &lt;ToBeFilledInElement id="12345"&gt;dxoakes&lt;/ToBeFilledInElement&gt;
+  &lt;ElementWithMissingAttribute newAttr="newAttrValue"/&gt;
+  &lt;ElementWithSomeChildren&gt;
+    &lt;ChildOne&gt;ChildOneValue&lt;/ChildOne&gt;
+    &lt;ChildTwo&gt;ChildTwoValue&lt;/ChildTwo&gt;
+    &lt;ChildThree&gt;ChildThreeValue&lt;/ChildThree&gt;
+  &lt;/ElementWithSomeChildren&gt;
+&lt;/GPathInputOutputDoc&gt;
+</pre>
+</body>
+</html>

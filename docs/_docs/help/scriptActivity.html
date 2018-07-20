@@ -1,0 +1,135 @@
+<html>
+<head>
+<title>Script Activities</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Script Activities</h1>
+
+This document covers the MDW script activities (labeled "Execute Script" and "Expression Evaluator" in the Toolbox).
+Script expression syntax can also be used in other places throughout MDW.
+
+<br/>
+<h3>Supported Languages</h3>
+MDW has built-in support for these scripting languages:
+<ul>
+  <li><a href="http://groovy.codehaus.org/Documentation">Groovy</a></li>
+  <li><a href="https://kotlinlang.org/docs/reference/">Kotlin</a></li>
+  <li><a href="http://developer.mozilla.org/en/JavaScript">JavaScript</a></li>
+  <li><a href="bindingExpressions.html">javax.el</a></li>
+</ul>
+
+In addition, you can implement support for any arbitrary scripting language as described <a href="#CustomScriptingLanguages">below</a>.
+<br/><br/>
+When you drag the general scripting activity onto your process canvas, the first configuration attribute you'll specify is the the language to use.
+In Eclipse Designer, this appears as a dropdown on the Script tab in the properties view for an "Execute Script" activity, or on the Expression tab for a "Script Expression Evaluator". 
+<br/><br/>
+Groovy is the recommended general-purpose scripting language for MDW.  With Groovy scripting you have the ability to reference classes and closures declared in separate libraries, leading to greater power and flexibility.
+<p>Also, if you have the Groovy Plug-In installed in your Eclipse, you can set breakpoints and debug your scripts and libraries in Eclipse. 
+If you have not installed the Groovy Plug-In in your Eclipse, follow <a href="http://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/">this link</a> to installed it. 
+</p>
+Kotlin and JavaScript are supported via the Java 8 generic ScriptEngine mechanism.
+Check the <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script">scripting automated tests</a> for detailed working examples of all three scripting languages.
+Kotlin specifics are described here: <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md">https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md</a>.
+<br/><br/>
+Whichever scripting language you choose, the activities behave similarly, with the main difference being the syntax of the script itself.
+The script content is stored as an attribute of your activity, so it is maintained and versioned along with your process definition.
+To edit your script, you can right click on the activity and select "Edit Script" from the context menu, or click on the "Edit Script" link in the properties view "Script" tab.
+When you open a script for editing in Eclipse, the contents are saved to a temporary file in your workspace and are saved in VCS when the process definition is saved.
+This is important to remember since you'll want to reflect the latest changes when testing your processes.  There is a preference option in Eclipse to disable the nag dialog so that you aren't reminded of this fact every time you save your scripts.
+<br/><br/>
+In your script you have implicit access to all of your process variables, as well as "runtimeContext" (which represents the containing activity's workflow
+state).  The runtimeContext binding is an instance of 
+<a href="../javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a>.
+The syntax for accessing your process variables is simply <i>varName</i> in Groovy or JavaScript.  In Kotlin, variables are referenced through the <i>variables</i> map. 
+
+<br/><br/>
+<h3>Execute Script Activity</h3>
+In a script executor activity, you can both interrogate and assign values to your process variables.
+<a href="variable.html">Document variables</a> are treated specially, however, and you'll need to identify which if any document (or Reference) variables are to be assigned values in your script:
+<br/><br/>
+<img src="images/scriptDocVars.jpg" />
+<br/><br/>
+You can control the return code from your script executor activity by returning a value from your script.
+For example, if your activity has two outcomes labeled "VALID" and "INVALID", and your script has business logic that determines the outcome, you could implement as follows:
+<pre>
+if (myVar != null && myVar.indexOf("something important") >= 0)
+  return "VALID";
+else
+  return "INVALID";
+</pre>
+
+<br/>
+<h3>Script Expression Evaluator</h3>
+A script evaluator behaves much like a script activity except that it is normally a simple, one-line statement that evaluates to the return code which controls the outcome of the activity.
+It is used for clarity to indicate a decision point in your process flow, where the outcome will depend on the runtime value of one or more process variables:
+<br/><br/>
+<img src="images/expressionEval.jpg" />
+
+<br/><br/>
+<h3>Script Libraries</h3>
+Script libraries can contain reusable logic and utility classes that are accessible from all your script activities.
+A script library artifact is really nothing more than a segment of code that resides in an MDW package. 
+Currently the only supported language for script libraries is Groovy.
+Namespace resolution considerations dictate that the Groovy package name for your library components be the same as your MDW package name, and for this reason only MDW packages that comply with Groovy naming rules may contain script libraries. 
+To create a new script library artifact, right click on the MDW package in Process Explorer view, and select New > Script.
+The newly-created script will automatically contain the appropriate package declaration.  Here's an example:
+<pre>
+package ValidationLibrary;
+
+class TnValidator
+{
+  boolean validate(tn)
+  {
+    println 'tn: ' + tn;
+    return true;
+  }
+  
+  Closure getRegisterTnClosure()
+  {
+    return println('registering tn: ' + it); }
+  }
+}
+</pre>
+This resides in the MDW package ValidationLibrary and contains a class declaration for TnValidator.
+To access this functionality from a script activity, you might include the following code:
+<pre>
+  import ValidationLibrary.*;
+  ...
+  tnVal = new TnValidator();
+  valid = tnVal.validate(travelerTN);
+  
+  tns = ["303-555-1212", "303-634-7861", 303-624-1952];
+  tns.each(tnVal.getRegisterTnClosure());
+</pre>
+<br/>
+Script library artifacts are cached in the MDW runtime engine.  They are compiled on-demand by the GroovyScriptEngine.
+The first time any Groovy script is accessed, all script libraries are loaded and initialized.  So the first execution may be slow, but subsequent executions should be very fast since the code has been pre-loaded and pre-compiled.
+If you change a script or library and save it in Eclipse, the cache is automatically reloaded, and the next access will re-initialize the libraries.
+
+<br/>
+<h3>Debugging Groovy Scripts</h3>
+If you have the Groovy Plug-In http://dist.springsource.org/snapshot/GRECLIPSE/e4.6 installed on your eclipse, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
+This only works for local (not remote) workflow projects, and the server must be running in debug mode.
+When a breakpoint is encountered, you can evaluate variables and change values just as you would when debugging Java code in Eclipse.
+Note that in the context of a script activity, there is a wrapper class that contains your process variable bind values.
+You can evaluate or watch a process variable value by entering the following expression in the Eclipse Display view:<br/>
+<pre>
+this.getBinding().getVariable("myVariable")
+this.binding.getVariables().get("modifiedXmlBean")
+</pre>
+
+<br/>
+<h3 id="CustomScriptingLanguages">Custom Scripting Languages</h3>
+You can add support in MDW's script activities for any language of your choosing by writing a lightweight wrapper around your script library.
+To accomplish this, you need to create assets that implement either or both of two interfaces:
+  <li><a href="../javadoc/com/centurylink/mdw/script/ScriptExecutor.html">ScriptExecutor</a></li>
+  <li><a href="../javadoc/com/centurylink/mdw/script/ScriptEvaluator.html">ScriptEvaluator</a></li>
+<br/><br/>
+The Java 1.8 <a href="http://java.sun.com/developer/technicalArticles/J2SE/Desktop/scripting/">javax.script.ScriptEngine</a> interfaces makes it easy to plug-in a script provider who complies with the JSR 223 specification.
+MDW's <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/KotlinExecutor.java">KotlinExecutor</a> is implemented as an asset, and you can refer to this as an illustration of how to implement your own executor.
+The main point to observe is the @RegisteredService annotation, which is how the runtime engine identifies you implementation as an available language.
+To add a custom scripting activity to the Toolbox, create a .impl asset similar to the Kotlin <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/ScriptActivity.impl">ScriptActivity</a>.
+The details of configuring activity implementors are described <a href="implementor.html">here</a>.     
+</body>
+</html>

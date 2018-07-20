@@ -1,0 +1,4 @@
+package com.centurylink.mdw.tests.microservice
+
+// TODO launch for different conditions via postman test
+println 'TODO'

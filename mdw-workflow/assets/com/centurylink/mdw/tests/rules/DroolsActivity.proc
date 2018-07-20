@@ -1,0 +1,103 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=221,y=36,w=60,h=40"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=227,ly=95,type=Elbow,xs=251&251,ys=80&119"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A1"
+      }]
+    },
+    {
+      "attributes": {
+        "Facts": "dueDate#region",
+        "KnowledgeBase": "com.centurylink.mdw.tests.rules/drools-orderRoutingDrool.drl",
+        "KnowledgeBase_assetVersion": "[0.2,1)",
+        "Logging": "TRUE",
+        "Rules Language": "Drools",
+        "Stateful": "FALSE",
+        "WORK_DISPLAY_INFO": "x=202,y=123,w=100,h=69",
+        "assetVersion": "[0.6,1)"
+      },
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.drools.DroolsActivity",
+      "name": "Apply Order \r\nRouting",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=93,ly=232,type=Elbow,xs=198&82,ys=157&292"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "WESTERN",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=369,ly=234,type=Elbow,xs=306&435,ys=157&291"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "EASTERN",
+          "to": "A2"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=52,y=296,w=60,h=40"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=405,y=295,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "START_TRANSITION_ID": "2344974",
+    "WORK_DISPLAY_INFO": "x=39,y=33,w=128,h=27"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=316,y=123,w=309,h=22"},
+    "content": "TODO: Custom attributes for VCS Assets",
+    "id": "N5"
+  }],
+  "variables": {
+    "billedPrice": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    },
+    "dueDate": {
+      "category": "INPUT",
+      "type": "java.util.Date"
+    },
+    "orderNumber": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "quotedPrice": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "region": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "workgroup": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

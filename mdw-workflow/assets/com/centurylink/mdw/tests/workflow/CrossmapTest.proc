@@ -1,0 +1,101 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=33,y=127,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=97,ly=70,type=Elbow,xs=97&153,ys=147&147"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=507,y=127,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Input": "jsonInput",
+        "Mapper": "com.centurylink.mdw.tests.workflow/jsonToJson.groovy",
+        "Mapper_assetVersion": "[0.1,1)",
+        "Output": "jsonToJsonOutput",
+        "WORK_DISPLAY_INFO": "x=157,y=118,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
+      "name": "jsonToJson",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=299,ly=167,type=Elbow,xs=261&317,ys=148&148"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "Input": "jsonInput",
+        "Mapper": "com.centurylink.mdw.tests.workflow/jsonToXml.groovy",
+        "Mapper_assetVersion": "[0.1,1)",
+        "Output": "jsonToXmlOutput",
+        "WORK_DISPLAY_INFO": "x=321,y=118,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
+      "name": "jsonToXml",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=464,ly=147,type=Elbow,xs=425&503,ys=147&147"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "SLA": "20",
+    "SLA_UNIT": "Minutes",
+    "Transition with no Label": "Acts as Default",
+    "WORK_DISPLAY_INFO": "x=45,y=38,w=131,h=27"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=215,y=30,w=341,h=22"},
+    "content": "TODO: Add tests for jsonToXml and xmlToXml",
+    "id": "N6"
+  }],
+  "variables": {
+    "jsonInput": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
+    "jsonToJsonOutput": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "jsonToXmlOutput": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    },
+    "xmlInput": {
+      "category": "INPUT",
+      "type": "org.w3c.dom.Document"
+    },
+    "xmlToJsonOutput": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "xmlToXmlOutput": {
+      "category": "LOCAL",
+      "type": "org.w3c.dom.Document"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <trans:requestId xmlns:trans="http://www.centurylink.com/transaction/">12345678</trans:requestId>
+  </env:Header>                    
+  <env:Body>
+    <GetEmployee>
+      <workstationId>dxoakes</workstationId>
+    </GetEmployee>
+  </env:Body>
+</env:Envelope>

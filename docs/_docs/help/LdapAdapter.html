@@ -1,0 +1,117 @@
+<html>
+<head>
+<title>LDAP Adapter Activity</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>LDAP Adapter Activity</h1>
+
+The MDW LDAP Adapter Activity provides the ability to query an LDAP directory for entities and attributes, and to bind the results to process variables.
+<br/>
+<b>Note:</b> In order to connect to the LDAP servers, your ServiceMix/Fuse or Tomcat server must be configured with the CenturyLinkQCA trust keystore.
+Ecom environments are usually configured with the appropriate certificates by default.
+For ServiceMix/Fuse reference the jks file as follows in etc/system.properties:<br/>
+javax.net.ssl.trustStore=etc/CenturyLinkQCA.jks<br/>
+In your local development environment this should happen automatically when you run the buildConfig Ant target.  
+<br/>
+For Tomcat edit the MDW Tomcat server and add the following Java Option (substitute your workspace location): <br/>
+-Djavax.net.ssl.trustStore=c:\workspaces\mdw\mdw-framework\deploy\certs\CenturyLinkQCA.jks
+<br/>
+<h3>Design Attributes</h3>
+The basic design parameters for configuring an LDAP Adapter Activity are illustrated in the screenshot below.
+The first five attributes use the special notation to indicate that their runtime values are retrieved from application properties.
+In fact, these five properties should already exist in your ApplicationProperties.xml file, and would only need to be changed from the defaults if you want to connect to a different server or with different application credentials.
+The "Search Context" attribute specifies corresponds to what's called the <i>base object</i> for the search in LDAP parlance.  This constitutes the starting point for your search. 
+The "Search Filter" attribute identifies the criteria to narrow down the search results.
+The search filter syntax is a logical expression in prefix notation (where the logical operator precedes its arguments).
+Inside your expression, you can embed dynamic process variable values according to the usual MDW <a href="bindingExpressions">binding expressions</a> syntax.
+For example, in the screenshot we are searching for the user whose CUID matches the process variable named "cuid".
+<br/><br/>
+<img src="images/ldapDesignTab.jpg" />
+<br/><br/>
+
+The table below lists the symbols used for creating filters.  For more information, refer to Sun's <a href="http://java.sun.com/products/jndi%2Ftutorial/ldap/index.html">JNDI LDAP Tutorial</a>.
+
+<p>
+<table
+  border="1"
+  cellpadding=3
+  width="85%">
+  <tr>
+    <th width="30%">Symbol</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>&amp;</td>
+    <td>conjunction (i.e., <em>and</em> -- all in list must be true)</td>
+  </tr>
+  <tr>
+    <td>|</td>
+    <td>disjunction (i.e., <em>or</em> -- one or more alternatives must be true)</td>
+  </tr>
+  <tr>
+    <td>!</td>
+    <td>negation (i.e., <em>not</em> -- the item being negated must not be true)</td>
+  </tr>
+  <tr>
+    <td>=</td>
+    <td>equality (according to the matching rule of the attribute)</td>
+  </tr>
+  <tr>
+    <td>~=</td>
+    <td>approximate equality (according to the matching rule of the attribute)</td>
+  </tr>
+  <tr>
+    <td>&gt;=</td>
+    <td>greater than (according to the matching rule of the attribute)</td>
+  </tr>
+  <tr>
+    <td>&lt;=</td>
+    <td>less than (according to the matching rule of the attribute)</td>
+  </tr>
+  <tr>
+    <td>=*</td>
+    <td>presence (i.e., the entry must have the attribute but its value is irrelevant)</td>
+  </tr>
+  <tr>
+    <td>*</td>
+    <td>wildcard (indicates zero or more characters can occur in that position); used when
+    specifying attribute values to match</td>
+  </tr>
+  <tr>
+    <td>\</td>
+    <td>escape (for escaping '*', '(', or ')' when they occur inside an attribute value)</td>
+  </tr>
+</table>
+</p>
+
+<br/>
+<h3>Bindings</h3>
+
+The results from your LDAP directory search are bound to process variables as illustrated in the following screenshot.
+For instance, in our example we are binding the LDAP attribute "departmentname" to our process variable "department".
+<br/><br/>
+<img src="images/ldapBindingsTab.jpg" />
+<br/><br/>
+If you expect multiple matching results from your search, you should bind to a collections variable type.
+For example, if your search filter was "(sn=${lastName})", you might expect <i>n</i> matching results, corresponding to the number of people whose last names match the process variable called "lastName".
+In this case, you could bind a variable of type java.lang.String[] to the uid attribute to receive all the CUIDs, and a variable of type java.lang.Integer[] to the mnetid attribute to receive those values.
+After execution, each of these array variables would contain <i>n</i> elements, populated with the retrieved values.   
+<br/><br/>
+You can bind the entire result set to a document variable by using the implicit "results" attribute (see screenshot).
+If the document variable is an XML document type, its value will be populated with an XML representation of the first match based on the MDW user schema type.
+If the document variable is of type java.lang.Object, then it will be populated with a Map&lt;String,List&lt;Object&gt;&gt; value containing the names and corresponding value(s) for each LDAP attribute.
+Either way, the LDAP results are passed to your Adapter post script as "(Map&lt;String,List&lt;Object&gt;&gt;)results" for any desired custom handling.
+Adapter post script is configured using the Script tab.
+<br/><br/>
+<img src="images/ldapDocBinding.jpg" />
+<br/><br/>
+<b>Troubleshooting:</b> if you encounter an exception like the following, then it means you need to download the
+<a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html">JCE 6 Unlimited Strength Jurisdiction Policy Files</a> for JDK 1.6. <br/> 
+Or for JRE 1.7 <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html">JCE 7 Unlimited Strength Jurisdiction Policy Files </a>
+<pre>
+java.security.InvalidKeyException: Illegal key size or default parameters
+</pre>
+
+</body>
+</html>

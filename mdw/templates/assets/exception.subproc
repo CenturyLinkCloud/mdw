@@ -1,0 +1,45 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=40,y=40,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=135,ly=60,xs=104&166,ys=60&60"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "WORK_DISPLAY_INFO": "x=170,y=30,w=100,h=60"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "Handlers Fallout",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=305,ly=60,xs=274&336,ys=60&60"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=340,y=40,w=60,h=40"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "EMBEDDED_PROCESS_TYPE": "Exception Handler",
+    "PROCESS_VISIBILITY": "EMBEDDED",
+    "WORK_DISPLAY_INFO": "x=0,y=0,w=440,h=120"
+  },
+  "id": "P1",
+  "name": "Exception Handler"
+}

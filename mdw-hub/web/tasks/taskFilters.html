@@ -1,0 +1,50 @@
+<div class="mdw-float-left">
+  <div>
+    <label class="mdw-label">Status:</label>
+    <ul class="dropdown-menu mdw-popover-menu mdw-check-menu mdw-bordered-menu">
+      <li>
+        <div class="mdw-checked" ng-if="model.taskFilter.status == '[Active]'">
+          <i class="glyphicon glyphicon-ok"></i>
+          <a class="mdw-drop-selected" href="">[Active]</a>
+        </div>
+        <a href="" ng-if="model.taskFilter.status != '[Active]'" ng-click="model.taskFilter.status = '[Active]'">[Active]</a>
+      </li>
+      <li>
+        <div class="mdw-checked" ng-if="model.taskFilter.status == '[Closed]'">
+          <i class="glyphicon glyphicon-ok"></i>
+          <a class="mdw-drop-selected" href="">[Closed]</a>
+        </div>
+        <a href="" ng-if="model.taskFilter.status != '[Closed]'" ng-click="model.taskFilter.status = '[Closed]'">[Closed]</a>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <label class="mdw-label">Advisory:</label>
+    <ul class="dropdown-menu mdw-popover-menu mdw-check-menu mdw-bordered-menu">
+      <li ng-repeat="advisory in taskAdvisories">
+        <div class="mdw-checked" ng-if="model.taskFilter.advisory == advisory">
+          <i class="glyphicon glyphicon-ok"></i>
+          <a class="mdw-drop-selected" href="">{{advisory}}</a>
+        </div>
+        <a href="" ng-if="model.taskFilter.advisory != advisory" ng-click="model.taskFilter.advisory = advisory">{{advisory}}</a>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary mdw-btn">Reset</button>
+  </div>
+</div>
+<div class="mdw-float-left mdw-sm-indent mdw-med-width2">
+  <!-- placeholder -->
+  <label class="mdw-label">&nbsp;</label> 
+  <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true">
+    <i class="glyphicon glyphicon-chevron-down"></i>
+    <input type="text" class="form-control mdw-dropfilter"
+      placeholder="Category" uib-dropdown-toggle readonly value="{{model.taskFilter.category}}">
+    <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+      <li ng-repeat="category in taskCategories">
+        <a href="" ng-click="model.taskFilter.category = category.name">{{category.name}}</a>
+      </li>
+    </ul>
+  </div>
+</div>

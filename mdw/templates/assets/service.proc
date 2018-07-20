@@ -1,0 +1,63 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=69,y=132,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=210,ly=110,type=Elbow,xs=133&241,ys=152&152"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=489,y=132,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"response\"]",
+        "Rule": "// TODO generated code\r\nresponse = new com.centurylink.mdw.model.StatusResponse(202, \"Ok\")",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=245,y=127,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Respond",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=417,ly=152,type=Elbow,xs=349&485,ys=152&152"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "WORK_DISPLAY_INFO": "x=50,y=38,w=69,h=27"
+  },
+  "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "responseHeaders": {
+      "category": "OUTPUT",
+      "type": "java.util.Map<String,String>"
+    }
+  }
+}

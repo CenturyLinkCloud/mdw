@@ -1,0 +1,108 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=77,y=85,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=197,ly=81,type=Elbow,xs=141&191,ys=105&105"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "DoNotNotifyCaller": "false",
+        "WORK_DISPLAY_INFO": "x=492,y=84,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "custom",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=195,y=85,w=60,h=40"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "custom",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=269,ly=82,type=Elbow,xs=259&313,ys=105&105"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "false",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=260,ly=151,type=Elbow,xs=259&316,ys=105&208"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "true",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/autoform task for local resume.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=317,y=78,w=108,h=73",
+        "Wait for Task": "TRUE"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "autoform task\r\nfor local resume",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=460,ly=104,type=Elbow,xs=429&488,ys=104&104"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/custom task for local resume.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=320,y=172,w=105,h=72"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
+      "name": "custom task for\r\nlocal resume",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=459,ly=158,type=Elbow,xs=429&488,ys=208&104"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=26,y=22,w=165,h=27"
+  },
+  "variables": {
+    "custom": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    },
+    "inputString": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "requiredString": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

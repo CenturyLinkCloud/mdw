@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="x-ua-compatible" content="IE=Edge"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="application-name" content="mdw-login" />
+  <title>Sign in to MDWHub</title>
+  <link rel="stylesheet" href="css/mdw.css">
+  <link rel="stylesheet" href="css/mdw-hub.css">
+  <link rel="stylesheet" href="css/mdw-admin.css">
+  <link rel="icon" type="image/png" href="images/mdw.ico" />
+</head>
+<body class="mdw-body">
+  <div class="mdw_banner">
+    <div class="mdw_bannerLeft">
+      <img src="/mdw/images/mdw.png" alt="MDW">
+      <img src="/mdw/images/hub.png" alt="Hub">
+      <img id="hub_logo" src="/mdw/images/hub_logo.png" alt="Hub Logo">
+      <img id="hub_loading" src="/mdw/images/hub_loading.gif" alt="Hub Loading"
+        style="display: none; margin-left: 5px;">
+    </div>
+    <div style="float: left;"></div>
+    <div class="mdw_bannerRight">
+      <img src="/mdw/images/ctl.gif" alt="CenturyLink(R)" />
+    </div>
+  </div>
+  <div id="mdwAuthError"></div>
+  <div class="mdw_formHeader"> 
+    Sign in to MDWHub
+  </div>
+  <div class="mdw_hubPanel" style="width:400px;">
+    <form id="authForm" method="post">
+      <input type="hidden" id="auth_mode" name="auth_mode" value="BASIC">
+      <div style="display:table;">
+        <div style="display:table-row;">
+          <div class="mdw_inputLabel" style="display:table-cell">Username:</div> 
+          <div style="display:table-cell">
+            <input id="user" name="user" type="text" value="" class="mdw_input mdw_login">
+          </div>
+        </div>
+        <div style="display:table-row;">
+          <div class="mdw_inputLabel" style="display:table-cell">Password:</div>
+          <div style="display:table-cell">
+            <input type="password" id="password" name="password" value="" class="mdw_input mdw_login" />
+          </div>
+        </div>
+        <div style="display:table-row;">
+          <div style="display:table-cell"></div>
+          <div style="display:table-cell">
+            <input id="ctGoButton" name="ctGoButton" type="submit" value="Login" class="mdw_button" />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="mdw_footer">
+    Copyright &#169; 2018 CenturyLink, Inc.
+  </div>  
+</body>
+</html>

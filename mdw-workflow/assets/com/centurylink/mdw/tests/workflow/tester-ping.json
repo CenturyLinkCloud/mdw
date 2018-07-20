@@ -1,0 +1,5 @@
+{
+  "ping": {
+    "message": "${helloMessage}, from ${masterRequestId}"
+  }
+}

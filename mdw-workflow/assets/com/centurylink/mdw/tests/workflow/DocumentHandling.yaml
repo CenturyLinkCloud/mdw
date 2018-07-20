@@ -1,0 +1,293 @@
+process: # 10158
+  name: DocumentChange
+  instance: 1
+  activity: # 1 "2016-12-14 13:08:13"
+    name: Start
+    status: Completed
+  activity: # 6 "2016-12-14 13:08:13"
+    name: |
+      Create
+      Java Objects
+    status: Completed
+  activity: # 4 "2016-12-14 13:08:13"
+    name: Outcome
+    status: Completed
+    result: nochange
+  activity: # 5 "2016-12-14 13:08:13"
+    name: |
+      Change
+      Non-Output Docs
+    status: Completed
+  activity: # 2 "2017-04-28 18:23:04"
+    name: Stop
+    status: Completed
+  variable: # 10476
+    name: changedDomDoc
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10474
+    name: changedJavaObject
+    value: |
+      cuid: dxoakes,
+      firstName: Donald,
+      lastName: Oakes,
+      email: null,
+      phone: null,
+      allowable actions:
+      workgroups
+  variable: # 10470
+    name: changedJson
+    value: |
+      {"house": {
+        "rooms": [
+          {
+            "name": "bedroom",
+            "floor": "second"
+          },
+          {
+            "name": "kitchen",
+            "floor": "first"
+          }
+        ],
+        "address": "100 Elm Street"
+      }}
+  variable: # 10479
+    name: changedStringDoc
+    value: Now is the time for all good men to come to the aid of their country.
+  variable: # 10475
+    name: changedXmlBean
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10469
+    name: changedXmlBeanWrapper
+    value: |
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+          </Action>
+      </mdw:ActionRequest>
+  variable: # 10480
+    name: outcome
+    value: nochange
+  variable: # 10477
+    name: unchangedDomDoc
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10481
+    name: unchangedJavaObject
+    value: |
+      cuid: dxoakes,
+      firstName: Donald,
+      lastName: Oakes,
+      email: null,
+      phone: null,
+      allowable actions:
+      workgroups
+  variable: # 10471
+    name: unchangedJson
+    value: |
+      {"house": {
+        "rooms": [
+          {
+            "name": "bedroom",
+            "floor": "second"
+          },
+          {
+            "name": "kitchen",
+            "floor": "first"
+          }
+        ],
+        "address": "100 Elm Street"
+      }}
+  variable: # 10473
+    name: unchangedXmlBean
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10472
+    name: unchangedXmlBeanWrapper
+    value: |
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+          </Action>
+      </mdw:ActionRequest>
+process: # 10157
+  name: DocumentChange
+  instance: 2
+  activity: # 1 "2016-12-14 13:07:58"
+    name: Start
+    status: Completed
+  activity: # 6 "2016-12-14 13:07:58"
+    name: |
+      Create
+      Java Objects
+    status: Completed
+  activity: # 4 "2016-12-14 13:07:58"
+    name: Outcome
+    status: Completed
+    result: change
+  activity: # 3 "2016-12-14 13:07:58"
+    name: |
+      Change
+      Output Docs
+    status: Completed
+  activity: # 2 "2016-12-14 13:07:59"
+    name: Stop
+    status: Completed
+  variable: # 10460
+    name: changedDomDoc
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+          <Album name="The Head on the Door" year="1985">
+              <Artist>The Cure</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10458
+    name: changedJavaObject
+    value: |
+      cuid: sidhug,
+      firstName: Gary,
+      lastName: Sidhu,
+      email: null,
+      phone: null,
+      allowable actions:
+      workgroups
+  variable: # 10454
+    name: changedJson
+    value: |
+      {"house": {
+        "rooms": [
+          {
+            "name": "bedroom",
+            "floor": "second"
+          },
+          {
+            "name": "kitchen",
+            "floor": "first"
+          },
+          {
+            "name": "bathroom",
+            "floor": "second"
+          }
+        ],
+        "address": "100 Elm Street"
+      }}
+  variable: # 10463
+    name: changedStringDoc
+    value: Early to bed, early to rise; makes a man healthy, wealthy and wise.
+  variable: # 10459
+    name: changedXmlBean
+    value: |
+      <EightiesMusic>
+          <Album name="Special Beat Service" year="1982">
+              <Artist>The English Beat</Artist>
+          </Album>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10453
+    name: changedXmlBeanWrapper
+    value: |
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+              <Parameter name="frequency" type="java.lang.String">EVERYDAY</Parameter>
+          </Action>
+      </mdw:ActionRequest>
+  variable: # 10464
+    name: outcome
+    value: change
+  variable: # 10461
+    name: unchangedDomDoc
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10465
+    name: unchangedJavaObject
+    value: |
+      cuid: dxoakes,
+      firstName: Donald,
+      lastName: Oakes,
+      email: null,
+      phone: null,
+      allowable actions:
+      workgroups
+  variable: # 10455
+    name: unchangedJson
+    value: |
+      {"house": {
+        "rooms": [
+          {
+            "name": "bedroom",
+            "floor": "second"
+          },
+          {
+            "name": "kitchen",
+            "floor": "first"
+          }
+        ],
+        "address": "100 Elm Street"
+      }}
+  variable: # 10457
+    name: unchangedXmlBean
+    value: |
+      <EightiesMusic>
+          <Album name="Stop Making Sense" year="1984">
+              <Artist>Talking Heads</Artist>
+          </Album>
+          <Album name="London Calling" year="1980">
+              <Artist>The Clash</Artist>
+          </Album>
+      </EightiesMusic>
+  variable: # 10456
+    name: unchangedXmlBeanWrapper
+    value: |
+      <mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
+          <Action name="beZen">
+              <Parameter name="priority">URGENT</Parameter>
+          </Action>
+      </mdw:ActionRequest>

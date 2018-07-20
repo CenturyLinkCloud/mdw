@@ -1,0 +1,75 @@
+process: # 10411
+  name: MDWTestMainProcess
+  instance: 1
+  activity: # 6 "2017-03-13 19:22:53"
+    name: Process Start
+    status: Completed
+  activity: # 33 "2017-03-13 19:22:53"
+    name: multiple processes ?
+    status: Completed
+    result: RemoteSubProcess
+  activity: # 4 "2017-03-13 19:22:53"
+    name: Set remote argument
+    status: Completed
+  activity: # 21 "2017-03-13 19:22:54"
+    name: Invoke remote process
+    status: Completed
+  activity: # 26 "2017-03-13 19:23:55"
+    name: Display result
+    status: Completed
+  activity: # 11 "2017-03-13 19:23:56"
+    name: Process Finish
+    status: Completed
+  variable: # 10912
+    name: intarraytest
+    value: [1,1,2,3,5,8]
+  variable: # 10911
+    name: maptest
+    value: |
+      {
+        "B": "blue",
+        "G": "green",
+        "R": "red"
+      }
+  variable: # 10910
+    name: N
+    value: 17
+  variable: # 10909
+    name: processCase
+    value: RemoteSubProcess
+  variable: # 10917
+    name: Sum
+    value: 289
+  variable: # 10913
+    name: xmldata
+    value: |
+      <ROOT>
+          <MINUTES>2</MINUTES>
+      </ROOT>
+process: # 10412
+  name: MDWTestSubProcess
+  instance: 1
+  activity: # 34 "2017-03-13 19:22:54"
+    name: Start
+    status: Completed
+  activity: # 31 "2017-03-13 19:22:55"
+    name: Calculate sqaure
+    status: Completed
+  activity: # 32 "2017-03-13 19:22:55"
+    name: Wait for a while
+    status: Completed
+  activity: # 33 "2017-03-13 19:23:55"
+    name: Finish
+    status: Completed
+  variable: # 10914
+    name: argument
+    value: 17
+  variable: # 10916
+    name: result
+    value: 289
+  variable: # 10915
+    name: testxml
+    value: |
+      <ROOT>
+          <MINUTES>2</MINUTES>
+      </ROOT>

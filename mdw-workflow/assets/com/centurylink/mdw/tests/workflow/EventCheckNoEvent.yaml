@@ -1,0 +1,14 @@
+process: # 13649
+  name: EventCheck
+  instance: 1
+  activity: # 1 "2016-02-22 13:05:41"
+    name: Start
+    status: Completed
+  activity: # 23 "2016-02-22 13:05:41"
+    name: |
+      Event Check 
+      Activity
+    status: Completed
+  activity: # 2 "2016-02-22 13:05:41"
+    name: Stop
+    status: Completed

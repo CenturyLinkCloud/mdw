@@ -1,0 +1,28 @@
+process: # 14120
+  name: CustomBaseData
+  instance: 1
+  activity: # 1 "2016-02-25 16:10:15"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-25 16:10:15"
+    name: |
+      Assign
+      Local Float
+    status: Completed
+  activity: # 4 "2016-02-25 16:10:15"
+    name: |
+      Custom
+      Category Task
+    status: Completed
+  activity: # 2 "2016-02-25 16:10:45"
+    name: Stop
+    status: Completed
+  variable: # 21818
+    name: assignedFloat
+    value: 6.022
+  variable: # 21816
+    name: inputFloat
+    value: 2.7183
+  variable: # 21817
+    name: localFloat
+    value: 3.1416

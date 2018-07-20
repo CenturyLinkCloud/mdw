@@ -1,0 +1,81 @@
+<html>
+<head>
+<title>Binding Expressions in MDW</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Binding Expressions in MDW</h1>
+
+<p>Binding expressions are everywhere in MDW.  For example, when a workflow process uses a <a href="InvokeSubProcessActivity.html">subprocess activity</a> 
+to invoke another process, it can assign values for the subprocess's input variables through binding expressions.  Generally, for activity attributes
+in Designer, binding expressions can be used where a dynamic value is required from the runtime environment.  Other examples where expressions are
+used to embed dynamic values include:</p>
+<ul>
+  <li><a href="customWeb.html">Custom Web Pages</a></li>
+  <li><a href="notification.html">Email Notification Templates</a></li>
+</ul>
+
+<p>
+Although MDW supports multiple scripting languages for data binding expressions, the preferred syntax is the standard <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java
+Expression Language</a>. 
+</p>
+
+<h3>Evaluation Context</h3>
+<p>
+In most cases the evaluation context for an MDW Java EL expression is a 
+<a href="../javadoc/com/centurylink/mdw/model/workflow/RuntimeContext.html">runtime context</a> for a process, activity or task.
+In this context your process variables are available as top-level entities, or they can be the base for further evaluation:
+</p>
+<pre>
+    #{productType}
+    #{customer.name}
+    #{mySuit == 'hearts'}
+    #{myVar}_hardCodedSuffix
+</pre>
+
+<p>
+Besides process variables, certain other runtime values are available for binding. In fact the RuntimeContext itself is implicitly bound
+as <i>context</i>, so through this you can access any values described by the javadocs for the relevant context:
+</p>
+<ul>
+  <li><a href="../javadoc/com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html">ProcessRuntimeContext</a></li>
+  <li><a href="../javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a></li>
+  <li><a href="../javadoc/com/centurylink/mdw/model/task/TaskRuntimeContext.html">TaskRuntimeContext</a></li>
+  <li><a href="../javadoc/com/centurylink/mdw/test/MockRuntimeContext.html">MockRuntimeContext</a></li>
+</ul>
+<p>As an example, if for whatever reason in your <a href="DocWebServiceAdapter.html">document web service adapter</a> you wanted to point the URL
+to the Employee.wsdl endpoint hosted in the same MDW environment, on the Design tab for this activity in Designer you could specify:
+</p>
+<pre>
+  #{context.servicesUrl}/SOAP/Employee.wsdl
+</pre>
+<p>
+In a more likely scenario, suppose you're invoking the Employee service at an endpoint specified in your configuration
+file as <i>employee.service.url</i>.  In that case you can take advantage of the <code>props</code> shortcut access:
+</p>
+<pre>
+  #{props['employee.service.url']}
+</pre>
+
+<h3>Document Variables</h3>
+<p>
+MDW <a href="variable.html#documents">document variables</a> are available as full-blown objects in your expressions.  For instance,
+if you have a JAXBElement variable named <i>order</i> in your workflow based on the DesignerOrder XML, 
+you can access the orderNumber element as follows:
+</p>
+<pre>
+  #{order.orderNumber}
+</pre>
+<p>
+Note: Do not try this type of access through getProcessInstance().getVariables().  For documents this returns only a DocumentReference,
+which cannot be treated as an object.
+</p>
+<p>
+When a TaskRuntimeContext is extant, or for notification XHTML templates, document variables which are XML types (JAXB, DOM, XMLBeans) can use XPath syntax to pull values.
+In this case the above example could be replicated as follows (see the <a href="customWeb.html">Custom Web</a> and <a href="notification.html">Notifications</a> docs for details):
+</p>
+<pre>
+  #{variables['order']['/orderNumber']}
+</pre>
+</body>
+</html>

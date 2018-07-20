@@ -1,0 +1,87 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading" style="padding-left:20px;">
+        <div class="mdw-heading-checklist">
+          <input type="checkbox" ng-model="selectedState.all" ng-change="toggleAll()" ng-if="authUser.hasRole('Process Execution')"></input>
+          Automated Tests
+          <span ng-if="testCaseCount > 0" class="mdw-heading-sub"> ({{testCaseCount}})</span>
+          <a href="" ng-click="collapseAll()">
+            <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
+          </a> 
+          <a href="" ng-click="expandAll()">
+            <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
+          </a> 
+        </div>
+        <div ng-if="testCaseList.packages" class="mdw-heading-summary">
+          <span class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running" title="Running"></span> = {{running().length}} 
+          <span class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay" title="Passed"></span> = {{passed().length}} 
+          <span class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn" title="Failed"></span> = {{failed().length}} 
+          <span class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn" title="Errored"></span> = {{errored().length}}
+        </div>
+        <div class="mdw-heading-actions" ng-if="authUser.hasRole('Process Execution')">
+          <button type="button" class="btn btn-primary mdw-btn" pop-click popover-placement="left" uib-popover-template="'testing/config.html'" 
+            ng-if="authUser.hasRole('Site Admin')">
+            <span class="glyphicon glyphicon-cog"></span>
+          </button> 
+          <button type="button" class="btn btn-primary mdw-btn" ng-disabled="running().length > 0" ng-click="runTests()">
+            <span class="glyphicon glyphicon-play"></span> Run
+          </button> 
+          <button type="button" class="btn mdw-btn mdw-cancel-btn" ng-if="running().length > 0" ng-click="cancelTests()">
+            <span class="glyphicon glyphicon-stop"></span> Cancel
+          </button> 
+        </div>
+      </div>
+      <div class="mdw-sub" ng-repeat="pkg in testCaseList.packages">
+        <div class="panel-heading mdw-sub-heading">
+          <div class="mdw-heading-checklist">
+            <input type="checkbox" ng-model="pkg.selected" ng-change="togglePackage(pkg)" ng-if="authUser.hasRole('Process Execution')"></input>
+            {{pkg.name}} v{{pkg.version}}
+            <a href="" ng-if="!pkg.collapsed" ng-click="collapse(pkg)">
+              <span class="glyphicon glyphicon-chevron-up mdw-action-icon button button-primary"></span>
+            </a> 
+            <a href="" ng-if="pkg.collapsed" ng-click="expand(pkg)">
+              <span class="glyphicon glyphicon-chevron-down mdw-action-icon button button-primary"></span>
+            </a> 
+          </div>
+        </div>
+        <ul class="mdw-checklist" uib-collapse="pkg.collapsed">
+          <li ng-repeat="testCase in pkg.testCases" ng-class="{'mdw-last-item': $last}">
+            <div>
+              <input type="checkbox" ng-model="testCase.selected" ng-change="packageOff(pkg)" 
+                ng-if="!testCase.items && authUser.hasRole('Process Execution')"></input>
+              <span ng-if="testCase.items || !testCase.status || testCase.status == 'Stopped'" 
+                class="glyphicon glyphicon-off mdw-test-status" style="opacity:0.25;{{testCase.items ? 'visibility:hidden' : ''}}"></span>
+              <span ng-if="!testCase.items && testCase.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
+              <span ng-if="!testCase.items && testCase.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
+              <span ng-if="!testCase.items && testCase.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
+              <span ng-if="!testCase.items && testCase.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+              <img ng-if="testCase.items && testCase.name.endsWith('.postman')" src="images/postman.png" alt="postman">&nbsp;</img>
+              <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}">
+                {{testCase.baseName}}
+              </a>
+              <span class="mdw-item-substat" ng-if="!testCase.items && testCase.start"> {{testCase.start}}</span>
+            </div>
+            <ul class="mdw-checklist" ng-if="testCase.items" style="margin-left:20px;">
+              <li ng-repeat="item in testCase.items" ng-class="{'mdw-last-item': $last}">
+                <div>
+                  <input type="checkbox" ng-model="item.selected" ng-change="packageOff(pkg);testCase.selected=true;" ng-if="authUser.hasRole('Process Execution')"></input>
+                  <span ng-if="!item.status || item.status == 'Stopped'" class="glyphicon glyphicon-off mdw-test-status" style="opacity:0.25;"></span>
+                  <span ng-if="item.status == 'InProgress'" class="glyphicon glyphicon-circle-arrow-right mdw-test-status mdw-running"></span>
+                  <span ng-if="item.status == 'Passed'" class="glyphicon glyphicon-ok-sign mdw-test-status mdw-okay"></span>
+                  <span ng-if="item.status == 'Failed'" class="glyphicon glyphicon-remove-sign mdw-test-status mdw-warn"></span>
+                  <span ng-if="item.status == 'Errored'" class="glyphicon glyphicon-exclamation-sign mdw-test-status mdw-warn"></span>
+                  <a class="mdw-item-link" href="#/tests/{{pkg.name}}/{{testCase.name}}/{{item.path}}" style="position:relative;top:-2px">
+                    <span class="mdw-test-item-method {{'mdw-test-item-meth-' + item.meth}}">{{item.meth}}</span>{{item.object.name}}
+                  </a>
+                  <span class="mdw-item-substat" ng-if="item.start"> {{item.start}}</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

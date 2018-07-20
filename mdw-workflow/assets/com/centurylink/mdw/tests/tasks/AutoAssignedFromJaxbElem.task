@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "AssigneeVar": "#{jaxbWithAssignee.elementOne}",
+    "AutoAssign": "Process Variable",
+    "Groups": "MDW Support",
+    "Notices": "Open,,,,;Assigned,,,,;Completed,,,,;Cancelled,,,,;In Progress,,,,;Alert,,,,;Jeopardy,,,,;Forward,,,,;"
+  },
+  "category": "GEN",
+  "logicalId": "AutoAssignedFromJaxbElem",
+  "name": "AutoAssigned From Jaxb Elem",
+  "version": "0.1"
+}

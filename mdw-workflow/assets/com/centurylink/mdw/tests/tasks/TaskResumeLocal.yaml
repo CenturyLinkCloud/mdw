@@ -1,0 +1,54 @@
+process: # 14893
+  name: TaskResumeLocal
+  instance: 1
+  activity: # 1 "2016-03-10 15:33:22"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-03-10 15:33:22"
+    name: custom
+    status: Completed
+    result: true
+  activity: # 5 "2016-03-10 15:33:22"
+    name: |
+      custom task for
+      local resume
+    status: Completed
+  activity: # 2 "2016-03-10 15:33:42"
+    name: Stop
+    status: Completed
+  variable: # 23968
+    name: custom
+    value: true
+  variable: # 23967
+    name: inputString
+    value: customAfterUpdate
+  variable: # 23969
+    name: requiredString
+    value: customRequiredValue
+process: # 14892
+  name: TaskResumeLocal
+  instance: 2
+  activity: # 1 "2016-03-10 15:32:58"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-03-10 15:32:58"
+    name: custom
+    status: Completed
+    result: false
+  activity: # 4 "2016-03-10 15:32:58"
+    name: |
+      autoform task
+      for local resume
+    status: Completed
+  activity: # 2 "2016-03-10 15:33:18"
+    name: Stop
+    status: Completed
+  variable: # 23965
+    name: custom
+    value: false
+  variable: # 23964
+    name: inputString
+    value: autoformAfterUpdate
+  variable: # 23966
+    name: requiredString
+    value: autoformRequiredValue

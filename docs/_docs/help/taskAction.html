@@ -1,0 +1,212 @@
+<html>
+<head>
+<title>Task Definitions</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+
+<h1>Manual Task Activity</h1>
+
+Manual task activities are used to create a manual task instance
+in a workflow.
+<ul>
+  <li><a href="taskNotices.html">Task notices</a>: Task notices provide the capability to automatically 
+  	send templated e-mail notifications when a stage in the task instance lifecycle is reached.</li>
+  <li><a href="taskSLA.html">Task SLA</a>: describes SLA (a.k.a due dates) of tasks.</li>
+</ul>
+
+<h2>Task Template Attributes</h2>
+<table>
+<tr><th>Attribute</th><th>Description</th></tr>
+<tr><td>Task Name</td><td>The name displayed in MDW Hub.</td></tr>
+<tr><td>Task Description</td><td>A more detail description about this task.</td></tr>
+<tr><td>Category</td><td>Optional mechanism for grouping tasks.</td></tr>
+<tr><td>Task SLA</td><td>Follow <a href="taskSLA.html">this link</a> for information on task SLA.</td></tr>
+<tr><td>Alert Interval</td><td>Alert interval when SLA is violated.
+	Follow <a href="taskSLA.html">this link</a> for information on task SLA.</td></tr>
+<tr><td>Variables</td><td>Variables to be displayed in the task detail page in the task manager.</td></tr>
+<tr><td>Work groups</td><td>The user group(s) the task is to be placed in.</td></tr>
+<tr><td>Auto-assign Strategy</td><td>Strategy to automatically assign tasks to a user in the specified user groups.</td></tr>
+<tr><td>Notices</td><td>Follow <a href="taskNotices.html">this link</a> for information on task notices.</td></tr>
+<tr><td>Notice Groups</td><td>Follow <a href="taskNotices.html">this link</a> for information on task notices.</td></tr>
+<tr><td>Recipient Variable</td><td>Follow <a href="taskNotices.html">this link</a> for information on task notices.</td></tr>
+</table>
+
+<a name="taskActions"><h3>Standard Actions</h3></a>
+The rules governing allowable standard actions are defined in asset com.centurylink.mdw.tasks/mdw-task-actions.xml.
+Standard actions have specific pre-determined outcomes which may be overridden in your process definition.  
+The following table summarizes the available standard actions and their default outcomes.
+<br/><br/>
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Outcome for In-Line<br/>Task Activities</th>
+    <th>Outcome for Exception Handler<br/>Task Activities</th>
+    <th colspan="3"><table border="0"><tr><th colspan="3" style="border-style:none">End State</th></tr>
+          <tr>
+            <th width="115px">Activity Status</th>
+            <th width="115px">Task Status</th>
+            <th width="115px">Task State</th></tr>
+        </table></th>
+  </tr>
+  <tr>
+    <td>Abort</td>
+    <td>Process containing task activity is failed</td>
+    <td>Parent process with errored activity is failed</td>
+    <td width="115px">Failed</td>
+    <td width="115px">Failed</td>
+    <td width="115px">Closed</td>
+  </tr>
+  <tr>
+    <td>Assign</td>
+    <td>Task instance is assigned to selected user</td>
+    <td>Task instance is assigned to selected user</td>
+    <td>Unchanged</td>
+    <td>Assigned</td>
+    <td>Open</td>
+  </tr>
+  <tr>
+    <td>Cancel</td>
+    <td>Process null transition from task activity</td>
+    <td>Process null transition from errored activity</td>
+    <td>Cancelled</td>
+    <td>Cancelled</td>
+    <td>Closed</td>
+  </tr>
+  <tr>
+    <td>Claim</td>
+    <td>Task instance is assigned to current user</td>
+    <td>Task instance is assigned to current user</td>
+    <td>Unchanged</td>
+    <td>Assigned</td>
+    <td>Open</td>
+  </tr>    
+  <tr>
+    <td>Complete</td>
+    <td>Process null transition from task activity</td>
+    <td>Process null transition from errored activity</td>
+    <td>Completed</td>
+    <td>Completed</td>
+    <td>Closed</td>
+  </tr>
+  <tr>
+    <td>Forward</td>
+    <td>Task instance becomes selected type</td>
+    <td>Task instance becomes selected type</td>
+    <td>Unchanged</td>
+    <td>Unchanged</td>
+    <td>Open</td>
+  </tr>
+  <tr>
+    <td>Release</td>
+    <td>Task instance becomes unassigned</td>
+    <td>Task instance becomes unassigned</td>
+    <td>Unchanged</td>
+    <td>Open</td>
+    <td>Open</td>
+  </tr>    
+  <tr>
+    <td>Retry</td>
+    <td>No default behavior</td>
+    <td>Invoke main process errored activity again</td>
+    <td>Cancelled</td>
+    <td>Cancelled</td>
+    <td>Closed</td>
+  </tr>
+  <tr>
+    <td>Work</td>
+    <td>Task instance becomes editable for assigned user</td>
+    <td>Task instance becomes editable for assigned user</td>
+    <td>Unchanged</td>
+    <td>In Progress</td>
+    <td>Open</td>
+  </tr>    
+  <tr>
+    <td><i>Custom Action</i></td>
+    <td>Process custom transition from task activity</td>
+    <td>Process custom transition from errored activity</td>
+    <td>Completed</td>
+    <td>Completed</td>
+    <td>Closed</td>
+  </tr>
+</table>
+<br/><br/>
+Note that the default behavior for standard actions may differ according to whether a task instance was created by an In-Line Manual Task Activity (appearing in a user-created process) or an Exception Handler Manual Task Activity (appearing in an embedded exception handler subprocess).
+<h3>TaskActions.xml</h3>
+Standard task actions are configured in the TaskActions.xml file, which is excerpted below:
+<br/><br/>
+<pre>
+    &lt;taskStatus status="Assigned"&gt;
+      &lt;allowableAction&gt;
+        Release
+        &lt;navigationOutcome&gt;tasks&lt;/navigationOutcome&gt;
+      &lt;/allowableAction&gt;
+      &lt;allowableAction outcome="Undo"&gt;
+        Cancel
+        &lt;navigationOutcome&gt;tasks&lt;/navigationOutcome&gt;
+      &lt;/allowableAction&gt;
+      &lt;allowableAction&gt;
+        Retry
+        &lt;navigationOutcome&gt;tasks&lt;/navigationOutcome&gt;
+      &lt;/allowableAction&gt;
+      &lt;allowableAction alias="Finish"&gt;
+        Complete
+        &lt;navigationOutcome&gt;tasks&lt;/navigationOutcome&gt;
+        &lt;autosave&gt;true&lt;/autosave&gt;
+      &lt;/allowableAction&gt;
+      &lt;allowableAction&gt;
+        Forward
+        &lt;navigationOutcome&gt;tasks&lt;/navigationOutcome&gt;
+        &lt;forTask&gt;
+          Forwardable Task
+          &lt;destination alias="Billing"&gt;Billing Task&lt;/destination&gt;
+          &lt;destination alias="Production Support"&gt;Production Support Task&lt;/destination&gt;
+        &lt;/forTask&gt;
+      &lt;/allowableAction&gt;      
+    &lt;/taskStatus&gt;
+</pre>
+<br/>
+The TaskActions.xml file is divided into sections which define the allowable actions according to whether they are to be performed at the bulk level (Task List page) versus the individual level (Task Detail page).
+
+At the individual level, standard actions are also specified according to the current status of the task instance.
+<br/><br/>
+The UI labels for standard actions can be easily customized by way of the "alias" attribute as illustrated in the TaskActions.xml snippet following the table (where the Complete action is rebranded to the label Finish).
+Also, the default outcome can be overridden by designating the "outcome" attribute which controls the downstream process transition that will be traversed when the action is performed.
+<br/><br/>
+Notice that a particular action can be limited to a subset of possible task types via the &lt;forTask&gt; element (although it may be more advisable in this case to utilize custom task actions as described in the next section below).
+
+The standard actions configuration can also control the page in Task Manager where the user will be navigated after performing the action by using the &lt;navigationOutcome&gt; element. 
+<br/><br/>
+See the embedded comments in TaskActions.xml for a more detailed description of how to configure standard task actions.
+
+<h3>Custom Actions</h3>
+
+Custom task actions are not globally configured but instead are specified for a particular circumstance as part of the process definition.
+
+Since custom actions depend on the process definition and are specific to a particular instance, they are only presented to the user at the Task Detail level.
+
+The following process definition diagram illustrates how custom task actions are used:
+<br/><br/>
+<img src="images/customTaskActions.jpg" />
+<br/><br/>
+In this example process the left-hand outcome ("Inline") from the script activity illustrates how custom task actions are specified for task activities included directly in your main process, while the right-hand outcome ("Exception") illustrates the usage for embedded exception handler subprocesses.
+<p/>
+For the Inline case, allowable actions for the "Activity-Created" task instance are governed by the result codes of its outbound transitions.
+
+Here the possible actions called "ActionOne" and "ActionTwo" would be added to the dropdown list on the Task Detail page for any task instance created by "Activity-Created".
+
+The Inline scenario also specifies what would happen when certain standard actions are performed (Complete or Cancel would proceed to Stop, and Retry would go back to the "Set Task Type" script activity).<a>
+
+<p/>
+For the Exception case the semantics are slightly different owing to the fact that the task instance is created by an activity within the embedded exception handler subprocess.
+
+To distinguish the outcomes which are applicable during exception handling, the event type RESUME is specified for task action transitions.
+
+Here if an error is encountered in the "Error Creation" activity, a task instance will be created which on its Task Detail page will include the custom action "ActionThree" in the dropdown list.
+
+Also in the Exception case the behavior for the Retry standard action is overridden.  Instead of retrying the "Error Creation" activity, process flow is directed back to the "Set Task Type" script activity.
+
+Actually in the scenario where a retryable ActivityException is thrown from "Error Creation", automated retry will be attempted the configured number of times before the manual task is even created.  When the task is retried manually, only then would the RESUME:Retry transition be traversed.
+    
+</body>
+</html>

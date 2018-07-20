@@ -1,0 +1,160 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=342,y=24,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=470,ly=78,type=Elbow,xs=372&372,ys=68&147"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=174,y=475,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Expression": "${sendVia}",
+        "SCRIPT": "javax.el",
+        "WORK_DISPLAY_INFO": "x=325,y=151,w=94,h=71"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Send\r\nVia",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=292,ly=164,type=Elbow,xs=321&258,ys=186&266"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "smtp",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=420,ly=164,type=Elbow,xs=423&490,ys=186&267"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "sendgrid",
+          "to": "A4"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "CCGroups": "[\"MDW Support\"]",
+        "NoticeGroups": "[\"Developers\"]",
+        "RecipientsExpression": "${recipientList ? recipientList : recipient}",
+        "WORK_DISPLAY_INFO": "x=154,y=236,w=100,h=60",
+        "from": "mdwdev@centurylink.com",
+        "noticeType": "SMTP",
+        "subject": "Test Email via SMTP",
+        "template": "com.centurylink.mdw.base/emailTemplate.html",
+        "template_assetVersion": "[0.1,1)"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.notification.EmailNotificationActivity",
+      "name": "SMTP",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=204,ly=322,type=Elbow,xs=204&204,ys=300&345"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "CCGroups": "[\"MDW Support\"]",
+        "NoticeGroups": "[\"Developers\"]",
+        "RecipientsExpression": "${recipientList ? recipientList : recipient}",
+        "WORK_DISPLAY_INFO": "x=494,y=237,w=100,h=60",
+        "from": "mdw.support@centurylink.com",
+        "subject": "Test Email via SendGrid",
+        "template": "com.centurylink.mdw.base/emailTemplate.html",
+        "template_assetVersion": "[0.1,1)"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.sendgrid.SendgridActivity",
+      "name": "SendGrid",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=544,ly=322,type=Elbow,xs=544&544,ys=301&344"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/SmtpTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=153,y=349,w=103,h=68",
+        "Wait for Task": "true"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "SMTP\r\nTask",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=204,ly=446,type=Elbow,xs=204&204,ys=421&471"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/SendgridTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=495,y=348,w=102,h=70",
+        "Wait for Task": "true"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "SendGrid\r\nTask",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=546,ly=444,type=Elbow,xs=546&546,ys=422&471"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=516,y=475,w=60,h=40"},
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=61,y=26,w=63,h=27"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=28,y=81,w=277,h=38"},
+    "content": "For manual Testing.\r\nNo tests exist for these features.",
+    "id": "N9"
+  }],
+  "variables": {
+    "recipient": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "recipientList": {
+      "category": "INPUT",
+      "type": "java.util.List<String>"
+    },
+    "sendVia": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

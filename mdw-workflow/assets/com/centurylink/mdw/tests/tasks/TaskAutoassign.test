@@ -1,0 +1,65 @@
+package com.centurylink.mdw.tests.tasks
+
+import groovy.json.JsonSlurper
+
+// task-autoassign
+start process("TaskAutoAssign") {
+    variables = [ stringAssignee: "aa56486",
+                  jaxbWithAssignee: '''<TaskJaxb
+  attributeOne="aa56486">
+  <elementOne>dxoakes</elementOne>
+</TaskJaxb>''' ]
+}
+
+sleep 20
+
+// use Tasks service to check assignees
+// TODO: URLEncoding in TestCaseHttp?
+def response = get http("services/Tasks?masterRequestId=${masterRequestId}") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = ''
+}
+
+assert response.code == 200
+def slurped = new JsonSlurper().parseText(response.content)
+autoAssignedTask = null
+autoAssignedFromJaxbElem = null
+autoAssignedFromJaxbAttr = null
+slurped.tasks.each {
+    if (it.name == 'Auto Assign Task')
+        autoAssignedTask = it
+    else if (it.name == 'AutoAssigned From Jaxb Elem')
+        autoAssignedFromJaxbElem = it
+    else if (it.name == 'Auto Assigned From Jaxb Attr')
+        autoAssignedFromJaxbAttr = it
+}
+sleep 20
+assert autoAssignedTask && autoAssignedTask.assigneeId == 'aa56486'
+assert autoAssignedFromJaxbElem && autoAssignedFromJaxbElem.assigneeId == 'dxoakes'
+assert autoAssignedFromJaxbAttr && autoAssignedFromJaxbAttr.assigneeId == 'aa56486'
+
+// update assignees
+response = post http("services/Tasks/${autoAssignedTask.id}/Assign") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Assign","taskInstanceId":${autoAssignedTask.id},"assignee":"dxoakes", "user":"mdwapp"}'
+}
+assert response.code == 200
+response = post http("services/Tasks/${autoAssignedFromJaxbElem.id}/Assign") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Assign","taskInstanceId":${autoAssignedFromJaxbElem.id},"assignee":"aa56486", "user":"mdwapp"}'
+}
+assert response.code == 200
+response = post http("services/Tasks/${autoAssignedFromJaxbAttr.id}/Assign") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    payload = '{"action":"Assign","taskInstanceId":${autoAssignedFromJaxbAttr.id},"assignee":"dxoakes", "user":"mdwapp"}'
+}
+assert response.code == 200
+
+verify process
+
+// verify process (variables should reflect new assignees)
+

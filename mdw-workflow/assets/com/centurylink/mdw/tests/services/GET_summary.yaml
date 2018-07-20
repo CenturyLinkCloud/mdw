@@ -1,0 +1,20 @@
+test: 'GET:summary'
+request:
+  url: >-
+    ${base-url}/Workflow/${process-path}?summary=true
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+  body: |-
+    {
+      "id": ${process-id},
+      "name": "StartStopProcess",
+      "package": "com.centurylink.mdw.tests.workflow",
+      "version": "0.7"
+    }

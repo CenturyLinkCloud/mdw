@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>MDW Designer User Guide</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+
+<h2>MDW Designer User Guide</h2>
+ 
+<h3>Getting Started with MDW Designer</h3>
+
+<p>The MDW Designer application comes in two flavors: an Eclipse plug-in for developers, and a standalone program (Designer RCP) for business users, architects, 
+    analysts, testers and support teams. Both versions leverage the same codebase, with the main difference being that the standalone program does not require a
+    full-blown development setup.
+</p>
+
+<p>In addition to this document, there is a great deal of online help available via the menu option Help &gt; Help Contents &gt; MDW
+Designer Help. Also, for frequently performed tasks, you can refer to the growing number of cheat sheet topics available under Help &gt; Cheat Sheets &gt; MDW Workflow.
+</p>
+
+<p>Once you’ve installed and launched MDW Designer (and logged in using your AD/LDAP credentials), you’ll be able to view processes for various projects and environments in the Process Explorer view.
+Initially this view will be empty; until you identify which projects you’re interested in. The most convenient way to accomplish this is through the mechanism
+referred to as “Discovery”, which does not require knowledge of database connection info or server hosts and ports. 
+
+<ol>
+<li>To discover a workflow project, from the menu select File &gt; Import &gt; MDW Designer Import &gt; Workflow Project(s):</li>
+	 <img src="images/mdwDesignerWorkflowImport.png" />
+	 
+<li>Click &quot;Next&quot; and select &quot;Discover&quot; as the import mechanism:</li>
+	 <img src="images/mdwDesignerWorkflowImport2.png" />
+	 
+<li>Once you’ve selected a workflow project and clicked, you’ll be presented with a list of available environments. Your permissions in each environment will depend on the roles you’ve been granted by the administrators
+(as described below in the section entitled Roles and Permissions). Click Finish. </li>
+	 <img src="images/mdwDesignerWorkflowImport3.png" />
+
+<li>The top-level elements in the Process Explorer tree represent the project environments you’ve imported. If you expand the tree, you’ll see some workflow processes and packages 
+that reside in the database for the environment you selected:</li>
+	 <img src="images/mdwDesignerWorkflowImport4.png" />
+	 
+<li>You can view a process definition by double-clicking it in the Process Explorer tree: </li>
+	 <img src="images/mdwDesignerWorkflowImport5.png" />
+ </ol>
+
+<h3>Roles and Permissions</h3>
+
+Before you can create or change processes in MDW Designer, you'll need to be added to Users, Workgroups and Roles for your environment. 
+An administrator can grant you this role using the MDWHub on Admin page. You can use the Admin tab to navigate to Users, Workgroups and Roles links 
+from the left navigation pane and follow the instructions on each page. 
+
+<ol>
+<li>Click the &quot;New&quot; button to open the New User page: </li>
+	 <img src="images/addUser.png" />
+
+<li>Once the required fields (.*) have been filled out, click &quot;Save&quot; button to save the change.</li>
+	 <img src="images/addUser2.png" />
+	 
+<li>Next, click &quot;Workgroups&quot; link and click &quot;New&quot; button to open the New Workgroup page. Enter your name and select the name 
+of the group you are adding from the Parent drop down list box. You may need to repeat this step to add yourself to each group listed in the drop down list box. </li>
+	 <img src="images/addGroup.png" />	 
+ 
+<li>Now click &quot;Roles&quot; link and click &quot;New&quot; button to open the New Role page. Enter your name and click &quot;Save&quot;. </li>
+	 <img src="images/addRole.png" />	 
+	 
+<p>The Admin tab is available to users who have the Administrators role. The table below summarizes the MDW built-in roles and their permissions. 
+    Role Permissions Administrators Add users and assign them to workgroups and roles. ProcessAdmin Create and change process definitions and artifacts. 
+    System Admins Launch processes and configure environments.
+</p>
+ 
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;    
+}
+</style>
+<table style="width:50%">
+  <tr>
+    <th>Roles:</th>
+    <th>Permissions:</th> 
+  </tr>
+  <tr>
+    <td>User Admin</td>
+     <td>Add users and assign them to workgroups and roles.</td>
+  </tr>
+   <tr>
+    <td>Process Design</td>
+    <td>Create and change process definitions and artifacts.</td>
+  </tr>
+  <tr>
+    <td>Group</td>
+     <td>Launch processes and configure environments.</td>
+  </tr>
+</table>
+</ol>
+
+<h3>Creating Workflow Process</h3>
+
+<p>At the top level of the Process Explorer tree are workflow packages. A package is simply a convenient way of grouping processes together.</p>
+<ol>
+<li>You can create a new package by clicking on the &quot;New Package&quot; toolbar button, second from the right at the top of Process Explorer.
+    Click &quot;Finish&quot; and your package should appear in your project’s tree.</li>
+	<img src="images/mdwWorkflowPackage.png" />
+
+<li>To create a new process, launch the New Process wizard. Just like many aspects of MDW and Eclipse, there are a number of ways to launch the wizards. 
+    To illustrate a different method versus the package creation above, this time from the Eclipse menus select File &gt; New &gt; Other &gt; MDW Designer
+    &gt; MDW Process. Alternatively, you could right-click on the package you'd like to contain the process and select &gt; New &gt; MDW Process Either way, 
+    choose a name for your new process when the dialog comes up, and optionally select a package you would like the process to belong to. You can also add 
+    a description and click &quot;Finish&quot;.</li>
+
+<li>TIP: you can <span class=GramE>hover</span> your mouse over a toolbar button to get a tooltip description of what the button does.</li>
+	<img src="images/mdwWorkflowPackage2.png" />
+
+<li>Once the process has been created it will be opened in the Process Editor view, and the Toolbox view will be populated with the available activities for insertion into your process flow.</li>
+	<img src="images/mdwWorkflowProcess.png" />
+
+<li>Note: MDW implements a locking feature to facilitate collaborative process development. Initially your newly-created process will be locked to you. style='mso-spacerun:yes'>
+    Once you make changes and save the process, your lock will automatically removed, and the process will display as read-only. There is an icon on the
+    Process Editor toolbar that shows the locked state of your process and enables you to perform the lock and unlock actions.</li>
+
+<li>The Process Editor toolbar looks like this:</li>
+	<img src="images/toolbar.jpg" /> 
+	
+<li>You can hover over each of the icons for a tooltip explanation of their functionality. Many of these functions are also available from the right click menu either in Process Explorer or from the Designer Canvas itself.</p>
+</ol>
+
+<h3>Running Workflow Process</h3>
+
+<p class=MsoNormal>At this point your process consists of just a Start and Stop activity, but you can still run it.<span style='mso-spacerun:yes'> 
+</span>Check in Servers view and make sure your server is running.<span style='mso-spacerun:yes'></span>
+
+<ol> 
+<li>Right-click on the process in the Process Explorer tree and select &gt; Run. This will open the Process Launch Configuration dialog where you can specify
+    parameters and run your process.</li>
+    <img src="images/mdwWorkflowProcessRun.png" /> 
+
+
+<li>Any process will need a Master Request ID. This functions as a unique external identifier with business meaning (such as an order number) that will identify
+the entity this process instance is dealing with. By default the Master Request ID is populated, so you can simply click the &quot;Run&quot; button.
+However, if there are input variables for your process that you’d like to initialize, you can do so by selecting the
+“Variables” tab and entering their values. These values will be remembered for subsequent launches of this process.</li>
+
+<li>Once your process has been run, you can view its instances by right clicking in the process and selecting &gt; <b style='mso-bidi-font-weight:
+normal'>Show Instances</b>.<span style='mso-spacerun:yes'></span></li>
+</ol>
+</body>
+</html>

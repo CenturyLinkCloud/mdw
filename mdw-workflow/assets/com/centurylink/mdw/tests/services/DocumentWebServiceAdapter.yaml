@@ -1,0 +1,29 @@
+process: # 13598
+  name: DocumentWebService
+  instance: 1
+  activity: # 1 "2016-02-22 11:34:33"
+    name: Start
+    status: Completed
+  activity: # 3 "2016-02-22 11:34:33"
+    name: |
+      Invoke
+      Employee Service
+    status: Completed
+  activity: # 2 "2016-02-22 11:34:35"
+    name: Stop
+    status: Completed
+  variable: # 20563
+    name: requestDoc
+    value: |
+      <GetEmployee>
+          <workstationId>dxoakes</workstationId>
+      </GetEmployee>
+  variable: # 20567
+    name: responseDoc
+    value: |
+      <GetEmployeeResponse xmlns="http://mdw.centurylink.com/serviceTypes">
+          <sapId>DHO115360</sapId>
+          <workstationId>dxoakes</workstationId>
+          <firstName>Donald</firstName>
+          <lastName>Oakes</lastName>
+      </GetEmployeeResponse>

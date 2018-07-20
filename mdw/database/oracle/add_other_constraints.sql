@@ -1,0 +1,10 @@
+spool add_other_constraints.lst;
+
+ALTER TABLE USER_GROUP add (
+  CONSTRAINT USERGROUP_GROUPNAME UNIQUE(GROUP_NAME));
+  
+ALTER TABLE SOLUTION ADD  (   
+   UNIQUE(ID) 
+);
+
+spool off;

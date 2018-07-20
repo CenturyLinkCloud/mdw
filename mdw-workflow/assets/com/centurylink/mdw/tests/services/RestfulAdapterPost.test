@@ -1,0 +1,7 @@
+package com.centurylink.mdw.tests.services
+
+start process("RestfulServiceAdapter") {
+    variables = [httpMethod: "POST"]
+}
+wait process
+verify process

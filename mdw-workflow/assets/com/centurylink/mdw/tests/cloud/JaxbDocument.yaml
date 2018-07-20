@@ -1,0 +1,48 @@
+process: # 13575
+  name: JaxbDocument
+  instance: 1
+  activity: # 1 "2016-02-19 16:27:14"
+    name: Start
+    status: Completed
+  activity: # 7 "2016-02-19 16:27:14"
+    name: |
+      Programmatic
+      Access/Create
+    status: Completed
+  activity: # 8 "2016-02-19 16:27:14"
+    name: |
+      Programmatic
+      Update
+    status: Completed
+  activity: # 2 "2016-02-19 16:27:14"
+    name: Stop
+    status: Completed
+  variable: # 20427
+    name: actionRequest
+    value: |
+      <ActionRequest>
+          <Action Name="updatedAction">
+              <Parameter name="appName">MDW</Parameter>
+              <Parameter name="insertedParam">insertedValue</Parameter>
+          </Action>
+      </ActionRequest>
+  variable: # 20426
+    name: assetDefinedJaxb
+    value: |
+      <JaxbAsset optionalAttribute="updatedOptionalAttr" requiredAttribute="x">
+          <RequiredElement>inputDocRequiredElement</RequiredElement>
+          <OptionalElement>updatedOptionalElem</OptionalElement>
+      </JaxbAsset>
+  variable: # 20428
+    name: locallyCreatedJaxb
+    value: |
+      <JaxbAsset optionalAttribute="mdw" requiredAttribute="from">
+          <RequiredElement>hello</RequiredElement>
+          <OptionalElement>jaxb</OptionalElement>
+      </JaxbAsset>
+  variable: # 20429
+    name: requiredAttrValue
+    value: x
+  variable: # 20430
+    name: requiredElemValue
+    value: inputDocRequiredElement

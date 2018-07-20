@@ -1,0 +1,242 @@
+eclipse {
+    wtp {
+        facet {
+            facet type: "fixed", name: "jst.utility"
+            facet name: "jst.utility", version: "1.0"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "../mdw/classes"
+        }
+    }
+}
+
+configurations {
+    cli
+    codegen
+    schemas.extendsFrom(cli)
+    compile.extendsFrom(schemas)
+}
+ 
+dependencies {
+
+    cli group: "com.beust", name: "jcommander", version: "1.72"
+    cli group: "org.json", name: "json", version: "20180130"
+    cli group: "org.yaml", name: "snakeyaml", version: "1.18"
+    cli group: "com.samskivert", name: "jmustache", version: "1.12"
+
+    schemas fileTree(dir: "../mdw/libs", include: "mdw-schemas.jar")
+    schemas fileTree(dir: "../mdw/libs", include: "spring-xsds.jar")
+    
+    compile group: "org.apache.xmlbeans", name: "xmlbeans", version: "2.4.0"
+    compile group: "javax.jms", name: "javax.jms-api", version: "2.0.1"
+    compile group: "javax.mail", name: "mail", version: "1.4.5"
+    compile group: "javax.transaction", name: "jta", version: "1.1"
+    compile group: "javax.ws.rs", name: "jsr311-api", version: "1.1.1"
+    compile group: "org.springframework", name: "spring-beans", version: springVersion
+    compile group: "org.springframework", name: "spring-context", version: springVersion
+    compile group: "org.springframework", name: "spring-core", version: springVersion
+    compile group: "org.springframework", name: "spring-expression", version: springVersion
+    compile group: "org.springframework", name: "spring-jms", version: springVersion
+    compile group: "org.springframework", name: "spring-aop", version: springVersion
+    compile group: "aopalliance", name: "aopalliance", version: "1.0"
+    compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.4.10"
+	compile group: "org.apache.activemq", name: "activemq-spring", version: "5.15.0"
+	compile group: "org.apache.activemq", name: "activemq-kahadb-store", version: "5.15.0"
+    compile group: "org.apache.poi", name: "poi", version: "3.15"
+    compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
+    compile group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.3"
+    compile group: "commons-beanutils", name: "commons-beanutils", version: "1.8.3"
+    compile group: "commons-codec", name: "commons-codec", version: "1.3"
+    compile group: "commons-lang", name: "commons-lang", version: "2.4"
+    compile group: "commons-logging", name: "commons-logging", version: "1.1.1"
+    compile group: "commons-jexl", name: "commons-jexl", version: "1.1"
+    compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
+    compile group: "junit", name: "junit", version: "4.8.1"
+    compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "4.8.0.201706111038-r"
+    compile(group: "org.eclipse.jgit", name: "org.eclipse.jgit.pgm", version: "4.8.0.201706111038-r") { transitive = false; } // cli-only
+    compile group: "com.jcraft", name: "jsch", version: "0.1.54" // for jgit
+    compile group: "dom4j", name: "dom4j", version: "1.6.1"
+    compile group: "org.glassfish", name: "javax.el", version: "3.0.0"
+    compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
+    compile group: "io.limberest", name: "limberest", version: "1.2.4"
+    compile group: "com.auth0", name: "java-jwt", version: "3.3.0"
+    compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.2.3"
+    
+    // swagger
+    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-core", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-models", version: "1.5.13"
+    
+    compile group: "com.fasterxml.jackson.core", name: "jackson-core", version: "2.4.5"
+    compile group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "2.4.5"
+    compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.4.5"
+    compile group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "2.4.5"
+    compile group: "org.reflections", name: "reflections", version: "0.9.10"
+    compile group: "org.javassist", name: "javassist", version: "3.18.1-GA"
+    compile group: "org.apache.commons", name: "commons-lang3", version: "3.2.1"
+    compile group: "com.google.guava", name: "guava", version: "18.0"
+    
+    // jsr-303 for swagger validations
+    compile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
+
+    // rabbitmq
+    compile group: "com.rabbitmq", name: "amqp-client", version: "3.5.1"
+    compile group: "org.springframework.amqp", name: "spring-amqp", version: "1.4.4.RELEASE"
+    compile group: "org.springframework.amqp", name: "spring-rabbit", version: "1.4.4.RELEASE"
+    compile group: "org.springframework.retry", name: "spring-retry", version: "1.0.2.RELEASE"
+
+    // doc store
+    compile group: "org.mongodb", name: "mongodb-driver", version: "3.3.0"
+    compile group: "org.mongodb", name: "mongodb-driver-core", version: "3.3.0"
+    compile group: "org.mongodb", name: "bson", version: "3.3.0"
+    
+    // jsr-356
+    compile group: "javax.websocket", name: "javax.websocket-api", version: "1.1"
+    
+    // codegen
+    compileOnly group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
+    codegen group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
+    codegen group: "io.limberest", name: "limberest", version: "1.2.4"
+    
+    // bpmn
+    compileOnly fileTree(dir: "../mdw/libs", include: "bpmn-schemas.jar")
+}
+
+clean {
+    dependsOn cleanJar
+}
+
+task cliJar(type: Jar) {
+    dependsOn compileJava
+    destinationDir = file("../mdw/cli")
+    archiveName = "mdw-cli.jar"
+    manifest {
+        attributes("MDW-Version": "${version}",
+            "MDW-Build": new Date().format(mdwBuildTimeFormat),
+            "Main-Class": "com.centurylink.mdw.cli.Main",
+            "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar"
+              + " ./lib/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar"
+              + " ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/args4j-2.0.15.jar"
+              + " ./lib/httpclient-4.5.3.jar ./lib/httpcore-4.4.7.jar ./lib/commons-logging-1.2.jar ./lib/mariadb-java-client-2.2.3.jar"
+              + " ./lib/org.eclipse.jgit.ui-4.8.0.201706111038-r.jar ./lib/airline-0.8.jar ./lib/guava-23.0.jar ./lib/javax.inject-1.jar"
+              + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
+              + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
+              + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
+              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/limberest-1.2.4.jar ./lib/xmlbeans-2.4.0.jar");
+    }
+    
+    from("build/classes") {
+        include "com/centurylink/mdw/cli/**/*.class"
+        include "com/centurylink/mdw/dataaccess/AssetRevision.class"
+        include "com/centurylink/mdw/dataaccess/VersionControl.class"
+        include "com/centurylink/mdw/dataaccess/file/VersionControlGit.class"
+        include "com/centurylink/mdw/dataaccess/file/VersionControlGit\$*.class"
+        include "com/centurylink/mdw/dataaccess/file/GitDiffs.class"
+        include "com/centurylink/mdw/dataaccess/file/GitDiffs\$*.class"
+        include "com/centurylink/mdw/dataaccess/AssetRef.class"
+        include "com/centurylink/mdw/model/asset/CommitInfo.class"
+        include "com/centurylink/mdw/config/Yaml*.class"
+        include "com/centurylink/mdw/config/DefaultYamlTranslator.class"
+        include "com/centurylink/mdw/config/OrderedProperties.class"
+        include "com/centurylink/mdw/yaml/YamlLoader.class"
+        include "com/centurylink/mdw/model/system/Server.class"
+        include "com/centurylink/mdw/model/system/ServerList.class"
+        include "com/centurylink/mdw/util/file/MdwIgnore.class"
+        include "com/centurylink/mdw/util/file/VersionProperties.class"
+        include "com/centurylink/mdw/model/workflow/Process.class"
+        include "com/centurylink/mdw/model/workflow/Activity.class"
+        include "com/centurylink/mdw/model/workflow/TextNote.class"
+        include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
+        include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"
+        include "com/centurylink/mdw/model/workflow/Transition.class" 
+        include "com/centurylink/mdw/model/attribute/Attribute.class"
+        include "com/centurylink/mdw/model/event/EventType.class"
+        include "com/centurylink/mdw/model/variable/Variable.class"
+        include "com/centurylink/mdw/model/asset/Asset.class"
+        include "com/centurylink/mdw/model/Jsonable.class"
+        include "com/centurylink/mdw/model/JsonObject.class"
+        include "com/centurylink/mdw/bpmn/*.class"
+        include "com/centurylink/mdw/export/*.class"
+    }
+    
+    from configurations.cli.asFileTree.files.collect {
+        zipTree(it)
+    }
+
+    // swagger codegen
+    from("../mdw/cli") {
+        include "swagger-codegen-version.properties"
+        rename("swagger-codegen-version.properties", "version.properties")
+    }
+    from configurations.codegen.asFileTree.files.collect {
+        zipTree(it).matching {
+            include "io/swagger/codegen/*.class"
+            include "io/swagger/codegen/cmd/**/*.class"
+            include "io/swagger/codegen/config/*.class"
+            include "io/swagger/codegen/ignore/*.class"
+            include "io/swagger/codegen/utils/*.class"
+            include "io/swagger/codegen/examples/*.class"
+            include "io/swagger/codegen/auth/AuthParser.class"
+            include "io/swagger/codegen/languages/AbstractJavaCodegen.class"
+            include "io/swagger/codegen/languages/features/BeanValidationFeatures.class"
+            include "io/limberest/api/codegen/*.class"
+            include "io/limberest/json/*.class"
+            include "version.properties"
+        }
+    }
+    
+    from("src") {
+        include "META-INF/mdw/configurations.map"
+    }
+}
+
+task cliZip(type: Zip) {
+    dependsOn cliJar
+    destinationDir = file("../${mdwOutputDir}")
+    archiveName = "mdw-cli-${version}.zip"
+    from ("../mdw/cli") {
+        exclude ".gitignore"
+        exclude "lib/"
+    }
+}
+
+jar {
+    dependsOn cliZip
+    
+    // avoid confusingly including tomcat spring config(s)
+    exclude "META-INF/mdw/spring/**"
+    
+    // exclude cli classes and embedded deps
+    exclude "com/beust/"
+    exclude "org/json/"
+    exclude "META-INF/maven/org.json/"
+    exclude "org/yaml/"
+    exclude "META-INF/maven/org.yaml/"
+    exclude "com/samskivert/"
+    exclude "META-INF/maven/com.samskivert/"
+    
+    // include needed schemas within mdw-common
+    from configurations.schemas.asFileTree.files.collect {
+        zipTree(it)
+    }
+    
+    into("META-INF/mdw/templates") {
+      from "../mdw/templates"
+    }
+    
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+}
+
+archivesBaseName = "mdw-common"
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}
+

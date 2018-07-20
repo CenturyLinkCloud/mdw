@@ -1,0 +1,69 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          Requests <span class="mdw-heading-sub">({{requestList.total}})</span>
+        </div>
+        <div class="mdw-heading-input">
+          <div class="mdw-inner-addon mdw-right-addon">
+            <i class="glyphicon glyphicon-search"></i> 
+            <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
+              ng-model="typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
+              typeahead-editable="false" typeahead-on-select="typeaheadSelect()" ng-change="typeaheadChange()">
+          </div>  
+          <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+            <i class="glyphicon glyphicon-chevron-down"></i> 
+            <input type="text" class="form-control mdw-inline mdw-dropfilter mdw-med-indent mdw-med-width2"
+              value="{{requestTypes[requestType]}}" uib-dropdown-toggle readonly>
+            <ul class="dropdown-menu mdw-dropdown-menu mdw-med-indent"
+              uib-dropdown-menu aria-labelledby="simple-dropdown">
+              <li><a href="" ng-click="setRequestType('masterRequests')">Master Requests</a></li>
+              <li><a href="" ng-click="setRequestType('inboundRequests')">Inbound</a></li>
+              <li><a href="" ng-click="setRequestType('outboundRequests')">Outbound</a></li>
+            </ul>
+          </div>
+ 
+        </div>
+
+        <!-- NOTE: wrap attribute must be adjusted if action buttons are added or removed -->
+        <mdw-actions wrap="1000">
+        <button type="button" class="btn btn-primary mdw-btn"
+          mdw-action-pop-button
+          uib-popover-template="'workflow/requestFilters.html'">
+          <span class="glyphicon glyphicon-filter"></span> Filter
+        </button>
+        <button type="button" class="btn btn-primary mdw-btn"
+          mdw-action-pop-button
+          uib-popover-template="'workflow/requestSort.html'">
+          <span class="glyphicon glyphicon-sort"></span> Sort
+        </button>
+        <button type="button" class="btn btn-primary mdw-btn"
+          ng-click="requestList.downloadExcel()">
+          <span class="glyphicon glyphicon-download-alt"></span> Export
+        </button>
+        <button type="button" class="btn btn-primary mdw-btn"
+          mdw-route="#/dashboard/requests">
+          <span class="glyphicon glyphicon-stats"></span> Chart
+        </button>
+        </mdw-actions>
+      </div>
+    <div>
+  </div>       
+      <!-- ListUI attributes:
+         mdw-list-service: retrieval service relative URL (should support query filters, and optionally search)
+         mdw-list-model: an object from your controller's scope that will contain the retrieved InstanceList
+         mdw-list-items: the field name in the model (service response) that contains the actual array of items
+         mdw-list-filter: an object in your controller's scope that contains filter fields (must be name/value only)
+         mdw-list-item: template for displaying items in the list
+       -->
+       <mdw-list class="mdw-list" mdw-list-service="/services/Requests" mdw-list-model="requestList" mdw-list-items="requests"
+        mdw-list-filter="requestFilter" mdw-list-item="workflow/requestItem.html">
+      </mdw-list>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>

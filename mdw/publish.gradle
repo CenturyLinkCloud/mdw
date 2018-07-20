@@ -1,0 +1,157 @@
+// publishes build output to a maven repository
+// eg: mdw repo or maven central
+plugins {
+    id 'io.codearte.nexus-staging' version '0.9.0'
+}
+
+nexusStaging {
+    ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
+    ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
+    delayBetweenRetriesInMillis = 4000
+    packageGroup = "com.centurylink"
+    serverUrl = "https://oss.sonatype.org/service/local"
+    username = ossrhUsername
+    password = ossrhPassword
+}
+
+task updateRestApiDefinition {
+    description = "Update RestApiDefinition with Version number"
+    
+    def mdwPkgVer = mdwVersion;
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+        mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+    println "setting Rest API version to  " + mdwPkgVer
+    fileTree(dir: "../mdw-services/src/com/centurylink/mdw/service/api", include:'RestApiDefinition.java').each { pkgFile ->
+        doLast {
+            pkgFile.setWritable(true)
+            def pkgJson = pkgFile.text            
+            pkgFile.withWriter { w ->
+                w << pkgJson.replaceAll("version=\\\".*?\\\"", "version=\"${mdwPkgVer}\"");
+            }
+        }
+    } 
+}
+
+task cleanAssetZips(type: Delete) {
+    delete fileTree(dir: "../${mdwAssetOutputDir}")
+}
+
+task zipAssetPackages {
+    dependsOn cleanAssetZips
+    description = "Export Asset Packages"
+    file("../${mdwAssetOutputDir}").mkdirs()
+        
+    def assetRootPath = file("../${mdwAssetRoot}").toString()
+   
+    println "Exporting asset packages from " + assetRootPath + ":"
+    
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
+        def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('\\','/')      
+        def pkgCat = pkgName.replace('com/centurylink/mdw/','').replace('/', '-')
+           
+        println "    " + pkgCat + ": " + pkgName
+              
+        task "zipAsset$pkgCat"(type: Zip) {
+            destinationDir = file("../${mdwAssetOutputDir}")
+            archiveName = "${pkgCat}-${mdwVersion}.zip"
+            from "../${mdwAssetRoot}"
+            include "${pkgName}/**"
+            doLast {
+                ant.zip(destfile: "../${mdwAssetOutputDir}/${pkgCat}-${mdwVersion}.zip") {
+                    fileset(dir: "../${mdwAssetRoot}", includes: "${pkgName}/**", defaultexcludes: "no", excludes: "com/centurylink/mdw/node/node_modules/")
+                }
+            }
+        }
+    }
+}
+
+task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAsset")}) {
+}
+
+task uploadToMavenCentral(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["uploadArchives"]
+}
+
+task uploadAssetsToMavenCentral(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["uploadAssets"]
+}
+  
+task publishToMavenCentral(type: GradleBuild) {
+    dependsOn uploadToMavenCentral
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
+}
+
+task publishAssetsToMavenCentral(type: GradleBuild) {
+    dependsOn uploadAssetsToMavenCentral
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
+}
+
+closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
+
+closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
+
+
+task updatePlugInFile {
+      description = "Update plugin file with Version number"
+  
+      fileTree(dir: "../mdw-workflow/.settings", include:'com.centurylink.mdw.plugin.xml').each { pkgFile ->
+          println "Updating file  " + pkgFile.name + " with version= " + mdwVersion
+          
+          doLast {
+              pkgFile.setWritable(true)
+              def pkgJson = pkgFile.text
+              pkgFile.withWriter { w ->
+                  w << pkgJson.replaceAll("mdwFramework version=\\\".*?\\\"", "mdwFramework version=\"${mdwVersion}\"");
+              }
+          }
+      }
+}
+  
+task updateJson {
+      description = "Update bower.json and packag.json with version number"
+      
+      def mdwPkgVer = mdwVersion;
+      if (mdwVersion.endsWith("-SNAPSHOT"))
+          mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+      fileTree(dir: "../mdw-hub", include:"package.json").each { pkgFile ->
+          println "Updating file  " + pkgFile.name + " with version= " + mdwPkgVer
+          
+          doLast {
+              pkgFile.setWritable(true)
+              def pkgJson = pkgFile.text
+              pkgFile.withWriter { w ->
+                  w << pkgJson.replaceAll("\\\"version\\\": \\\".*?\\\"", "\\\"version\\\": \"${mdwPkgVer}\"");
+              }
+          }
+      }
+}
+
+// update MDW version  all the packages in the mdw-workflow/assets directory
+task updateMDWVerInAssetPackages {
+    description = "Update Asset Package Version" + mdwVersion
+    
+    def assetRootPath = file("../${mdwAssetRoot}").toString()
+    def mdwPkgVer = mdwVersion;
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+        mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
+    println "Update MDW version in asset packages in asstRoot: " + assetRootPath + ":"
+    fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
+        doLast {
+            def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
+            println "        setting package.yaml version: ${mdwPkgVer} for ${pkgName}"
+            pkgFile.setWritable(true)
+            def pkgJson = pkgFile.text
+            pkgFile.withWriter { w ->
+                w << pkgJson.replaceAll("version: [0-9]\\.[0-9]\\.[0-9][0-9]", "version: ${mdwPkgVer}");
+            }
+        }
+    }
+}
+
+task updateMdwVerInFiles {
+      dependsOn(updateJson, updatePlugInFile, updateRestApiDefinition, updateMDWVerInAssetPackages)
+}

@@ -1,0 +1,74 @@
+eclipse {
+    project {
+        natures += "org.eclipse.jdt.groovy.core.groovyNature"
+    }
+    
+    classpath {
+        defaultOutputDir = file("build/classes")
+        
+        containers "GROOVY_SUPPORT"
+        containers "GROOVY_DSL_SUPPORT"
+        
+        file {
+            whenMerged { classpath ->
+                // eclipse should process dynamic java, but should not be part of build
+                def assetsSrc = new org.gradle.plugins.ide.eclipse.model.SourceFolder("assets", "build/assets")
+                assetsSrc.excludes.add("Archive/")
+                entries.add(assetsSrc)
+                
+                def groovySupport = entries.find { it.kind == "con" && it.path == "GROOVY_SUPPORT" }
+                groovySupport.entryAttributes.put("minimal", "true")
+            }
+        }
+    }
+    
+    wtp {
+        facet {
+            facet name: "mdw.workflow", version: "5.1"
+            facet type: "fixed", name: "jst.utility"
+            facet name: "jst.utility", version: "1.0"
+        }
+    }
+}
+
+dependencies {
+    compile project(":mdw-common")
+    compile project(":mdw-services")
+    
+    // build-time-only dependencies (exluded from mdw-hub)
+    compile fileTree(dir: "assets/com/centurylink/mdw/drools", includes: ["*.jar"])   
+    compile fileTree(dir: "assets/com/centurylink/mdw/camel", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/node", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/kotlin", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/microservice", includes: ["*.jar"])
+    
+    compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.3"
+    compile group: "org.apache.velocity", name: "velocity", version: "1.7"
+    
+    compile group: "junit", name: "junit", version:"4.8.1"
+    compile group: "oro", name: "oro", version: "2.0.8"   
+    
+}
+
+task cleanJar {
+    doLast {
+        delete "../${mdwOutputDir}/mdw-base-${version}.jar"
+    }
+}
+
+clean {
+    dependsOn cleanJar
+}
+
+jar {
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+}
+
+archivesBaseName = "mdw-workflow"
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}

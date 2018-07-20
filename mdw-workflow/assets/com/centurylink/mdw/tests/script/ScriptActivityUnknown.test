@@ -1,0 +1,7 @@
+package com.centurylink.mdw.tests.script
+
+start process("ScriptTest") {
+    variables = [ scriptFlavor: "Unknown" ]
+}
+sleep 10
+verify process("ScriptTest")
