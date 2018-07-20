@@ -288,7 +288,7 @@ task checkAssetVersions(type: Exec) {
 }
 
 task testAll(type: GradleBuild) {
-    dependsOn(buildAll, codeFormat, checkAssetVersions)
+    dependsOn(buildAll, codeFormat /*, checkAssetVersions*/)
     buildFile = "test.gradle"
     tasks = ["test"]
     startParameter.projectProperties = [include: '**/*.test',
