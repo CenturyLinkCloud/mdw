@@ -4,9 +4,7 @@
     {
       "type": "editor",
       "name": "Documentation",
-      "editing": true,
-      "multiline": true,
-      "language": "markdown"
+      "ext": "md"
     }
   ]}
 }
