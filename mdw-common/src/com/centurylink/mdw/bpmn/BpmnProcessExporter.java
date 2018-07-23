@@ -27,7 +27,7 @@ public class BpmnProcessExporter implements ProcessExporter {
 
     @Override
     public String export(Process process) throws IOException {
-        return new BpmnHelper().exportProcess(process);
+        return new BpmnExportHelper().exportProcess(process);
     }
 
     @Override
