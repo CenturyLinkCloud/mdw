@@ -34,13 +34,17 @@ import com.centurylink.mdw.model.workflow.Process;
  * If --format is specified wiht html/png, exports into html/png format
  * otherwise, exports into bpmn2 format.
  */
-@Parameters(commandNames = "export", commandDescription = "Export process or package into supported formats", separators = "=")
+@Parameters(commandNames = "export", commandDescription = "Export process into supported formats", separators = "=")
 public class Export extends Setup {
     @Parameter(names = "--process", description = "Process to be exported.")
     private String process;
 
     public String getProcess() {
         return process;
+    }
+
+    public void setProcess(String proc) {
+        this.process = proc;
     }
 
     @Parameter(names = "--format", description = "Format to be exported")
