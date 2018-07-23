@@ -94,7 +94,7 @@ import com.centurylink.mdw.model.workflow.Transition;
  * @author aa70413
  *
  */
-public class BpmnHelper {
+public class BpmnExportHelper {
 
     // Root element
     private TDefinitions defs;
@@ -191,6 +191,7 @@ public class BpmnHelper {
                     TSubProcess subProcess = (TSubProcess) flow.changeType(TSubProcess.type);
                     subProcess.setId("P" + subproc.getId());
                     subProcess.setName(subproc.getName());
+                    subProcess.addNewExtensionElements().set(getExtentionElements(subproc));
                     addProcessElements(subProcess, subproc);
                 }
             }
@@ -225,6 +226,7 @@ public class BpmnHelper {
                         BPMNEdgeDocument.type.getDocumentElementName(), BPMNEdge.type);
                 BPMNEdge shape = (BPMNEdge) diagramElement.changeType(BPMNEdge.type);
                 shape.setBpmnElement(new QName(referrId));
+
                 // Set the cooordinates
                 for (int i = 0; i < coords.getXs().length; i++) {
                     Point startPoint = shape.addNewWaypoint();
@@ -625,11 +627,12 @@ public class BpmnHelper {
         private double height;
     }
 
-    public void addElements(Document doc, Element elements, List<?> attrs) {
+    private void addElements(Document doc, Element elements, List<?> attrs) {
         for (Object attr : attrs) {
             if (attr instanceof Attribute) {
                 Attribute attribute = (Attribute) attr;
                 if (elements.getLocalName() == null
+                        || "mdw:ProcessExtensions".equals(elements.getNodeName())
                         || (!"WORK_DISPLAY_INFO".equals(attribute.getAttributeName())
                                 && !"LOGICAL_ID".equals(attribute.getAttributeName())))
                     elements.appendChild(getNode(doc, MDW_ATTRIBUTE, attribute.getAttributeName(),
@@ -658,7 +661,10 @@ public class BpmnHelper {
         Element attribute = doc.createElement(element);
         attribute.setAttribute("name", var.getName());
         attribute.setAttribute("category", var.getCategory());
-        attribute.setAttribute("dispaySequence", String.valueOf(var.getDisplaySequence()));
+        if (var.getDisplaySequence() != null)
+            attribute.setAttribute("dispaySequence", String.valueOf(var.getDisplaySequence()));
+        else
+            attribute.setAttribute("dispaySequence", "0");
         attribute.appendChild(getNode(doc, "mdw:type", var.getType(), ""));
         return attribute;
     }
@@ -687,27 +693,33 @@ public class BpmnHelper {
             }
             else if (obj instanceof Transition) {
                 Transition trans = (Transition) obj;
-                Element eventEelement = doc.createElementNS(MDW_NAMESPACE, "mdw:Attributes");
-                doc.appendChild(eventEelement);
-                eventEelement.appendChild(getNode(doc, MDW_ATTRIBUTE, "Event", String.valueOf(trans.getEventType())));
+                Element elements = doc.createElementNS(MDW_NAMESPACE, "mdw:Attributes");
+                doc.appendChild(elements);
+                String[] displayInfo = trans
+                        .getAttribute(WorkTransitionAttributeConstant.TRANSITION_DISPLAY_INFO)
+                        .split(",");
+                elements.appendChild(
+                        getNode(doc, MDW_ATTRIBUTE, "Event", String.valueOf(trans.getEventType())));
+                elements.appendChild(getNode(doc, MDW_ATTRIBUTE,
+                        WorkTransitionAttributeConstant.TRANSITION_DISPLAY_INFO,
+                        displayInfo[0] + "," + displayInfo[1]));
                 if (!trans.getTransitionDelayUnit().isEmpty())
-                    eventEelement.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelayUnit", trans.getTransitionDelayUnit()));
+                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelayUnit",
+                            trans.getTransitionDelayUnit()));
                 if (trans.getTransitionDelay() != 0)
-                    eventEelement.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelay", String.valueOf(trans.getTransitionDelay())));
+                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelay",
+                            String.valueOf(trans.getTransitionDelay())));
 
             }
             else if (obj instanceof Process) {
                 Process proc = (Process) obj;
                 Element elements = doc.createElementNS(MDW_NAMESPACE, "mdw:ProcessExtensions");
                 doc.appendChild(elements);
-                elements.appendChild(
-                        getNode(doc, MDW_ATTRIBUTE, "Version", proc.getVersionString()));
                 addElements(doc, elements, proc.getAttributes());
                 addElements(doc, elements, proc.getVariables());
                 if (!proc.getTextNotes().isEmpty())
                     addElements(doc, elements, proc.getTextNotes());
             }
-
             return XmlObject.Factory.parse(getExtensionElemetnsXml(doc));
         }
         catch (XmlException | ParserConfigurationException e) {
@@ -716,12 +728,11 @@ public class BpmnHelper {
         return null;
     }
 
-    public String getExtensionElemetnsXml(Document doc) {
+    private String getExtensionElemetnsXml(Document doc) {
         StringWriter writer = new StringWriter();
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer;
-            transformer = transformerFactory.newTransformer();
+            Transformer transformer = transformerFactory.newTransformer();
 
             DOMSource domSource = new DOMSource(doc);
             StreamResult streamResult = new StreamResult(writer);

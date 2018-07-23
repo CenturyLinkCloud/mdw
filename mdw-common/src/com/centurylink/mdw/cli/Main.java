@@ -61,6 +61,7 @@ public class Main {
         Codegen codegen = new Codegen();
         Vercheck vercheck = new Vercheck();
         Export export = new Export();
+        BpmnImport bpmnimport = new BpmnImport();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -80,6 +81,7 @@ public class Main {
             .addCommand("codegen", codegen)
             .addCommand("vercheck", vercheck)
             .addCommand("export", export)
+            .addCommand("bpmnimport", bpmnimport)
             .build();
 
         cmd.setProgramName("mdw");
@@ -134,6 +136,10 @@ public class Main {
                 else if (command.equals("export")) {
                     op = export;
                 }
+                else if (command.equals("bpmnimport")) {
+                    op = bpmnimport;
+                }
+
 
                 if (op == null) {
                     cmd.usage();
