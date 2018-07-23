@@ -11,10 +11,10 @@ database:
   validationQuery: select 1 from dual
 
 asset:
-  location: c:/workspaces/mdw6/mdw-workflow/assets
+  location: ../mdw-workflow/assets
 
 git:
-  local.path: c:/workspaces/mdw6/
+  local.path: ../
   remote.url: https://github.com/CenturyLinkCloud/mdw.git
   branch: master
   user: anonymous
