@@ -40,6 +40,7 @@ import org.omg.spec.bpmn.x20100524.di.BPMNEdgeDocument;
 import org.omg.spec.bpmn.x20100524.di.BPMNShape;
 import org.omg.spec.bpmn.x20100524.di.BPMNShapeDocument;
 import org.omg.spec.bpmn.x20100524.model.BusinessRuleTaskDocument;
+import org.omg.spec.bpmn.x20100524.model.CallActivityDocument;
 import org.omg.spec.bpmn.x20100524.model.DefinitionsDocument;
 import org.omg.spec.bpmn.x20100524.model.EndEventDocument;
 import org.omg.spec.bpmn.x20100524.model.ExclusiveGatewayDocument;
@@ -54,6 +55,7 @@ import org.omg.spec.bpmn.x20100524.model.StartEventDocument;
 import org.omg.spec.bpmn.x20100524.model.SubProcessDocument;
 import org.omg.spec.bpmn.x20100524.model.TBaseElement;
 import org.omg.spec.bpmn.x20100524.model.TBusinessRuleTask;
+import org.omg.spec.bpmn.x20100524.model.TCallActivity;
 import org.omg.spec.bpmn.x20100524.model.TDefinitions;
 import org.omg.spec.bpmn.x20100524.model.TEndEvent;
 import org.omg.spec.bpmn.x20100524.model.TExclusiveGateway;
@@ -370,9 +372,9 @@ public class BpmnExportHelper {
             referrId = subProcTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity":
-            flow = substitute(flow, SubProcessDocument.type.getDocumentElementName(),
-                    TSubProcess.type);
-            TSubProcess hetProcTask = (TSubProcess) flow.changeType(TSubProcess.type);
+            flow = substitute(flow, CallActivityDocument.type.getDocumentElementName(),
+                    TCallActivity.type);
+            TCallActivity hetProcTask = (TCallActivity) flow.changeType(TCallActivity.type);
             hetProcTask.setId(act.getLogicalId());
             hetProcTask.setName(act.getName());
             hetProcTask.addNewExtensionElements().set(getExtentionElements(act));
