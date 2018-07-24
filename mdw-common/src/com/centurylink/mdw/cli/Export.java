@@ -21,12 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
 import com.centurylink.mdw.export.ProcessExporter;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 
 /**
@@ -79,10 +78,9 @@ public class Export extends Setup {
         String pkgFile = getAssetRoot() + "/" + pkg.replace('.', '/') + "/";
         String procName = process.substring(index+1);
         String content = new String(Files.readAllBytes(Paths.get(pkgFile + procName)));
-        JSONObject json = new JSONObject(content);
-        Process process = new Process(json);
-        process.setName(procName.substring(0, procName.length() - 5));
-        String exported = exporter.export(process);
+        Process proc = new Process(new JsonObject(content));
+        proc.setName(procName.substring(0, procName.length() - 5));
+        String exported = exporter.export(proc);
 
         if (output == null) {
             output = new File(pkgFile + procName.substring(0, procName.length() - 5) + "." + format);

@@ -68,6 +68,8 @@ public class BpmnImportHelper {
                 "com.centurylink.mdw.workflow.activity.event.PublishEventMessage");
         activityMap.put("serviceTask",
                 "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter");
+        activityMap.put("callActivity",
+                "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity");
     }
 
     public String importProcess(File process) throws IOException {
@@ -202,23 +204,13 @@ public class BpmnImportHelper {
             Node cNode = nodeList.item(i);
             if (Node.ELEMENT_NODE == cNode.getNodeType()) {
                 if ("mdw:Attribute".equals(cNode.getNodeName()))
-                    parseAttributeData(cNode, proc);
+                    proc.setAttribute(parseAttributeValue(cNode, "name"), cNode.getTextContent());
                 else if ("mdw:Variable".equals(cNode.getNodeName()))
                     parseVaraibleData(cNode, proc);
                 else if ("mdw:TextNote".equals(cNode.getNodeName()))
                     parseTextNotesData(cNode, proc);
             }
         }
-    }
-
-    private void parseAttributeData(Node node, Object obj) {
-        if (obj instanceof Process) {
-            ((Process) obj).setAttribute(parseAttributeValue(node, "name"), node.getTextContent());
-        }
-        else if (obj instanceof Activity)
-            ((Activity) obj).setAttribute(parseAttributeValue(node, "name"), node.getTextContent());
-        else if (obj instanceof Transition)
-            ((Activity) obj).setAttribute(parseAttributeValue(node, "name"), node.getTextContent());
     }
 
     private void parseVaraibleData(Node node, Process proc) {
