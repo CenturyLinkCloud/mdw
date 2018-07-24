@@ -4,7 +4,7 @@
     {
       "type": "table",
       "name": "variables",
-      "applier": "ObjectTableApplier",
+      "adapter": "ObjectTableAdapter",
       "widgets": [
         {
           "label": "Variable Name",
