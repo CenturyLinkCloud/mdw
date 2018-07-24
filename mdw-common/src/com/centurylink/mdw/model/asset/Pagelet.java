@@ -192,10 +192,19 @@ public class Pagelet implements Jsonable {
             else if ("RuleSets".equals(source)) {
                 String format = attrs.get("type");
                 if (format != null) {
-                    String ext = Asset.getFileExtension(format.split(",")[0]);
-                    if (ext != null) {
+                    String exts = "";
+                    String[] formats = format.split(",");
+                    for (int i = 0; i < formats.length; i++) {
+                        String ext = Asset.getFileExtension(formats[i]);
+                        if (ext != null) {
+                            if (exts.length() > 0)
+                                exts += ",";
+                            exts += ext.substring(1);
+                        }
+                    }
+                    if (exts.length() > 0) {
                         translated = "asset";
-                        attrs.put("source", ext.substring(1));
+                        attrs.put("source", exts);
                     }
                 }
             }

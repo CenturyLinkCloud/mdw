@@ -57,7 +57,7 @@
 	      "type": "asset",
 	      "name": "dataType",
 	      "label": "Data Type",
-	      "source": "[java,kt]"
+	      "source": "java,kt"
 	    }
       ]
     },

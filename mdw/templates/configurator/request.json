@@ -23,7 +23,7 @@
     {
       "type": "table",
       "name": "requestParameters",
-      "applier": "ObjectTableApplier",
+      "adapter": "ObjectTableAdapter",
       "widgets": [
         {
           "label": "Parameter Name",
@@ -57,7 +57,7 @@
 	      "type": "asset",
 	      "name": "dataType",
 	      "label": "Data Type",
-	      "source": "[java,kt]"
+	      "source": "java,kt"
 	    }
       ]
     },

@@ -315,7 +315,14 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
     }
     else {
-      $http.get(mdw.roots.services + '/services/Assets?extension=' + widgets[0].source.replace(/\[/g, "%5B").replace(/]/g, "%5D") + "&app=mdw-admin").then(function(res) {
+      var ext = widgets[0].source;
+      if (ext.startsWith('[')) {
+        ext = ext.substring(1, ext.length - 1);
+      }
+      if (ext.indexOf(',') > 0) {
+        ext = '%5B' + ext + '%5D';
+      }
+      $http.get(mdw.roots.services + '/services/Assets?extension=' + ext + "&app=mdw-admin").then(function(res) {
         if (res.data.packages) {
           res.data.packages.forEach(function(pkg) {
             pkg.assets.forEach(function(asset) {
