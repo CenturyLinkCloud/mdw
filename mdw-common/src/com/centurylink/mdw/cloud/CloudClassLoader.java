@@ -96,7 +96,7 @@ public class CloudClassLoader extends ClassLoader {
 
         classpath = new ArrayList<File>();
 
-        String cp = pkg.getProperty(PropertyNames.MDW_JAVA_RUNTIME_CLASSPATH);
+        String cp = PropertyManager.getProperty(PropertyNames.MDW_JAVA_RUNTIME_CLASSPATH);
         if (cp != null) {
             String[] cps = cp.trim().split(File.pathSeparator);
             for (int i = 0; i < cps.length; i++) {
@@ -104,7 +104,7 @@ public class CloudClassLoader extends ClassLoader {
             }
         }
 
-        String libdir = pkg.getProperty(PropertyNames.MDW_JAVA_LIBRARY_PATH);
+        String libdir = PropertyManager.getProperty(PropertyNames.MDW_JAVA_LIBRARY_PATH);
         if (libdir != null) {
             File dir = new File(libdir);
             if (dir.isDirectory()) {

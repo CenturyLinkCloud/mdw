@@ -24,18 +24,14 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.email.TemplatedEmail;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.TemplatedNotifier;
 import com.centurylink.mdw.services.user.ContextEmailRecipients;
@@ -68,24 +64,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
     }
 
     protected String getProperty(String name) {
-        try {
-            Asset template = null;
-            if (getTemplateSpec() != null)
-                template = AssetCache.getAsset(getTemplateSpec());
-            if (template == null || template.getId() == 0L)
-                return PropertyManager.getProperty(name);
-            else {
-                Package pkg = PackageCache.getAssetPackage(template.getId());
-                if (pkg == null)
-                    return PropertyManager.getProperty(name);
-                else
-                    return pkg.getProperty(name);
-            }
-        }
-        catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            return null;
-        }
+        return PropertyManager.getProperty(name);
     }
 
     protected String getSubject(TaskInstance taskInstance, String outcome) {

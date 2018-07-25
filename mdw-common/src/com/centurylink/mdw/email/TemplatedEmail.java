@@ -51,15 +51,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.util.ExpressionUtil;
 
@@ -85,18 +82,7 @@ public class TemplatedEmail {
     }
 
     private String getProperty(String propname) throws MessagingException {
-        if (getTemplate().getId() == 0)
-            return PropertyManager.getProperty(propname);
-        try {
-            Package pkg = PackageCache.getAssetPackage(getTemplate().getId());
-            if (pkg == null)
-                return PropertyManager.getProperty(propname);
-            else
-                return pkg.getProperty(propname);
-        }
-        catch (CachingException ex) {
-            throw new MessagingException(ex.getMessage(), ex);
-        }
+        return PropertyManager.getProperty(propname);
     }
 
     public String getSmtpPort() throws MessagingException {

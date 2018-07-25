@@ -131,7 +131,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
     }
 
     public String getProperty(String name) {
-        return pkg.getProperty(name);
+        return PropertyManager.getProperty(name);
     }
 
     public Long getProcessId() {
