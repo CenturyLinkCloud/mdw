@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.DynamicJavaImplementor;
 import com.centurylink.mdw.java.JavaExecutor;
@@ -126,12 +125,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
                 tempPkg = getPackage();
 
                 if (tempPkg.isDefaultPackage()) {  // In case in-flight pulled out of Git history
-                    tempPkg = new Package() {
-                        @Override
-                        public String getProperty(String propertyName) {
-                            return PropertyManager.getProperty(propertyName);
-                        }
-                    };
+                    tempPkg = new Package();
                     tempPkg.setPackageName(getProcessDefinition().getPackageName());
                     // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key
                     tempPkg.setVersion((-1 * getProcessDefinition().getVersion()));

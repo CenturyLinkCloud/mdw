@@ -78,7 +78,6 @@ public class PackageCache implements PreloadableCache {
             List<Package> packageListTemp = DataAccess.getProcessLoader().getPackageList(false, null);
             for (Package pkg : packageListTemp) {
                 pkg.setAttributes(loadPackage(pkg).getAttributes());
-                pkg.hashProperties();
             }
             Collections.sort(packageListTemp, new Comparator<Package>() {
                 public int compare(Package p1, Package p2) {

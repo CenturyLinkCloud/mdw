@@ -31,6 +31,7 @@ import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -1058,7 +1059,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return value of the property, or null if the property does not exist.
      */
     protected String getProperty(String propertyName) {
-       return getPackage().getProperty(propertyName);
+       return PropertyManager.getProperty(propertyName);
     }
 
     protected Asset getAsset(String name, String language, int version) {

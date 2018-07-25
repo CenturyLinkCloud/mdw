@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -89,7 +89,7 @@ public class TaskNotifier extends TemplatedNotifier {
     }
 
     protected String getProperty(String name) {
-        return PackageCache.getAssetPackage(template.getId()).getProperty(name);
+        return PropertyManager.getProperty(name);
     }
 
     protected String getSubject(String action) {

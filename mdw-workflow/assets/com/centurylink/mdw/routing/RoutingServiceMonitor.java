@@ -22,14 +22,12 @@ import java.util.Map;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.RequestRoutingStrategy;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -60,8 +58,7 @@ public class RoutingServiceMonitor implements ServiceMonitor {
         String pkgName = this.getClass().getName().substring(0,this.getClass().getName().lastIndexOf('.'));
         if ("GET".equalsIgnoreCase(headers.get(Listener.METAINFO_HTTP_METHOD))) {
             try {
-                Package pkg = PackageCache.getPackage(pkgName);
-                String[] exclusions = pkg.getProperty("ExclusionRoutingList").split(",");
+                String[] exclusions = PropertyManager.getProperty("ExclusionRoutingList").split(",");
                 for (String path : exclusions) {
                     if (headers.get(Listener.METAINFO_REQUEST_PATH).toLowerCase().contains(path.toLowerCase()))
                         return null;

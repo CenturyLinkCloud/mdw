@@ -31,7 +31,6 @@ import org.yaml.snakeyaml.Yaml;
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cloud.CloudClassLoader;
-import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.MdwJavaException;
@@ -68,7 +67,6 @@ public class Package implements Serializable, Jsonable {
     private boolean exported;
     private Date modifyDate;
     // runtime information
-    private Map<String,String> properties;
     private ClassLoader classloader;
     private String group;
 
@@ -418,31 +416,9 @@ public class Package implements Serializable, Jsonable {
         this.modifyDate = modifyDate;
     }
 
-    public void hashProperties() {
-        properties = new HashMap<>();
-        if (attributes!=null) {
-            for (Attribute attr: attributes) {
-                properties.put(attr.getAttributeName(), attr.getAttributeValue());
-            }
-        }
-    }
-
-    public String getProperty(String propertyName) {
-        if (properties == null)
-            hashProperties();
-        String v = properties.get(propertyName);
-        if (v==null) v = PropertyManager.getProperty(propertyName);
-        return v;
-    }
-
     public static Package getDefaultPackage() {
-        if (defaultPackage==null) {
-            defaultPackage = new Package() {
-                @Override
-                public String getProperty(String propertyName) {
-                    return PropertyManager.getProperty(propertyName);
-                }
-            };
+        if (defaultPackage == null) {
+            defaultPackage = new Package();
         }
         return defaultPackage;
     }
