@@ -123,8 +123,10 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
               promise.then(function(res) {
                 var resArr;
                 var maxWidth;
+                var resIds;
                 if (res instanceof Array) {
                   resArr = res;
+                  resIds = [];
                 }
                 else {
                   resArr = [res];
@@ -147,7 +149,17 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
                         passedTabArr[0][itsProp] = itsSpec;
                       }
                     });
-                    tabInfo.push(item);
+                    // don't add duplicate item ids (https://github.com/CenturyLinkCloud/mdw/issues/464)
+                    var shouldAdd = true;
+                    if (item.id && resIds) {
+                      shouldAdd = resIds.indexOf(item.id) < 0;
+                    }
+                    if (shouldAdd) {
+                        tabInfo.push(item);
+                        if (item.id && resIds) {
+                          resIds.push(item.id);
+                        }
+                    }
                   });
                 });
                 $scope.applyTabArray(passedTabArr, tabInfo, maxWidth);
