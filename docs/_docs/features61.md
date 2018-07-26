@@ -4,7 +4,7 @@ title: MDW 6.1 New Features
 ---
 
 ## Major Enhancements
-  1. [MDW Authentication]() via JWT on [MDW Central]()
+  1. [MDW Authentication]() via JWT
   2. Full [Docker](../guides/docker.md) support, with the MDW 6.1 image available from Docker Hub
   3. [Hyperion]() platform integration 
   4. [MDW Mobile](../guides/mdw-mobile/) on Google Play and the App Store

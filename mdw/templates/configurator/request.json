@@ -23,7 +23,6 @@
     {
       "type": "table",
       "name": "requestParameters",
-      "adapter": "ObjectTableAdapter",
       "widgets": [
         {
           "label": "Parameter Name",
