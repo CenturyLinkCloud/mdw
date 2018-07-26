@@ -40,12 +40,14 @@
             "Header",
             "Form"
           ],
-          "default": "Body"
+          "default": "Body",
+          "vw": 100
         },
         {
           "type": "checkbox",
           "name": "required",
-          "label": "Required"
+          "label": "Required",
+          "vw": 75
         },
         {
           "name": "description",

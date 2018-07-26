@@ -48,7 +48,8 @@
             "OUTPUT",
             "INOUT",
             "STATIC"
-          ]
+          ],
+          "vw": 120
         },
         {
           "label": "Label",
@@ -65,13 +66,14 @@
             "Optional",
             "ReadOnly",
             "Hidden"
-          ]
+          ],
+          "vw": 120
         },
         {
           "label": "Sequence",
           "name": "sequence",
           "type": "number",
-          "vw": 50
+          "vw": 60
         }        
       ]
     },
