@@ -36,7 +36,8 @@
             "org.apache.xmlbeans.XmlObject",
             "org.w3c.dom.Document",
             "org.yaml.snakeyaml.Yaml"
-          ]
+          ],
+          "default": "java.lang.String"
         },
         {
           "label": "Mode",
@@ -49,6 +50,7 @@
             "INOUT",
             "STATIC"
           ],
+          "default": "LOCAL",
           "vw": 120
         },
         {
