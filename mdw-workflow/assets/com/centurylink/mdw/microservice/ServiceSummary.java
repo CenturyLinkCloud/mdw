@@ -34,9 +34,21 @@ public class ServiceSummary implements Jsonable {
         return instances == null ? null : instances.getInstance(instanceId);
     }
 
+    /**
+     * Adds instance and/or empty invocation list for this instance if not found.
+     */
     public List<Invocation> getInvocations(String microserviceName, Long instanceId) {
         MicroserviceInstance instance = getMicroservice(microserviceName, instanceId);
-        return instance == null ? null : instance.getInvocations();
+        if (instance == null) {
+            instance = addMicroservice(microserviceName, instanceId);
+        }
+        List<Invocation> invocations = instance.getInvocations();
+        if (invocations == null) {
+            invocations = new ArrayList<>();
+            instance.setInvocations(invocations);
+        }
+
+        return invocations;
     }
 
     public List<Update> getUpdates(String microserviceName, Long instanceId) {
@@ -69,10 +81,6 @@ public class ServiceSummary implements Jsonable {
             instance = addMicroservice(microserviceName, instanceId);
         }
         List<Invocation> invocations = getInvocations(microserviceName, instanceId);
-        if (invocations == null) {
-            invocations = new ArrayList<>();
-            instance.setInvocations(invocations);
-        }
         invocations.add(invocation);
     }
 

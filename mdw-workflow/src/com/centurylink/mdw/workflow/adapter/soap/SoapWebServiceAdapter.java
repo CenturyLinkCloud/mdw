@@ -158,7 +158,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
             String response =  httpHelper.post(request);
 
             if (response != null) {
-                int codeThreshold = DEFAULT_HTTP_CODE;
+                int codeThreshold = DEFAULT_RETRY_HTTP_CODE;
                 String retryCodes = getAttributeValueSmart(RETRY_HTTP_CODES);
                 if (retryCodes != null) {
                     try {

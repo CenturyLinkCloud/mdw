@@ -42,7 +42,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
     public static final String CONNECT_TIMEOUT = "ConnectTimeout";
     public static final String READ_TIMEOUT = "ReadTimeout";
     public static final String RETRY_HTTP_CODES = "RetryHttpCodes";
-    public static final int DEFAULT_HTTP_CODE = Status.INTERNAL_ERROR.getCode();
+    public static final int DEFAULT_RETRY_HTTP_CODE = Status.INTERNAL_ERROR.getCode();
 
     private Map<String,String> requestHeaders = null;
     protected Map<String,String> getRequestHeaders() { return requestHeaders; }
