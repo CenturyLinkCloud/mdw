@@ -23,7 +23,7 @@ def postReq = post http("Services/Solutions/" + test1001 + "?format=json") {
   payload = sol1.toString(2)
 }
 def solutions = new groovy.json.JsonSlurper().parseText(postReq.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 def post2Req = post http("Services/Solutions/" + test1002 + "?format=json") {
   user  = 'mdwapp'
@@ -31,7 +31,7 @@ def post2Req = post http("Services/Solutions/" + test1002 + "?format=json") {
   payload = sol2.toString(2)
 }
 solutions = new groovy.json.JsonSlurper().parseText(post2Req.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 def post3Req = post http("Services/Solutions/" + test1003 + "?format=json") {
   user  = 'mdwapp'
@@ -39,7 +39,7 @@ def post3Req = post http("Services/Solutions/" + test1003 + "?format=json") {
   payload = sol3.toString(2)
 }
 solutions = new groovy.json.JsonSlurper().parseText(post3Req.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 println 'Add a memebr to solution /solutionID/solutions/memberSolID'
 def postMemberReq = post http("Services/Solutions/" + test1001 + "/solutions/" + test1002 + "?format=json") {
@@ -48,7 +48,7 @@ def postMemberReq = post http("Services/Solutions/" + test1001 + "/solutions/" +
   payload = "{}"
 }
 solutions = new groovy.json.JsonSlurper().parseText(postMemberReq.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 println 'Add a memebr to solution /solutionID/solutions/memberSolID'
 def postMember2Req = post http("Services/Solutions/" + test1002 + "/solutions/" + test1003 + "?format=json") {
@@ -57,7 +57,7 @@ def postMember2Req = post http("Services/Solutions/" + test1002 + "/solutions/" 
   payload = "{}"
 }
 solutions = new groovy.json.JsonSlurper().parseText(postMember2Req.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 println 'Solution get Service'
 def getResp = get http("Services/Solutions/" + test1001 + "/solutions?format=json")
@@ -71,7 +71,7 @@ def delReq = delete http("Services/Solutions/" + test1003 + "?format=json") {
   payload = {}
 }
 solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 println 'Delete solution 2'
 delReq = delete http("Services/Solutions/" + test1002 + "?format=json") {
@@ -80,7 +80,7 @@ delReq = delete http("Services/Solutions/" + test1002 + "?format=json") {
   payload = {}
 }
 solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"
 
 println 'Delete solution 1'
 delReq = delete http("Services/Solutions/" + test1001 + "?format=json") {
@@ -89,4 +89,4 @@ delReq = delete http("Services/Solutions/" + test1001 + "?format=json") {
   payload = {}
 }
 solutions = new groovy.json.JsonSlurper().parseText(delReq.getContent())
-assert solutions.status.message == "Success"
+assert solutions.status.message == "OK"

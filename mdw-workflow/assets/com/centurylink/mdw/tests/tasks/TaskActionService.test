@@ -27,7 +27,7 @@ response = post http("services/Tasks/${taskInst.id}/Release") {
     payload = '{"action":"Release","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 200
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 
 // confirm Release
 response = get http("services/Tasks/${taskInst.id}")
@@ -41,7 +41,7 @@ response = post http("services/Tasks/${taskInst.id}/Claim") {
     payload = '{"action":"Claim","taskInstanceId":${taskInst.id},"user":"mdwapp"}'
 }
 assert response.code == 200
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 
 // confirm Claim
 response = get http("services/Tasks/${taskInst.id}")
@@ -56,7 +56,7 @@ response = post http("services/Tasks/${taskInst.id}/Assign") {
     payload = '{"action":"Assign","taskInstanceId":${taskInst.id},"user":"mdwapp","assignee":"mdwapp"}'
 }
 assert response.code == 200
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 
 // confirm Assign
 response = get http("services/Tasks/${taskInst.id}")

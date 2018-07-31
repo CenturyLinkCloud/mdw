@@ -117,7 +117,7 @@ response = post http("services/Tasks/${taskInst.id}/Complete") {
       "taskInstanceId": ''' + taskInst.id + '\n}'
 }
 assert response.code == 200
-assert new groovy.json.JsonSlurper().parseText(response.content).status.code == 0
+assert new groovy.json.JsonSlurper().parseText(response.content).status.code == 200
 
 verify process
 

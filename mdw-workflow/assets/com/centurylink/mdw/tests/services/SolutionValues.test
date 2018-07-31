@@ -39,13 +39,13 @@ def response = post http("services/Solutions/${id1}") {
     password = 'mdwapp'
     payload = solution1.toString(2)
 }
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 response = post http("services/Solutions/${id2}") {
     user  = 'mdwapp'
     password = 'mdwapp'
     payload = solution2.toString(2)
 }
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 
 // confirm solutions
 response = get http("services/Solutions/${id1}")
@@ -113,12 +113,12 @@ response = delete http("services/Solutions/${id1}") {
     user  = 'mdwapp'
     password = 'mdwapp'
 }
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 response = delete http("services/Solutions/${id2}") {
     user  = 'mdwapp'
     password = 'mdwapp'
 }
-assert new JsonSlurper().parseText(response.content).status.code == 0
+assert new JsonSlurper().parseText(response.content).status.code == 200
 
 // confirm cleanup
 response = get http("services/Solutions/${id1}")
