@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExport;
@@ -251,6 +252,9 @@ public abstract class JsonRestService extends RestService implements JsonService
     }
 
     protected JSONObject getDefaultResponse(Map<String,String> headers) {
+        if ("true".equals(PropertyManager.getProperty("mdw.service.default.response.compat"))) {
+            return null; // compatibility for any previous users who depend on old status code of 0
+        }
         String code = headers.get(Listener.METAINFO_HTTP_STATUS_CODE);
         if (code != null) {
             return StatusResponse.forCode(Integer.parseInt(code)).getJson();
