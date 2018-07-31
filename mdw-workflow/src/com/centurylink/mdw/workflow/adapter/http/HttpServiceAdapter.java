@@ -24,6 +24,7 @@ import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
@@ -75,45 +76,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
                 response.setStatusCode(httpConn.getResponse().getCode());
                 response.setStatusMessage(httpConn.getResponse().getMessage());
                 if (response.getStatusCode() > 0 && StringHelper.isEmpty(response.getStatusMessage())) {
-                    switch (response.getStatusCode()) {
-                        case 200: response.setStatusMessage(Status.OK.getMessage());  break;
-                        case 201: response.setStatusMessage(Status.CREATED.getMessage());  break;
-                        case 202: response.setStatusMessage(Status.ACCEPTED.getMessage());  break;
-                        case 204: response.setStatusMessage(Status.NO_CONTENT.getMessage());  break;
-                        case 205: response.setStatusMessage(Status.RESET_CONTENT.getMessage());  break;
-                        case 206: response.setStatusMessage(Status.PARTIAL_CONTENT.getMessage());  break;
-                        case 301: response.setStatusMessage(Status.MOVED_PERMANENTLY.getMessage());  break;
-                        case 302: response.setStatusMessage(Status.FOUND.getMessage());  break;
-                        case 303: response.setStatusMessage(Status.SEE_OTHER.getMessage());  break;
-                        case 304: response.setStatusMessage(Status.NOT_MODIFIED.getMessage());  break;
-                        case 305: response.setStatusMessage(Status.USE_PROXY.getMessage());  break;
-                        case 307: response.setStatusMessage(Status.TEMPORARY_REDIRECT.getMessage());  break;
-                        case 400: response.setStatusMessage(Status.BAD_REQUEST.getMessage());  break;
-                        case 401: response.setStatusMessage(Status.UNAUTHORIZED.getMessage());  break;
-                        case 402: response.setStatusMessage(Status.PAYMENT_REQUIRED.getMessage());  break;
-                        case 403: response.setStatusMessage(Status.FORBIDDEN.getMessage());  break;
-                        case 404: response.setStatusMessage(Status.NOT_FOUND.getMessage());  break;
-                        case 405: response.setStatusMessage(Status.METHOD_NOT_ALLOWED.getMessage());  break;
-                        case 406: response.setStatusMessage(Status.NOT_ACCEPTABLE.getMessage());  break;
-                        case 407: response.setStatusMessage(Status.PROXY_AUTHENTICATION_REQUIRED.getMessage());  break;
-                        case 408: response.setStatusMessage(Status.REQUEST_TIMEOUT.getMessage());  break;
-                        case 409: response.setStatusMessage(Status.CONFLICT.getMessage());  break;
-                        case 410: response.setStatusMessage(Status.GONE.getMessage());  break;
-                        case 411: response.setStatusMessage(Status.LENGTH_REQUIRED.getMessage());  break;
-                        case 412: response.setStatusMessage(Status.PRECONDITION_FAILED.getMessage());  break;
-                        case 413: response.setStatusMessage(Status.REQUEST_ENTITY_TOO_LARGE.getMessage());  break;
-                        case 414: response.setStatusMessage(Status.REQUEST_URI_TOO_LONG.getMessage());  break;
-                        case 415: response.setStatusMessage(Status.UNSUPPORTED_MEDIA_TYPE.getMessage());  break;
-                        case 416: response.setStatusMessage(Status.REQUESTED_RANGE_NOT_SATISFIABLE.getMessage());  break;
-                        case 417: response.setStatusMessage(Status.EXPECTATION_FAILED.getMessage());  break;
-                        case 500: response.setStatusMessage(Status.INTERNAL_SERVER_ERROR.getMessage());  break;
-                        case 501: response.setStatusMessage(Status.NOT_IMPLEMENTED.getMessage());  break;
-                        case 502: response.setStatusMessage(Status.BAD_GATEWAY.getMessage());  break;
-                        case 503: response.setStatusMessage(Status.SERVICE_UNAVAILABLE.getMessage());  break;
-                        case 504: response.setStatusMessage(Status.GATEWAY_TIMEOUT.getMessage());  break;
-                        case 505: response.setStatusMessage(Status.HTTP_VERSION_NOT_SUPPORTED.getMessage());  break;
-                        default: response.setStatusMessage("Unrecognized HTTP code"); break;
-                    }
+                    response.setStatusMessage(StatusResponse.getMessage(response.getStatusCode()));
                 }
             }
         }

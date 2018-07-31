@@ -36,6 +36,7 @@ import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -57,7 +58,7 @@ public abstract class JsonRestService extends RestService implements JsonService
             if (user != null)
                 auditLog(getUserAction(user, path, json, headers));
             if (response == null) {
-                return null;
+                return getDefaultResponse(headers).toString(2);
             }
             else if (response.has(JsonArray.GENERIC_ARRAY)) {
                 return response.getJSONArray(JsonArray.GENERIC_ARRAY).toString(2);
@@ -249,4 +250,13 @@ public abstract class JsonRestService extends RestService implements JsonService
         return this.getClass().getAnnotation(Api.class) != null;
     }
 
+    protected JSONObject getDefaultResponse(Map<String,String> headers) {
+        String code = headers.get(Listener.METAINFO_HTTP_STATUS_CODE);
+        if (code != null) {
+            return StatusResponse.forCode(Integer.parseInt(code)).getJson();
+        }
+        else {
+            return new StatusResponse(Status.OK).getJson();
+        }
+    }
 }

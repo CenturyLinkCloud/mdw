@@ -18,8 +18,6 @@ package com.centurylink.mdw.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-
 public class Response implements Jsonable {
 
     private String content;
@@ -79,7 +77,4 @@ public class Response implements Jsonable {
     public String getJsonName() {
         return "response";
     }
-
-
-
 }

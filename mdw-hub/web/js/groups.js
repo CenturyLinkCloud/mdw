@@ -31,7 +31,7 @@ groupMod.controller('GroupsController', ['$scope', '$location', 'Workgroups',
     
     Workgroups.create({name: $scope.workgroup.name}, $scope.workgroup,
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.workgroup.message = data.status.message;
         }
         else {
@@ -87,7 +87,7 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
     
     Workgroups.update({name: $scope.uneditedWorkgroup.name}, Workgroups.shallowCopy({}, $scope.workgroup),
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.workgroup.message = data.status.message;
         }
         else {
@@ -106,7 +106,7 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
     
     Workgroups.remove({name: $scope.workgroup.name},
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.workgroup.message = data.status.message;
         }
         else {
@@ -124,7 +124,7 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
   $scope.addSelectedUser = function(selUser) {
     Workgroups.create({name: $scope.workgroup.name, rel: 'users', relId: selUser.cuid }, Workgroups.shallowCopy({}, $scope.workgroup),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.workgroup.message = data.status.message;
           }
           else {
@@ -150,7 +150,7 @@ groupMod.controller('GroupController', ['$scope', '$routeParams', '$location', '
   $scope.removeUser = function(cuid) {
     Workgroups.remove({name: $scope.workgroup.name, rel: 'users', relId: cuid }, Workgroups.shallowCopy({}, $scope.workgroup),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.workgroup.message = data.status.message;
           }
           else {

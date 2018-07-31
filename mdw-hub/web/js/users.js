@@ -69,7 +69,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
     console.log('creating user: ' + selUser.username);
     Users.create({cuid: selUser.username}, { name: selUser.name, cuid: selUser.username },
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.user.message = data.status.message;
         }
         else {
@@ -109,7 +109,7 @@ userMod.controller('UsersController', ['$scope', '$http', '$location', 'mdw', 'U
     console.log('creating user: ' + $scope.user.cuid);
     Users.create({cuid: $scope.user.cuid}, $scope.user,
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.user.message = data.status.message;
         }
         else {
@@ -174,7 +174,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
     console.log('saving user: ' + $scope.user.cuid);
     Users.update({cuid: $scope.uneditedUser.cuid}, Users.shallowCopy({}, $scope.user),
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.user.message = data.status.message;
         }
         else {
@@ -193,7 +193,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
     
     Users.remove({cuid: $scope.user.cuid},
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.user.message = data.status.message;
         }
         else {
@@ -222,7 +222,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
   $scope.addWorkgroup = function(workgroup) {
     Users.create({cuid: $scope.user.cuid, rel: 'workgroups', relId: workgroup }, Users.shallowCopy({}, $scope.user),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.user.message = data.status.message;
           }
           else {
@@ -240,7 +240,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
   $scope.removeWorkgroup = function(workgroup) {
     Users.remove({cuid: $scope.user.cuid, rel: 'workgroups', relId: workgroup }, Users.shallowCopy({}, $scope.user),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.user.message = data.status.message;
           }
           else {
@@ -268,7 +268,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
   $scope.addRole = function(role) {
       Users.create({cuid: $scope.user.cuid, rel: 'roles', relId: role }, Users.shallowCopy({}, $scope.user),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.user.message = data.status.message;
           }
           else {
@@ -286,7 +286,7 @@ userMod.controller('UserController', ['$scope', '$routeParams', '$location', 'Us
   $scope.removeRole = function(role) {
     Users.remove({cuid: $scope.user.cuid, rel: 'roles', relId: role }, Users.shallowCopy({}, $scope.user),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.user.message = data.status.message;
           }
           else {

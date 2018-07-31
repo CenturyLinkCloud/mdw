@@ -53,7 +53,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   
   $scope.gitImport = function() {
     GitVcs.import({pkgPath: '*', gitAction: 'pull'}, { distributed: $scope.distributedImport, deleteTempBackups: $scope.deleteTempBackups, gitHard: $scope.gitHardReset }, function(data) {
-      if (data.status && data.status.code !== 0) {
+      if (data.status && data.status.code >= 300) {
         $scope.gitImportMessage = data.status.message;
       }
       else {
