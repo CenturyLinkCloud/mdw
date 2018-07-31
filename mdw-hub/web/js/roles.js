@@ -27,7 +27,7 @@ roleMod.controller('RolesController', ['$scope', '$location', 'Workroles',
     console.log('creating role: ' + $scope.role.name);
     Workroles.create({name: $scope.role.name}, $scope.role,
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.role.message = data.status.message;
         }
         else {
@@ -77,7 +77,7 @@ roleMod.controller('RoleController', ['$scope', '$routeParams', '$location', '$h
 
   Workroles.update({name: $scope.uneditedRole.name}, Workroles.shallowCopy({}, $scope.role),
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.role.message = data.status.message;
         }
         else {
@@ -95,7 +95,7 @@ roleMod.controller('RoleController', ['$scope', '$routeParams', '$location', '$h
     
     Workroles.remove({name: $scope.role.name},
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.role.message = data.status.message;
         }
         else {
@@ -113,7 +113,7 @@ roleMod.controller('RoleController', ['$scope', '$routeParams', '$location', '$h
   $scope.addSelectedUser = function(selUser) {
     Workroles.create({name: $scope.role.name, rel: 'users', relId: selUser.cuid }, Workroles.shallowCopy({}, $scope.role),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.role.message = data.status.message;
           }
           else {
@@ -139,7 +139,7 @@ roleMod.controller('RoleController', ['$scope', '$routeParams', '$location', '$h
   $scope.removeUser = function(cuid) {
     Workroles.remove({name: $scope.role.name, rel: 'users', relId: cuid }, $scope.role,
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.role.message = data.status.message;
           }
           else {

@@ -82,7 +82,7 @@ solutionMod.controller('SolutionsController', ['$scope', '$http', '$location', '
     
     Solutions.create({id: $scope.solution.id}, $scope.solution,
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.solution.message = data.status.message;
         }
         else {
@@ -131,7 +131,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
     console.log('saving solution: ' + $scope.solution.id);
     Solutions.update({id: $scope.uneditedSolution.id}, Solutions.shallowCopy({}, $scope.solution),
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.solution.message = data.status.message;
         }
         else {
@@ -149,7 +149,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
     
     Solutions.remove({id: $scope.solution.id},
       function(data) {
-        if (data.status.code !== 0) {
+        if (data.status.code >= 300) {
           $scope.solution.message = data.status.message;
         }
         else {
@@ -189,7 +189,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
     console.log('adding task: ' + selTask.id + 'to solution: ' + $scope.solution.id);
     Solutions.create({id: $scope.solution.id, rel: 'tasks', relId: selTask.id }, Solutions.shallowCopy({}, $scope.solution),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.solution.message = data.status.message;
           }
           else {
@@ -212,7 +212,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
     console.log('adding Request: ' + selRequest.masterRequestId + 'to solution: ' + $scope.solution.id);
     Solutions.create({id: $scope.solution.id, rel: 'requests', relId: selRequest.masterRequestId }, Solutions.shallowCopy({}, $scope.solution),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.solution.message = data.status.message;
           }
           else {
@@ -235,7 +235,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
       console.log('adding Process: ' + selProcess.id + 'to solution: ' + $scope.solution.id);
       Solutions.create({id: $scope.solution.id, rel: 'processes', relId: selProcess.id }, Solutions.shallowCopy({}, $scope.solution),
           function(data) {
-            if (data.status.code !== 0) {
+            if (data.status.code >= 300) {
               $scope.solution.message = data.status.message;
             }
             else {
@@ -257,7 +257,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   $scope.removeTask = function(task) {
     Solutions.remove({id: $scope.solution.id, rel: 'tasks', relId: task.id }, Solutions.shallowCopy({}, $scope.solution),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.solution.message = data.status.message;
           }
           else {
@@ -272,7 +272,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   $scope.removeRequest = function(request) {
     Solutions.remove({id: $scope.solution.id, rel: 'requests', relId: request.masterRequestId }, Solutions.shallowCopy({}, $scope.solution),
         function(data) {
-          if (data.status.code !== 0) {
+          if (data.status.code >= 300) {
             $scope.solution.message = data.status.message;
           }
           else {
@@ -287,7 +287,7 @@ solutionMod.controller('SolutionController', ['$scope', '$routeParams', '$locati
   $scope.removeProcess = function(process) {
       Solutions.remove({id: $scope.solution.id, rel: 'processes', relId: process.id }, Solutions.shallowCopy({}, $scope.solution),
           function(data) {
-            if (data.status.code !== 0) {
+            if (data.status.code >= 300) {
               $scope.solution.message = data.status.message;
             }
             else {
