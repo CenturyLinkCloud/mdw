@@ -510,7 +510,7 @@ public class AssetServicesImpl implements AssetServices {
             else {
                 AssetInfo asset = getGhostAsset(pkgDir, assetName);
                 if (asset == null)
-                    throw new DataAccessException("Missing asset file for path: " + getAssetPath());
+                    throw new DataAccessException("Missing asset file for path: " + pkgName + "/" + assetName);
                 return asset;
             }
         }
