@@ -40,7 +40,7 @@
   - Run following command in root of your workspace
   github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
   - git pull
-  - git commit CHANGELOG.md -m "Release notes [skip ci]" 
+  - Review/Update CHANGELOG.md and then: `git commit CHANGELOG.md -m "Release notes [skip ci]"` 
   - git push (pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, copy the notes from updated CHANGELOG.md
 
