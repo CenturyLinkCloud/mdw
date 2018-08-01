@@ -1,0 +1,16 @@
+dependencies {
+    compile project(":mdw-hub")
+    compile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    compile group: "org.springframework.boot", name: "spring-boot-configuration-processor", version: springBootVersion
+}
+
+jar {
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+}
+
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}

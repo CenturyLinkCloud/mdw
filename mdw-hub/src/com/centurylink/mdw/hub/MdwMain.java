@@ -74,9 +74,7 @@ public class MdwMain {
             // initialize db access and set database time
             try {
                 DatabaseAccess db = new DatabaseAccess(null);
-
-                if (!"true".equals(System.getProperty("mdw.skip.db.upgrade"))) // TODO: temp
-                    db.checkAndUpgradeSchema();
+                db.checkAndUpgradeSchema();
 
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
@@ -96,8 +94,6 @@ public class MdwMain {
 
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
-            CacheRegistration cacheMgr = new CacheRegistration();
-//            cacheMgr.registerCache(PropertyManager.class.getName(), PropertyManager.getInstance());
 
             logger.info("Starting Thread Pool");
             threadPool = ApplicationContext.getThreadPoolProvider();
