@@ -129,7 +129,7 @@ public class SpringBootApplication {
             if (bootLoc == null) {
                 String tempLoc = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
                 if (tempLoc == null)
-                    tempLoc = "mdw/.temp";
+                    tempLoc = "mdw/temp";
                 bootLoc = tempLoc + "/boot";
             }
             String mainLoc = ClasspathUtil.locate(MdwMain.class.getName());
