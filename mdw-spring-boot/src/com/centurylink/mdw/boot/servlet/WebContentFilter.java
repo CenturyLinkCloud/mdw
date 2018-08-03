@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.boot.servlet;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.centurylink.mdw.hub.context.ContextPaths;
+import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.hub.servlet.AccessFilter;
 
 @WebFilter(urlPatterns={"/*"})
@@ -51,9 +53,20 @@ public class WebContentFilter  implements Filter {
             path += request.getPathInfo();
         if (contextPaths.isHubPath(path)) {
             if (request.getSession().getAttribute("authenticatedUser") == null) {
-                new AccessFilter().doFilter(servletRequest, servletResponse, chain);
+                // let access filter redirect if not authenticated
+                new AccessFilter().doFilter(servletRequest, servletResponse, new FilterChain() {
+                    public void doFilter(ServletRequest request, ServletResponse response)
+                            throws IOException, ServletException {
+                        // dummy filter chain
+                    }
+                });
             }
-            request.getRequestDispatcher("/hub" + path).forward(servletRequest, servletResponse);
+            if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
+                request.getRequestDispatcher("/customContent" + path).forward(servletRequest, servletResponse);
+            }
+            else {
+                request.getRequestDispatcher("/hub" + path).forward(servletRequest, servletResponse);
+            }
         }
         else {
             chain.doFilter(servletRequest, servletResponse);
