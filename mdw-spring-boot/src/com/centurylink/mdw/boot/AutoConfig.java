@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.hub.context.ContextPaths;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -43,8 +44,12 @@ public class AutoConfig {
 
     @Bean
     public MdwStarter getMdwStarter() {
-        MdwStarter starter = new MdwStarter(getBootDir());
-        return starter;
+        return new MdwStarter(getBootDir());
+    }
+
+    @Bean
+    public ContextPaths getContextPaths() {
+        return new ContextPaths();
     }
 
     private static File bootDir;

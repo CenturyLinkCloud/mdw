@@ -27,4 +27,12 @@ public class MdwStarter {
     public File getBootDir() {
         return bootDir;
     }
+
+
+    /**
+     * Path should begin with /
+     */
+    public File getFile(String path) {
+        return new File(bootDir + path);
+    }
 }
