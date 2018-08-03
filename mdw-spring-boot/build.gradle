@@ -39,7 +39,7 @@ jar {
     from("../mdw-hub/build/classes") {
         include "**/*"
     }
-    into("web") {
+    into("hub") {
         from "../mdw-hub/web"
         exclude "WEB-INF/"
     }
