@@ -23,12 +23,7 @@ import java.util.List;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.util.ExpressionUtil;
 
-/**
- * TODO: Customize non-hub roots (via mdw-hub asset?).
- */
 public class ContextPaths {
-
-    // TODO what about index.html (RootServlet)
 
     /**
      * Root (/) and /index.html are allowed to be handled by base hub.
@@ -57,20 +52,29 @@ public class ContextPaths {
     private static final String MDW_ADMIN_JS = "<script src=\"js/admin.js\"></script>";
     private static final String MDW_ADMIN_CSS = "<link rel=\"stylesheet\" href=\"css/mdw-admin.css\">";
 
+    private static List<String> nonHubRoots;
+
     /**
      * Root paths that aren't part of MDWHub UI.
      * Values that don't end with / are exact.
      * Values prefixed with * match by extension.
+     * Customize in access.yaml.
      */
-    public List<String> getNonHubRoots() {
-        // TODO customizable
-        return DEFAULT_NON_HUB_ROOTS;
+    public List<String> getNonHubRoots() throws IOException {
+        if (nonHubRoots == null) {
+            nonHubRoots = DEFAULT_NON_HUB_ROOTS;
+            List<String> customPaths = WebAppContext.getMdw().getCustomPaths();
+            if (customPaths != null) {
+                nonHubRoots.addAll(customPaths);
+            }
+        }
+        return nonHubRoots;
     }
 
     /**
      * Returns true unless excluded by getNonHubRoots().
      */
-    public boolean isHubPath(String path) {
+    public boolean isHubPath(String path) throws IOException {
         if ("/".equals(path))
             return true;
         for (String root : getNonHubRoots()) {
