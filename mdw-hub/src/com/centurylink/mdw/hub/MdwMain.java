@@ -94,6 +94,7 @@ public class MdwMain {
 
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
+            DatabaseAccess.initDocumentDb();
 
             logger.info("Starting Thread Pool");
             threadPool = ApplicationContext.getThreadPoolProvider();

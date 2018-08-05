@@ -536,7 +536,7 @@ public class EventServicesImpl implements EventServices {
                 docvo.setDocumentType(documentType);
             if (ownerType != null) {
                 if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
-                    edao.updateDocumentMongoCollection(docvo, ownerType);
+                    edao.getDocumentDbAccess().updateDocumentDbOwnerType(docvo, ownerType);
                 docvo.setOwnerType(ownerType);
             }
             if (ownerId != null)

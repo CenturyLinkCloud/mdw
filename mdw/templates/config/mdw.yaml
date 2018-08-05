@@ -10,7 +10,7 @@ database:
   poolMaxIdle: 3
   validationQuery: select 1 from dual
 
-# optional mongodb
+# optional mongodb (requires asset package com.centurylink.mdw.mongo)
 # mongodb:
 #   host: localhost
 #   port: 27017

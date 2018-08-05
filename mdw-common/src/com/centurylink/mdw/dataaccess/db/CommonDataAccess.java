@@ -15,10 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
-import static com.mongodb.client.model.Projections.excludeId;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -32,12 +28,11 @@ import javax.sql.XAConnection;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 
-import org.bson.json.JsonWriterSettings;
-
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DocumentDbAccess;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -50,8 +45,6 @@ import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.timer.CodeTimer;
-import com.mongodb.client.MongoCollection;
 
 public class CommonDataAccess {
 
@@ -61,6 +54,9 @@ public class CommonDataAccess {
             "pi.status_cd, pi.start_dt, pi.end_dt, pi.compcode, pi.comments, pi.template";
 
     protected DatabaseAccess db;
+    protected DocumentDbAccess documentDbAccess;
+    public DocumentDbAccess getDocumentDbAccess() { return documentDbAccess; }
+
     private int databaseVersion;
     private int supportedVersion;
 
@@ -70,6 +66,7 @@ public class CommonDataAccess {
 
     protected CommonDataAccess(DatabaseAccess db, int databaseVersion, int supportedVersion) {
         this.db = db == null ? new DatabaseAccess(null) : db;
+        this.documentDbAccess = new DocumentDbAccess(DatabaseAccess.getDocumentDb());
         this.databaseVersion = databaseVersion;
         this.supportedVersion = supportedVersion;
     }
@@ -493,22 +490,15 @@ public class CommonDataAccess {
             vo.setDocumentType(rs.getString("DOCUMENT_TYPE"));
             vo.setOwnerType(rs.getString("OWNER_TYPE"));
             vo.setOwnerId(rs.getLong("OWNER_ID"));
-            boolean foundInMongo = false;
-            if (DatabaseAccess.getMongoDb() != null) {
-                CodeTimer timer = new CodeTimer("Load mongodb doc", true);
-                MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(vo.getOwnerType());
-                org.bson.Document mongoQuery = new org.bson.Document("document_id", vo.getDocumentId());
-                org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
-                if (c != null) {
-                    if (c.getBoolean("isJSON", false))
-                        vo.setContent(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true)));
-                    else
-                        vo.setContent(c.getString("CONTENT"));
-                    foundInMongo = true;
+            boolean foundInDocDb = false;
+            if (documentDbAccess.hasDocumentDb()) {
+                String docDbContent = documentDbAccess.getDocumentContent(vo.getOwnerType(), vo.getDocumentId());
+                if (docDbContent != null) {
+                    vo.setContent(docDbContent);
+                    foundInDocDb = true;
                 }
-                timer.stopAndLogTiming(null);
             }
-            if (!foundInMongo) {
+            if (!foundInDocDb) {
                 query = "select CONTENT from DOCUMENT_CONTENT where DOCUMENT_ID = ?";
                 rs = db.runSelect(query, documentId);
                 if (rs.next())

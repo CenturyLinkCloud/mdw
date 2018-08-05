@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DocumentDbAccess;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.variable.Document;
@@ -28,8 +29,8 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.model.workflow.Transition;
+import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.util.TransactionWrapper;
 
 public interface EngineDataAccess {
@@ -186,8 +187,7 @@ public interface EngineDataAccess {
     /////// miscellaneous
 
     DatabaseAccess getDatabaseAccess();
+    DocumentDbAccess getDocumentDbAccess();
 
     int getPerformanceLevel();
-
-    void updateDocumentMongoCollection(Document docvo, String newOwnerType);
 }

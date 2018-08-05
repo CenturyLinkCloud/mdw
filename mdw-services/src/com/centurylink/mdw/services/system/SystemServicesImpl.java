@@ -59,6 +59,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.db.DocumentDb;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.services.SystemServices;
@@ -369,6 +370,11 @@ public class SystemServicesImpl implements SystemServices {
             dbInfos.add(new SysInfo("JDBC URL", metadata.getURL()));
             dbInfos.add(new SysInfo("DB user", metadata.getUserName()));
             dbInfos.add(new SysInfo("DB time", String.valueOf(new Date(dbAccess.getDatabaseTime()))));
+
+            if (DatabaseAccess.getDocumentDb() != null) {
+                DocumentDb docDb = DatabaseAccess.getDocumentDb();
+                dbInfos.add(new SysInfo("Document DB", docDb.getClass().getName() + " " + docDb));
+            }
         }
         catch (Exception ex) {
             // don't let runtime exceptions prevent page display
