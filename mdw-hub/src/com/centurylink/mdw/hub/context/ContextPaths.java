@@ -37,6 +37,7 @@ public class ContextPaths {
         DEFAULT_NON_HUB_ROOTS.add("/REST");
         DEFAULT_NON_HUB_ROOTS.add("/soap");
         DEFAULT_NON_HUB_ROOTS.add("/SOAP");
+        DEFAULT_NON_HUB_ROOTS.add("/websocket");
         DEFAULT_NON_HUB_ROOTS.add("/asset");
         DEFAULT_NON_HUB_ROOTS.add("/attach");
         DEFAULT_NON_HUB_ROOTS.add("/customContent");
@@ -62,10 +63,12 @@ public class ContextPaths {
      */
     public List<String> getNonHubRoots() throws IOException {
         if (nonHubRoots == null) {
-            nonHubRoots = DEFAULT_NON_HUB_ROOTS;
-            List<String> customPaths = WebAppContext.getMdw().getCustomPaths();
-            if (customPaths != null) {
-                nonHubRoots.addAll(customPaths);
+            synchronized(ContextPaths.class) {
+                nonHubRoots = DEFAULT_NON_HUB_ROOTS;
+                List<String> customPaths = WebAppContext.getMdw().getCustomPaths();
+                if (customPaths != null) {
+                    nonHubRoots.addAll(customPaths);
+                }
             }
         }
         return nonHubRoots;
