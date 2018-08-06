@@ -24,7 +24,7 @@
 
 6 - After success, verify release artifacts are published to Maven Central (https://oss.sonatype.org/#stagingRepositories)
   - Formal build:       http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
-  - SNAPHOT:            https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
+  - SNAPSHOT:           https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
   - Assets:             http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
  
 7 - (Formal builds only) On GitHub:
