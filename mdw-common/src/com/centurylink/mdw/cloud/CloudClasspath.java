@@ -67,7 +67,9 @@ public class CloudClasspath {
 
         if (ApplicationContext.isSpringBoot()) {
             File bootInfLib = new File(ApplicationContext.getDeployPath() + "/BOOT-INF/lib");
-            webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(bootInfLib, true, false)));
+            if (bootInfLib.exists()) {
+                webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(bootInfLib, true, false)));
+            }
             webInfClasses = new File(ApplicationContext.getDeployPath() + "/BOOT-INF/classes");
         }
         else {

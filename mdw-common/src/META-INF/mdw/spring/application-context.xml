@@ -60,7 +60,6 @@
         <entry key="com.centurylink.mdw:name=MDWDataSource" value-ref="MDWDataSource"/>
       </map>
     </property>
-    <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING"/>
   </bean>
 
   <!-- Baseline Data -->

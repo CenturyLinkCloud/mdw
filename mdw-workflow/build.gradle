@@ -41,6 +41,7 @@ dependencies {
     compile fileTree(dir: "assets/com/centurylink/mdw/node", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/kafka", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/kotlin", includes: ["*.jar"])
+    compile fileTree(dir: "assets/com/centurylink/mdw/mongo", includes: ["*.jar"])   
     compile fileTree(dir: "assets/com/centurylink/mdw/microservice", includes: ["*.jar"])
     
     compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.3"

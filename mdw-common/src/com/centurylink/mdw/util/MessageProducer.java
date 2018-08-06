@@ -19,9 +19,7 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 
 /**
- * Interface for RabbitMQ and ActiveMQ producers
- * @author aa70413
- *
+ * Interface for JMS producers
  */
 public interface MessageProducer {
 

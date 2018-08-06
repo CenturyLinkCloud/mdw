@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DocumentDbAccess;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.variable.Document;
@@ -31,8 +32,8 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.model.workflow.Transition;
+import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
@@ -78,6 +79,10 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public DatabaseAccess getDatabaseAccess() {
         return edadb.getDatabaseAccess();
+    }
+
+    public DocumentDbAccess getDocumentDbAccess() {
+        return edadb.getDocumentDbAccess();
     }
 
     private Long getNextInternalId() {
@@ -780,10 +785,4 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public void stopTransaction(TransactionWrapper transaction) throws DataAccessException {
         if (edadb!=null) edadb.stopTransaction(transaction);
     }
-
-    public void updateDocumentMongoCollection(Document doc, String newOwnerType) {
-        if (edadb!=null) edadb.updateDocumentMongoCollection(doc, newOwnerType);
-    }
-
-
 }

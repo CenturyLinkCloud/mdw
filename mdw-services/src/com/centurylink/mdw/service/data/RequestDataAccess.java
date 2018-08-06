@@ -15,10 +15,6 @@
  */
 package com.centurylink.mdw.service.data;
 
-import static com.mongodb.client.model.Projections.excludeId;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -27,8 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.bson.json.JsonWriterSettings;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -43,8 +37,6 @@ import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
-import com.centurylink.mdw.util.timer.CodeTimer;
-import com.mongodb.client.MongoCollection;
 
 public class RequestDataAccess extends CommonDataAccess {
 
@@ -244,33 +236,23 @@ public class RequestDataAccess extends CommonDataAccess {
                     if (rs.next()) {
                         metaId = rs.getLong("document_id");
                     }
-                    boolean foundInMongo = false;
-                    if (DatabaseAccess.getMongoDb() != null) {
-                        CodeTimer timer = new CodeTimer("Load mongodb doc", true);
-                        MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(ownerType);
-                        org.bson.Document mongoQuery = new org.bson.Document("document_id", id);
-                        org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
-                        if (c != null) {
-                            if (c.getBoolean("isJSON", false))
-                                request.setContent(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true)));
-                            else
-                                request.setContent(c.getString("CONTENT"));
-                            foundInMongo = true;
+                    boolean foundInDocDb = false;
+                    if (getDocumentDbAccess().hasDocumentDb()) {
 
+                        String docContent = getDocumentDbAccess().getDocumentContent(ownerType, id);
+                        if (docContent != null) {
+                            request.setContent(docContent);
+                            foundInDocDb = true;
                             // Get META
                             if (metaId > 0L) {
-                                mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
-                                mongoQuery = new org.bson.Document("document_id", metaId);
-                                c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
-                                if (c != null) {
-                                    if (c.getBoolean("isJSON", false))
-                                        request.setMeta(new JsonObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                String metaContent = getDocumentDbAccess().getDocumentContent(owner_type_meta, metaId);
+                                if (metaContent != null) {
+                                    request.setMeta(new JsonObject(metaContent));
                                 }
                             }
                         }
-                        timer.stopAndLogTiming(null);
                     }
-                    if (!foundInMongo) {
+                    if (!foundInDocDb) {
                         query = "select content from document_content where document_id = ?";
                         rs = db.runSelect(query, id);
                         if (rs.next())
@@ -319,33 +301,21 @@ public class RequestDataAccess extends CommonDataAccess {
                     if (rs.next()) {
                         metaId = rs.getLong("document_id");
                     }
-                    boolean foundInMongo = false;
-                    if (DatabaseAccess.getMongoDb() != null) {
-                        CodeTimer timer = new CodeTimer("Load mongodb doc", true);
-                        MongoCollection<org.bson.Document> mongoCollection = DatabaseAccess.getMongoDb().getCollection(responseOwnerType);
-                        org.bson.Document mongoQuery = new org.bson.Document("document_id", request.getResponseId());
-                        org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
-                        if (c != null) {
-                            if (c.getBoolean("isJSON", false))
-                                response.setContent(c.get("CONTENT", org.bson.Document.class).toJson(new JsonWriterSettings(true)));
-                            else
-                                response.setContent(c.getString("CONTENT"));
-                            foundInMongo = true;
-
-                            // Get META
+                    boolean foundInDocDb = false;
+                    if (getDocumentDbAccess().hasDocumentDb()) {
+                        String responseDocContent = getDocumentDbAccess().getDocumentContent(responseOwnerType, request.getResponseId());
+                        if (responseDocContent != null) {
+                            response.setContent(responseDocContent);
+                            foundInDocDb = true;
                             if (metaId > 0L) {
-                                mongoCollection = DatabaseAccess.getMongoDb().getCollection(owner_type_meta);
-                                mongoQuery = new org.bson.Document("document_id", metaId);
-                                c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
-                                if (c != null) {
-                                    if (c.getBoolean("isJSON", false))
-                                        response.setMeta(new JsonObject(DatabaseAccess.decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(new JsonWriterSettings(true))));
+                                String responseMetaContent = getDocumentDbAccess().getDocumentContent(owner_type_meta, metaId);
+                                if (responseMetaContent != null) {
+                                    response.setMeta(new JsonObject(responseMetaContent));
                                 }
                             }
                         }
-                        timer.stopAndLogTiming(null);
                     }
-                    if (!foundInMongo) {
+                    if (!foundInDocDb) {
                         query = "select content from document_content where document_id = ?";
                         responseRs = db.runSelect(query, request.getResponseId());
                         if (responseRs.next())
