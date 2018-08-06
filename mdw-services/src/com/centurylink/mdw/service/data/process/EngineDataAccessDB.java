@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,7 +49,6 @@ import com.centurylink.mdw.model.workflow.TransitionStatus;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.util.StringHelper;
-import com.mongodb.client.MongoCollection;
 
 /**
  * TODO: Remove non-engine-related data access from this class.
@@ -355,7 +352,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return createDocument(doc, null);
     }
 
-    boolean hasMongo() { return (DatabaseAccess.getMongoDb() != null); }
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
@@ -382,29 +378,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         else
             db.runUpdate(query, String.valueOf(args));
         doc.setDocumentId(docId);
-        if (hasMongo()) {
-            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(doc.getOwnerType());
-            org.bson.Document myDoc = null;
-            if (doc.getContent(pkg).trim().startsWith("{") && doc.getContent(pkg).trim().endsWith("}")) {
-                try {
-                    org.bson.Document myJsonDoc = org.bson.Document.parse(doc.getContent(pkg)); // Parse JSON to create BSON CONTENT Document
-                    if (!myJsonDoc.isEmpty()) {
-                        if (doc.getContent(pkg).contains(".") || doc.getContent(pkg).contains("$"))
-                            myJsonDoc = DatabaseAccess.encodeMongoDoc(myJsonDoc);
-                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("document_id", docId).append("isJSON", true); // Plus append _id and isJSON:true field
-                    }
-                }
-                catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
-            }
-            if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON, plus append _id and isJSON:false
-                myDoc = new org.bson.Document("CONTENT", doc.getContent(pkg)).append("document_id", docId).append("isJSON", false);
-
-            collection.insertOne(myDoc);
-            if (!DatabaseAccess.checkForDocIdIndex(doc.getOwnerType()))
-                DatabaseAccess.createMongoDocIdIndex(doc.getOwnerType());
+        if (getDocumentDbAccess().hasDocumentDb()) {
+            getDocumentDbAccess().createDocument(doc, pkg);
         }
         else {
-            // store in DOCUMENT_CONTENT
+            // store in DOCUMENT_CONTENT column
             query = "insert into DOCUMENT_CONTENT (DOCUMENT_ID, CONTENT) values (?, ?)";
             args = new Object[2];
             args[0] = docId;
@@ -416,41 +394,24 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void updateDocumentContent(Long documentId, String content) throws SQLException {
         String selectQuery = "select OWNER_TYPE from DOCUMENT where DOCUMENT_ID = ?";
-        String owner_type = "";
+        String ownerType = "";
         ResultSet rs = db.runSelect(selectQuery, documentId);
         if (rs.next())
-            owner_type = rs.getString("OWNER_TYPE");
+            ownerType = rs.getString("OWNER_TYPE");
 
         String query = "update DOCUMENT set MODIFY_DT = " + nowPrecision() + " where DOCUMENT_ID = ?";
         db.runUpdate(query, documentId);
-        boolean inMongo = false;  // not found (compatibility)
-        if (hasMongo() && owner_type.length() > 0) {
-            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(owner_type);
-            org.bson.Document myDoc = null;
-            if (content.trim().startsWith("{") && content.trim().endsWith("}")) {
-                try {
-                    org.bson.Document myJsonDoc = org.bson.Document.parse(content); // Parse JSON to create BSON CONTENT Document
-                    if (!myJsonDoc.isEmpty())
-                        if (content.contains(".") || content.contains("$"))
-                            myJsonDoc = DatabaseAccess.encodeMongoDoc(myJsonDoc);
-                        myDoc = new org.bson.Document("CONTENT", myJsonDoc).append("document_id", documentId).append("isJSON", true); // Plus append isJSON:true field
-                }
-                catch (Throwable ex) {myDoc=null;}  // Assume not JSON then
-            }
-            if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON plus append isJSON:false
-                myDoc = new org.bson.Document("CONTENT", content).append("document_id", documentId).append("isJSON", false);
-            if (collection.findOneAndReplace(eq("document_id", documentId), myDoc) != null)
-                inMongo = true;
+        boolean inDocDb = false;  // not found (compatibility)
+        if (getDocumentDbAccess().hasDocumentDb() && ownerType.length() > 0) {
+            inDocDb = getDocumentDbAccess().updateDocumentContent(ownerType, documentId, content);
         }
-
-        if (!inMongo) {
+        if (!inDocDb) {
             query = "update DOCUMENT_CONTENT set CONTENT = ? where DOCUMENT_ID = ?";
             Object[] args = new Object[2];
             args[0] = content;
             args[1] = documentId;
             db.runUpdate(query, args);
         }
-
     }
 
     public void updateDocumentInfo(Document docvo) throws SQLException {
@@ -1439,23 +1400,5 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws SQLException {
         super.setAttributes0(ownerType, ownerId, attributes);
-    }
-
-    protected org.bson.Document deleteMongoDocumentContent(Document doc) {
-        if (hasMongo()) {
-            MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(doc.getOwnerType());
-            return collection.findOneAndDelete(eq("document_id", doc.getDocumentId()));
-        }
-        return null;
-    }
-
-    public void updateDocumentMongoCollection(Document doc, String newOwnerType) {
-        if (hasMongo()) {
-            org.bson.Document myDoc = deleteMongoDocumentContent(doc);
-            if (myDoc != null) {
-                MongoCollection<org.bson.Document> collection = DatabaseAccess.getMongoDb().getCollection(newOwnerType);
-                collection.insertOne(myDoc);
-            }
-        }
     }
 }

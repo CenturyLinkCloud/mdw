@@ -76,6 +76,7 @@ public class AccessFilter implements Filter {
     private static boolean logCookies;
     private static List<InetAddress> internalHosts; // List of servers in cluster
 
+    @SuppressWarnings("unchecked")
     public void init(FilterConfig filterConfig) throws ServletException {
 
         devMode = ApplicationContext.isDevelopment();
@@ -177,6 +178,9 @@ public class AccessFilter implements Filter {
             for (Server server : ApplicationContext.getServerList().getServers()) {
                 internalHosts.add(InetAddress.getByName(server.getHost()));
             }
+
+            WebAppContext.getMdw().setCustomPaths(yamlLoader.getList("customPaths", topMap));
+
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

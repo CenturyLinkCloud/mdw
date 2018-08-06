@@ -221,21 +221,37 @@ public class SpringAppContext implements CacheService {
         return injected == null ? mdw : injected;
     }
 
-    public Object getBean(Class<?> type) {
+    /**
+     * Returns null rather than throwing when not found.
+     * Insists on finding only one bean of the given type.
+     */
+    public <T> T getBean(Class<T> type) {
+        Map<String,T> beans = new HashMap<>();
         try {
-            Map<String,?> beans = getApplicationContext().getBeansOfType(type);
-            if (beans == null || beans.isEmpty())
+            beans = getApplicationContext().getBeansOfType(type);
+            if (packageContexts != null) {
+                for (ApplicationContext pkgContext : packageContexts.values()) {
+                    beans.putAll(pkgContext.getBeansOfType(type));
+                }
+            }
+
+            if (beans.isEmpty()) {
                 return null;
-            if (beans.values().size() != 1)
+            }
+            else if (beans.values().size() > 1) {
                 throw new IOException("Too many bean definitions for type: " + type + " (" + beans.values().size() + ")");
-            else
+            }
+            else {
                 return beans.values().iterator().next();
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
     }
+
+
 
     /**
      * Prefers any non-MDW BaselineData implementation.

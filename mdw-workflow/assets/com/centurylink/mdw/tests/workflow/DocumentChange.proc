@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=21,y=154,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=16,y=156,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=52,ly=116,type=Elbow,xs=85&131,ys=174&174"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=42,ly=113,type=Elbow,xs=80&131,ys=176&176"},
         "event": "FINISH",
         "id": "T1",
         "to": "A6"
@@ -25,7 +25,7 @@
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=275,ly=171,type=Elbow,xs=249&300,ys=171&171"},
         "event": "FINISH",
-        "id": "T1",
+        "id": "T4",
         "to": "A4"
       }]
     },
@@ -64,7 +64,7 @@
         {
           "attributes": {"TRANSITION_DISPLAY_INFO": "lx=419,ly=147,type=Elbow,xs=368&507&507,ys=168&168&98"},
           "event": "FINISH",
-          "id": "T1",
+          "id": "T5",
           "resultCode": "change",
           "to": "A3"
         },
@@ -90,7 +90,7 @@
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "lx=632,ly=114,type=Elbow,xs=568&691,ys=57&169"},
         "event": "FINISH",
-        "id": "T1",
+        "id": "T6",
         "to": "A2"
       }]
     }
@@ -103,7 +103,7 @@
     "SLA_UNIT": "Minutes",
     "START_TRANSITION_ID": "2346077",
     "Transition with no Label": "Acts as Default",
-    "WORK_DISPLAY_INFO": "x=14,y=15,w=161,h=27"
+    "WORK_DISPLAY_INFO": "x=14,y=15,w=169,h=26"
   },
   "variables": {
     "changedDomDoc": {

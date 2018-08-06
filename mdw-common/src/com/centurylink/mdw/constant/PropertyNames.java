@@ -40,10 +40,6 @@ public class PropertyNames {
     // for embedded db
     public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
     public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
-    // for MongoDB
-    public static final String MDW_MONGODB_HOST = "mdw.mongodb.host";
-    public static final String MDW_MONGODB_PORT = "mdw.mongodb.port";
-    public static final String MDW_MONGODB_POOLSIZE = "mdw.mongodb.poolsize";
 
     // thread pool
     public static final String MDW_THREADPOOL_CORE_THREADS = "mdw.threadpool.core_threads";

@@ -99,6 +99,11 @@ public abstract class PropertyManager {
         return getInstance().getStringProperty(name);
     }
 
+    public static String getProperty(String name, String defaultValue) {
+        String v = getInstance().getStringProperty(name);
+        return v == null ? defaultValue : v;
+    }
+
     public static int getIntegerProperty(String name, int defaultValue) {
         String v = getInstance().getStringProperty(name);
         if (v == null)

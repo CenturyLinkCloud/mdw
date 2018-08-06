@@ -42,17 +42,11 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.dataaccess.db.DocumentDb;
+import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
 
 public class DatabaseAccess {
 
@@ -66,7 +60,6 @@ public class DatabaseAccess {
     private static int retryInterval = PropertyManager.getIntegerProperty(PropertyNames.MDW_TRANSACTION_RETRY_INTERVAL, 500);
 
     private static Map<String,DataSource> loadedDataSources = new ConcurrentHashMap<>();
-    private static Map<String,Boolean> collectionDocIdIndexed = new ConcurrentHashMap<>();
 
     private static EmbeddedDataAccess embedded;
     public static EmbeddedDataAccess getEmbedded() { return embedded; }
@@ -103,19 +96,24 @@ public class DatabaseAccess {
 
     private boolean isEmbedded;
 
-    private static boolean isMongoDB = false;
-    private static MongoClient mongoClient;
-    public static MongoDatabase getMongoDb() {
-        if (mongoClient == null)
-            return null;
-        else
-            return mongoClient.getDatabase("mdw");
+    private static DocumentDb documentDb;
+    public static void initDocumentDb() {
+            documentDb = (DocumentDb) SpringAppContext.getInstance().getBean(DocumentDb.class);
+            boolean hasDocDb = documentDb != null && documentDb.isEnabled();
+            if (hasDocDb) {
+                LoggerUtil.getStandardLogger().info("Using documentDb: " + documentDb.getClass().getName() + " " + documentDb);
+                documentDb.initializeDbClient();
+            }
+            else {
+                documentDb = null;
+            }
     }
 
-    public static boolean checkForDocIdIndex(String collectionName) {
-        if (collectionDocIdIndexed.get(collectionName) != null)
-            return ((Boolean)collectionDocIdIndexed.get(collectionName)).booleanValue();
-        return false;
+    /**
+     * Returns null if not enabled
+     */
+    public static DocumentDb getDocumentDb() {
+        return documentDb;
     }
 
     /**
@@ -170,12 +168,6 @@ public class DatabaseAccess {
                 LoggerUtil.getStandardLogger().severeException("Failed to start embedded DB: " + INTERNAL_DATA_SOURCE, ex);
             }
         }
-
-        if (!StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_MONGODB_HOST)))
-            isMongoDB = true;
-
-        if (isMongoDB && mongoClient == null)  // Check and open client for MongoDB
-            openMongoDbClient();
     }
 
     public DatabaseAccess(String dbName, Map<String,String> connectParams) {
@@ -283,34 +275,6 @@ public class DatabaseAccess {
         connection.setAutoCommit(true);  // New default. Code using startTransaction/stopTransaction methods will set this to false.
 
         return connection;
-    }
-
-    private static synchronized void openMongoDbClient() {
-        if (mongoClient == null) {
-            String mongoHost = PropertyManager.getProperty(PropertyNames.MDW_MONGODB_HOST);
-            int mongoPort = PropertyManager.getIntegerProperty(PropertyNames.MDW_MONGODB_PORT, 27017);
-            int maxConnections = PropertyManager.getIntegerProperty(PropertyNames.MDW_MONGODB_POOLSIZE, PropertyManager.getIntegerProperty(PropertyNames.MDW_DB_POOLSIZE, 100));
-
-            MongoClientOptions.Builder options = MongoClientOptions.builder();
-            options.socketKeepAlive(true);
-            if (maxConnections > 100)  // MongoClient default is 100 max connections per host
-                options.connectionsPerHost(maxConnections);
-
-            mongoClient = new MongoClient(new ServerAddress(mongoHost, mongoPort), options.build());
-
-            for (String name : mongoClient.getDatabase("mdw").listCollectionNames()) {
-                createMongoDocIdIndex(name);
-            }
-            LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
-        }
-    }
-
-    public static void createMongoDocIdIndex(String collectionName) {
-        IndexOptions indexOptions = new IndexOptions().unique(true).background(true);
-        MongoCollection<org.bson.Document> collection = mongoClient.getDatabase("mdw").getCollection(collectionName);
-        String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
-        LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
-        collectionDocIdIndexed.putIfAbsent(collectionName, Boolean.valueOf(true));
     }
 
     public void commit() throws SQLException {
@@ -622,65 +586,5 @@ public class DatabaseAccess {
 
     public String toString() {
         return database_name;
-    }
-
-    /**
-     * MongoDB doesn't allow keys to have dots (.) or to start with $.  This method encodes such keys if found
-     * and returns a new BSON document
-     */
-    @SuppressWarnings("unchecked")
-    public static org.bson.Document encodeMongoDoc(org.bson.Document doc) {
-        org.bson.Document newDoc = new org.bson.Document();
-        for (String key : doc.keySet()) {
-            Object value = doc.get(key);
-            if (value instanceof org.bson.Document)
-                value = encodeMongoDoc(doc.get(key, org.bson.Document.class));
-            else if (value instanceof List<?>) {
-                for (int i=0; i < ((List<?>)value).size(); i++) {
-                    Object obj = ((List<?>)value).get(i);
-                    if (obj instanceof org.bson.Document)
-                        ((List<org.bson.Document>)value).set(i, encodeMongoDoc((org.bson.Document)obj));
-                }
-            }
-
-            String newKey = key;
-            if (key.startsWith("$"))
-                newKey = "\\uff04" + key.substring(1);
-            if (key.contains(".")) {
-                newKey = newKey.replace(".", "\\uff0e");
-            }
-            newDoc.put(newKey, value);
-        }
-        return newDoc;
-    }
-
-    /**
-     * MongoDB doesn't allow keys to have dots (.) or to start with $.  This method decodes such keys back to dots and $ if found
-     * and returns a new BSON document
-     */
-    @SuppressWarnings("unchecked")
-    public static org.bson.Document decodeMongoDoc(org.bson.Document doc) {
-        org.bson.Document newDoc = new org.bson.Document();
-        for (String key : doc.keySet()) {
-            Object value = doc.get(key);
-            if (value instanceof org.bson.Document)
-                value = decodeMongoDoc(doc.get(key, org.bson.Document.class));
-            else if (value instanceof List<?>) {
-                for (int i=0; i < ((List<?>)value).size(); i++) {
-                    Object obj = ((List<?>)value).get(i);
-                    if (obj instanceof org.bson.Document)
-                        ((List<org.bson.Document>)value).set(i, decodeMongoDoc((org.bson.Document)obj));
-                }
-            }
-
-            String newKey = key;
-            if (key.startsWith("\\uff04"))
-                newKey = "$" + key.substring(6);
-            if (key.contains("\\uff0e")) {
-                newKey = newKey.replace("\\uff0e", ".");
-            }
-            newDoc.put(newKey, value);
-        }
-        return newDoc;
     }
 }

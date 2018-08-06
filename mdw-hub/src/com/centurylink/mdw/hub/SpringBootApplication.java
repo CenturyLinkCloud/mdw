@@ -25,11 +25,9 @@ import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -61,7 +59,7 @@ public class SpringBootApplication {
      * TODO: support Jetty as well
      */
     @Bean
-    public EmbeddedServletContainerFactory embeddedServletContainerFactory(ApplicationContext ctx) {
+    public TomcatServletWebServerFactory containerFactory() {
         String portProp = System.getProperty("mdw.server.port");
         if (portProp == null)
             portProp = System.getProperty("server.port");
@@ -72,8 +70,7 @@ public class SpringBootApplication {
             contextProp = System.getProperty("server.contextPath");
         if (contextProp == null)
             contextProp = "/mdw";
-        TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory(
-                contextProp, Integer.parseInt(portProp));
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory(contextProp, Integer.parseInt(portProp));
         factory.addContextCustomizers(tomcatContextCustomizer());
         factory.setDocumentRoot(new File(getBootDir() + "/web"));
         return factory;
@@ -129,7 +126,7 @@ public class SpringBootApplication {
             if (bootLoc == null) {
                 String tempLoc = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
                 if (tempLoc == null)
-                    tempLoc = "mdw/.temp";
+                    tempLoc = "mdw/temp";
                 bootLoc = tempLoc + "/boot";
             }
             String mainLoc = ClasspathUtil.locate(MdwMain.class.getName());
