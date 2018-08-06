@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.bpmn;
+package com.centurylink.mdw.html;
 
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -318,24 +318,23 @@ public class HtmlExportHelper {
     }
 
     public void printImage(String fileName, Process processVO) throws IOException {
-        float scale = -1f;
         int hMargin = 72;
         int vMargin = 72;
         Dimension graphsize = getGraphSize(processVO);
         BufferedImage image = new BufferedImage(graphsize.width + hMargin,
                 graphsize.height + vMargin, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = image.createGraphics();
-        if (scale > 0)
-            g2.scale(scale, scale);
-        g2.setBackground(Color.WHITE);
-        g2.clearRect(0, 0, image.getWidth(), image.getHeight());
+        Graphics2D g2d = image.createGraphics();
+        g2d.setBackground(Color.WHITE);
+        g2d.clearRect(0, 0, image.getWidth(), image.getHeight());
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         Canvas canvas = new Canvas();
         canvas.setSize(400, 400);
         Color bgsave = canvas.getBackground();
         canvas.setBackground(Color.white);
         //canvas.paintComponent(g2);
         canvas.setBackground(bgsave);
-        g2.dispose();
+        g2d.dispose();
         ImageIO.write(image, "jpeg", new File(fileName));
         Runtime r = Runtime.getRuntime();
         r.gc();

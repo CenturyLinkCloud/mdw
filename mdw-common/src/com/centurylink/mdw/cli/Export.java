@@ -24,8 +24,8 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
-import com.centurylink.mdw.bpmn.HtmlProcessExporter;
 import com.centurylink.mdw.export.ProcessExporter;
+import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 
