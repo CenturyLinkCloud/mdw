@@ -59,21 +59,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <!-- kotlin asset package dependencies -->
-    <dependency>
-      <groupId>com.centurylink.mdw.kotlin</groupId>
-      <artifactId>script-engine.jar</artifactId>
-      <version>0.4</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/assets/com/centurylink/mdw/kotlin/script-engine.jar</systemPath>
-    </dependency>        
-    <dependency>
-      <groupId>com.centurylink.mdw.microservice</groupId>
-      <artifactId>service-plan.jar</artifactId>
-      <version>0.2</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/assets/com/centurylink/mdw/microservice/service-plan.jar</systemPath>
-    </dependency>        
   </dependencies>
     
 </project>
