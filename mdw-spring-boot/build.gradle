@@ -2,7 +2,7 @@ dependencies {
     // hub is compileOnly -- otherwise war ends up in client jar
     compileOnly(project(":mdw-hub")) { exclude(module: "mariaDB4j-core") }
     compile(project(":mdw-workflow")) { exclude(module: "mariaDB4j-core") }
-    // put back some mariaDB4j transitives
+    // put back this mariaDB4j transitive
     compile group: "commons-io", name: "commons-io", version: "2.5"
     
     compile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
@@ -19,17 +19,8 @@ dependencies {
     // indirect tomcat    
     compile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     compile group: "org.hibernate.validator", name: "hibernate-validator", version: "6.0.11.Final"
-
 }
 
-// TEMP
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-
-// TODO make sure jar runs after hub build
 jar {
     manifest {
         attributes("MDW-Version": mdwVersion)
@@ -55,5 +46,5 @@ jar {
 }
 
 artifacts {
-    archives jar // , javadocJar, sourcesJar
+    archives jar, javadocJar, sourcesJar
 }
