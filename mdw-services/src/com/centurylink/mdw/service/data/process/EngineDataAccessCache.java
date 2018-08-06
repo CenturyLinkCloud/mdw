@@ -81,8 +81,11 @@ public class EngineDataAccessCache implements EngineDataAccess {
         return edadb.getDatabaseAccess();
     }
 
+    /**
+     * Returns null for perf level 9.
+     */
     public DocumentDbAccess getDocumentDbAccess() {
-        return edadb.getDocumentDbAccess();
+        return edadb == null ? null : edadb.getDocumentDbAccess();
     }
 
     private Long getNextInternalId() {
