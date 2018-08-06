@@ -1,0 +1,79 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>com.centurylink.mdwdemo</groupId>
+  <artifactId>{{project}}</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  
+  <name>{{project}}</name>
+  
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.0.4.RELEASE</version>
+    <relativePath/>
+  </parent>
+    
+  <properties>
+    <java.version>1.8</java.version>
+    <spring.version>5.0.8.RELEASE</spring.version>
+    <mdw.version>{{mdw-version}}</mdw.version>
+    <asset.loc>assets</asset.loc>
+  </properties>
+  
+  <repositories>
+    <repository>
+      <id>maven-central</id>
+      <url>http://repo1.maven.org/maven2</url>
+    </repository>
+    <repository>
+      <id>snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-spring-boot</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!-- kotlin asset package dependencies -->
+    <dependency>
+      <groupId>com.centurylink.mdw.kotlin</groupId>
+      <artifactId>script-engine.jar</artifactId>
+      <version>0.4</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/assets/com/centurylink/mdw/kotlin/script-engine.jar</systemPath>
+    </dependency>        
+    <dependency>
+      <groupId>com.centurylink.mdw.microservice</groupId>
+      <artifactId>service-plan.jar</artifactId>
+      <version>0.2</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/assets/com/centurylink/mdw/microservice/service-plan.jar</systemPath>
+    </dependency>        
+  </dependencies>
+    
+</project>
