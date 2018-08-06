@@ -77,9 +77,9 @@ dependencies {
     springBoot group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
     providedCompile group: "org.springframework", name: "spring-web", version: springVersion
     springBoot group: "org.springframework", name: "spring-web", version: springVersion
-    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.29"
-    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.29"
-    providedCompile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.29"
+    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.32"
+    springBoot group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.32"
+    providedCompile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.32"
     springBoot group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     springBoot group: "javax.el", name: "el-api", version: "1.0"  // why?
     springBootLoader group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion

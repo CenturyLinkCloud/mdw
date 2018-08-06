@@ -12,9 +12,9 @@ dependencies {
     compile group: "org.springframework", name: "spring-web", version: springVersion
     
     // tomcat
-    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.15"
-    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.15"
-    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.15"
+    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.32"
+    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.32"
+    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.32"
 
     // indirect tomcat    
     compile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"

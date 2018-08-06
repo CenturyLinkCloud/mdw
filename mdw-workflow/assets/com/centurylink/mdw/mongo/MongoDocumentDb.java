@@ -155,9 +155,9 @@ public class MongoDocumentDb implements DocumentDb {
     }
 
     @Override
-    public void deleteDocument(String ownerType, Long documentId) {
+    public boolean deleteDocument(String ownerType, Long documentId) {
         MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(ownerType);
-        collection.findOneAndDelete(eq("document_id", documentId));
+        return collection.findOneAndDelete(eq("document_id", documentId)) != null;
     }
 
     public static void createMongoDocIdIndex(String collectionName) {

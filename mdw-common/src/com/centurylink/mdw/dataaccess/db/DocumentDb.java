@@ -30,5 +30,5 @@ public interface DocumentDb {
      */
     boolean updateDocument(String ownerType, Long documentId, String content);
 
-    void deleteDocument(String ownerType, Long documentId);
+    boolean deleteDocument(String ownerType, Long documentId);
 }
