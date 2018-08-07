@@ -69,7 +69,7 @@ public abstract class PropertyManager {
                 if (!configLoc.endsWith("/"))
                     configLoc = configLoc + "/";
                 propertyFileLocation = configLoc;
-                System.out.println("Loading configuration files from '" + configLoc + "'");
+                System.out.println("Loading configuration files from '" + new File(configLoc).getAbsolutePath() + "'");
             }
         }
         return propertyFileLocation;
