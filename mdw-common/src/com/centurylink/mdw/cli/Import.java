@@ -184,7 +184,7 @@ public class Import extends Setup {
             versionControl.hardCheckout(branch, hardReset);
 
             // Capture new Refs in ASSET_REF after import (Git pull)
-            Checkpoint checkpoint = new Checkpoint(new File(getAssetLoc()), versionControl, versionControl.getCommit(), pooledConn);
+            Checkpoint checkpoint = new Checkpoint(new File(getProjectDir() + "/" + getAssetLoc()), versionControl, versionControl.getCommit(), pooledConn);
             try {
                 checkpoint.updateRefs();
             }
