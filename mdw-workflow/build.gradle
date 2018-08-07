@@ -2,32 +2,37 @@ eclipse {
     project {
         natures += "org.eclipse.jdt.groovy.core.groovyNature"
     }
-    
+
     classpath {
         defaultOutputDir = file("build/classes")
-        
+
         containers "GROOVY_SUPPORT"
         containers "GROOVY_DSL_SUPPORT"
-        
+
         file {
             whenMerged { classpath ->
-                // eclipse should process dynamic java, but should not be part of build
-                def assetsSrc = new org.gradle.plugins.ide.eclipse.model.SourceFolder("assets", "build/assets")
-                assetsSrc.excludes.add("Archive/")
-                entries.add(assetsSrc)
-                
                 def groovySupport = entries.find { it.kind == "con" && it.path == "GROOVY_SUPPORT" }
                 groovySupport.entryAttributes.put("minimal", "true")
             }
         }
     }
-    
+
     wtp {
         facet {
             facet name: "mdw.workflow", version: "5.1"
             facet type: "fixed", name: "jst.utility"
             facet name: "jst.utility", version: "1.0"
         }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs "src"
+            srcDirs "assets"
+        }
+        output.classesDir = "build/classes"
     }
 }
 
@@ -66,6 +71,10 @@ jar {
     manifest {
         attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+    // exclude assets
+    files { file("../${mdwAssetRoot}/com/centurylink/mdw").listFiles() }.each() {
+        exclude "com/centurylink/mdw/${it.name}/"
     }
 }
 
