@@ -12,3 +12,4 @@ npm-debug.log
 notes.txt
 activemq-data/
 .DS_Store
+out/
