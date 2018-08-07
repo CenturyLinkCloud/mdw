@@ -74,7 +74,7 @@ class ScriptChecker(
 
         val result = when {
             syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ScriptCheckResult.Incomplete()
-            syntaxErrorReport.isHasErrors -> ScriptCheckResult.Error(errorHolder.renderedDiagnostics)
+            syntaxErrorReport.isHasErrors -> ScriptCheckResult.Error(errorHolder.renderMessage())
             else -> ScriptCheckResult.Ok()
         }
 
@@ -90,12 +90,11 @@ class ScriptDiagnosticMessageHolder : MessageCollectorBasedReporter, DiagnosticM
             false
     )
 
-    override val renderedDiagnostics: String
-        get() {
-            messageCollector.flush()
-            val bytes = outputStream.toByteArray()
-            return Charsets.UTF_8.decode(ByteBuffer.wrap(bytes)).toString()
-        }
+    override fun renderMessage(): String {
+        messageCollector.flush()
+        val bytes = outputStream.toByteArray()
+        return Charsets.UTF_8.decode(ByteBuffer.wrap(bytes)).toString()
+    }
 }
 
 class ScriptCheckOutcome(val psiFile: KtFile, val errorHolder: DiagnosticMessageHolder, val result: ScriptCheckResult ) {

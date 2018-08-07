@@ -24,6 +24,8 @@ import javax.websocket.server.ServerContainer;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.container.NamingProvider;
+import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.services.util.InitialRequest;
 
 @WebListener
 public class StartupListener implements ServletContextListener {
@@ -47,6 +49,7 @@ public class StartupListener implements ServletContextListener {
         }
         else {
             mdwMain.startup(container, servletContext.getRealPath("/"), servletContext.getContextPath());
+            new InitialRequest().submit();
         }
     }
 
