@@ -15,11 +15,13 @@
  */
 package com.centurylink.mdw.hub;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.services.util.InitialRequest;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.ClasspathUtil;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
@@ -33,12 +35,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.ClasspathUtil;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Configuration
 @ComponentScan
@@ -49,6 +49,7 @@ public class SpringBootApplication {
     public static void main(String[] args) {
         try {
             SpringApplication.run(SpringBootApplication.class, args);
+            new InitialRequest().submit();
         }
         catch (Throwable t) {
             t.printStackTrace();
