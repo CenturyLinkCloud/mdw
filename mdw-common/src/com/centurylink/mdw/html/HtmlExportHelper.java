@@ -212,12 +212,8 @@ public class HtmlExportHelper {
     }
 
     private boolean excludeAttribute(String name, String value) {
-        if (value == null || value.isEmpty())
-            return true;
-        if (excludedAttributes.contains(name)
-                || value.equals(excludedAttributesForSpecificValues.get(name)))
-            return true;
-        return false;
+        return (value == null || value.isEmpty() || excludedAttributes.contains(name)
+                || value.equals(excludedAttributesForSpecificValues.get(name)));
     }
 
     private void printCodeBoxHtml(StringBuilder sb, String content) {
