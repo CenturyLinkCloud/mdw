@@ -128,6 +128,11 @@ public class HttpConnection {
         else {
             connection = (HttpURLConnection)url.openConnection();
         }
+        String contentType = getHeader("Content-Type");
+        if (contentType == null)
+            contentType = getHeader("content-type");
+        if (contentType == null)
+            setHeader("Content-Type", getDefaultContentType());
     }
 
     private void open(Proxy proxy) throws IOException {
@@ -249,4 +254,7 @@ public class HttpConnection {
         return new String(Base64.decodeBase64(authHeader.substring("Basic ".length()).getBytes())).split(":");
     }
 
+    public String getDefaultContentType() {
+        return "text/plain";
+    }
 }
