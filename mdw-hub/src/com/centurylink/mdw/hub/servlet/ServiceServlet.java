@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
@@ -48,6 +50,7 @@ public abstract class ServiceServlet extends HttpServlet {
     protected void populateResponseHeaders(Set<String> requestHeaderKeys, Map<String,String> metaInfo, HttpServletResponse response) {
         for (String key : metaInfo.keySet()) {
             if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)
+                    && !Listener.AUTHENTICATED_JWT.equals(key)
                     && !Listener.METAINFO_HTTP_STATUS_CODE.equals(key)
                     && !Listener.METAINFO_ACCEPT.equals(key)
                     && !Listener.METAINFO_CONTENT_TYPE.equals(key)
@@ -103,7 +106,7 @@ public abstract class ServiceServlet extends HttpServlet {
         Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = (String) headerNames.nextElement();
-            if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName)) // do not allow this to be injected
+            if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName) && !Listener.AUTHORIZATION_HEADER_NAME.equals(headerName)) // do not allow this to be injected and exclude from metaInfo map
                 metaInfo.put(headerName, request.getHeader(headerName));
             if (Listener.METAINFO_ACCEPT.equalsIgnoreCase(headerName)) {
                 String accept = request.getHeader(Listener.METAINFO_ACCEPT);
@@ -133,8 +136,12 @@ public abstract class ServiceServlet extends HttpServlet {
         headers.remove(Listener.AUTHENTICATED_USER_HEADER); // only we should populate this
         // check for user authenticated in session (added by AccessFilter.java)
         AuthenticatedUser user = (AuthenticatedUser)request.getSession().getAttribute("authenticatedUser");
-        if (user != null && user.getCuid() != null)
+        if (user != null && user.getCuid() != null) {
             headers.put(Listener.AUTHENTICATED_USER_HEADER, user.getCuid());
+            String authHdr = request.getHeader(Listener.AUTHORIZATION_HEADER_NAME);
+            if (authHdr != null && authHdr.startsWith("Bearer") && PropertyManager.getBooleanProperty(PropertyNames.MDW_JWT_PRESERVE, false))
+                headers.put(Listener.AUTHENTICATED_JWT, authHdr.replaceFirst("Bearer ", ""));
+        }
         else { // headers.get(Listener.AUTHENTICATED_USER_HEADER) == null
             if (ApplicationContext.getServiceUser() != null) {
                 // auth failed or not provided but /services/* path was in authExclusions, so allow service user override
