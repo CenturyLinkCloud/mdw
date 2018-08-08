@@ -24,6 +24,6 @@ ScriptActivityGroovy.test=4
 ScriptActivityGroovy.yaml=1
 ScriptActivityJavascript.test=3
 ScriptActivityJavascript.yaml=1
-ScriptActivityUnknown.test=3
+ScriptActivityUnknown.test=4
 ScriptActivityUnknown.yaml=1
 ScriptTest.proc=21
