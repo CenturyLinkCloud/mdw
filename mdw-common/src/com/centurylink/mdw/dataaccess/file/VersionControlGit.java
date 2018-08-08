@@ -724,9 +724,9 @@ public class VersionControlGit implements VersionControl {
 
                     // Check each property to make sure if value changed, that it was increased, not decreased
                     for (String key : newVersions.stringPropertyNames()) {
-                        String assetTmp = (assetPath.substring(0, assetPath.indexOf(VERSIONS_FILE)) + key);
-                        if (VersionControlGit.parseAssetRevision(newVersions.getProperty(key)).getVersion() < getRevision(new File(assetTmp)).getVersion()) {
-                            oldAssets.add(assetTmp);
+                        File assetTmp = new File(assetPath.substring(0, assetPath.indexOf(VERSIONS_FILE)) + key);
+                        if (getRevision(assetTmp) != null && VersionControlGit.parseAssetRevision(newVersions.getProperty(key)).getVersion() < getRevision(assetTmp).getVersion()) {
+                            oldAssets.add(assetTmp.getPath());
                         }
                     }
                 }

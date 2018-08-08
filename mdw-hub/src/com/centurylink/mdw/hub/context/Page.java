@@ -96,7 +96,7 @@ public class Page {
     public Page findAncestor(String name) {
         Path rootPath = Paths.get(mdw.getAssetRoot().getPath()).normalize();
         Path pkgPath = Paths.get(getAsset().getFile().getPath()).normalize();
-        while (pkgPath.startsWith(rootPath)) {
+        while (pkgPath != null && pkgPath.startsWith(rootPath)) {
             if (new File(pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH).exists() || new File(pkgPath + "/" + PackageDir.PACKAGE_YAML_PATH).exists() ) {
                 Page p = new Page(mdw, "/" + rootPath.relativize(pkgPath) + "/" + name);
                 if (p.exists())

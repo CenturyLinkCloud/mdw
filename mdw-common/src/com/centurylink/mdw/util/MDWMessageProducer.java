@@ -20,12 +20,6 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageDeliveryMode;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
@@ -38,10 +32,6 @@ public class MDWMessageProducer implements MessageProducer {
     @Autowired(required = false)
     @Qualifier("jmsTemplate")
     private JmsTemplate jmsTemplate;
-
-    @Autowired(required = false)
-    @Qualifier("rabbitTemplate")
-    private RabbitTemplate rabbitTemplate;
 
     @Autowired(required = false)
     private JmsTemplate jmsTopicTemplate;
@@ -73,50 +63,6 @@ public class MDWMessageProducer implements MessageProducer {
                 jmsTemplate.send(new MDWMessageCreator(requestMessage, correlationId, replyQueue));
             }
         }
-        else if (rabbitTemplate != null) {
-            MessageProperties messageProperties = new MessageProperties();
-            String targetQueueName = queueName;
-            if (delaySeconds > 0) {
-                /**
-                 * For RabbitMQ, you can set a TTL (TimeToLive)
-                 * on the message properties
-                 */
-                targetQueueName="com.centurylink.mdw.process.delay.queue";
-                messageProperties.setExpiration(String.valueOf(delaySeconds * 1000));
-            }
-            messageProperties.setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT);
-            if (replyQueue != null) {
-                rabbitTemplate.setReplyQueue(new org.springframework.amqp.core.Queue(replyQueue
-                        .getQueueName()));
-            }
-            rabbitTemplate.send(getExchange(targetQueueName), targetQueueName,
-                    new Message(requestMessage.getBytes(), messageProperties), new CorrelationData(
-                            correlationId));
-
-            /**
-             * new MDWMessageCreator(requestMessage, correlationId, replyQueue,
-             * delaySeconds). if (!StringUtils.isEmpty(queueName)) {
-             * rabbitTemplate.send(queueName, routingKey, new
-             * Message(requestMessage.getBytes(), messageProperties),
-             * correlationData);
-             *
-             * } else { rabbitTemplate.send(new
-             * MDWMessageCreator(requestMessage, correlationId, replyQueue)); }
-             */
-        }
-    }
-
-    /**
-     * For RabbitMQ, syou can set a TTL (TimeToLive)
-     * on the message
-     * @param requestMessage
-     * @param correlationId
-     * @param replyQueue
-     * @param delaySeconds
-     */
-    public void sendDelayedMessageToRabbit(String queueName, String requestMessage,
-            String correlationId, Queue replyQueue, int delaySeconds) {
-
     }
 
     public void sendMessage(String requestMessage, String queueName, String correlationId,
@@ -196,18 +142,12 @@ public class MDWMessageProducer implements MessageProducer {
      * @param queue
      * @param correlationId
      * @throws JMSException
-     * @throws AmqpException
      */
     public void sendMessage(String message, Queue queue, String correlationId)
-            throws AmqpException, JMSException {
+            throws JMSException {
         if (jmsTemplate != null) {
             jmsTemplate.send(queue, new MDWMessageCreator(message, correlationId, null, 0));
         }
-        else if (rabbitTemplate != null) {
-            rabbitTemplate.send(getExchange(queue.getQueueName()), null,
-                    new Message(message.getBytes(), null), new CorrelationData(correlationId));
-        }
-
     }
 
     /**

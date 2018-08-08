@@ -15,41 +15,44 @@ title: Spring Boot
   
 ### 2. MDW as a Spring Boot Dependency
   If you're creating your own full-blown Spring Boot app, you can reference MDW as a straight dependency.
-  Your jar or war will be repackaged by the [MDW Gradle plugin](https://plugins.gradle.org/plugin/com.centurylink.mdw.boot)
-  to automatically include MDWHub and expose your [REST APIs](../../guides/mdw-cookbook/#14-expose-the-process-as-a-rest-service).   
-
-  Here's a simple example of a build.gradle script that leverages MDW as a dependency: 
+  By including [mdw-spring-boot](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mdw-spring-boot%22) among your dependencies, 
+  you'll automagically get the MDWHub webapp and expose your MDW 
+  [REST APIs](../../guides/mdw-cookbook/#14-expose-the-process-as-a-rest-service).
+  
+  The easy way to see how this works is to use run the MDW CLI command:
   ```
+  mdw init --spring-boot
+  ```
+  This creates a starter build.gradle (or pom.xml if you add the --maven option). 
+
+  Here's a snippet from a simple Gradle build script created in this way: 
+  ```gradle
   buildscript {
-      ext {
-          springBootVersion = '1.5.4.RELEASE'
-          mdwGradleVersion = '1.0.05'
-      }
       repositories {
-          maven { url "https://plugins.gradle.org/m2/" }
           mavenCentral()
       }
       dependencies {
           classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-          classpath("gradle.plugin.com.centurylink.mdw:buildSrc:${mdwGradleVersion}")
       }
   }
   
   apply plugin: 'java'
-  apply plugin: 'eclipse'
   apply plugin: 'org.springframework.boot'
-  apply plugin: 'com.centurylink.mdw.boot'
   
-  version = '0.0.1-SNAPSHOT'
+  group = "my-mdw-boot"
+  version = '1.0.1-SNAPSHOT'
+  
   sourceCompatibility = 1.8
   
   repositories {
       mavenCentral()
-      maven { url "https://oss.sonatype.org/content/repositories/snapshots" }  // TODO: maven-central
   }
   
   dependencies {
-      compile('org.springframework.boot:spring-boot-starter-web') { exclude(module: 'logback-classic') } 
-      compile("com.centurylink.mdw:mdw:${mdwVersion}")
+      compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion
+      compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+      
+      // asset package dependencies
+      compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
   }
   ```  

@@ -362,8 +362,10 @@ class ProcessExecutorImpl {
             if (documentType != null)
                 docvo.setDocumentType(documentType);
             if (ownerType != null) {
-                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
-                    edao.updateDocumentMongoCollection(docvo, ownerType);
+                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType())) {
+                    if (edao.getDocumentDbAccess() != null)
+                        edao.getDocumentDbAccess().updateDocumentDbOwnerType(docvo, ownerType);
+                }
                 docvo.setOwnerType(ownerType);
             }
             if (ownerId != null)

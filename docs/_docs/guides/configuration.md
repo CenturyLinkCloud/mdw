@@ -47,7 +47,7 @@ title: MDW Configuration
     db.base.location: ../data  # default=assetLoc + "/../data/db"
     db.data.location: ../data/mdw  # default=assetLoc + "/../data/mdw"
     
-    # optional mongodb
+    # optional mongodb (requires asset package com.centurylink.mdw.mongo)
     mongodb:
       host: localhost
       port: 27017

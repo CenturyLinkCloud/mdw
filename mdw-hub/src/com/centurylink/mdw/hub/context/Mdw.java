@@ -16,6 +16,7 @@
 package com.centurylink.mdw.hub.context;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Lightweight server-side model object for dynamically populating index.html.
@@ -82,6 +83,13 @@ public class Mdw {
     private String customRoutes;
     public String getCustomRoutes() { return customRoutes; }
     public void setCustomRoutes(String customRoutes) { this.customRoutes = customRoutes; }
+
+    /**
+     * Custom service paths for a spring boot app.
+     */
+    private List<String> customPaths;
+    public List<String> getCustomPaths() { return customPaths; }
+    public void setCustomPaths(List<String> paths) { this.customPaths = paths; }
 
     Mdw(String version, String build, String hubRoot, String servicesRoot, File assetRoot, String overridePackage) {
         this.version = version;

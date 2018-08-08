@@ -31,6 +31,6 @@ start process("DocumentChange") {
                   unchangedXmlBeanWrapper: asset("doc-unchangedXmlBeanWrapper.txt").text ]
 }
 
-sleep 70
+sleep 60
 
 verify process("DocumentChange")

@@ -1,0 +1,50 @@
+dependencies {
+    // hub is compileOnly -- otherwise war ends up in client jar
+    compileOnly(project(":mdw-hub")) { exclude(module: "mariaDB4j-core") }
+    compile(project(":mdw-workflow")) { exclude(module: "mariaDB4j-core") }
+    // put back this mariaDB4j transitive
+    compile group: "commons-io", name: "commons-io", version: "2.5"
+    
+    compile group: "org.springframework.boot", name: "spring-boot", version: springBootVersion
+    compile group: "org.springframework.boot", name: "spring-boot-configuration-processor", version: springBootVersion
+    compile group: "org.springframework.boot", name: "spring-boot-autoconfigure", version: springBootVersion
+    compile group: "org.springframework.boot", name: "spring-boot-loader", version: springBootVersion
+    compile group: "org.springframework", name: "spring-web", version: springVersion
+    
+    // tomcat
+    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-core", version: "8.5.32"
+    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.32"
+    compile group: "org.apache.tomcat.embed", name: "tomcat-embed-websocket", version: "8.5.32"
+
+    // indirect tomcat    
+    compile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
+    compile group: "org.hibernate.validator", name: "hibernate-validator", version: "6.0.11.Final"
+}
+
+jar {
+    manifest {
+        attributes("MDW-Version": mdwVersion)
+        attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
+    }
+
+    from("../mdw-hub/build/classes") {
+        include "**/*"
+    }
+    into("hub") {
+        from "../mdw-hub/web"
+        exclude "WEB-INF/"
+    }
+    from("src") {
+        include "META-INF/spring.factories"
+    }
+    from("../mdw-common/src") {
+        include "META-INF/mdw/**/*"
+    }
+    from("../mdw-workflow/src") {
+        include "META-INF/mdw/**/*"
+    }
+}
+
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}

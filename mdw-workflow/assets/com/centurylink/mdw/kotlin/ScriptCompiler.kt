@@ -91,7 +91,7 @@ class ScriptCompiler(disposable: Disposable,
         val analysisResult = analyzerEngine.analyzeReplLine(psiFile, dummyCodeLine)
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
         val scriptDescriptor = when (analysisResult) {
-            is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return ScriptCompileResult.Error(errorHolder.renderedDiagnostics)
+            is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return ScriptCompileResult.Error(errorHolder.renderMessage())
             is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
             else -> error("Unexpected result ${analysisResult::class.java}")
         }

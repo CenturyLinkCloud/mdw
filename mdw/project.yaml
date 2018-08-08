@@ -1,0 +1,9 @@
+# paths are relative to the location of this file
+mdw:
+  version: 6.1.07-SNAPSHOT
+
+asset:
+  location: ../mdw-workflow/assets
+
+config:
+  location: config

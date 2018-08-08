@@ -69,7 +69,7 @@ public abstract class PropertyManager {
                 if (!configLoc.endsWith("/"))
                     configLoc = configLoc + "/";
                 propertyFileLocation = configLoc;
-                System.out.println("Loading configuration files from '" + configLoc + "'");
+                System.out.println("Loading configuration files from '" + new File(configLoc).getAbsolutePath() + "'");
             }
         }
         return propertyFileLocation;
@@ -97,6 +97,11 @@ public abstract class PropertyManager {
 
     public static String getProperty(String name) {
         return getInstance().getStringProperty(name);
+    }
+
+    public static String getProperty(String name, String defaultValue) {
+        String v = getInstance().getStringProperty(name);
+        return v == null ? defaultValue : v;
     }
 
     public static int getIntegerProperty(String name, int defaultValue) {

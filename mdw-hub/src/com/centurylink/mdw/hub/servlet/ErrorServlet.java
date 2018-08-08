@@ -47,9 +47,22 @@ public class ErrorServlet extends HttpServlet {
             response.getWriter().println(sr.getJson().toString(2));
         }
         else {
-            StatusResponse sr = new StatusResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unknown error");
-            response.setStatus(sr.getStatus().getCode());
-            response.getWriter().println(sr.getJson().toString(2));
+            Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+            if (statusCode != null) {
+                if (statusCode == 404) {
+                    request.getRequestDispatcher("/404").forward(request, response);
+                }
+                else {
+                    StatusResponse sr = StatusResponse.forCode(statusCode);
+                    response.setStatus(sr.getStatus().getCode());
+                    response.getWriter().println(sr.getJson().toString(2));
+                }
+            }
+            else {
+                StatusResponse sr = new StatusResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unknown error");
+                response.setStatus(sr.getStatus().getCode());
+                response.getWriter().println(sr.getJson().toString(2));
+            }
         }
     }
 

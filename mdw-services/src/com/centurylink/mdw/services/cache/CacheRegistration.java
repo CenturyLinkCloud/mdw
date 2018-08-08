@@ -15,23 +15,8 @@
  */
 package com.centurylink.mdw.services.cache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.xmlbeans.XmlException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument.ApplicationCache;
@@ -48,14 +33,20 @@ import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.util.InitialRequest;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
-import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.xmlbeans.XmlException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Startup class that manages registration of all the caches
@@ -87,7 +78,6 @@ public class CacheRegistration implements StartupService {
             preloadCaches();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             preloadDynamicCaches();
-            performInitialRequest();
         }
         catch (Exception ex){
             String message = "Failed to load caches";
@@ -206,8 +196,6 @@ public class CacheRegistration implements StartupService {
         try {
             bulletin = SystemMessages.bulletinOn("Cache refresh in progress...");
             String propmgr = PropertyManager.class.getName();
-//            if (excludedFormats == null || !excludedFormats.contains("PROPERTIES"))
-//                refreshCache(propmgr);
             if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
                 CacheRegistry.getInstance().clearDynamicServices();
             synchronized (allCaches) {
@@ -217,7 +205,7 @@ public class CacheRegistration implements StartupService {
                 }
             }
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
-            performInitialRequest();
+            new InitialRequest().submit();
             SystemMessages.bulletinOff(bulletin, "Cache refresh completed");
 
         } catch (Exception ex) {
@@ -240,7 +228,7 @@ public class CacheRegistration implements StartupService {
 
     /**
      * Refreshes a particular cache by name.
-     * @param name the cache to refresh
+     * @param cacheName the cache to refresh
      */
     public void refreshCache(String cacheName, List<String> excludedFormats) {
         CacheService cache = allCaches.get(cacheName);
@@ -335,24 +323,4 @@ public class CacheRegistration implements StartupService {
         return orderedCaches;
     }
 
-    /**
-     * After all caches have been loaded or refreshed (startup or a cache refresh request),
-     * call this method to eliminate "first request" performance penalty.
-     */
-    public static void performInitialRequest() {
-        try {
-            String url = ApplicationContext.getLocalServiceAccessUrl() + "/services/AppSummary";
-            logger.info("Submit initial request: " + url);
-            HttpHelper helper = new HttpHelper(new URL(url));
-            helper.setConnectTimeout(1000);
-            helper.setReadTimeout(1000);
-            helper.get();
-        }
-        catch (SocketTimeoutException ex) {
-            // no need to wait for response
-        }
-        catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 }

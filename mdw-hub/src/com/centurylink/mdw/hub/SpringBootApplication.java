@@ -15,32 +15,30 @@
  */
 package com.centurylink.mdw.hub;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.services.util.InitialRequest;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.ClasspathUtil;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.file.ZipHelper;
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatContextCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.ClasspathUtil;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Configuration
 @ComponentScan
@@ -51,6 +49,7 @@ public class SpringBootApplication {
     public static void main(String[] args) {
         try {
             SpringApplication.run(SpringBootApplication.class, args);
+            new InitialRequest().submit();
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -61,7 +60,7 @@ public class SpringBootApplication {
      * TODO: support Jetty as well
      */
     @Bean
-    public EmbeddedServletContainerFactory embeddedServletContainerFactory(ApplicationContext ctx) {
+    public TomcatServletWebServerFactory containerFactory() {
         String portProp = System.getProperty("mdw.server.port");
         if (portProp == null)
             portProp = System.getProperty("server.port");
@@ -72,8 +71,7 @@ public class SpringBootApplication {
             contextProp = System.getProperty("server.contextPath");
         if (contextProp == null)
             contextProp = "/mdw";
-        TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory(
-                contextProp, Integer.parseInt(portProp));
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory(contextProp, Integer.parseInt(portProp));
         factory.addContextCustomizers(tomcatContextCustomizer());
         factory.setDocumentRoot(new File(getBootDir() + "/web"));
         return factory;
@@ -129,7 +127,7 @@ public class SpringBootApplication {
             if (bootLoc == null) {
                 String tempLoc = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
                 if (tempLoc == null)
-                    tempLoc = "mdw/.temp";
+                    tempLoc = "mdw/temp";
                 bootLoc = tempLoc + "/boot";
             }
             String mainLoc = ClasspathUtil.locate(MdwMain.class.getName());

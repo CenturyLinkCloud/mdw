@@ -17,7 +17,7 @@ Get up and running with MDW in a hurry.
   
 ### Install the MDW CLI
   The [MDW CLI](../cli) gives you commands for common operations like initializing your workspace and updating assets.
-   - Download **mdw-cli.zip** from the latest MDW release on GitHub:<br>   
+   - Download **mdw-cli.zip** from the latest MDW release on GitHub:  
      <https://github.com/CenturyLinkCloud/mdw/releases>
    - Unzip anywhere on your hard drive (e.g.: c:\mdw on Windows).
    - Create an environment variable named MDW_HOME pointing to this location, and add its bin directory to your system PATH. 
@@ -39,11 +39,12 @@ Get up and running with MDW in a hurry.
   At this point you have a decision to make.  MDW comes with a rich set of REST service APIs, and also
   enables you to quickly [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/).  To host these services MDW relies on a 
   Java Servlet container.  Your options are:
-  1. Use the self-contained [MDW Spring Boot jar](../../guides/spring-boot)
-  2. Install [Apache Tomcat (or Jetty)](../../guides/tomcat)
+  1. Use the self-contained [MDW Spring Boot jar](../../guides/spring-boot/#1-self-contained-boot-jar)
+  2. Build your own [Custom Spring Boot jar](../../guides/spring-boot/#2-mdw-as-a-spring-boot-dependency)
+  3. Install [Apache Tomcat (or Jetty)](../../guides/tomcat)
   
   Whichever option you choose, MDW behaves in exactly the same way.  To get you running quickly we'll start 
-  with the Spring Boot option.  You can always switch to Tomcat later when you want to debug your assets,
+  with the prebuilt Spring Boot option.  You can always switch to custom Spring Boot or Tomcat later when you want to debug your assets,
   or if you need more control over your container.
 
 #### Spring Boot Setup
@@ -55,7 +56,7 @@ Get up and running with MDW in a hurry.
     This downloads the self-contained MDW Spring-Bootable jar file that matches mdwVersion in gradle.properties or pom.xml.  
     
 ### Command-line startup
-  After installing, make sure you're in your project directory and type:   
+  After installing, **make sure you're in your project directory** (not bin) and type:   
   ```
   mdw run 
   ``` 
@@ -63,11 +64,18 @@ Get up and running with MDW in a hurry.
 ### Access MDWHub
   If everything is set up correctly, after MDW fully starts you should be able to access MDWHub in your browser:<br>
   <http://localhost:8080/mdw>
+
+### Import into IntelliJ IDEA
+  - Launch IntelliJ and select "Import Project" from the splash screen
+  - Browse to and select your newly created project directory
+  - Elect to "Import project from external model", and select Gradle or Maven as appropriate
+  
+  TODO: Install MDW Studio and Run/Debug.
   
 ### Import into Eclipse
-  Unless you suppressed Eclipse artifact generation (with the `--eclipse=false` option), your project is ready to be imported into
+  In you included the `--eclipse` option when you ran `mdw init`, your project is ready to be imported into
   Eclipse.  From the Eclipse File menu select > Import > General > Existing Projects into Workspace.  Then browse for your project
   directory.
   
   To start creating workflows and assets using MDW Designer in Eclipse,
-  [install the MDW Designer plugin](../install-designer).  
+  [install the MDW Designer plugin](../install-designer).
