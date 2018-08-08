@@ -106,7 +106,7 @@ public abstract class ServiceServlet extends HttpServlet {
         Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = (String) headerNames.nextElement();
-            if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName) && !Listener.AUTHORIZATION_HEADER_NAME.equals(headerName)) // do not allow this to be injected and exclude from metaInfo map
+            if (!Listener.AUTHENTICATED_USER_HEADER.equals(headerName) && !Listener.AUTHORIZATION_HEADER_NAME.equalsIgnoreCase(headerName)) // do not allow this to be injected and exclude from metaInfo map
                 metaInfo.put(headerName, request.getHeader(headerName));
             if (Listener.METAINFO_ACCEPT.equalsIgnoreCase(headerName)) {
                 String accept = request.getHeader(Listener.METAINFO_ACCEPT);
