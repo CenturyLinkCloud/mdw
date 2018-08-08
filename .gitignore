@@ -11,6 +11,7 @@ testResults/
 npm-debug.log
 notes.txt
 activemq-data/
+temp/
 .DS_Store
 out/
 mdw/.idea/**/workspace.xml
