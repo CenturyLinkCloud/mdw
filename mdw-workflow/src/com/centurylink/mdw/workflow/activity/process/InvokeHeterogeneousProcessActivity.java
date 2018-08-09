@@ -403,7 +403,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     }
 
     private void bindVariable(Parameter param, String value, boolean passDocContent) throws ActivityException {
-        bindVariable(param, value, false);
+        bindVariable(param, value, passDocContent, false);
     }
 
     private void bindVariable(Parameter param, String value, boolean passDocContent, boolean refreshDocCache) throws ActivityException {
