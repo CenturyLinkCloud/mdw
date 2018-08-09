@@ -37,6 +37,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.VariableConstants;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -352,8 +353,8 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 piplan.setStatusCode(WorkStatus.STATUS_COMPLETED.intValue());
                 for (String paramName : outParameters.keySet()) {
                     Parameter p = getParameterBinding(piplan, paramName);
-                    if (p!=null)
-                        bindVariable(p, outParameters.get(paramName), (getEngine().getPerformanceLevel() >= 5 || getEngine().isInService()));  // DHO
+                    if (p!=null)  // Since child executed in different engine, need to update this engine's documentCache (last arg passed in below)
+                        bindVariable(p, outParameters.get(paramName), (getEngine().getPerformanceLevel() >= 5 || getEngine().isInService()), true);  // DHO
                 }
             }
         }
@@ -402,6 +403,10 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     }
 
     private void bindVariable(Parameter param, String value, boolean passDocContent) throws ActivityException {
+        bindVariable(param, value, false);
+    }
+
+    private void bindVariable(Parameter param, String value, boolean passDocContent, boolean refreshDocCache) throws ActivityException {
         Process procdef = getMainProcessDefinition();
         String binding = param.getStringValue();
         if (StringHelper.isEmpty(binding)) return;
@@ -432,7 +437,18 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 } else {
                     value0 = VariableTranslator.toObject(var.getType(), value);
                 }
+
                 this.setParameterValue(varname, value0);
+
+                // Clear from this engine's documentCache map (forces getting from DB when next needed)
+                if (refreshDocCache && value0 instanceof DocumentReference) {
+                    try {
+                        getEngine().loadDocument((DocumentReference)value0, false);
+                    }
+                    catch (DataAccessException e) {
+                        throw new ActivityException(e.getMessage(), e);
+                    }
+                }
             }
         }
     }

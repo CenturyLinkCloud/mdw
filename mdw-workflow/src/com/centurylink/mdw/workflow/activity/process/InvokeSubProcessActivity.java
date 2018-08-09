@@ -160,10 +160,11 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             else {  // Current process is Non-service (regular)
                 if (subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {
                     // Documents exist in DB and so are visible to child
-                    ProcessEngineDriver engineDriver = new ProcessEngineDriver();
+                    ProcessEngineDriver engineDriver = new ProcessEngineDriver();   // Execute in new separate engine
                     Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getId(), ownerId, getMasterRequestId(),
                             validParams, subprocdef.getPerformanceLevel());
-                    this.bindVariables(params, true);        // last arg should be true only when perf_level>=9 (DHO:actually 5), but this works
+                    // Documents modified in child are not reflected in this engine's documentCache, so force retrieval from DB if needed by removing from cache
+                    this.bindVariables(params, true, true);        // passDocContent arg should be true only when perf_level>=9 (DHO:actually 5), but this works
                 }
                 else if (isSynchronousCall() && engine.getPerformanceLevel() >= 9) {  // Documents are cache-only, need to execute in same thread and same engine - ignore child's perf lvl, if any specified
                         ProcessInstance pi = getEngine().createProcessInstance(
@@ -224,6 +225,10 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     }
 
     private void bindVariables(Map<String,String> params, boolean passDocContent) throws ActivityException {
+        bindVariables(params, passDocContent, false);
+    }
+
+    private void bindVariables(Map<String,String> params, boolean passDocContent, boolean refreshDocCache) throws ActivityException {
         String map = getAttributeValue(VARIABLES);
         if (map==null) map = "";
         if (params!=null) {
@@ -249,7 +254,18 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 } else {
                     value = VariableTranslator.toObject(var.getType(), varvalue);
                 }
+
                 this.setParameterValue(para, value);
+
+                // Clear from this engine's documentCache map (forces getting from DB when next needed)
+                if (refreshDocCache && value instanceof DocumentReference) {
+                    try {
+                        getEngine().loadDocument((DocumentReference)value, false);
+                    }
+                    catch (DataAccessException e) {
+                        throw new ActivityException(e.getMessage(), e);
+                    }
+                }
             }
         }
     }
