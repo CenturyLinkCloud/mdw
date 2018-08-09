@@ -23,6 +23,7 @@ script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRA
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 - cat ../testResults/com.centurylink.mdw.tests.script/ScriptActivityUnknown.log
+- cat ../testResults/com.centurylink.mdw.tests.workflow/ServiceHeteroprocParallel.log
 - cat mdw.log
 - sleep 10s
 notifications:
