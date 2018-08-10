@@ -445,8 +445,8 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                     try {
                         getEngine().loadDocument((DocumentReference)value0, false);
                     }
-                    catch (DataAccessException e) {
-                        throw new ActivityException(e.getMessage(), e);
+                    catch (DataAccessException e) {  // In mySQL, New documents created after this activity started its transaction are not findable in DB at this point
+                        logger.debug(e.getMessage());
                     }
                 }
             }
