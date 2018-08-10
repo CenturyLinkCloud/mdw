@@ -88,7 +88,7 @@ public class Unzip implements Operation {
                 }
                 else {
                     // delete parent directory's files if any (only once per dir)
-                    if (hasFiles(outfile.getParentFile()) && entryName.contains("/")) {
+                    if (overwriteEntry && hasFiles(outfile.getParentFile()) && entryName.contains("/")) {
                         String parentEntry = entryName.substring(0, entryName.lastIndexOf('/') + 1);
                         if (!dirEntriesWhereFilesDeleted.contains(parentEntry)) {
                             deleteFiles(outfile.getParentFile());
