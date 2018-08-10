@@ -112,7 +112,7 @@ task updatePlugInFile {
 }
   
 task updateJson {
-      description = "Update bower.json and packag.json with version number"
+      description = "Update mdw-hub/package.json with version number"
       
       def mdwPkgVer = mdwVersion;
       if (mdwVersion.endsWith("-SNAPSHOT"))
