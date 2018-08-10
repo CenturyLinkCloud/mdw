@@ -15,20 +15,19 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
  * Bare min impl to support CLI without dependencies.
+ * Suited for asset package imports in the way it handles overwriting.
  */
 public class Unzip implements Operation {
 
@@ -59,6 +58,8 @@ public class Unzip implements Operation {
             throw new IOException("Destination directory does not exist: " + destDir);
         try (ZipFile zip = new ZipFile(zipFile)) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
+            List<String> dirEntriesWhereFilesDeleted = new ArrayList<>();
+
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
@@ -83,11 +84,17 @@ public class Unzip implements Operation {
                 if (outfile.exists() && !overwriteEntry)
                     throw new IOException("Destination already exists: " + outfile.getAbsolutePath());
                 if (entry.isDirectory()) {
-                    if (outfile.exists() && hasFiles(outfile))
-                        new Delete(outfile, true).run();
                     Files.createDirectories(Paths.get(outfile.getPath()));
                 }
                 else {
+                    // delete parent directory's files if any (only once per dir)
+                    if (hasFiles(outfile.getParentFile()) && entryName.contains("/")) {
+                        String parentEntry = entryName.substring(0, entryName.lastIndexOf('/') + 1);
+                        if (!dirEntriesWhereFilesDeleted.contains(parentEntry)) {
+                            deleteFiles(outfile.getParentFile());
+                            dirEntriesWhereFilesDeleted.add(parentEntry);
+                        }
+                    }
                     InputStream is = null;
                     OutputStream os = null;
                     try {
@@ -109,6 +116,14 @@ public class Unzip implements Operation {
         }
 
         return this;
+    }
+
+
+    private void deleteFiles(File dir) {
+        for (File child : dir.listFiles()) {
+            if (child.isFile())
+                child.delete();
+        }
     }
 
     private boolean hasFiles(File dir) {
