@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.workflow.activity.process;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ import com.centurylink.mdw.constant.VariableConstants;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -443,9 +445,17 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 // Clear from this engine's documentCache map (forces getting from DB when next needed)
                 if (refreshDocCache && value0 instanceof DocumentReference) {
                     try {
+                        DatabaseAccess db = getEngine().getDatabaseAccess();
+                        if (db != null && db.isMySQL() && db.connectionIsOpen())
+                            db.commit();  // This is so that the current transaction can see newly created/updated documents from other transactions
+                    }
+                    catch (SQLException e) { // If for some reason db is null - Still try to load document below
+                        logger.debug(e.getMessage());
+                    }
+                    try {
                         getEngine().loadDocument((DocumentReference)value0, false);
                     }
-                    catch (DataAccessException e) {  // In mySQL, New documents created after this activity started its transaction are not findable in DB at this point
+                    catch (DataAccessException e) {  // In mySQL, New documents created after this activity started its transaction are not findable in DB at this point, unless performing commit above
                         logger.debug(e.getMessage());
                     }
                 }
