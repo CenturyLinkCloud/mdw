@@ -1,8 +1,11 @@
 ## Publishing an mdw6 build
 
-1 - Edit gradle.properties to set the new build numbers.
-    - mdwVersion
-    - mdwPrevTag
+1 - Edit these files to set the new build number:
+    mdw/gradle.properties:
+      - mdwVersion
+      - mdwPrevTag
+    mdw/project.yaml:
+      - mdw version
     
 2 - Run Gradle task updateMdwVerInFiles to update these files: 
   - mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
@@ -48,7 +51,20 @@
 
 9 - Run task 1,2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
 
-10 - Upgrade mdw-demo:
+10 - Create and publish Docker image
+    - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
+    - git pull
+    - Create docker image with following command:
+        docker build --build-arg version=6.1.04 -t mdwcore/mdw:6.1.04 .   (update with actual MDW version)
+    - Log into docker using the following command (use your Docker Hub credentials when it prompts you)
+        docker login
+    - Publish image to Docker repository with command
+        docker push mdwcore/mdw:6.1.0X   (update with actual MDW version)
+        
+11 - Internal Assets
+   - TODO
+
+12 - Upgrade mdw-demo (** Need to wait until asset zips are queryable on Maven Central):
    - Update mdw version in the following files:
        - mdw-demo/gradle.properties
        - mdw-demo/pom.xml
@@ -57,19 +73,7 @@
    - Update the framework assets:
      ```
      cd mdw-demo
-     mdw update
+     mdw update (--snapshots)
      ```
   - Commit and push changes
 
-11 - Create and publish Docker image
-    - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
-    - git pull
-    - Create docker image with following command:
-        docker build --build-arg version=6.1.04 -t mdwcore/mdw:6.1.04 .   (update with actual MDW version)
-    - Log into docker using the following command (use your Docker Hub credentials when it prompts you)
-        docker login
-    - Publish image to Docker repository with command
-        docker push mdwcore/mdw:6.1.04   (update with actual MDW version)
-        
-12 - Internal Assets
-   - TODO
