@@ -84,8 +84,13 @@ adminApp.config(['$routeProvider', function($routeProvider) {
       var hubRoot = $mdwHubRoot;
       if (!hubRoot.endsWith('/'))
         hubRoot += '/';
-      if (pathname == hubRoot)
+      if (pathname == hubRoot + "index.html") {
+        window.location = hubRoot;
+        return;
+      }
+      else if (pathname == hubRoot) {
         return '/workflow/processes';
+      }
         
       throw new Error("Cannot route: " + window.location);
     }
