@@ -13,7 +13,8 @@
         ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
       </textarea>
       <input type="checkbox" ng-if="value.type === 'java.lang.Boolean'" class="checkbox mdw-boolean-input" 
-        id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)">
+        id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-checked="value.value" ng-disabled="!value.editable"
+        ng-true-value="'true'" ng-false-value="'false'" ng-change="dirty(value)" style="position:relative;top:8px;">
       <div ng-if="value.type === 'java.util.Date'">
         <input type="text" class="form-control mdw-date-input" ng-style="{width: (dateDisplayFormat.length * 10) + 'px'}"
           id="{{value.name}}" name="{{value.name}}" ng-model="value.value" ng-readonly="!value.editable" ng-change="dirty(value)"                
