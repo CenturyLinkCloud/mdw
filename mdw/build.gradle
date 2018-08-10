@@ -396,9 +396,3 @@ task publishAssets(type: GradleBuild) {
     buildFile = "publish.gradle"
     tasks = ["publishAssetsToMavenCentral"]
 }
-
-// update mdw-demo workspace locally during the build. local.gradle is in our internal GitLab repo, update mdwDemoDir
-task updateMDWDemo(type: GradleBuild) {
-    buildFile = "local.gradle"
-    tasks = ["updateMDWDemoWorkspace"]
-}
