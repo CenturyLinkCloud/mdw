@@ -58,7 +58,7 @@ public class Unzip implements Operation {
             throw new IOException("Destination directory does not exist: " + destDir);
         try (ZipFile zip = new ZipFile(zipFile)) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
-            List<String> dirEntriesWhereFilesDeleted = new ArrayList<>();
+            List<String> cleanedUpDirEntries = new ArrayList<>();
 
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
@@ -88,11 +88,11 @@ public class Unzip implements Operation {
                 }
                 else {
                     // delete parent directory's files if any (only once per dir)
-                    if (overwriteEntry && hasFiles(outfile.getParentFile()) && entryName.contains("/")) {
+                    if (overwriteEntry && entryName.contains("/")) {
                         String parentEntry = entryName.substring(0, entryName.lastIndexOf('/') + 1);
-                        if (!dirEntriesWhereFilesDeleted.contains(parentEntry)) {
+                        if (!cleanedUpDirEntries.contains(parentEntry)) {
                             deleteFiles(outfile.getParentFile());
-                            dirEntriesWhereFilesDeleted.add(parentEntry);
+                            cleanedUpDirEntries.add(parentEntry);
                         }
                     }
                     InputStream is = null;
@@ -124,13 +124,5 @@ public class Unzip implements Operation {
             if (child.isFile())
                 child.delete();
         }
-    }
-
-    private boolean hasFiles(File dir) {
-        for (File child : dir.listFiles()) {
-            if (child.isFile())
-                return true;
-        }
-        return false;
     }
 }
