@@ -59,7 +59,7 @@ public class BpmnImport extends Setup {
 
     public BpmnImport run(ProgressMonitor... monitors) throws IOException {
         ProcessImporter importer = getProcessImporter();
-        String imported = importer.importProcess(process);
+        String imported = importer.importProcess(process).getJson().toString(2);
         String filePath = process.getPath();
         int index = filePath.lastIndexOf('\\');
         String procName = filePath.substring(index+1);

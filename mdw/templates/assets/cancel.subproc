@@ -20,10 +20,10 @@
     }
   ],
   "attributes": {
-    "EMBEDDED_PROCESS_TYPE": "Cancelation Handler",
+    "EMBEDDED_PROCESS_TYPE": "Cancellation Handler",
     "PROCESS_VISIBILITY": "EMBEDDED",
     "WORK_DISPLAY_INFO": "x=0,y=0,w=440,h=120"
   },
   "id": "P1",
-  "name": "Cancelation Handler"
+  "name": "Cancellation Handler"
 }

@@ -552,6 +552,13 @@ public class VersionControlGit implements VersionControl {
         return file.getAbsolutePath().substring(localPath.length() + 1).replace('\\', '/');
     }
 
+    /**
+     * Check path vs repository
+     */
+    public boolean isDiff(String path) throws Exception {
+        return !git.diff().setPathFilter(PathFilter.create(path)).call().isEmpty();
+    }
+
     public GitDiffs getDiffs(String branch, String path) throws Exception {
         fetch();
         GitDiffs diffs = new GitDiffs();
@@ -694,6 +701,10 @@ public class VersionControlGit implements VersionControl {
             revWalk.dispose();
             return baos.toByteArray();
         }
+    }
+
+    public byte[] readFromHead(String filePath) throws Exception {
+        return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);
     }
 
     public Map<String, List<String>> checkVersionConsistency(String branch, String path) throws Exception {

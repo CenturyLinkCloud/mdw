@@ -16,7 +16,7 @@
       "rows": 2
     },
     {
-      "type": "link",
+      "type": "asset",
       "name": "implementor",
       "label": "Implementor"
     },
