@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":9,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":9,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -397,44 +397,54 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
 </tr>
 <tr id="i43" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#isTracked-java.lang.String-">isTracked</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#isDiff-java.lang.String-">isDiff</a></span>(java.lang.String&nbsp;path)</code>
+<div class="block">Check path vs repository</div>
+</td>
 </tr>
 <tr id="i44" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#localRepoExists--">localRepoExists</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#isTracked-java.lang.String-">isTracked</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
 <tr id="i45" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#localRepoExists--">localRepoExists</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#parseAssetRevision-java.lang.String-">parseAssetRevision</a></span>(java.lang.String&nbsp;propertyValue)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#pull-java.lang.String-">pull</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#push--">push</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#readFromCommit-java.lang.String-java.lang.String-">readFromCommit</a></span>(java.lang.String&nbsp;commitId,
               java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i50" class="altColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#readFromHead-java.lang.String-">readFromHead</a></span>(java.lang.String&nbsp;filePath)</code>&nbsp;</td>
+</tr>
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#setCredentialsProvider-org.eclipse.jgit.transport.CredentialsProvider-">setCredentialsProvider</a></span>(org.eclipse.jgit.transport.CredentialsProvider&nbsp;provider)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#setRevision-java.io.File-com.centurylink.mdw.dataaccess.AssetRevision-">setRevision</a></span>(java.io.File&nbsp;file,
            <a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a>&nbsp;rev)</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#setRevisionInVersionsFile-java.io.File-com.centurylink.mdw.dataaccess.AssetRevision-">setRevisionInVersionsFile</a></span>(java.io.File&nbsp;file,
                          <a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a>&nbsp;rev)</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#sparseCheckout-java.lang.String-java.lang.String-">sparseCheckout</a></span>(java.lang.String&nbsp;branch,
               java.lang.String&nbsp;path)</code>
@@ -442,7 +452,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
  https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772.</div>
 </td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -1199,6 +1209,21 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
  see Repository.stripWorkDir()</div>
 </li>
 </ul>
+<a name="isDiff-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDiff</h4>
+<pre>public&nbsp;boolean&nbsp;isDiff(java.lang.String&nbsp;path)
+               throws java.lang.Exception</pre>
+<div class="block">Check path vs repository</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
 <a name="getDiffs-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
@@ -1296,6 +1321,20 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
 <pre>public&nbsp;byte[]&nbsp;readFromCommit(java.lang.String&nbsp;commitId,
                              java.lang.String&nbsp;path)
                       throws java.lang.Exception</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="readFromHead-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readFromHead</h4>
+<pre>public&nbsp;byte[]&nbsp;readFromHead(java.lang.String&nbsp;filePath)
+                    throws java.lang.Exception</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
