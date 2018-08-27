@@ -11,4 +11,4 @@ Forked modules:
    - `npm install`
    - `npm run build`
    - (copy all but .git and node_modules into mdw-workflow/assets/com/centurylink/mdw/node/node_modules/react-custom-scrollbars)
-   - edit package.json to replace `main: src/index.js` with `main: lib/index.js`
+   - edit package.json to replace `"main": "src/index.js"` with `"main": "lib/index.js"`
