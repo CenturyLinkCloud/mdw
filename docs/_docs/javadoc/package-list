@@ -25,6 +25,7 @@ com.centurylink.mdw.container.plugin.tomcat
 com.centurylink.mdw.dataaccess
 com.centurylink.mdw.dataaccess.db
 com.centurylink.mdw.dataaccess.file
+com.centurylink.mdw.drawio
 com.centurylink.mdw.email
 com.centurylink.mdw.event
 com.centurylink.mdw.export
