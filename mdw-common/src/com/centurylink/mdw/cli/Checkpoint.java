@@ -161,7 +161,8 @@ public class Checkpoint extends Setup {
         select += "order by ARCHIVE_DT desc";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
-            stmt.setTimestamp(1, new Timestamp(cutoffDate.getTime()));
+            if (cutoffDate != null)
+                stmt.setTimestamp(1, new Timestamp(cutoffDate.getTime()));
             try (ResultSet rs = stmt.executeQuery()) {
                 assetRefList = new ArrayList<AssetRef>();
                 while (rs.next()) {
