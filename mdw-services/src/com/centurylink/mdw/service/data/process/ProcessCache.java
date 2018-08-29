@@ -271,7 +271,7 @@ public class ProcessCache implements CacheService {
                     proc.applyOverrideAttributes(attributes);
             }
             if (proc == null && exceptionWhenNotFound)
-                throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + version));
+                throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + Asset.formatVersion(version)));
             return proc;
         }
         catch (Exception ex) {
