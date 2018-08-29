@@ -17,7 +17,6 @@ package com.centurylink.mdw.dataaccess.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -91,18 +90,18 @@ public class PackageDir extends File {
         return metaFile;
     }
 
-    public void parse() throws DataAccessException {
+    public boolean parse() throws DataAccessException {
         yaml = new File(toString() + "/" + PACKAGE_YAML_PATH).exists();
-        parse(yaml);
+        return parse(yaml);
     }
 
     @SuppressWarnings("rawtypes")
-    public void parse(boolean yaml) throws DataAccessException {
+    public boolean parse(boolean yaml) throws DataAccessException {
         try {
             this.yaml = yaml;
             File pkgFile = getMetaFile();
             if (!pkgFile.exists())
-                throw new FileNotFoundException(pkgFile.getAbsolutePath());
+                return false;
             if (yaml) {
                 Yaml yamlLoader = new Yaml();
                 Map map = (Map) yamlLoader
@@ -151,6 +150,7 @@ public class PackageDir extends File {
             logicalDir = new File("/" + pkgName + " v" + pkgVersion);
             if (versionControl != null)
                 pkgId = versionControl.getId(logicalDir);
+            return true;
         }
         catch (DataAccessException ex) {
             throw ex;

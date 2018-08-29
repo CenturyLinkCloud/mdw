@@ -5,11 +5,31 @@ var processMod = angular.module('processes', ['mdw']);
 processMod.controller('ProcessesController', 
     ['$scope', '$http', '$cookieStore', 'mdw', 'util', 'PROCESS_STATUSES',
     function($scope, $http, $cookieStore, mdw, util, PROCESS_STATUSES) {
+
+  // definitionId and processSpec passed in query params
+  // (from mdw-studio, for example)
+  var definitionIdParam = util.urlParams().definitionId;
+  var processSpecParam = util.urlParams().processSpec;
+  if (definitionIdParam && processSpecParam) {
+    var procFilter = $cookieStore.get('processFilter');
+    if (!procFilter)
+      procFilter = {};
+    procFilter.processId = definitionIdParam;
+    procFilter.master = false;
+    procFilter.status = null;
+    $cookieStore.put('processFilter', procFilter);
+    if (processSpecParam.endsWith('.proc'))
+      processSpecParam = processSpecParam.substring(0, processSpecParam.length - 5);
+    $cookieStore.put('processSpec', processSpecParam);
+    window.location = mdw.roots.hub + '#/workflow/processes';
+    return;
+  }
       
   // two-way bound to/from directive
   $scope.processList = {};
   
   $scope.selectedChart=$cookieStore.get('selectedChart');
+  
   $scope.processFilter = $cookieStore.get('processFilter');
   if (!$scope.processFilter) {
       $scope.processFilter = { 

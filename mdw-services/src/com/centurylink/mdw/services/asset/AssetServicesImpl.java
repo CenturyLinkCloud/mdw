@@ -351,8 +351,8 @@ public class AssetServicesImpl implements AssetServices {
                 if (sub.isDirectory() && !sub.equals(getArchiveDir()) && !excludes.contains(sub) && !mdwIgnore.isIgnore(sub)) {
                     if (new File(sub + "/.mdw").isDirectory()) {
                         PackageDir pkgSubDir = new PackageDir(getAssetRoot(), sub, getAssetVersionControl());
-                        pkgSubDir.parse();
-                        pkgSubDirs.add(pkgSubDir);
+                        if (pkgSubDir.parse())
+                            pkgSubDirs.add(pkgSubDir);
                     }
                     allSubDirs.add(sub);
                 }

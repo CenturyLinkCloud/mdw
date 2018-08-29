@@ -192,8 +192,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             List<PackageDir> pkgDirsTemp = new ArrayList<PackageDir>();
             for (File pkgNode : getPkgDirFiles(storageDir, includeArchive, new ArrayList<>())) {
                 PackageDir pkgDir = new PackageDir(storageDir, pkgNode, versionControl);
-                pkgDir.parse();
-                pkgDirsTemp.add(pkgDir);
+                if (pkgDir.parse())
+                    pkgDirsTemp.add(pkgDir);
             }
             Collections.sort(pkgDirsTemp, pkgDirComparator);
             pkgDirs = pkgDirsTemp;
