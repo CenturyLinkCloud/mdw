@@ -204,11 +204,13 @@ public class AssetRefCache implements CacheService {
                         Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                         list = cp.retrieveAllRefs(date);
                     }
-                    if (list != null) {
+                    if (list != null && list.size() > 0) {
                         for (AssetRef ref : list) {
                             myAssetRefs.put(ref.getDefinitionId(), ref);
                         }
                     }
+                    else
+                        logger.warn("No entries were found in ASSET_REF table!");
                     assetRefs = myAssetRefs;
                 }
             }
