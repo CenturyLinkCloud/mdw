@@ -19,7 +19,7 @@ response:
   body: |-
     {
       "status": {
-        "code": 0,
-        "message": "Success"
+        "code": 201,
+        "message": "Created"
       }
     }
