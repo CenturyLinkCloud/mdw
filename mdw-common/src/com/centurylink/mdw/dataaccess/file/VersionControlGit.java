@@ -77,6 +77,7 @@ import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.model.asset.CommitInfo;
 import com.centurylink.mdw.util.file.VersionProperties;
+import com.google.common.io.Files;
 
 public class VersionControlGit implements VersionControl {
 
@@ -226,7 +227,7 @@ public class VersionControlGit implements VersionControl {
 
     public AssetRevision getRevisionInVersionsFile(File file) throws IOException {
         Properties verProps = getVersionProps(file.getParentFile());
-        if(verProps==null)
+        if (verProps == null)
             return null;
         String propVal = verProps.getProperty(file.getName());
         if (propVal == null) {
@@ -239,6 +240,13 @@ public class VersionControlGit implements VersionControl {
 
     public void setRevisionInVersionsFile(File file, AssetRevision rev) throws IOException {
         VersionProperties verProps = getVersionProps(file.getParentFile());
+        if (verProps == null) {
+            // presumably newly-created package
+            File verFile = new File(file.getParentFile() + "/" + VERSIONS_FILE);
+            Files.write("".getBytes(), verFile);
+            verProps = new VersionProperties(verFile);
+            pkg2versions.put(file.getParentFile(), verProps);
+        }
         verProps.setProperty(file.getName(), String.valueOf(rev.getVersion()));
         verProps.save();
     }
@@ -260,13 +268,14 @@ public class VersionControlGit implements VersionControl {
     private VersionProperties getVersionProps(File pkgDir) throws IOException {
         VersionProperties props = pkg2versions.get(pkgDir);
         if (props == null) {
-            File file=new File(pkgDir + "/" + VERSIONS_FILE);
-            if(file.exists()){
+            File file = new File(pkgDir + "/" + VERSIONS_FILE);
+            if (file.exists()) {
                 props = new VersionProperties(file);
                 pkg2versions.put(pkgDir, props);
             }
-            else if (file.getAbsolutePath().indexOf(localDir.getAbsolutePath()) < 0)
+            else if (file.getAbsolutePath().indexOf(localDir.getAbsolutePath()) < 0) {
                 return getVersionProps(new File(localDir.getAbsolutePath() + "/" + pkgDir.getPath()));
+            }
         }
         return props;
     }
