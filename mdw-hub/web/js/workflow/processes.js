@@ -71,12 +71,6 @@ processMod.controller('ProcessesController',
     $cookieStore.remove('processSpec'); 
   }
   
-  $scope.clearTypeahead = function() {
-    $scope.typeaheadMatchSelection = null;
-    $scope.clearTypeaheadFilters();
-    $cookieStore.remove('processSpec'); 
-  };
-  
   $scope.$on('page-retrieved', function(event, processList) {
   $cookieStore.remove('selectedChart');
     // start date and end date, adjusted for db offset
@@ -175,6 +169,11 @@ processMod.controller('ProcessesController',
       $scope.processFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
   };
   
+  $scope.clearTypeahead = function() {
+    $scope.typeaheadMatchSelection = null;
+    $scope.clearTypeaheadFilters();
+    $cookieStore.remove('processSpec'); 
+  };
 }]);
 
 processMod.controller('ProcessController', 
