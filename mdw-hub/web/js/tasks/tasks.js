@@ -188,6 +188,10 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       if ($scope.model.typeaheadMatchSelection === null)
       $scope.clearTypeaheadFilters();
   };
+  $scope.clearTypeahead = function() {
+    $scope.model.typeaheadMatchSelection = null;
+    $scope.clearTypeaheadFilters();
+  };
   
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
