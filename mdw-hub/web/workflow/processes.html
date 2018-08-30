@@ -8,12 +8,12 @@
         </div>
         <div class="mdw-heading-input">
           <div class="mdw-inner-addon mdw-right-addon">
-            <i class="glyphicon glyphicon-search"></i>
-            <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
+            <input type="text" class="form-control mdw-inline" style="min-width:200px;" autofocus placeholder="search" spellcheck="false"
               ng-model="typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
               typeahead-editable="false" typeahead-on-select="typeaheadSelect()" ng-change="typeaheadChange()">
           </div>
-          <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
+          <span class="glyphicon glyphicon-remove mdw-clear-input" ng-click="clearTypeahead()"></span>
+          <div class="mdw-inner-addon mdw-right-addon" style="margin-left:-10px;" uib-dropdown>
             <i class="glyphicon glyphicon-chevron-down"></i>
             <input type="text" class="form-control mdw-inline mdw-dropfilter mdw-med-indent mdw-med-width2"  
               value="{{processFilter.master ? 'Master Processes' : 'All Processes'}}" uib-dropdown-toggle readonly>
