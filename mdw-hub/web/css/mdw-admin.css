@@ -489,6 +489,10 @@
   white-space: nowrap;
   overflow-x: hidden;
 }
+.mdw-sys-description {
+  color: #455a64;
+  margin-bottom: 5px;
+}
 .mdw-sys-info-value {
   margin-left: 10px;
 }
