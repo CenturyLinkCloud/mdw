@@ -13,6 +13,7 @@
             </a>
           </div>
           <div class="mdw-sys-info" ng-if="sysInfoCategory.expanded">
+            <div ng-if="sysInfoCategory.description" class="mdw-sys-description">{{sysInfoCategory.description}}</div>
             <div ng-repeat="sysInfo in sysInfoCategory.sysInfos">
               <span style="font-weight:bold">{{sysInfo.name}}</span>: {{sysInfo.value}}
               <div class="mdw-sys-info-value" ng-if="sysInfo.values" ng-repeat="sysInfoValue in sysInfo.values track by $index">

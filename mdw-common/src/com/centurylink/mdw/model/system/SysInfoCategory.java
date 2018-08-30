@@ -33,6 +33,10 @@ public class SysInfoCategory implements Jsonable {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
+    private String description;
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
     private List<SysInfo> sysInfos;
     public List<SysInfo> getSysInfos() { return sysInfos; }
     public void setSysInfos(List<SysInfo> sysInfos) { this.sysInfos = sysInfos; }
@@ -44,6 +48,8 @@ public class SysInfoCategory implements Jsonable {
 
     public SysInfoCategory(JSONObject json) throws JSONException {
         this.name = json.getString("name");
+        if (json.has("description"))
+            this.description = json.getString("description");
         if (json.has("sysInfos")) {
             this.sysInfos = new ArrayList<SysInfo>();
             JSONArray sysInfoArr = json.getJSONArray("sysInfos");
@@ -56,6 +62,8 @@ public class SysInfoCategory implements Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("name", this.name);
+        if (this.description != null)
+            json.put("description", this.description);
         if (this.sysInfos != null) {
             JSONArray sysInfoArr = new JSONArray();
             for (SysInfo sysInfo : this.sysInfos) {
