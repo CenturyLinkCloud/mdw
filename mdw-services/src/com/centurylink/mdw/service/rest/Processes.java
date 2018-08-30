@@ -128,34 +128,13 @@ public class Processes extends JsonRestService implements JsonExportable {
                     }
                     else if ("summary".equals(segTwo)) {
                         ProcessInstance process = workflowServices.getProcess(id, false);
-                        JSONObject summary = new JsonObject();
-                        summary.put("id", process.getId());
-                        summary.put("name", process.getProcessName());
-                        summary.put("packageName", process.getPackageName());
-                        summary.put("version", process.getProcessVersion());
-                        summary.put("masterRequestId", process.getMasterRequestId());
-                        summary.put("definitionId", process.getProcessId());
-                        summary.put("template", process.getTemplate());
-                        if (process.getTemplate() != null) {
-                            summary.put("templatePackage", process.getTemplatePackage());
-                            summary.put("templateVersion", process.getTemplateVersion());
-                            Process latestTemplate = ProcessCache.getProcess(process.getTemplatePackage() + "/" + process.getTemplate());
-                            if (latestTemplate != null && !latestTemplate.getId().equals(process.getProcessId()))
-                                summary.put("archived", true);
-                        }
-                        else {
-                            Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
-                            if (latest != null && !latest.getId().equals(process.getProcessId()))
-                                summary.put("archived", true);
-                        }
-
-                        return summary;
+                        return getSummaryJson(process);
                     }
                     else {
                         JSONObject json = null;
-                        if ("true".equals(query.getBooleanFilter("shallow")))
+                        if (query.getBooleanFilter("shallow"))
                             json = ServiceLocator.getProcessServices().getInstanceShallow(id).getJson();
-                        else if ("true".equals(query.getBooleanFilter("nosubs")))
+                        else if (query.getBooleanFilter("nosubs"))
                             json = workflowServices.getProcess(id).getJson();
                         else
                             json = workflowServices.getProcess(id, true).getJson();
@@ -254,14 +233,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 if (triggerId > 0) {
                     // retrieve instance by trigger -- just send summary
                     ProcessInstance process = workflowServices.getProcessForTrigger(triggerId);
-                    JSONObject summary = new JsonObject();
-                    summary.put("id", process.getId());
-                    summary.put("name", process.getProcessName());
-                    summary.put("packageName", process.getPackageName());
-                    summary.put("version", process.getProcessVersion());
-                    summary.put("masterRequestId", process.getMasterRequestId());
-                    summary.put("definitionId", process.getProcessId());
-                    return summary;
+                    return getSummaryJson(process);
                 }
                 else if ("designer".equals(query.getFilter("mdw-app"))) {
                     try {
@@ -312,6 +284,30 @@ public class Processes extends JsonRestService implements JsonExportable {
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
+    }
+
+    protected JSONObject getSummaryJson(ProcessInstance process) {
+        JSONObject summary = new JsonObject();
+        summary.put("id", process.getId());
+        summary.put("name", process.getProcessName());
+        summary.put("packageName", process.getPackageName());
+        summary.put("version", process.getProcessVersion());
+        summary.put("masterRequestId", process.getMasterRequestId());
+        summary.put("definitionId", process.getProcessId());
+        summary.put("template", process.getTemplate());
+        if (process.getTemplate() != null) {
+            summary.put("templatePackage", process.getTemplatePackage());
+            summary.put("templateVersion", process.getTemplateVersion());
+            Process latestTemplate = ProcessCache.getProcess(process.getTemplatePackage() + "/" + process.getTemplate());
+            if (latestTemplate != null && !latestTemplate.getId().equals(process.getProcessId()))
+                summary.put("archived", true);
+        }
+        else {
+            Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
+            if (latest != null && !latest.getId().equals(process.getProcessId()))
+                summary.put("archived", true);
+        }
+        return summary;
     }
 
     @Override

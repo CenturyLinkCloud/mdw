@@ -96,15 +96,18 @@ The MDW stack is aligned into these major components:
  ![MDW Components](../../img/MdwComponents.png)
 
 ### Task Management
-  TODO
+  To be written
   
 ### Error Handling
-  TODO
+  To be written
   
 ### Automated Tests
-  TODO
+  To be written
   
-### Event Handlers
-  TODO
+### REST Interfaces
+  To be written
+  
+### Metrics
+  To be written
 
 
