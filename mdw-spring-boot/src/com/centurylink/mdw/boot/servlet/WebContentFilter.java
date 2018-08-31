@@ -55,9 +55,18 @@ public class WebContentFilter  implements Filter {
             if (request.getSession().getAttribute("authenticatedUser") == null) {
                 // let access filter redirect if not authenticated
                 new AccessFilter().doFilter(servletRequest, servletResponse, new FilterChain() {
-                    public void doFilter(ServletRequest request, ServletResponse response)
+                    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                             throws IOException, ServletException {
-                        // dummy filter chain
+                        HttpServletRequest request = (HttpServletRequest) servletRequest;
+                        String path = request.getServletPath();
+                        if (request.getPathInfo() != null)
+                            path += request.getPathInfo();
+                        if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
+                            request.getRequestDispatcher("/customContent" + path).forward(servletRequest, servletResponse);
+                        }
+                        else {
+                            request.getRequestDispatcher("/hub" + path).forward(servletRequest, servletResponse);
+                        }
                     }
                 });
             }
