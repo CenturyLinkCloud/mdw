@@ -21,7 +21,7 @@
   - Delete SNAPSHOT release and tag
   - git pull
   
-5 - Commit and push all the above changes to Git (normally plugin.xml and gradle.properties).
+5 - Commit and push all the above changes to Git (normally plugin.xml, gradle.properties and project.yaml).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
