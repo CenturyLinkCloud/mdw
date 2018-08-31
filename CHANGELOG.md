@@ -1,12 +1,23 @@
 # Change Log
 
+## [6.1.08](https://github.com/CenturyLinkCloud/mdw/tree/6.1.08) (2018-08-31)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.07...6.1.08)
+
+**Implemented enhancements:**
+
+- Allow for use of different Mongo database besides "mdw" [\#478](https://github.com/CenturyLinkCloud/mdw/issues/478)
+
+**Closed issues:**
+
+- Ignore .mdw directory with no package.yaml/json [\#483](https://github.com/CenturyLinkCloud/mdw/issues/483)
+- Issue with AssetRefCache when retrieving entire list instead of initial setting of last 2 years [\#482](https://github.com/CenturyLinkCloud/mdw/issues/482)
+- Hub always renders instance using current process version when using "source" link from child [\#481](https://github.com/CenturyLinkCloud/mdw/issues/481)
+- After asset import, ASSET\_REF table is updated with incorrect asset versions [\#480](https://github.com/CenturyLinkCloud/mdw/issues/480)
+- FilePanel no longer works when using MDW node 6.1.07 package [\#479](https://github.com/CenturyLinkCloud/mdw/issues/479)
+- Error creating assets in newly-created package in MDWHub [\#461](https://github.com/CenturyLinkCloud/mdw/issues/461)
+
 ## [6.1.07](https://github.com/CenturyLinkCloud/mdw/tree/6.1.07) (2018-08-10)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.06...6.1.07)
-
-### **IMPORTANT FIXES**
-### Security update for Auth header issue.
-### Fix CLI "mdw update" to avoid overwriting local user changes
-### Spring upgrade requires modification to any customized [application-context.xml](https://github.com/CenturyLinkCloud/mdw/commit/470bd3ebbfc2be0cca8078d5fe4269862ca8959c#diff-9f7aa99d67f5a5e33f47f616b7f417fd)
 
 **Implemented enhancements:**
 
