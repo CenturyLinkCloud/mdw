@@ -61,7 +61,7 @@ public class WebContentFilter  implements Filter {
                     }
                 });
             }
-            if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
+            else if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
                 request.getRequestDispatcher("/customContent" + path).forward(servletRequest, servletResponse);
             }
             else {
