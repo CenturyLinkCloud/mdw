@@ -2,7 +2,7 @@
 <mdw-workflow>
   <sourceProject name="mdw-workflow" author="aa56486"/>
   <webProject name="mdw-hub" deployDir="deploy" />
-  <mdwFramework version="6.1.08-SNAPSHOT"/>
+  <mdwFramework version="6.1.08"/>
   <server host="localhost" port="8080" contextRoot="mdw"/>
   <repository provider="Git" branch="master" localPath="assets"/>
 </mdw-workflow>
