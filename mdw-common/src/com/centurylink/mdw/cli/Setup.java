@@ -41,11 +41,14 @@ public abstract class Setup implements Operation {
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
     protected static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
-    protected static List<String> defaultBasePackages = new ArrayList<>();
+    protected static final List<String> DEFAULT_BASE_PACKAGES = new ArrayList<>();
     static {
-        defaultBasePackages.add("com.centurylink.mdw.base");
-        defaultBasePackages.add("com.centurylink.mdw.db");
-        defaultBasePackages.add("com.centurylink.mdw.testing");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.base");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.db");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.node");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.react");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.task");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.testing");
     }
 
     Setup() {
@@ -243,7 +246,7 @@ public abstract class Setup implements Operation {
         baseAssetPackages = new ArrayList<>();
         addBasePackages(getAssetRoot(), getAssetRoot());
         if (baseAssetPackages.isEmpty())
-            baseAssetPackages = defaultBasePackages;
+            baseAssetPackages = DEFAULT_BASE_PACKAGES;
     }
 
     private void addBasePackages(File assetDir, File dir) throws IOException {

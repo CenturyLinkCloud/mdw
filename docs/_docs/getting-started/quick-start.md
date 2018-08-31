@@ -36,12 +36,13 @@ Get up and running with MDW in a hurry.
   You can update these base assets at any time by running `mdw update`.
   
 ### Run MDW
-  At this point you have a decision to make.  MDW comes with a rich set of REST service APIs, and also
-  enables you to quickly [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/).  To host these services MDW relies on a 
-  Java Servlet container.  Your options are:
+  MDW comes with a rich set of REST service APIs, and also enables you to quickly 
+  [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/).  
+  To host these services MDW relies on a Java Servlet container.  Your options are:
   1. Use the self-contained [MDW Spring Boot jar](../../guides/spring-boot/#1-self-contained-boot-jar)
   2. Build your own [Custom Spring Boot jar](../../guides/spring-boot/#2-mdw-as-a-spring-boot-dependency)
   3. Install [Apache Tomcat (or Jetty)](../../guides/tomcat)
+  4. Use the prebuilt MDW [Docker image](../../guides/docker).
   
   Whichever option you choose, MDW behaves in exactly the same way.  To get you running quickly we'll start 
   with the prebuilt Spring Boot option.  You can always switch to custom Spring Boot or Tomcat later when you want to debug your assets,
