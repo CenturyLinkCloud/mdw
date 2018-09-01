@@ -16,7 +16,9 @@ processMod.controller('ProcessesController',
       procFilter = {};
     procFilter.processId = definitionIdParam;
     procFilter.master = false;
-    procFilter.status = null;
+    procFilter.status = '[Any]';
+    procFilter.sort = 'startDate';
+    procFilter.descending = true;
     $cookieStore.put('processFilter', procFilter);
     if (processSpecParam.endsWith('.proc'))
       processSpecParam = processSpecParam.substring(0, processSpecParam.length - 5);
@@ -24,6 +26,15 @@ processMod.controller('ProcessesController',
     window.location = mdw.roots.hub + '#/workflow/processes';
     return;
   }
+  
+  $scope.resetFilter = function() {
+    $scope.processFilter = { 
+        master: true,
+        status: '[Active]',
+        sort: 'startDate',
+        descending: true
+    };
+  };
       
   // two-way bound to/from directive
   $scope.processList = {};
@@ -32,12 +43,7 @@ processMod.controller('ProcessesController',
   
   $scope.processFilter = $cookieStore.get('processFilter');
   if (!$scope.processFilter) {
-      $scope.processFilter = { 
-        master: true,
-        status: '[Active]',
-        sort: 'startDate',
-        descending: true
-    };
+    $scope.resetFilter();
   }
   else {
     // don't remember these
@@ -72,7 +78,7 @@ processMod.controller('ProcessesController',
   }
   
   $scope.$on('page-retrieved', function(event, processList) {
-  $cookieStore.remove('selectedChart');
+    $cookieStore.remove('selectedChart');
     // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
     processList.processInstances.forEach(function(processInstance) {
