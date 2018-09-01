@@ -462,7 +462,7 @@ public class TaskServicesImpl implements TaskServices {
             templates = new ArrayList<TaskTemplate>();
             String findLower = find.toLowerCase();
             for (TaskTemplate taskVO : TaskTemplateCache.getTaskTemplates()) {
-                if (taskVO.getName() != null && taskVO.getName().toLowerCase().startsWith(findLower))
+                if (taskVO.getTaskName() != null && taskVO.getTaskName().toLowerCase().startsWith(findLower))
                     templates.add(taskVO);
                 else if (find.indexOf(".") > 0 && taskVO.getPackageName() != null && taskVO.getPackageName().toLowerCase().startsWith(findLower))
                     templates.add(taskVO);

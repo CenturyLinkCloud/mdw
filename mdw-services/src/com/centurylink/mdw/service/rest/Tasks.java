@@ -113,7 +113,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                             JSONObject jsonTask = new JsonObject();
                             jsonTask.put("packageName", taskVO.getPackageName());
                             jsonTask.put("taskId", taskVO.getId());
-                            jsonTask.put("name", taskVO.getName());
+                            jsonTask.put("name", taskVO.getTaskName());
                             jsonTask.put("version", taskVO.getVersionString());
                             jsonTask.put("logicalId", taskVO.getLogicalId());
                             jsonTasks.put(jsonTask);

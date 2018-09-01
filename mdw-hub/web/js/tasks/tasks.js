@@ -6,14 +6,32 @@ var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location','$cookieStore', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
                                        function($scope, $window, $http, $location, $cookieStore, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
   
+  // templateId and taskSpec passed in query params
+  var templateIdParam = util.urlParams().templateId;
+  var taskSpecParam = util.urlParams().taskSpec;
+  if (templateIdParam && taskSpecParam) {
+    var taskFilter = $cookieStore.get('taskFilter');
+    if (!taskFilter)
+      taskFilter = {};
+    taskFilter.taskId = templateIdParam;
+    taskFilter.workgroups = '[My Workgroups]';
+    taskFilter.status = null;
+    taskFilter.advisory = '[Not Invalid]';
+    taskFilter.sort = 'startDate';
+    taskFilter.descending = true;
+    $cookieStore.put('taskFilter', taskFilter);
+    if (taskSpecParam.endsWith('.task'))
+      taskSpecParam = taskSpecParam.substring(0, taskSpecParam.length - 5);
+    $cookieStore.put('taskSpec', taskSpecParam);
+    window.location = mdw.roots.hub + '#/tasks';
+    return;
+  }
+  
   // If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can 
   // break two-way binding, so taskList is a field in the top-level model object
   // https://github.com/angular/angular.js/issues/4046 -->
   
-  $scope.model = {};
-  $scope.model.taskList = {};
-  $scope.model.taskFilter = $cookieStore.get('taskFilter');
-  if (!$scope.model.taskFilter) {
+  $scope.resetFilter = function() {
     $scope.model.taskFilter = {
         workgroups: '[My Workgroups]',
         status: '[Active]',
@@ -21,15 +39,31 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         sort: 'startDate',
         descending: true
      };
+  };
+  
+  $scope.model = {};
+  $scope.model.taskList = {};
+  $scope.model.taskFilter = $cookieStore.get('taskFilter');
+  if (!$scope.model.taskFilter) {
+    $scope.resetFilter();
   }
-  //filter tasks based on template-id
-  $scope.taskId=$cookieStore.get('taskId');
-  if($scope.taskId)
-    $scope.model.taskFilter.taskId=$scope.taskId;
-  else
-    $scope.model.taskFilter.taskId=null;
- 
+  else {
+    // don't remember these
+    if ($scope.model.taskFilter.instanceId)
+      $scope.model.taskFilter.instanceId = null;
+    if ($scope.model.taskFilter.masterRequestId)
+      $scope.model.taskFilter.masterRequestId = null;
+  }
+  
   $scope.taskAdvisories = ['[Not Invalid]'].concat(TASK_ADVISORIES);
+
+  // preselected taskSpec
+  if ($scope.model.taskFilter.taskId) {
+    $scope.model.typeaheadMatchSelection = $cookieStore.get('taskSpec');
+  }
+  else {
+    $cookieStore.remove('taskSpec');
+  }
   
   // retrieve TaskCategories
   $http.get(mdw.roots.services + '/services/BaseData/TaskCategories' + '?app=mdw-admin')
@@ -39,16 +73,22 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.$on('page-retrieved', function(event, taskList) {
     // create date and due date
-    $cookieStore.remove('taskId');
     taskList.tasks.forEach(function(task) {
       TaskUtil.setTask(task);
     });
+    if ($scope.model.taskFilter.taskId && taskList.tasks.length > 0) {
+      $cookieStore.put('taskSpec', taskList.tasks[0].name);
+    }
+    else {
+      $cookieStore.remove('taskSpec');
+    }
+    $cookieStore.put('taskFilter', $scope.model.taskFilter);
+    
     // retrieve TaskActions
     $http.get(mdw.roots.hub + '/services/Tasks/bulkActions?app=mdw-admin&myTasks=' + ($scope.model.taskFilter.assignee == '[My Tasks]'))
       .then(function(response) {
         $scope.taskActions = response.data;
       });
-    $cookieStore.put('taskFilter', $scope.model.taskFilter);
   });
   
   // must match actions wrap width in tasks.html
@@ -153,7 +193,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     $scope.model.taskFilter.assignee = assignee;
   };  
   
-  $scope.model.typeaheadMatchSelection = null;
   // instanceId, masterRequestId, taskName, packageName
   $scope.findTypeaheadMatches = function(typed) {
     return $http.get(mdw.roots.services + '/services/Tasks' + '?app=mdw-admin&find=' + typed).then(function(response) {
@@ -182,7 +221,6 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       $scope.model.taskFilter.masterRequestId = null;
     if ($scope.model.taskFilter.taskId)
       $scope.model.taskFilter.taskId = null;
-    
   };
   $scope.typeaheadChange = function() {
       if ($scope.model.typeaheadMatchSelection === null)
@@ -191,6 +229,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   $scope.clearTypeahead = function() {
     $scope.model.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
+    $cookieStore.remove('taskSpec');
   };
   
   $scope.typeaheadSelect = function() {
