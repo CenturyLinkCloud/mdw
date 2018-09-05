@@ -28,6 +28,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Standard parameters:
+ * <ul>
+ *   <li>count - Count only (no data retrieval)</li>
+ *   <li>find - Find string</li>
+ *   <li>start - Start index (for pagination)</li>
+ *   <li>max - Max rows (for pagination)</li>
+ *   <li>sort - sort field</li>
+ *   <li>descending - sort descending</li>
+ * </ul>
+ * @author donaldoakes
+ *
+ */
 public class Query {
     public static final int DEFAULT_MAX = 50;
     public static final int MAX_ALL = -1;
