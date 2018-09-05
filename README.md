@@ -30,7 +30,12 @@
      ```
      npm install
      ```
-4. Build the Projects (Initial, non-incremental build)
+4a. Build in IntelliJ IDEA
+   - Run IntelliJ IDEA Community Edition
+   - Select Open Project and browse to mdw/mdw
+   - Build > Rebuild Project
+
+4b. Build in Eclipse
    - Window > Show View > Other > Gradle  > Gradle Tasks.
    - Expand the mdw project, click View Menu > Show All Tasks, then expand `other` and double-click the `buildDev` task (on Mac it may be necessary to run Gradle from the command line).
    - Refresh all projects in Eclipse and (ctrl-b) to build (or let autobuild do it).  Incremental builds can be performed this way and do not require a Gradle build.

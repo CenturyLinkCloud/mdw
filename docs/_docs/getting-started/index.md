@@ -18,12 +18,12 @@ permalink: /docs/getting-started/
 	  <p>Super brief instructions to get up and running with MDW.</p>
     </div>
     <div class="unit one-third">
-      <a href="../guides/mdw-cookbook">Cookbook &rarr;</a>
-      <p>A step-by-step tutorial on MDW's essential features.</p>
+      <a href="../guides/mdw-studio">MDW Studio &rarr;</a>
+      <p>Design workflow processes and other MDW assets.</p>
     </div>
     <div class="unit one-third">
-      <a href="{{ site.baseurl }}/docs/guides/">Guides &rarr;</a>
-      <p>Container-specific setup with all the detail you'll ever want.</p>
+      <a href="../guides/mdw-cookbook">Cookbook &rarr;</a>
+      <p>A step-by-step tutorial on MDW's essential features.</p>
     </div>
     <div class="clear"></div>
   </div>
