@@ -31,6 +31,7 @@ import com.centurylink.mdw.task.types.TaskServiceRegistry;
 public class TaskInstanceStrategyFactory {
 
     public static final String STRATEGY_IMPL_PACKAGE = "com.centurylink.mdw.workflow.task.strategy";
+    public static final String DROOLS_IMPL_PACKAGE = "com.centurylink.mdw.drools";
 
     public enum StrategyType {
         AutoAssignStrategy,
@@ -179,6 +180,8 @@ public class TaskInstanceStrategyFactory {
         if (logicalName.indexOf(".") > 0) {
             return logicalName;  // full package specified (custom strategy)
         }
+        else if (logicalName.contains("Rule-Based"))
+            return DROOLS_IMPL_PACKAGE + "." + logicalName.replaceAll(" ", "").replaceAll("-", "") + type.toString();
         else {
             return STRATEGY_IMPL_PACKAGE + "." + logicalName.replaceAll(" ", "").replaceAll("-", "") + type.toString();
         }
