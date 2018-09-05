@@ -180,7 +180,7 @@ public class TaskInstanceStrategyFactory {
         if (logicalName.indexOf(".") > 0) {
             return logicalName;  // full package specified (custom strategy)
         }
-        else if (logicalName.contains("Rule-Based"))
+        else if (logicalName.contains("Rules-Based"))
             return DROOLS_IMPL_PACKAGE + "." + logicalName.replaceAll(" ", "").replaceAll("-", "") + type.toString();
         else {
             return STRATEGY_IMPL_PACKAGE + "." + logicalName.replaceAll(" ", "").replaceAll("-", "") + type.toString();
