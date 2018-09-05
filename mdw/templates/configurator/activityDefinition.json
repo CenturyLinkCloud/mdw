@@ -18,6 +18,7 @@
     {
       "type": "asset",
       "name": "implementor",
+      "applier": "ActivityImplApplier",
       "label": "Implementor"
     },
     {
