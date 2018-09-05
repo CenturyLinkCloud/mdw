@@ -14,4 +14,4 @@ activemq-data/
 temp/
 .DS_Store
 out/
-mdw/.idea/**/workspace.xml
+mdw/.idea/workspace.xml
