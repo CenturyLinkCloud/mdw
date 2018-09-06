@@ -539,9 +539,10 @@ public abstract class BaseActivity implements GeneralActivity {
                 varInst.setData(value);
                 engine.updateVariableInstance(varInst);
             } else {
-                varInst = engine.createVariableInstance(processInst, name, value);
+                varInst = engine.createVariableInstance(processInst, name, value);  // This also adds it to ProcessInstance
                 varInstId = varInst.getInstanceId();
-                parameters.add(varInst);    // This adds to ProcessInstanceVO as well
+                if (!parameters.contains(varInst))  // Should already be there when added to ProcessInstance
+                    parameters.add(varInst);    // This adds to ProcessInstanceVO as well - do not think this ever executes
             }
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

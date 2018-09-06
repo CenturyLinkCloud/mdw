@@ -30,7 +30,12 @@
      ```
      npm install
      ```
-4. Build the Projects (Initial, non-incremental build)
+4a. Build in IntelliJ IDEA
+   - Run IntelliJ IDEA Community Edition
+   - Select Open Project and browse to mdw/mdw
+   - Build > Rebuild Project
+
+4b. Build in Eclipse
    - Window > Show View > Other > Gradle  > Gradle Tasks.
    - Expand the mdw project, click View Menu > Show All Tasks, then expand `other` and double-click the `buildDev` task (on Mac it may be necessary to run Gradle from the command line).
    - Refresh all projects in Eclipse and (ctrl-b) to build (or let autobuild do it).  Incremental builds can be performed this way and do not require a Gradle build.
@@ -43,7 +48,14 @@
    - mdw/config/seed_users.json
    - (On Linux or Mac): Copy mdw-common/src/META-INF/mdw/spring/application-context.xml to mdw/config/spring/application-context.xml, and edit so that ActiveMQ dataDirectory points to a writeable location.
 
-7. Deploy on Tomcat in Eclipse
+7a. Run Spring Boot Jar in IntelliJ IDEA
+   - From the IntelliJ menu select Run > Edit Configurations.
+   - Click **+** > Jar Application.
+   - For Path to Jar, browse to mdw/deploy/app/mdw-boot-6.1.XX-SNAPSHOT.jar
+   - VM Options: -Dmdw.runtime.env=dev -Dmdw.config.location=mdw/config
+   - Save the configuration and type ctrl-alt-R to run/debug MDW.
+
+7b. Run on Tomcat in Eclipse
    - In Eclipse Servers view, right-click and select New > Server  
      **Important**: Select the Apache > Tomcat 8/8.5 (MDW) runtime
      and make sure you have a jdk 1.8 (vs jre) selected for the runtime.
@@ -55,8 +67,6 @@
      -Dmdw.config.location=c:/workspaces/mdw/mdw/config
      -Xms512m -Xmx1024m
      ```
-
-8. Run
    - Right-click on the server and select Debug to start it up (this should automatically publish mdw-hub)
    - (On Linux and Mac): Right-click on the mdw-hub project in Eclipse and manually add the 'web' folder to the root of the Deployment Assembly: Properties > Deployment Assembly.  If initially mdw-hub publishing is incomplete (missing index.html, etc):
      - On the file system under mdw-hub/deploy, delete the directories webapps/mdw and work/Catalina/localhost/mdw.

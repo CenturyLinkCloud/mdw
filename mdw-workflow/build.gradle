@@ -11,6 +11,11 @@ eclipse {
 
         file {
             whenMerged { classpath ->
+                // eclipse should process dynamic java, but should not be part of build
+                def assetsSrc = new org.gradle.plugins.ide.eclipse.model.SourceFolder("assets", "build/assets")
+                assetsSrc.excludes.add("Archive/")
+                entries.add(assetsSrc)
+            
                 def groovySupport = entries.find { it.kind == "con" && it.path == "GROOVY_SUPPORT" }
                 groovySupport.entryAttributes.put("minimal", "true")
             }
@@ -30,7 +35,7 @@ sourceSets {
     main {
         java {
             srcDirs "src"
-            srcDirs "assets"
+            // srcDirs "assets"
         }
         output.classesDir = "build/classes"
     }

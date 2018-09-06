@@ -32,7 +32,7 @@ import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.util.file.VersionProperties;
 
-@Parameters(commandNames = "assets", commandDescription = "Compare asset versions to avoid errors during import", separators="=")
+@Parameters(commandNames = "vercheck", commandDescription = "Compare asset versions to avoid errors during import", separators="=")
 public class Vercheck extends Setup {
 
     @Parameter(names="--tag", description="Git tag to compare")

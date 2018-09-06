@@ -28,6 +28,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Standard parameters:
+ * <ul>
+ *   <li>count - Count only (no data retrieval)</li>
+ *   <li>find - Find string</li>
+ *   <li>start - Start index (for pagination)</li>
+ *   <li>max - Max rows (for pagination)</li>
+ *   <li>sort - sort field</li>
+ *   <li>descending - sort descending</li>
+ * </ul>
+ * @author donaldoakes
+ *
+ */
 public class Query {
     public static final int DEFAULT_MAX = 50;
     public static final int MAX_ALL = -1;
@@ -288,9 +301,44 @@ public class Query {
                 sb.append(name).append("=").append(URLEncoder.encode(filters.get(name)));
             }
         }
+        if (count) {
+            sb.append("count=true");
+            if (sb.length() > 0)
+                sb.append("&");
+        }
+        if (find != null) {
+            sb.append("find=" + find);
+            if (sb.length() > 0)
+                sb.append("&");
+        }
+        if (start > 0) {
+            sb.append("start=" + start);
+            if (sb.length() > 0)
+                sb.append("&");
+        }
+        if (max != DEFAULT_MAX) {
+            sb.append("max=" + max);
+            if (sb.length() > 0)
+                sb.append("&");
+        }
+        if (sort != null) {
+            sb.append("sort=" + sort);
+            if (sb.length() > 0)
+                sb.append("&");
+        }
+        if (descending) {
+            sb.append("descending=true");
+            if (sb.length() > 0)
+                sb.append("&");
+        }
+
+        String query = sb.toString();
+        if (query.endsWith("&"))
+            query = query.substring(0, query.length() - 1);
+
         if (path != null)
-            return path + "?" + sb.toString();
+            return query.length() > 0 ? path + "?" + query : path;
         else
-            return sb.toString();
+            return query;
     }
 }

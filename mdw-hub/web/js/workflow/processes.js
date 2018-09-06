@@ -5,19 +5,45 @@ var processMod = angular.module('processes', ['mdw']);
 processMod.controller('ProcessesController', 
     ['$scope', '$http', '$cookieStore', 'mdw', 'util', 'PROCESS_STATUSES',
     function($scope, $http, $cookieStore, mdw, util, PROCESS_STATUSES) {
-      
-  // two-way bound to/from directive
-  $scope.processList = {};
+
+  // definitionId and processSpec passed in query params
+  // (from mdw-studio, for example)
+  var definitionIdParam = util.urlParams().definitionId;
+  var processSpecParam = util.urlParams().processSpec;
+  if (definitionIdParam && processSpecParam) {
+    var procFilter = $cookieStore.get('processFilter');
+    if (!procFilter)
+      procFilter = {};
+    procFilter.processId = definitionIdParam;
+    procFilter.master = false;
+    procFilter.status = '[Any]';
+    procFilter.sort = 'startDate';
+    procFilter.descending = true;
+    $cookieStore.put('processFilter', procFilter);
+    if (processSpecParam.endsWith('.proc'))
+      processSpecParam = processSpecParam.substring(0, processSpecParam.length - 5);
+    $cookieStore.put('processSpec', processSpecParam);
+    window.location = mdw.roots.hub + '#/workflow/processes';
+    return;
+  }
   
-  $scope.selectedChart=$cookieStore.get('selectedChart');
-  $scope.processFilter = $cookieStore.get('processFilter');
-  if (!$scope.processFilter) {
-      $scope.processFilter = { 
+  $scope.resetFilter = function() {
+    $scope.processFilter = { 
         master: true,
         status: '[Active]',
         sort: 'startDate',
         descending: true
     };
+  };
+      
+  // two-way bound to/from directive
+  $scope.processList = {};
+  
+  $scope.selectedChart=$cookieStore.get('selectedChart');
+  
+  $scope.processFilter = $cookieStore.get('processFilter');
+  if (!$scope.processFilter) {
+    $scope.resetFilter();
   }
   else {
     // don't remember these
@@ -52,7 +78,7 @@ processMod.controller('ProcessesController',
   }
   
   $scope.$on('page-retrieved', function(event, processList) {
-  $cookieStore.remove('selectedChart');
+    $cookieStore.remove('selectedChart');
     // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
     processList.processInstances.forEach(function(processInstance) {
@@ -149,6 +175,11 @@ processMod.controller('ProcessesController',
       $scope.processFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
   };
   
+  $scope.clearTypeahead = function() {
+    $scope.typeaheadMatchSelection = null;
+    $scope.clearTypeaheadFilters();
+    $cookieStore.remove('processSpec'); 
+  };
 }]);
 
 processMod.controller('ProcessController', 

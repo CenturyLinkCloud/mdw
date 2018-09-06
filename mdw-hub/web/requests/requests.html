@@ -8,7 +8,6 @@
           </div>
           <div class="mdw-heading-input">
             <div class="mdw-inner-addon mdw-right-addon">
-              <i class="glyphicon glyphicon-search"></i> 
               <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
                 ng-model="typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
                 typeahead-editable="false" typeahead-on-select="typeaheadSelect()" typeahead-min-length="2" ng-change="typeaheadChange()">

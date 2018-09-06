@@ -287,7 +287,6 @@ public class Assets extends JsonRestService {
     }
 
     /**
-     * This is only for creating packages.  For individual assets, see AssetContentServlet.
      * TODO: Content is ignored, and an empty asset is always created.
      */
     @Override

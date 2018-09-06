@@ -17,7 +17,7 @@ title: Spring Boot
   If you're creating your own full-blown Spring Boot app, you can reference MDW as a straight dependency.
   By including [mdw-spring-boot](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mdw-spring-boot%22) among your dependencies, 
   you'll automagically get the MDWHub webapp and expose your MDW 
-  [REST APIs](../../guides/mdw-cookbook/#14-expose-the-process-as-a-rest-service).
+  [REST APIs](../../guides/mdw-cookbook/#14-expose-the-process-as-a-rest-service).  Sometimes we call this *Pure Spring Boot* mode.
   
   The easy way to see how this works is to use run the MDW CLI command:
   ```

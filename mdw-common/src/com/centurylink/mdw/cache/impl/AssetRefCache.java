@@ -53,15 +53,16 @@ public class AssetRefCache implements CacheService {
     @Override
     public void clearCache() {
         assetRefs = null;
-
     }
 
     public static AssetRef getAssetRef(String name) throws CachingException {
-        if (assetRefs == null)
-            load();
+        Map<Long,AssetRef> myAssetRefs = assetRefs;
+
+        if (myAssetRefs == null)
+            myAssetRefs = load();
 
         AssetRef ref = null;
-        for (AssetRef curRef : assetRefs.values()) {
+        for (AssetRef curRef : myAssetRefs.values()) {
             if (curRef.getName().equals(name))
                 ref = curRef;
         }
@@ -69,32 +70,36 @@ public class AssetRefCache implements CacheService {
         if (ref == null && isEnabled && offset != 0L) {
             ref = loadAssetRef(name);
             if (ref != null)
-                assetRefs.put(ref.getDefinitionId(), ref);
+                myAssetRefs.put(ref.getDefinitionId(), ref);
         }
         return ref;
     }
 
     public static AssetRef getAssetRef(Long definitionId) throws CachingException {
-        if (assetRefs == null)
-            load();
+        Map<Long,AssetRef> myAssetRefs = assetRefs;
 
-        AssetRef ref = assetRefs.get(definitionId);
+        if (myAssetRefs == null)
+            myAssetRefs = load();
+
+        AssetRef ref = myAssetRefs.get(definitionId);
 
         if (ref == null && isEnabled && offset != 0L) {
             ref = loadAssetRef(definitionId);
             if (ref != null)
-                assetRefs.put(definitionId, ref);
+                myAssetRefs.put(definitionId, ref);
         }
         return ref;
     }
 
     public static AssetRef getAssetRef(AssetVersionSpec spec) throws CachingException {
-        if (assetRefs == null)
-            load();
+        Map<Long,AssetRef> myAssetRefs = assetRefs;
+
+        if (myAssetRefs == null)
+            myAssetRefs = load();
 
         String name = spec.getPackageName() != null ? spec.getPackageName() : "";
         name += "/" + spec.getName() + " v";
-        for (AssetRef curRef : assetRefs.values()) {
+        for (AssetRef curRef : myAssetRefs.values()) {
             if (curRef.getName().contains(name)) {
                 Asset asset = new Asset();
                 asset.setVersion(Asset.parseVersion(curRef.getName().substring((curRef.getName().lastIndexOf(" v")+1))));
@@ -102,23 +107,31 @@ public class AssetRefCache implements CacheService {
                     return curRef;
             }
         }
+
         // If we haven't found it, pull all rows from ASSET_REF table (unless we already did)
         if (offset != 0L) {
-            offset = 0L; // This will trigger loading the entire ASSET_REF table
-            assetRefs = null;
-            return getAssetRef(spec);
+            synchronized (lock) {
+                Long myOffset = offset;
+                if (myOffset != 0L) {
+                    offset = 0L; // This will trigger loading the entire ASSET_REF table
+                    assetRefs = null;
+                    return getAssetRef(spec);
+                }
+            }
         }
 
         return null;
     }
 
     public static List<AssetRef> getAllProcessRefs() throws CachingException {
-        if (assetRefs == null)
-            load();
+        Map<Long,AssetRef> myAssetRefs = assetRefs;
+
+        if (myAssetRefs == null)
+            myAssetRefs = load();
 
         List<AssetRef> refList = new ArrayList<AssetRef>();
         String name = ".proc v";
-        for (AssetRef curRef : assetRefs.values()) {
+        for (AssetRef curRef : myAssetRefs.values()) {
             if (curRef.getName().contains(name)) {
                 refList.add(curRef);
             }
@@ -170,12 +183,11 @@ public class AssetRefCache implements CacheService {
         return assetRef;
     }
 
-    private static synchronized void load() {
+    private static synchronized Map<Long,AssetRef> load() {
      // load all Refs from database that were archived in last X days (default is 2 years)
         Map<Long,AssetRef> myAssetRefs = assetRefs;
         if (myAssetRefs == null) {
-            myAssetRefs = assetRefs = new ConcurrentHashMap<Long,AssetRef>();
-
+            myAssetRefs = new ConcurrentHashMap<Long,AssetRef>();
             try {
                 if (DataAccess.getProcessLoader() instanceof LoaderPersisterVcs &&
                         ((LoaderPersisterVcs)DataAccess.getProcessLoader()).getVersionControl() instanceof VersionControlGit) {
@@ -192,16 +204,20 @@ public class AssetRefCache implements CacheService {
                         Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
                         list = cp.retrieveAllRefs(date);
                     }
-                    if (list != null) {
+                    if (list != null && list.size() > 0) {
                         for (AssetRef ref : list) {
-                            assetRefs.put(ref.getDefinitionId(), ref);
+                            myAssetRefs.put(ref.getDefinitionId(), ref);
                         }
                     }
+                    else
+                        logger.warn("No entries were found in ASSET_REF table!");
+                    assetRefs = myAssetRefs;
                 }
             }
             catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
             }
         }
+        return myAssetRefs;
     }
 }

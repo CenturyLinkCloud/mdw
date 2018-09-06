@@ -32,9 +32,9 @@ var $mdwUi = {
      },
      {
        category: 'subflow',
-       label: 'Cancelation Handler Subflow',
+       label: 'Cancellation Handler Subflow',
        icon: 'com.centurylink.mdw.base/subflow.png',
-       implementorClass: 'Cancelation Handler'
+       implementorClass: 'Cancellation Handler'
      },
      {
        category: 'subflow',

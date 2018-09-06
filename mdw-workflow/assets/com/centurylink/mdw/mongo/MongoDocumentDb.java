@@ -55,7 +55,11 @@ public class MongoDocumentDb implements DocumentDb {
     private static Map<String,Boolean> collectionDocIdIndexed = new ConcurrentHashMap<>();
 
     public static MongoDatabase getMongoDb() {
-        return mongoClient == null ? null : mongoClient.getDatabase("mdw");
+        return getMongoDb("mdw");   // Default database within Mongo instance
+    }
+
+    public static MongoDatabase getMongoDb(String databaseName) {
+        return mongoClient == null ? null : mongoClient.getDatabase(databaseName);
     }
 
     @Override

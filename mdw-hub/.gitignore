@@ -2,3 +2,4 @@ build/
 deploy/
 node_modules/
 bin/
+package-lock.json

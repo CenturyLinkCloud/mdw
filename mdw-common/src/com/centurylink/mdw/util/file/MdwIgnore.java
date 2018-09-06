@@ -22,6 +22,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.centurylink.mdw.dataaccess.file.AssetFile;
+
 /**
  * Currently only supports a straight dir/file list (no wildcards or subpaths).
  */
@@ -47,4 +49,10 @@ public class MdwIgnore {
         return excludes.contains(file);
     }
 
+    /**
+     * TODO: Currently hardcoded for Mac's annoying .DS_Store files.
+     */
+    public static boolean isIgnore(AssetFile assetFile) {
+        return ".DS_Store".equals(assetFile.getName());
+    }
 }

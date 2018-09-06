@@ -78,7 +78,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public DatabaseAccess getDatabaseAccess() {
-        return edadb.getDatabaseAccess();
+        return edadb == null ? null : edadb.getDatabaseAccess();
     }
 
     /**

@@ -16,8 +16,9 @@
       "rows": 2
     },
     {
-      "type": "link",
+      "type": "asset",
       "name": "implementor",
+      "applier": "ActivityImplApplier",
       "label": "Implementor"
     },
     {

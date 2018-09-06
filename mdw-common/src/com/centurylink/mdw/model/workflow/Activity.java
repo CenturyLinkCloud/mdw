@@ -29,6 +29,8 @@ import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
 
 public class Activity implements Serializable, Comparable<Activity>, Jsonable {
 
+    public static final String DEFAULT_IMPL = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
+
     private Long id;
     private String name;
     private String description;
@@ -149,7 +151,10 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         if (logicalId.startsWith("Activity"))
             logicalId = "A" + logicalId.substring(8);
         id = Long.valueOf(logicalId.substring(1));
-        setImplementor(json.getString("implementor"));
+        if (json.has("implementor"))
+            setImplementor(json.getString("implementor"));
+        else
+            setImplementor(DEFAULT_IMPL);
         if (json.has("description"))
             setDescription(json.getString("description"));
         if (json.has("attributes"))

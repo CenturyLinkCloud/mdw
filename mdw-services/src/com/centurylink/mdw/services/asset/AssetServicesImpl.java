@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,9 +150,12 @@ public class AssetServicesImpl implements AssetServices {
             }
             List<AssetInfo> assets = new ArrayList<AssetInfo>();
             if (!DiffType.MISSING.equals(pkgDir.getVcsDiffType())) {
-                for (File file : pkgDir.listFiles())
+                for (File file : pkgDir.listFiles()) {
                     if (file.isFile()) {
-                        assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
+                        AssetFile assetFile = pkgDir.getAssetFile(file);
+                        if (!MdwIgnore.isIgnore(assetFile))
+                            assets.add(new AssetInfo(assetFile));
+                    }
                 }
             }
 
@@ -351,8 +355,8 @@ public class AssetServicesImpl implements AssetServices {
                 if (sub.isDirectory() && !sub.equals(getArchiveDir()) && !excludes.contains(sub) && !mdwIgnore.isIgnore(sub)) {
                     if (new File(sub + "/.mdw").isDirectory()) {
                         PackageDir pkgSubDir = new PackageDir(getAssetRoot(), sub, getAssetVersionControl());
-                        pkgSubDir.parse();
-                        pkgSubDirs.add(pkgSubDir);
+                        if (pkgSubDir.parse())
+                            pkgSubDirs.add(pkgSubDir);
                     }
                     allSubDirs.add(sub);
                 }
@@ -520,20 +524,24 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     /**
-     * Create an unversioned (version 0) asset on the file system.
+     * Create a new asset (version 1) on the file system.
      */
     public void createAsset(String path) throws ServiceException {
         createAsset(path, new byte[0]);
     }
 
     /**
-     * Create an unversioned (version 0) asset on the file system.
+     * Create a new asset (version 1) on the file system.
      */
     public void createAsset(String path, byte[] content) throws ServiceException {
         int lastSlash = path.lastIndexOf('/');
         File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
         try {
             FileHelper.writeToFile(new ByteArrayInputStream(content), assetFile);
+            AssetRevision rev = new AssetRevision();
+            rev.setVersion(1);
+            rev.setModDate(new Date());
+            getVersionControl().setRevision(assetFile, rev);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());

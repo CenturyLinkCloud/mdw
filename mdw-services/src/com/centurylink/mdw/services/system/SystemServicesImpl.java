@@ -55,6 +55,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.PropertyUtil;
+import com.centurylink.mdw.config.YamlPropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
@@ -418,8 +419,9 @@ public class SystemServicesImpl implements SystemServices {
 
     public SysInfoCategory getMdwProperties() {
         List<SysInfo> mdwPropInfos = new ArrayList<SysInfo>();
+        PropertyManager propMgr = null;
         try {
-            PropertyManager propMgr = PropertyUtil.getInstance().getPropertyManager();
+            propMgr = PropertyUtil.getInstance().getPropertyManager();
             Properties properties = propMgr.getAllProperties();
             List<String> propNames = new ArrayList<String>();
             for (Iterator<?> iter = properties.keySet().iterator(); iter.hasNext();)
@@ -443,7 +445,10 @@ public class SystemServicesImpl implements SystemServices {
             mdwPropInfos.add(new SysInfo("Error", String.valueOf(ex)));
         }
 
-        return new SysInfoCategory("MDW Properties", mdwPropInfos);
+        SysInfoCategory category = new SysInfoCategory("MDW Properties", mdwPropInfos);
+        if (propMgr instanceof YamlPropertyManager)
+            category.setDescription("Never-accessed properties are not displayed.  Null means the property has been read and not found.");
+        return category;
     }
 
     private SysInfoCategory getPoolStatus() {
