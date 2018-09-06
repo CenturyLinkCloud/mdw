@@ -325,9 +325,8 @@ public class HtmlExportHelper {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         ProcessCanvas canvas = new ProcessCanvas(processVO);
-        canvas.setSize(400, 400);
+        canvas.setSize(graphsize);
         Color bgsave = canvas.getBackground();
-        canvas.setBackground(Color.white);
         canvas.paintComponent(g2d);
         canvas.setBackground(bgsave);
         g2d.dispose();
