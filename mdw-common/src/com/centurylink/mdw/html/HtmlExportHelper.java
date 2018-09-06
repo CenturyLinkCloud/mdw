@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.html;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -35,6 +34,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.draw.ProcessCanvas;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;
@@ -324,11 +324,11 @@ public class HtmlExportHelper {
         g2d.clearRect(0, 0, image.getWidth(), image.getHeight());
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        Canvas canvas = new Canvas();
+        ProcessCanvas canvas = new ProcessCanvas(processVO);
         canvas.setSize(400, 400);
         Color bgsave = canvas.getBackground();
         canvas.setBackground(Color.white);
-        //canvas.paintComponent(g2);
+        canvas.paintComponent(g2d);
         canvas.setBackground(bgsave);
         g2d.dispose();
         ImageIO.write(image, "jpeg", new File(fileName));

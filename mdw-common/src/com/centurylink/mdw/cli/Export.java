@@ -24,6 +24,7 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
+import com.centurylink.mdw.draw.Implementors;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
@@ -105,11 +106,13 @@ public class Export extends Setup {
         return this;
     }
 
-    protected ProcessExporter getProcessExporter() {
+    protected ProcessExporter getProcessExporter() throws IOException {
         if ("bpmn2".equals(format))
             return new BpmnProcessExporter();
-        else if ("html".equals(format))
+        else if ("html".equals(format)) {
+            Implementors.assetLoc = getAssetRoot();
             return new HtmlProcessExporter();
+        }
 
         return null;
     }
