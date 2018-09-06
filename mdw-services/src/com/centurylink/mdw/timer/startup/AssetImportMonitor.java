@@ -93,6 +93,8 @@ public class AssetImportMonitor implements StartupService {
 
             while (!_terminating) {
                 try {
+                    Thread.sleep(interval);
+
                     // Check if it needs to trigger an asset import to sync up this instance's assets
                     // Exclude if head commit in local repo is missing from ASSET_REF DB table (means new local commit - asset saved)
                     try (DbAccess dbAccess = new DbAccess()) {
@@ -127,7 +129,6 @@ public class AssetImportMonitor implements StartupService {
                             }
                         }
                     }
-                    Thread.sleep(interval);
                 }
                 catch (InterruptedException e) {
                     if (!_terminating) throw e;
