@@ -255,7 +255,7 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().getProcessBase(name, version);
-            if (proc == null) {
+            if (proc == null && version != 0) {
                 String refName = name;
                 if (!refName.endsWith(".proc"))
                     refName += ".proc";
