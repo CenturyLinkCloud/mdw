@@ -96,8 +96,10 @@ public class Export extends Setup {
                 throw new IOException("Unable to create directory: " + fileDir);
         }
 
-        if (exporter instanceof HtmlProcessExporter)
+        if (exporter instanceof HtmlProcessExporter) {
+            Implementors.assetLoc = getAssetRoot();
            ((HtmlProcessExporter)exporter).setOutput(output.getPath());
+        }
 
         String exported = exporter.export(proc);
 
@@ -109,10 +111,8 @@ public class Export extends Setup {
     protected ProcessExporter getProcessExporter() throws IOException {
         if ("bpmn2".equals(format))
             return new BpmnProcessExporter();
-        else if ("html".equals(format)) {
-            Implementors.assetLoc = getAssetRoot();
+        else if ("html".equals(format))
             return new HtmlProcessExporter();
-        }
 
         return null;
     }

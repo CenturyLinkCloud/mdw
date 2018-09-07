@@ -46,30 +46,17 @@ public class Step extends Shape implements Drawable {
             drawIcon(implementor.getIcon(), iconX, iconY, 1.0F);
         }
         else if (this.implementor.getIconName() != null) {
-            String shape = this.implementor.getIconName();
-
+            String shape = this.implementor.getIconName().substring(6);
             if (shape.equals("stop")) {
-                if (this.getDisplay().getW() == 60 && this.getDisplay().getH() == 40) {
-                    this.drawIcon(Display.STOP_ICON, this.getDisplay().getX(),
-                            this.getDisplay().getY(), 0.8F);
-                }
-                else {
-                    drawOval(this.getDisplay().getX(), this.getDisplay().getY(),
-                            this.getDisplay().getW(), this.getDisplay().getH(), Display.STOP_COLOR, null, null);
-                }
-
+                drawOval(this.getDisplay().getX(), this.getDisplay().getY(),
+                        this.getDisplay().getW(), this.getDisplay().getH(), Display.STOP_COLOR,
+                        null, g2d);
                 textColor = Display.SHAPE_TEXT_COLOR;
             }
             else if (shape.equals("start")) {
-                if (this.getDisplay().getW() == 60 && this.getDisplay().getH() == 40) {
-                    this.drawIcon(Display.START_ICON, this.getDisplay().getX(),
-                            this.getDisplay().getY(), 0.8F);
-                }
-                else {
-                    drawOval(this.getDisplay().getX(), this.getDisplay().getY(),
-                            this.getDisplay().getW(), this.getDisplay().getH(), Display.START_COLOR, null, null);
-                }
-
+                drawOval(this.getDisplay().getX(), this.getDisplay().getY(),
+                        this.getDisplay().getW(), this.getDisplay().getH(), Display.START_COLOR,
+                        null, g2d);
                 textColor = Display.SHAPE_TEXT_COLOR;
             }
             else if (shape.equals("decision")) {

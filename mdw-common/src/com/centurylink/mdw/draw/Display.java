@@ -7,8 +7,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.swing.ImageIcon;
-
 public final class Display {
     private int x;
     private int y;
