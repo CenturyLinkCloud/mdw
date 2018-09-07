@@ -1,0 +1,42 @@
+package {{packageName}}
+
+import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter
+
+/**
+ * REST Adapter Activity.
+ */
+class {{className}} : RestServiceAdapter() {
+    
+    /**
+     * Returns an HttpURLConnection based on the configured endpoint attribute,
+     * which includes the resource path.
+     */
+    override fun openConnection(): Any {
+        return super.openConnection()
+    }
+
+    /**
+     * Override this method to build the request data (usually a string containing JSON).
+     * Request data is not applicable for HTTP GET and DELETE.
+     */
+    override fun getRequestData(): String {
+        // TODO generated
+        return "{}"
+    }
+
+    /**
+     * Invoked by the runtime engine when the service has succeeded at the protocol level (ie: the
+     * HTTP request/response went through okay). If there are business-related errors contained in the
+     * response, this method should set the result code accordingly.
+     *
+     * @param response by default a String containing the HTTP response
+     */
+    override fun onSuccess(response: String) {
+        super.onSuccess(response)
+    }
+
+    override fun onFailure(cause: Throwable): String {
+        return super.onFailure(cause)
+    }
+
+}

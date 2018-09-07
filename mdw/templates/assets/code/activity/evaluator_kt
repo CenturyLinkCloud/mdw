@@ -1,0 +1,16 @@
+package {{packageName}}
+
+import com.centurylink.mdw.util.log.StandardLogger
+import com.centurylink.mdw.util.timer.Tracked
+import com.centurylink.mdw.workflow.activity.AbstractEvaluator
+
+/**
+ * MDW evaluator activity.
+ */
+@Tracked(StandardLogger.LogLevel.TRACE)
+class {{className}} : AbstractEvaluator() {
+    override fun evaluate(): Any? {
+        // TODO generated
+        return null
+    }
+}

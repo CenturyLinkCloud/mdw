@@ -1,0 +1,16 @@
+process: # 10308
+  name: KotlinImplementor
+  instance: 1
+  activity: # 1 "2018-09-07 13:18:31"
+    name: Start
+    status: Completed
+  activity: # 3 "2018-09-07 13:18:31"
+    name: Kotlin Impl
+    status: Completed
+    result: myOutcome
+  activity: # 2 "2018-09-07 13:18:31"
+    name: Stop
+    status: Completed
+  variable: # 11078
+    name: stringVar
+    value: myValue
