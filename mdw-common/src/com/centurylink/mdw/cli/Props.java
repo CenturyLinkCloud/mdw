@@ -59,7 +59,7 @@ public class Props {
 
     private static String MDW;
 
-    static void init(String mdwConfig) {
+    public static void init(String mdwConfig) {
         MDW = mdwConfig;
 
         // mdw

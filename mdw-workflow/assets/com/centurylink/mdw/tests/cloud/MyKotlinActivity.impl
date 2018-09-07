@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "mykotlin.png",
+  "implementorClass": "com.centurylink.mdw.tests.cloud.MyKotlinActivity",
+  "label": "MyKotlinActivity",
+  "pagelet": "<PAGELET />"
+}
