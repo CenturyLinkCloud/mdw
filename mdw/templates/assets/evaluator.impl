@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.EvaluatorActivity",
+  "icon": "shape:decision",
+  "implementorClass": "{{packageName}}.{{className}}",
+  "label": "{{className}}",
+  "pagelet": "<PAGELET/>"
+}

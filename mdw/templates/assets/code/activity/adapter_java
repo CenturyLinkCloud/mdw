@@ -1,0 +1,48 @@
+package {{packageName}};
+
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
+
+/**
+ * REST Adapter Activity.
+ */
+public class {{className}} extends RestServiceAdapter {
+
+    /**
+     * Returns an HttpURLConnection based on the configured endpoint attribute,
+     * which includes the resource path.
+     */
+    @Override
+    public Object openConnection() throws ConnectionException {
+        return super.openConnection();
+    }
+
+    /**
+     * Override this method to build the request data (usually a string containing JSON).
+     * Request data is not applicable for HTTP GET and DELETE.
+     */
+    @Override
+    protected String getRequestData() throws ActivityException {
+        // TODO generated
+        return "{}";
+    }
+
+    /**
+     * Invoked by the runtime engine when the service has succeeded at the protocol level (ie: the
+     * HTTP request/response went through okay). If there are business-related errors contained in the
+     * response, this method should set the result code accordingly.
+     *
+     * @param response by default a String containing the HTTP response
+     */
+    @Override
+    public void onSuccess(String response) throws ActivityException, ConnectionException, AdapterException {
+        super.onSuccess(response);
+    }
+
+    @Override
+    public String onFailure(Throwable errorCause) throws AdapterException, ConnectionException {
+        return super.onFailure(errorCause);
+    }
+}

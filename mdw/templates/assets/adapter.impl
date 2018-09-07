@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
+  "icon": "adapter.png",
+  "implementorClass": "{{packageName}}.{{className}}",
+  "label": "{{className}}",
+  "pagelet": "<PAGELET></PAGELET>"
+}
