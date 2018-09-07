@@ -25,8 +25,6 @@ public final class Display {
     public static  Color BACKGROUND_COLOR = Color.WHITE;
     public static final Color START_COLOR = new Color(0x98fb98);
     public static final Color STOP_COLOR = new Color(0xff8c86);
-    public static final ImageIcon START_ICON = Implementors.readIcon("start.png");
-    public static final ImageIcon STOP_ICON = Implementors.readIcon("stop.png");
     public static final Color SHAPE_TEXT_COLOR = Color.BLACK;
     public static final BasicStroke DEFAULT_STROKE = new BasicStroke();
     public static final BasicStroke LINK_STROKE = new BasicStroke(3.0f);

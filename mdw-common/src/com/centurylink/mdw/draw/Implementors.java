@@ -70,15 +70,4 @@ public class Implementors extends LinkedHashMap<String, Implementor> {
         }
         return null;
     }
-
-    public static ImageIcon readIcon(String name) {
-        try {
-            File imgFile = new File(assetLoc + "\\" + BASE_PKG.replace(".", "\\") + '\\' + name);
-            return new ImageIcon(Files.readAllBytes(Paths.get(imgFile.getPath())));
-        }
-        catch (IOException e) {
-            System.out.println("Unable to load icon -- " + name);
-        }
-        return null;
-    }
 }
