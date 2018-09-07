@@ -155,6 +155,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/export/*.class"
         include "com/centurylink/mdw/procimport/*.class"
         include "com/centurylink/mdw/html/*.class"
+        include "com/centurylink/mdw/image/*.class"
         include "com/centurylink/mdw/draw/*.class"
     }
     
