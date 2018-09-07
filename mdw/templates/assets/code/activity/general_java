@@ -1,0 +1,24 @@
+package {{packageName}};
+
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+
+/**
+ * MDW activity.
+ */
+@Tracked(LogLevel.TRACE)
+public class {{className}} extends DefaultActivityImpl {
+
+    /**
+     * Here's where the main processing for the activity is performed.
+     * @return activity result (or null for default)
+     */
+    @Override
+    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        // TODO generated
+        return null;
+    }
+}
