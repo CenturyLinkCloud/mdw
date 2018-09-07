@@ -27,6 +27,7 @@ import com.centurylink.mdw.bpmn.BpmnProcessExporter;
 import com.centurylink.mdw.draw.Implementors;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
+import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 
@@ -97,13 +98,16 @@ public class Export extends Setup {
         }
 
         if (exporter instanceof HtmlProcessExporter) {
-            Implementors.assetLoc = getAssetRoot();
-           ((HtmlProcessExporter)exporter).setOutput(output.getPath());
+            ((HtmlProcessExporter) exporter).setOutput(output.getPath());
+        }
+        else if (exporter instanceof PngProcessExporter) {
+            ((PngProcessExporter) exporter).setOutput(output.getPath());
         }
 
         String exported = exporter.export(proc);
 
-        Files.write(Paths.get(output.getPath()), exported.getBytes());
+        if (exported != null)
+            Files.write(Paths.get(output.getPath()), exported.getBytes());
 
         return this;
     }
@@ -111,9 +115,23 @@ public class Export extends Setup {
     protected ProcessExporter getProcessExporter() throws IOException {
         if ("bpmn2".equals(format))
             return new BpmnProcessExporter();
-        else if ("html".equals(format))
-            return new HtmlProcessExporter();
+        else {
+            Implementors.assetLoc = getAssetRoot();
+            if ("html".equals(format))
+                return new HtmlProcessExporter();
+            else if ("png".equals(format))
+                return new PngProcessExporter();
+        }
 
         return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Export exp = new Export();
+        exp.setConfigLoc("c:\\MdwBootTest\\config");
+        exp.setAssetLoc("c:\\MdwBootTest\\assets");
+        exp.setFormat("png");
+        exp.setProcess("com\\centurylink\\mdw\\tests\\workflow/ActivityException.proc");
+        exp.run(null);
     }
 }
