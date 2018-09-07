@@ -48,6 +48,7 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.util.ServiceLocatorException;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -82,19 +83,24 @@ public class ProcessExecutor implements RetryableTransaction {
         String label = null, template = null;
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
-            Package pkg = PackageCache.getProcessPackage(processId);
+            String pkgName = process.getPackageName();
+            if (StringHelper.isEmpty(pkgName)) { // This should never happen, but just in case
+                Package pkg = PackageCache.getProcessPackage(processId);
+                if (pkg != null && !pkg.isDefaultPackage())
+                    pkgName = pkg.getName();
+            }
             if (process.getName().startsWith("$") && parameters.containsKey(process.getName())) {
                 // template process -- name is provided in params
                 label = parameters.get(process.getName());
                 parameters.remove(process.getName());
                 template = process.getLabel();
-                if (pkg != null && !pkg.isDefaultPackage())
-                    template = pkg.getName() + "/" + template;
+                if (!StringHelper.isEmpty(pkgName))
+                    template = pkgName + "/" + template;
             }
             else {
                 label = process.getLabel();
-                if (pkg != null && !pkg.isDefaultPackage())
-                    label = pkg.getName() + "/" + label;
+                if (!StringHelper.isEmpty(pkgName))
+                    label = pkgName + "/" + label;
             }
         }
 

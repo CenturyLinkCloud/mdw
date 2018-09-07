@@ -91,14 +91,17 @@ public class Checkpoint extends Setup {
             for (File file : dir.listFiles()) {
                 if (pkgName != null && file.isFile()) {
                     AssetRevision rev = versionControl.getRevision(file);
+                    /*  Do NOT add any non-versioned assets, otherwise we end up with v0 entries
                     if (rev == null) {
                         rev = new AssetRevision();
                         rev.setVersion(0);
                         rev.setModDate(new Date());
+                    }  */
+                    if (rev != null) {  // Only add versioned assets
+                        // logical path
+                        String name = pkgName + "/" + file.getName() + " " + rev.getFormattedVersion();
+                        refs.add(new AssetRef(name, versionControl.getId(new File(name)), commit));
                     }
-                    // logical path
-                    String name = pkgName + "/" + file.getName() + " " + rev.getFormattedVersion();
-                    refs.add(new AssetRef(name, versionControl.getId(new File(name)), commit));
                 }
                 if (file.isDirectory() && !file.getName().equals("Archive")) {
                     refs.addAll(getCurrentRefs(file));
@@ -166,7 +169,9 @@ public class Checkpoint extends Setup {
             try (ResultSet rs = stmt.executeQuery()) {
                 assetRefList = new ArrayList<AssetRef>();
                 while (rs.next()) {
-                    assetRefList.add(new AssetRef(rs.getString("name"), rs.getLong("definition_id"), rs.getString("ref")));
+                    String name = rs.getString("name");
+                    if (name != null && !name.endsWith("v0")) // Ignore version 0 assets
+                        assetRefList.add(new AssetRef(rs.getString("name"), rs.getLong("definition_id"), rs.getString("ref")));
                 }
             }
         }

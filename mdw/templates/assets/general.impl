@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "shape:activity",
+  "implementorClass": "{{packageName}}.{{className}}",
+  "label": "{{className}}",
+  "pagelet": "<PAGELET></PAGELET>"
+}
