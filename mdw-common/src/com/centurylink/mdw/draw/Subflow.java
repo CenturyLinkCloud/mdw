@@ -85,7 +85,8 @@ public class Subflow extends Shape implements Drawable {
 
     public Display draw() {
         Display extents = new Display(0, 0, this.getDisplay().getX() + this.getDisplay().getW(), this.getDisplay().getY() + this.getDisplay().getH());
-        drawRect(0, 0, 0, 0, BOX_OUTLINE_COLOR, null, null);
+        drawRect(this.getDisplay().getX(), this.getDisplay().getY(), this.getDisplay().getW(),
+                this.getDisplay().getH(), BOX_OUTLINE_COLOR, null, null);
         extents.setW(Math.max(extents.getW(), this.label.getDisplay().getX() + this.label.getDisplay().getW()));
         extents.setH(Math.max(extents.getH(), this.label.getDisplay().getY()));
         int labelW = this.g2d.getFontMetrics().stringWidth(this.label.getText()) + Label.PAD * 2;
@@ -113,7 +114,7 @@ public class Subflow extends Shape implements Drawable {
             extents.setH(Math.max(extents.getH(), metaY));
 
             clearRect(metaX - 1, metaY - metaH + g2d.getFontMetrics().getDescent(), metaW + 2, metaH);
-            drawText("[" + subprocess.getId() + "]", metaX, metaY, null, Display.META_COLOR);
+            drawText("[P" + subprocess.getId() + "]", metaX, metaY, null, Display.META_COLOR);
         }
 
 

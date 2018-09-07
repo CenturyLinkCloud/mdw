@@ -251,8 +251,8 @@ public class Link implements Drawable {
         int[] xs = this.display.getXs();
         int[] ys = this.display.getYs();
         int t = 0;
-        int xcorr = (xs[0] < xs[1]) ? 3 : -3;
-        int ycorr = (ys[0] < ys[1]) ? 3 : -3;
+        int xcorr = (xs[0] < xs[1]) ? CORR : -CORR;
+        int ycorr = (ys[0] < ys[1]) ? CORR : -CORR;
         GeneralPath path = new GeneralPath();
         switch (this.getAutoElbowLinkType()) {
         case 1:
@@ -264,39 +264,39 @@ public class Link implements Drawable {
             path.lineTo((float) xs[1], (float) ys[1]);
             break;
         case 3:
-            t = (xs[0] + xs[1]) / 2;
             path.moveTo((float) (xs[0] - xcorr), (float) ys[0]);
-            path.lineTo((t > xs[0]) ? (float) (t - 8) : (float) (t + 8), (float) ys[0]);
-            path.quadTo((float) t, (float) ys[0], (float) t,
-                    (ys[1] > ys[0]) ? (float) (ys[0] + 8) : (float) (ys[0] - 8));
-            path.lineTo((float) t, (ys[1] > ys[0]) ? (float) (ys[1] - 8) : (float) (ys[1] + 8));
-            path.quadTo((float) t, (float) ys[1], (xs[1] > t) ? (float) (t + 8) : (float) (t - 8),
-                    (float) ys[1]);
+            path.lineTo((xs[1] > xs[0]) ? (float) (xs[1] - CR) : (float) (xs[1] + CR), (float) ys[0]);
+            path.quadTo((float) xs[1], (float) ys[0], (float) xs[1],
+                    (ys[1] > ys[0]) ? (float) (ys[0] + CR) : (float) (ys[0] - CR));
             path.lineTo((float) xs[1], (float) ys[1]);
             break;
         case 4:
-            t = (ys[0] + ys[1]) / 2;
             path.moveTo((float) xs[0], (float) (ys[0] - ycorr));
-            path.lineTo((float) xs[0], (t > ys[0]) ? (float) (t - 8) : (float) (t + 8));
-            path.quadTo((float) xs[0], (float) t,
-                    (xs[1] > xs[0]) ? (float) (xs[0] + 8) : (float) (xs[0] - 8), (float) t);
-            path.lineTo((xs[1] > xs[0]) ? (float) (xs[1] - 8) : (float) (xs[1] + 8), (float) t);
-            path.quadTo((float) xs[1], (float) t, (float) xs[1],
-                    (ys[1] > t) ? (float) (t + 8) : (float) (t - 8));
+            path.lineTo((float) xs[0], (ys[1] > ys[0]) ? (float) (ys[1] - CR) : (float) (ys[1] + CR));
+            path.quadTo((float) xs[0], (float) ys[1],
+                    (xs[1] > xs[0]) ? (float) (xs[0] + CR) : (float) (xs[0] - CR), (float) ys[1]);
             path.lineTo((float) xs[1], (float) ys[1]);
             break;
         case 5:
+            t = (xs[0] + xs[1]) / 2;
             path.moveTo((float) (xs[0] - xcorr), (float) ys[0]);
-            path.lineTo((xs[1] > xs[0]) ? (float) (xs[1] - 8) : (float) (xs[1] + 8), (float) ys[0]);
-            path.quadTo((float) xs[1], (float) ys[0], (float) xs[1],
-                    (ys[1] > ys[0]) ? (float) (ys[0] + 8) : (float) (ys[0] - 8));
+            path.lineTo((t > xs[0]) ? (float) (t - CR) : (float) (t + CR), (float) ys[0]);
+            path.quadTo((float) t, (float) ys[0], (float) t,
+                    (ys[1] > ys[0]) ? (float) (ys[0] + CR) : (float) (ys[0] - CR));
+            path.lineTo((float) t, (ys[1] > ys[0]) ? (float) (ys[1] - CR) : (float) (ys[1] + CR));
+            path.quadTo((float) t, (float) ys[1], (xs[1] > t) ? (float) (t + CR) : (float) (t - CR),
+                    (float) ys[1]);
             path.lineTo((float) xs[1], (float) ys[1]);
             break;
         case 6:
+            t = (ys[0] + ys[1]) / 2;
             path.moveTo((float) xs[0], (float) (ys[0] - ycorr));
-            path.lineTo((float) xs[0], (ys[1] > ys[0]) ? (float) (ys[1] - 8) : (float) (ys[1] + 8));
-            path.quadTo((float) xs[0], (float) ys[1],
-                    (xs[1] > xs[0]) ? (float) (xs[0] + 8) : (float) (xs[0] - 8), (float) ys[1]);
+            path.lineTo((float) xs[0], (t > ys[0]) ? (float) (t - CR) : (float) (CR));
+            path.quadTo((float) xs[0], (float) t,
+                    (xs[1] > xs[0]) ? (float) (xs[0] + CR) : (float) (xs[0] - CR), (float) t);
+            path.lineTo((xs[1] > xs[0]) ? (float) (xs[1] - CR) : (float) (xs[1] + CR), (float) t);
+            path.quadTo((float) xs[1], (float) t, (float) xs[1],
+                    (ys[1] > t) ? (float) (t + CR) : (float) (t - CR));
             path.lineTo((float) xs[1], (float) ys[1]);
             break;
         default:
@@ -329,16 +329,16 @@ public class Link implements Drawable {
         }
         else if (xs.length == 2) {
             switch (getAutoElbowLinkType()) {
-            case 1:
             case 2:
             case 3:
+            case 6:
                 x = xs[1];
                 y = ys[1] > ys[0] ? ys[1] + GAP : ys[1] - GAP;
                 slope = ys[1] > ys[0] ? (float) (Math.PI / 2) : (float) (Math.PI * 1.5);
                 break;
-            case 4:
+            case 1:
             case 5:
-            case 6:
+            case 4:
                 x = xs[1] > xs[0] ? xs[1] + GAP : (xs[1]) - GAP;
                 y = (ys[1]);
                 slope = xs[1] > xs[0] ? 0.0F : (float) Math.PI;
@@ -372,8 +372,8 @@ public class Link implements Drawable {
         }
         else {
             this.g2d.fill(path);
-            return false;
         }
+        return false;
     }
 
     class Pt {

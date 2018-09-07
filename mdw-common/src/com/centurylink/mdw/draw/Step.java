@@ -8,15 +8,13 @@ import java.awt.Graphics2D;
 
 import com.centurylink.mdw.model.workflow.Activity;
 
-
 public class Step extends Shape implements Drawable {
     private final Activity activity;
     private final Implementor implementor;
     private final boolean boxStyle;
     public static final int MIN_SIZE = 4;
 
-    public Step(Graphics2D g2d, Activity activity,
-            Implementor implementor, boolean boxStyle) {
+    public Step(Graphics2D g2d, Activity activity, Implementor implementor, boolean boxStyle) {
         super(g2d, new Display(activity.getAttribute("WORK_DISPLAY_INFO")));
         this.g2d = g2d;
         this.activity = activity;
@@ -38,7 +36,8 @@ public class Step extends Shape implements Drawable {
         int y;
         if (implementor.getIcon() != null) {
             if (boxStyle) {
-                drawRect(0, 0, 0, 0, null, null, null);
+                drawRect(this.getDisplay().getX(), this.getDisplay().getY(),
+                        this.getDisplay().getW(), this.getDisplay().getH(), null, null, null);
             }
             iconX = display.getX() + display.getW() / 2 - 12;
             int iconY = display.getY() + 5;
@@ -55,7 +54,8 @@ public class Step extends Shape implements Drawable {
                             this.getDisplay().getY(), 0.8F);
                 }
                 else {
-                    drawOval(0, 0, 0, 0, Display.STOP_COLOR, null, null);
+                    drawOval(this.getDisplay().getX(), this.getDisplay().getY(),
+                            this.getDisplay().getW(), this.getDisplay().getH(), Display.STOP_COLOR, null, null);
                 }
 
                 textColor = Display.SHAPE_TEXT_COLOR;
@@ -66,19 +66,23 @@ public class Step extends Shape implements Drawable {
                             this.getDisplay().getY(), 0.8F);
                 }
                 else {
-                    drawOval(0, 0, 0, 0, Display.START_COLOR, null, null);
+                    drawOval(this.getDisplay().getX(), this.getDisplay().getY(),
+                            this.getDisplay().getW(), this.getDisplay().getH(), Display.START_COLOR, null, null);
                 }
 
                 textColor = Display.SHAPE_TEXT_COLOR;
             }
             else if (shape.equals("decision")) {
-                drawDiamond(0, 0, 0, 0, null);
+                drawDiamond(this.getDisplay().getX(), this.getDisplay().getY(),
+                        this.getDisplay().getW(), this.getDisplay().getH(), null);
             }
             else
-                drawRect(0, 0, 0, 0, null, null, null);
+                drawRect(this.getDisplay().getX(), this.getDisplay().getY(),
+                        this.getDisplay().getW(), this.getDisplay().getH(), null, null, null);
         }
         else
-            drawRect(0, 0, 0, 0, null, null, null);
+            drawRect(this.getDisplay().getX(), this.getDisplay().getY(), this.getDisplay().getW(),
+                    this.getDisplay().getH(), null, null, null);
 
         if (this.activity.getName() != null) {
             String[] lines = this.activity.getName().split("\r\n");
