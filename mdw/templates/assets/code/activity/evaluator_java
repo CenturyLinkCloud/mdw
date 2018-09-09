@@ -1,15 +1,12 @@
 package {{packageName}};
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
-import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractEvaluator;
-
+{{annotationsImports}}
 /**
  * MDW evaluator activity.
  */
-@Tracked(LogLevel.TRACE)
-public class {{className}} extends AbstractEvaluator {
+{{annotations}}public class {{className}} extends AbstractEvaluator {
 
     /**
      * Returns the outcome of the evaluation (null for default).

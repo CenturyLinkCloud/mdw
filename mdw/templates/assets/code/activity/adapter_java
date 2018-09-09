@@ -4,11 +4,11 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
-
+{{annotationsImports}}
 /**
  * REST Adapter Activity.
  */
-public class {{className}} extends RestServiceAdapter {
+{{annotations}}public class {{className}} extends RestServiceAdapter {
 
     /**
      * Returns an HttpURLConnection based on the configured endpoint attribute,
