@@ -22,7 +22,7 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 /**
  * Baseline controlled activity interface.
  */
-public interface GeneralActivity {
+public interface GeneralActivity extends ActivityCategory {
 
     /**
      * Executes the workflow activity.

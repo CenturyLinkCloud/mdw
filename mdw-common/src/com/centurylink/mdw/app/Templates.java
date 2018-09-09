@@ -72,7 +72,7 @@ public class Templates {
     }
 
     /**
-     * Simple substitution mechanism.
+     * Simple substitution mechanism.  Missing values substituted with empty string.
      */
     public static String substitute(String input, Map<String,Object> values) {
         StringBuilder output = new StringBuilder(input.length());
@@ -82,8 +82,6 @@ public class Templates {
             String match = matcher.group();
             output.append(input.substring(index, matcher.start()));
             Object value = values.get(match.substring(2, match.length() - 2));
-            if (value == null)
-                value = match;
             output.append(value == null ? "" : String.valueOf(value));
             index = matcher.end();
         }

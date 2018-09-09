@@ -4,9 +4,8 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
 import com.centurylink.mdw.util.log.StandardLogger
 import com.centurylink.mdw.util.timer.Tracked
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl
-
-@Tracked(StandardLogger.LogLevel.TRACE)
-class {{className}} : DefaultActivityImpl() {
+{{annotationsImports}}
+{{annotations}}class {{className}} : DefaultActivityImpl() {
 
     override fun execute(runtimeContext: ActivityRuntimeContext): Any? {
         // TODO generated

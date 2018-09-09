@@ -3,5 +3,5 @@
   "icon": "shape:decision",
   "implementorClass": "{{packageName}}.{{className}}",
   "label": "{{className}}",
-  "pagelet": "<PAGELET/>"
+  "pagelet": "<PAGELET></PAGELET>"
 }

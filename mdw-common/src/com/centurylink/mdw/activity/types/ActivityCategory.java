@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 package com.centurylink.mdw.activity.types;
 
 /**
- * Interface for all Finish Activities
+ * Base interface for activity types
  */
-public interface FinishActivity extends GeneralActivity {
+public interface ActivityCategory {
 
-    String getProcessCompletionCode();
-
-    boolean doNotNotifyCaller();
 }

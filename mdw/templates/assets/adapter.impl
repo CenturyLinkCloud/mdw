@@ -3,5 +3,5 @@
   "icon": "adapter.png",
   "implementorClass": "{{packageName}}.{{className}}",
   "label": "{{className}}",
-  "pagelet": "<PAGELET></PAGELET>"
+  "pagelet": "<PAGELET>\n  <DROPDOWN NAME='HttpMethod' LABEL='HTTP Method' DEFAULT='GET' VW='100'>\n    <OPTION>GET</OPTION>\n    <OPTION>POST</OPTION>\n    <OPTION>PUT</OPTION>\n    <OPTION>DELETE</OPTION>\n    <OPTION>PATCH</OPTION>\n  </DROPDOWN>\n  <HYPERLINK NAME='EndpointUri' LABEL='Resource URL'/>\n</PAGELET>"
 }

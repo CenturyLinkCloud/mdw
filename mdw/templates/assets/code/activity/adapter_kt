@@ -1,11 +1,11 @@
 package {{packageName}}
 
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter
-
+{{annotationsImports}}
 /**
  * REST Adapter Activity.
  */
-class {{className}} : RestServiceAdapter() {
+{{annotations}}class {{className}} : RestServiceAdapter() {
     
     /**
      * Returns an HttpURLConnection based on the configured endpoint attribute,
