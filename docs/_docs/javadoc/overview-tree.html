@@ -723,6 +723,7 @@
 <li type="circle">com.centurylink.mdw.boot.<a href="com/centurylink/mdw/boot/MdwStarter.html" title="class in com.centurylink.mdw.boot"><span class="typeNameLink">MdwStarter</span></a></li>
 <li type="circle">com.centurylink.mdw.service.api.<a href="com/centurylink/mdw/service/api/MdwSwaggerCache.html" title="class in com.centurylink.mdw.service.api"><span class="typeNameLink">MdwSwaggerCache</span></a> (implements com.centurylink.mdw.cache.<a href="com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>)</li>
 <li type="circle">com.centurylink.mdw.container.plugin.<a href="com/centurylink/mdw/container/plugin/MdwTransactionManager.html" title="class in com.centurylink.mdw.container.plugin"><span class="typeNameLink">MdwTransactionManager</span></a> (implements javax.transaction.TransactionManager)</li>
+<li type="circle">com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/MdwVersion.html" title="class in com.centurylink.mdw.model.system"><span class="typeNameLink">MdwVersion</span></a></li>
 <li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/MessageServices.html" title="class in com.centurylink.mdw.services"><span class="typeNameLink">MessageServices</span></a></li>
 <li type="circle">com.centurylink.mdw.services.messenger.<a href="com/centurylink/mdw/services/messenger/MessengerFactory.html" title="class in com.centurylink.mdw.services.messenger"><span class="typeNameLink">MessengerFactory</span></a></li>
 <li type="circle">com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/MiniCrypter.html" title="class in com.centurylink.mdw.util"><span class="typeNameLink">MiniCrypter</span></a></li>
@@ -1193,27 +1194,12 @@
 </ul>
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
-<li type="circle">com.centurylink.mdw.adapter.<a href="com/centurylink/mdw/adapter/AdapterInvocationError.html" title="interface in com.centurylink.mdw.adapter"><span class="typeNameLink">AdapterInvocationError</span></a></li>
-<li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">AssetServices</span></a></li>
-<li type="circle">com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/Authenticator.html" title="interface in com.centurylink.mdw.auth"><span class="typeNameLink">Authenticator</span></a></li>
-<li type="circle">com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/AuthTokenProvider.html" title="interface in com.centurylink.mdw.auth"><span class="typeNameLink">AuthTokenProvider</span></a></li>
-<li type="circle">com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/BaselineData.html" title="interface in com.centurylink.mdw.dataaccess"><span class="typeNameLink">BaselineData</span></a></li>
-<li type="circle">com.centurylink.mdw.translator.<a href="com/centurylink/mdw/translator/BsonTranslator.html" title="interface in com.centurylink.mdw.translator"><span class="typeNameLink">BsonTranslator</span></a></li>
-<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/Builder.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">Builder</span></a></li>
-<li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/CollaborationServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">CollaborationServices</span></a></li>
-<li type="circle">com.centurylink.mdw.container.plugin.<a href="com/centurylink/mdw/container/plugin/CommonThreadPoolMXBean.html" title="interface in com.centurylink.mdw.container.plugin"><span class="typeNameLink">CommonThreadPoolMXBean</span></a></li>
-<li type="circle">com.centurylink.mdw.container.<a href="com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container"><span class="typeNameLink">DataSourceProvider</span></a></li>
-<li type="circle">com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/DocumentDb.html" title="interface in com.centurylink.mdw.dataaccess.db"><span class="typeNameLink">DocumentDb</span></a></li>
-<li type="circle">com.centurylink.mdw.java.<a href="com/centurylink/mdw/java/DynamicJavaImplementor.html" title="interface in com.centurylink.mdw.java"><span class="typeNameLink">DynamicJavaImplementor</span></a></li>
-<li type="circle">com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process"><span class="typeNameLink">EngineDataAccess</span></a></li>
-<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/EvaluatorActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">EvaluatorActivity</span></a></li>
-<li type="circle">com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event"><span class="typeNameLink">EventHandler</span></a>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/ActivityCategory.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">ActivityCategory</span></a>
 <ul>
-<li type="circle">com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/ExternalEventHandler.html" title="interface in com.centurylink.mdw.event"><span class="typeNameLink">ExternalEventHandler</span></a></li>
-</ul>
-</li>
-<li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">EventServices</span></a></li>
-<li type="circle">com.centurylink.mdw.cache.<a href="com/centurylink/mdw/cache/ExcludableCache.html" title="interface in com.centurylink.mdw.cache"><span class="typeNameLink">ExcludableCache</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/AdapterActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">AdapterActivity</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/EvaluatorActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">EvaluatorActivity</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/EventWaitActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">EventWaitActivity</span></a> (also extends com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>, com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/SuspendibleActivity.html" title="interface in com.centurylink.mdw.activity.types">SuspendibleActivity</a>)</li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/FinishActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">FinishActivity</span></a></li>
 <li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">GeneralActivity</span></a>
 <ul>
 <li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/AdapterActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">AdapterActivity</span></a></li>
@@ -1228,6 +1214,35 @@
 <li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/TaskActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">TaskActivity</span></a></li>
 </ul>
 </li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/InvokeProcessActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">InvokeProcessActivity</span></a> (also extends com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>, com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/SuspendibleActivity.html" title="interface in com.centurylink.mdw.activity.types">SuspendibleActivity</a>)</li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/NotificationActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">NotificationActivity</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/RuleActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">RuleActivity</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/ScriptActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">ScriptActivity</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/StartActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">StartActivity</span></a></li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/SynchronizationActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">SynchronizationActivity</span></a> (also extends com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>, com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/SuspendibleActivity.html" title="interface in com.centurylink.mdw.activity.types">SuspendibleActivity</a>)</li>
+<li type="circle">com.centurylink.mdw.activity.types.<a href="com/centurylink/mdw/activity/types/TaskActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="typeNameLink">TaskActivity</span></a></li>
+</ul>
+</li>
+<li type="circle">com.centurylink.mdw.adapter.<a href="com/centurylink/mdw/adapter/AdapterInvocationError.html" title="interface in com.centurylink.mdw.adapter"><span class="typeNameLink">AdapterInvocationError</span></a></li>
+<li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">AssetServices</span></a></li>
+<li type="circle">com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/Authenticator.html" title="interface in com.centurylink.mdw.auth"><span class="typeNameLink">Authenticator</span></a></li>
+<li type="circle">com.centurylink.mdw.auth.<a href="com/centurylink/mdw/auth/AuthTokenProvider.html" title="interface in com.centurylink.mdw.auth"><span class="typeNameLink">AuthTokenProvider</span></a></li>
+<li type="circle">com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/BaselineData.html" title="interface in com.centurylink.mdw.dataaccess"><span class="typeNameLink">BaselineData</span></a></li>
+<li type="circle">com.centurylink.mdw.translator.<a href="com/centurylink/mdw/translator/BsonTranslator.html" title="interface in com.centurylink.mdw.translator"><span class="typeNameLink">BsonTranslator</span></a></li>
+<li type="circle">com.centurylink.mdw.script.<a href="com/centurylink/mdw/script/Builder.html" title="interface in com.centurylink.mdw.script"><span class="typeNameLink">Builder</span></a></li>
+<li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/CollaborationServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">CollaborationServices</span></a></li>
+<li type="circle">com.centurylink.mdw.container.plugin.<a href="com/centurylink/mdw/container/plugin/CommonThreadPoolMXBean.html" title="interface in com.centurylink.mdw.container.plugin"><span class="typeNameLink">CommonThreadPoolMXBean</span></a></li>
+<li type="circle">com.centurylink.mdw.container.<a href="com/centurylink/mdw/container/DataSourceProvider.html" title="interface in com.centurylink.mdw.container"><span class="typeNameLink">DataSourceProvider</span></a></li>
+<li type="circle">com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/DocumentDb.html" title="interface in com.centurylink.mdw.dataaccess.db"><span class="typeNameLink">DocumentDb</span></a></li>
+<li type="circle">com.centurylink.mdw.java.<a href="com/centurylink/mdw/java/DynamicJavaImplementor.html" title="interface in com.centurylink.mdw.java"><span class="typeNameLink">DynamicJavaImplementor</span></a></li>
+<li type="circle">com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process"><span class="typeNameLink">EngineDataAccess</span></a></li>
+<li type="circle">com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event"><span class="typeNameLink">EventHandler</span></a>
+<ul>
+<li type="circle">com.centurylink.mdw.event.<a href="com/centurylink/mdw/event/ExternalEventHandler.html" title="interface in com.centurylink.mdw.event"><span class="typeNameLink">ExternalEventHandler</span></a></li>
+</ul>
+</li>
+<li type="circle">com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services"><span class="typeNameLink">EventServices</span></a></li>
+<li type="circle">com.centurylink.mdw.cache.<a href="com/centurylink/mdw/cache/ExcludableCache.html" title="interface in com.centurylink.mdw.cache"><span class="typeNameLink">ExcludableCache</span></a></li>
 <li type="circle">com.centurylink.mdw.adapter.<a href="com/centurylink/mdw/adapter/HeaderAwareAdapter.html" title="interface in com.centurylink.mdw.adapter"><span class="typeNameLink">HeaderAwareAdapter</span></a></li>
 <li type="circle">com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Instance.html" title="interface in com.centurylink.mdw.model"><span class="typeNameLink">Instance</span></a></li>
 <li type="circle">com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/InstanceCount.html" title="interface in com.centurylink.mdw.model"><span class="typeNameLink">InstanceCount</span></a></li>
@@ -1358,6 +1373,7 @@
 </ul>
 <h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
 <ul>
+<li type="circle">com.centurylink.mdw.annotations.<a href="com/centurylink/mdw/annotations/Activity.html" title="annotation in com.centurylink.mdw.annotations"><span class="typeNameLink">Activity</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">com.centurylink.mdw.annotations.<a href="com/centurylink/mdw/annotations/Parameter.html" title="annotation in com.centurylink.mdw.annotations"><span class="typeNameLink">Parameter</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">com.centurylink.mdw.annotations.<a href="com/centurylink/mdw/annotations/RegisteredService.html" title="annotation in com.centurylink.mdw.annotations"><span class="typeNameLink">RegisteredService</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">com.centurylink.mdw.util.timer.<a href="com/centurylink/mdw/util/timer/Tracked.html" title="annotation in com.centurylink.mdw.util.timer"><span class="typeNameLink">Tracked</span></a> (implements java.lang.annotation.Annotation)</li>
