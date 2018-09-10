@@ -1,0 +1,97 @@
+process: # 10325
+  name: ActivityImplementors
+  instance: 1
+  activity: # 1 "2018-09-10 16:34:31"
+    name: Start
+    status: Completed
+  activity: # 3 "2018-09-10 16:34:31"
+    name: Which?
+    status: Completed
+    result: kotlin pagelet
+  activity: # 7 "2018-09-10 16:34:31"
+    name: Kotlin Invader
+    status: Completed
+    result: Jupiter
+  activity: # 9 "2018-09-10 16:34:31"
+    name: Stop
+    status: Completed
+  variable: # 11115
+    name: invader
+    value: Gul Dukat
+  variable: # 11113
+    name: testCase
+    value: kotlin pagelet
+  variable: # 11114
+    name: updated
+    value: updated from kotlin
+process: # 10324
+  name: ActivityImplementors
+  instance: 2
+  activity: # 1 "2018-09-10 16:34:27"
+    name: Start
+    status: Completed
+  activity: # 3 "2018-09-10 16:34:27"
+    name: Which?
+    status: Completed
+    result: kotlin
+  activity: # 5 "2018-09-10 16:34:27"
+    name: |
+      Kotlin
+      Activity
+    status: Completed
+  activity: # 9 "2018-09-10 16:34:27"
+    name: Stop
+    status: Completed
+  variable: # 11112
+    name: testCase
+    value: kotlin
+process: # 10323
+  name: ActivityImplementors
+  instance: 3
+  activity: # 1 "2018-09-10 16:34:22"
+    name: Start
+    status: Completed
+  activity: # 3 "2018-09-10 16:34:22"
+    name: Which?
+    status: Completed
+    result: java pagelet
+  activity: # 6 "2018-09-10 16:34:22"
+    name: Java Invader
+    status: Completed
+    result: Neptune
+  activity: # 8 "2018-09-10 16:34:22"
+    name: Stop
+    status: Completed
+  variable: # 11111
+    name: invader
+    value: Dr. Soran
+  variable: # 11109
+    name: testCase
+    value: java pagelet
+  variable: # 11110
+    name: updated
+    value: updated from java
+process: # 10322
+  name: ActivityImplementors
+  instance: 4
+  activity: # 1 "2018-09-10 16:34:18"
+    name: Start
+    status: Completed
+  activity: # 3 "2018-09-10 16:34:18"
+    name: Which?
+    status: Completed
+    result: java
+  activity: # 4 "2018-09-10 16:34:18"
+    name: |
+      Java
+      Activity
+    status: Completed
+  activity: # 8 "2018-09-10 16:34:18"
+    name: Stop
+    status: Completed
+  variable: # 11107
+    name: testCase
+    value: java
+  variable: # 11108
+    name: updated
+    value: updated from java

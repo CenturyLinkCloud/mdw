@@ -1,0 +1,20 @@
+package com.centurylink.mdw.tests.cloud
+
+start process('ActivityImplementors.proc') {
+    variables = [ testCase: 'java']
+}
+wait process
+start process('ActivityImplementors.proc') {
+    variables = [ testCase: 'java pagelet']
+}
+wait process
+start process('ActivityImplementors.proc') {
+    variables = [ testCase: 'kotlin']
+}
+wait process
+start process('ActivityImplementors.proc') {
+    variables = [ testCase: 'kotlin pagelet']
+}
+wait process
+
+verify process
