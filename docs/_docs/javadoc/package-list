@@ -9,6 +9,7 @@ com.centurylink.mdw.boot.servlet
 com.centurylink.mdw.bpmn
 com.centurylink.mdw.cache
 com.centurylink.mdw.cache.impl
+com.centurylink.mdw.canvas
 com.centurylink.mdw.cli
 com.centurylink.mdw.cloud
 com.centurylink.mdw.common
@@ -29,9 +30,11 @@ com.centurylink.mdw.drawio
 com.centurylink.mdw.email
 com.centurylink.mdw.event
 com.centurylink.mdw.export
+com.centurylink.mdw.html
 com.centurylink.mdw.hub
 com.centurylink.mdw.hub.context
 com.centurylink.mdw.hub.servlet
+com.centurylink.mdw.image
 com.centurylink.mdw.java
 com.centurylink.mdw.jaxb
 com.centurylink.mdw.listener

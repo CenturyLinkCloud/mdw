@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -118,9 +118,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">Export</span>
 extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></pre>
-<div class="block">Exports process into bpmn2 format.
- If --format is specified wiht html/png, exports into html/png format
- otherwise, exports into bpmn2 format.</div>
+<div class="block">Exports process into specific format. If --format is specified wiht html/png,
+ exports into html/png format otherwise, exports into bpmn2 format.</div>
 </li>
 </ul>
 </div>
@@ -175,6 +174,10 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Export.html#run-com.centurylink.mdw.cli.ProgressMonitor...-">run</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Export.html#setFormat-java.lang.String-">setFormat</a></span>(java.lang.String&nbsp;format)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Export.html#setProcess-java.lang.String-">setProcess</a></span>(java.lang.String&nbsp;proc)</code>&nbsp;</td>
 </tr>
@@ -234,6 +237,15 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <pre>public&nbsp;java.lang.String&nbsp;getFormat()</pre>
 </li>
 </ul>
+<a name="setFormat-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFormat</h4>
+<pre>public&nbsp;void&nbsp;setFormat(java.lang.String&nbsp;format)</pre>
+</li>
+</ul>
 <a name="getOutput--">
 <!--   -->
 </a>
@@ -266,7 +278,12 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getProcessExporter</h4>
-<pre>protected&nbsp;<a href="../../../../com/centurylink/mdw/export/ProcessExporter.html" title="interface in com.centurylink.mdw.export">ProcessExporter</a>&nbsp;getProcessExporter()</pre>
+<pre>protected&nbsp;<a href="../../../../com/centurylink/mdw/export/ProcessExporter.html" title="interface in com.centurylink.mdw.export">ProcessExporter</a>&nbsp;getProcessExporter()
+                                      throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 </li>
