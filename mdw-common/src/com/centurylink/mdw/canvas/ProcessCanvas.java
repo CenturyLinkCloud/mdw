@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.draw;
+package com.centurylink.mdw.canvas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,6 +14,8 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import com.centurylink.mdw.draw.Diagram;
+import com.centurylink.mdw.draw.Display;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class ProcessCanvas extends JPanel {
@@ -30,13 +32,13 @@ public class ProcessCanvas extends JPanel {
         super((LayoutManager) (new BorderLayout()));
         this.process = process;
         this.zoom = 100;
-        Display.DEFAULT_COLOR = UIManager.getColor("EditorPane.foreground");
-        Display.GRID_COLOR = Color.LIGHT_GRAY;
-        Display.OUTLINE_COLOR = UIManager.getColor("EditorPane.foreground");
-        Display.SHADOW_COLOR = new Color(0, 0, 0, 50);
-        Display.META_COLOR = Color.GRAY;
-        Display.BACKGROUND_COLOR = UIManager.getColor("EditorPane.background");
-        this.setBackground(Display.BACKGROUND_COLOR);
+        Display.Companion.setDEFAULT_COLOR(UIManager.getColor("EditorPane.foreground"));
+        Display.Companion.setGRID_COLOR(Color.LIGHT_GRAY);
+        Display.Companion.setOUTLINE_COLOR(UIManager.getColor("EditorPane.foreground"));
+        Display.Companion.setSHADOW_COLOR(new Color(0, 0, 0, 50));
+        Display.Companion.setMETA_COLOR(Color.GRAY);
+        Display.Companion.setBACKGROUND_COLOR(UIManager.getColor("EditorPane.background"));
+        this.setBackground(Display.Companion.getBACKGROUND_COLOR());
         this.setFocusable(true);
         this.setAutoscrolls(true);
     }
@@ -49,7 +51,7 @@ public class ProcessCanvas extends JPanel {
             double scale = (double) this.zoom / 100.0D;
             g2d.scale(scale, scale);
         }
-        final Diagram d = new Diagram(g2d, this.getInitDisplay(), this.process, new Implementors());
+        final Diagram d = new Diagram(g2d, this.getInitDisplay(), this.process, process, new Implementors(), true);
         diagram = d;
         d.draw();
     }

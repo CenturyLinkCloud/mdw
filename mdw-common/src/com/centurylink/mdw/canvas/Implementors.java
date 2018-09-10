@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.draw;
+package com.centurylink.mdw.canvas;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,9 @@ import javax.swing.ImageIcon;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Implementors extends LinkedHashMap<String, Implementor> {
+import com.centurylink.mdw.draw.Impl;
+
+public class Implementors extends LinkedHashMap<String, Impl> {
    public static final String BASE_PKG = "com.centurylink.mdw.base";
     public static final String START_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity";
     public static final String STOP_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity";
@@ -26,9 +28,9 @@ public class Implementors extends LinkedHashMap<String, Implementor> {
     private void loadImplemetors(File assetLoc) {
         for (File file : assetLoc.listFiles()) {
             if (file.exists() && !file.isDirectory() && file.getPath().endsWith("impl")) {
-                Implementor impl;
+                Impl impl;
                 try {
-                    impl = new Implementor(file.getPath(), new JSONObject(
+                    impl = new Impl(file.getPath(), new JSONObject(
                             new String(Files.readAllBytes(Paths.get(file.getPath())))));
 
                     String iconAsset = impl.getIconName();

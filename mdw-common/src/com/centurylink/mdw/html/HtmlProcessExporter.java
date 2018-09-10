@@ -16,7 +16,10 @@
 package com.centurylink.mdw.html;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.centurylink.mdw.cli.Dependency;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.workflow.Process;
 
@@ -30,6 +33,14 @@ public class HtmlProcessExporter implements ProcessExporter {
     @Override
     public String export(Process process) throws IOException {
         return new HtmlExportHelper().exportProcess(process, output);
+    }
+
+    @Override
+    public List<Dependency> getDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
+        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+                "org/jetbrains/kotlin/kotlin-stdlib/1.2.61/kotlin-stdlib-1.2.61.jar", 12388L));
+        return dependencies;
     }
 
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
-import com.centurylink.mdw.draw.Implementors;
+import com.centurylink.mdw.canvas.Implementors;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.image.PngProcessExporter;
