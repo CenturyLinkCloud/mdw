@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
-  "icon": "shape:activity",
-  "implementorClass": "com.centurylink.mdw.tests.cloud.DynamicJavaGeneralActivity",
-  "label": "Dynamic Java General Activity",
-  "pagelet": "<PAGELET>\n  <HYPERLINK URL='help/dynamicJava.html'>Dynamic Java Help<\/HYPERLINK>\n<\/PAGELET>"
-}

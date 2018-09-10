@@ -1,0 +1,142 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=284,y=28,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=314,ly=100,xs=314&314,ys=71&129"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=284,y=133,w=60,h=40"},
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.tests.cloud.WhichActivity",
+      "name": "Which?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=155,ly=182,xs=280&101,ys=153&224"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "java",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=228,ly=226,xs=314&230,ys=177&314"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "java pagelet",
+          "to": "A6"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=461,ly=182,xs=348&567,ys=153&212"},
+          "event": "FINISH",
+          "id": "T4",
+          "resultCode": "kotlin",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=339,ly=330,xs=329&329&416&416,ys=164&350&350&379"},
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "kotlin pagelet",
+          "to": "A7"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=36,y=204,w=60,h=40"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.tests.cloud.JavaActivity",
+      "name": "Java\nActivity",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=67,ly=283,xs=67&67,ys=248&319"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=572,y=192,w=60,h=40"},
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.tests.cloud.KotlinGeneral",
+      "name": "Kotlin\nActivity",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=600,ly=271,xs=600&600,ys=236&306"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A9"
+      }]
+    },
+    {
+      "attributes": {
+        "Invader": "Dr. Soran",
+        "Planet": "Neptune",
+        "WORK_DISPLAY_INFO": "x=181,y=318,w=100,h=60"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.tests.cloud.JavaInvader",
+      "name": "Java Invader",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=112,ly=324,xs=176&102,ys=343&343"},
+        "event": "FINISH",
+        "id": "T6",
+        "resultCode": "Neptune",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "Invader": "Gul Dukat",
+        "Planet": "Jupiter",
+        "WORK_DISPLAY_INFO": "x=375,y=384,w=100,h=60"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.tests.cloud.KotlinInvader",
+      "name": "Kotlin Invader",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=524,ly=362,xs=479&564,ys=414&330"},
+        "event": "FINISH",
+        "id": "T8",
+        "resultCode": "Jupiter",
+        "to": "A9"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=38,y=323,w=60,h=40"},
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=569,y=310,w=60,h=40"},
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=39,y=79,w=202,h=26"
+  },
+  "variables": {
+    "invader": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "testCase": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "updated": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

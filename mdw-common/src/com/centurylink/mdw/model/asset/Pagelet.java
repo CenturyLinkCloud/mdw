@@ -15,17 +15,8 @@
  */
 package com.centurylink.mdw.model.asset;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,8 +25,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.JsonUtil;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.util.*;
 
 public class Pagelet implements Jsonable {
 
@@ -63,12 +56,16 @@ public class Pagelet implements Jsonable {
     /**
      * Note: changes widget type and attribute names into lower case.
      */
-    public Pagelet(String xml) throws Exception {
-        InputSource src = new InputSource(new ByteArrayInputStream(xml.getBytes()));
+    public Pagelet(String source) throws Exception {
+        if (source.startsWith("{")) {
+            fromJson(new JSONObject(source));
+            return;
+        }
+        InputSource inputSource = new InputSource(new ByteArrayInputStream(source.getBytes()));
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
         SAXParser parser = parserFactory.newSAXParser();
-        parser.parse(src, new DefaultHandler() {
+        parser.parse(inputSource, new DefaultHandler() {
             private Stack<Widget> widgs = new Stack<>();
             private Map<String,String> widgNameToElem = new HashMap<>();
             private boolean inOpt;
@@ -236,13 +233,19 @@ public class Pagelet implements Jsonable {
         }
     }
 
-    public Pagelet(JSONObject json) throws JSONException {
-        JSONArray widgetsJson = json.getJSONArray("widgets");
-        for (int i = 0; i < widgetsJson.length(); i++) {
-            widgets.add(new Widget(widgetsJson.getJSONObject(i)));
+    public Pagelet(JSONObject json) {
+        fromJson(json);
+    }
+
+    private void fromJson(JSONObject json) {
+        if (json.has("widgets")) {
+            JSONArray widgetsJson = json.getJSONArray("widgets");
+            for (int i = 0; i < widgetsJson.length(); i++) {
+                widgets.add(new Widget(widgetsJson.getJSONObject(i)));
+            }
+            if (json.has("attributes"))
+                attributes = JsonUtil.getMap(json.getJSONObject("attributes"));
         }
-        if (json.has("attributes"))
-            attributes = JsonUtil.getMap(json.getJSONObject("attributes"));
     }
 
     public JSONObject getJson() throws JSONException {
