@@ -18,6 +18,7 @@ sourceSets {
 configurations {
     cli
     codegen
+    draw
     schemas.extendsFrom(cli)
     compile.extendsFrom(schemas)
 }
@@ -94,6 +95,10 @@ dependencies {
     
     // bpmn
     compileOnly fileTree(dir: "../mdw/libs", include: "bpmn-schemas.jar")
+    
+    //mdw-draw
+    compileOnly fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
+    draw fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
 }
 
 clean {
@@ -116,7 +121,7 @@ task cliJar(type: Jar) {
               + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
               + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
               + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
-              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar");
+              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar");
     }
     
     from("build/classes") {
@@ -139,6 +144,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/util/file/VersionProperties.class"
         include "com/centurylink/mdw/model/workflow/Process.class"
         include "com/centurylink/mdw/model/workflow/Activity.class"
+        include "com/centurylink/mdw/model/workflow/ActivityImplementor.class"
         include "com/centurylink/mdw/model/workflow/TextNote.class"
         include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
         include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"
@@ -153,6 +159,9 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/bpmn/*.class"
         include "com/centurylink/mdw/export/*.class"
         include "com/centurylink/mdw/procimport/*.class"
+        include "com/centurylink/mdw/html/*.class"
+        include "com/centurylink/mdw/image/*.class"
+        include "com/centurylink/mdw/canvas/*.class"
     }
     
     from configurations.cli.asFileTree.files.collect {
@@ -178,6 +187,15 @@ task cliJar(type: Jar) {
             include "io/limberest/api/codegen/*.class"
             include "io/limberest/json/*.class"
             include "version.properties"
+        }
+    }
+    
+    from configurations.draw.asFileTree.files.collect {
+        zipTree(it).matching {
+            include "com/centurylink/mdw/draw/*.class"
+            include "com/centurylink/mdw/draw/edit/*.class"
+            include "com/centurylink/mdw/draw/ext/*.class"
+            include "icons/*"
         }
     }
     
