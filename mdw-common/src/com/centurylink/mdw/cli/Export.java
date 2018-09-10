@@ -125,13 +125,4 @@ public class Export extends Setup {
 
         return null;
     }
-
-    public static void main(String[] args) throws IOException {
-        Export exp = new Export();
-        exp.setConfigLoc("c:\\MdwBootTest\\config");
-        exp.setAssetLoc("c:\\MdwBootTest\\assets");
-        exp.setFormat("png");
-        exp.setProcess("com\\centurylink\\mdw\\tests\\workflow/ActivityException.proc");
-        exp.run(null);
-    }
 }
