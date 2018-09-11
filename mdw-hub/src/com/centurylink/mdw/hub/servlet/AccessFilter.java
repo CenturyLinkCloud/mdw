@@ -332,9 +332,19 @@ public class AccessFilter implements Filter {
                 }
             }
 
-            // This is to remove the JWT from QueryString
+            // This is to remove the JWT from QueryString - but preserve path and rest of query string
             if ((user != null || authUser != null)  && "GET".equals(request.getMethod()) && request.getParameter(Listener.AUTHORIZATION_HEADER_NAME) != null) {
-                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/");
+                String query = "";
+                if (request.getParameterMap().size() > 1) {
+                    int startIdx = 0;
+                    int endIdx = request.getQueryString().toLowerCase().indexOf("authorization=");
+                    int startIdx2 = request.getQueryString().indexOf("&", endIdx)+1;
+                    query += "?";
+                    query += startIdx < endIdx ? request.getQueryString().substring(startIdx,  endIdx-1) : "";
+                    query += startIdx2 > 0 ? query.length() > 1 ? "&" + request.getQueryString().substring(startIdx2) : request.getQueryString().substring(startIdx2) : "";
+                }
+                String url = ApplicationContext.getMdwHubUrl() + (path.length() == 0 ? "/" : path) + query;
+                response.sendRedirect(url);
                 return;
             }
 
