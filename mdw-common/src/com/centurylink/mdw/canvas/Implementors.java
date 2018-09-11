@@ -3,23 +3,17 @@
  */
 package com.centurylink.mdw.canvas;
 
+import com.centurylink.mdw.draw.Impl;
+import org.json.JSONObject;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 
-import javax.swing.ImageIcon;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.draw.Impl;
-
 public class Implementors extends LinkedHashMap<String, Impl> {
-   public static final String BASE_PKG = "com.centurylink.mdw.base";
-    public static final String START_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity";
-    public static final String STOP_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity";
 
     public Implementors() {
         loadImplemetors(assetLoc);
@@ -27,37 +21,47 @@ public class Implementors extends LinkedHashMap<String, Impl> {
 
     private void loadImplemetors(File assetLoc) {
         for (File file : assetLoc.listFiles()) {
-            if (file.exists() && !file.isDirectory() && file.getPath().endsWith("impl")) {
-                Impl impl;
-                try {
-                    impl = new Impl(file.getPath(), new JSONObject(
-                            new String(Files.readAllBytes(Paths.get(file.getPath())))));
-
-                    String iconAsset = impl.getIconName();
-                    if (iconAsset != null && !iconAsset.startsWith("shape:")) {
-                        String iconPkg = BASE_PKG;
-                        int slash = iconAsset.lastIndexOf('/');
-                        if (slash > 0) {
-                            iconPkg = iconAsset.substring(0, slash).replace(".", "\\");
-                            iconAsset = iconAsset.substring(slash + 1);
-                        }
-                        else
-                            iconPkg = file.getPath().substring(0, file.getPath().lastIndexOf('\\'));
-                        impl.setIcon(getIcon(iconPkg + "\\" + iconAsset));
-                    }
-                    put(impl.getImplementorClassName(), impl);
-                }
-                catch (JSONException e) {
-                    System.out.println(" Unable to load implementors");
-                }
-                catch (IOException e) {
-                   System.out.println(" Unable to load implementors");
-                }
-            }
-            else if (file.isDirectory()){
+            if (file.isDirectory()) {
                 loadImplemetors(file);
             }
+            else if (file.exists()) {
+                try {
+                    if (file.getName().endsWith("impl")) {
+                        add(new Impl(file.getPath(), new JSONObject(new String(Files.readAllBytes(file.toPath())))));
+                    }
+                    else if (file.getName().endsWith(".java")) {
+                        // TODO annotation-based implementors
+
+                    }
+                    else if (file.getName().endsWith(".kt")) {
+                        // TODO annotation-based implementors
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("Problem loading implementor " + file + ": " + e);
+                }
+            }
         }
+    }
+
+    public void add(Impl impl) {
+        String iconAsset = impl.getIconName();
+        if (iconAsset != null && !iconAsset.startsWith("shape:")) {
+            String iconPkg = Impl.BASE_PKG;
+            int slash = iconAsset.lastIndexOf('/');
+            if (slash > 0) {
+                iconPkg = iconAsset.substring(0, slash);
+                iconAsset = iconAsset.substring(slash + 1);
+            }
+            else {
+                String implClass = impl.getImplementorClassName();
+                String pkg = implClass.substring(0, implClass.lastIndexOf('.'));
+                if (new File(assetLoc + "/" + pkg.replace('.', '/') + "/" + iconAsset).isFile())
+                    iconPkg = pkg;
+            }
+            impl.setIcon(getIcon(assetLoc + "/" + iconPkg.replace('.', '/') + "/" + iconAsset));
+        }
+        put(impl.getImplementorClassName(), impl);
     }
 
     public static File assetLoc;
@@ -68,7 +72,7 @@ public class Implementors extends LinkedHashMap<String, Impl> {
             return new ImageIcon(Files.readAllBytes(Paths.get(imgFile.getPath())));
         }
         catch (IOException e) {
-            System.out.println("Unable to load icon --- " + filePath);
+            System.out.println("Unable to load icon " + filePath + ": " + e);
         }
         return null;
     }
