@@ -161,7 +161,6 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/procimport/*.class"
         include "com/centurylink/mdw/html/*.class"
         include "com/centurylink/mdw/image/*.class"
-        include "com/centurylink/mdw/canvas/*.class"
     }
     
     from configurations.cli.asFileTree.files.collect {

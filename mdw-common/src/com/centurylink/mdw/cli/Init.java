@@ -44,7 +44,7 @@ public class Init extends Setup {
     public void setUser(String user) { this.user = user; }
 
     @Parameter(names="--eclipse", description="Generate Eclipse workspace artifacts")
-    private boolean eclipse = true;
+    private boolean eclipse = false;
     public boolean isEclipse() { return eclipse; }
     public void setEclipse(boolean eclipse) { this.eclipse = eclipse; }
 
