@@ -63,7 +63,7 @@
     {
       "attributes": {"WORK_DISPLAY_INFO": "x=572,y=192,w=60,h=40"},
       "id": "A5",
-      "implementor": "com.centurylink.mdw.tests.cloud.KotlinGeneral",
+      "implementor": "com.centurylink.mdw.tests.cloud.KotlinActivity",
       "name": "Kotlin\nActivity",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=600,ly=271,xs=600&600,ys=236&306"},

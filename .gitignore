@@ -15,3 +15,5 @@ temp/
 .DS_Store
 out/
 mdw/.idea/workspace.xml
+mdw/.idea/uiDesigner.xml
+mdw/.idea/tasks.xml

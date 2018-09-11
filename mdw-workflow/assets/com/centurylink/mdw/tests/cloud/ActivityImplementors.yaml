@@ -1,97 +1,100 @@
-process: # 10325
+process: # 10364
   name: ActivityImplementors
   instance: 1
-  activity: # 1 "2018-09-10 16:34:31"
+  activity: # 1 "2018-09-11 16:15:09"
     name: Start
     status: Completed
-  activity: # 3 "2018-09-10 16:34:31"
+  activity: # 3 "2018-09-11 16:15:09"
     name: Which?
     status: Completed
     result: kotlin pagelet
-  activity: # 7 "2018-09-10 16:34:31"
+  activity: # 7 "2018-09-11 16:15:09"
     name: Kotlin Invader
     status: Completed
     result: Jupiter
-  activity: # 9 "2018-09-10 16:34:31"
+  activity: # 9 "2018-09-11 16:15:09"
     name: Stop
     status: Completed
-  variable: # 11115
+  variable: # 11221
     name: invader
     value: Gul Dukat
-  variable: # 11113
+  variable: # 11219
     name: testCase
     value: kotlin pagelet
-  variable: # 11114
+  variable: # 11220
     name: updated
     value: updated from kotlin
-process: # 10324
+process: # 10363
   name: ActivityImplementors
   instance: 2
-  activity: # 1 "2018-09-10 16:34:27"
+  activity: # 1 "2018-09-11 16:15:05"
     name: Start
     status: Completed
-  activity: # 3 "2018-09-10 16:34:27"
+  activity: # 3 "2018-09-11 16:15:05"
     name: Which?
     status: Completed
     result: kotlin
-  activity: # 5 "2018-09-10 16:34:27"
+  activity: # 5 "2018-09-11 16:15:05"
     name: |
       Kotlin
       Activity
     status: Completed
-  activity: # 9 "2018-09-10 16:34:27"
+  activity: # 9 "2018-09-11 16:15:05"
     name: Stop
     status: Completed
-  variable: # 11112
+  variable: # 11217
     name: testCase
     value: kotlin
-process: # 10323
+  variable: # 11218
+    name: updated
+    value: updated from kotlin
+process: # 10362
   name: ActivityImplementors
   instance: 3
-  activity: # 1 "2018-09-10 16:34:22"
+  activity: # 1 "2018-09-11 16:15:00"
     name: Start
     status: Completed
-  activity: # 3 "2018-09-10 16:34:22"
+  activity: # 3 "2018-09-11 16:15:00"
     name: Which?
     status: Completed
     result: java pagelet
-  activity: # 6 "2018-09-10 16:34:22"
+  activity: # 6 "2018-09-11 16:15:00"
     name: Java Invader
     status: Completed
     result: Neptune
-  activity: # 8 "2018-09-10 16:34:22"
+  activity: # 8 "2018-09-11 16:15:00"
     name: Stop
     status: Completed
-  variable: # 11111
+  variable: # 11216
     name: invader
     value: Dr. Soran
-  variable: # 11109
+  variable: # 11214
     name: testCase
     value: java pagelet
-  variable: # 11110
+  variable: # 11215
     name: updated
     value: updated from java
-process: # 10322
+process: # 10361
   name: ActivityImplementors
   instance: 4
-  activity: # 1 "2018-09-10 16:34:18"
+  activity: # 1 "2018-09-11 16:14:56"
     name: Start
     status: Completed
-  activity: # 3 "2018-09-10 16:34:18"
+  activity: # 3 "2018-09-11 16:14:56"
     name: Which?
     status: Completed
     result: java
-  activity: # 4 "2018-09-10 16:34:18"
+  activity: # 4 "2018-09-11 16:14:56"
     name: |
       Java
       Activity
     status: Completed
-  activity: # 8 "2018-09-10 16:34:18"
+  activity: # 8 "2018-09-11 16:14:56"
     name: Stop
     status: Completed
-  variable: # 11107
+  variable: # 11212
     name: testCase
     value: java
-  variable: # 11108
+  variable: # 11213
     name: updated
     value: updated from java
