@@ -9,7 +9,6 @@ com.centurylink.mdw.boot.servlet
 com.centurylink.mdw.bpmn
 com.centurylink.mdw.cache
 com.centurylink.mdw.cache.impl
-com.centurylink.mdw.canvas
 com.centurylink.mdw.cli
 com.centurylink.mdw.cloud
 com.centurylink.mdw.common
