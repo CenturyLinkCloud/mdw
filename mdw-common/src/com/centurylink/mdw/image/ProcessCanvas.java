@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
  */
-package com.centurylink.mdw.export;
+package com.centurylink.mdw.image;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
