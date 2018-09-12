@@ -229,8 +229,9 @@ public class DatabaseAccess {
                                     ResultSet rs = dbAccess.runSelect(checkSql);
                                     if (!rs.next()) {
                                         logger.info("  db upgrade: " + name);
-                                        String upgradeSql = queriesObj.getString("upgrade");
-                                        dbAccess.runUpdate(upgradeSql);
+                                        String[] upgradeSqls = queriesObj.getString("upgrade").split(";");
+                                        for (String upgradeSql : upgradeSqls)
+                                            dbAccess.runUpdate(upgradeSql);
                                     }
                                 }
                             }

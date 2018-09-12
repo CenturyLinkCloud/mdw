@@ -12,4 +12,4 @@ Run the following scripts to create a  database on Oracle for VCS based projects
     be granted Site Admin access to enable them to add users through the Administration webapp.
 9. (Optional) Run add_solutions_entities.sql if the solutions concept is desired.
    
-
+NOTE: It is recommended that the MDW schema owner is the specified user in property mdw.database.username
