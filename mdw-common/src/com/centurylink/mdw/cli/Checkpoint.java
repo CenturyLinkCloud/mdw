@@ -192,24 +192,10 @@ public class Checkpoint extends Setup {
                 for (AssetRef ref : refs) {
                     stmt.setLong(1, ref.getDefinitionId());
                     try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            String name = rs.getString("name");
-                            if (!ref.getName().equals(name)) {
-                                throw new IOException("Unexpected name for id=" + ref.getDefinitionId()
-                                + " (expected '" + ref.getName() + "', found '" + name + "'");
-                            }
-                            String oldRef = rs.getString("ref");
-                            if (!oldRef.equals(ref.getRef())) {
-                                String update = "update asset_ref set ref = ? where definition_id = ?";
-                                try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
-                                    updateStmt.setString(1, ref.getRef());
-                                    updateStmt.setLong(2, ref.getDefinitionId());
-                                    updateStmt.executeUpdate();
-                                    if (!conn.getAutoCommit()) conn.commit();
-                                }
-                            }
-                        }
-                        else {
+                        // DO NOT update existing refs with newer commitID
+                        // Doing so can obliterate previous commitID from asset_ref table
+                        // which will prevent auto-import detection in cluster envs
+                        if (!rs.next()) {
                             String insert = "insert into asset_ref (definition_id, name, ref) values (?, ?, ?)";
                             try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
                                 insertStmt.setLong(1, ref.getDefinitionId());
