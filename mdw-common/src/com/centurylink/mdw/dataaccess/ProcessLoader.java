@@ -71,9 +71,6 @@ public interface ProcessLoader {
     List<TaskCategory> getTaskCategories()
     throws DataAccessException;
 
-    List<ActivityImplementor> getReferencedImplementors(Package packageVO)
-    throws DataAccessException;
-
     List<Process> findCallingProcesses(Process subproc)
     throws DataAccessException;
 

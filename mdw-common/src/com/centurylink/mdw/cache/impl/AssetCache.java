@@ -134,7 +134,6 @@ public class AssetCache implements PreloadableCache {
 
     /**
      * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
-     * @see AssetVO.meetsVersionSpec().
      */
     public static Asset getAsset(AssetVersionSpec spec) {
         Asset match = null, assetVO = null;
@@ -333,7 +332,7 @@ public class AssetCache implements PreloadableCache {
                         else if (assetPkg == null)
                           packageMatch = true;  // earlier version in default package should be ignored
                         else
-                          packageMatch = rsPkg.getPackageName().equals(assetPkg.getPackageName());
+                          packageMatch = rsPkg.getName().equals(assetPkg.getName());
 
                         if (languageMatch && packageMatch) {
                             already = true;

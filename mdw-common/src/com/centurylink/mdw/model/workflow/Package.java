@@ -15,19 +15,6 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlException;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.yaml.snakeyaml.Yaml;
-
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cloud.CloudClassLoader;
@@ -43,17 +30,24 @@ import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.JsonUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Package implements Serializable, Jsonable {
 
     public static final String MDW = "com.centurylink.mdw";
-    public static final String MDW_HUB = MDW + ".hub";
 
     private static Package defaultPackage = null;
 
-    private Long packageId;
-    private String packageName;
-    private String packageDescription;
+    private Long id;
+    private String name;
     private String metaContent;
     private List<Attribute> attributes;
     private List<ActivityImplementor> implementors;
@@ -65,7 +59,6 @@ public class Package implements Serializable, Jsonable {
     private int schemaVersion;
     private int version;
     private boolean exported;
-    private Date modifyDate;
     // runtime information
     private ClassLoader classloader;
     private String group;
@@ -73,12 +66,11 @@ public class Package implements Serializable, Jsonable {
     public String getGroup() {
         return group;
     }
-
     public void setGroup(String group) {
         this.group = group;
     }
 
-    public Package(){
+    public Package() {
     }
 
     /**
@@ -111,22 +103,6 @@ public class Package implements Serializable, Jsonable {
         return groupAttributes;
     }
 
-    public Map<String,List<Attribute>> getAttributesByGroup() {
-        if (attributes == null)
-            return null;
-        Map<String,List<Attribute>> grouped = new HashMap<>();
-        for (Attribute attribute : attributes) {
-            String group = attribute.getAttributeGroup();
-            List<Attribute> groupAttrs = grouped.get(group);
-            if (groupAttrs == null) {
-                groupAttrs = new ArrayList<>();
-                grouped.put(group, groupAttrs);
-            }
-            groupAttrs.add(attribute);
-        }
-        return grouped;
-    }
-
     /**
      * @param attributes the attributes to set
      */
@@ -144,71 +120,27 @@ public class Package implements Serializable, Jsonable {
         return null;
     }
 
-    public Long getPackageId() {
-        return packageId;
-    }
-
     public Long getId() {
-        return getPackageId();
+        return id;
     }
-
-    /**
-     * @param processId the processId to set
-     */
-    public void setPackageId(Long packageId) {
-        this.packageId = packageId;
-    }
-
     public void setId(Long id) {
-        setPackageId(id);
+        this.id = id;
     }
-
-    /**
-     * @return the processName
-     */
-    public String getPackageName() {
-        return packageName;
-    }
+    @Deprecated
+    public Long getPackageId() { return getId(); }
 
     public String getName() {
-        return getPackageName();
+        return name;
     }
-
-    /**
-     * @param processName the processName to set
-     */
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
     public void setName(String name) {
-        setPackageName(name);
+        this.name = name;
     }
+    @Deprecated
+    public String getPackageName() { return getName(); }
 
-    /**
-     * @return the processDescription
-     */
-    public String getPackageDescription() {
-        return packageDescription;
-    }
-
-    /**
-     * @param processDescription the processDescription to set
-     */
-    public void setPackageDescription(String packageDescription) {
-        this.packageDescription = packageDescription;
-    }
-
-    /**
-     * @return the processes
-     */
     public List<Process> getProcesses() {
         return this.processes;
     }
-
-    /**
-     * @param processes the processes to set
-     */
     public void setProcesses(List<Process> pProcesses) {
         this.processes = pProcesses;
     }
@@ -224,45 +156,12 @@ public class Package implements Serializable, Jsonable {
         return false;
     }
 
-    public boolean containsExternalEvent(Long externalEventId) {
-        if (externalEvents == null)
-            return false;
-
-        for (ExternalEvent externalEventVO : externalEvents) {
-            if (externalEventVO.getId().equals(externalEventId))
-                return true;
-        }
-        return false;
-    }
-
     public boolean containsTaskTemplate(Long taskId) {
         if (taskTemplates == null)
             return false;
 
         for (TaskTemplate taskTemplate : taskTemplates) {
             if (taskTemplate.getTaskId().equals(taskId))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean containsActivityImpl(Long activityImplId) {
-        if (implementors == null)
-            return false;
-
-        for (ActivityImplementor activityImplVO : implementors) {
-            if (activityImplVO.getImplementorId().equals(activityImplId))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean containsActivityImpl(String implClass) {
-        if (implementors == null)
-            return false;
-
-        for (ActivityImplementor activityImplVO : implementors) {
-            if (activityImplVO.getImplementorClassName().equals(implClass))
                 return true;
         }
         return false;
@@ -373,8 +272,7 @@ public class Package implements Serializable, Jsonable {
         this.metaContent = metaContent;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Attribute> getMetaAttributes() throws XmlException {
+    public List<Attribute> getMetaAttributes() {
         if (metaContent == null || metaContent.isEmpty())
             return null;
         if (metaContent.trim().startsWith("{")) {
@@ -399,21 +297,8 @@ public class Package implements Serializable, Jsonable {
             return version + 1;
     }
 
-    public String getNewVersionString(boolean major) {
-        int version = getNewVersion(major);
-        return version/1000 + "." + version%1000;
-    }
-
     public String getLabel() {
-        return getPackageName() + " v" + getVersionString();
-    }
-
-    public Date getModifyDate() {
-        return modifyDate;
-    }
-
-    public void setModifyDate(Date modifyDate) {
-        this.modifyDate = modifyDate;
+        return getName() + " v" + getVersionString();
     }
 
     public static Package getDefaultPackage() {
@@ -446,17 +331,17 @@ public class Package implements Serializable, Jsonable {
         return classloader.loadClass(classname);
     }
 
-    public GeneralActivity getActivityImplementor(Activity activity)
+    public GeneralActivity getActivityImplementor(String className)
     throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, MdwJavaException {
         // try dynamic java first (preferred in case patch override is needed)
         try {
             ClassLoader parentLoader = getCloudClassLoader();
-            return (GeneralActivity) CompiledJavaCache.getInstance(activity.getImplementor(), parentLoader, this);
+            return (GeneralActivity) CompiledJavaCache.getInstance(className, parentLoader, this);
         }
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
-        String implClass = Compatibility.getActivityImplementor(activity.getImplementor());
+        String implClass = Compatibility.getActivityImplementor(className);
         GeneralActivity injected = SpringAppContext.getInstance().getActivityImplementor(implClass, this);
         if (injected != null)
             return injected;
@@ -465,7 +350,7 @@ public class Package implements Serializable, Jsonable {
         return getClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
     }
 
-    public EventHandler getEventHandler(String classname, String content, Map<String,String> metaInfo)
+    public EventHandler getEventHandler(String classname)
     throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, MdwJavaException {
         // try dynamic java first (preferred in case patch override is needed)
         try {

@@ -95,7 +95,6 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     /**
      * To load all the dynamic java Registered services classes
-     * @param string
      */
     private void loadDynamicJavaRegisteredServices() {
         Map<Package,Map<String,String>> packagedJava = new HashMap<Package,Map<String,String>>();
@@ -110,7 +109,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                         logger.severe("Omitting unpackaged Registered Service from compilation: " + javaAsset.getLabel());
                     }
                     else {
-                        String qName = JavaNaming.getValidPackageName(javaAssetPackage.getPackageName()) + "." + className;
+                        String qName = JavaNaming.getValidPackageName(javaAssetPackage.getName()) + "." + className;
                         Map<String,String> javaSources = packagedJava.get(javaAssetPackage);
                         if (javaSources == null) {
                             javaSources = new HashMap<String,String>();
@@ -531,7 +530,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         for (Asset javaSource : AssetCache.getAssets(Asset.JAVA)) {
             Package pkg = PackageCache.getAssetPackage(javaSource.getId());
-            String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
+            String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getName());
             String className = JavaNaming.getValidClassName(javaSource.getName());
             File dir = createNeededDirs(packageName);
             File file = new File(dir + "/" + className + ".java");
@@ -560,7 +559,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 try {
                     Asset javaAsset = AssetCache.getAsset(preCompClass, Asset.JAVA);
                     Package pkg = PackageCache.getAssetPackage(javaAsset.getId());
-                    String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
+                    String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getName());
                     String className = (pkg == null ? "" : packageName + ".") + JavaNaming.getValidClassName(javaAsset.getName());
                     getClass(null, pkg, className, javaAsset.getStringContent());
                 }

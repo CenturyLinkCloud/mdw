@@ -113,7 +113,7 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         return file.getName();
     }
 
-    public String rootName;
+    private String rootName;
     public String getRootName() {
         if (rootName == null) {
             String filename = file.getName();

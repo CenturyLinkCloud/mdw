@@ -299,11 +299,6 @@ class ProcessExecutorImpl {
 
     /**
      * Create a process instance. The status is PENDING_PROCESS
-     * @param process
-     * @param eventMessageDoc
-     * @return
-     * @throws ProcessException
-     * @throws DataAccessException
      */
     ProcessInstance createProcessInstance(Long processId, String ownerType,
             Long ownerId, String secondaryOwnerType, Long secondaryOwnerId,
@@ -461,10 +456,6 @@ class ProcessExecutorImpl {
 
     /**
      * Handles the work Transitions for the passed in collection of Items
-     *
-     * @param processInst
-     * @param transitions
-     * @param eventMessageDoc
      */
     void createTransitionInstances(ProcessInstance processInstanceVO,
             List<Transition> transitions, Long fromActInstId)
@@ -609,11 +600,6 @@ class ProcessExecutorImpl {
     /**
      * determine if activity needs to wait (such as synchronous
      * process invocation, wait activity, synchronization)
-     *
-     * @param activity
-     * @param activityInstanceId
-     * @param eventMessageDoc
-     * @return whether to wait
      */
     private boolean activityNeedsWait(GeneralActivity activity)
             throws ActivityException {
@@ -624,13 +610,6 @@ class ProcessExecutorImpl {
 
     /**
      * Reports the error status of the activity instance to the activity manager
-     *
-     * @param eventMessageDoc
-     * @param activityInstId
-     * @param processInstId
-     * @param activity
-     * @param cause
-     * @throws DataAccessException, MdwException, SQLException
      */
     void failActivityInstance(InternalEvent event,
             ProcessInstance processInst, Long activityId, Long activityInstId,
@@ -742,7 +721,7 @@ class ProcessExecutorImpl {
             Activity actVO = processVO.getActivityVO(activityId);
             Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
             try {
-                GeneralActivity activity = pkg.getActivityImplementor(actVO);
+                GeneralActivity activity = pkg.getActivityImplementor(actVO.getImplementor());
                 ar.activity = (BaseActivity)activity;
             } catch (Throwable e) {
                 String logtag = this.logtag(procInst.getProcessId(), procInst.getId(), activityId, 0L);
@@ -1080,9 +1059,6 @@ class ProcessExecutorImpl {
 
      /**
      * Resumes the process instance for the secondary owner
-     *
-     * @param childInst child process instance
-     * @param masterReqId
      */
     private void resumeProcessInstanceForSecondaryOwner(InternalEvent event,
             BaseActivity cntrActivity) throws Exception {
@@ -1218,12 +1194,6 @@ class ProcessExecutorImpl {
         }
     }
 
-    /**
-     *
-     * @param processInstVO
-     * @param process
-     * @param pMessage
-     */
     private void completeProcessInstance(ProcessInstance processInst, String completionCode, boolean noNotify)
     throws Exception {
 
@@ -1354,7 +1324,7 @@ class ProcessExecutorImpl {
             // use design-time package
             Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
 
-            BaseActivity cntrActivity = (BaseActivity)pkg.getActivityImplementor(actVO);
+            BaseActivity cntrActivity = (BaseActivity)pkg.getActivityImplementor(actVO.getImplementor());
             Tracked t = cntrActivity.getClass().getAnnotation(Tracked.class);
             if (t != null) {
                 String logTag = logtag(procInst.getProcessId(), procInst.getId(), actId, actInst.getId());
@@ -1548,12 +1518,6 @@ class ProcessExecutorImpl {
      * Abort a single process instance by process instance ID,
      * or abort potentially multiple (but typically one) process instances
      * by process ID and owner ID.
-     *
-     * @param pMessage
-     * @param pProcessInst
-     * @param pCause
-     * @throws ProcessHandlerException
-     *
      */
     void abortProcessInstance(InternalEvent event)
       throws ProcessException {
@@ -1588,13 +1552,7 @@ class ProcessExecutorImpl {
 
     /**
      * Cancels the process instance as well as all descendant process instances.
-     *
-     * The method deregister associated event wait instances.
-     *
-     * @param pProcessInstId
-     * @return new WorkInstance
-     * @throws SQLException
-     * @throws ProcessException
+     * Deregisters associated event wait instances.
      */
     private void cancelProcessInstanceTree(ProcessInstance pi)
     throws Exception {
@@ -1720,18 +1678,6 @@ class ProcessExecutorImpl {
 
    /**
      * Method that creates the event log based on the passed in params
-     *
-     * @param pEventNames
-     * @param pEventSources
-     * @param pEventOwner
-     * @param pEventOwnerId
-     * @param pWorkTransInstId
-     * @param pEventTypes
-     * @param pEventOccurances
-     * @param pDeRegisterSiblings
-     * @return EventWaitInstance
-     * @throws SQLException
-     * @throws ProcessException
      */
     EventWaitInstance createEventWaitInstances(Long actInstId,
             String[] pEventNames, String[] pWakeUpEventTypes,
@@ -1850,9 +1796,6 @@ class ProcessExecutorImpl {
      *       In this case, the argument message is populated.
      *   2) when register even wait instance, and the even has already arrived. In this case
      *       the argument message null.
-     *
-     * @param pProcessInstId
-     * @param pCompletionCode
      */
     private void resumeActivityInstance(ActivityInstance actInst,
             String pCompletionCode, Long documentId, String message, int delay)

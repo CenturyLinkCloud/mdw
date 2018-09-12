@@ -15,25 +15,7 @@
  */
 package com.centurylink.mdw.services.workflow;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.bind.JAXBElement;
-
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.yaml.snakeyaml.Yaml;
-
+import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -57,6 +39,7 @@ import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -69,27 +52,14 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityCount;
-import com.centurylink.mdw.model.workflow.ActivityImplementor;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessCount;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRun;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.EventServices;
-import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
@@ -102,6 +72,19 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
+
+import javax.xml.bind.JAXBElement;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.util.*;
 
 public class WorkflowServicesImpl implements WorkflowServices {
 
@@ -385,10 +368,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return values;
     }
 
-    /**
-     * @param runtimeContext
-     * @return
-     */
     protected Map<String,Variable> getVariableDefinitions(Long processId) {
         Process processVo = ProcessCache.getProcess(processId);
         Map<String,Variable> varDefs = new HashMap<String,Variable>();
@@ -876,8 +855,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityImplementors = DataAccess.getProcessLoader().getActivityImplementors();
                 for (ActivityImplementor impl : activityImplementors) {
                     // qualify the icon location
-                    if (impl.getIconName() != null && !impl.getIconName().startsWith("shape:")) {
-                        String icon = impl.getIconName();
+                    String icon = impl.getIconName();
+                    if (icon != null && !icon.startsWith("shape:") && icon.indexOf('/') <= 0) {
                         for (Package pkg : PackageCache.getPackages()) {
                             for (Asset asset : pkg.getAssets()) {
                                 if (asset.getName().equals(icon)) {
@@ -888,6 +867,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         }
                     }
                     impl.setAttributeDescription(null);
+                }
+                AssetServices assetServices = ServiceLocator.getAssetServices();
+                Map<String,List<AssetInfo>> annotatedAssets = assetServices.getAssetsOfTypes(new String[]{"java", "kt"});
+                for (String packageName : annotatedAssets.keySet()) {
+                    Package pkg = PackageCache.getPackage(packageName);
+                    for (AssetInfo assetInfo : annotatedAssets.get(packageName)) {
+                        ActivityImplementor impl = getAnnotatedImpl(pkg, assetInfo);
+                        if (impl != null)
+                            activityImplementors.add(impl);
+                    }
                 }
             }
             catch (CachingException ex) {
@@ -912,11 +901,50 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     return implementor;
                 }
             }
+            Package pkg = PackageCache.getPackage(className.substring(0, className.lastIndexOf('.')));
+            if (pkg != null) {
+                AssetServices assetServices = ServiceLocator.getAssetServices();
+                String assetRoot = pkg.getName() + "/" + className.substring(className.lastIndexOf('.') + 1);
+                AssetInfo assetInfo = null;
+                try {
+                    // TODO asset service should return null if not found instead of throwing
+                    assetInfo = assetServices.getAsset(assetRoot + ".java");
+                }
+                catch (ServiceException ex) {
+                    try {
+                        assetInfo = assetServices.getAsset(assetRoot + ".kt");
+                    }
+                    catch (ServiceException ex2) {
+                    }
+                }
+                if (assetInfo != null)
+                    return getAnnotatedImpl(pkg, assetInfo);
+            }
             return null;
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
+    }
+
+    private ActivityImplementor getAnnotatedImpl(Package pkg, AssetInfo assetInfo) {
+        String implClass = pkg.getName() + "." + assetInfo.getRootName();
+        try {
+            String contents = new String(Files.readAllBytes(assetInfo.getFile().toPath()));
+            if (contents.contains("@Activity")) {
+                GeneralActivity activity = pkg.getActivityImplementor(implClass);
+                com.centurylink.mdw.annotations.Activity annotation =
+                        activity.getClass().getAnnotation(com.centurylink.mdw.annotations.Activity.class);
+                ActivityImplementor impl = new ActivityImplementor(annotation.value(), implClass, annotation.icon(), annotation.pagelet());
+                impl.setBaseClassName(annotation.category().getName());
+                impl.setPackageName(pkg.getName());
+                return impl;
+            }
+        }
+        catch (Exception ex) {
+            logger.severeException("Cannot load " + implClass, ex);
+        }
+        return null;
     }
 
     public Long launchProcess(String name, String masterRequestId, String ownerType,
