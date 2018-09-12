@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -171,6 +172,16 @@ public class WorkflowDataAccess extends CommonDataAccess {
         String template = query.getFilter("template");
         if (template != null)
             sb.append(" and template = '" + template + "'");
+        // values
+        Map<String,String> values = query.getMapFilter("values");
+        if (values != null) {
+            for (String varName : values.keySet()) {
+                String varValue = values.get(varName);
+                sb.append("\n and exists (select vi.variable_inst_id from variable_instance vi ");
+                sb.append(" where vi.process_inst_id = pi.process_instance_id and vi.variable_name = '").append(varName).append("'");
+                sb.append(" and vi.variable_value = '").append(varValue).append("')");
+            }
+        }
         return sb.toString();
     }
 

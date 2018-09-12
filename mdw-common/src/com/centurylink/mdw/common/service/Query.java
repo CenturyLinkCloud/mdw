@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -165,6 +166,33 @@ public class Query {
             filters.put(key, value);
         }
         return this;
+    }
+
+    /**
+     * Empty map returns null, as does invalid format.
+     */
+    public Map<String,String> getMapFilter(String name) {
+        String value = filters.get(name);
+        if (value == null)
+            return null;
+        Map<String,String> map = new LinkedHashMap<>();
+        if (value.startsWith("{") && value.endsWith("}")) {
+            for (String entry : value.substring(1, value.length() - 1).split(",")) {
+                int eq = entry.indexOf('=');
+                if (eq > 0 && eq < entry.length() - 1) {
+                    String key = entry.substring(0, eq).trim();
+                    String val = entry.substring(eq + 1);
+                    if (val.startsWith("'") && val.endsWith("'") && val.length() > 1) {
+                        val = val.substring(1, val.length() - 1);
+                    }
+                    else {
+                        val = val.trim();
+                    }
+                    map.put(key, val);
+                }
+            }
+        }
+        return map.isEmpty() ? null : map;
     }
 
     public Long[] getLongArrayFilter(String key) {
