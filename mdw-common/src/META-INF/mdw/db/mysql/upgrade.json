@@ -8,12 +8,7 @@
     {
       "name": "instance timing",
       "check": "SELECT * FROM  information_schema.tables WHERE table_name = 'INSTANCE_TIMING' AND table_schema='MDW'",
-      "upgrade":"CREATE TABLE INSTANCE_TIMING (INSTANCE_ID  BIGINT   NOT NULL,  OWNER_TYPE  VARCHAR(30)  NOT NULL, ELAPSED_MS   BIGINT   NOT NULL)"                              
-    },
-    {
-      "name": "instance timing primary key",
-      "check": "SELECT * FROM information_schema.table_constraints WHERE table_name = 'INSTANCE_TIMING' AND constraint_name = 'PRIMARY'",
-      "upgrade": "ALTER TABLE INSTANCE_TIMING ADD(CONSTRAINT timing_primary_key PRIMARY KEY(INSTANCE_ID,OWNER_TYPE))"
+      "upgrade":"CREATE TABLE INSTANCE_TIMING (INSTANCE_ID  BIGINT   NOT NULL,  OWNER_TYPE  VARCHAR(30)  NOT NULL, ELAPSED_MS   BIGINT   NOT NULL);ALTER TABLE INSTANCE_TIMING ADD(CONSTRAINT timing_primary_key PRIMARY KEY(INSTANCE_ID,OWNER_TYPE))"                              
     }
   ]  
 }
