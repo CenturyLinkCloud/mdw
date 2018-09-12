@@ -112,11 +112,11 @@ public class PackageCache implements PreloadableCache {
 
         List<Package> filteredPackages = packages.stream()
                 .filter(e -> !mdwVersion.equals(e.getVersionString())
-                        && e.getPackageName().startsWith("com.centurylink.mdw")
-                        && !e.getPackageName().startsWith("com.centurylink.mdw.central"))
+                        && e.getName().startsWith("com.centurylink.mdw")
+                        && !e.getName().startsWith("com.centurylink.mdw.central"))
                 .collect(Collectors.toList());
         List<Package> obsoletePackages = filteredPackages.stream()
-                .filter(p2 -> !(p2.getPackageName().matches(exceptions)))
+                .filter(p2 -> !(p2.getName().matches(exceptions)))
                 .collect(Collectors.toList());
 
         if (!obsoletePackages.isEmpty()){
@@ -213,7 +213,7 @@ public class PackageCache implements PreloadableCache {
     public static List<Package> getAllPackages(String packageName) throws CachingException {
         List<Package> allPackages = new ArrayList<Package>();
         for (Package packageVO : getPackageList()) {
-            if (packageVO.getPackageName().equals(packageName)) {
+            if (packageVO.getName().equals(packageName)) {
                 allPackages.add(packageVO);
             }
         }
@@ -226,7 +226,7 @@ public class PackageCache implements PreloadableCache {
                 return Package.getDefaultPackage();
 
             for (Package packageVO : getPackageList()) {
-                if (packageVO.getPackageId().equals(packageId)) {
+                if (packageVO.getId().equals(packageId)) {
                     return packageVO;
                 }
             }
@@ -240,7 +240,7 @@ public class PackageCache implements PreloadableCache {
 
     public static Package getPackage(String packageName) throws CachingException {
         for (Package packageVO : getPackageList()) {
-            if (packageVO.getPackageName().equals(packageName)) {
+            if (packageVO.getName().equals(packageName)) {
                 return packageVO;
             }
         }
@@ -249,7 +249,7 @@ public class PackageCache implements PreloadableCache {
 
     public static Package getDefaultPackage() throws CachingException {
         for (Package pkg : getPackageList()) {
-            if (pkg.getPackageName() == null)
+            if (pkg.getName() == null)
               return pkg;
         }
         return null;
@@ -261,7 +261,7 @@ public class PackageCache implements PreloadableCache {
             // populate attributes from attribute table
             Package loaded = loader.loadPackage(pkg.getId(), false);
             // retrieve to avoid deadlock waiting for AssetVOCache
-            Asset assetVO = loader.getAssetForOwner(OwnerType.PACKAGE, loaded.getPackageId());
+            Asset assetVO = loader.getAssetForOwner(OwnerType.PACKAGE, loaded.getId());
             if (assetVO != null && assetVO.getStringContent() != null) {
                 if (assetVO.getStringContent().trim().startsWith("{")) {
                     Package metaPkg = new Package(new JsonObject(assetVO.getStringContent()));

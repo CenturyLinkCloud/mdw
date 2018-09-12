@@ -15,29 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.json.JSONException;
-import org.yaml.snakeyaml.Yaml;
-
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.config.PropertyManager;
@@ -45,14 +22,7 @@ import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.AssetRef;
-import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
-import com.centurylink.mdw.dataaccess.ProcessPersister;
-import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.*;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -68,6 +38,14 @@ import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 
 // TODO clear VersionControl & PackageDir/AssetFile caches on Cache Refresh.
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
@@ -424,7 +402,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             saveProcesses(packageVO, pkgDir); // also saves v0 task templates
         }
 
-        return packageVO.getPackageId();
+        return packageVO.getId();
     }
 
     public Process loadProcess(PackageDir pkgDir, AssetFile assetFile, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
@@ -624,10 +602,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         }
     }
 
-    public List<ActivityImplementor> loadActivityImplementors(PackageDir pkgDir) throws IOException, XmlException, JSONException {
-        List<ActivityImplementor> impls = new ArrayList<ActivityImplementor>();
-        for (File implFile : pkgDir.listFiles(implFileFilter))
+    public List<ActivityImplementor> loadActivityImplementors(PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
+        List<ActivityImplementor> impls = new ArrayList<>();
+        for (File implFile : pkgDir.listFiles(implFileFilter)) {
             impls.add(loadActivityImplementor(pkgDir, pkgDir.getAssetFile(implFile)));
+        }
         return impls;
     }
 
@@ -635,8 +614,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (packageVo.getImplementors() != null && !packageVo.getImplementors().isEmpty()) {
             List<ActivityImplementor> existingImpls = new ArrayList<ActivityImplementor>();
             for (PackageDir existPkgDir : getPackageDirs()) {
-                if (!existPkgDir.isArchive())
+                if (!existPkgDir.isArchive()) {
                     existingImpls.addAll(loadActivityImplementors(existPkgDir));
+                }
             }
             for (ActivityImplementor impl : packageVo.getImplementors()) {
                 boolean alreadyPresentInAnotherPackage = false;
@@ -1008,34 +988,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             List<ActivityImplementor> modifiableList = new ArrayList<>();
             modifiableList.addAll(Arrays.asList(impls.values().toArray(new ActivityImplementor[0])));
             return modifiableList;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
-        }
-    }
-
-    public List<ActivityImplementor> getReferencedImplementors(Package packageVO) throws DataAccessException {
-        PackageDir pkgDir = getPackageDir(packageVO.getId());
-        List<String> implClasses = new ArrayList<String>();
-        try {
-            for (Process process : loadProcesses(pkgDir, true)) {
-                for (Activity activity : process.getActivities()) {
-                    String implClass = activity.getImplementor();
-                    if (!implClasses.contains(implClass))
-                        implClasses.add(implClass);
-                }
-            }
-            List<ActivityImplementor> referencedImpls = new ArrayList<ActivityImplementor>();
-            List<ActivityImplementor> allImpls = getActivityImplementors();  // TODO cache these
-            for (String implClass : implClasses) {
-                for (ActivityImplementor impl : allImpls) {
-                    if (impl.getImplementorClassName().equals(implClass)) {
-                        referencedImpls.add(impl);
-                        break;
-                    }
-                }
-            }
-            return referencedImpls;
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);

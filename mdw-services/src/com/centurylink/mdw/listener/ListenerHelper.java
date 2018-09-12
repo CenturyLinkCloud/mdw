@@ -153,9 +153,6 @@ public class ListenerHelper {
      * The user identified in the AuthenticatedUser headers must be authorized to
      * perform this action.  For HTTP, MDW removes this header (if it exists) from
      * every request and then populates based on session authentication or HTTP Basic/Bearer.
-     * @param content
-     *
-     * @return authorized user if successful
      */
     private boolean isAuthorized(EventHandler handler, Map<String,String> headers)
     throws AuthorizationException {
@@ -196,11 +193,6 @@ public class ListenerHelper {
      * null, in DOCUMENT table with owner type LISTENER_RESPONSE and return the
      * message to the listener</li>
      * </ul>
-     * If any of the above step throws exception, the method captures it and
-     * will generate a standard message (see
-     * {@link #createStandardResponse(int, String, String)}), with -1
-     * (RETURN_STATUS_FAILURE) as the status code and the message of the
-     * exception as the status message.
      * <p>
      * Note that if the message cannot even been parsed by the generic XML bean
      * (not a well formed XML message), the message will still be logged in the
@@ -391,7 +383,7 @@ public class ListenerHelper {
                     handler = Class.forName(clsname).asSubclass(EventHandler.class).newInstance();
                 }
                 else {
-                    handler = pkg.getEventHandler(clsname, request, metaInfo);
+                    handler = pkg.getEventHandler(clsname);
                     if (!pkg.isDefaultPackage() && handler instanceof ExternalEventHandlerBase)
                         ((ExternalEventHandlerBase)handler).setPackage(pkg);
                 }
@@ -580,7 +572,6 @@ public class ListenerHelper {
 
     /**
      * Create a default error message.  To customized this response use a ServiceMonitor.
-     * @see com.centurylink.mdw.monitor.ServiceMonitor.
      */
     public Response createErrorResponse(String req, Map<String,String> metaInfo, ServiceException ex) {
         Request request = new Request(0L);
@@ -625,12 +616,6 @@ public class ListenerHelper {
         }
     }
 
-    /**
-     * @param request
-     * @param jsonMessage
-     * @param metaInfo
-     * @return
-     */
     private Object getParsedMessage(String request, Map<String,String> metaInfo) {
         if (request == null || request.isEmpty())
             return null;
@@ -693,18 +678,6 @@ public class ListenerHelper {
      * @param ownerId
      *            This should be the external event handler ID for
      *            LISTENER_REQUEST and request document ID for LISTENER_RESPONSE
-     * @param processInstanceId
-     *            this is the ID of the process instance the message is going to
-     *            be delivered to. If that information is not available, pass
-     *            new Long(0) to it. You can update the information using
-     *            updateDocumentInfo later on.
-     * @param searchKey1
-     *            user defined search key. Pass null if you do not need custom
-     *            search key
-     * @param searchKey2
-     *            another custom search key. Pass null if you do not need it.
-     * @return document reference that refers to the newly created document.
-     * @throws EventHandlerException
      */
     public DocumentReference createDocument(String docType, Object document, Package pkg,
             String ownerType, Long ownerId) throws EventHandlerException {

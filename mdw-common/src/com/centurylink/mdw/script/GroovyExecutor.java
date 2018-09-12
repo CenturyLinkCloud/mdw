@@ -193,7 +193,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
         for (Asset groovy : AssetCache.getAssets(Asset.GROOVY)) {
             Package pkg = PackageCache.getAssetPackage(groovy.getId());
-            String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
+            String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getName());
             File dir = createNeededDirs(packageName);
             String filename = dir + "/" + groovy.getName();
             if (!filename.endsWith(".groovy"))
@@ -223,7 +223,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
         for (Asset java : AssetCache.getAssets(Asset.JAVA)) {
             Package pkg = PackageCache.getAssetPackage(java.getId());
-            String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getPackageName());
+            String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getName());
             File dir = createNeededDirs(packageName);
             String filename = dir + "/" + java.getName();
             if (filename.endsWith(".java"))

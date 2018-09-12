@@ -85,10 +85,16 @@ public class Implementors extends JsonRestService {
                 if (impl == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Implementor not found: " + implClassName);
                 String pagelet = impl.getAttributeDescription();
-                if (pagelet != null && !pagelet.isEmpty() && !pagelet.trim().startsWith("{")) {
-                    JSONObject pageletJson = new Pagelet(pagelet).getJson();
+                if (pagelet != null && !pagelet.isEmpty()) {
                     impl.setAttributeDescription(null);
                     JSONObject implJson = impl.getJson();
+                    JSONObject pageletJson;
+                    if (pagelet.trim().startsWith("{")) {
+                        pageletJson = new JSONObject(pagelet);
+                    }
+                    else {
+                        pageletJson = new Pagelet(pagelet).getJson();
+                    }
                     implJson.put("pagelet", pageletJson);
                     return implJson;
                 }

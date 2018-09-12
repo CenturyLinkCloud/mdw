@@ -126,7 +126,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
 
                 if (tempPkg.isDefaultPackage()) {  // In case in-flight pulled out of Git history
                     tempPkg = new Package();
-                    tempPkg.setPackageName(getProcessDefinition().getPackageName());
+                    tempPkg.setName(getProcessDefinition().getPackageName());
                     // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key
                     tempPkg.setVersion((-1 * getProcessDefinition().getVersion()));
                 }
@@ -163,10 +163,10 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             if (tempPkg == null || tempPkg.isDefaultPackage())
                 return "";
             else
-                return JavaNaming.getValidPackageName(tempPkg.getPackageName() + ".");
+                return JavaNaming.getValidPackageName(tempPkg.getName() + ".");
         }
         else
-            return JavaNaming.getValidPackageName(pkg.getPackageName() + ".");
+            return JavaNaming.getValidPackageName(pkg.getName() + ".");
     }
 
 }
