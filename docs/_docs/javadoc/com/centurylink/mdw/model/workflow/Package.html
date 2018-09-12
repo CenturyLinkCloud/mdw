@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":9,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":9,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10,"i66":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":42,"i28":42,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":9,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -140,10 +140,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#MDW">MDW</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#MDW_HUB">MDW_HUB</a></span></code>&nbsp;</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -177,286 +173,244 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsActivityImpl-java.lang.Long-">containsActivityImpl</a></span>(java.lang.Long&nbsp;activityImplId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsAsset-java.lang.Long-">containsAsset</a></span>(java.lang.Long&nbsp;assetId)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsActivityImpl-java.lang.String-">containsActivityImpl</a></span>(java.lang.String&nbsp;implClass)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsProcess-java.lang.Long-">containsProcess</a></span>(java.lang.Long&nbsp;processId)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsAsset-java.lang.Long-">containsAsset</a></span>(java.lang.Long&nbsp;assetId)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsExternalEvent-java.lang.Long-">containsExternalEvent</a></span>(java.lang.Long&nbsp;externalEventId)</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsProcess-java.lang.Long-">containsProcess</a></span>(java.lang.Long&nbsp;processId)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#containsTaskTemplate-java.lang.Long-">containsTaskTemplate</a></span>(java.lang.Long&nbsp;taskId)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#formatVersion-int-">formatVersion</a></span>(int&nbsp;version)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#formatVersionOld-int-">formatVersionOld</a></span>(int&nbsp;version)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getActivityImplementor-com.centurylink.mdw.model.workflow.Activity-">getActivityImplementor</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getActivityImplementor-java.lang.String-">getActivityImplementor</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getAsset-java.lang.String-">getAsset</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getAssets--">getAssets</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getAttribute-java.lang.String-">getAttribute</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getAttributes--">getAttributes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getAttributes-java.lang.String-">getAttributes</a></span>(java.lang.String&nbsp;attributeGroup)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
-<td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getAttributesByGroup--">getAttributesByGroup</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i15" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.ClassLoader</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getClassLoader--">getClassLoader</a></span>()</code>
 <div class="block">TODO : dynamic java classloader</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/cloud/CloudClassLoader.html" title="class in com.centurylink.mdw.cloud">CloudClassLoader</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getCloudClassLoader--">getCloudClassLoader</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getDefaultPackage--">getDefaultPackage</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event">EventHandler</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getEventHandler-java.lang.String-java.lang.String-java.util.Map-">getEventHandler</a></span>(java.lang.String&nbsp;classname,
-               java.lang.String&nbsp;content,
-               java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getEventHandler-java.lang.String-">getEventHandler</a></span>(java.lang.String&nbsp;classname)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/event/ExternalEvent.html" title="class in com.centurylink.mdw.model.event">ExternalEvent</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getExternalEvents--">getExternalEvents</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getGroup--">getGroup</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getImplementors--">getImplementors</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getJson-boolean-">getJson</a></span>(boolean&nbsp;deep)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getJsonName--">getJsonName</a></span>()</code>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getLabel--">getLabel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getMetaAttributes--">getMetaAttributes</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getMetaContent--">getMetaContent</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
-<td class="colFirst"><code>java.util.Date</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getModifyDate--">getModifyDate</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i30" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getNewVersion-boolean-">getNewVersion</a></span>(boolean&nbsp;major)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getNewVersionString-boolean-">getNewVersionString</a></span>(boolean&nbsp;major)</code>&nbsp;</td>
-</tr>
-<tr id="i33" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getPackageDescription--">getPackageDescription</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i34" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getPackageId--">getPackageId</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getPackageId--">getPackageId</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getPackageName--">getPackageName</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getPackageName--">getPackageName</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getProcesses--">getProcesses</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getSchemaVersion--">getSchemaVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getTaskTemplates--">getTaskTemplates</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getVariables--">getVariables</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getVersion--">getVersion</a></span>()</code>
 <div class="block">Method that returns the version</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#getVersionString--">getVersionString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#isArchived--">isArchived</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#isDefaultPackage--">isDefaultPackage</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#isExported--">isExported</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#loadClass-java.lang.String-">loadClass</a></span>(java.lang.String&nbsp;classname)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#parseVersion-java.lang.String-">parseVersion</a></span>(java.lang.String&nbsp;versionString)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setArchived-boolean-">setArchived</a></span>(boolean&nbsp;archived)</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setAssets-java.util.List-">setAssets</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a>&gt;&nbsp;assets)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setAttributes-java.util.List-">setAttributes</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setExported-boolean-">setExported</a></span>(boolean&nbsp;exported)</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setExternalEvents-java.util.List-">setExternalEvents</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/event/ExternalEvent.html" title="class in com.centurylink.mdw.model.event">ExternalEvent</a>&gt;&nbsp;externalEvents)</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setGroup-java.lang.String-">setGroup</a></span>(java.lang.String&nbsp;group)</code>&nbsp;</td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setImplementors-java.util.List-">setImplementors</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;&nbsp;imps)</code>&nbsp;</td>
 </tr>
-<tr id="i55" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setMetaContent-java.lang.String-">setMetaContent</a></span>(java.lang.String&nbsp;metaContent)</code>&nbsp;</td>
 </tr>
-<tr id="i56" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setModifyDate-java.util.Date-">setModifyDate</a></span>(java.util.Date&nbsp;modifyDate)</code>&nbsp;</td>
-</tr>
-<tr id="i57" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setName-java.lang.String-">setName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i58" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setPackageDescription-java.lang.String-">setPackageDescription</a></span>(java.lang.String&nbsp;packageDescription)</code>&nbsp;</td>
-</tr>
-<tr id="i59" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setPackageId-java.lang.Long-">setPackageId</a></span>(java.lang.Long&nbsp;packageId)</code>&nbsp;</td>
-</tr>
-<tr id="i60" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setPackageName-java.lang.String-">setPackageName</a></span>(java.lang.String&nbsp;packageName)</code>&nbsp;</td>
-</tr>
-<tr id="i61" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setProcesses-java.util.List-">setProcesses</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;pProcesses)</code>&nbsp;</td>
 </tr>
-<tr id="i62" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setSchemaVersion-int-">setSchemaVersion</a></span>(int&nbsp;schemaVersion)</code>&nbsp;</td>
 </tr>
-<tr id="i63" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setTaskTemplates-java.util.List-">setTaskTemplates</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&gt;&nbsp;taskTemplates)</code>&nbsp;</td>
 </tr>
-<tr id="i64" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setVariables-java.util.List-">setVariables</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/Variable.html" title="class in com.centurylink.mdw.model.variable">Variable</a>&gt;&nbsp;variables)</code>&nbsp;</td>
 </tr>
-<tr id="i65" class="rowColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#setVersion-int-">setVersion</a></span>(int&nbsp;pVersion)</code>
 <div class="block">method that sets the version</div>
 </td>
 </tr>
-<tr id="i66" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Package.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -499,26 +453,13 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <a name="MDW">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>MDW</h4>
 <pre>public static final&nbsp;java.lang.String MDW</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.workflow.Package.MDW">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="MDW_HUB">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>MDW_HUB</h4>
-<pre>public static final&nbsp;java.lang.String MDW_HUB</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.workflow.Package.MDW_HUB">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -628,15 +569,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;getAttributes(java.lang.String&nbsp;attributeGroup)</pre>
 </li>
 </ul>
-<a name="getAttributesByGroup--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAttributesByGroup</h4>
-<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&gt;&nbsp;getAttributesByGroup()</pre>
-</li>
-</ul>
 <a name="setAttributes-java.util.List-">
 <!--   -->
 </a>
@@ -659,15 +591,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;java.lang.String&nbsp;getAttribute(java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="getPackageId--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackageId</h4>
-<pre>public&nbsp;java.lang.Long&nbsp;getPackageId()</pre>
-</li>
-</ul>
 <a name="getId--">
 <!--   -->
 </a>
@@ -675,19 +598,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <li class="blockList">
 <h4>getId</h4>
 <pre>public&nbsp;java.lang.Long&nbsp;getId()</pre>
-</li>
-</ul>
-<a name="setPackageId-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setPackageId</h4>
-<pre>public&nbsp;void&nbsp;setPackageId(java.lang.Long&nbsp;packageId)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processId</code> - the processId to set</dd>
-</dl>
 </li>
 </ul>
 <a name="setId-java.lang.Long-">
@@ -699,17 +609,15 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;void&nbsp;setId(java.lang.Long&nbsp;id)</pre>
 </li>
 </ul>
-<a name="getPackageName--">
+<a name="getPackageId--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getPackageName</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getPackageName()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the processName</dd>
-</dl>
+<h4>getPackageId</h4>
+<pre>@Deprecated
+public&nbsp;java.lang.Long&nbsp;getPackageId()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getName--">
@@ -721,19 +629,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 </li>
 </ul>
-<a name="setPackageName-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setPackageName</h4>
-<pre>public&nbsp;void&nbsp;setPackageName(java.lang.String&nbsp;packageName)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processName</code> - the processName to set</dd>
-</dl>
-</li>
-</ul>
 <a name="setName-java.lang.String-">
 <!--   -->
 </a>
@@ -743,30 +638,15 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;void&nbsp;setName(java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="getPackageDescription--">
+<a name="getPackageName--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getPackageDescription</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getPackageDescription()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the processDescription</dd>
-</dl>
-</li>
-</ul>
-<a name="setPackageDescription-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setPackageDescription</h4>
-<pre>public&nbsp;void&nbsp;setPackageDescription(java.lang.String&nbsp;packageDescription)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processDescription</code> - the processDescription to set</dd>
-</dl>
+<h4>getPackageName</h4>
+<pre>@Deprecated
+public&nbsp;java.lang.String&nbsp;getPackageName()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getProcesses--">
@@ -776,10 +656,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <li class="blockList">
 <h4>getProcesses</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;getProcesses()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the processes</dd>
-</dl>
 </li>
 </ul>
 <a name="setProcesses-java.util.List-">
@@ -789,10 +665,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <li class="blockList">
 <h4>setProcesses</h4>
 <pre>public&nbsp;void&nbsp;setProcesses(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;pProcesses)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processes</code> - the processes to set</dd>
-</dl>
 </li>
 </ul>
 <a name="containsProcess-java.lang.Long-">
@@ -804,15 +676,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;boolean&nbsp;containsProcess(java.lang.Long&nbsp;processId)</pre>
 </li>
 </ul>
-<a name="containsExternalEvent-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>containsExternalEvent</h4>
-<pre>public&nbsp;boolean&nbsp;containsExternalEvent(java.lang.Long&nbsp;externalEventId)</pre>
-</li>
-</ul>
 <a name="containsTaskTemplate-java.lang.Long-">
 <!--   -->
 </a>
@@ -820,24 +683,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <li class="blockList">
 <h4>containsTaskTemplate</h4>
 <pre>public&nbsp;boolean&nbsp;containsTaskTemplate(java.lang.Long&nbsp;taskId)</pre>
-</li>
-</ul>
-<a name="containsActivityImpl-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>containsActivityImpl</h4>
-<pre>public&nbsp;boolean&nbsp;containsActivityImpl(java.lang.Long&nbsp;activityImplId)</pre>
-</li>
-</ul>
-<a name="containsActivityImpl-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>containsActivityImpl</h4>
-<pre>public&nbsp;boolean&nbsp;containsActivityImpl(java.lang.String&nbsp;implClass)</pre>
 </li>
 </ul>
 <a name="containsAsset-java.lang.Long-">
@@ -1045,12 +890,7 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <ul class="blockList">
 <li class="blockList">
 <h4>getMetaAttributes</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;getMetaAttributes()
-                                            throws org.apache.xmlbeans.XmlException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.apache.xmlbeans.XmlException</code></dd>
-</dl>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;getMetaAttributes()</pre>
 </li>
 </ul>
 <a name="getVersionString--">
@@ -1071,15 +911,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;int&nbsp;getNewVersion(boolean&nbsp;major)</pre>
 </li>
 </ul>
-<a name="getNewVersionString-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNewVersionString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getNewVersionString(boolean&nbsp;major)</pre>
-</li>
-</ul>
 <a name="getLabel--">
 <!--   -->
 </a>
@@ -1087,24 +918,6 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <li class="blockList">
 <h4>getLabel</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getLabel()</pre>
-</li>
-</ul>
-<a name="getModifyDate--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getModifyDate</h4>
-<pre>public&nbsp;java.util.Date&nbsp;getModifyDate()</pre>
-</li>
-</ul>
-<a name="setModifyDate-java.util.Date-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setModifyDate</h4>
-<pre>public&nbsp;void&nbsp;setModifyDate(java.util.Date&nbsp;modifyDate)</pre>
 </li>
 </ul>
 <a name="getDefaultPackage--">
@@ -1153,13 +966,13 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 </dl>
 </li>
 </ul>
-<a name="getActivityImplementor-com.centurylink.mdw.model.workflow.Activity-">
+<a name="getActivityImplementor-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getActivityImplementor</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>&nbsp;getActivityImplementor(<a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity)
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>&nbsp;getActivityImplementor(java.lang.String&nbsp;className)
                                        throws java.lang.InstantiationException,
                                               java.lang.IllegalAccessException,
                                               java.lang.ClassNotFoundException,
@@ -1175,15 +988,13 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 </dl>
 </li>
 </ul>
-<a name="getEventHandler-java.lang.String-java.lang.String-java.util.Map-">
+<a name="getEventHandler-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getEventHandler</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event">EventHandler</a>&nbsp;getEventHandler(java.lang.String&nbsp;classname,
-                                    java.lang.String&nbsp;content,
-                                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event">EventHandler</a>&nbsp;getEventHandler(java.lang.String&nbsp;classname)
                              throws java.lang.InstantiationException,
                                     java.lang.IllegalAccessException,
                                     java.lang.ClassNotFoundException,

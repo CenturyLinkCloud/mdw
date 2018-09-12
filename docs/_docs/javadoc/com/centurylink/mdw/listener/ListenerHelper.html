@@ -383,11 +383,6 @@ extends java.lang.Object</pre>
  null, in DOCUMENT table with owner type LISTENER_RESPONSE and return the
  message to the listener</li>
  </ul>
- If any of the above step throws exception, the method captures it and
- will generate a standard message (see
- <code>#createStandardResponse(int, String, String)</code>), with -1
- (RETURN_STATUS_FAILURE) as the status code and the message of the
- exception as the status message.
  <p>
  Note that if the message cannot even been parsed by the generic XML bean
  (not a well formed XML message), the message will still be logged in the
@@ -420,10 +415,6 @@ extends java.lang.Object</pre>
                                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo,
                                     <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>&nbsp;ex)</pre>
 <div class="block">Create a default error message.  To customized this response use a ServiceMonitor.</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><code>com.centurylink.mdw.monitor.ServiceMonitor.</code></dd>
-</dl>
 </li>
 </ul>
 <a name="createAckResponse-java.lang.String-java.util.Map-">
@@ -482,15 +473,6 @@ extends java.lang.Object</pre>
             systems.</dd>
 <dd><code>ownerId</code> - This should be the external event handler ID for
             LISTENER_REQUEST and request document ID for LISTENER_RESPONSE</dd>
-<dd><code>processInstanceId</code> - this is the ID of the process instance the message is going to
-            be delivered to. If that information is not available, pass
-            new Long(0) to it. You can update the information using
-            updateDocumentInfo later on.</dd>
-<dd><code>searchKey1</code> - user defined search key. Pass null if you do not need custom
-            search key</dd>
-<dd><code>searchKey2</code> - another custom search key. Pass null if you do not need it.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>document reference that refers to the newly created document.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/event/EventHandlerException.html" title="class in com.centurylink.mdw.event">EventHandlerException</a></code></dd>
 </dl>
