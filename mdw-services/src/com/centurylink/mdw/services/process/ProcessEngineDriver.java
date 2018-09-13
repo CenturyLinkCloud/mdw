@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.services.process;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.WorkflowException;
@@ -42,13 +34,9 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
@@ -62,6 +50,13 @@ import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProcessEngineDriver {
 
@@ -74,14 +69,9 @@ public class ProcessEngineDriver {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private Exception lastException;    // used by service process to throw exception back to event handler
     private Long mainProcessInstanceId;    // used by service process to remember main process instance ID which caller may query
-    private int eventConsumeRetrySleep = 2;
+    private int eventConsumeRetrySleep;
 
-    /**
-     * @param engineId the ID for this engine driver. When it is null,
-     * it is generated internally.
-     * @throws ServiceLocatorException
-     */
-    public ProcessEngineDriver() throws ServiceLocatorException {
+    public ProcessEngineDriver() {
         if (default_performance_level_regular == null)
             loadDefaultPerformanceLevel();
         eventConsumeRetrySleep = PropertyManager.getIntegerProperty(PropertyNames.MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP, 2);
@@ -89,11 +79,9 @@ public class ProcessEngineDriver {
 
     /**
      * Checks whether the process instance has been canceled or completed
-     *
-     * @param processInstId
      * @return false if process has been canceled or completed
      */
-    private boolean processInstanceIsActive(ProcessInstance processInst) throws ProcessException {
+    private boolean processInstanceIsActive(ProcessInstance processInst) {
         Integer status = processInst.getStatusCode();
         if (WorkStatus.STATUS_CANCELLED.equals(status)) {
             logger.info("ProcessInstance has been cancelled. ProcessInstanceId = " + processInst.getId());
@@ -125,10 +113,6 @@ public class ProcessEngineDriver {
 
     /**
      * Handles an event for a process or activity
-     *
-     * @param processInstVO
-     * @param eventMessageDoc
-     * @param eventType
      */
     private void handleInheritedEvent(ProcessExecutor engine, ProcessInstance processInstVO,
             Process processVO, InternalEvent messageDoc, Integer eventType)
@@ -216,7 +200,6 @@ public class ProcessEngineDriver {
                         startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
                                 messageDoc.getSecondaryOwnerId(), params, null);
                     }
-                    return;
                 }
                 else if (eventType.equals(EventType.ABORT)) {
                     // abort the root process instance
@@ -238,24 +221,28 @@ public class ProcessEngineDriver {
      * Finds the relevant package handler for a master process instance.
      */
     private Process getPackageHandler(ProcessInstance masterInstance, Integer eventType) {
-        // try package-level handler
         Process process = getProcessDefinition(masterInstance);
-        String pkg = process.getPackageName();
+        Process handler = getPackageHandler(process.getPackageName(), eventType);
+        if (handler != null && handler.getName().equals(process.getName())) {
+            logger.warn("Package handler recursion is not allowed. "
+                    + "Define an embedded handler in package handler: " + handler.getLabel());
+        }
+        return handler;
+    }
+
+    private Process getPackageHandler(String packageName, Integer eventType) {
         String handlerProcName = EventType.getHandlerName(eventType);
         if (handlerProcName != null) {
             Process packageHandlerProc = null;
-            packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName.toLowerCase());
-            if (packageHandlerProc == null)
-                packageHandlerProc = ProcessCache.getProcess(pkg + "/" + handlerProcName);
-            if (packageHandlerProc != null) {
-                if (packageHandlerProc.getName().equals(process.getName())) {
-                    logger.warn("Package handler recursion is not allowed. "
-                        + "Define an embedded handler in package handler: " + packageHandlerProc.getLabel());
-                }
-                else {
-                    return packageHandlerProc;
-                }
+            if (PackageCache.getPackage(packageName) != null) {
+                packageHandlerProc = ProcessCache.getProcess(packageName + "/" + handlerProcName);
+                if (packageHandlerProc == null)  // try lower case
+                    packageHandlerProc = ProcessCache.getProcess(packageName + "/" + handlerProcName.toLowerCase());
             }
+            if (packageHandlerProc == null && packageName.indexOf('.') > 0) {
+                packageHandlerProc = getPackageHandler(packageName.substring(0, packageName.lastIndexOf('.')), eventType);
+            }
+            return packageHandlerProc;
         }
         return null;
     }
@@ -414,7 +401,7 @@ public class ProcessEngineDriver {
             // new way to handle SLA through JMS message delay rather than timer demon
             Long actInstId = event.getWorkInstanceId();
             ActivityInstance ai = engine.getActivityInstance(actInstId);
-            if (ai.getStatusCode()!=WorkStatus.STATUS_WAITING.intValue()) {
+            if (ai.getStatusCode() != WorkStatus.STATUS_WAITING) {
                 // ignore the message when the status is not waiting.
                 return;
             }
@@ -470,8 +457,6 @@ public class ProcessEngineDriver {
 
     /**
      * Executes the flow
-     *
-     * @param messageEventDoc
      */
     public void processEvents(String msgid, String textMessage) {
         try {
@@ -657,8 +642,8 @@ public class ProcessEngineDriver {
     }
 
     private void addDocumentToCache(ProcessExecutor engine, Long docid, String type, String content) {
-        if (content!=null) {
-            if (docid.longValue()==0L) {
+        if (content != null) {
+            if (docid == 0L) {
                 try {
                     engine.createDocument(type, OwnerType.LISTENER_REQUEST, 0L, content);
                 } catch (DataAccessException e) {
@@ -676,14 +661,6 @@ public class ProcessEngineDriver {
 
     /**
      * Invoke a real-time service process.
-     * @param processId
-     * @param ownerType
-     * @param ownerId
-     * @param masterRequestId
-     * @param masterRequest
-     * @param parameters
-     * @param responseVarName
-     * @param headers
      * @return the service response
      */
     public String invokeService(Long processId, String ownerType,
@@ -716,7 +693,6 @@ public class ProcessEngineDriver {
      *         unless the performance level attribute is configured for the process.
      * @return response message, which is obtained from the variable named ie responseVarName
      *      of the process.
-     * @throws Exception
      */
     public String invokeService(Long processId, String ownerType,
             Long ownerId, String masterRequestId, String masterRequest,
@@ -770,14 +746,7 @@ public class ProcessEngineDriver {
     /**
      * Called internally by invoke subprocess activities to call service processes as
      * subprocesses of regular processes.
-     * @param processId
-     * @param parentProcInstId
-     * @param masterRequestId
-     * @param parameters
-     * @param performance_level
-     * @param packageId
-     * @return hash table of output parameters (can be empty hash, but not null);
-     * @throws Exception when the process is not complete
+     * @return map of output parameters (can be empty hash, but not null);
      */
     public Map<String,String> invokeServiceAsSubprocess(Long processId,
             Long parentProcInstId, String masterRequestId, Map<String,String> parameters,
@@ -804,15 +773,6 @@ public class ProcessEngineDriver {
 
     /**
      * execute service process using asynch engine
-     * @param engine
-     * @param processId
-     * @param ownerType TODO
-     * @param ownerId
-     * @param masterRequestId
-     * @param parameters
-     * @param responseVarName
-     * @return
-     * @throws Exception
      */
     private ProcessInstance executeServiceProcess(ProcessExecutor engine, Long processId,
             String ownerType, Long ownerId, String masterRequestId, Map<String,String> parameters,
@@ -826,7 +786,7 @@ public class ProcessEngineDriver {
                 masterRequestId, parameters);
         mainProcessInstanceId = mainProcessInst.getId();
         engine.updateProcessInstanceStatus(mainProcessInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
-        if (OwnerType.DOCUMENT.equals(ownerType) && ownerId.longValue() != 0L) {
+        if (OwnerType.DOCUMENT.equals(ownerType) && ownerId != 0L) {
             setOwnerDocumentProcessInstanceId(engine, ownerId, mainProcessInst.getId(), masterRequestId);
             bindRequestVariable(procdef, ownerId, engine, mainProcessInst);
         }
@@ -858,7 +818,7 @@ public class ProcessEngineDriver {
             Long msgDocId, Long procInstId, String masterRequestId) {
         // update document's OWNER_ID with the processInstanceId (OWNER_TYPE will stay LISTENER_REQUEST)
         try {
-            if (msgDocId.longValue() != 0L)
+            if (msgDocId != 0L)
                 engine.updateDocumentInfo(new DocumentReference(msgDocId),
                         null, null, procInstId, null, null);
         } catch (Exception e) {
@@ -910,7 +870,7 @@ public class ProcessEngineDriver {
             engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, headers);
         }
         else if (vartype.equals("java.util.Map<String,String>") || vartype.equals(Object.class.getName())) {
-            DocumentReference docRef = engine.createDocument(vartype, OwnerType.VARIABLE_INSTANCE, new Long(0), headers);
+            DocumentReference docRef = engine.createDocument(vartype, OwnerType.VARIABLE_INSTANCE, 0L, headers);
             VariableInstance varInst = engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, docRef);
             engine.updateDocumentInfo(docRef, null, null, varInst.getInstanceId(), null, null);
         }
@@ -941,9 +901,7 @@ public class ProcessEngineDriver {
      * @param ownerType
      * @param ownerId
      * @param vars Input parameter bindings for the process instance to be created
-     * @param packageId the package ID of the context in which the process instance will be running
      * @return Process instance ID
-     * @throws Exception
      */
     public Long startProcess(Long processId, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> vars,
@@ -962,7 +920,7 @@ public class ProcessEngineDriver {
         ProcessInstance processInst = engine.createProcessInstance(processId,
                 ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
                 masterRequestId, vars);
-        if (ownerType.equals(OwnerType.DOCUMENT) && ownerId.longValue() != 0L) {
+        if (ownerType.equals(OwnerType.DOCUMENT) && ownerId != 0L) {
             setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
             bindRequestVariable(procdef, ownerId, engine, processInst);
         }
@@ -977,20 +935,10 @@ public class ProcessEngineDriver {
     }
 
     /**
-     * Start a process from middle - for development use only
-     * @param processId
-     * @param activityId
-     * @param masterRequestId
-     * @param ownerType
-     * @param ownerId
-     * @param vars
-     * @param packageId
-     * @param performance_level
-     * @return
-     * @throws Exception
+     * Start a process from somewhere in the middle - for development use only
      */
     public Long startProcessFromActivity(Long processId, Long activityId, String masterRequestId,
-            String ownerType, Long ownerId, Map<String,String> vars, Long packageId) throws Exception {
+            String ownerType, Long ownerId, Map<String,String> vars) throws Exception {
         Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
         if (performance_level<=0) performance_level = default_performance_level_regular;
@@ -1018,7 +966,7 @@ public class ProcessEngineDriver {
     }
 
     private String logtag(Long procId, Long procInstId, String masterRequestId) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("p");
         sb.append(procId);
         sb.append(".");
@@ -1028,7 +976,7 @@ public class ProcessEngineDriver {
         return sb.toString();
     }
     private String logtag(Long procId, Long procInstId, Long actId, Long actInstId) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("p");
         sb.append(procId);
         sb.append(".");
