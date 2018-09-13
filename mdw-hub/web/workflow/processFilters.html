@@ -25,6 +25,40 @@
       </ul>
     </div>
   </div>
+  <div class="mdw-vsm-indent" style="width:180px;margin-top:17px;">
+    <div class="mdw-flex-item">
+      <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true" auto-close="disabled">
+        <i class="glyphicon glyphicon-chevron-down"></i>
+        <input type="text" class="form-control mdw-dropfilter" placeholder="Values..." 
+          uib-dropdown-toggle readonly>
+        <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown" style="width:500px;">
+          <li class="mdw-value-item" ng-repeat="(varName, varValue) in getValueFilters()">
+            <input type="text" class="form-control" style="width:120px;" placeholder="Name" readonly popover-stay-open
+              ng-model="varName">
+            <div class="glyphicon glyphicon-pause mdw-glyph-equals"></div>
+            <input type="text" class="form-control" style="width:300px;margin-left:20px;" placeholder="Value" popover-stay-open
+              ng-model="varValue" ng-change="setValueFilter(varName,varValue)">
+            <button type="button" class="btn mdw-btn" style="background-color:transparent;margin-left:5px;" popover-stay-open title="Remove"
+              ng-click="removeValueFilter(varName)">
+              <span class="glyphicon glyphicon-remove" style="color:#337ab7;" popover-stay-open></span>
+            </button>
+          </li>
+          <li class="mdw-value-item">
+            <input type="text" class="form-control" style="width:120px;" placeholder="Name" popover-stay-open
+              ng-model="varName">
+            <div class="glyphicon glyphicon-pause mdw-glyph-equals"></div>
+            <input type="text" class="form-control" style="width:300px;margin-left:20px;" placeholder="Value" popover-stay-open
+              ng-model="varValue">
+            <button type="button" class="btn mdw-btn" style="background-color:transparent;margin-left:5px;" popover-stay-open title="Add"
+              ng-click="setValueFilter(varName,varValue);varName=null;varValue=null;">
+                <span class="glyphicon glyphicon-plus" style="color:#337ab7;" popover-stay-open></span>
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="glyphicon glyphicon-asterisk mdw-glyph-asterisk" ng-if="processFilter.values"></div>
+    </div>
+  </div>
   <div class="mdw-vmed-indent">
     <button type="button" class="btn btn-primary mdw-btn" ng-click="resetFilter();clearTypeahead();">Reset</button>
   </div>

@@ -9,6 +9,7 @@
     "navigator": false,
     "setTimeout": false,
     "clearTimeout": false,
+    "sessionStorage": false,
     "angular": false,
     "require": false,
     "confirm": false,

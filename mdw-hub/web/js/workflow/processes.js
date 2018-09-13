@@ -3,26 +3,29 @@
 var processMod = angular.module('processes', ['mdw']);
 
 processMod.controller('ProcessesController', 
-    ['$scope', '$http', '$cookieStore', 'mdw', 'util', 'PROCESS_STATUSES',
-    function($scope, $http, $cookieStore, mdw, util, PROCESS_STATUSES) {
+    ['$scope', '$http', 'mdw', 'util', 'PROCESS_STATUSES',
+    function($scope, $http, mdw, util, PROCESS_STATUSES) {
 
   // definitionId and processSpec passed in query params
   // (from mdw-studio, for example)
   var definitionIdParam = util.urlParams().definitionId;
   var processSpecParam = util.urlParams().processSpec;
   if (definitionIdParam && processSpecParam) {
-    var procFilter = $cookieStore.get('processFilter');
-    if (!procFilter)
+    var procFilter = sessionStorage.getItem('processFilter');
+    if (procFilter)
+      procFilter = JSON.parse(procFilter);
+    else
       procFilter = {};
     procFilter.processId = definitionIdParam;
     procFilter.master = false;
     procFilter.status = '[Any]';
     procFilter.sort = 'startDate';
     procFilter.descending = true;
-    $cookieStore.put('processFilter', procFilter);
+    procFilter.values = null;
+    sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
     if (processSpecParam.endsWith('.proc'))
       processSpecParam = processSpecParam.substring(0, processSpecParam.length - 5);
-    $cookieStore.put('processSpec', processSpecParam);
+    sessionStorage.setItem('processSpec', processSpecParam);
     window.location = mdw.roots.hub + '#/workflow/processes';
     return;
   }
@@ -32,53 +35,71 @@ processMod.controller('ProcessesController',
         master: true,
         status: '[Active]',
         sort: 'startDate',
-        descending: true
+        descending: true,
+        values: null
     };
   };
       
   // two-way bound to/from directive
   $scope.processList = {};
   
-  $scope.selectedChart=$cookieStore.get('selectedChart');
-  
-  $scope.processFilter = $cookieStore.get('processFilter');
-  if (!$scope.processFilter) {
+  var processFilter = sessionStorage.getItem('processFilter');
+  if (!processFilter) {
     $scope.resetFilter();
   }
   else {
+    $scope.processFilter = JSON.parse(processFilter);
     // don't remember these
     $scope.processFilter.instanceId = null;
     $scope.processFilter.masterRequestId = null;
     // fix date format stored in cookieStore
     if ($scope.processFilter.startDate)
       $scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
-    $cookieStore.remove('selectedChart');
   }
   
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]','[Any]'].concat(PROCESS_STATUSES);
   
-  $scope.setSelectedChart=function(selChart) {
-    $scope.selectedChart= selChart;
-    $cookieStore.put('selectedChart',$scope.selectedChart);
-    if (selChart ==='List') {
-      window.location.href='#/workflow/processes';
-    }
-    else {     
-      window.location.href='#/dashboard/processes?chart='+selChart;
-    }    
-  };
-  
   // preselected procDef
   if ($scope.processFilter.processId) {
-    $scope.typeaheadMatchSelection = $cookieStore.get('processSpec');
+    $scope.typeaheadMatchSelection = sessionStorage.getItem('processSpec');
   }
   else {
-    $cookieStore.remove('processSpec'); 
+    sessionStorage.removeItem('processSpec'); 
   }
   
+  $scope.getValueFilters = function() {
+    if ($scope.processFilter.values) {
+      // translate param string to object
+      return util.toValuesObject($scope.processFilter.values);
+    }
+  };
+  
+  $scope.setValueFilter = function(name, value) {
+    if (name) {
+      if (value || value === '') {
+        var valuesObject = util.toValuesObject($scope.processFilter.values);
+        if (!valuesObject) {
+          valuesObject = {};
+        }
+        valuesObject[name] = value;
+        $scope.processFilter.values = util.toParamString(valuesObject);
+      }
+      else {
+        $scope.removeValueFilter(name);
+      }
+    }
+  };
+  
+  $scope.removeValueFilter = function(name) {
+    if ($scope.processFilter.values) {
+      var valuesObject = util.toValuesObject($scope.processFilter.values);
+      delete valuesObject[name];
+      $scope.processFilter.values = util.toParamString(valuesObject);
+    }
+  };
+  
   $scope.$on('page-retrieved', function(event, processList) {
-    $cookieStore.remove('selectedChart');
     // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
     processList.processInstances.forEach(function(processInstance) {
@@ -91,20 +112,20 @@ processMod.controller('ProcessesController',
         let procSpec = processList.processInstances[0].processName;
         if (processList.processInstances[0].processVersion)
           procSpec += ' v' + processList.processInstances[0].processVersion;
-        $cookieStore.put('processSpec', procSpec);
+        sessionStorage.setItem('processSpec', procSpec);
       }
       else {
         $http.get(mdw.roots.services + '/services/Workflow?id=' + $scope.processFilter.processId + '&summary=true&app=mdw-admin')
           .then(function(response) {
-            $cookieStore.put('processSpec', response.data.name + ' v' + response.data.version);
+            sessionStorage.setItem('processSpec', response.data.name + ' v' + response.data.version);
           }
         );
       }
     }
     else {
-      $cookieStore.remove('processSpec');
+      sessionStorage.removeItem('processSpec');
     }
-    $cookieStore.put('processFilter', $scope.processFilter);
+    sessionStorage.setItem('processFilter', JSON.stringify($scope.processFilter));
   });
   
   // instanceId, masterRequestId, processName, packageName
@@ -178,7 +199,11 @@ processMod.controller('ProcessesController',
   $scope.clearTypeahead = function() {
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
-    $cookieStore.remove('processSpec'); 
+    sessionStorage.removeItem('processSpec'); 
+  };
+  
+  $scope.goChart = function() {
+    window.location = '#/dashboard/processes?chart=list';
   };
 }]);
 
@@ -292,8 +317,8 @@ processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
   });
 }]);
 
-processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw', 'util', 'ProcessDef',
-                                               function($scope, $cookieStore, mdw, util, ProcessDef) {
+processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'ProcessDef',
+                                               function($scope, mdw, util, ProcessDef) {
   $scope.definitionList = ProcessDef.retrieve({}, function success() {
     var pkgs = $scope.definitionList.packages;
     pkgs.forEach(function(pkg) {
@@ -331,11 +356,12 @@ processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw',
       if (pkg.collapsed)
         st[pkg.name] = true;
     });
-    $cookieStore.put('procsPkgCollapsedState', st);
+    sessionStorage.setItem('procsPkgCollapsedState', JSON.stringify(st));
   };
   $scope.applyPkgCollapsedState = function() {
-    var st = $cookieStore.get('procsPkgCollapsedState');
+    var st = sessionStorage.getItem('procsPkgCollapsedState');
     if (st) {
+      st = JSON.parse(st);
       util.getProperties(st).forEach(function(pkgName) {
         var col = st[pkgName];
         if (col === true) {
@@ -352,8 +378,8 @@ processMod.controller('ProcessDefsController', ['$scope', '$cookieStore', 'mdw',
 }]);
 
 processMod.controller('ProcessDefController', 
-    ['$scope', '$routeParams', '$route', '$location', '$filter', '$cookieStore', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
-    function($scope, $routeParams, $route, $location, $filter, $cookieStore, mdw, util, ProcessDef, ProcessSummary) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
+    function($scope, $routeParams, $route, $location, $filter, mdw, util, ProcessDef, ProcessSummary) {
       
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
       
@@ -365,8 +391,10 @@ processMod.controller('ProcessDefController',
   $scope.definitionId = null;  // stored at scope level due to vagaries in $scope.process 
   
   $scope.setProcessFilter = function() {
-    var procFilter = $cookieStore.get('processFilter');
-    if (!procFilter)
+    var procFilter = sessionStorage.getItem('processFilter');
+    if (procFilter)
+      procFilter = JSON.parse(procFilter);
+    else
       procFilter = {};
     procFilter.processId = $scope.definitionId;
     if (procFilter.processId) {
@@ -377,8 +405,8 @@ processMod.controller('ProcessDefController',
         procSpec += ' v' + $routeParams.version;
       procFilter.master = false;
       procFilter.status = null;
-      $cookieStore.put('processFilter', procFilter);
-      $cookieStore.put('processSpec', procSpec);
+      sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
+      sessionStorage.setItem('processSpec', procSpec);
     }
   };
   
@@ -399,7 +427,7 @@ processMod.controller('ProcessDefController',
         $scope.definitionId = $scope.process.definitionId;
         $scope.template = $scope.process.template;
     });
-  }
+  }  
 }]);
 
 // retains state for nav

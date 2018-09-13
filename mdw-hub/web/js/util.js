@@ -224,6 +224,45 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
         }
       }
       return except;
+    },
+    toParamString: function(valuesObject) {
+      if (valuesObject) {
+        var str = '';
+        this.getProperties(valuesObject).forEach(function(prop) {
+          var val = valuesObject[prop];
+          if (val || val === '') {
+            if (str) {
+              str += ',';
+            }
+            str += prop + '=' + (val === '' ? "''" : val);
+          }
+        });
+        if (str) {
+          return '{' + str + '}';
+        }
+      }
+    },
+    toValuesObject: function(paramString) {
+      if (paramString) {
+        var values = {};
+        if (paramString.startsWith('{') && paramString.endsWith('}')) {
+          paramString.substring(1, paramString.length - 1).split(",").forEach(function(entry) {
+            var eq = entry.indexOf('=');
+            if (eq > 0 && eq < entry.length - 1) {
+                var key = entry.substring(0, eq).trim();
+                var val = entry.substring(eq + 1);
+                if (val.startsWith("'") && val.endsWith("'") && val.length > 1) {
+                    val = val.substring(1, val.length - 1);
+                }
+                else {
+                    val = val.trim();
+                }
+                values[key] = val;
+            }            
+          });     
+        }
+        return values;
+      }
     }
   };
 }]);
