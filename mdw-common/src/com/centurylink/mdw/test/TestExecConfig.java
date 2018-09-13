@@ -33,6 +33,7 @@ public class TestExecConfig implements Jsonable {
     public static final String MDW_TEST_PIN_TO_SERVER = "mdw.test.pin.to.server";
     public static final String MDW_TEST_SERVER_URL = "mdw.test.server.url";
     public static final String MDW_TEST_INCLUDE_POSTMAN_ITEMS = "mdw.test.include.postman.items";
+    public static final String MDW_TEST_POSTMAN_ENV = "mdw.test.postman.env";
 
     private int threads = 5; // thread pool size
     public int getThreads() { return threads; }
@@ -70,6 +71,10 @@ public class TestExecConfig implements Jsonable {
     public boolean isIncludePostmanItems() { return includePostmanItems; }
     public void setIncludePostmanItems(boolean includePostmanItems) { this.includePostmanItems = includePostmanItems; }
 
+    private String postmanEnv = "localhost.env";
+    public String getPostmanEnv() { return postmanEnv; }
+    public void setPostmanEnv(String env) { this.postmanEnv = env; }
+
     /**
      * Implies running workflow through REST.
      */
@@ -103,6 +108,9 @@ public class TestExecConfig implements Jsonable {
             this.serverUrl = json.getString("serverUrl");
         if (json.has("includePostmanItems"))
             this.includePostmanItems = json.getBoolean("includePostmanItems");
+        if (json.has("postmanEnv"))
+            this.postmanEnv = json.getString("postmanEnv");
+
     }
 
     public TestExecConfig(Properties properties) {
@@ -122,6 +130,9 @@ public class TestExecConfig implements Jsonable {
         String includePostman = properties.getProperty(MDW_TEST_INCLUDE_POSTMAN_ITEMS);
         if (includePostman != null)
             this.includePostmanItems = Boolean.parseBoolean(includePostman);
+        String postmanEnv = properties.getProperty(MDW_TEST_POSTMAN_ENV);
+        if (postmanEnv != null)
+            this.postmanEnv = postmanEnv;
     }
 
     public JSONObject getJson() throws JSONException {
@@ -146,6 +157,8 @@ public class TestExecConfig implements Jsonable {
             json.put("serverUrl", serverUrl);
         if (includePostmanItems)
             json.put("includePostmanItems", includePostmanItems);
+        if (postmanEnv != null)
+            json.put("postmanEnv", postmanEnv);
         return json;
     }
 

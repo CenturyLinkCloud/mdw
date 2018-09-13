@@ -15,7 +15,6 @@ process.on('uncaughtException', (err) => {
 
 try {
   const limberest = require('limberest');
-  // const limberest = require('../../../../../../../limberest-js/index.js');
   const path = require('path');
   
   // Runs multiple test items, each with their own case.
@@ -37,8 +36,11 @@ try {
         console.log("options: " + JSON.stringify(opts, null, 2));
       // deep clone for values
       var vals = {};
-      if (opts.valueFiles) {
-        opts.valueFiles.forEach(valueFile => {
+      if (testCase.valueFiles) {
+        testCase.valueFiles.forEach(valueFile => {
+          if (valueFile.indexOf('/') == -1) {
+            valueFile = testLoc + '/' + valueFile;
+          }
           vals = Object.assign(vals, limberest.loadValuesSync(valueFile), item.values);
         });
       }

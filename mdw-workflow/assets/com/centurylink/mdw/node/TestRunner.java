@@ -85,12 +85,27 @@ public class TestRunner {
         if (!parseResult.status.equals("OK"))
             throw new ServiceException(PARSER + parseResult);
 
+        TestExecConfig config = ServiceLocator.getTestingServices().getTestExecConfig();
+
         nodeJS = NodeJS.createNodeJS();
 
         V8Object testObj = new V8Object(nodeJS.getRuntime());
         testObj.add("file", testCase.getAsset().getFile().getAbsolutePath());
         V8Array valueFiles = new V8Array(nodeJS.getRuntime());
-        valueFiles.push("localhost.env"); // TODO hardcoded
+        String valueFile = "localhost.env";
+        if (config.getPostmanEnv() != null) {
+            String env = config.getPostmanEnv();
+            int lastSlash = env.lastIndexOf('/');
+            if (lastSlash > 0) {
+                // package path syntax
+                valueFile = ServiceLocator.getAssetServices().getAssetRoot().getAbsolutePath() + "/"
+                        + env.substring(0, lastSlash).replace('.', '/') + env.substring(lastSlash);
+            }
+            else {
+                valueFile = env;
+            }
+        }
+        valueFiles.push(valueFile);
         testObj.add("valueFiles", valueFiles);
         valueFiles.release();
         try {
@@ -112,7 +127,6 @@ public class TestRunner {
                 }
             }
             JSONObject options = item.getOptions() == null ? new JSONObject() : item.getOptions();
-            TestExecConfig config = ServiceLocator.getTestingServices().getTestExecConfig();
             if (config.isVerbose() && !options.has("debug"))
                 options.put("debug", true);
             if (config.isCreateReplace() && !options.has("overwriteExpected"))

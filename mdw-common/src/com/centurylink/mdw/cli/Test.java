@@ -86,6 +86,11 @@ public class Test extends Setup {
     public int getStubPort() { return stubPort; }
     public void setStubPort(int port) { this.stubPort = port; }
 
+    @Parameter(names="--postman-env", description="Postman env asset")
+    private String postmanEnv;
+    public String getPostmanEnv() { return postmanEnv; }
+    public void setPostmanEnv(String env) { this.postmanEnv = env; }
+
     @Parameter(names="--json", description="Print JSON summary to stdout")
     private boolean json;
     public boolean isJson() { return json; }
@@ -394,10 +399,16 @@ public class Test extends Setup {
         JSONObject json = new JSONObject();
         json.put("threads", threads);
         json.put("interval", interval);
+        if (isDebug()) {
+            json.put("verbose", true);
+        }
         if (stubbing) {
             json.put("stubbing", stubbing);
             if (stubPort > 0)
                 json.put("stubPort", stubPort);
+        }
+        if (postmanEnv != null) {
+            json.put("postmanEnv", postmanEnv);
         }
         return json;
     }
