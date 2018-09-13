@@ -101,7 +101,7 @@
 }
 .mdw-config input[type="checkbox"] {
   position: relative;
-  top: 2px;
+  top: -1px;
   margin-right: 1px;
 }
 .mdw-config input[type="number"] {

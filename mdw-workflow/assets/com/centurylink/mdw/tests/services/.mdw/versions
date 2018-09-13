@@ -1,5 +1,5 @@
 AdminApisWorkgroups.test=7
-AdminApisWorkgroups.yaml=4
+AdminApisWorkgroups.yaml=5
 DEL_asset.yaml=2
 DEL_workgroups_{group-name}.yaml=4
 DeleteNon200.test=2
@@ -79,7 +79,7 @@ Values.json=1
 admin-apis.postman=2
 asset-apis.postman=2
 employee-request.xml=2
-localhost.env=8
+localhost.env=9
 process-apis.postman=2
 process-values.json=7
 processJaxb.xsd=1
