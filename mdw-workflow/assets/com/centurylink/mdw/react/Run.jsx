@@ -20,34 +20,41 @@ class Run extends Component {
   
   componentDidMount() {
     const path = '/services/Processes/run/' + this.state.assetPath;
+    var ok = false;
     fetch(new Request($mdwServicesRoot + path, {
       method: 'GET',
       headers: {Accept: 'application/json'},
       credentials: 'same-origin'
     }))
     .then(response => {
+      ok = response.ok;
       return response.json();
     })
     .then(run => {
-      const vals = values.toArray(run.values);
-      if (vals) {
-        // populated remembered values from localStorage
-        const storVals = localStorage.getItem(path + '-values');
-        if (storVals) {
-          const vs = JSON.parse(storVals);
-          vals.forEach(val => {
-            const v = vs[val.name];
-            if (v)
-              val.value = v;
-          });
+      if (ok) {
+        const vals = values.toArray(run.values);
+        if (vals) {
+          // populated remembered values from localStorage
+          const storVals = localStorage.getItem(path + '-values');
+          if (storVals) {
+            const vs = JSON.parse(storVals);
+            vals.forEach(val => {
+              const v = vs[val.name];
+              if (v)
+                val.value = v;
+            });
+          }
         }
+        
+        this.setState({
+          assetPath: this.state.assetPath,
+          masterRequestId: run.masterRequestId,
+          values: vals
+        });        
       }
-      
-      this.setState({
-        assetPath: this.state.assetPath,
-        masterRequestId: run.masterRequestId,
-        values: vals
-      });
+      else {
+        $mdwUi.showMessage('Error: ' + (run.status ? run.status.message : ''));        
+      }
     });
   }
   
