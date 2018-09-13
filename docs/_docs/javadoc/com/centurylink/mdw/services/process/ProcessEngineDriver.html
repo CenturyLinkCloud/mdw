@@ -240,14 +240,13 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#startProcessFromActivity-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-java.lang.Long-">startProcessFromActivity</a></span>(java.lang.Long&nbsp;processId,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#startProcessFromActivity-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">startProcessFromActivity</a></span>(java.lang.Long&nbsp;processId,
                         java.lang.Long&nbsp;activityId,
                         java.lang.String&nbsp;masterRequestId,
                         java.lang.String&nbsp;ownerType,
                         java.lang.Long&nbsp;ownerId,
-                        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars,
-                        java.lang.Long&nbsp;packageId)</code>
-<div class="block">Start a process from middle - for development use only</div>
+                        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars)</code>
+<div class="block">Start a process from somewhere in the middle - for development use only</div>
 </td>
 </tr>
 </table>
@@ -299,15 +298,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ProcessEngineDriver</h4>
-<pre>public&nbsp;ProcessEngineDriver()
-                    throws <a href="../../../../../com/centurylink/mdw/util/ServiceLocatorException.html" title="class in com.centurylink.mdw.util">ServiceLocatorException</a></pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>engineId</code> - the ID for this engine driver. When it is null,
- it is generated internally.</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/util/ServiceLocatorException.html" title="class in com.centurylink.mdw.util">ServiceLocatorException</a></code></dd>
-</dl>
+<pre>public&nbsp;ProcessEngineDriver()</pre>
 </li>
 </ul>
 </li>
@@ -327,10 +318,6 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;processEvents(java.lang.String&nbsp;msgid,
                           java.lang.String&nbsp;textMessage)</pre>
 <div class="block">Executes the flow</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>messageEventDoc</code> - </dd>
-</dl>
 </li>
 </ul>
 <a name="invokeService-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-java.util.Map-">
@@ -350,15 +337,6 @@ extends java.lang.Object</pre>
                                throws java.lang.Exception</pre>
 <div class="block">Invoke a real-time service process.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processId</code> - </dd>
-<dd><code>ownerType</code> - </dd>
-<dd><code>ownerId</code> - </dd>
-<dd><code>masterRequestId</code> - </dd>
-<dd><code>masterRequest</code> - </dd>
-<dd><code>parameters</code> - </dd>
-<dd><code>responseVarName</code> - </dd>
-<dd><code>headers</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the service response</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -429,17 +407,10 @@ extends java.lang.Object</pre>
 <div class="block">Called internally by invoke subprocess activities to call service processes as
  subprocesses of regular processes.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processId</code> - </dd>
-<dd><code>parentProcInstId</code> - </dd>
-<dd><code>masterRequestId</code> - </dd>
-<dd><code>parameters</code> - </dd>
-<dd><code>performance_level</code> - </dd>
-<dd><code>packageId</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>hash table of output parameters (can be empty hash, but not null);</dd>
+<dd>map of output parameters (can be empty hash, but not null);</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code> - when the process is not complete</dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </li>
 </ul>
@@ -504,7 +475,6 @@ extends java.lang.Object</pre>
 <dd><code>ownerType</code> - </dd>
 <dd><code>ownerId</code> - </dd>
 <dd><code>vars</code> - Input parameter bindings for the process instance to be created</dd>
-<dd><code>packageId</code> - the package ID of the context in which the process instance will be running</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Process instance ID</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -512,7 +482,7 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="startProcessFromActivity-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-java.lang.Long-">
+<a name="startProcessFromActivity-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -523,21 +493,10 @@ extends java.lang.Object</pre>
                                                java.lang.String&nbsp;masterRequestId,
                                                java.lang.String&nbsp;ownerType,
                                                java.lang.Long&nbsp;ownerId,
-                                               java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars,
-                                               java.lang.Long&nbsp;packageId)
+                                               java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars)
                                         throws java.lang.Exception</pre>
-<div class="block">Start a process from middle - for development use only</div>
+<div class="block">Start a process from somewhere in the middle - for development use only</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>processId</code> - </dd>
-<dd><code>activityId</code> - </dd>
-<dd><code>masterRequestId</code> - </dd>
-<dd><code>ownerType</code> - </dd>
-<dd><code>ownerId</code> - </dd>
-<dd><code>vars</code> - </dd>
-<dd><code>packageId</code> - </dd>
-<dd><code>performance_level</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
