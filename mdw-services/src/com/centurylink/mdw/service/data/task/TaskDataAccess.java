@@ -849,6 +849,14 @@ public class TaskDataAccess extends CommonDataAccess {
                     + index.substring(0, eq) + "' and index_value='" + index.substring(eq + 1) + "') > 0\n");
         }
 
+        Map<String,String> indexes = query.getMapFilter("indexes");
+        if (indexes != null) {
+            for (String varName : indexes.keySet()) {
+                where.append(" and (select count(*) from instance_index tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
+                    + varName + "' and index_value='" + indexes.get(varName) + "') > 0\n");
+            }
+        }
+
         return where.toString();
     }
 
