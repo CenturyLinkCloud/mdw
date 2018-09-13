@@ -310,7 +310,7 @@ public class AccessFilter implements Filter {
                         else {
                             if (path.startsWith("/services/SOAP/") || path.startsWith("/SOAP/"))
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                            else if (path.startsWith("/services/") || path.startsWith("/REST/") || path.startsWith("/asset/")) {
+                            else if (path.startsWith("/services/") || path.startsWith("/REST/") || path.startsWith("/asset/") || path.startsWith("/api/")) {
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                 response.getWriter().println(new Status(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Required").getJson().toString(2));
                             }
