@@ -102,10 +102,13 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
       if ($scope.listFilter.hasOwnProperty(key)) {
         var val = $scope.listFilter[key];
         if (val !== null && typeof(val) != 'undefined') {
-          if (val instanceof Date) 
+          if (val instanceof Date) {
             val = util.serviceDate(val);
-          else if (typeof(val) === 'string')
+          }
+          else if (typeof(val) === 'string') {
             val = val.replace(/\[/g, "%5B").replace(/]/g, "%5D");
+            val = val.replace(/\{/g, "%7B").replace(/}/g, "%7D");
+          }
           query += '&' + key + '=' + val;
         }
       }

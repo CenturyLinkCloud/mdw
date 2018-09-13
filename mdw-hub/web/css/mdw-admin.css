@@ -615,6 +615,21 @@
 .mdw-value-name {
   font-style: italic;
 }
+.mdw-value-item {
+  display: flex;
+  margin: 5px 10px;
+}
+.mdw-glyph-equals {
+  transform: rotate(90deg);
+  font-size: 12px;
+  margin-left: -3px;  
+}
+.mdw-glyph-asterisk {
+  color: #337ab7;
+  font-size: 12px;
+  margin-left: 5px;
+  margin-top: 3px;
+}
 .mdw-code {
   white-space: pre;
 }
@@ -692,6 +707,10 @@
   color: #f44336;
   vertical-align: top;
   font-size: 18px;
+}
+.mdw-asterisk {
+  color: #f44336;
+  vertical-align: top;
 }
 .mdw-message {
   float: left;
