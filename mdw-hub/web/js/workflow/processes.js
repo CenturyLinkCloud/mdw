@@ -6,29 +6,20 @@ processMod.controller('ProcessesController',
     ['$scope', '$http', 'mdw', 'util', 'PROCESS_STATUSES',
     function($scope, $http, mdw, util, PROCESS_STATUSES) {
 
-  // definitionId and processSpec passed in query params
-  // (from mdw-studio, for example)
-  var definitionIdParam = util.urlParams().definitionId;
-  var processSpecParam = util.urlParams().processSpec;
-  if (definitionIdParam && processSpecParam) {
+  $scope.getFilter = function() {
     var procFilter = sessionStorage.getItem('processFilter');
     if (procFilter)
       procFilter = JSON.parse(procFilter);
     else
       procFilter = {};
-    procFilter.processId = definitionIdParam;
-    procFilter.master = false;
-    procFilter.status = '[Any]';
-    procFilter.sort = 'startDate';
-    procFilter.descending = true;
-    procFilter.values = null;
-    sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
-    if (processSpecParam.endsWith('.proc'))
-      processSpecParam = processSpecParam.substring(0, processSpecParam.length - 5);
-    sessionStorage.setItem('processSpec', processSpecParam);
-    window.location = mdw.roots.hub + '#/workflow/processes';
-    return;
-  }
+    return procFilter;
+  };
+  
+  $scope.setFilter = function(procFilter) {
+    if (procFilter) {
+        sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
+    }
+  };
   
   $scope.resetFilter = function() {
     $scope.processFilter = { 
@@ -39,7 +30,36 @@ processMod.controller('ProcessesController',
         values: null
     };
   };
-      
+    
+  // definitionId and processSpec passed in query params
+  // (from mdw-studio, for example)
+  var definitionIdParam = util.urlParams().definitionId;
+  var processSpecParam = util.urlParams().processSpec;
+  var valuesParam = util.urlParams().values;
+  var procFilter = $scope.getFilter();
+  if (definitionIdParam && processSpecParam) {
+    procFilter.processId = definitionIdParam;
+    procFilter.master = false;
+    procFilter.status = '[Any]';
+    procFilter.values = null;
+    $scope.setFilter(procFilter);
+    if (processSpecParam.endsWith('.proc'))
+      processSpecParam = processSpecParam.substring(0, processSpecParam.length - 5);
+    sessionStorage.setItem('processSpec', processSpecParam);
+    if (!valuesParam) {  // otherwise wait redirect after setting values
+      window.location = mdw.roots.hub + '#/workflow/processes';
+      return;
+    }
+  }
+  if (valuesParam) {
+    procFilter.master = false;
+    procFilter.status = '[Any]';
+    procFilter.values = valuesParam;
+    $scope.setFilter(procFilter);
+    window.location = mdw.roots.hub + '#/workflow/processes';
+    return;
+  }
+  
   // two-way bound to/from directive
   $scope.processList = {};
   
