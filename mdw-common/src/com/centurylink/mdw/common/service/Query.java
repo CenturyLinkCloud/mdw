@@ -146,8 +146,9 @@ public class Query {
             array = value.split(",");
         }
         for (int i = 0; i < array.length; i++) {
-            if (array[i].charAt(0) == '"')
-                array[i] = array[i].substring(1, array[i].length() - 2);
+            String item = array[i];
+            if ((item.startsWith("\"") && item.endsWith("\"")) || (item.startsWith("'") && item.endsWith("'")) && item.length() > 1)
+                array[i] = item.substring(1, item.length() - 2);
         }
         return array;
     }
@@ -182,7 +183,7 @@ public class Query {
                 if (eq > 0 && eq < entry.length() - 1) {
                     String key = entry.substring(0, eq).trim();
                     String val = entry.substring(eq + 1);
-                    if (val.startsWith("'") && val.endsWith("'") && val.length() > 1) {
+                    if ((val.startsWith("\"") && val.endsWith("\"")) || (val.startsWith("'") && val.endsWith("'")) && val.length() > 1) {
                         val = val.substring(1, val.length() - 1);
                     }
                     else {
