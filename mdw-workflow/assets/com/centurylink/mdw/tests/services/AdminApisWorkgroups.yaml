@@ -19,8 +19,8 @@ response:
   body: |-
     {
       "status": {
-        "code": 0,
-        "message": "Success"
+        "code": 201,
+        "message": "Created"
       }
     }
 test: AdminApisWorkgroups
@@ -69,8 +69,8 @@ response:
   body: |-
     {
       "status": {
-        "code": 0,
-        "message": "Success"
+        "code": 200,
+        "message": "OK"
       }
     }
 test: AdminApisWorkgroups
