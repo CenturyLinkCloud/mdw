@@ -223,6 +223,8 @@ public class Pagelet implements Jsonable {
                 companion.options = Arrays.asList(widget.getAttribute("languages").split(","));
                 if (companion.options.contains("Groovy"))
                     companion.setAttribute("default", "Groovy");
+                else if (companion.options.contains("Kotlin Script"))
+                    companion.setAttribute("default", "Kotlin Script");
                 companions.put(i, companion);
             }
         }
