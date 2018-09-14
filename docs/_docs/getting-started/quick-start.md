@@ -67,11 +67,10 @@ Get up and running with MDW in a hurry.
   <http://localhost:8080/mdw>
 
 ### Import into IntelliJ IDEA
-  - Launch IntelliJ and select "Import Project" from the splash screen
+  - Launch IntelliJ (Community Edition is okay), and select "Import Project" from the splash screen
   - Browse to and select your newly created project directory
   - Elect to "Import project from external model", and select Gradle or Maven as appropriate
-  
-  TODO: Install MDW Studio and Run/Debug.
+  - [Get started using MDW Studio](../../guides/mdw-studio) for IntelliJ
   
 ### Import into Eclipse
   In you included the `--eclipse` option when you ran `mdw init`, your project is ready to be imported into

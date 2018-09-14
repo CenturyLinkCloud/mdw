@@ -4,16 +4,17 @@ title: MDW 6.1 New Features
 ---
 
 ## Major Enhancements
-  1. [MDW Authentication]() via JWT
-  2. Full [Docker](../guides/docker.md) support, with the MDW 6.1 image available from Docker Hub
-  3. [Hyperion]() platform integration 
-  4. [MDW Mobile](../guides/mdw-mobile/) on Google Play and the App Store
-  5. [CLI](../getting-started/cli/) Swagger codegen with automatic orchestration flow creation
-  6. Kotlin language support
-  7. SendGrid email notifications
-  8. "Bootstrap" mode enables startup without local assets
-  9. Refined Slack channel workflow collaboration
-  10. [Declarative REST API service paths]() for workflow processes.
+  1. "Pure Spring Boot" mode
+  2. [MDW Authentication]() via JWT
+  3. Full [Docker](../guides/docker.md) support, with the MDW 6.1 image available from Docker Hub
+  4. [Hyperion]() platform integration 
+  5. [MDW Mobile](../guides/mdw-mobile/) on Google Play and the App Store
+  6. [CLI](../getting-started/cli/) Swagger codegen with automatic orchestration flow creation
+  7. Kotlin language support
+  8. SendGrid email notifications
+  9. "Bootstrap" mode enables startup without local assets
+  10. Refined Slack channel workflow collaboration
+  11. [Declarative REST API service paths]() for workflow processes.
   
 ## Compatibility Notes
   1. Asset package metafiles saved as package.yaml instead of package.json (json metafiles still supported).

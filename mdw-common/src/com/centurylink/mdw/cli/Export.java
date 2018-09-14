@@ -24,15 +24,16 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
+import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
-import com.centurylink.mdw.image.Implementors;
 import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
 
 /**
- * Exports process into specific format. If --format is specified wiht html/png,
+ * Exports process into specific format. If --format is specified with html/png,
  * exports into html/png format otherwise, exports into bpmn2 format.
  */
 @Parameters(commandNames = "export", commandDescription = "Export process into supported formats", separators = "=")
@@ -116,11 +117,32 @@ public class Export extends Setup {
         if ("bpmn2".equals(format))
             return new BpmnProcessExporter();
         else {
-            Implementors.assetLoc = getAssetRoot();
+            final Setup setup = this;
+            Project project = new Project() {
+                public File getAssetRoot() {
+                    try {
+                        return setup.getAssetRoot();
+                    }
+                    catch (IOException ex) {
+                        throw new RuntimeException(ex.getMessage(), ex);
+                    }
+                }
+                public String getHubRootUrl() {
+                    try {
+                        return new Props(setup).get(Props.DISCOVERY_URL);
+                    }
+                    catch (IOException ex) {
+                        throw new RuntimeException(ex.getMessage(), ex);
+                    }
+                }
+                public MdwVersion getMdwVersion() {
+                    return new MdwVersion(setup.getMdwVersion());
+                }
+            };
             if ("html".equals(format))
-                return new HtmlProcessExporter();
+                return new HtmlProcessExporter(project);
             else if ("png".equals(format))
-                return new PngProcessExporter();
+                return new PngProcessExporter(project);
         }
 
         return null;

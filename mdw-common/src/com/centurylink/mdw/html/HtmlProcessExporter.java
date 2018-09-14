@@ -20,19 +20,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.centurylink.mdw.cli.Dependency;
+import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class HtmlProcessExporter implements ProcessExporter {
-    private String output;
 
+    private Project project;
+    public HtmlProcessExporter(Project project) {
+        this.project = project;
+    }
+
+    private String output;
     public void setOutput(String output) {
         this.output = output;
     }
 
     @Override
     public String export(Process process) throws IOException {
-        return new HtmlExportHelper().exportProcess(process, output);
+        return new HtmlExportHelper(project).exportProcess(process, output);
     }
 
     @Override

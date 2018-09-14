@@ -20,6 +20,10 @@
   - guides/mdw-mobile
   - guides/dashboard
   
+- title: MDW Studio
+  docs:
+  - guides/mdw-studio
+
 - title: Designer
   docs:
   - getting-started/install-designer

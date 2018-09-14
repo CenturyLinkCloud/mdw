@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.image.ImageExportHelper;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
@@ -47,7 +48,11 @@ public class HtmlExportHelper {
     private Map<String, String> textboxAttributes;
     private Map<String, String> excludedAttributesForSpecificValues;
 
-    public HtmlExportHelper() {
+    private Project project;
+
+    public HtmlExportHelper(Project project) {
+        this.project = project;
+
         excludedAttributes = new HashSet<>();
         excludedAttributes.add(WorkAttributeConstant.LOGICAL_ID);
         excludedAttributes.add(WorkAttributeConstant.REFERENCE_ID);
@@ -309,7 +314,7 @@ public class HtmlExportHelper {
     }
 
     public void printImage(String fileName, Process processVO) throws IOException {
-        ImageExportHelper imageHelper = new ImageExportHelper();
+        ImageExportHelper imageHelper = new ImageExportHelper(project);
         ImageIO.write(imageHelper.printImage(processVO), "jpeg", new File(fileName));
         Runtime r = Runtime.getRuntime();
         r.gc();
