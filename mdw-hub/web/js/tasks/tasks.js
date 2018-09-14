@@ -37,7 +37,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   // templateId and taskSpec passed in query params
   var templateIdParam = util.urlParams().templateId;
   var taskSpecParam = util.urlParams().taskSpec;
-  var valuesParam = util.urlParams().indexes;
+  var indexesParam = util.urlParams().indexes;
   var taskFilter = $scope.getFilter();
   if (templateIdParam && taskSpecParam) {
     taskFilter.taskId = templateIdParam;
@@ -51,18 +51,18 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     if (taskSpecParam.endsWith('.task'))
       taskSpecParam = taskSpecParam.substring(0, taskSpecParam.length - 5);
     $cookieStore.put('taskSpec', taskSpecParam);
-    if (!valuesParam) {  // otherwise wait redirect after setting values
+    if (!indexesParam) {  // otherwise wait redirect after setting values
       window.location = mdw.roots.hub + '#/tasks';
       return;
     }
   }
-  if (valuesParam) {
+  if (indexesParam) {
     taskFilter.workgroups = '[My Workgroups]';
     taskFilter.status = null;
     taskFilter.advisory = '[Not Invalid]';
     taskFilter.sort = 'startDate';
     taskFilter.descending = true;
-    taskFilter.indexes = valuesParam;
+    taskFilter.indexes = indexesParam;
     $scope.setFilter(taskFilter);
     window.location = mdw.roots.hub + '#/tasks';
     return;
