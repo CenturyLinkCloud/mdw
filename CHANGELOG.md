@@ -1,5 +1,32 @@
 # Change Log
 
+## [6.1.09](https://github.com/CenturyLinkCloud/mdw/tree/6.1.09) (2018-09-14)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.08...6.1.09)
+
+**Implemented enhancements:**
+
+- Auto-increment option when conflicts during asset import [\#324](https://github.com/CenturyLinkCloud/mdw/issues/324)
+- Create reports using MongoDB [\#264](https://github.com/CenturyLinkCloud/mdw/issues/264)
+- MDWHub/API filtering for process instances by variable value(s) [\#40](https://github.com/CenturyLinkCloud/mdw/issues/40)
+- Kotlin language activity implementors [\#494](https://github.com/CenturyLinkCloud/mdw/issues/494)
+- Support `@Activity` annotations for .java or .kt assets instead of separate .impl file [\#500](https://github.com/CenturyLinkCloud/mdw/issues/500)
+- Redirect to intended path when navigating with JWT in query param [\#499](https://github.com/CenturyLinkCloud/mdw/issues/499)
+- Asset\_ref DB table should not contain version 0 assets [\#495](https://github.com/CenturyLinkCloud/mdw/issues/495)
+- Search parent packages for error handler processes [\#493](https://github.com/CenturyLinkCloud/mdw/issues/493)
+- Parameterized Postman test case environment files [\#489](https://github.com/CenturyLinkCloud/mdw/issues/489)
+- Allow task name query param in MDWHub to populate search string [\#488](https://github.com/CenturyLinkCloud/mdw/issues/488)
+- MDWHub Task search params from query string [\#486](https://github.com/CenturyLinkCloud/mdw/issues/486)
+- Additional export options for MDW CLI [\#467](https://github.com/CenturyLinkCloud/mdw/issues/467)
+
+**Closed issues:**
+
+- Auto asset import is not triggered in certain cases in clustered envs [\#502](https://github.com/CenturyLinkCloud/mdw/issues/502)
+- Process instances of renamed or removed processes cannot be viewed in Hub [\#498](https://github.com/CenturyLinkCloud/mdw/issues/498)
+- Process instances of removed/renamed process end up being created without a package [\#496](https://github.com/CenturyLinkCloud/mdw/issues/496)
+- Task instance failing when rule based prioritization strategy is speciified [\#491](https://github.com/CenturyLinkCloud/mdw/issues/491)
+- Use all\_tab\_cols in db self-upgrade check for Oracle [\#490](https://github.com/CenturyLinkCloud/mdw/issues/490)
+- Error accessing Hub for spring boot app with mdw dependency and not in dev mode [\#487](https://github.com/CenturyLinkCloud/mdw/issues/487)
+
 ## [6.1.08](https://github.com/CenturyLinkCloud/mdw/tree/6.1.08) (2018-08-31)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.07...6.1.08)
 
