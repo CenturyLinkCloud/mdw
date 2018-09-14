@@ -8,9 +8,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.getFilter = function() {
     var taskFilter = $cookieStore.get('taskFilter');
-    if (taskFilter)
-      taskFilter = JSON.parse(taskFilter);
-    else
+    if (!taskFilter)
       taskFilter = {};
     return taskFilter;
   };
