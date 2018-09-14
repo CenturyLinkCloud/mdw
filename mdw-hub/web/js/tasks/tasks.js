@@ -6,28 +6,22 @@ var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location','$cookieStore', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
                                        function($scope, $window, $http, $location, $cookieStore, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
   
-  // templateId and taskSpec passed in query params
-  var templateIdParam = util.urlParams().templateId;
-  var taskSpecParam = util.urlParams().taskSpec;
-  if (templateIdParam && taskSpecParam) {
+  $scope.getFilter = function() {
     var taskFilter = $cookieStore.get('taskFilter');
-    if (!taskFilter)
+    if (taskFilter)
+      taskFilter = JSON.parse(taskFilter);
+    else
       taskFilter = {};
-    taskFilter.taskId = templateIdParam;
-    taskFilter.workgroups = '[My Workgroups]';
-    taskFilter.status = null;
-    taskFilter.advisory = '[Not Invalid]';
-    taskFilter.sort = 'startDate';
-    taskFilter.descending = true;
-    $cookieStore.put('taskFilter', taskFilter);
-    if (taskSpecParam.endsWith('.task'))
-      taskSpecParam = taskSpecParam.substring(0, taskSpecParam.length - 5);
-    $cookieStore.put('taskSpec', taskSpecParam);
-    window.location = mdw.roots.hub + '#/tasks';
-    return;
-  }
+    return taskFilter;
+  };
   
-  // If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can 
+  $scope.setFilter = function(taskFilter) {
+    if (taskFilter) {
+      $cookieStore.put('taskFilter', taskFilter);
+    }
+  };
+  
+//If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can 
   // break two-way binding, so taskList is a field in the top-level model object
   // https://github.com/angular/angular.js/issues/4046 -->
   
@@ -37,9 +31,44 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         status: '[Active]',
         advisory: '[Not Invalid]',
         sort: 'startDate',
-        descending: true
+        descending: true,
+        indexes: null
      };
   };
+  
+  // templateId and taskSpec passed in query params
+  var templateIdParam = util.urlParams().templateId;
+  var taskSpecParam = util.urlParams().taskSpec;
+  var valuesParam = util.urlParams().indexes;
+  var taskFilter = $scope.getFilter();
+  if (templateIdParam && taskSpecParam) {
+    taskFilter.taskId = templateIdParam;
+    taskFilter.workgroups = '[My Workgroups]';
+    taskFilter.status = null;
+    taskFilter.advisory = '[Not Invalid]';
+    taskFilter.sort = 'startDate';
+    taskFilter.descending = true;
+    taskFilter.indexes = null;
+    $scope.setFilter(taskFilter);
+    if (taskSpecParam.endsWith('.task'))
+      taskSpecParam = taskSpecParam.substring(0, taskSpecParam.length - 5);
+    $cookieStore.put('taskSpec', taskSpecParam);
+    if (!valuesParam) {  // otherwise wait redirect after setting values
+      window.location = mdw.roots.hub + '#/tasks';
+      return;
+    }
+  }
+  if (valuesParam) {
+    taskFilter.workgroups = '[My Workgroups]';
+    taskFilter.status = null;
+    taskFilter.advisory = '[Not Invalid]';
+    taskFilter.sort = 'startDate';
+    taskFilter.descending = true;
+    taskFilter.indexes = valuesParam;
+    $scope.setFilter(taskFilter);
+    window.location = mdw.roots.hub + '#/tasks';
+    return;
+  }
   
   $scope.model = {};
   $scope.model.taskList = {};
