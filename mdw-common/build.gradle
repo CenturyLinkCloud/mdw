@@ -191,9 +191,7 @@ task cliJar(type: Jar) {
     
     from configurations.draw.asFileTree.files.collect {
         zipTree(it).matching {
-            include "com/centurylink/mdw/draw/*.class"
-            include "com/centurylink/mdw/draw/edit/*.class"
-            include "com/centurylink/mdw/draw/ext/*.class"
+            include "com/centurylink/mdw/draw/**/*.class"
             include "icons/*"
         }
     }

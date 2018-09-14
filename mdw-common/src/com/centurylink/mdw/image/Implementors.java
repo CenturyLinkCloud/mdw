@@ -1,12 +1,20 @@
-/**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2018 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.centurylink.mdw.image;
 
-import com.centurylink.mdw.draw.Impl;
-import org.json.JSONObject;
-
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,11 +23,19 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Implementors extends LinkedHashMap<String, Impl> {
+import javax.swing.ImageIcon;
 
-    public static File assetLoc;
+import org.json.JSONObject;
 
-    public Implementors() {
+import com.centurylink.mdw.draw.model.Data;
+import com.centurylink.mdw.draw.model.Implementor;
+
+public class Implementors extends LinkedHashMap<String,Implementor> {
+
+    private File assetLoc;
+
+    public Implementors(File assetLoc) {
+        this.assetLoc = assetLoc;
         loadImplemetors(assetLoc);
     }
 
@@ -31,10 +47,10 @@ public class Implementors extends LinkedHashMap<String, Impl> {
             else if (file.exists()) {
                 try {
                     if (file.getName().endsWith("impl")) {
-                        add(new Impl(file.getPath(), new JSONObject(new String(Files.readAllBytes(file.toPath())))));
+                        add(new Implementor(file.getPath(), new JSONObject(new String(Files.readAllBytes(file.toPath())))));
                     }
                     else if (file.getName().endsWith(".java") || file.getName().endsWith(".kt")) {
-                        Impl impl = getImpl(file);
+                        Implementor impl = getImpl(file);
                         if (impl != null)
                             add(impl);
                     }
@@ -55,7 +71,7 @@ public class Implementors extends LinkedHashMap<String, Impl> {
      * For annotation-based implementors.  Custom impl classes cannot be compiled, so this crude
      * parsing mechanism is used to determine image icon.  Kotlin limitation: file name must be the same as impl class name.
      */
-    private Impl getImpl(File file) throws IOException {
+    private Implementor getImpl(File file) throws IOException {
         String contents = new String(Files.readAllBytes(file.toPath()));
 
         Matcher matcher = ACTIVITY_ANNOTATION.matcher(contents);
@@ -72,15 +88,15 @@ public class Implementors extends LinkedHashMap<String, Impl> {
             if (iconMatcher.find()) {
                 icon = iconMatcher.group(1);
             }
-            return new Impl(category, label, icon, implClass, "{}");
+            return new Implementor(category, label, icon, implClass, "{}");
         }
         return null;
     }
 
-    public void add(Impl impl) {
+    public void add(Implementor impl) {
         String iconAsset = impl.getIconName();
         if (iconAsset != null && !iconAsset.startsWith("shape:")) {
-            String iconPkg = Impl.BASE_PKG;
+            String iconPkg = Data.BASE_PKG;
             int slash = iconAsset.lastIndexOf('/');
             if (slash > 0) {
                 iconPkg = iconAsset.substring(0, slash);

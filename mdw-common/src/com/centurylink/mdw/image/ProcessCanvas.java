@@ -1,5 +1,17 @@
-/**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (C) 2018 CenturyLink, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.centurylink.mdw.image;
 
@@ -16,11 +28,13 @@ import javax.swing.UIManager;
 
 import com.centurylink.mdw.draw.Diagram;
 import com.centurylink.mdw.draw.Display;
+import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class ProcessCanvas extends JPanel {
     private Diagram diagram;
     private int zoom;
+    private Project project;
     private Process process;
 
     private Display getInitDisplay() {
@@ -28,8 +42,9 @@ public class ProcessCanvas extends JPanel {
                 ProcessCanvas.this.getSize().height);
     }
 
-    public ProcessCanvas(Process process) {
+    public ProcessCanvas(Project project, Process process) {
         super((LayoutManager) (new BorderLayout()));
+        this.project = project;
         this.process = process;
         this.zoom = 100;
         Display.Companion.setDEFAULT_COLOR(UIManager.getColor("EditorPane.foreground"));
@@ -51,7 +66,7 @@ public class ProcessCanvas extends JPanel {
             double scale = (double) this.zoom / 100.0D;
             g2d.scale(scale, scale);
         }
-        final Diagram d = new Diagram(g2d, this.getInitDisplay(), this.process, process, new Implementors(), true);
+        final Diagram d = new Diagram(g2d, this.getInitDisplay(), project, process, new Implementors(project.getAssetRoot()), true);
         diagram = d;
         d.draw();
     }
