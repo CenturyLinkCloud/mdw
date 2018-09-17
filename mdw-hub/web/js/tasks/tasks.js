@@ -39,9 +39,9 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   var taskSpecParam = util.urlParams().taskSpec;
   var indexesParam = util.urlParams().indexes;
   var taskFilter = $scope.getFilter();
+  taskFilter.workgroups = '[My Workgroups]';
   if (templateIdParam && taskSpecParam) {
     taskFilter.taskId = templateIdParam;
-    taskFilter.workgroups = '[My Workgroups]';
     taskFilter.status = null;
     taskFilter.advisory = '[Not Invalid]';
     taskFilter.sort = 'startDate';
@@ -57,12 +57,17 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     }
   }
   if (indexesParam) {
-    taskFilter.workgroups = '[My Workgroups]';
     taskFilter.status = null;
     taskFilter.advisory = '[Not Invalid]';
     taskFilter.sort = 'startDate';
     taskFilter.descending = true;
     taskFilter.indexes = indexesParam;
+    var workgroups = util.urlParams().workgroups;
+    if (workgroups)
+      taskFilter.workgroups = workgroups;
+    var assignee = util.urlParams().assignee;
+    if (assignee)
+      taskFilter.assignee = assignee;
     $scope.setFilter(taskFilter);
     window.location = mdw.roots.hub + '#/tasks';
     return;
