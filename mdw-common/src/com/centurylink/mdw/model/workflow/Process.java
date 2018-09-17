@@ -288,7 +288,7 @@ public class Process extends Asset implements Jsonable {
     private ActivityImplementor getImplementor(Activity activity) {
         if (implementors != null) {
             for (ActivityImplementor impl : implementors) {
-                if (impl.getImplementorClassName().equals(activity.getImplementor()))
+                if (impl.getImplementorClass().equals(activity.getImplementor()))
                     return impl;
             }
         }
@@ -588,7 +588,7 @@ public class Process extends Asset implements Jsonable {
                     return activity;
             }
         }
-        // revert to logic of assuming first activity in asset is start
+        // revert to old logic of assuming first activity in asset is start
         return getActivities().get(0);
     }
 

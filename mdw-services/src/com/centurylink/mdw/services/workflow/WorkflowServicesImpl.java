@@ -855,18 +855,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityImplementors = DataAccess.getProcessLoader().getActivityImplementors();
                 for (ActivityImplementor impl : activityImplementors) {
                     // qualify the icon location
-                    String icon = impl.getIconName();
+                    String icon = impl.getIcon();
                     if (icon != null && !icon.startsWith("shape:") && icon.indexOf('/') <= 0) {
                         for (Package pkg : PackageCache.getPackages()) {
                             for (Asset asset : pkg.getAssets()) {
                                 if (asset.getName().equals(icon)) {
-                                    impl.setIconName(pkg.getName() + "/" + icon);
+                                    impl.setIcon(pkg.getName() + "/" + icon);
                                     break;
                                 }
                             }
                         }
                     }
-                    impl.setAttributeDescription(null);
+                    impl.setPagelet(null);
                 }
                 AssetServices assetServices = ServiceLocator.getAssetServices();
                 Map<String,List<AssetInfo>> annotatedAssets = assetServices.getAssetsOfTypes(new String[]{"java", "kt"});
@@ -892,7 +892,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ActivityImplementor getImplementor(String className) throws ServiceException {
         try {
             for (ActivityImplementor implementor : DataAccess.getProcessLoader().getActivityImplementors()) {
-                String implClassName = implementor.getImplementorClassName();
+                String implClassName = implementor.getImplementorClass();
                 if (className == null) {
                     if (implClassName == null)
                         return implementor;
@@ -935,9 +935,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 GeneralActivity activity = pkg.getActivityImplementor(implClass);
                 com.centurylink.mdw.annotations.Activity annotation =
                         activity.getClass().getAnnotation(com.centurylink.mdw.annotations.Activity.class);
-                ActivityImplementor impl = new ActivityImplementor(annotation.value(), implClass, annotation.icon(), annotation.pagelet());
-                impl.setBaseClassName(annotation.category().getName());
-                impl.setPackageName(pkg.getName());
+                ActivityImplementor impl = new ActivityImplementor(implClass, annotation);
                 return impl;
             }
         }

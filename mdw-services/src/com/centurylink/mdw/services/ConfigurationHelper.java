@@ -21,7 +21,6 @@ import java.io.Serializable;
 
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
-import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
