@@ -14,6 +14,8 @@ const process = {
     else if (instanceId) {
       this.getInstance(serviceBase, instanceId, null, instance => {
         var path = instance.packageName + '/' + instance.processName;
+        if (instance.processVersion)
+           path += "/v" + instance.processVersion;
         this.getProcess(serviceBase, path, process => {
           process.packageName = instance.packageName;
           process.instance = instance;

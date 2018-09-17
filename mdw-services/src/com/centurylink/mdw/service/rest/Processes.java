@@ -267,10 +267,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         // retrieving summary for activity instance
                         if (processList.getCount() == 0)
                             throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
-                        JSONObject json = processList.getProcesses().get(0).getJson();
-                        json.put("definitionId", json.getLong("processId"));
-                        json.put("name", json.getString("processName"));
-                        return json;
+                        return getSummaryJson(processList.getProcesses().get(0));
                     }
                     else {
                         return processList.getJson();
@@ -299,7 +296,8 @@ public class Processes extends JsonRestService implements JsonExportable {
             summary.put("templatePackage", process.getTemplatePackage());
             summary.put("templateVersion", process.getTemplateVersion());
             Process latestTemplate = ProcessCache.getProcess(process.getTemplatePackage() + "/" + process.getTemplate());
-            if (latestTemplate != null && !latestTemplate.getId().equals(process.getProcessId()))
+            // If null it means it is archived but was renamed or removed from current assets
+            if (latestTemplate == null || !latestTemplate.getId().equals(process.getProcessId()))
                 summary.put("archived", true);
         }
         else {
