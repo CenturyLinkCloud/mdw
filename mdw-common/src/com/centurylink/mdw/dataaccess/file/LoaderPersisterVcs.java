@@ -15,6 +15,29 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
+import org.yaml.snakeyaml.Yaml;
+
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.config.PropertyManager;
@@ -22,7 +45,14 @@ import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.*;
+import com.centurylink.mdw.dataaccess.AssetRef;
+import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.dataaccess.BaselineData;
+import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.ProcessLoader;
+import com.centurylink.mdw.dataaccess.ProcessPersister;
+import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -38,16 +68,7 @@ import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.json.JSONException;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
-
-// TODO clear VersionControl & PackageDir/AssetFile caches on Cache Refresh.
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public static final String PROCESS_FILE_EXTENSION = ".proc";
@@ -435,11 +456,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         List<ActivityImplementor> impls = getActivityImplementors();  // TODO maybe cache these
         for (Activity activity : process.getActivities()) {
             for (ActivityImplementor impl : impls) {
-                if (activity.getImplementor().equals(impl.getImplementorClassName())) {
-                    if (impl.isManualTask()) {
-                        if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-                            removeObsoleteTaskActivityAttributes(activity);
-                        }
+                if (activity.getImplementor().equals(impl.getImplementorClass())) {
+                    if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null &&
+                            activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_NAME) != null) {
+                        removeObsoleteTaskActivityAttributes(activity);
                     }
                 }
             }
@@ -448,11 +468,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             for (Process embedded : process.getSubprocesses()) {
                 for (Activity activity : embedded.getActivities()) {
                     for (ActivityImplementor impl : impls) {
-                        if (activity.getImplementor().equals(impl.getImplementorClassName())) {
-                            if (impl.isManualTask()) {
-                                if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-                                    removeObsoleteTaskActivityAttributes(activity);
-                                }
+                        if (activity.getImplementor().equals(impl.getImplementorClass())) {
+                            if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null &&
+                                    activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_NAME) != null) {
+                                removeObsoleteTaskActivityAttributes(activity);
                             }
                         }
                     }
@@ -511,7 +530,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public ActivityImplementor loadActivityImplementor(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
         String content = new String(read(assetFile));
         ActivityImplementor implVo = new ActivityImplementor(new JsonObject(content));
-        implVo.setImplementorId(assetFile.getId());
+        implVo.setId(assetFile.getId());
         implVo.setPackageName(pkgDir.getPackageName());
         return implVo;
     }
@@ -520,8 +539,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         String content = implVo.getJson().toString(2);
         AssetFile assetFile = pkgDir.getAssetFile(getActivityImplementorFile(implVo), null); // no revs
         write(content.getBytes(), assetFile);
-        implVo.setImplementorId(versionControl.getId(assetFile.getLogicalFile()));
-        return implVo.getImplementorId();
+        implVo.setId(versionControl.getId(assetFile.getLogicalFile()));
+        return implVo.getId();
     }
 
     public ExternalEvent loadExternalEventHandler(PackageDir pkgDir, AssetFile assetFile) throws IOException, XmlException, JSONException {
@@ -621,7 +640,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             for (ActivityImplementor impl : packageVo.getImplementors()) {
                 boolean alreadyPresentInAnotherPackage = false;
                 for (ActivityImplementor existingImpl : existingImpls) {
-                    if (existingImpl.getImplementorClassName().equals(impl.getImplementorClassName())) {
+                    if (existingImpl.getImplementorClass().equals(impl.getImplementorClass())) {
                         alreadyPresentInAnotherPackage = true;
                         break;
                     }
@@ -981,8 +1000,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             Map<String,ActivityImplementor> impls = new HashMap<>();
             for (PackageDir pkgDir : getPackageDirs()) {
                 for (ActivityImplementor impl : loadActivityImplementors(pkgDir)) {
-                    if (!impls.containsKey(impl.getImplementorClassName()))
-                        impls.put(impl.getImplementorClassName(), impl);
+                    if (!impls.containsKey(impl.getImplementorClass()))
+                        impls.put(impl.getImplementorClass(), impl);
                 }
             }
             List<ActivityImplementor> modifiableList = new ArrayList<>();
@@ -1415,72 +1434,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
      */
     public void removeAssetFromPackage(Long assetId, Long packageId) throws DataAccessException {
         deleteAsset(assetId);
-    }
-
-    /**
-     * Saves to top-level package.  Expects getPackageName() to be set.
-     */
-    public Long createActivityImplementor(ActivityImplementor implementor) throws DataAccessException {
-        try {
-            return save(implementor, getTopLevelPackageDir(implementor.getPackageName()));
-        }
-        catch (DataAccessException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
-        }
-    }
-
-    public void updateActivityImplementor(ActivityImplementor implementor) throws DataAccessException {
-        createActivityImplementor(implementor);
-    }
-
-    /**
-     * may have already been deleted due to removeActivityImplFromPackage
-     */
-    public void deleteActivityImplementor(Long implementorId) throws DataAccessException {
-        File logicalFile = getVersionControl().getFile(implementorId);
-        if (logicalFile != null) {
-            PackageDir pkgDir = getPackageDir(logicalFile);
-            try {
-                File implFile = pkgDir.findAssetFile(logicalFile);
-                if (implFile.exists()) {
-                    delete(implFile);
-                    getVersionControl().clearId(logicalFile);
-                    getVersionControl().deleteRev(implFile);
-                }
-            }
-            catch (IOException ex) {
-                throw new DataAccessException(ex.getMessage(), ex);
-            }
-        }
-    }
-
-    /**
-     * in move scenario, must be called before removeActivityImplFromPackage()
-     */
-    public long addActivityImplToPackage(Long activityImplId, Long packageId) throws DataAccessException {
-        File logicalFile = getVersionControl().getFile(activityImplId);
-        PackageDir pkgDir = getPackageDir(logicalFile);
-        try {
-            ActivityImplementor implementor = loadActivityImplementor(pkgDir, pkgDir.findAssetFile(logicalFile));
-            PackageDir newPkgDir = getPackageDir(packageId);
-            File newFile = new File(newPkgDir + "/" + implementor.getSimpleName() + IMPL_FILE_EXTENSION);
-            implementor.setPackageName(newPkgDir.getPackageName());  // required for save()
-            save(implementor, newPkgDir);
-            return loadActivityImplementor(newPkgDir, newPkgDir.getAssetFile(newFile)).getImplementorId(); // prime the cache
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * may have already been deleted in deleteImplementor()
-     */
-    public void removeActivityImplFromPackage(Long activityImplId, Long packageId) throws DataAccessException {
-        deleteActivityImplementor(activityImplId);
     }
 
     /**

@@ -22,7 +22,6 @@ import org.apache.xmlbeans.XmlException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 
@@ -67,15 +66,6 @@ public interface ProcessPersister {
     void updateTaskTemplate(TaskTemplate taskTemplate)
     throws DataAccessException;
 
-    Long createActivityImplementor(ActivityImplementor implementor)
-    throws DataAccessException;
-
-    void deleteActivityImplementor(Long implementorId)
-    throws DataAccessException;
-
-    void updateActivityImplementor(ActivityImplementor vo)
-    throws DataAccessException;
-
     long renameProcess(Long processId, String newName, int newVersion)
     throws DataAccessException;
 
@@ -104,12 +94,6 @@ public interface ProcessPersister {
     throws DataAccessException;
 
     void removeTaskTemplateFromPackage(Long taskId, Long packageId)
-    throws DataAccessException;
-
-    long addActivityImplToPackage(Long activityImplId, Long packageId)
-    throws DataAccessException;
-
-    void removeActivityImplFromPackage(Long activityImplId, Long packageId)
     throws DataAccessException;
 
     long addAssetToPackage(Long assetId, Long packageId)

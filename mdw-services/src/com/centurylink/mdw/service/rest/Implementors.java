@@ -84,9 +84,9 @@ public class Implementors extends JsonRestService {
                 ActivityImplementor impl = workflowServices.getImplementor(implClassName);
                 if (impl == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Implementor not found: " + implClassName);
-                String pagelet = impl.getAttributeDescription();
+                String pagelet = impl.getPagelet();
                 if (pagelet != null && !pagelet.isEmpty()) {
-                    impl.setAttributeDescription(null);
+                    impl.setPagelet(null);
                     JSONObject implJson = impl.getJson();
                     JSONObject pageletJson;
                     if (pagelet.trim().startsWith("{")) {

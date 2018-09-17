@@ -28,9 +28,9 @@ import javax.swing.ImageIcon;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.draw.model.Data;
-import com.centurylink.mdw.draw.model.Implementor;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
 
-public class Implementors extends LinkedHashMap<String,Implementor> {
+public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
 
     private File assetLoc;
 
@@ -47,10 +47,10 @@ public class Implementors extends LinkedHashMap<String,Implementor> {
             else if (file.exists()) {
                 try {
                     if (file.getName().endsWith("impl")) {
-                        add(new Implementor(file.getPath(), new JSONObject(new String(Files.readAllBytes(file.toPath())))));
+                        add(new ActivityImplementor(new JSONObject(new String(Files.readAllBytes(file.toPath())))));
                     }
                     else if (file.getName().endsWith(".java") || file.getName().endsWith(".kt")) {
-                        Implementor impl = getImpl(file);
+                        ActivityImplementor impl = getImpl(file);
                         if (impl != null)
                             add(impl);
                     }
@@ -71,7 +71,7 @@ public class Implementors extends LinkedHashMap<String,Implementor> {
      * For annotation-based implementors.  Custom impl classes cannot be compiled, so this crude
      * parsing mechanism is used to determine image icon.  Kotlin limitation: file name must be the same as impl class name.
      */
-    private Implementor getImpl(File file) throws IOException {
+    private ActivityImplementor getImpl(File file) throws IOException {
         String contents = new String(Files.readAllBytes(file.toPath()));
 
         Matcher matcher = ACTIVITY_ANNOTATION.matcher(contents);
@@ -88,13 +88,13 @@ public class Implementors extends LinkedHashMap<String,Implementor> {
             if (iconMatcher.find()) {
                 icon = iconMatcher.group(1);
             }
-            return new Implementor(category, label, icon, implClass, "{}");
+            return new ActivityImplementor(implClass, category, label, icon, "{}");
         }
         return null;
     }
 
-    public void add(Implementor impl) {
-        String iconAsset = impl.getIconName();
+    public void add(ActivityImplementor impl) {
+        String iconAsset = impl.getIcon();
         if (iconAsset != null && !iconAsset.startsWith("shape:")) {
             String iconPkg = Data.BASE_PKG;
             int slash = iconAsset.lastIndexOf('/');
@@ -103,20 +103,20 @@ public class Implementors extends LinkedHashMap<String,Implementor> {
                 iconAsset = iconAsset.substring(slash + 1);
             }
             else {
-                String implClass = impl.getImplementorClassName();
+                String implClass = impl.getImplementorClass();
                 String pkg = implClass.substring(0, implClass.lastIndexOf('.'));
                 if (new File(assetLoc + "/" + pkg.replace('.', '/') + "/" + iconAsset).isFile())
                     iconPkg = pkg;
             }
             String iconPath = assetLoc + "/" + iconPkg.replace('.', '/') + "/" + iconAsset;
             try {
-                impl.setIcon(getIcon(iconPath));
+                impl.setImageIcon(getIcon(iconPath));
             }
             catch (IOException ex) {
-                System.err.println("Cannot find icon " + iconPath + " for implementor " + impl.getImplementorClassName());
+                System.err.println("Cannot find icon " + iconPath + " for implementor " + impl.getImplementorClass());
             }
         }
-        put(impl.getImplementorClassName(), impl);
+        put(impl.getImplementorClass(), impl);
     }
 
     private ImageIcon getIcon(String iconPath) throws IOException {
