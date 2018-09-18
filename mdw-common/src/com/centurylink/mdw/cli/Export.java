@@ -24,11 +24,11 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
-import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
 
@@ -49,8 +49,8 @@ public class Export extends Setup {
         this.process = proc;
     }
 
-    @Parameter(names = "--format", description = "Format to be exported")
-    private String format = "bpmn2";
+    @Parameter(names = "--format", description = "Format to be exported (bpmn, png or html)")
+    private String format = "bpmn";
 
     public String getFormat() {
         return format;
@@ -99,22 +99,19 @@ public class Export extends Setup {
         }
 
         if (exporter instanceof HtmlProcessExporter) {
-            ((HtmlProcessExporter) exporter).setOutput(output.getPath());
-        }
-        else if (exporter instanceof PngProcessExporter) {
-            ((PngProcessExporter) exporter).setOutput(output.getPath());
+            ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
         }
 
-        String exported = exporter.export(proc);
+        byte[] exported = exporter.export(proc);
 
         if (exported != null)
-            Files.write(Paths.get(output.getPath()), exported.getBytes());
+            Files.write(Paths.get(output.getPath()), exported);
 
         return this;
     }
 
     protected ProcessExporter getProcessExporter() throws IOException {
-        if ("bpmn2".equals(format))
+        if ("bpmn2".equals(format) || "bpmn".equals(format))
             return new BpmnProcessExporter();
         else {
             final Setup setup = this;

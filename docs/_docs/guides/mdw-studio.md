@@ -32,7 +32,7 @@ that enables you to create workflow processes and other assets.
       **TODO**
     - Snapshot Release
       - Add the Beta plugin repository in IntelliJ
-        - Preferences > Plugins > Browse Repositories > Manage Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/Beta/list" %}
+        - Preferences/Settings > Plugins > Browse Repositories > Manage Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/Beta/list" %}
         - Search for "MDW" and click Install
   
 ### 1.2 Create and open a project
