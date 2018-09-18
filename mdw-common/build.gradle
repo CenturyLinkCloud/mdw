@@ -143,13 +143,9 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/Project.class"
         include "com/centurylink/mdw/model/system/Server.class"
         include "com/centurylink/mdw/model/system/ServerList.class"
-        include "com/centurylink/mdw/model/workflow/Process.class"
-        include "com/centurylink/mdw/model/workflow/Activity.class"
-        include "com/centurylink/mdw/model/workflow/ActivityImplementor.class"
-        include "com/centurylink/mdw/model/workflow/TextNote.class"
+        include "com/centurylink/mdw/model/workflow/*.class"
         include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
         include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"
-        include "com/centurylink/mdw/model/workflow/Transition.class" 
         include "com/centurylink/mdw/model/attribute/Attribute.class"
         include "com/centurylink/mdw/model/event/EventType.class"
         include "com/centurylink/mdw/model/variable/Variable.class"
@@ -163,6 +159,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/html/*.class"
         include "com/centurylink/mdw/image/*.class"
         include "com/centurylink/mdw/activity/types/*.class"
+        include "com/centurylink/mdw/drawio/*.class"
     }
     
     from configurations.cli.asFileTree.files.collect {
