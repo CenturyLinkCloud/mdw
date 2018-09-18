@@ -154,7 +154,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#HtmlExportHelper-com.centurylink.mdw.draw.model.Project-">HtmlExportHelper</a></span>(com.centurylink.mdw.draw.model.Project&nbsp;project)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#HtmlExportHelper-com.centurylink.mdw.model.Project-">HtmlExportHelper</a></span>(<a href="../../../../com/centurylink/mdw/model/Project.html" title="interface in com.centurylink.mdw.model">Project</a>&nbsp;project)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -173,8 +173,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#exportProcess-com.centurylink.mdw.model.workflow.Process-java.lang.String-">exportProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO,
-             java.lang.String&nbsp;filename)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#exportProcess-com.centurylink.mdw.model.workflow.Process-java.io.File-">exportProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO,
+             java.io.File&nbsp;outputDir)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -250,13 +250,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="HtmlExportHelper-com.centurylink.mdw.draw.model.Project-">
+<a name="HtmlExportHelper-com.centurylink.mdw.model.Project-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>HtmlExportHelper</h4>
-<pre>public&nbsp;HtmlExportHelper(com.centurylink.mdw.draw.model.Project&nbsp;project)</pre>
+<pre>public&nbsp;HtmlExportHelper(<a href="../../../../com/centurylink/mdw/model/Project.html" title="interface in com.centurylink.mdw.model">Project</a>&nbsp;project)</pre>
 </li>
 </ul>
 </li>
@@ -267,14 +267,14 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="exportProcess-com.centurylink.mdw.model.workflow.Process-java.lang.String-">
+<a name="exportProcess-com.centurylink.mdw.model.workflow.Process-java.io.File-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>exportProcess</h4>
 <pre>public&nbsp;java.lang.String&nbsp;exportProcess(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO,
-                                      java.lang.String&nbsp;filename)
+                                      java.io.File&nbsp;outputDir)
                                throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
