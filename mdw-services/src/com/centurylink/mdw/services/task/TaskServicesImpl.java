@@ -383,14 +383,16 @@ public class TaskServicesImpl implements TaskServices {
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
                 ProcessInstance processInstance = workflowServices.getProcess(taskInst.getOwnerId(),
                         true);
-                if (action.equals(TaskAction.COMPLETE)
+                if (TaskAction.COMPLETE.equals(action)
                         && "ERROR".equals(processInstance.getOwner())) {
-                    Long activityInstanceId = getActivityInstaceIdForError(new JSONObject(workflowServices
-                            .getProcessValue(processInstance.getId(), "exception").getValue()));
+                    Long activityInstanceId = getActivityInstaceIdForError(new JSONObject(
+                            workflowServices.getProcessValue(processInstance.getId(), "exception")
+                                    .getValue()));
                     workflowServices.actionActivity(String.valueOf(activityInstanceId),
                             Action.Retry.toString(), "");
                 }
-                helper.performAction(action, user.getId(), assigneeId, comment, destination, true, false);
+                helper.performAction(action, user.getId(), assigneeId, comment, destination, true,
+                        false);
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);
@@ -668,16 +670,15 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public Long getActivityInstaceIdForError(JSONObject json) {
-        Long actInstId = null;
         if (json.has("runtimeContext")) {
             JSONObject runtimeContext = json.getJSONObject("runtimeContext");
             if (runtimeContext.has("activityInstance")) {
                 JSONObject actInst = runtimeContext.getJSONObject("activityInstance");
                 if (actInst.has("id"))
-                    actInstId =  actInst.getLong("id");
+                    return actInst.getLong("id");
             }
         }
-        return actInstId;
+        return null;
     }
 
     public void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException {
