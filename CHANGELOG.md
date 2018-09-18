@@ -6,7 +6,6 @@
 **Implemented enhancements:**
 
 - Auto-increment option when conflicts during asset import [\#324](https://github.com/CenturyLinkCloud/mdw/issues/324)
-- Create reports using MongoDB [\#264](https://github.com/CenturyLinkCloud/mdw/issues/264)
 - MDWHub/API filtering for process instances by variable value(s) [\#40](https://github.com/CenturyLinkCloud/mdw/issues/40)
 - Kotlin language activity implementors [\#494](https://github.com/CenturyLinkCloud/mdw/issues/494)
 - Support `@Activity` annotations for .java or .kt assets instead of separate .impl file [\#500](https://github.com/CenturyLinkCloud/mdw/issues/500)
