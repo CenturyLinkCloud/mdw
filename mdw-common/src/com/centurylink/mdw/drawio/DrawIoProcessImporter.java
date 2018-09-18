@@ -22,10 +22,8 @@ import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
-import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.model.workflow.Display;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.procimport.ProcessImporter;
@@ -41,7 +39,7 @@ public class DrawIoProcessImporter implements ProcessImporter {
     @Override
     public Process importProcess(File from) throws IOException {
         try {
-            Process process = new Process(new JSONObject(Templates.get("assets/new.proc")));
+            Process process = new Process();
             String name = from.getName();
             int lastDot = name.lastIndexOf('.');
             if (lastDot > 0 && lastDot < name.length() - 1)
