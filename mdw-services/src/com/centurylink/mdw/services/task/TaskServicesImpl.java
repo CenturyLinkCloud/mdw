@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
@@ -359,7 +361,7 @@ public class TaskServicesImpl implements TaskServices {
             List<Long> taskInstanceIds;
             Long taskInstanceId = taskAction.getTaskInstanceId();
             if (taskInstanceId != null) {
-                taskInstanceIds = new ArrayList<Long>();
+                taskInstanceIds = new ArrayList<>();
                 taskInstanceIds.add(taskInstanceId);
             }
             else {
@@ -378,6 +380,16 @@ public class TaskServicesImpl implements TaskServices {
                 validator.validateAction(taskAction);
 
                 TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInst);
+                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                ProcessInstance processInstance = workflowServices.getProcess(taskInst.getOwnerId(),
+                        true);
+                if (action.equals(TaskAction.COMPLETE)
+                        && "ERROR".equals(processInstance.getOwner())) {
+                    Long activityInstanceId = getActivityInstaceIdForError(new JSONObject(workflowServices
+                            .getProcessValue(processInstance.getId(), "exception").getValue()));
+                    workflowServices.actionActivity(String.valueOf(activityInstanceId),
+                            Action.Retry.toString(), "");
+                }
                 helper.performAction(action, user.getId(), assigneeId, comment, destination, true, false);
 
                 if (logger.isDebugEnabled())
@@ -653,6 +665,19 @@ public class TaskServicesImpl implements TaskServices {
         List<TaskInstance> daoResults = getTaskDAO().getTaskInstancesForProcessInstance(processInstanceId);
         timer.stopAndLogTiming("");
         return daoResults;
+    }
+
+    public Long getActivityInstaceIdForError(JSONObject json) {
+        Long actInstId = null;
+        if (json.has("runtimeContext")) {
+            JSONObject runtimeContext = json.getJSONObject("runtimeContext");
+            if (runtimeContext.has("activityInstance")) {
+                JSONObject actInst = runtimeContext.getJSONObject("activityInstance");
+                if (actInst.has("id"))
+                    actInstId =  actInst.getLong("id");
+            }
+        }
+        return actInstId;
     }
 
     public void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException {
