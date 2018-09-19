@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.export;
+package com.centurylink.mdw.model;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.File;
 
-import com.centurylink.mdw.cli.Dependency;
-import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.system.MdwVersion;
 
-public interface ProcessExporter {
-    byte[] export(Process process) throws IOException;
+public interface Project {
 
-    default List<Dependency> getDependencies() {
-        return null;
-    }
+    File getAssetRoot();
+
+    String getHubRootUrl();
+
+    MdwVersion getMdwVersion();
 }

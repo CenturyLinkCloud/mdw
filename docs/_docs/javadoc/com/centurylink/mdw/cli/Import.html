@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -197,80 +197,108 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getArtifacts--">getArtifacts</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getGroupId--">getGroupId</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.io.File</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getFile--">getFile</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getPackageNames--">getPackageNames</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getFormat--">getFormat</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getVersion--">getVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getGroupId--">getGroupId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getPackageNames--">getPackageNames</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getProcess--">getProcess</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/procimport/ProcessImporter.html" title="interface in com.centurylink.mdw.procimport">ProcessImporter</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getProcessImporter-java.lang.String-">getProcessImporter</a></span>(java.lang.String&nbsp;format)</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getVersion--">getVersion</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importGit-com.centurylink.mdw.cli.ProgressMonitor...-">importGit</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importMaven-com.centurylink.mdw.cli.ProgressMonitor...-">importMaven</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importMdw-com.centurylink.mdw.cli.ProgressMonitor...-">importMdw</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importMDWGit-com.centurylink.mdw.cli.ProgressMonitor...-">importMDWGit</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importPackageFromMaven-java.lang.String-java.lang.String-java.lang.String-com.centurylink.mdw.cli.ProgressMonitor...-">importPackageFromMaven</a></span>(java.lang.String&nbsp;groupId,
                       java.lang.String&nbsp;artifactId,
                       java.lang.String&nbsp;version,
                       <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importPackagesFromMaven-java.lang.String-java.util.List-com.centurylink.mdw.cli.ProgressMonitor...-">importPackagesFromMaven</a></span>(java.lang.String&nbsp;groupId,
                        java.util.List&lt;java.lang.String&gt;&nbsp;packages,
                        <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importPackagesFromMdw-java.lang.String-java.util.List-com.centurylink.mdw.cli.ProgressMonitor...-">importPackagesFromMdw</a></span>(java.lang.String&nbsp;url,
                      java.util.List&lt;java.lang.String&gt;&nbsp;packages,
                      <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importSnapshotPackage-java.lang.String-com.centurylink.mdw.cli.ProgressMonitor...-">importSnapshotPackage</a></span>(java.lang.String&nbsp;pkg,
                      <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#isForce--">isForce</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#isHardReset--">isHardReset</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/cli/Import.html" title="class in com.centurylink.mdw.cli">Import</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#run-com.centurylink.mdw.cli.ProgressMonitor...-">run</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setArtifacts-java.util.List-">setArtifacts</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;artifacts)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i21" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setFile-java.io.File-">setFile</a></span>(java.io.File&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setForce-boolean-">setForce</a></span>(boolean&nbsp;force)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i23" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setFormat-java.lang.String-">setFormat</a></span>(java.lang.String&nbsp;format)</code>&nbsp;</td>
+</tr>
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setHardReset-boolean-">setHardReset</a></span>(boolean&nbsp;hardReset)</code>&nbsp;</td>
+</tr>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setProcess-java.lang.String-">setProcess</a></span>(java.lang.String&nbsp;process)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -343,6 +371,60 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getFile--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFile</h4>
+<pre>public&nbsp;java.io.File&nbsp;getFile()</pre>
+</li>
+</ul>
+<a name="setFile-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFile</h4>
+<pre>public&nbsp;void&nbsp;setFile(java.io.File&nbsp;file)</pre>
+</li>
+</ul>
+<a name="getFormat--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFormat</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getFormat()</pre>
+</li>
+</ul>
+<a name="setFormat-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFormat</h4>
+<pre>public&nbsp;void&nbsp;setFormat(java.lang.String&nbsp;format)</pre>
+</li>
+</ul>
+<a name="getProcess--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProcess</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getProcess()</pre>
+</li>
+</ul>
+<a name="setProcess-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setProcess</h4>
+<pre>public&nbsp;void&nbsp;setProcess(java.lang.String&nbsp;process)</pre>
+</li>
+</ul>
 <a name="getGroupId--">
 <!--   -->
 </a>
@@ -558,11 +640,25 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <a name="importSnapshotPackage-java.lang.String-com.centurylink.mdw.cli.ProgressMonitor...-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>importSnapshotPackage</h4>
 <pre>protected&nbsp;void&nbsp;importSnapshotPackage(java.lang.String&nbsp;pkg,
                                      <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</pre>
+</li>
+</ul>
+<a name="getProcessImporter-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getProcessImporter</h4>
+<pre>protected&nbsp;<a href="../../../../com/centurylink/mdw/procimport/ProcessImporter.html" title="interface in com.centurylink.mdw.procimport">ProcessImporter</a>&nbsp;getProcessImporter(java.lang.String&nbsp;format)
+                                      throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 </li>

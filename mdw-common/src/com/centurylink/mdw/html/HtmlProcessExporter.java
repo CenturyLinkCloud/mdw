@@ -15,13 +15,14 @@
  */
 package com.centurylink.mdw.html;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.centurylink.mdw.cli.Dependency;
-import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.export.ProcessExporter;
+import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class HtmlProcessExporter implements ProcessExporter {
@@ -31,14 +32,14 @@ public class HtmlProcessExporter implements ProcessExporter {
         this.project = project;
     }
 
-    private String output;
-    public void setOutput(String output) {
-        this.output = output;
+    private File outputDir;
+    public void setOutputDir(File outputDir) {
+        this.outputDir = outputDir;
     }
 
     @Override
-    public String export(Process process) throws IOException {
-        return new HtmlExportHelper(project).exportProcess(process, output);
+    public byte[] export(Process process) throws IOException {
+        return new HtmlExportHelper(project).exportProcess(process, outputDir).getBytes();
     }
 
     @Override

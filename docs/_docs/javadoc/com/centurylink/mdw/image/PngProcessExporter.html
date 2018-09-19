@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -132,7 +132,7 @@ implements <a href="../../../../com/centurylink/mdw/export/ProcessExporter.html"
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#PngProcessExporter-com.centurylink.mdw.draw.model.Project-">PngProcessExporter</a></span>(com.centurylink.mdw.draw.model.Project&nbsp;project)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#PngProcessExporter-com.centurylink.mdw.model.Project-">PngProcessExporter</a></span>(<a href="../../../../com/centurylink/mdw/model/Project.html" title="interface in com.centurylink.mdw.model">Project</a>&nbsp;project)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -150,16 +150,12 @@ implements <a href="../../../../com/centurylink/mdw/export/ProcessExporter.html"
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#export-com.centurylink.mdw.model.workflow.Process-">export</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/cli/Dependency.html" title="class in com.centurylink.mdw.cli">Dependency</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#getDependencies--">getDependencies</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#setOutput-java.lang.String-">setOutput</a></span>(java.lang.String&nbsp;output)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -183,13 +179,13 @@ implements <a href="../../../../com/centurylink/mdw/export/ProcessExporter.html"
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PngProcessExporter-com.centurylink.mdw.draw.model.Project-">
+<a name="PngProcessExporter-com.centurylink.mdw.model.Project-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PngProcessExporter</h4>
-<pre>public&nbsp;PngProcessExporter(com.centurylink.mdw.draw.model.Project&nbsp;project)</pre>
+<pre>public&nbsp;PngProcessExporter(<a href="../../../../com/centurylink/mdw/model/Project.html" title="interface in com.centurylink.mdw.model">Project</a>&nbsp;project)</pre>
 </li>
 </ul>
 </li>
@@ -200,23 +196,14 @@ implements <a href="../../../../com/centurylink/mdw/export/ProcessExporter.html"
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="setOutput-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setOutput</h4>
-<pre>public&nbsp;void&nbsp;setOutput(java.lang.String&nbsp;output)</pre>
-</li>
-</ul>
 <a name="export-com.centurylink.mdw.model.workflow.Process-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>export</h4>
-<pre>public&nbsp;java.lang.String&nbsp;export(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)
-                        throws java.io.IOException</pre>
+<pre>public&nbsp;byte[]&nbsp;export(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)
+              throws java.io.IOException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/export/ProcessExporter.html#export-com.centurylink.mdw.model.workflow.Process-">export</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/centurylink/mdw/export/ProcessExporter.html" title="interface in com.centurylink.mdw.export">ProcessExporter</a></code></dd>

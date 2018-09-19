@@ -29,7 +29,11 @@ import java.util.Map;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.bpmn.BpmnProcessImporter;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.drawio.DrawIoProcessImporter;
+import com.centurylink.mdw.procimport.ProcessImporter;
+import com.centurylink.mdw.model.workflow.Process;
 
 /**
  * Imports asset packages from Git or Maven.
@@ -40,10 +44,25 @@ import com.centurylink.mdw.dataaccess.VersionControl;
  * <a href="https://git-scm.com/docs/git-reset#git-reset---hard">HARD RESET only if --hard-reset is specified</a>,
  * overwriting all local changes.
  */
-@Parameters(commandNames="import", commandDescription="Import assets from Git, or Maven", separators="=")
+@Parameters(commandNames="import", commandDescription="Import packages from Git/Maven, or process from external format", separators="=")
 public class Import extends Setup {
 
     private static boolean inProgress = false;
+
+    @Parameter(names="--file", description="File to import into process")
+    private File file;
+    public File getFile() { return file; }
+    public void setFile(File file) { this.file = file; }
+
+    @Parameter(names="--format", description="Process import source format")
+    private String format;
+    public String getFormat() { return format; }
+    public void setFormat(String format) { this.format = format; }
+
+    @Parameter(names="--process", description="Destination process asset path")
+    private String process;
+    public String getProcess() { return process; }
+    public void setProcess(String process) { this.process = process; }
 
     @Parameter(names="--group-id", description="Maven group id.  If this option is specified, imports from Discovery.")
     private String groupId;
@@ -113,22 +132,40 @@ public class Import extends Setup {
     }
 
     public Import run(ProgressMonitor... monitors) throws IOException {
-        if (!isForce()) {
-            String serviceUrl = new Props(this).get(Props.SERVICES_URL, false);
-            if (serviceUrl != null && new URL(serviceUrl).getHost().equals("localhost")) {
-                System.err.println(Props.SERVICES_URL.getProperty() + " indicates 'localhost'; "
-                        + "use --force to confirm (overwrites ALL local changes)");
-                return this;
+        if (file != null) {
+            // process import
+            if (format == null)
+                throw new IOException("--format is required");
+            ProcessImporter importer = getProcessImporter(format);
+            File outFile;
+            if (process == null) {
+                int lastDot = file.getName().lastIndexOf('.');
+                outFile = new File(file.getName().substring(0, lastDot) + ".proc");
             }
-        }
-        if (groupId != null) {
-            importMaven(monitors);
-        }
-        else if (packageNames != null) {
-            importMdw(monitors);
+            else {
+                outFile = getAssetFile(process);
+            }
+            Process proc = importer.importProcess(file);
+            Files.write(outFile.toPath(), proc.getJson().toString(2).getBytes());
         }
         else {
-            importGit(monitors);
+            if (!isForce()) {
+                String serviceUrl = new Props(this).get(Props.SERVICES_URL, false);
+                if (serviceUrl != null && new URL(serviceUrl).getHost().equals("localhost")) {
+                    System.err.println(Props.SERVICES_URL.getProperty() + " indicates 'localhost'; "
+                            + "use --force to confirm (overwrites ALL local changes)");
+                    return this;
+                }
+            }
+            if (groupId != null) {
+                importMaven(monitors);
+            }
+            else if (packageNames != null) {
+                importMdw(monitors);
+            }
+            else {
+                importGit(monitors);
+            }
         }
         return this;
     }
@@ -349,5 +386,14 @@ public class Import extends Setup {
         catch (IOException e) {
             System.err.println("Unable to import  - " + pkg );
         }
+    }
+
+    protected ProcessImporter getProcessImporter(String format) throws IOException {
+        if ("bpmn".equals(format))
+            return new BpmnProcessImporter();
+        else if ("draw.io".equals(format))
+            return new DrawIoProcessImporter();
+        else
+            throw new IOException("Unsupported format: " + format);
     }
 }
