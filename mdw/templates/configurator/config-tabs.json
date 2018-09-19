@@ -43,7 +43,10 @@
       "_categories": ["com.centurylink.mdw.activity.types.NotificationActivity"]
     },
     "Authentication": {
-      "_attributes": "auth",
+      "_template": "<implementor>",
+      "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
+    },
+    "Script": {
       "_template": "<implementor>",
       "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
     },
@@ -52,13 +55,7 @@
       "_template": "documentation.json"
     },
     "Monitoring": {
-      "_attributes": "monitoring",
-      "_template": "monitoring.json"
-    },
-    "Stubbing": {
-      "_attributes": "stubbing",
-      "_template": "stubbing.json",
-      "_categories": ["com.centurylink.mdw.activity.types.AdapterActivity"]
+      "_template": "<implementor>"
     },
     "Source": "source"
   },

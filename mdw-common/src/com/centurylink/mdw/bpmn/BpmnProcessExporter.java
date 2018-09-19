@@ -26,8 +26,8 @@ import com.centurylink.mdw.model.workflow.Process;
 public class BpmnProcessExporter implements ProcessExporter {
 
     @Override
-    public String export(Process process) throws IOException {
-        return new BpmnExportHelper().exportProcess(process);
+    public byte[] export(Process process) throws IOException {
+        return new BpmnExportHelper().exportProcess(process).getBytes();
     }
 
     @Override

@@ -28,7 +28,7 @@ import javax.swing.UIManager;
 
 import com.centurylink.mdw.draw.Diagram;
 import com.centurylink.mdw.draw.Display;
-import com.centurylink.mdw.draw.model.Project;
+import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class ProcessCanvas extends JPanel {

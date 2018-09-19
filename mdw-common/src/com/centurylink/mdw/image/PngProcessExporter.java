@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.image;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +23,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import com.centurylink.mdw.cli.Dependency;
-import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.export.ProcessExporter;
+import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class PngProcessExporter implements ProcessExporter {
@@ -34,15 +34,11 @@ public class PngProcessExporter implements ProcessExporter {
         this.project = project;
     }
 
-    private String output;
-    public void setOutput(String output) {
-        this.output = output;
-    }
-
     @Override
-    public String export(Process process) throws IOException {
-        ImageIO.write(new ImageExportHelper(project).printImage(process), "png", new File(output));
-        return null;
+    public byte[] export(Process process) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(new ImageExportHelper(project).printImage(process), "png", baos);
+        return baos.toByteArray();
     }
 
     @Override

@@ -29,8 +29,8 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.draw.model.Project;
 import com.centurylink.mdw.image.ImageExportHelper;
+import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;
@@ -88,9 +88,9 @@ public class HtmlExportHelper {
         textboxAttributes.put("PostScript", "Post-Script");
     }
 
-    public String exportProcess(Process processVO, String filename) throws IOException {
+    public String exportProcess(Process processVO, File outputDir) throws IOException {
         StringBuilder sb = printPrologHtml("Process " + processVO.getName());
-        printProcessHtml(sb, 0, processVO, filename);
+        printProcessHtml(sb, 0, processVO, outputDir);
         printEpilogHtml(sb);
         return sb.toString();
     }
@@ -244,14 +244,14 @@ public class HtmlExportHelper {
         sb.append("</table>\n");
     }
 
-    private void printProcessHtml(StringBuilder sb, int chapter, Process process, String filename)
+    private void printProcessHtml(StringBuilder sb, int chapter, Process process, File outputDir)
             throws IOException {
         sb.append("<h1>");
         if (chapter > 0)
             sb.append(Integer.toString(chapter)).append(". ");
         sb.append("Workflow: \"").append(process.getName()).append("\"</h1>\n");
         // print image
-        printGraphHtml(sb, process, filename, chapter);
+        printGraphHtml(sb, process, outputDir, chapter);
         // print documentation text
         sb.append(BR);
         printProcessBodyHtml(sb, process);
@@ -279,18 +279,11 @@ public class HtmlExportHelper {
         }
     }
 
-    private void printGraphHtml(StringBuilder sb, Process process, String filename,
+    private void printGraphHtml(StringBuilder sb, Process process, File outputDir,
             int chapterNumber) throws IOException {
-        String imgfilepath;
-        int k = filename.lastIndexOf('/');
-        if (k < 0)
-            k = filename.lastIndexOf('\\');
         String imgfilename = process.getName() + "_" + process.getVersionString()
                 + "_ch" + chapterNumber + ".jpg";
-        if (k > 0)
-            imgfilepath = filename.substring(0, k + 1) + imgfilename;
-        else
-            imgfilepath = imgfilename;
+        String imgfilepath = outputDir + "/" + imgfilename;
         printImage(imgfilepath, process);
         sb.append("<img src='").append(escapeXml(imgfilename)).append("'/>\n");
     }

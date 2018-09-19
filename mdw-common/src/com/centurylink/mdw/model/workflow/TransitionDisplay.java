@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 
 public class TransitionDisplay {
@@ -68,25 +66,29 @@ public class TransitionDisplay {
 
 
     private void addX(int x, boolean end) {
-        List<Integer> xlist = new ArrayList<>(Arrays.asList(ArrayUtils.toObject(xs)));
+        List<Integer> xlist = new ArrayList<>();
+        for (int xi : xs)
+            xlist.add(xi);
         if (end || xlist.size() == 0) {
             xlist.add(x);
         }
         else {
             xlist.add(xlist.size() - 1, x);
         }
-        xs = ArrayUtils.toPrimitive(xlist.toArray(new Integer[0]));
+        xs = Arrays.stream(xlist.toArray(new Integer[0])).mapToInt(Integer::intValue).toArray();
     }
 
     private void addY(int y, boolean end) {
-        List<Integer> ylist = new ArrayList<>(Arrays.asList(ArrayUtils.toObject(ys)));
+        List<Integer> ylist = new ArrayList<>();
+        for (int yi : ys)
+            ylist.add(yi);
         if (end || ylist.size() == 0) {
             ylist.add(y);
         }
         else {
             ylist.add(ylist.size() - 1, y);
         }
-        ys = ArrayUtils.toPrimitive(ylist.toArray(new Integer[0]));
+        ys = Arrays.stream(ylist.toArray(new Integer[0])).mapToInt(Integer::intValue).toArray();
     }
 
     public String toString() {

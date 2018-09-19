@@ -15,8 +15,17 @@
  */
 package com.centurylink.mdw.model.asset;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.JsonUtil;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,10 +34,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
-import java.util.*;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.JsonUtil;
 
 public class Pagelet implements Jsonable {
 
@@ -53,10 +61,14 @@ public class Pagelet implements Jsonable {
     public List<Widget> getWidgets() { return widgets; }
     public void setWidgets(List<Widget> widgets) { this.widgets = widgets; }
 
+    public Pagelet(String source) throws Exception {
+        this(null, source);
+    }
+
     /**
      * Note: changes widget type and attribute names into lower case.
      */
-    public Pagelet(String source) throws Exception {
+    public Pagelet(String implCategory, String source) throws Exception {
         if (source.startsWith("{")) {
             fromJson(new JSONObject(source));
             return;
@@ -128,8 +140,7 @@ public class Pagelet implements Jsonable {
             }
         });
 
-        adjustWidgets();
-
+        adjustWidgets(implCategory);
     }
 
     /**
@@ -212,7 +223,7 @@ public class Pagelet implements Jsonable {
     /**
      * Adds companion widgets as needed.
      */
-    private void adjustWidgets() {
+    private void adjustWidgets(String implCategory) {
         // adjust to add script language options param
         Map<Integer,Widget> companions = new HashMap<>();
         for (int i = 0; i < widgets.size(); i++) {
@@ -225,6 +236,9 @@ public class Pagelet implements Jsonable {
                     companion.setAttribute("default", "Groovy");
                 else if (companion.options.contains("Kotlin Script"))
                     companion.setAttribute("default", "Kotlin Script");
+                String section = widget.getAttribute("section");
+                if (section != null)
+                    companion.setAttribute("section", section);
                 companions.put(i, companion);
             }
         }
@@ -232,6 +246,30 @@ public class Pagelet implements Jsonable {
         for (int idx : companions.keySet()) {
             widgets.add(idx + offset, companions.get(idx));
             offset++;
+        }
+
+        // add automagic widgets (will only appear according to impl category)
+        if (AdapterActivity.class.getName().equals(implCategory)) {
+            Widget preScript = new Widget("PreScript", "edit");
+            preScript.setAttribute("section", "Script");
+            preScript.setAttribute("languages", "Groovy,Kotlin Script");
+            widgets.add(preScript);
+            Widget language = new Widget("PreScriptLang", "dropdown");
+            language.setAttribute("label", "Language");
+            language.setAttribute("default", "Groovy");
+            language.setAttribute("section", "Script");
+            language.options = Arrays.asList(new String[] {"Groovy", "Kotlin Script"});
+            widgets.add(language);
+            Widget postScript = new Widget("PostScript", "edit");
+            postScript.setAttribute("section", "Script");
+            postScript.setAttribute("languages", "Groovy,Kotlin Script");
+            widgets.add(postScript);
+            language = new Widget("PostScriptLang", "dropdown");
+            language.setAttribute("label", "Language");
+            language.setAttribute("default", "Groovy");
+            language.setAttribute("section", "Script");
+            language.options = Arrays.asList(new String[] {"Groovy", "Kotlin Script"});
+            widgets.add(language);
         }
     }
 
