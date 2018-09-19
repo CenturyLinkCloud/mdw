@@ -23,7 +23,7 @@ import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
 
 /**
- * Registry for MDW workflow monitoring services.
+ * Registry for MDW monitoring services.
  */
 public class MonitorRegistry extends ServiceRegistry {
 
@@ -48,21 +48,19 @@ public class MonitorRegistry extends ServiceRegistry {
     }
 
     public List<ProcessMonitor> getProcessMonitors() {
-        List<ProcessMonitor> processMonitors = new ArrayList<ProcessMonitor>();
-        processMonitors.addAll(super.getDynamicServices(ProcessMonitor.class));
-        return processMonitors;
+        return getDynamicServices(ProcessMonitor.class);
     }
 
     public List<ActivityMonitor> getActivityMonitors() {
-        List<ActivityMonitor> activityMonitors = new ArrayList<ActivityMonitor>();
-        activityMonitors.addAll(super.getDynamicServices(ActivityMonitor.class));
-        return activityMonitors;
+        return getDynamicServices(ActivityMonitor.class);
     }
 
     public List<AdapterMonitor> getAdapterMonitors() {
-        List<AdapterMonitor> adapterMonitors =  new ArrayList<AdapterMonitor>();
-        adapterMonitors.addAll(super.getDynamicServices(AdapterMonitor.class));
-        return adapterMonitors;
+        return getDynamicServices(AdapterMonitor.class);
+    }
+
+    public List<TaskMonitor> getTaskMonitors() {
+        return getDynamicServices(TaskMonitor.class);
     }
 
     /**

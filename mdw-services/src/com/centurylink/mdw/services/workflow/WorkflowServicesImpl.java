@@ -903,20 +903,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             Package pkg = PackageCache.getPackage(className.substring(0, className.lastIndexOf('.')));
             if (pkg != null) {
-                AssetServices assetServices = ServiceLocator.getAssetServices();
-                String assetRoot = pkg.getName() + "/" + className.substring(className.lastIndexOf('.') + 1);
-                AssetInfo assetInfo = null;
-                try {
-                    // TODO asset service should return null if not found instead of throwing
-                    assetInfo = assetServices.getAsset(assetRoot + ".java");
-                }
-                catch (ServiceException ex) {
-                    try {
-                        assetInfo = assetServices.getAsset(assetRoot + ".kt");
-                    }
-                    catch (ServiceException ex2) {
-                    }
-                }
+                AssetInfo assetInfo = ServiceLocator.getAssetServices().getImplAsset(className);
                 if (assetInfo != null)
                     return getAnnotatedImpl(pkg, assetInfo);
             }

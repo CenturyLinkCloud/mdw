@@ -22,15 +22,27 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.activity.types.TaskActivity;
+import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.MonitoringWidget;
 import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.asset.Pagelet.Widget;
+import com.centurylink.mdw.model.asset.PrePostWidgetProvider;
 import com.centurylink.mdw.model.user.Role;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.monitor.ActivityMonitor;
+import com.centurylink.mdw.monitor.AdapterMonitor;
+import com.centurylink.mdw.monitor.MonitorRegistry;
+import com.centurylink.mdw.monitor.TaskMonitor;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -84,16 +96,58 @@ public class Implementors extends JsonRestService {
                 ActivityImplementor impl = workflowServices.getImplementor(implClassName);
                 if (impl == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Implementor not found: " + implClassName);
-                String pagelet = impl.getPagelet();
-                if (pagelet != null && !pagelet.isEmpty()) {
+                String pageletStr = impl.getPagelet();
+                if (pageletStr != null && !pageletStr.isEmpty()) {
                     impl.setPagelet(null);
                     JSONObject implJson = impl.getJson();
                     JSONObject pageletJson;
-                    if (pagelet.trim().startsWith("{")) {
-                        pageletJson = new JSONObject(pagelet);
+                    if (pageletStr.trim().startsWith("{")) {
+                        pageletJson = new JSONObject(pageletStr);
                     }
                     else {
-                        pageletJson = new Pagelet(impl.getCategory(), pagelet).getJson();
+                        Pagelet pagelet = new Pagelet(impl.getCategory(), pageletStr);
+                        pagelet.addWidgetProvider(new PrePostWidgetProvider());
+                        pagelet.addWidgetProvider(implCategory -> {
+                            List<Widget> widgets = new ArrayList<>();
+                            Widget activityMonitoringWidget = new MonitoringWidget("Activity Monitors");
+                            widgets.add(activityMonitoringWidget);
+                            JSONArray rows = new JSONArray();
+                            for (ActivityMonitor activityMonitor : MonitorRegistry.getInstance().getActivityMonitors()) {
+                                JSONArray row = getRowDefault(activityMonitor.getClass());
+                                if (row != null) {
+                                    rows.put(row);
+                                }
+                            }
+                            if (rows.length() > 0)
+                                activityMonitoringWidget.setAttribute("default", rows.toString());
+
+                            if (AdapterActivity.class.getName().equals(implCategory)) {
+                                Widget adapterMonitorWidget = new MonitoringWidget("Adapter Monitors");
+                                widgets.add(adapterMonitorWidget);
+                                rows = new JSONArray();
+                                for (AdapterMonitor adapterMonitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
+                                    JSONArray row = getRowDefault(adapterMonitor.getClass());
+                                    if (row != null)
+                                        rows.put(row);
+                                }
+                                if (rows.length() > 0)
+                                    adapterMonitorWidget.setAttribute("default", rows.toString());
+                            }
+                            else if (TaskActivity.class.getName().equals(implCategory)) {
+                                Widget taskMonitorWidget = new MonitoringWidget("Task Monitors");
+                                widgets.add(taskMonitorWidget);
+                                rows = new JSONArray();
+                                for (TaskMonitor taskMonitor : MonitorRegistry.getInstance().getTaskMonitors()) {
+                                    JSONArray row = getRowDefault(taskMonitor.getClass());
+                                    if (row != null)
+                                        rows.put(row);
+                                }
+                                if (rows.length() > 0)
+                                    taskMonitorWidget.setAttribute("default", rows.toString());
+                            }
+                            return widgets;
+                        });
+                        pageletJson = pagelet.getJson();
                     }
                     implJson.put("pagelet", pageletJson);
                     return implJson;
@@ -109,5 +163,22 @@ public class Implementors extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
+    }
+
+    public JSONArray getRowDefault(Class<? extends com.centurylink.mdw.monitor.Monitor> monitorClass) {
+        Monitor monitorAnnotation = monitorClass.getAnnotation(Monitor.class);
+        if (monitorAnnotation == null)
+            return null;
+        JSONArray cols = new JSONArray();
+        cols.put(monitorAnnotation.global());
+        cols.put(monitorAnnotation.value());
+        String className = monitorClass.getName();
+        AssetInfo implAsset = ServiceLocator.getAssetServices().getImplAsset(className);
+        if (implAsset == null)
+            cols.put("");
+        else
+            cols.put(className.substring(0, className.lastIndexOf(".")) + "/" + implAsset.getName());
+        cols.put(monitorAnnotation.defaultOptions());
+        return cols;
     }
 }

@@ -21,12 +21,12 @@ import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
 /**
- * AdapterMonitors can be registered through @RegisteredService annotations to intercept
+ * AdapterMonitors can be registered through @Monitor annotations to intercept
  * external service calls originating from MDW workflow adapter activities.  Must be threadsafe.
  * Normally all registered monitors are called in sequence.  However the first monitor whose onInvoke()
  * returns non-null breaks the chain, and this non-null response is passed back to the MDW runtime.
  */
-public interface AdapterMonitor extends RegisteredService {
+public interface AdapterMonitor extends RegisteredService, Monitor {
 
     /**
      * Called when the request is created.  Can change the request contents.
@@ -37,7 +37,9 @@ public interface AdapterMonitor extends RegisteredService {
      * @param headers Protocol header values.  May be modified by the monitor.
      * @return null, or an alternative request that should be sent to the called service
      */
-    public Object onRequest(ActivityRuntimeContext runtimeContext, Object request, Map<String,String> headers);
+    default public Object onRequest(ActivityRuntimeContext runtimeContext, Object request, Map<String,String> headers) {
+        return null;
+    }
 
     /**
      * Called after onRequest(), but before the service is actually invoked.
@@ -49,7 +51,9 @@ public interface AdapterMonitor extends RegisteredService {
      * @param headers protocol headers
      * @return null, or an alternative response to send back to the MDW runtime
      */
-    public Object onInvoke(ActivityRuntimeContext runtimeContext, Object request, Map<String,String> headers);
+    default public Object onInvoke(ActivityRuntimeContext runtimeContext, Object request, Map<String,String> headers) {
+        return null;
+    }
 
     /**
      * Called when the response is received.
@@ -59,7 +63,9 @@ public interface AdapterMonitor extends RegisteredService {
      * @param headers Protocol headers for the incoming response.  New headers can be injected by the monitor.
      * @return Null unless the monitor wants to change the response contents.  In that case, return the alternative response.
      */
-    public Object onResponse(ActivityRuntimeContext runtimeContext, Object response, Map<String,String> headers);
+    default public Object onResponse(ActivityRuntimeContext runtimeContext, Object response, Map<String,String> headers) {
+        return null;
+    }
 
 
     /**
@@ -68,5 +74,7 @@ public interface AdapterMonitor extends RegisteredService {
      * @param ex error that was encountered
      * @return null, or activity result code
      */
-    public String onError(ActivityRuntimeContext runtimeContext, Throwable t);
+    default public String onError(ActivityRuntimeContext runtimeContext, Throwable t) {
+        return null;
+    }
 }

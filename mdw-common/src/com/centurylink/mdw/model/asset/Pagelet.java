@@ -34,7 +34,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.JsonUtil;
 
@@ -61,6 +60,19 @@ public class Pagelet implements Jsonable {
     public List<Widget> getWidgets() { return widgets; }
     public void setWidgets(List<Widget> widgets) { this.widgets = widgets; }
 
+    private List<WidgetProvider> widgetProviders;
+    public void addWidgetProvider(WidgetProvider widgetProvider) {
+        if (widgetProviders == null) {
+            widgetProviders = new ArrayList<>();
+        }
+        widgetProviders.add(widgetProvider);
+    }
+    public void removeWidgetProvider(WidgetProvider widgetProvider) {
+        if (widgetProviders != null) {
+            widgetProviders.remove(widgetProvider);
+        }
+    }
+
     public Pagelet(String source) throws Exception {
         this(null, source);
     }
@@ -73,6 +85,7 @@ public class Pagelet implements Jsonable {
             fromJson(new JSONObject(source));
             return;
         }
+
         InputSource inputSource = new InputSource(new ByteArrayInputStream(source.getBytes()));
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
@@ -248,28 +261,13 @@ public class Pagelet implements Jsonable {
             offset++;
         }
 
-        // add automagic widgets (will only appear according to impl category)
-        if (AdapterActivity.class.getName().equals(implCategory)) {
-            Widget preScript = new Widget("PreScript", "edit");
-            preScript.setAttribute("section", "Script");
-            preScript.setAttribute("languages", "Groovy,Kotlin Script");
-            widgets.add(preScript);
-            Widget language = new Widget("PreScriptLang", "dropdown");
-            language.setAttribute("label", "Language");
-            language.setAttribute("default", "Groovy");
-            language.setAttribute("section", "Script");
-            language.options = Arrays.asList(new String[] {"Groovy", "Kotlin Script"});
-            widgets.add(language);
-            Widget postScript = new Widget("PostScript", "edit");
-            postScript.setAttribute("section", "Script");
-            postScript.setAttribute("languages", "Groovy,Kotlin Script");
-            widgets.add(postScript);
-            language = new Widget("PostScriptLang", "dropdown");
-            language.setAttribute("label", "Language");
-            language.setAttribute("default", "Groovy");
-            language.setAttribute("section", "Script");
-            language.options = Arrays.asList(new String[] {"Groovy", "Kotlin Script"});
-            widgets.add(language);
+        if (widgetProviders != null) {
+            for (WidgetProvider provider : widgetProviders) {
+                List<Widget> providedWidgets = provider.getWidgets(implCategory);
+                if (providedWidgets != null) {
+                    widgets.addAll(providedWidgets);
+                }
+            }
         }
     }
 
@@ -305,7 +303,7 @@ public class Pagelet implements Jsonable {
         return "pagelet";
     }
 
-    public class Widget implements Jsonable {
+    public static class Widget implements Jsonable {
 
         public Widget(String name, String type) {
             this.name = name;
