@@ -380,17 +380,6 @@ public class TaskServicesImpl implements TaskServices {
                 validator.validateAction(taskAction);
 
                 TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInst);
-                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                ProcessInstance processInstance = workflowServices.getProcess(taskInst.getOwnerId(),
-                        false);
-                if (TaskAction.COMPLETE.equals(action)
-                        && "ERROR".equals(processInstance.getOwner())) {
-                    Long activityInstanceId = getActivityInstaceIdForError(new JSONObject(
-                            workflowServices.getProcessValue(processInstance.getId(), "exception")
-                                    .getValue()));
-                    workflowServices.actionActivity(String.valueOf(activityInstanceId),
-                            Action.Retry.toString(), "");
-                }
                 helper.performAction(action, user.getId(), assigneeId, comment, destination, true,
                         false);
 
@@ -667,18 +656,6 @@ public class TaskServicesImpl implements TaskServices {
         List<TaskInstance> daoResults = getTaskDAO().getTaskInstancesForProcessInstance(processInstanceId);
         timer.stopAndLogTiming("");
         return daoResults;
-    }
-
-    public Long getActivityInstaceIdForError(JSONObject json) {
-        if (json.has("runtimeContext")) {
-            JSONObject runtimeContext = json.getJSONObject("runtimeContext");
-            if (runtimeContext.has("activityInstance")) {
-                JSONObject actInst = runtimeContext.getJSONObject("activityInstance");
-                if (actInst.has("id"))
-                    return actInst.getLong("id");
-            }
-        }
-        return null;
     }
 
     public void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException {
