@@ -359,7 +359,7 @@ public class TaskServicesImpl implements TaskServices {
             List<Long> taskInstanceIds;
             Long taskInstanceId = taskAction.getTaskInstanceId();
             if (taskInstanceId != null) {
-                taskInstanceIds = new ArrayList<Long>();
+                taskInstanceIds = new ArrayList<>();
                 taskInstanceIds.add(taskInstanceId);
             }
             else {
@@ -378,7 +378,8 @@ public class TaskServicesImpl implements TaskServices {
                 validator.validateAction(taskAction);
 
                 TaskWorkflowHelper helper = new TaskWorkflowHelper(taskInst);
-                helper.performAction(action, user.getId(), assigneeId, comment, destination, true, false);
+                helper.performAction(action, user.getId(), assigneeId, comment, destination, true,
+                        false);
 
                 if (logger.isDebugEnabled())
                     logger.debug("Performed action: " + action + " on task instance: " + instanceId);
