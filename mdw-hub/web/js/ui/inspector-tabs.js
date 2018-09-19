@@ -68,7 +68,10 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_categories': ['com.centurylink.mdw.activity.types.NotificationActivity']
         },
         Authentication: {
-          '_attributes': 'auth', // TODO not fully baked 
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
+        },
+        Script: {
           '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
           '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
         },
@@ -79,11 +82,6 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         Monitoring: {
           '_attributes': 'monitoring', // TODO not fully baked 
           '_template': mdw.roots.hub + '/js/ui/templates/monitoring.json'
-        },
-        Stubbing: {
-          '_attributes': 'stubbing', // TODO not fully baked 
-          '_template': mdw.roots.hub + '/js/ui/templates/stubbing.json',
-          '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
         },
         /* string:
          * Evaluated string refers to obj collection for list-type display.

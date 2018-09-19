@@ -93,7 +93,7 @@ public class Implementors extends JsonRestService {
                         pageletJson = new JSONObject(pagelet);
                     }
                     else {
-                        pageletJson = new Pagelet(pagelet).getJson();
+                        pageletJson = new Pagelet(impl.getCategory(), pagelet).getJson();
                     }
                     implJson.put("pagelet", pageletJson);
                     return implJson;
