@@ -88,9 +88,9 @@ public class TimerTaskRegistration implements StartupService {
                 ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
                 queue.scheduleCronJob(ScheduledEvent.SCHEDULED_JOB_PREFIX + clsnameAndArgs, schedule);
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            throw new StartupException(ex.getMessage());
         }
     }
 
