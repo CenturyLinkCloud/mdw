@@ -197,12 +197,14 @@ public class ProcessEngineDriver {
                         params.put("exception", new DocumentReference(messageDoc.getSecondaryOwnerId()).toString());
                     }
                     if (packageHandlerProc.isService()) {
-                        invokeService(packageHandlerProc.getId(), OwnerType.ERROR, messageDoc.getSecondaryOwnerId(),
-                                originatingInstance.getMasterRequestId(), null, params, null, null);
+                        invokeService(packageHandlerProc.getId(), OwnerType.ERROR,
+                                messageDoc.getSecondaryOwnerId(),
+                                originatingInstance.getMasterRequestId(), null, params, null, 0,
+                                OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
                     }
                     else {
                         startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
-                                messageDoc.getSecondaryOwnerId(), params, null);
+                                messageDoc.getSecondaryOwnerId(), params, OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
                     }
                 }
                 else if (eventType.equals(EventType.ABORT)) {

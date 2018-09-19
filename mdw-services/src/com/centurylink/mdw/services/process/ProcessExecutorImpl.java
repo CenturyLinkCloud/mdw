@@ -1014,7 +1014,8 @@ class ProcessExecutorImpl {
                     }
                 }
             } else if (ownerType.equals(OwnerType.PROCESS_INSTANCE)
-                    || ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
+                    || ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)
+                    || ownerType.equals(OwnerType.ERROR)) {
                 // local process call or call to error/correction/delay handler
                 Long activityInstId = event.getSecondaryOwnerId();
                 ActivityInstance actInst = edao.getActivityInstance(activityInstId);
@@ -1039,7 +1040,6 @@ class ProcessExecutorImpl {
             this.resumeActivityFinishSub(actInst, (BaseActivity)cntrActivity, procInst,
                     finished, true);
         } catch (Exception e) {
-//          throw new ProcessException(-1, e.getMessage(), e);
             logger.severeException("Resume failed", e);
             String statusMsg = "activity failed during resume";
             try {
@@ -1065,12 +1065,12 @@ class ProcessExecutorImpl {
         Long actInstId = event.getSecondaryOwnerId();
         ActivityInstance actInst = edao.getActivityInstance(actInstId);
         String masterRequestId = event.getMasterRequestId();
-//            Long parentInstId = eventMessageDoc.getEventMessage().getWorkOwnerId();
         Long parentInstId = actInst.getProcessInstanceId();
         ProcessInstance parentInst = edao.getProcessInstance(parentInstId);
         String logtag = logtag(parentInst.getProcessId(), parentInstId, actInst.getActivityId(), actInstId);
         boolean isEmbeddedProcess;
-        if (event.getOwnerType().equals(OwnerType.MAIN_PROCESS_INSTANCE)) isEmbeddedProcess = true;
+        if (event.getOwnerType().equals(OwnerType.MAIN_PROCESS_INSTANCE))
+            isEmbeddedProcess = true;
         else if (event.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
             try {
                 Process subprocdef = ProcessCache.getProcess(event.getWorkId());
@@ -1084,7 +1084,7 @@ class ProcessExecutorImpl {
             }
         } else isEmbeddedProcess = false;    // including the case the subprocess is remote
         String compCode = event.getCompletionCode();
-        if (isEmbeddedProcess) {
+        if (isEmbeddedProcess || event.getOwnerType().equals(OwnerType.ERROR)) {
             // mark parent process instance in progress
             edao.setProcessInstanceStatus(parentInst.getId(), WorkStatus.STATUS_IN_PROGRESS);
             if (logger.isInfoEnabled())
