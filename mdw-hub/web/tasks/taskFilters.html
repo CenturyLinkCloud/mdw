@@ -47,4 +47,40 @@
       </li>
     </ul>
   </div>
+   <div class="mdw-vsm-indent mdw-med-width2" style="margin-top:17px;">
+    <div class="mdw-flex-item">
+      <div class="mdw-inner-addon mdw-right-addon" uib-dropdown dropdown-append-to-body="true" auto-close="disabled">
+        <i class="glyphicon glyphicon-chevron-down"></i>
+        <input type="text" class="form-control mdw-dropfilter" placeholder="Indexes..." 
+          uib-dropdown-toggle readonly>
+        <ul class="dropdown-menu mdw-dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown" style="width:500px;">
+          <li class="mdw-value-item" ng-repeat="(indexKey, indexValue) in getIndexFilters()">
+            <input type="text" class="form-control" style="width:150px;" placeholder="Key" readonly popover-stay-open
+              ng-model="indexKey">
+            <div class="glyphicon glyphicon-pause mdw-glyph-equals"></div>
+            <input type="text" class="form-control" style="width:300px;margin-left:20px;" placeholder="Value" popover-stay-open
+              ng-model="indexValue" ng-change="setValueFilter(indexKey,indexValue))">
+            <button type="button" class="btn mdw-btn" style="background-color:transparent;margin-left:5px;" popover-stay-open title="Remove"
+              ng-click="removeIndexFilter(indexKey)">
+              <span class="glyphicon glyphicon-remove" style="color:#337ab7;" popover-stay-open></span>
+            </button>
+          </li>
+          <li class="mdw-value-item">
+            <input type="text" class="form-control" style="width:120px;" placeholder="Key" popover-stay-open
+              ng-model="indexKey">
+            <div class="glyphicon glyphicon-pause mdw-glyph-equals"></div>
+            <input type="text" class="form-control" style="width:300px;margin-left:20px;" placeholder="Value" popover-stay-open
+              ng-model="indexValue">
+            <button type="button" class="btn mdw-btn" style="background-color:transparent;margin-left:5px;" popover-stay-open title="Add"
+              ng-click="setIndexFilter(indexKey,indexValue);indexKey=null;indexValue=null;">
+                <span class="glyphicon glyphicon-plus" style="color:#337ab7;" popover-stay-open></span>
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="glyphicon glyphicon-asterisk mdw-glyph-asterisk" ng-if="model.taskFilter.indexes"></div>
+    </div>
+  </div>
+  <div>
+  </div>
 </div>

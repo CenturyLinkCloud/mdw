@@ -3,19 +3,21 @@
 var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 
 // task list controller
-tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location','$cookieStore', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
-                                       function($scope, $window, $http, $location, $cookieStore, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
+tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
+                                       function($scope, $window, $http, $location, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
   
   $scope.getFilter = function() {
-    var taskFilter = $cookieStore.get('taskFilter');
-    if (!taskFilter)
+    var taskFilter = sessionStorage.getItem('taskFilter');
+    if (taskFilter)
+      taskFilter = JSON.parse(taskFilter);
+    else
       taskFilter = {};
     return taskFilter;
   };
   
   $scope.setFilter = function(taskFilter) {
     if (taskFilter) {
-      $cookieStore.put('taskFilter', taskFilter);
+      sessionStorage.setItem('taskFilter', JSON.stringify(taskFilter));
     }
   };
   
@@ -38,11 +40,13 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   var templateIdParam = util.urlParams().templateId;
   var taskSpecParam = util.urlParams().taskSpec;
   var indexesParam = util.urlParams().indexes;
+  var workgroups = util.urlParams().workgroups;
+  var assignee = util.urlParams().assignee;
   var taskFilter = $scope.getFilter();
-  taskFilter.workgroups = '[My Workgroups]';
   if (templateIdParam && taskSpecParam) {
     taskFilter.taskId = templateIdParam;
     taskFilter.status = null;
+    taskFilter.workgroups = '[My Workgroups]';
     taskFilter.advisory = '[Not Invalid]';
     taskFilter.sort = 'startDate';
     taskFilter.descending = true;
@@ -50,22 +54,23 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     $scope.setFilter(taskFilter);
     if (taskSpecParam.endsWith('.task'))
       taskSpecParam = taskSpecParam.substring(0, taskSpecParam.length - 5);
-    $cookieStore.put('taskSpec', taskSpecParam);
+    sessionStorage.setItem('taskSpec', taskSpecParam);
     if (!indexesParam) {  // otherwise wait redirect after setting values
       window.location = mdw.roots.hub + '#/tasks';
       return;
     }
   }
-  if (indexesParam) {
+  if (indexesParam || workgroups || assignee) {
     taskFilter.status = null;
     taskFilter.advisory = '[Not Invalid]';
     taskFilter.sort = 'startDate';
     taskFilter.descending = true;
-    taskFilter.indexes = indexesParam;
-    var workgroups = util.urlParams().workgroups;
+    if (indexesParam)
+      taskFilter.indexes = indexesParam;
     if (workgroups)
       taskFilter.workgroups = workgroups;
-    var assignee = util.urlParams().assignee;
+    else
+      taskFilter.workgroups = '[My Workgroups]';
     if (assignee)
       taskFilter.assignee = assignee;
     $scope.setFilter(taskFilter);
@@ -75,11 +80,12 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.model = {};
   $scope.model.taskList = {};
-  $scope.model.taskFilter = $cookieStore.get('taskFilter');
-  if (!$scope.model.taskFilter) {
+  var tasksFilter = sessionStorage.getItem('taskFilter');
+  if (!tasksFilter) {
     $scope.resetFilter();
   }
   else {
+    $scope.model.taskFilter = JSON.parse(tasksFilter);
     // don't remember these
     if ($scope.model.taskFilter.instanceId)
       $scope.model.taskFilter.instanceId = null;
@@ -91,10 +97,10 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
 
   // preselected taskSpec
   if ($scope.model.taskFilter.taskId) {
-    $scope.model.typeaheadMatchSelection = $cookieStore.get('taskSpec');
+    $scope.model.typeaheadMatchSelection = sessionStorage.getItem('taskSpec');
   }
   else {
-    $cookieStore.remove('taskSpec');
+    sessionStorage.removeItem('taskSpec');
   }
   
   // retrieve TaskCategories
@@ -103,18 +109,50 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       $scope.taskCategories = response.data;
     });
   
+  $scope.getIndexFilters = function() {
+    if ($scope.model.taskFilter.indexes) {
+      // translate param string to object
+      return util.toValuesObject($scope.model.taskFilter.indexes);
+    }
+  };
+  
+  $scope.setIndexFilter = function(key, value) {
+    if (key) {
+      if (value || value === '') {
+        var indexesObject = util.toValuesObject($scope.model.taskFilter.indexes);
+        if (!indexesObject) {
+          indexesObject = {};
+        }
+        indexesObject[key] = value;
+        $scope.model.taskFilter.indexes = util.toParamString(indexesObject);
+      }
+      else {
+        $scope.removeIndexFilter(key);
+      }
+    }
+  };
+  
+  $scope.removeIndexFilter = function(key) {
+    if ($scope.model.taskFilter.indexes) {
+      var indexesObject = util.toValuesObject($scope.model.taskFilter.indexes);
+      delete indexesObject[key];
+      $scope.model.taskFilter.indexes = util.toParamString(indexesObject);
+    }
+  };
+  
+  
   $scope.$on('page-retrieved', function(event, taskList) {
     // create date and due date
     taskList.tasks.forEach(function(task) {
       TaskUtil.setTask(task);
     });
     if ($scope.model.taskFilter.taskId && taskList.tasks.length > 0) {
-      $cookieStore.put('taskSpec', taskList.tasks[0].name);
+      sessionStorage.setItem('taskSpec', taskList.tasks[0].name);
     }
     else {
-      $cookieStore.remove('taskSpec');
+      sessionStorage.removeItem('taskSpec');
     }
-    $cookieStore.put('taskFilter', $scope.model.taskFilter);
+    sessionStorage.setItem('taskFilter', JSON.stringify($scope.model.taskFilter));
     
     // retrieve TaskActions
     $http.get(mdw.roots.hub + '/services/Tasks/bulkActions?app=mdw-admin&myTasks=' + ($scope.model.taskFilter.assignee == '[My Tasks]'))
@@ -261,7 +299,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   $scope.clearTypeahead = function() {
     $scope.model.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
-    $cookieStore.remove('taskSpec');
+    sessionStorage.removeItem('taskSpec');
   };
   
   $scope.typeaheadSelect = function() {
@@ -323,8 +361,8 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
 }]);
 
-tasksMod.controller('TemplatesController', ['$scope', '$cookieStore', 'mdw', 'util', 'Templates',
-                       function($scope, $cookieStore, mdw, util, Templates) {
+tasksMod.controller('TemplatesController', ['$scope', 'mdw', 'util', 'Templates',
+                       function($scope, mdw, util, Templates) {
   $scope.templateList = Templates.retrieve({grouped:true}, function success() {
   var pkgs = $scope.templateList.packages;
   pkgs.forEach(function(pkg) {
@@ -361,11 +399,12 @@ tasksMod.controller('TemplatesController', ['$scope', '$cookieStore', 'mdw', 'ut
       if (pkg.collapsed)
         st[pkg.name] = true;
     });
-    $cookieStore.put('procsPkgCollapsedState', st);
+    sessionStorage.setItem('procsPkgCollapsedState', JSON.stringify(st));
   };
   $scope.applyPkgCollapsedState = function() {
-  var st = $cookieStore.get('procsPkgCollapsedState');
+  var st = sessionStorage.getItem('procsPkgCollapsedState');
   if (st) {
+    st = JSON.parse(st);
     util.getProperties(st).forEach(function(pkgName) {
     var col = st[pkgName];
     if (col === true) {
