@@ -1,1 +1,1 @@
-nohup java -jar $@ ${MDW_HOME}/mdw-cli.jar run &
+nohup java -jar $@ ${MDW_HOME}/mdw-cli.jar run >> mdw.log 2>&1 &
