@@ -80,8 +80,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'
         },
         Monitoring: {
-          '_attributes': 'monitoring', // TODO not fully baked 
-          '_template': mdw.roots.hub + '/js/ui/templates/monitoring.json'
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
         },
         /* string:
          * Evaluated string refers to obj collection for list-type display.

@@ -56,9 +56,21 @@ public class Pagelet implements Jsonable {
         this.attributes.put(name, val);
     }
 
+    private String implCategory;
+
     private List<Widget> widgets = new ArrayList<Widget>();
-    public List<Widget> getWidgets() { return widgets; }
-    public void setWidgets(List<Widget> widgets) { this.widgets = widgets; }
+    public List<Widget> getWidgets() {
+        List<Widget> allWidgets = new ArrayList<>(widgets);
+        if (widgetProviders != null) {
+            for (WidgetProvider provider : widgetProviders) {
+                List<Widget> providedWidgets = provider.getWidgets(implCategory);
+                if (providedWidgets != null) {
+                    allWidgets.addAll(providedWidgets);
+                }
+            }
+        }
+        return allWidgets;
+    }
 
     private List<WidgetProvider> widgetProviders;
     public void addWidgetProvider(WidgetProvider widgetProvider) {
@@ -81,6 +93,8 @@ public class Pagelet implements Jsonable {
      * Note: changes widget type and attribute names into lower case.
      */
     public Pagelet(String implCategory, String source) throws Exception {
+        this.implCategory = implCategory;
+
         if (source.startsWith("{")) {
             fromJson(new JSONObject(source));
             return;
@@ -260,15 +274,6 @@ public class Pagelet implements Jsonable {
             widgets.add(idx + offset, companions.get(idx));
             offset++;
         }
-
-        if (widgetProviders != null) {
-            for (WidgetProvider provider : widgetProviders) {
-                List<Widget> providedWidgets = provider.getWidgets(implCategory);
-                if (providedWidgets != null) {
-                    widgets.addAll(providedWidgets);
-                }
-            }
-        }
     }
 
     public Pagelet(JSONObject json) {
@@ -292,7 +297,7 @@ public class Pagelet implements Jsonable {
         if (attrsJson != null)
             json.put("attributes", attrsJson);
         JSONArray widgetsJson = new JSONArray();
-        for (Widget w : widgets) {
+        for (Widget w : getWidgets()) {
             widgetsJson.put(w.getJson());
         }
         json.put("widgets", widgetsJson);

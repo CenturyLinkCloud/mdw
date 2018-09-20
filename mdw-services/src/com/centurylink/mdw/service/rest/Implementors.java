@@ -109,8 +109,8 @@ public class Implementors extends JsonRestService {
                         pagelet.addWidgetProvider(new PrePostWidgetProvider());
                         pagelet.addWidgetProvider(implCategory -> {
                             List<Widget> widgets = new ArrayList<>();
-                            Widget activityMonitoringWidget = new MonitoringWidget("Activity Monitors");
-                            widgets.add(activityMonitoringWidget);
+                            Widget monitoringWidget = new MonitoringWidget("Monitors");
+                            widgets.add(monitoringWidget);
                             JSONArray rows = new JSONArray();
                             for (ActivityMonitor activityMonitor : MonitorRegistry.getInstance().getActivityMonitors()) {
                                 JSONArray row = getRowDefault(activityMonitor.getClass());
@@ -118,33 +118,23 @@ public class Implementors extends JsonRestService {
                                     rows.put(row);
                                 }
                             }
-                            if (rows.length() > 0)
-                                activityMonitoringWidget.setAttribute("default", rows.toString());
 
                             if (AdapterActivity.class.getName().equals(implCategory)) {
-                                Widget adapterMonitorWidget = new MonitoringWidget("Adapter Monitors");
-                                widgets.add(adapterMonitorWidget);
-                                rows = new JSONArray();
                                 for (AdapterMonitor adapterMonitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
                                     JSONArray row = getRowDefault(adapterMonitor.getClass());
                                     if (row != null)
                                         rows.put(row);
                                 }
-                                if (rows.length() > 0)
-                                    adapterMonitorWidget.setAttribute("default", rows.toString());
                             }
                             else if (TaskActivity.class.getName().equals(implCategory)) {
-                                Widget taskMonitorWidget = new MonitoringWidget("Task Monitors");
-                                widgets.add(taskMonitorWidget);
-                                rows = new JSONArray();
                                 for (TaskMonitor taskMonitor : MonitorRegistry.getInstance().getTaskMonitors()) {
                                     JSONArray row = getRowDefault(taskMonitor.getClass());
                                     if (row != null)
                                         rows.put(row);
                                 }
-                                if (rows.length() > 0)
-                                    taskMonitorWidget.setAttribute("default", rows.toString());
                             }
+                            if (rows.length() > 0)
+                                monitoringWidget.setAttribute("default", rows.toString());
                             return widgets;
                         });
                         pageletJson = pagelet.getJson();
@@ -170,7 +160,7 @@ public class Implementors extends JsonRestService {
         if (monitorAnnotation == null)
             return null;
         JSONArray cols = new JSONArray();
-        cols.put(monitorAnnotation.global());
+        cols.put(String.valueOf(monitorAnnotation.global()));
         cols.put(monitorAnnotation.value());
         String className = monitorClass.getName();
         AssetInfo implAsset = ServiceLocator.getAssetServices().getImplAsset(className);

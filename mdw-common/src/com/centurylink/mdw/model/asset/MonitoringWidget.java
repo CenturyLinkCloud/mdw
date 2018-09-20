@@ -25,14 +25,22 @@ public class MonitoringWidget extends Widget {
     public MonitoringWidget(String name) {
         super(name, "table");
         setAttribute("section", "Monitoring");
+        setAttribute("noButtons", "true");
         List<Widget> columns = new ArrayList<>();
         setWidgets(columns);
-        columns.add(new Widget("Enabled", "checkbox"));
+        Widget enabledColumn = new Widget("Enabled", "checkbox");
+        enabledColumn.setAttribute("label", "Enabled");
+        columns.add(enabledColumn);
         Widget nameColumn = new Widget("Name", "text");
+        nameColumn.setAttribute("label", "Name");
         nameColumn.setAttribute("readonly", "true");
+        columns.add(nameColumn);
         Widget implColumn = new Widget("Implementation", "asset");
+        implColumn.setAttribute("label", "Implementation");
         implColumn.setAttribute("readonly", "true");
         columns.add(implColumn);
-        columns.add(new Widget("Options", "text"));
+        Widget optionsColumn = new Widget("Options", "text");
+        optionsColumn.setAttribute("label", "Options");
+        columns.add(optionsColumn);
     }
 }
