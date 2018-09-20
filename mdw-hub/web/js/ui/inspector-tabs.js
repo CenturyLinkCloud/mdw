@@ -44,7 +44,6 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.services + '/js/ui/templates/documentation.json'
         },
         Monitoring: {
-          '_attributes': 'monitoring', // TODO not fully baked 
           '_template': mdw.roots.hub + '/js/ui/templates/monitoring.json'
         }
       },

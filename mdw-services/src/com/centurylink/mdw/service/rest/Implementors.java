@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,9 +30,9 @@ import org.json.JSONObject;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.annotations.Monitor;
+import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.MonitoringWidget;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.asset.Pagelet.Widget;
 import com.centurylink.mdw.model.asset.PrePostWidgetProvider;
@@ -48,6 +49,8 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JsonUtil;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,6 +58,8 @@ import io.swagger.annotations.ApiOperation;
 @Path("/Implementors")
 @Api("Activity implementor definitions")
 public class Implementors extends JsonRestService {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
     protected List<String> getRoles(String path, String method) {
@@ -109,32 +114,36 @@ public class Implementors extends JsonRestService {
                         pagelet.addWidgetProvider(new PrePostWidgetProvider());
                         pagelet.addWidgetProvider(implCategory -> {
                             List<Widget> widgets = new ArrayList<>();
-                            Widget monitoringWidget = new MonitoringWidget("Monitors");
-                            widgets.add(monitoringWidget);
-                            JSONArray rows = new JSONArray();
-                            for (ActivityMonitor activityMonitor : MonitorRegistry.getInstance().getActivityMonitors()) {
-                                JSONArray row = getRowDefault(activityMonitor.getClass());
-                                if (row != null) {
-                                    rows.put(row);
-                                }
-                            }
-
-                            if (AdapterActivity.class.getName().equals(implCategory)) {
-                                for (AdapterMonitor adapterMonitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
-                                    JSONArray row = getRowDefault(adapterMonitor.getClass());
-                                    if (row != null)
+                            try {
+                                Widget monitoringWidget = new Widget(new JSONObject(Templates.get("configurator/monitors.json")));
+                                widgets.add(monitoringWidget);
+                                JSONArray rows = new JSONArray();
+                                for (ActivityMonitor activityMonitor : MonitorRegistry.getInstance().getActivityMonitors()) {
+                                    JSONArray row = getRowDefault(activityMonitor.getClass());
+                                    if (row != null) {
                                         rows.put(row);
+                                    }
                                 }
-                            }
-                            else if (TaskActivity.class.getName().equals(implCategory)) {
-                                for (TaskMonitor taskMonitor : MonitorRegistry.getInstance().getTaskMonitors()) {
-                                    JSONArray row = getRowDefault(taskMonitor.getClass());
-                                    if (row != null)
-                                        rows.put(row);
+                                if (AdapterActivity.class.getName().equals(implCategory)) {
+                                    for (AdapterMonitor adapterMonitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
+                                        JSONArray row = getRowDefault(adapterMonitor.getClass());
+                                        if (row != null)
+                                            rows.put(row);
+                                    }
                                 }
+                                else if (TaskActivity.class.getName().equals(implCategory)) {
+                                    for (TaskMonitor taskMonitor : MonitorRegistry.getInstance().getTaskMonitors()) {
+                                        JSONArray row = getRowDefault(taskMonitor.getClass());
+                                        if (row != null)
+                                            rows.put(row);
+                                    }
+                                }
+                                if (rows.length() > 0)
+                                    monitoringWidget.setAttribute("default", rows.toString());
                             }
-                            if (rows.length() > 0)
-                                monitoringWidget.setAttribute("default", rows.toString());
+                            catch (IOException ex) {
+                                logger.severeException("Error loading monitor widgets for: " + implClassName, ex);
+                            }
                             return widgets;
                         });
                         pageletJson = pagelet.getJson();

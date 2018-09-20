@@ -1,0 +1,32 @@
+{
+  "comment": "this individual widget is loaded programmatically",
+  "name": "Monitors",
+  "noButtons": "true",
+  "section": "Monitoring",
+  "type": "table",
+  "widgets": [
+    {
+      "label": "Enabled",
+      "name": "Enabled",
+      "type": "checkbox"
+    },
+    {
+      "label": "Name",
+      "name": "Name",
+      "readonly": "true",
+      "type": "text"
+    },
+    {
+      "label": "Implementation",
+      "name": "Implementation",
+      "readonly": "true",
+      "type": "asset",
+      "source": "java,kt"
+    },
+    {
+      "label": "Options",
+      "name": "Options",
+      "type": "text"
+    }
+  ]
+}
