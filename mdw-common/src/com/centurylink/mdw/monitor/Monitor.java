@@ -18,15 +18,7 @@ package com.centurylink.mdw.monitor;
 public interface Monitor {
 
     default boolean isOffline() {
-        if (this instanceof OfflineMonitor<?>) {
-            return true;
-        }
-        else {
-            com.centurylink.mdw.annotations.Monitor monitorAnnotation = getClass().getAnnotation(com.centurylink.mdw.annotations.Monitor.class);
-            if (monitorAnnotation != null)
-                return monitorAnnotation.offline();
-        }
-        return false;
+        return this instanceof OfflineMonitor<?>;
     }
 
 }

@@ -6,26 +6,27 @@
   "type": "table",
   "widgets": [
     {
-      "label": "Enabled",
+      "label": "",
       "name": "Enabled",
-      "type": "checkbox"
+      "type": "checkbox",
+      "vw": 50
     },
     {
-      "label": "Name",
-      "name": "Name",
+      "label": "Monitor Name",
+      "name": "name",
       "readonly": "true",
       "type": "text"
     },
     {
       "label": "Implementation",
-      "name": "Implementation",
+      "name": "impl",
       "readonly": "true",
       "type": "asset",
       "source": "java,kt"
     },
     {
       "label": "Options",
-      "name": "Options",
+      "name": "options",
       "type": "text"
     }
   ]

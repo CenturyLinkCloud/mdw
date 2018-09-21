@@ -15,11 +15,7 @@
  */
 package com.centurylink.mdw.annotations;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Documented
 @Target(ElementType.TYPE)
@@ -43,12 +39,6 @@ public @interface Monitor {
      * If global is true, the enablement checkbox is readonly in MDW Studio/Hub.
      */
     public boolean global() default false;
-
-    /**
-     * If true, monitor will be invoked asynchronously (and any return
-     * values are not honored).
-     */
-    public boolean offline() default false;
 
     /**
      * Default value for user-entered options for this monitor.
