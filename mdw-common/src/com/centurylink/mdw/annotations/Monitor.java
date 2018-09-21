@@ -33,17 +33,17 @@ public @interface Monitor {
     public Class<? extends com.centurylink.mdw.monitor.Monitor> category();
 
     /**
-     * Recommended practice is to leave this set to false, and to allow
-     * per-activity configuration in MDW Studio or MDWHub.  This way only
-     * designated activities will trigger this monitor.
-     * If global is true, the enablement checkbox is readonly in MDW Studio/Hub.
+     * Recommended practice is to leave this set to false, and then enable
+     * per activity in MDW Studio or MDWHub.  This way only designated activities
+     * will trigger this monitor.  If defaultEnabled is set to true, this monitor
+     * is enabled unless explicitly deselected in MDW Studio/Hub.
      */
-    public boolean global() default false;
+    public boolean defaultEnabled() default false;
 
     /**
      * Default value for user-entered options for this monitor.
-     * The value entered in MDW Studio/Hub is available as attribute "Options"
-     * in the runtimeContext.
+     * The value entered in MDW Studio/Hub is available as the forth column in the
+     * JSONArray value from attribute "monitors" in the runtimeContext.
      */
     public String defaultOptions() default "";
 }

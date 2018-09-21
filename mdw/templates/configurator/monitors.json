@@ -1,5 +1,5 @@
 {
-  "comment": "this individual widget is loaded programmatically",
+  "comment": "this individual widget is loaded programmatically (see Implementors.java)",
   "name": "Monitors",
   "noButtons": "true",
   "section": "Monitoring",

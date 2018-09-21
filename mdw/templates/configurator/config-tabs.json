@@ -21,6 +21,9 @@
       "_attribute": { "name": "Documentation", "markdown": true },
       "_template": "documentation.json"
     },
+    "Monitoring": {
+      "_template": "processMonitoring.json"
+    },
     "Source": "source"
   },
   "activity": {

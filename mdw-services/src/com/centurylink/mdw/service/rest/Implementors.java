@@ -169,7 +169,7 @@ public class Implementors extends JsonRestService {
         if (monitorAnnotation == null)
             return null;
         JSONArray cols = new JSONArray();
-        cols.put(String.valueOf(monitorAnnotation.global()));
+        cols.put(String.valueOf(monitorAnnotation.defaultEnabled()));
         cols.put(monitorAnnotation.value());
         String className = monitorClass.getName();
         AssetInfo implAsset = ServiceLocator.getAssetServices().getImplAsset(className);
