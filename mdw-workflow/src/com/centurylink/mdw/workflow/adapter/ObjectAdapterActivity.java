@@ -34,6 +34,7 @@ import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
@@ -284,7 +285,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
             super.setReturnCode(ActivityResultCodeConstant.RESULT_RETRY);
         }
 
-        for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
+        for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors(getRuntimeContext())) {
             String errResult = (String)monitor.onError(getRuntimeContext(), errorCause);
             if (errResult != null) {
                 this.setReturnCode(errResult);
@@ -322,7 +323,11 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
-            getEngine().setReqCompletionTime(OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            if (getPerformanceLevel() <= 5) {
+                CommonDataAccess dataAccess = new CommonDataAccess();
+                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+            }
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -334,7 +339,11 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         try {
             DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
-            getEngine().setReqCompletionTime(OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            if (getPerformanceLevel() <= 5) {
+                CommonDataAccess dataAccess = new CommonDataAccess();
+                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+            }
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -516,7 +525,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
                 headers = ((HeaderAwareAdapter) this).getRequestHeaders();
 
             ActivityRuntimeContext runtimeContext = getRuntimeContext();
-            List<AdapterMonitor> monitors = MonitorRegistry.getInstance().getAdapterMonitors();
+            List<AdapterMonitor> monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
 
             Object altRequest = null;
             for (AdapterMonitor monitor : monitors) {

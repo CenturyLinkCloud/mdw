@@ -291,12 +291,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
         documentCache.put(docvo.getDocumentId(), docvo);
     }
 
-    public synchronized void setReqCompletionTime(String ownerType, Long ownerId)throws SQLException{
-        // no cache for req completion time
-           if (cache_document!=CACHE_OFF) {
-               edadb.setReqCompletionTime(ownerType, ownerId);
-           }
-    }
     public synchronized Long createTransitionInstance(TransitionInstance vo) throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
             vo.setTransitionInstanceID(getNextInternalId());

@@ -46,6 +46,8 @@ public interface OwnerType {
 
     public static final String VARIABLE_INSTANCE = "VARIABLE_INSTANCE";
 
+    public static final String ADAPTER = "ADAPTER"; // owner ID is activity instance ID
+    public static final String LISTENER = "LISTENER"; // owner ID is processInstanceId (if present)
     public static final String ADAPTER_REQUEST = "ADAPTER_REQUEST"; // owner ID is activity instance ID
     public static final String ADAPTER_RESPONSE = "ADAPTER_RESPONSE"; // owner ID is activity instance ID
     public static final String ADAPTER_REQUEST_META = "ADAPTER_REQUEST_META"; // owner ID is document ID of ADAPTER_REQUEST

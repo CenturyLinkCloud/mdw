@@ -36,6 +36,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 import javax.ws.rs.Path;
 
+import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
@@ -54,6 +55,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -101,7 +103,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         try {
             for (Asset javaAsset : AssetCache.getAssets(Asset.JAVA)) {
                 // process RegisteredService-annotated classes
-                if (javaAsset.getStringContent().indexOf("@RegisteredService") > 0 ||
+                if (javaAsset.getStringContent().indexOf("@RegisteredService") > 0 || javaAsset.getStringContent().indexOf("@Monitor") > 0 ||
                         javaAsset.getStringContent().indexOf("@Path") > 0 || javaAsset.getStringContent().indexOf("@Api") > 0) {
                     String className = JavaNaming.getValidClassName(javaAsset.getName());
                     Package javaAssetPackage = PackageCache.getAssetPackage(javaAsset.getId());
@@ -143,6 +145,13 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                                     logger.info("JAX-RS XML Service: " + resourcePath + " --> '" + clazz + "'");
                                     DynamicJavaServiceRegistry.addRegisteredService(XmlService.class.getName(), clazz.getName(), resourcePath);
                                 }
+                            }
+                            // Monitor annotation
+                            Monitor monitorAnnotation = clazz.getAnnotation(Monitor.class);
+                            if (monitorAnnotation != null) {
+                                logger.info("Monitor Service: " + monitorAnnotation.value() + " --> '" + clazz + "'");
+                                String monitorCategory = monitorAnnotation.category().getName();
+                                MonitorRegistry.getInstance().addDynamicService(monitorCategory, clazz.getName());
                             }
                         }
                         else {

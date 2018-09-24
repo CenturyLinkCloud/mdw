@@ -18,6 +18,7 @@ package com.centurylink.mdw.testing;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
@@ -28,9 +29,9 @@ import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.translator.VariableTranslator;
 
-@RegisteredService(ActivityMonitor.class)
+@Monitor(value="Test Cases", category=ActivityMonitor.class, defaultEnabled=true)
 public class TestCaseActivityMonitor implements ActivityMonitor {
-    StubHelper stubber = new StubHelper();
+    private StubHelper stubber = new StubHelper();
 
     // TODO remove this and perform updates through runtimeContext
     public Map<String,Object> onStart(ActivityRuntimeContext runtimeContext) {

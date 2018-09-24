@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>Monitoring</title>
+<link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>Monitoring</h1>
+<p>
+  Monitors are Java or Kotlin assets that are triggered at designated points in a process, activity, task or service lifecycle.
+  Depending on what it's interested in, a monitor implements one of these interfaces:
+  <ul>
+    <li><a href="https://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/monitor/ProcessMonitor.html">ProcessMonitor</a></li>
+    <li><a href="https://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/monitor/ActivityMonitor.html">ActivityMonitor</a></li>
+    <li><a href="https://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/monitor/AdapterMonitor.html">AdapterMonitor</a></li>
+    <li><a href="https://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/monitor/TaskMonitor.html">TaskMonitor</a></li>
+    <li><a href="https://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/monitor/ServiceMonitor.html">ServiceMonitor</a></li>
+  </ul>
+  A monitor must identify itself with the <code>@Monitor</code> annotation, whose value is the monitor name and which includes the mandatory
+  "category" attribute to designate its type. Here's an example:
+<pre>
+@Monitor(value="Activity Timing", category=ActivityMonitor.class)
+public class ActivityTimingMonitor implements ActivityMonitor {
+
+    @Override
+    public Map&lt;String,Object> onStart(ActivityRuntimeContext context) {
+        context.logDebug("Start: " + Instant.now());
+        return null;
+    }
+}
+</pre>
+</p>
+
+<h3><a id="configuration">Monitor Configuration</a></h3>
+<p>
+  Unlike those registered with the old-style <code>@RegisteredServices</code>, implementations using <code>@Monitor</code> are not enabled by
+  default unless the "defaultEnabled" annotation attribute is specified as true.  Non-global monitors can be configured in MDW Studio or MDWHub
+  for specific activities as depicted in the screenshot below.
+</p>
+<img src="images/monitoring.png" alt="monitoring" style="width:1200px" />
+<p>
+  Any monitor asset you create with the proper annotations will appear in the Monitoring tab list for its designated elements.
+</p>
+
+<h3><a id="offline">Offline Monitors</a></h3>
+<p>
+  Generally, monitors have the ability to change outcomes (in the sample code above the <code>onStart()</code> method
+  can return a map of process variable names/values to update).  This means a monitor usually runs synchronously.
+  However, some monitors only need to perform notifications or other actions that can take place asynchronously and
+  should not slow down workflow/service execution.  Such a monitor can implement the
+  <a href="https://centurylinkcloud.github.io/mdw/docs/javadoc/com/centurylink/mdw/monitor/OfflineMonitor.html">OfflineMonitor</a>
+  interface to be fired asynchronously.
+</p>
+
+</body>
+</html>

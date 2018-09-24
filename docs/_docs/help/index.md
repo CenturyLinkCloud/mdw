@@ -71,10 +71,10 @@ permalink: /docs/help/
 <h3>Testing, Debugging and Monitoring</h3>
 <ul>
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
-  <li><a href='eventmgr.html'>Event Manager</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
-  <li><a href='todo.html'>MDW Reports</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
+  <li><a href='monitoring.html'>Monitoring</a></li>
+  <li><a href='todo.html'>MDW Dashboard</a></li>
 </ul>
 </div>
 </section>

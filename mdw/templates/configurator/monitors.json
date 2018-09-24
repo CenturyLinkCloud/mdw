@@ -1,0 +1,33 @@
+{
+  "comment": "this individual widget is loaded programmatically (see Implementors.java)",
+  "name": "Monitors",
+  "noButtons": "true",
+  "section": "Monitoring",
+  "type": "table",
+  "widgets": [
+    {
+      "label": "",
+      "name": "Enabled",
+      "type": "checkbox",
+      "vw": 50
+    },
+    {
+      "label": "Monitor Name",
+      "name": "name",
+      "readonly": "true",
+      "type": "text"
+    },
+    {
+      "label": "Implementation",
+      "name": "impl",
+      "readonly": "true",
+      "type": "asset",
+      "source": "java,kt"
+    },
+    {
+      "label": "Options",
+      "name": "options",
+      "type": "text"
+    }
+  ]
+}
