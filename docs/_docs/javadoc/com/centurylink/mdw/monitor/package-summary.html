@@ -42,7 +42,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/model/workflow/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../../../com/centurylink/mdw/monitor/impl/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../../../com/centurylink/mdw/observer/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/monitor/package-summary.html" target="_top">Frames</a></li>
@@ -83,36 +83,47 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a></td>
 <td class="colLast">
-<div class="block">Activity monitors can be registered through @RegisteredService annotations to get
- called whenever an MDW workflow activity is invoked.</div>
+<div class="block">Activity monitors can be registered through @Monitor annotations to get
+ (optionally) called whenever an MDW workflow activity is invoked.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a></td>
 <td class="colLast">
-<div class="block">AdapterMonitors can be registered through @RegisteredService annotations to intercept
+<div class="block">AdapterMonitors can be registered through @Monitor annotations to intercept
  external service calls originating from MDW workflow adapter activities.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor">OfflineMonitor</a>&lt;T extends <a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&gt;</td>
 <td class="colLast">
 <div class="block">Indicates that a monitor should be run in a separate thread so as not
  to bog down mainstream workflow processing.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a></td>
 <td class="colLast">
-<div class="block">Process monitors can be registered through @RegisteredService annotations to get
+<div class="block">Process monitors can be registered through @Monitor annotations to get
  notified during the lifecycle of an MDW workflow process.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a></td>
 <td class="colLast">
-<div class="block">ServiceMonitors can be registered through @RegisteredService annotations to intercept
+<div class="block">ServiceMonitors can be registered through @Monitor annotations to intercept
  service calls handled by the MDW framework.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></td>
+<td class="colLast">
+<div class="block">Activity monitors can be registered through @Monitor annotations to get
+ (optionally) called whenever an MDW workflow activity is invoked.</div>
 </td>
 </tr>
 </tbody>
@@ -127,9 +138,13 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor">MonitorAttributes</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></td>
 <td class="colLast">
-<div class="block">Registry for MDW workflow monitoring services.</div>
+<div class="block">Registry for MDW monitoring services.</div>
 </td>
 </tr>
 </tbody>
@@ -158,7 +173,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/model/workflow/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../../../com/centurylink/mdw/monitor/impl/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../../../com/centurylink/mdw/observer/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/monitor/package-summary.html" target="_top">Frames</a></li>

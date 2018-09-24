@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":9,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":9,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -362,24 +362,19 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
                         java.lang.Integer&nbsp;status)</code>&nbsp;</td>
 </tr>
 <tr id="i41" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#setReqCompletionTime-java.lang.String-java.lang.Long-">setReqCompletionTime</a></span>(java.lang.String&nbsp;ownerType,
-                    java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
-</tr>
-<tr id="i42" class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#startTransaction--">startTransaction</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a></span>(<a href="../../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a>&nbsp;transaction)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#updateActivityInstanceEndTime-java.lang.Long-java.util.Date-">updateActivityInstanceEndTime</a></span>(java.lang.Long&nbsp;actInstId,
                              java.util.Date&nbsp;endtime)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#updateDocumentContent-java.lang.Long-java.lang.String-">updateDocumentContent</a></span>(java.lang.Long&nbsp;docid,
                      java.lang.String&nbsp;content)</code>
@@ -387,13 +382,13 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
  document reference object.</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#updateDocumentInfo-com.centurylink.mdw.model.variable.Document-">updateDocumentInfo</a></span>(<a href="../../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;docvo)</code>
 <div class="block">Update document information (everything but document content itself).</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#updateVariableInstance-com.centurylink.mdw.model.variable.VariableInstance-">updateVariableInstance</a></span>(<a href="../../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var)</code>&nbsp;</td>
 </tr>
@@ -678,23 +673,6 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
 <li class="blockList">
 <h4>addDocumentToCache</h4>
 <pre>public&nbsp;void&nbsp;addDocumentToCache(<a href="../../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;docvo)</pre>
-</li>
-</ul>
-<a name="setReqCompletionTime-java.lang.String-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setReqCompletionTime</h4>
-<pre>public&nbsp;void&nbsp;setReqCompletionTime(java.lang.String&nbsp;ownerType,
-                                 java.lang.Long&nbsp;ownerId)
-                          throws java.sql.SQLException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccess.html#setReqCompletionTime-java.lang.String-java.lang.Long-">setReqCompletionTime</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process">EngineDataAccess</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.sql.SQLException</code></dd>
-</dl>
 </li>
 </ul>
 <a name="createTransitionInstance-com.centurylink.mdw.model.workflow.TransitionInstance-">

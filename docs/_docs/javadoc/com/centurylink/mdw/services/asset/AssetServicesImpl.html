@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -237,27 +237,33 @@ implements <a href="../../../../../com/centurylink/mdw/services/AssetServices.ht
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getExtraPackageNames--">getExtraPackageNames</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i17" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getImplAsset-java.lang.String-">getImplAsset</a></span>(java.lang.String&nbsp;className)</code>
+<div class="block">Returns either Java or Kotlin asset implementor for a class.</div>
+</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">PackageDir</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getPackage-java.lang.String-">getPackage</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Return the PackageDir for a name.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">PackageDir</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getPackageDir-java.lang.String-">getPackageDir</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html" title="class in com.centurylink.mdw.model.asset">PackageList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getPackages-boolean-">getPackages</a></span>(boolean&nbsp;withVcsInfo)</code>
 <div class="block">Returns the list of workflow packages.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/services/asset/Renderer.html" title="interface in com.centurylink.mdw.services.asset">Renderer</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getRenderer-java.lang.String-java.lang.String-">getRenderer</a></span>(java.lang.String&nbsp;assetPath,
            java.lang.String&nbsp;renderTo)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl.html" title="interface in com.centurylink.mdw.dataaccess">VersionControl</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/AssetServicesImpl.html#getVersionControl--">getVersionControl</a></span>()</code>&nbsp;</td>
 </tr>
@@ -557,6 +563,20 @@ implements <a href="../../../../../com/centurylink/mdw/services/AssetServices.ht
 <dd><code>withVcsInfo</code> - - include Git info if available</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getImplAsset-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getImplAsset</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a>&nbsp;getImplAsset(java.lang.String&nbsp;className)</pre>
+<div class="block">Returns either Java or Kotlin asset implementor for a class.  Null if not found.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/AssetServices.html#getImplAsset-java.lang.String-">getImplAsset</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services">AssetServices</a></code></dd>
 </dl>
 </li>
 </ul>

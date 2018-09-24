@@ -55,7 +55,6 @@ com.centurylink.mdw.model.user
 com.centurylink.mdw.model.variable
 com.centurylink.mdw.model.workflow
 com.centurylink.mdw.monitor
-com.centurylink.mdw.monitor.impl
 com.centurylink.mdw.observer
 com.centurylink.mdw.observer.task
 com.centurylink.mdw.procimport
